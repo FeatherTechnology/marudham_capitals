@@ -1,0 +1,13 @@
+@font-face {
+    font-family: 'Maiandra GD';
+    src: url('MaiandraGD-Regular.eot');
+    src: url('MaiandraGD-Regular.eot?#iefix') format('embedded-opentype'),
+        url('MaiandraGD-Regular.woff2') format('woff2'),
+        url('MaiandraGD-Regular.woff') format('woff'),
+        url('MaiandraGD-Regular.ttf') format('truetype'),
+        url('MaiandraGD-Regular.svg#MaiandraGD-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+

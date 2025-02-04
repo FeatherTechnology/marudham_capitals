@@ -1,0 +1,122 @@
+.card {
+    min-height: 105vh;
+    margin: 12px 5px;
+}
+
+.inside-title {
+    margin: 10px -20px;
+}
+
+
+.split-card {
+    display: block;
+}
+
+.balance-sheet-card,
+.benefits-card,
+.benefits-check-card,
+.profit-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+table {
+    border: 3px solid black;
+    width: 90%;
+    /* Ensure the table takes 100% width of its container */
+}
+
+thead {
+    background-color: #00a494a1;
+    font-weight: bolder;
+}
+
+tfoot {
+    background-color: #a4190082;
+    font-weight: bolder;
+}
+
+tr td {
+    color: black;
+    border: 1px solid black;
+    padding: 10px 5px;
+    /* Adjust the padding for better responsiveness */
+}
+
+.break {
+    border-bottom: 3px solid black;
+}
+
+table tr td:not(:first-child) {
+    width: 30%;
+}
+
+
+
+
+/* Toggle button styles */
+.toggle-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.toggle-button {
+    padding: 12px 20px;
+    background-color: #ccc;
+    border: none;
+    border-radius: 5px;
+    margin: 0 5px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    outline: none;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.toggle-button.active:not(#by_user) {
+    background-color: #009688;
+    color: white;
+}
+
+
+/* label */
+.BBDiff {
+    padding: 12px 20px;
+    background-color: #ffd09b;
+    border: 1px solid #fa9017;
+    border-radius: 5px;
+    color: black;
+    margin-top: 35px;
+    font-family: 'Open Sans';
+}
+
+
+
+@media (max-width: 576px) {
+
+    .toggle-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+
+    .toggle-button {
+        margin: 2px 5px;
+        width: 100%;
+    }
+
+    select {
+        text-align: center;
+    }
+}
+
+@media (min-width: 1200px) {
+    .split-card {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: baseline;
+    }
+}

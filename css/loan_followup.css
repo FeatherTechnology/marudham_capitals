@@ -1,0 +1,17 @@
+.card{
+    min-height: fit-content;
+}
+
+.modal-body label {
+    padding: 10px 4px 3px 0px;
+}
+
+.img-show{
+    border-radius: 50%;
+    height: 150px;
+    width: 150px;
+    object-fit: cover;
+    background-color: white;
+    position: relative;
+    top: -10px;
+}
