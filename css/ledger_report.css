@@ -1,0 +1,61 @@
+/* Toggle button styles */
+.toggle-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 15px 0px;
+    background-color: transparent;
+}
+
+.toggle-button {
+    padding: 12px 20px;
+    background-color: #ccc;
+    border: none;
+    border-radius: 5px;
+    margin: 0 5px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    outline: none;
+    /* transition: background-color 0.3s, color 0.3s; */
+    transition: 0.3s all;
+}
+
+.toggle-button.active:not(#by_user) {
+    background-color: #009688;
+    color: white;
+}
+
+
+.dd_div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.date-button{
+    padding: 10px 18px;
+    background-color: #ccc;
+    border: none;
+    border-radius: 5px;
+    margin: -22px 0 4px 0px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #333;
+    outline: none;
+}
+
+@media (max-width:590px){
+    .date-button{
+        margin-top: 0;
+    }
+
+    .toggle-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+    .toggle-button {
+        margin: 2px 5px;
+        width: 100%;
+    }
+}

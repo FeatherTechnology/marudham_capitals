@@ -1,0 +1,73 @@
+.card {
+    min-height: fit-content;
+}
+
+#search_cus {
+    padding: 12px 20px;
+    background-color: #ccc;
+    border: none;
+    border-radius: 5px;
+    margin: 12px 5px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    outline: none;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+#search_cus:hover {
+    background-color: #009688;
+    color: white;
+}
+
+.add-new-btn {
+    padding: 6px 32px;
+    float: right;
+}
+
+.modal-body label {
+    padding: 10px 4px 3px 0px;
+}
+
+.img-show {
+    border-radius: 50%;
+    height: 150px;
+    width: 150px;
+    object-fit: cover;
+    background-color: white;
+    position: relative;
+    top: -10px;
+}
+
+/* Toggle button styles */
+.toggle-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 15px 0px;
+    background-color: transparent;
+}
+
+.toggle-button {
+    padding: 12px 20px;
+    background-color: #ccc;
+    border: none;
+    border-radius: 5px;
+    margin: 0 5px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    outline: none;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.toggle-button.active:not(#by_user) {
+    background-color: #009688;
+    color: white;
+}
+
+@media (max-width:1481px) {
+    .table-responsive {
+        overflow-x: scroll;
+    }
+}
