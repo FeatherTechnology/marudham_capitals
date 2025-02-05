@@ -10,7 +10,7 @@ $detailrecords = array();
 $j=0;
 foreach($sub_cat_array as $sub_cat){
 
-    $loanCatSelect = "SELECT * FROM loan_scheme WHERE (sub_category = '".$sub_cat."' and sub_category !='') and status=0"; 
+    $loanCatSelect = "SELECT * FROM loan_scheme WHERE (FIND_IN_SET('".strip_tags($sub_cat)."', sub_category) and sub_category !='') and status=0"; 
     $res = $connect->query($loanCatSelect) or die("Error in Get All Records");
     if ($res->rowCount()>0)
     {$i=0;

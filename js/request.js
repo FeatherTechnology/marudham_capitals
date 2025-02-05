@@ -810,16 +810,17 @@ function getLoaninfo(sub_cat_id) {
                 $('#loan_amt').val('');
                 $('#loan_amt').removeAttr('readonly');
 
-                $('#loan_amt').unbind('blur').blur(function () {// to check loan amount not exceed loan limit
-                    let loan_amt = $(this).val();
-                    if (parseInt(loan_amt) <= parseInt(response['loan_limit'])) {
-                        $('#loan_amt').val(loan_amt.toFixed(0));
+                $('#loan_amt').unbind('blur').blur(function () {
+                    // to check loan amount not exceed loan limit
+                    let loan_amnt = $(this).val();
+                    if (parseInt(loan_amnt) <= parseInt(response['loan_limit'])) {
+                        $('#loan_amt').val(parseInt(loan_amnt).toFixed(0));
                     } else {
                         alert('Please Enter Lesser amount!');
                         $('#loan_amt').val('');
                     }
                 })
-
+                
             } else {
                 $('.advance_yes').hide();
                 $('#tot_value').val('');

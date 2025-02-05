@@ -937,8 +937,19 @@ class admin
 			$loan_category = $_POST['loan_category'];
 		}
 		if (isset($_POST['sub_category'])) {
-			$sub_category = $_POST['sub_category'];
+			// If sub_category is a string with comma-separated values
+			if (!is_array($_POST['sub_category'])) {
+				// Convert the comma-separated string into an array
+				$sub_categorys = explode(",", $_POST['sub_category']);
+			} else {
+				// If it's already an array, use it as is
+				$sub_categorys = $_POST['sub_category'];
+			}
+		
+			// Implode the array into a comma-separated string
+			$sub_category = implode(",", $sub_categorys);
 		}
+		
 		if (isset($_POST['scheme_name'])) {
 			$scheme_name = $_POST['scheme_name'];
 		}
@@ -1202,7 +1213,17 @@ class admin
 			$loan_category = $_POST['loan_category'];
 		}
 		if (isset($_POST['sub_category'])) {
-			$sub_category = $_POST['sub_category'];
+			// If sub_category is a string with comma-separated values
+			if (!is_array($_POST['sub_category'])) {
+				// Convert the comma-separated string into an array
+				$sub_categorys = explode(",", $_POST['sub_category']);
+			} else {
+				// If it's already an array, use it as is
+				$sub_categorys = $_POST['sub_category'];
+			}
+		
+			// Implode the array into a comma-separated string
+			$sub_category = implode(",", $sub_categorys);
 		}
 		if (isset($_POST['scheme_name'])) {
 			$scheme_name = $_POST['scheme_name'];
@@ -3396,7 +3417,7 @@ class admin
 				$req_code = $initialapp;
 			}
 
-			$insertQry = "INSERT INTO request_creation(`user_type`, `user_name`, `agent_id`, `responsible`, `remarks`, `declaration`, `req_code`, `dor`, `cus_id`,
+		 	$insertQry = "INSERT INTO request_creation(`user_type`, `user_name`, `agent_id`, `responsible`, `remarks`, `declaration`, `req_code`, `dor`, `cus_id`,
 		`cus_data`, `cus_name`, `dob`, `age`, `gender`, `state`, `district`, `taluk`, `area`, `sub_area`, `address`, `mobile1`, `mobile2`, `father_name`, 
 		`mother_name`, `marital`, `spouse_name`, `occupation_type`, `occupation`, `pic`, `loan_category`, `sub_category`, `tot_value`, `ad_amt`, `ad_perc`, 
 		`loan_amt`, `poss_type`, `due_amt`, `due_period`, `insert_login_id`,`created_date`) 
@@ -3408,12 +3429,9 @@ class admin
 		'" . strip_tags($occupation) . "','" . strip_tags($pic) . "','" . strip_tags($loan_category) . "', '" . strip_tags($sub_category) . "', '" . strip_tags($tot_value) . "', '" . strip_tags($ad_amt) . "',
 		'" . strip_tags($ad_perc) . "', '" . strip_tags($loan_amt) . "','" . strip_tags($poss_type) . "','" . strip_tags($due_amt) . "','" . strip_tags($due_period) . "',
 		'" . strip_tags($userid) . "',current_timestamp )";
-
 			$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
 			$req_ref_id = $mysqli->insert_id;
-
-			if ($cus_data == 'New') {
-
+			if (`$cus_data` == 'New') {
 				$CustomerInsert = "INSERT INTO customer_register (`cus_id`,`req_ref_id`, `customer_name`, `dob`, `age`, `gender`, `state`, `district`,
 				`taluk`, `area`, `sub_area`, `address`, `mobile1`, `mobile2`, `father_name`, `mother_name`, `marital`, `spouse`, `occupation_type`, `occupation`,`pic`)
 				VALUES('" . strip_tags($cus_id) . "','" . strip_tags($req_ref_id) . "','" . strip_tags($cus_name) . "','" . strip_tags($dob) . "', '" . strip_tags($age) . "', '" . strip_tags($gender) . "', '" . strip_tags($state) . "',
@@ -3859,24 +3877,25 @@ class admin
 			$guarentor_relationship = $_POST['guarentor_relationship'];
 		}
 		if (!empty($_FILES['guarentorpic']['name'])) {
-			//to delete old pic
-			$goldpic = $_POST['guarentor_image'];
-			$check_file_exts = "uploads/verification/guarentor/" . $goldpic;
-
-			if(file_exists($check_file_exts)){
-				unlink($check_file_exts);
+			// To delete old pic
+			$oldpic = $_POST['guarentor_image'];
+			$file_path = "uploads/verification/guarentor/" . $oldpic;
+		
+			if (is_file($file_path)) {
+				unlink($file_path);  // Only unlink if it's a file
 			}
-
+		
 			$guarentor = $_FILES['guarentorpic']['name'];
 			$pic_temp = $_FILES['guarentorpic']['tmp_name'];
-			$picfolder = "uploads/verification/guarentor/" . $guarentor;
-
-			$fileExtension = pathinfo($picfolder, PATHINFO_EXTENSION); //get the file extention
+			$fileExtension = pathinfo($guarentor, PATHINFO_EXTENSION); // Get the file extension
 			$guarentor = uniqid() . '.' . $fileExtension;
+		
+			// Ensure unique file name
 			while (file_exists("uploads/verification/guarentor/" . $guarentor)) {
-				//this loop will continue until it generates a unique file name
 				$guarentor = uniqid() . '.' . $fileExtension;
 			}
+		
+			// Move the uploaded file to the desired location
 			move_uploaded_file($pic_temp, "uploads/verification/guarentor/" . $guarentor);
 		} else {
 			$guarentor = $_POST['guarentor_image'];
@@ -4492,6 +4511,9 @@ class admin
 		if (isset($_POST['verification_location'])) {
 			$verification_location = $_POST['verification_location'];
 		}
+		if (isset($_POST['verify_remark'])) {
+			$verify_remark = $_POST['verify_remark'];
+		}
 
 
 		if ($loan_cal_id > 0 and $loan_cal_id != '') {
@@ -4507,7 +4529,7 @@ class admin
 				proc_fee_cal = '" . strip_tags($proc_fee_cal) . "', net_cash_cal = '" . strip_tags($net_cash_cal) . "', due_start_from = '" . strip_tags($due_start_from) . "', 
 				maturity_month = '" . strip_tags($maturity_month) . "', collection_method = '" . strip_tags($collection_method) . "',
 				`communication`='" . strip_tags($Communitcation_to_cus) . "',`com_audio`='" . strip_tags($verify_audio) . "',`verification_person`='" . strip_tags($verifyPerson) . "',`verification_location`='" . strip_tags($verification_location) . "',
-				cus_status = 12, update_login_id = $userid, 
+				`verify_remark`='" . strip_tags($verify_remark) . "',cus_status = 12, update_login_id = $userid, 
 				update_date = current_timestamp() WHERE req_id = $req_id ");
 
 			$mysqli->query("DELETE FROM verif_loan_cal_category where req_id = '" . strip_tags($req_id) . "' and loan_cal_id='" . strip_tags($loan_cal_id) . "'");
@@ -4524,7 +4546,7 @@ class admin
 				$mysqli->query("INSERT INTO verification_loan_calculation (`req_id`, `cus_id_loan`, `cus_name_loan`,`cus_data_loan`, `mobile_loan`, `pic_loan`, `loan_category`, `sub_category`,
 				`tot_value`, `ad_amt`, `loan_amt`, `profit_type`, `due_method_calc`, `due_type`, `profit_method`, `calc_method`, `due_method_scheme`,`profit_method_scheme`, `day_scheme`, `scheme_name`, 
 				`int_rate`, `due_period`, `doc_charge`, `proc_fee`, `loan_amt_cal`, `principal_amt_cal`, `int_amt_cal`, `tot_amt_cal`, `due_amt_cal`, `doc_charge_cal`, `proc_fee_cal`, `net_cash_cal`,
-				`due_start_from`, `maturity_month`, `collection_method`,  `communication`, `com_audio`, `verification_person`, `verification_location`, `cus_status`, `insert_login_id`,`create_date`) 
+				`due_start_from`, `maturity_month`, `collection_method`,  `communication`, `com_audio`, `verification_person`, `verification_location`,`verify_remark`, `cus_status`, `insert_login_id`,`create_date`) 
 				VALUES ('" . strip_tags($req_id) . "', '" . strip_tags($cus_id_loan) . "', 
 				'" . strip_tags($cus_name_loan) . "', '" . strip_tags($cus_data_loan) . "','" . strip_tags($mobile_loan) . "', '" . strip_tags($pic_loan) . "', '" . strip_tags($loan_category) . "', 
 				'" . strip_tags($sub_category) . "', '" . strip_tags($tot_value) . "', '" . strip_tags($ad_amt) . "', '" . strip_tags($loan_amt) . "', '" . strip_tags($profit_type) . "', 
@@ -4533,7 +4555,7 @@ class admin
 				'" . strip_tags($proc_fee) . "', '" . strip_tags($loan_amt_cal) . "', '" . strip_tags($principal_amt_cal) . "', '" . strip_tags($int_amt_cal) . "', '" . strip_tags($tot_amt_cal) . "', 
 				'" . strip_tags($due_amt_cal) . "', '" . strip_tags($doc_charge_cal) . "', '" . strip_tags($proc_fee_cal) . "', '" . strip_tags($net_cash_cal) . "', '" . strip_tags($due_start_from) . "', 
 				'" . strip_tags($maturity_month) . "', '" . strip_tags($collection_method) . "',
-				'" . strip_tags($Communitcation_to_cus) . "','" . strip_tags($verify_audio) . "','" . strip_tags($verifyPerson) . "','" . strip_tags($verification_location) . "', 12, $userid, current_timestamp()) ");
+				'" . strip_tags($Communitcation_to_cus) . "','" . strip_tags($verify_audio) . "','" . strip_tags($verifyPerson) . "','" . strip_tags($verification_location) . "','" . strip_tags($verify_remark) . "', 12, $userid, current_timestamp()) ");
 				$loan_cal_id = $mysqli->insert_id;
 
 				for ($i = 0; $i < sizeof($category_info); $i++) {
@@ -4594,6 +4616,7 @@ class admin
 				$detailrecords['com_audio'] = $row['com_audio'];
 				$detailrecords['verification_person'] = $row['verification_person'];
 				$detailrecords['verification_location'] = $row['verification_location'];
+				$detailrecords['verify_remark'] = $row['verify_remark'];
 				$detailrecords['cus_status'] = $row['cus_status'];
 			}
 		}
@@ -5196,6 +5219,10 @@ class admin
 		if (isset($_POST['verification_location_ack'])) {
 			$verification_location = $_POST['verification_location_ack'];
 		}
+		if (isset($_POST['verify_remark_ack'])) {
+			$verify_remark = $_POST['verify_remark_ack'];
+		}
+
 		if (isset($_POST['cus_profile_id'])) {
 			$cus_profile_id = $_POST['cus_profile_id'];
 		}
@@ -5221,17 +5248,7 @@ class admin
 						'" . strip_tags($category_info[$i]) . "' )");
 			}
 		} else {
-echo "INSERT INTO acknowlegement_loan_calculation (`req_id`, `cus_id_loan`, `cus_name_loan`,`cus_data_loan`, `mobile_loan`, `pic_loan`, `loan_category`, `sub_category`,
-						`tot_value`, `ad_amt`, `loan_amt`, `profit_type`, `due_method_calc`, `due_type`, `profit_method`, `calc_method`, `due_method_scheme`, `profit_method_scheme`,`day_scheme`, `scheme_name`, 
-						`int_rate`, `due_period`, `doc_charge`, `proc_fee`, `loan_amt_cal`, `principal_amt_cal`, `int_amt_cal`, `tot_amt_cal`, `due_amt_cal`, `doc_charge_cal`, `proc_fee_cal`, `net_cash_cal`,
-						`due_start_from`, `maturity_month`, `collection_method`, `cus_status`, `insert_login_id`,`create_date`) VALUES ('" . strip_tags($req_id) . "', '" . strip_tags($cus_id_loan) . "', 
-						'" . strip_tags($cus_name_loan) . "', '" . strip_tags($cus_data_loan) . "','" . strip_tags($mobile_loan) . "', '" . strip_tags($pic_loan) . "', '" . strip_tags($loan_category) . "', 
-						'" . strip_tags($sub_category) . "', '" . strip_tags($tot_value) . "', '" . strip_tags($ad_amt) . "', '" . strip_tags($loan_amt) . "', '" . strip_tags($profit_type) . "', 
-						'" . strip_tags($due_method_calc) . "', '" . strip_tags($due_type) . "', '" . strip_tags($profit_method) . "', '" . strip_tags($calc_method) . "', '" . strip_tags($due_method_scheme) . "', '" . strip_tags($scheme_profit_method) . "', 
-						'" . strip_tags($day_scheme) . "', '" . strip_tags($scheme_name) . "', '" . strip_tags($int_rate) . "', '" . strip_tags($due_period) . "', '" . strip_tags($doc_charge) . "', 
-						'" . strip_tags($proc_fee) . "', '" . strip_tags($loan_amt_cal) . "', '" . strip_tags($principal_amt_cal) . "', '" . strip_tags($int_amt_cal) . "', '" . strip_tags($tot_amt_cal) . "', 
-						'" . strip_tags($due_amt_cal) . "', '" . strip_tags($doc_charge_cal) . "', '" . strip_tags($proc_fee_cal) . "', '" . strip_tags($net_cash_cal) . "', '" . strip_tags($due_start_from) . "', 
-						'" . strip_tags($maturity_month) . "', '" . strip_tags($collection_method) . "', 12, $userid, current_timestamp())  ";	$insertQry = $mysqli->query("INSERT INTO acknowlegement_loan_calculation (`req_id`, `cus_id_loan`, `cus_name_loan`,`cus_data_loan`, `mobile_loan`, `pic_loan`, `loan_category`, `sub_category`,
+	$insertQry = $mysqli->query("INSERT INTO acknowlegement_loan_calculation (`req_id`, `cus_id_loan`, `cus_name_loan`,`cus_data_loan`, `mobile_loan`, `pic_loan`, `loan_category`, `sub_category`,
 						`tot_value`, `ad_amt`, `loan_amt`, `profit_type`, `due_method_calc`, `due_type`, `profit_method`, `calc_method`, `due_method_scheme`, `profit_method_scheme`,`day_scheme`, `scheme_name`, 
 						`int_rate`, `due_period`, `doc_charge`, `proc_fee`, `loan_amt_cal`, `principal_amt_cal`, `int_amt_cal`, `tot_amt_cal`, `due_amt_cal`, `doc_charge_cal`, `proc_fee_cal`, `net_cash_cal`,
 						`due_start_from`, `maturity_month`, `collection_method`, `cus_status`, `insert_login_id`,`create_date`) VALUES ('" . strip_tags($req_id) . "', '" . strip_tags($cus_id_loan) . "', 
@@ -5301,6 +5318,7 @@ echo "INSERT INTO acknowlegement_loan_calculation (`req_id`, `cus_id_loan`, `cus
 				$detailrecords['com_audio'] = $row['com_audio'];
 				$detailrecords['verification_person'] = $row['verification_person'];
 				$detailrecords['verification_location'] = $row['verification_location'];
+				$detailrecords['verify_remark'] = $row['verify_remark'];
 				$detailrecords['cus_status'] = $row['cus_status'];
 			}
 		}

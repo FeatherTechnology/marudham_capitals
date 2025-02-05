@@ -18,7 +18,7 @@ if(isset($_POST['due_method'])){
 $detailrecords = array();
 
 //Fetched where selected sub category and due method matches
-$result=$connect->query("SELECT * FROM loan_scheme where sub_category = '".strip_tags($sub_cat)."' and due_method = '".strip_tags($due_method)."' "); 
+$result=$connect->query(" SELECT * FROM loan_scheme WHERE FIND_IN_SET('".strip_tags($sub_cat)."', sub_category) AND due_method = '".strip_tags($due_method)."' "); 
 $i=0;
 while($row = $result->fetch()){
     $detailrecords[$i]['scheme_id'] = $row['scheme_id'];

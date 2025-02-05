@@ -201,7 +201,7 @@ class GetLoanDetails
                     if ($loan_arr['scheme_name'] == '' || $loan_arr['scheme_name'] == null) {
                         $result = $connect->query("SELECT overdue FROM `loan_calculation` WHERE loan_category = '" . $loan_arr['loan_category'] . "' and sub_category = '" . $loan_arr['sub_category'] . "' ");
                     } else {
-                        $result = $connect->query("SELECT overdue FROM `loan_scheme` WHERE loan_category = '" . $loan_arr['loan_category'] . "' and sub_category = '" . $loan_arr['sub_category'] . "' ");
+                        $result =  $connect->query("SELECT overdue FROM `loan_scheme` WHERE loan_category = '" . $loan_arr['loan_category'] . "' AND FIND_IN_SET('" . $loan_arr['sub_category'] . "', sub_category)");
                     }
                     $row = $result->fetch();
                     $penalty_per = $row['overdue']; //get penalty percentage to insert
@@ -680,7 +680,7 @@ class GetLoanDetails
                     if ($scheme_name == '' || $scheme_name == null) {
                         $ovqry = $connect->query("SELECT overdue FROM `loan_calculation` WHERE loan_category = '$loan_category' and sub_category = '$sub_category' ");
                     } else {
-                        $ovqry = $connect->query("SELECT overdue FROM `loan_scheme` WHERE loan_category = '$loan_category' and sub_category = '$sub_category' ");
+                        $ovqry =  $connect->query("SELECT overdue FROM `loan_scheme` WHERE loan_category = '" . $loan_arr['loan_category'] . "' AND FIND_IN_SET('" . $loan_arr['sub_category'] . "', sub_category)");
                     }
                     $row = $ovqry->fetch();
                     $penalty_per = $row['overdue']; //get penalty percentage to insert
@@ -739,7 +739,7 @@ class GetLoanDetails
                     if ($scheme_name == '' || $scheme_name == null) {
                         $ovqry = $connect->query("SELECT overdue FROM `loan_calculation` WHERE loan_category = '$loan_category' and sub_category = '$sub_category' ");
                     } else {
-                        $ovqry = $connect->query("SELECT overdue FROM `loan_scheme` WHERE loan_category = '$loan_category' and sub_category = '$sub_category' ");
+                        $ovqry =  $connect->query("SELECT overdue FROM `loan_scheme` WHERE loan_category = '" . $loan_arr['loan_category'] . "' AND FIND_IN_SET('" . $loan_arr['sub_category'] . "', sub_category)");
                     }
                     $row = $ovqry->fetch();
                     $penalty_per = $row['overdue']; //get penalty percentage to insert
