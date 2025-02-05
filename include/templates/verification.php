@@ -291,6 +291,7 @@ if (sizeof($getLoanCalculation) > 0) {
 		$com_audio = $getLoanCalculation['com_audio'];
 		$verification_person = $getLoanCalculation['verification_person'];
 		$verification_location = $getLoanCalculation['verification_location'];
+		$verify_remark = $getLoanCalculation['verify_remark'];
 		$cus_status_lc = $getLoanCalculation['cus_status'];
 	}
 
@@ -1158,6 +1159,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 											<option value="3" <?php if (isset($how_to_know) and $how_to_know == '3') echo 'selected'; ?>> Agent Reference </option>
 											<option value="4" <?php if (isset($how_to_know) and $how_to_know == '4') echo 'selected'; ?>> Staff Reference </option>
 											<option value="5" <?php if (isset($how_to_know) and $how_to_know == '5') echo 'selected'; ?>> Other Reference </option>
+											<option value="6" <?php if (isset($how_to_know) and $how_to_know == '6') echo 'selected'; ?>> Renewal </option>
 										</select>
 										<span class="text-danger" style='display:none' id='howToKnowCheck'>Please Select How To Know </span>
 									</div>
@@ -2121,6 +2123,12 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 										<span class="text-danger" style='display:none' id='verificationLocCheck'>Please Select Verification Location </span>
 									</div>
 								</div>
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+									<div class="form-group">
+										<label for="verify_remark">Remarks</label>
+										<input type="text" class="form-control" id="verify_remark" name="verify_remark" value='<?php if (isset($verify_remark)) echo $verify_remark; ?>' tabindex='17' placeholder="Enter Remarks" pattern="[a-zA-Z\s]+">
+									</div>
+								</div>
 
 							</div>
 
@@ -2998,7 +3006,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 								<option value="0"> Customer </option>
 								<option value="1"> Guarantor </option>
 								<option value="2"> Family Members </option>
-								<option value="3"> Group Members </option>
+								<!-- <option value="3"> Group Members </option> -->
 							</select>
 							<span class="text-danger" id="proofCheck" style="display:none"> Select Proof </span>
 						</div>

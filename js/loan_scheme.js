@@ -1,3 +1,8 @@
+const sub_category = new Choices('#sub_category', {
+    removeItemButton: true,
+    noChoicesText: 'Select Sub Category',
+    allowHTML: true
+});
 $(document).ready(function () {
 
     //Scheme Type Change
@@ -109,7 +114,6 @@ $(document).ready(function () {
         // var intrest_rate = $('#intrest_rate').val();
         var total_due = $('#total_due').val();
         var profit_method = $('#profit_method').val();
-        var profit_method = $('#profit_method').val();
         var intreset_type = $('#intreset_type').val();
         var intreset_min = $('#intreset_min').val();
         var intreset_max = $('#intreset_max').val();
@@ -122,7 +126,7 @@ $(document).ready(function () {
         var due_date = $('#due_date').val();
         var grace_period = $('#grace_period').val();
         var overdue = $('#overdue').val();
-        if (loan_category != '' && sub_category != '' && scheme_name != '' && intreset_type != '' && intreset_min != '' && intreset_max != '' && total_due != '' && doc_charge_type != '' && doc_charge_min != '' && doc_charge_max != '' && proc_fee_type != '' && proc_fee_min != '' && proc_fee_max != '' && due_date != '' && grace_period != '' && overdue != '' && profit_method != '' && profit_method != null) {
+        if (loan_category != '' && sub_category != '' && sub_category != null && scheme_name != '' && intreset_type != '' && intreset_min != '' && intreset_max != '' && total_due != '' && doc_charge_type != '' && doc_charge_min != '' && doc_charge_max != '' && proc_fee_type != '' && proc_fee_min != '' && proc_fee_max != '' && due_date != '' && grace_period != '' && overdue != '' && profit_method != '' && profit_method != null) {
             return true;
         } else {
             Swal.fire({
@@ -271,7 +275,7 @@ $(document).ready(function () {
         var proc_fee_min = $('#proc_fee_min2').val();
         var proc_fee_max = $('#proc_fee_max2').val();
         var overdue = $('#overdue2').val();
-        if (loan_category != '' && sub_category != '' && scheme_name != '' && intreset_type != '' && intreset_min != '' && intreset_max != '' && due_period != '' && doc_charge_type != '' && doc_charge_min != '' && doc_charge_max != '' && proc_fee_type != '' && proc_fee_min != '' && proc_fee_max != '' && overdue != ''&& profit_method != '' && profit_method != null) {
+        if (loan_category != '' && sub_category != '' && scheme_name != '' && intreset_type != '' && intreset_min != '' && intreset_max != '' && due_period != '' && doc_charge_type != '' && doc_charge_min != '' && doc_charge_max != '' && proc_fee_type != '' && proc_fee_min != '' && proc_fee_max != '' && overdue != '' && profit_method != '' && profit_method != null) {
             return true;
         } else {
             Swal.fire({
@@ -383,9 +387,53 @@ $(function () {
     }
 });
 
-//Fetch Sub Category Based on loan category for Monthly
+// Fetch Sub Category Based on loan category for Monthly
+// function getSubCategory(loan_cat) {
+//     var sub_category_upd = $('#sub_category_upd').val()
+//     $.ajax({
+//         url: 'loanCalculationFile/getLoanSubCategory.php',
+//         type: 'POST',
+//         dataType: 'json',
+//         cache: false,
+//         data: { 'loan_cat': loan_cat },
+//         success: function (response) {
+
+//             // secondElement.clearStore();
+
+//             $('#sub_category').empty();
+//             $('#sub_category').append(`<option value=''>Select Sub Category</option>`);
+//             for (var i = 0; i < response.length; i++) {
+//                 if (response[i]['sub_category_name'] != '' && response[i]['sub_category_name'] != null) {
+//                     var selected = '';
+//                     if (sub_category_upd == response[i]['sub_category_name']) {
+//                         selected = 'selected';
+//                     }
+//                     // var items= [
+//                     //     {
+//                     //     value: response[i]['sub_category_name'],
+//                     //     label: response[i]['sub_category_name'],
+//                     //     selected: false,
+//                     //     disabled: false,
+//                     //   }
+//                     // ];
+//                     // secondElement.setChoices(items);
+//                     // secondElement.init();
+//                     $('#sub_category').append("<option value= '" + response[i]['sub_category_name'] + "' " + selected + " > " + response[i]['sub_category_name'] + " </option>")
+//                 }
+//             }
+//             {//To Order Alphabetically
+//                 var firstOption = $("#sub_category option:first-child");
+//                 $("#sub_category").html($("#sub_category option:not(:first-child)").sort(function (a, b) {
+//                     return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
+//                 }));
+//                 $("#sub_category").prepend(firstOption);
+//             }
+//         }
+//     })
+// }
 function getSubCategory(loan_cat) {
-    var sub_category_upd = $('#sub_category_upd').val()
+    var sub_category_upd = $('#sub_category_upd').val();
+    var sub_category_upd_array = sub_category_upd.split(',');
     $.ajax({
         url: 'loanCalculationFile/getLoanSubCategory.php',
         type: 'POST',
@@ -393,40 +441,33 @@ function getSubCategory(loan_cat) {
         cache: false,
         data: { 'loan_cat': loan_cat },
         success: function (response) {
-
-            // secondElement.clearStore();
-
-            $('#sub_category').empty();
-            $('#sub_category').append(`<option value=''>Select Sub Category</option>`);
-            for (var i = 0; i < response.length; i++) {
-                if (response[i]['sub_category_name'] != '' && response[i]['sub_category_name'] != null) {
-                    var selected = '';
-                    if (sub_category_upd == response[i]['sub_category_name']) {
-                        selected = 'selected';
-                    }
-                    // var items= [
-                    //     {
-                    //     value: response[i]['sub_category_name'],
-                    //     label: response[i]['sub_category_name'],
-                    //     selected: false,
-                    //     disabled: false,
-                    //   }
-                    // ];
-                    // secondElement.setChoices(items);
-                    // secondElement.init();
-                    $('#sub_category').append("<option value= '" + response[i]['sub_category_name'] + "' " + selected + " > " + response[i]['sub_category_name'] + " </option>")
+            // Clear the existing choices
+            sub_category.clearStore();
+            // Loop through the response and add options to the Choices instance
+            response.forEach(function (item) {
+                if (item['sub_category_name'] != '' && item['sub_category_name'] != null) {
+                    sub_category.setChoices([
+                        {
+                            value: item['sub_category_name'],
+                            label: item['sub_category_name'],
+                            selected: sub_category_upd_array.includes(item['sub_category_name'].trim()),
+                            disabled: false
+                        }
+                    ], 'value', 'label', false);
                 }
-            }
-            {//To Order Alphabetically
-                var firstOption = $("#sub_category option:first-child");
-                $("#sub_category").html($("#sub_category option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#sub_category").prepend(firstOption);
-            }
+            });
+
+            // Sort the options alphabetically, while keeping the first option intact
+            const choicesList = sub_category.getValue(true); // Get the list of choices
+            choicesList.sort((a, b) => {
+                return a.label?.localeCompare(b.label?.label) ?? 0; // Sort by label
+            });;
+
+            sub_category.setChoices(choicesList, 'value', 'label', false);
         }
-    })
+    });
 }
+
 //Fetch Sub Category Based on loan category for Weekly
 function getSubCategory1(loan_cat) {
     var sub_category_upd = $('#sub_category1_upd').val()

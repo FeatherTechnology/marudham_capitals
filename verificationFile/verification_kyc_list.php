@@ -37,7 +37,7 @@ include '../ajaxconfig.php';
             }
 
             if ($kyc['proof_type'] == '1') {
-                $proof_type = "Adhar";
+                $proof_type = "Aadhar";
             } else
             if ($kyc['proof_type'] == '2') {
                 $proof_type = "Smart Card";
@@ -76,16 +76,17 @@ include '../ajaxconfig.php';
                 $proof_type = "Others";
             }
 
+            $fam_mem = $kyc['fam_mem'];
 
             $relationship = 'NIL';
             if ($kyc['proofOf'] == '2') {
-                $fam_mem = $kyc['fam_mem'];
-                $sql = $connect->query("SELECT relationship FROM `verification_family_info` where famname = '$fam_mem'");
-                $relationship = $sql->fetch()['relationship'];
+                $sql = $connect->query("SELECT famname,relationship FROM `verification_family_info` where id = '$fam_mem'");
+               $rw1= $sql->fetch();
+                $fam_mem = $rw1['famname']?? '';
+                $relationship = $rw1['relationship']?? '';
             } elseif ($kyc['proofOf'] == '1') {
-                $qry = $connect->query("SELECT a.famname,a.relationship from verification_family_info a 
-                LEFT JOIN customer_profile b ON a.id = b.guarentor_name
-                where b.req_id = '$req_id' ");
+                $guarantor_mem = $kyc['guarantor_mem'];
+                $qry = $connect->query("SELECT famname,relationship FROM `verification_family_info` where id = '$guarantor_mem' ");
                 $rw = $qry->fetch();
                 $fam_mem = $rw['famname'] ?? '';
                 $relationship = $rw['relationship'] ?? '';

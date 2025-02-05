@@ -938,6 +938,7 @@ if (sizeof($documentationInfo) > 0) {
 											<option value="3" <?php if (isset($how_to_know) and $how_to_know == '3') echo 'selected'; ?>> Agent Reference </option>
 											<option value="4" <?php if (isset($how_to_know) and $how_to_know == '4') echo 'selected'; ?>> Staff Reference </option>
 											<option value="5" <?php if (isset($how_to_know) and $how_to_know == '5') echo 'selected'; ?>> Other Reference </option>
+											<option value="6" <?php if (isset($how_to_know) and $how_to_know == '6') echo 'selected'; ?>> Renewal </option>
 										</select>
 										<span class="text-danger" style='display:none' id='howToKnowCheck'>Please Select How To Know </span>
 									</div>
@@ -2664,7 +2665,6 @@ if (sizeof($documentationInfo) > 0) {
 								<option value="0"> Customer </option>
 								<option value="1"> Guarantor </option>
 								<option value="2"> Family Members </option>
-								<option value="3"> Group Members </option>
 							</select>
 							<span class="text-danger" id="proofCheck" style="display:none"> Select Proof </span>
 						</div>

@@ -1246,6 +1246,8 @@ $(document).on("click", "#kycInfoBtn", function () {
     let req_id = $('#req_id').val();
     let cus_id = $('#cus_id').val();
     let proofof = $("#proofof").val();
+    let famId = $("#guarentor_name").val();
+    let fam_mem = $("#fam_mem").val();
     let proof_type = $("#proof_type").val();
     let proof_number = $("#proof_number").val();
     let kyc_upload = $("#kyc_upload").val();
@@ -1257,6 +1259,9 @@ $(document).on("click", "#kycInfoBtn", function () {
     let formdata = new FormData();
     formdata.append('upload', file)
     formdata.append('proofof', proofof)
+    formdata.append('proofof', proofof)
+    formdata.append('famId', famId)
+    formdata.append('fam_mem', fam_mem)
     formdata.append('proof_type', proof_type)
     formdata.append('proof_number', proof_number)
     formdata.append('kycID', kycID)
@@ -1294,7 +1299,7 @@ $(document).on("click", "#kycInfoBtn", function () {
                         $('#bankNotOk').fadeOut('fast');
                     }, 2000);
                 }
-
+                $('.name_div').hide();
                 resetkycInfo();
             }
         });
@@ -1343,7 +1348,9 @@ function resetkycInfo() {
         success: function (html) {
             $("#kycTable").empty();
             $("#kycTable").html(html);
-
+            $(".fam_mem_div").hide();
+            $('.name_div').hide();
+            $("#fam_mem").val('');
             $("#proofof").val('');
             $("#proof_type").val('');
             $("#proof_number").val('');
@@ -1370,6 +1377,33 @@ $("body").on("click", "#verification_kyc_edit", function () {
 
             $("#kycID").val(result['id']);
             $("#proofof").val(result['proofOf']);
+            if (result['proofOf'] == 2) {
+                getfamilyforKyc();
+                setTimeout(() => {
+                    $("#fam_mem").val(result['fam_mem']);
+                }, 1000);
+                $('.fam_mem_div').show();
+                $('.name_div').hide();
+            } else {
+                $("#fam_mem").val('');
+                $('.fam_mem_div').hide();
+                $('.name_div').show();
+                let cus_name = $('#cus_name').val();
+                $('#proofofname').val(cus_name);
+            }
+            if (result['proofOf'] == 1) {
+                $("#fam_mem").val(result['fam_mem']);
+                setTimeout(() => {
+                    let famId = $("#guarentor_name").val();
+                    $.post('verificationFile/verification_guarantor.php', { "famid": famId}, function (response) {
+                        $('.name_div').show();
+                        $('#proofofname').val(response['famname']);
+                    }, 'json')
+                }, 700);
+                $("#fam_mem").val('');
+                $('.fam_mem_div').hide();
+            } 
+      
             $("#proof_type").val(result['proofType']);
             $("#proof_number").val(result['proofNo']);
             $("#kyc_upload").val(result['upload']);
@@ -1437,8 +1471,8 @@ $('#proofof').change(function () {
     let req_id = $('#req_id').val();
     let cus_id = $('#cus_id').val();
     let proof = $('#proofof').val();
-
-    if (proof == '0' || proof == '1') {
+    let famId = document.querySelector("#guarentor_name").value;
+    if (proof == '0') {
         $.post('verificationFile/get_proof_of_name.php', { req_id, cus_id, proof }, function (response) {
             $('.name_div').show();
             $('#proofofname').val(response);
@@ -1446,27 +1480,83 @@ $('#proofof').change(function () {
     } else {
         $('.name_div').hide()
     }
+    if (proof == '1') {
+        $.post('verificationFile/verification_guarantor.php', { "famid": famId}, function (response) {
+            $('.name_div').show();
+            $('#proofofname').val(response['famname']);
+        }, 'json')
+    } else {
+        $('.name_div').hide()
+    }
+    if (proof != '2' && proof != '') { // if proof of is not family members then check for other's proofs entered already 
+        $('.fam_mem_div').hide();//hide fam div on other proof of selected
+        $('#fam_mem').val('');
 
-    $.ajax({
-        url: 'verificationFile/verification_proof_type.php',
-        type: 'POST',
-        data: { "reqId": req_id, "cus_id":cus_id,"proof": proof },
-        dataType: 'json',
-        cache: false,
-        success: function (response) {
+        $.ajax({
+            url: 'verificationFile/verification_proof_type.php',
+            type: 'POST',
+            data: { "reqId": req_id, "cus_id": cus_id, "proof": proof },
+            dataType: 'json',
+            cache: false,
+            success: function (response) {
 
+                $('#proof_type option').prop('disabled', false);
 
-            $('#proof_type option').prop('disabled', false);
+                $.each(response, function (index, value) {
+                    $('#proof_type option[value="' + value + '"]').prop('disabled', true);
+                });
 
-            $.each(response, function (index, value) {
-                $('#proof_type option[value="' + value + '"]').prop('disabled', true);
-            });
-
-        }
-    });
+            }
+        });
+    } else if (proof == '2') { // if proof of is family members then show family members dropdown 
+        getfamilyforKyc();
+    } else {
+        $('.fam_mem_div').hide();
+        $('#fam_mem').val('');
+    }
 
 })
+function getfamilyforKyc() {
+    let req_id = $('#req_id').val();
+    let cus_id = $('#cus_id').val();
+    $.ajax({
+        url: 'verificationFile/verification_proof_fam.php',
+        data: { "reqId": req_id, cus_id },
+        dataType: 'json',
+        type: 'post',
+        cache: false,
+        success: function (response) {
+            $('.fam_mem_div').show();
+            $('#fam_mem').empty();
+            $('#fam_mem').append(`<option value=""> Select Family Member </option>`);
+            $.each(response, function (index, value) {
+                $('#fam_mem').append("<option value='" + value.id + "'>" + value.fam_mem + "</option>");
+            });
+        }
 
+    }).then(function () {
+        $('#fam_name').unbind('click');
+        $('#fam_mem').change(function () {
+            let req_id = $('#req_id').val(); let proof = $('#proofof').val(); let fam_name = $(this).val();
+            $.ajax({
+                url: 'verificationFile/verification_proof_type.php',
+                type: 'POST',
+                data: { "reqId": req_id, "proof": proof, "fam_name": fam_name,"cus_id":cus_id},
+                dataType: 'json',
+                cache: false,
+                success: function (response) {
+
+                    $('#proof_type option').prop('disabled', false);
+
+                    $.each(response, function (index, value) {
+                        $('#proof_type option[value="' + value + '"]').prop('disabled', true);
+                    });
+
+                }
+            });
+        })
+    })
+}
 
 //get district dropdown
 function getDistrictDropdown(StateSelected) {

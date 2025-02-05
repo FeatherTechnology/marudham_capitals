@@ -4,6 +4,7 @@ require '../ajaxconfig.php';
 $req_id       = $_POST['reqId'];
 $cus_id       = $_POST['cus_id'];
 $proofof       = $_POST['proofof'];
+$guarantor_mem     = $_POST['famId'];
 $fam_mem       = $_POST['fam_mem'];
 $proof_type    = $_POST['proof_type'];
 $proof_number  = $_POST['proof_number'];
@@ -33,9 +34,10 @@ if ($upload) {
 
 
 
+
 if ($kycID == '') {
 
-    $qry = $connect->query("INSERT INTO `verification_kyc_info`(`cus_id`, `req_id`, `proofOf`,`fam_mem`, `proof_type`, `proof_no`, `upload`) VALUES ('$cus_id','$req_id','$proofof','$fam_mem','$proof_type','$proof_number','$uniqueFileName')");
+    $qry = $connect->query("INSERT INTO `verification_kyc_info`(`cus_id`, `req_id`, `proofOf`,`fam_mem`,`guarantor_mem`, `proof_type`, `proof_no`, `upload`) VALUES ('$cus_id','$req_id','$proofof','$fam_mem','$guarantor_mem','$proof_type','$proof_number','$uniqueFileName')");
 } else {
 
     if ($upload) {

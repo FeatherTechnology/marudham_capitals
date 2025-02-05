@@ -95,7 +95,6 @@ if (isset($_GET['upd'])) {
 $status = 0;
 if ($idupd > 0) {
 	$getLoanScheme = $userObj->getLoanScheme($mysqli, $idupd);
-	print_r($getLoanScheme);
 	if (sizeof($getLoanScheme) > 0) {
 		for ($i = 0; $i < sizeof($getLoanScheme); $i++) {
 			$due_method                	 = $getLoanScheme['due_method'];
@@ -125,6 +124,8 @@ if ($idupd > 0) {
 				$grace_period        		     = $getLoanScheme['grace_period'];
 				$penalty        		     = $getLoanScheme['penalty'];
 				$profit_method = explode(',', $profit_method);
+				
+
 			} elseif ($type == 'weekly') {
 				$scheme_name1          		     = $getLoanScheme['scheme_name'];
 				$scheme_short1      			     = $getLoanScheme['short_name'];
@@ -260,14 +261,23 @@ if (isset($_GET['type'])) {
 											</select>
 										</div>
 									</div>
-									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+									<!-- <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Sub Category</label>&nbsp;<span class="text-danger">*</span>
 											<select tabindex="2" type="text" class="form-control" id="sub_category" name="sub_category">
 												<option value="">Select Sub Category</option>
 											</select>
 										</div>
-									</div>
+									</div> -->
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                                        <div class="form-group selectpicker">
+                                            <label for="sub_category">Sub Category</label><span class="text-danger">*</span>
+                                            <input type="hidden" id="sub_category_upd">
+                                            <select class="form-control" id="sub_category" name="sub_category[]" tabindex="2" multiple>
+                                                <option value="">Select Sub Category</option>
+                                            </select>
+                                        </div>
+                                    </div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Scheme Name</label>&nbsp;<span class="text-danger">*</span>

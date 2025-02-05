@@ -2060,6 +2060,7 @@ $(document).on("click", "#kycInfoBtn", function () {
     let req_id = $('#req_id').val();
     let cus_id = $('#cus_id').val();
     let proofof = $("#proofof").val();
+    let famId = document.querySelector("#guarentor_name").value;
     let fam_mem = $("#fam_mem").val();
     let proof_type = $("#proof_type").val();
     let proof_number = $("#proof_number").val();
@@ -2072,6 +2073,8 @@ $(document).on("click", "#kycInfoBtn", function () {
     let formdata = new FormData();
     formdata.append('upload', file)
     formdata.append('proofof', proofof)
+    formdata.append('proofof', proofof)
+    formdata.append('famId', famId)
     formdata.append('fam_mem', fam_mem)
     formdata.append('proof_type', proof_type)
     formdata.append('proof_number', proof_number)
@@ -2110,7 +2113,8 @@ $(document).on("click", "#kycInfoBtn", function () {
                         $('#bankNotOk').fadeOut('fast');
                     }, 2000);
                 }
-
+                $('.name_div').hide();
+                $('.fam_mem_div').hide();
                 resetkycInfo();
             }
         });
@@ -2177,6 +2181,7 @@ function resetkycInfo() {
 
             $("#proofof").val('');
             $(".fam_mem_div").hide();
+            $('.name_div').hide();
             $("#fam_mem").val('');
             $("#proof_type").val('');
             $("#proof_number").val('');
@@ -2202,16 +2207,32 @@ $("body").on("click", "#verification_kyc_edit", function () {
 
             $("#kycID").val(result['id']);
             $("#proofof").val(result['proofOf']);
-            if (result['fam_mem'] != '') {
+            if (result['proofOf'] == 2) {
                 getfamilyforKyc();
                 setTimeout(() => {
                     $("#fam_mem").val(result['fam_mem']);
                 }, 700);
                 $('.fam_mem_div').show();
+                $('.name_div').hide();
             } else {
                 $("#fam_mem").val('');
                 $('.fam_mem_div').hide();
+                $('.name_div').show();
+                let cus_name = $('#cus_name').val();
+                $('#proofofname').val(cus_name);
             }
+            if (result['proofOf'] == 1) {
+                $("#fam_mem").val(result['fam_mem']);
+                setTimeout(() => {
+                    let famId = document.querySelector("#guarentor_name").value;
+                    $.post('verificationFile/verification_guarantor.php', { "famid": famId}, function (response) {
+                        $('.name_div').show();
+                        $('#proofofname').val(response['famname']);
+                    }, 'json')
+                }, 700);
+                $("#fam_mem").val('');
+                $('.fam_mem_div').hide();
+            } 
             $("#proof_type").val(result['proofType']);
             $("#proof_number").val(result['proofNo']);
             $("#kyc_upload").val(result['upload']);
@@ -2279,8 +2300,8 @@ $('#proofof').change(function () {
     let req_id = $('#req_id').val();
     let cus_id = $('#cus_id').val();
     let proof = $('#proofof').val();
-
-    if (proof == '0' || proof == '1') {
+    let famId = document.querySelector("#guarentor_name").value;
+    if (proof == '0') {
         $.post('verificationFile/get_proof_of_name.php', { req_id, cus_id, proof }, function (response) {
             $('.name_div').show();
             $('#proofofname').val(response);
@@ -2288,7 +2309,14 @@ $('#proofof').change(function () {
     } else {
         $('.name_div').hide()
     }
-
+    if (proof == '1') {
+        $.post('verificationFile/verification_guarantor.php', { "famid": famId}, function (response) {
+            $('.name_div').show();
+            $('#proofofname').val(response['famname']);
+        }, 'json')
+    } else {
+        $('.name_div').hide()
+    }
     if (proof != '2' && proof != '') { // if proof of is not family members then check for other's proofs entered already 
         $('.fam_mem_div').hide();//hide fam div on other proof of selected
         $('#fam_mem').val('');
@@ -2332,7 +2360,7 @@ function getfamilyforKyc() {
             $('#fam_mem').empty();
             $('#fam_mem').append(`<option value=""> Select Family Member </option>`);
             $.each(response, function (index, value) {
-                $('#fam_mem').append("<option value='" + value + "'>" + value + "</option>");
+                $('#fam_mem').append("<option value='" + value.id + "'>" + value.fam_mem + "</option>");
             });
         }
 
@@ -2343,7 +2371,7 @@ function getfamilyforKyc() {
             $.ajax({
                 url: 'verificationFile/verification_proof_type.php',
                 type: 'POST',
-                data: { "reqId": req_id, "proof": proof, "fam_name": fam_name },
+                data: { "reqId": req_id, "proof": proof, "fam_name": fam_name,"cus_id":cus_id},
                 dataType: 'json',
                 cache: false,
                 success: function (response) {
@@ -5360,7 +5388,7 @@ function loan_calc_validation(submit_btn) {
     var proc_fee = $('#proc_fee').val(); var loan_amt_cal = $('#loan_amt_cal').val(); var principal_amt_cal = $('#principal_amt_cal').val(); var int_amt_cal = $('#int_amt_cal').val();
     var tot_amt_cal = $('#tot_amt_cal').val(); var due_amt_cal = $('#due_amt_cal').val(); var doc_charge_cal = $('#doc_charge_cal').val(); var proc_fee_cal = $('#proc_fee_cal').val();
     var net_cash_cal = $('#net_cash_cal').val(); var due_start_from = $('#due_start_from').val(); var maturity_month = $('#maturity_month').val(); var collection_method = $('#collection_method').val();
-    var Communitcation_to_cus = $('#Communitcation_to_cus').val(); var verification_location = $('#verification_location').val();
+    var Communitcation_to_cus = $('#Communitcation_to_cus').val(); var verification_location = $('#verification_location').val(); var verify_remark = $('#verify_remark').val();
 
     //Verification Person Multi select store
     var person_list = personMultiselect.getValue();

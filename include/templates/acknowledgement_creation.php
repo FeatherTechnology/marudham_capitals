@@ -304,6 +304,7 @@ if (sizeof($getLoanCalculation) > 0) {
 		$com_audio = $getLoanCalculation['com_audio'];
 		$verification_person = $getLoanCalculation['verification_person'];
 		$verification_location = $getLoanCalculation['verification_location'];
+		$verify_remark = $getLoanCalculation['verify_remark'];
 		$cus_status_lc = $getLoanCalculation['cus_status'];
 	}
 
@@ -1133,6 +1134,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 											<option value="3" <?php if (isset($how_to_know) and $how_to_know == '3') echo 'selected'; ?>> Agent Reference </option>
 											<option value="4" <?php if (isset($how_to_know) and $how_to_know == '4') echo 'selected'; ?>> Staff Reference </option>
 											<option value="5" <?php if (isset($how_to_know) and $how_to_know == '5') echo 'selected'; ?>> Other Reference </option>
+											<option value="6" <?php if (isset($how_to_know) and $how_to_know == '6') echo 'selected'; ?>> Renewal </option>
 										</select>
 									</div>
 								</div>
@@ -2189,6 +2191,15 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 											<option value="1" <?php if (isset($verification_location) and $verification_location == '1') echo 'selected'; ?>> Customer Spot </option>
 										</select>
 										<span class="text-danger" style='display:none' id='verificationLocCheck'>Please Select Verification Location </span>
+									</div>
+								</div>
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+									<div class="form-group">
+										<label for="verify_remark">Remarks</label>
+										<input type="hidden" class="form-control" id="verify_remark_ack" name="verify_remark_ack" value="<?php if (isset($verify_remark)) {
+																																								echo $verify_remark;
+																																							} ?>">
+										<input type="text" class="form-control" id="verify_remark" name="verify_remark" value='<?php if (isset($verify_remark)) echo $verify_remark; ?>' tabindex='17' placeholder="Enter Remarks" pattern="[a-zA-Z\s]+">
 									</div>
 								</div>
 
