@@ -8,10 +8,13 @@ include('../../ajaxconfig.php');
 if(isset($_POST['sub_cat'])){
     $sub_cat = $_POST['sub_cat'];
 }
+if(isset($_POST['loan_cat'])){
+    $loan_cat = $_POST['loan_cat'];
+}
 $detailrecords = array();
 
 
-$result=$connect->query("SELECT * FROM loan_calculation where sub_category = '".strip_tags($sub_cat)."' ");
+$result=$connect->query("SELECT * FROM loan_calculation where sub_category = '".strip_tags($sub_cat)."' and '".strip_tags($loan_cat)."' ");
 $i=0;
 while($row = $result->fetch()){
     $detailrecords['due_type'] = $row['due_type'];
