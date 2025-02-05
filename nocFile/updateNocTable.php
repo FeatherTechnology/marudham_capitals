@@ -21,6 +21,7 @@ class updateNocTable{
             // Retrieve the data sent via AJAX
             $req_id = $_POST['req_id'];
             $cus_id = $_POST['cusidupd'];
+
             $sign_checklist = $_POST['sign_checklist'];
             $cheque_checklist = $_POST['cheque_checklist'];
             $gold_checklist = $_POST['gold_checklist'];
@@ -30,30 +31,34 @@ class updateNocTable{
             $noc_date = $_POST['noc_date'];
             $noc_member = $_POST['noc_member'];
             $mem_name = $_POST['mem_name'];
-            
-            // Sanitize the input data to prevent SQL injection
-            $cus_id = $connect->real_escape_string($cus_id);
-            $sign_checklist = $connect->real_escape_string($sign_checklist);
-            $cheque_checklist = $connect->real_escape_string($cheque_checklist);
-            $gold_checklist = $connect->real_escape_string($gold_checklist);
-            $mort_checklist = $connect->real_escape_string($mort_checklist);
-            $endorse_checklist = $connect->real_escape_string($endorse_checklist);
-            $doc_checklist = $connect->real_escape_string($doc_checklist);
-            $noc_date = $connect->real_escape_string($noc_date);
-            $noc_member = $connect->real_escape_string($noc_member);
-            $mem_name = $connect->real_escape_string($mem_name);
             $user_id = $_SESSION['userid'];
             
             // Perform the query
-            $qry = $connect->query("INSERT INTO `noc`(`req_id`,`cus_id`, `sign_checklist`, `cheque_checklist`, `gold_checklist`, `mort_checklist`, `endorse_checklist`, `doc_checklist`, `noc_date`, `noc_member`, `mem_name`, `cus_status`, `insert_login_id`, `created_date`) VALUES('$req_id','$cus_id','$sign_checklist','$cheque_checklist','$gold_checklist','$mort_checklist','$endorse_checklist','$doc_checklist','$noc_date','$noc_member','$mem_name','21','$user_id',now()) ");
-            
+            $qry = $connect->prepare("INSERT INTO `noc`(`req_id`,`cus_id`, `sign_checklist`, `cheque_checklist`, `gold_checklist`, `mort_checklist`, `endorse_checklist`, `doc_checklist`, `noc_date`, `noc_member`, `mem_name`, `cus_status`, `insert_login_id`, `created_date`) VALUES(:req_id ,:cus_id ,:sign_checklist ,:cheque_checklist ,:gold_checklist ,:mort_checklist ,:endorse_checklist ,:doc_checklist ,:noc_date ,:noc_member ,:mem_name , 21 ,:user_id ,now() ) ");
+
+            // Bind the parameters
+            $qry->bindParam(':req_id', $req_id, PDO::PARAM_STR);
+            $qry->bindParam(':cus_id', $cus_id, PDO::PARAM_STR);
+            $qry->bindParam(':sign_checklist', $sign_checklist, PDO::PARAM_STR);
+            $qry->bindParam(':cheque_checklist', $cheque_checklist, PDO::PARAM_STR);
+            $qry->bindParam(':gold_checklist', $gold_checklist, PDO::PARAM_STR);
+            $qry->bindParam(':mort_checklist', $mort_checklist, PDO::PARAM_STR);
+            $qry->bindParam(':endorse_checklist', $endorse_checklist, PDO::PARAM_STR);
+            $qry->bindParam(':doc_checklist', $doc_checklist, PDO::PARAM_STR);
+            $qry->bindParam(':noc_date', $noc_date, PDO::PARAM_STR);
+            $qry->bindParam(':noc_member', $noc_member, PDO::PARAM_STR);
+            $qry->bindParam(':mem_name', $mem_name, PDO::PARAM_STR);
+            $qry->bindParam(':user_id', $user_id, PDO::PARAM_STR);
+
+            // Execute the statement           
             // Check if the query was successful
-            if ($qry) {
+            if ($qry->execute()) {
                 // Query executed successfully
                 $response =  "Success";
             } else {
-                // Query execution failed
-                $response =  "Error: " . $connect->error;
+                // Query execution failed, get error info
+                $errorInfo = $qry->errorInfo();
+                $response = "Error: " . $errorInfo[2]; // Get the error message from PDO
             }
         } else {
             // If the request method is not POST, show an error message
