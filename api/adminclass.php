@@ -4563,11 +4563,11 @@ class admin
 				'" . strip_tags($category_info[$i]) . "' )");
 				}
 
+				$mysqli->query("UPDATE request_creation set cus_status = 12,updated_date=now() where req_id ='" . strip_tags($req_id) . "' "); //12 means loan calculation completed
+		
+				$mysqli->query("UPDATE in_verification set cus_status = 12,updated_date=now() where req_id ='" . strip_tags($req_id) . "' ");
 			}
 		}
-		$mysqli->query("UPDATE request_creation set cus_status = 12,updated_date=now() where req_id ='" . strip_tags($req_id) . "' "); //12 means loan calculation completed
-
-		$mysqli->query("UPDATE in_verification set cus_status = 12,updated_date=now() where req_id ='" . strip_tags($req_id) . "' ");
 	}
 
 	function getLoanCalculationForVerification($mysqli, $req_id)

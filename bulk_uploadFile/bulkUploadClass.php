@@ -195,7 +195,7 @@ class bulkUploadClass
         $due_typeArray = ['EMI' => 'EMI', 'Interest' => 'Interest'];
         $dataArray['due_type'] = $this->arrayItemChecker($due_typeArray, $dataArray['due_type']);
 
-        $profit_methodArray = ['Pre Interest' => 'pre_interest', 'After Interest' => 'after_interest'];
+        $profit_methodArray = ['Pre Interest' => 'pre_intrest', 'After Interest' => 'after_intrest'];
         $dataArray['profit_method'] = $this->arrayItemChecker($profit_methodArray, $dataArray['profit_method']);
 
         $due_method_schemeArray = ['Monthly' => '1', 'Weekly' => '2', 'Daily' => '3'];

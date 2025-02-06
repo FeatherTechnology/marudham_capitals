@@ -4,15 +4,15 @@ require '../ajaxconfig.php';
 $req_id       = $_POST['reqId'];
 $cus_id       = $_POST['cus_id'];
 $proofof       = $_POST['proofof'];
-$guarantor_mem     = $_POST['famId'];
 $fam_mem       = $_POST['fam_mem'];
 $proof_type    = $_POST['proof_type'];
 $proof_number  = $_POST['proof_number'];
-$upload        = $_FILES['upload']['name'];
 $kycID         = $_POST['kycID'];
 $uniqueFileName = '';
 
-if ($upload) {
+if(!empty($_FILES['upload']['name'])){
+    $upload    = $_FILES['upload']['name'];
+
     $path = "kycUploads/";
     $fileName = $_FILES['upload']['name'];
     $filePath = $_FILES['upload']['tmp_name'];
@@ -34,13 +34,12 @@ if ($upload) {
 
 
 
-
 if ($kycID == '') {
 
-    $qry = $connect->query("INSERT INTO `verification_kyc_info`(`cus_id`, `req_id`, `proofOf`,`fam_mem`,`guarantor_mem`, `proof_type`, `proof_no`, `upload`) VALUES ('$cus_id','$req_id','$proofof','$fam_mem','$guarantor_mem','$proof_type','$proof_number','$uniqueFileName')");
+    $qry = $connect->query("INSERT INTO `verification_kyc_info`(`cus_id`, `req_id`, `proofOf`,`fam_mem`, `proof_type`, `proof_no`, `upload`) VALUES ('$cus_id','$req_id','$proofof','$fam_mem','$proof_type','$proof_number','$uniqueFileName')");
 } else {
 
-    if ($upload) {
+    if (!empty($_FILES['upload']['name'])) {
         $kyc_upload = $uniqueFileName;
         // we need to unlink old files
         $qry = $connect->query("SELECT upload FROM `verification_kyc_info` where id='" . strip_tags($kycID) . "' ");
