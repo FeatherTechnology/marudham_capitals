@@ -370,29 +370,31 @@ $(document).ready(function () {
         }
         if (verify == 'loan_calc') {
             $('#customer_profile').hide(); $('#cus_document').hide(); $('#customer_loan_calc').show();
-            onLoadEditFunction();
-            getCustomerOldData();
-            getUserBasedLoanCategory();
-            setTimeout(() => {
-                getCategoryInfo();
-                var sub_cat_id = $('#sub_category_load').val();
-                getLoaninfo(sub_cat_id);
-                profitCalculationInfo();
-            }, 1500)
+            initialize()
         }
     })
+
+    async function initialize(){
+        onLoadEditFunction();
+        await getUserBasedLoanCategory();
+        await getCategoryInfo();
+        var sub_cat_id = $('#sub_category_load').val();
+        await getLoaninfo(sub_cat_id);
+        await profitCalculationInfo();
+    }
 
     //Open close Cards
     // $('.icon-chevron-down1').click(function(){ //$('.card-header').click(function(){
     //     $(this).parent().next('div').slideToggle(); //$(this).next('div').slideToggle();
     // })
 
-    function getCustomerOldData() {
-        let cus_id = $('#cus_id').val();
-        $.post('updateFile/showCustomerOldData.php', { cus_id }, function (html) {
-            // $('#cusOldDataDiv').empty().html(html);
-        })
-    }
+    //Already div in comment but function call in loan calc. so comment function also.
+    // function getCustomerOldData() {
+    //     let cus_id = $('#cus_id').val();
+    //     $.post('updateFile/showCustomerOldData.php', { cus_id }, function (html) {
+    //         // $('#cusOldDataDiv').empty().html(html);
+    //     })
+    // }
 
     ///Documentation 
 
@@ -4079,36 +4081,41 @@ function getGroupandLine(sub_area_id) {
 
 //Fetch Loan category list Based on Agent
 function getUserBasedLoanCategory() {
-    var loan_category = $('#loan_category_load').val();
-    var loan_category_upd = $('#loan_category_upd').val();
-    $.ajax({
-        url: 'verificationFile/LoanCalculation/getUserBasedLoanCategory.php',
-        data: {},
-        dataType: 'json',
-        type: 'post',
-        cache: false,
-        success: function (response) {
-            $('#loan_category').empty();
-            $('#loan_category').append("<option value='' >Select Loan Category</option>");
-            for (var i = 0; i < response.length; i++) {
-                var selected = '';
-                if (loan_category_upd == '' || loan_category_upd == undefined) { //if update is not available, then only use on load value of loan category
-                    if (loan_category != undefined && loan_category != '' && loan_category == response[i]['loan_category_id']) {
-                        selected = 'selected';
-                        getSubCategory(response[i]['loan_category_id']);
+    return new Promise((resolve, reject) => {
+        var loan_category = $('#loan_category_load').val();
+        var loan_category_upd = $('#loan_category_upd').val();
+        $.ajax({
+            url: 'verificationFile/LoanCalculation/getUserBasedLoanCategory.php',
+            data: {},
+            dataType: 'json',
+            type: 'post',
+            cache: false,
+            success: function (response) {
+                $('#loan_category').empty();
+                $('#loan_category').append("<option value='' >Select Loan Category</option>");
+                for (var i = 0; i < response.length; i++) {
+                    var selected = '';
+                    if (loan_category_upd == '' || loan_category_upd == undefined) { //if update is not available, then only use on load value of loan category
+                        if (loan_category != undefined && loan_category != '' && loan_category == response[i]['loan_category_id']) {
+                            selected = 'selected';
+                            getSubCategory(response[i]['loan_category_id']);
+                        }
+                    } else {
+                        if (loan_category_upd != undefined && loan_category_upd != '' && loan_category_upd == response[i]['loan_category_id']) {
+                            selected = 'selected';
+                            getSubCategory(response[i]['loan_category_id']);
+                        }
                     }
-                } else {
-                    if (loan_category_upd != undefined && loan_category_upd != '' && loan_category_upd == response[i]['loan_category_id']) {
-                        selected = 'selected';
-                        getSubCategory(response[i]['loan_category_id']);
-                    }
-                }
 
-                $('#loan_category').append("<option value='" + response[i]['loan_category_id'] + "' " + selected + " >" + response[i]['loan_category_name'] + " </option>");
+                    $('#loan_category').append("<option value='" + response[i]['loan_category_id'] + "' " + selected + " >" + response[i]['loan_category_name'] + " </option>");
+                }
+                resolve();
+            },
+            error: function(xhr, status, error){
+                reject(new Error(`Failed to fetch loan categories: ${status} - ${error}`)); // Pass error details
             }
-            ;
-        }
-    })
+        })
+    });
 }
 
 //Fetch Sub Category Based on loan category

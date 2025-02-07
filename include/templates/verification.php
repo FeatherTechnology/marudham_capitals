@@ -1950,6 +1950,12 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 																													} ?>' tabindex="9">
 									</div>
 								</div>
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+									<div class="form-group">
+										<label for="rla">Request Loan Amount</label><span class="required">&nbsp;*</span>
+										<input type="text" class="form-control" id="rla" name="rla" readonly value='<?php if (isset($loan_amt)) echo $loan_amt;  ?>' tabindex="9">
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
