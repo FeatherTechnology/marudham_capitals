@@ -745,13 +745,7 @@ if ($idupd > 0) {
 				</button>
 			</div>
 			<div class="modal-body">
-				<div class="container-fluid">
-
-					<div class="col-12">
-						<div class="row">
-							<div class="col-12" id='commChartDiv'></div>
-						</div>
-					</div>
+				<div id='commChartDiv' style="overflow-x: auto;">
 				</div>
 			</div>
 			<div class="modal-footer">

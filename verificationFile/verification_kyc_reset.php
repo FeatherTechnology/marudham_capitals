@@ -75,17 +75,18 @@ include '../ajaxconfig.php';
                 $proof_type = "Others";
             }
 
-            $fam_mem = $kyc['fam_mem'];
+            $fam_mem_id = $kyc['fam_mem'];
 
             $relationship = 'NIL';
             if ($kyc['proofOf'] == '2') {
-                $sql = $connect->query("SELECT famname,relationship FROM `verification_family_info` where id = '$fam_mem'");
-               $rw1= $sql->fetch();
-                $fam_mem = $rw1['famname']?? '';
-                $relationship = $rw1['relationship']?? '';
+                $sql = $connect->query("SELECT famname, relationship FROM `verification_family_info` where id = '$fam_mem_id'");
+                $rw= $sql->fetch();
+                $fam_mem = $rw['famname']?? '';
+                $relationship = $rw['relationship']?? '';
             } elseif ($kyc['proofOf'] == '1') {
-                $guarantor_mem = $kyc['guarantor_mem'];
-                $qry = $connect->query("SELECT famname,relationship FROM `verification_family_info` where id = '$guarantor_mem' ");
+                $qry = $connect->query("SELECT a.famname, a.relationship from verification_family_info a 
+                LEFT JOIN customer_profile b ON a.id = b.guarentor_name
+                where b.req_id = '$req_id' ");
                 $rw = $qry->fetch();
                 $fam_mem = $rw['famname'] ?? '';
                 $relationship = $rw['relationship'] ?? '';

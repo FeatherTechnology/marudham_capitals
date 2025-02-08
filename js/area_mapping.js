@@ -245,7 +245,7 @@ function getArea() {
                 var checked = '';
                 var checked = response[i]['disabled'];
                 var selected = '';
-                if (area_id_upd != '' && values.includes(area_id)) {
+                if (area_id_upd != '' && values.includes(area_id.toString())) {
                     selected = 'selected';
                     checked = false;
                 }
@@ -285,7 +285,7 @@ function getArea1() {
                 var checked = '';
                 var checked = response[i]['disabled'];
                 var selected = '';
-                if (area_id_upd != '' && values.includes(area_id)) {
+                if (area_id_upd != '' && values.includes(area_id.toString())) {
                     selected = 'selected';
                     checked = false;
                 }
@@ -326,7 +326,7 @@ function getAreaBasedSubArea(area) {
                     var sub_area_name = response[i][j]['sub_area_name'];
                     var checked = response[i][j]['disabled'];
                     var selected = '';
-                    if (sub_area_upd != '' && values.includes(sub_area_id)) {
+                    if (sub_area_upd != '' && values.includes(sub_area_id.toString())) {
                         selected = 'selected';
                         checked = false;
                     }
@@ -367,7 +367,7 @@ function getAreaBasedSubArea1(area) {
                     var sub_area_name = response[i][j]['sub_area_name'];
                     var checked = response[i][j]['disabled'];
                     var selected = '';
-                    if (sub_area_upd != '' && values.includes(sub_area_id)) {
+                    if (sub_area_upd != '' && values.includes(sub_area_id.toString())) {
                         selected = 'selected';
                         checked = false;
                     }
