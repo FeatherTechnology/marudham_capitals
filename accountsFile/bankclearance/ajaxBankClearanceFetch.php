@@ -39,8 +39,16 @@ if($qry->rowCount() > 0){
     </thead>
     <tbody>
         <?php
-        while($row = $qry->fetch()){ ?>
-            <tr>
+        $bank_stmt = array();
+        while($row = $qry->fetch()){    
+            // Determine transaction type
+            $type = ($row['credit'] != '') ? 'cr' : 'dr';
+            $crdr = ($row['credit'] != '') ? $row['credit'] : $row['debit'];
+        ?>
+            <tr data-type="<?php echo $type; ?>" 
+                data-trans-id="<?php echo $row['trans_id']; ?>" 
+                data-crdr="<?php echo $crdr; ?>" 
+                data-bank-stmt-id="<?php echo $row['id']; ?>" >
                 <td><?php echo $i;?></td>
                 <td><?php echo date('d-m-Y',strtotime($row['trans_date']));?></td>
                 <td><?php echo $row['narration'];?></td>
@@ -96,7 +104,7 @@ function runcreditCategories($connect,$admin_access,$bank_id){
     while($catrow = $runqry->fetch()){
         $selectTxt .= "<option value='".$catrow['id']."'>".$catrow['modes']."</option>";
     }
-    $selectTxt .= "<option value='15'>Uncleared</option></select><input type='hidden' value='Credit'>";
+    $selectTxt .= "<option value='15'>Uncleared</option></select><input type='hidden' name='amnt_type[]' value='Credit'>";
 
     return $selectTxt;
 }
@@ -114,7 +122,7 @@ function rundebitCategories($connect,$admin_access,$bank_id){
     while($catrow = $runqry->fetch()){
         $selectTxt .= "<option value='".$catrow['id']."'>".$catrow['modes']."</option>";
     }
-    $selectTxt .= "</select><input type='hidden' value='Debit'>";
+    $selectTxt .= "</select><input type='hidden' name='amnt_type[]' value='Debit'>";
 
     return $selectTxt;
 }

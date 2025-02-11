@@ -4563,9 +4563,16 @@ class admin
 				'" . strip_tags($category_info[$i]) . "' )");
 				}
 
-				$mysqli->query("UPDATE request_creation set cus_status = 12,updated_date=now() where req_id ='" . strip_tags($req_id) . "' "); //12 means loan calculation completed
-		
-				$mysqli->query("UPDATE in_verification set cus_status = 12,updated_date=now() where req_id ='" . strip_tags($req_id) . "' ");
+				$result = $mysqli->query("UPDATE request_creation set cus_status = 12,updated_date=now() where req_id ='" . strip_tags($req_id) . "' "); //12 means loan calculation completed
+				if (!$result) {
+					die("Error updating request_creation: " . $mysqli->error);
+				}
+
+				$result = $mysqli->query("UPDATE in_verification set cus_status = 12,updated_date=now() where req_id ='" . strip_tags($req_id) . "' ");
+				if (!$result) {
+					die("Error updating in_verification: " . $mysqli->error);
+				}
+
 			}
 		}
 
