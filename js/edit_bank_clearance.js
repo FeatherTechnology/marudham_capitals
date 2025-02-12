@@ -1,9 +1,5 @@
 $(document).ready(function () {
 
-
-
-
-
     $('#from_date').change(function () {
         var fromDate = new Date($(this).val()); // take as date format
         var toDate = new Date($('#to_date').val()); // take as date format, if nothing selected will de invalid date
@@ -25,37 +21,8 @@ $(document).ready(function () {
     });
 
     $('#view_table').click(function () {
-        if (validation() == 0) {
-            var bank_id = $('#bank_name').val(); var from_date = $('#from_date').val(); var to_date = $('#to_date').val();
-            $.ajax({
-                url: 'accountsFile/bankclearance/ajaxBankClearanceFetch.php',
-                data: { 'bank_id': bank_id, 'from_date': from_date, 'to_date': to_date },
-                type: 'post',
-                cache: false,
-                success: function (response) {
-                    if (response.includes('Given Date Has No Statements!')) {
-                        Swal.fire({
-                            title: response,
-                            text: 'Please Try Different Dates',
-                            icon: 'warning',
-                            showConfirmButton: true,
-                            confirmButtonColor: '#009688'
-                        })
-                        $('.bank_clr_table').hide();
-                        return false;
-                    } else {
-                        $('.bank_clr_table').show();
-                        $('#bank_clearance_list').empty();
-                        $('#bank_clearance_list').html(response);
-                        // initializeDT();
-                        // tablesorting();
-                    }
-                }
-            }).then(function () {
-                clrcatClickEvent();
-                getUnclearTotal();
-            })
-        }
+        getClearanceTable();
+        
     })
 
     //Unbind or disable all other event listeners to avoid conflict
@@ -81,19 +48,7 @@ $(document).ready(function () {
         })
     })
 
-
-
-
-
-
-
-
-
-
-
 })// document ready END
-
-
 
 $(function () {
 
@@ -224,10 +179,11 @@ function clrcatClickEvent() {
         var crdb = $(this).next().val();
         var trans_id = $(this).parent().prev().prev().prev().prev().text();
         var ref_id_box = $(this).parent().next().children();//represents ref id select box
+        var trans_amt = $(this).closest('tr').attr('data-crdr');
 
         $.ajax({
             url: 'accountsFile/bankclearance/getRefCodetoClear.php',
-            data: { 'clr_cat': clr_cat, 'bank_id': bank_id, 'crdb': crdb, 'trans_id': trans_id },
+            data: { 'clr_cat': clr_cat, 'bank_id': bank_id, 'crdb': crdb, 'trans_id': trans_id, 'trans_amt': trans_amt },
             dataType: 'json',
             type: 'post',
             cache: false,
@@ -283,6 +239,36 @@ function clrcatClickEvent() {
         }
     })
 
+    $('#clear_all_bstmt').click(function(event){
+        event.preventDefault();
+        let bankStmt = [];
+
+        $("#bank_clearance_list tbody tr").each(function(){
+            let type = $(this).data("type");
+            let transId = $(this).data("trans-id");
+            let crdr = $(this).data("crdr");
+            let bankStmtId = $(this).data("bank-stmt-id");
+    
+            bankStmt.push({
+                type: type,
+                trans_id: transId,
+                cr_dr: crdr,
+                bank_stmt_id: bankStmtId
+            });
+        });
+    
+        let bankId = $('#bank_name').val(); // Debugging
+        $.post('accountsFile/bankclearance/clearAllTransaction.php',{bank_id: bankId, bank_stmt: bankStmt},function(response){
+            if(response.status =='1'){
+                alert('Transaction are cleared successfully.');
+                getClearanceTable();
+            } else{
+                alert('Failed to clear Transaction.');
+            }
+
+        },'json');
+    });
+
 }
 
 function getUnclearTotal() {
@@ -301,4 +287,38 @@ function getUnclearTotal() {
     unclear_debit = moneyFormatIndia(unclear_debit)
     $('#ucl_credit').text(unclear_credit).css('font-weight', 'bold');
     $('#ucl_debit').text(unclear_debit).css('font-weight', 'bold');
+}
+
+function getClearanceTable(){
+    if (validation() == 0) {
+        var bank_id = $('#bank_name').val(); var from_date = $('#from_date').val(); var to_date = $('#to_date').val();
+        $.ajax({
+            url: 'accountsFile/bankclearance/ajaxBankClearanceFetch.php',
+            data: { 'bank_id': bank_id, 'from_date': from_date, 'to_date': to_date },
+            type: 'post',
+            cache: false,
+            success: function (response) {
+                if (response.includes('Given Date Has No Statements!')) {
+                    Swal.fire({
+                        title: response,
+                        text: 'Please Try Different Dates',
+                        icon: 'warning',
+                        showConfirmButton: true,
+                        confirmButtonColor: '#009688'
+                    })
+                    $('.bank_clr_table').hide();
+                    return false;
+                } else {
+                    $('.bank_clr_table').show();
+                    $('#bank_clearance_list').empty();
+                    $('#bank_clearance_list').html(response);
+                    // initializeDT();
+                    // tablesorting();
+                }
+            }
+        }).then(function () {
+            clrcatClickEvent();
+            getUnclearTotal();
+        })
+    }
 }

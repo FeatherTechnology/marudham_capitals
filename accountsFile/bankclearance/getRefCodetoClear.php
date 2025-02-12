@@ -79,6 +79,7 @@ $runQry = $connect->query($qry);
         $i=0;
         while($row = $runQry->fetch()){
             $records[$i]['ref_code'] = $row['ref_code'];
+            $i++;
         }
     }
 
