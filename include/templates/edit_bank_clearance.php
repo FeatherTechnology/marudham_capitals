@@ -82,7 +82,7 @@
 						<div class="col-9"></div>
 						<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12 ">
 							<div class="form-group" style="text-align: right">
-								<input type="button" class="btn btn-primary" id='clear_all_bstmt' name='clear_all_bstmt' value="Clear All">
+								<button type="button" class="btn btn-primary" name="clear_all_bstmt" id="clear_all_bstmt">Clear All</button>
 							</div>
 						</div>
 
