@@ -175,27 +175,32 @@ function tablesorting() { // for sorting table
 function clrcatClickEvent() {
     $('.clr_cat').change(function () {
         var clr_cat = $(this).val();
-        var bank_id = $(this).prev().val();
-        var crdb = $(this).next().val();
-        var trans_id = $(this).parent().prev().prev().prev().prev().text();
         var ref_id_box = $(this).parent().next().children();//represents ref id select box
-        var trans_amt = $(this).closest('tr').attr('data-crdr');
+        if(clr_cat){
+            var bank_id = $(this).prev().val();
+            var crdb = $(this).next().val();
+            var trans_id = $(this).parent().prev().prev().prev().prev().text();
+            var trans_amt = $(this).closest('tr').attr('data-crdr');
+    
+            $.ajax({
+                url: 'accountsFile/bankclearance/getRefCodetoClear.php',
+                data: { 'clr_cat': clr_cat, 'bank_id': bank_id, 'crdb': crdb, 'trans_id': trans_id, 'trans_amt': trans_amt },
+                dataType: 'json',
+                type: 'post',
+                cache: false,
+                success: function (response) {
+                    ref_id_box.empty();
+                    ref_id_box.append("<option value=''>Select Ref ID</option>");
+                    $.each(response, function (ind, val) {
+                        ref_id_box.append("<option value='" + val['ref_code'] + "'>" + val['ref_code'] + "</option>")
+                    })
+                }
+            }); //AJAX END.
 
-        $.ajax({
-            url: 'accountsFile/bankclearance/getRefCodetoClear.php',
-            data: { 'clr_cat': clr_cat, 'bank_id': bank_id, 'crdb': crdb, 'trans_id': trans_id, 'trans_amt': trans_amt },
-            dataType: 'json',
-            type: 'post',
-            cache: false,
-            success: function (response) {
-                ref_id_box.empty();
-                ref_id_box.append("<option value=''>Select Ref ID</option>");
-                $.each(response, function (ind, val) {
-                    ref_id_box.append("<option value='" + val['ref_code'] + "'>" + val['ref_code'] + "</option>")
-                })
-
-            }
-        })
+        } else{
+            ref_id_box.empty();
+            ref_id_box.append("<option value=''>Select Ref ID</option>");
+        }//ESLE END.
     })
 
     $('.ref-id').change(function () {

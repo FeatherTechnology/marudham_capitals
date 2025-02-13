@@ -19,6 +19,7 @@ $branch_id           = '';
 $line_id           = '';
 $group_id           = '';
 $download_access = '';
+$report_access = '';
 $mastermodule    = '';
 $company_creation      = '';
 $branch_creation = '';
@@ -75,6 +76,7 @@ $due_followup  = '';
 $reportmodule = '';
 $ledger_report = '';
 $request_report = '';
+$cancel_revoke_report = '';
 $cus_profile_report = '';
 $loan_issue_report = '';
 $collection_report = '';
@@ -131,7 +133,7 @@ $idupd=$_GET['upd'];
 $status =0;
 if($idupd>0)
 {
-	$getUser = $userObj->getUser($mysqli,$idupd); 
+	$getUser = $userObj->getuser($mysqli,$idupd); 
 	if (sizeof($getUser)>0) {
         for($i=0;$i<sizeof($getUser);$i++)  {			
 			$user_id                 	 = $getUser['user_id'];
@@ -150,6 +152,7 @@ if($idupd>0)
 			$line_id          		     = $getUser['line_id'];
 			$group_id          		     = $getUser['group_id'];
 			$download_access          		     = $getUser['download_access'];
+			$report_access          		     = $getUser['report_access'];
 			$mastermodule          		     = $getUser['mastermodule'];
 			$company_creation          		     = $getUser['company_creation'];
 			$branch_creation          		     = $getUser['branch_creation'];
@@ -208,6 +211,7 @@ if($idupd>0)
 			$reportmodule          		     = $getUser['reportmodule'];
 			$ledger_report          		     = $getUser['ledger_report'];
 			$request_report          		     = $getUser['request_report'];
+			$cancel_revoke_report          		     = $getUser['cancel_revoke_report'];
 			$cus_profile_report          		     = $getUser['cus_profile_report'];
 			$loan_issue_report          		     = $getUser['loan_issue_report'];
 			$collection_report          		     = $getUser['collection_report'];
@@ -498,6 +502,16 @@ if($idupd>0)
 										<!-- <label class="custom-control-label" for="downloan_access">Download Access</label> -->
                                         </div>
                                     </div>
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+										<div class="form-group">
+											<label class="custom-control-label" for="report_access">Report Access</label>
+											<select class="form-control" name="report_access" id="report_access">
+												<option value="">Select Report Access</option>
+												<option value="1" <?php if($report_access == '1') echo 'selected';?> >Individual</option>
+												<option value="2" <?php if($report_access == '2') echo 'selected';?> >Overall</option>
+											</select>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -960,6 +974,12 @@ if($idupd>0)
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($request_report==0){ echo'checked'; }} ?> tabindex="63" class="report-checkbox" id="request_report" name="request_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="request_report">Request</label>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($cancel_revoke_report==0){ echo'checked'; }} ?> tabindex="63" class="report-checkbox" id="cancel_revoke_report" name="cancel_revoke_report" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="cancel_revoke_report">Cancel / Revoke</label>
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
