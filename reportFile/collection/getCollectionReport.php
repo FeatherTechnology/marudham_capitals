@@ -120,7 +120,12 @@ $query = "SELECT
 
             WHERE req.cus_status >= 14 
             AND $where
-            AND cp.area_confirm_subarea IN ($sub_area_list) ";
+            AND cp.area_confirm_subarea IN ($sub_area_list) 
+            AND (
+                coll.trans_date = '0000-00-00' 
+                OR (coll.trans_date BETWEEN '$from_date' AND '$to_date')
+            )";
+
 
 if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {

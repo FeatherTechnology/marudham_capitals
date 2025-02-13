@@ -139,8 +139,8 @@ class getTrackTableDetails
     public function getTrackDetails($connect, $stage, $date, $user_id, $branch)
     {
         $req_id = $_POST['req_id'] ?? '';
-
-        $qry = $connect->query("SELECT `role`,`user_name`,`fullname` FROM `user` WHERE user_id='" . mysqli_real_escape_string($connect, $user_id) . "'");
+        $user_id = $connect->quote($user_id);
+        $qry = $connect->query("SELECT `role`,`user_name`,`fullname` FROM `user` WHERE user_id=" . $user_id);
         $row = $qry->fetch();
 
         $date = date('d-m-Y', strtotime($date));

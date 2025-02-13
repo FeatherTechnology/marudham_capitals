@@ -32,6 +32,7 @@ if ($result->rowCount() > 0) {
         $records[$i]['code'] = $row['code'];
 
         $req_id = $row['req_id'];
+        $records[$i]['req_id'] = $row['req_id'];
         $cus_name = $row['cus_name'];
 
         $loan_category = $row['loan_category'] ?? '';
@@ -81,7 +82,7 @@ if ($result->rowCount() > 0) {
                 <td><?php echo $records[$i]['sub_category']; ?></td>
                 <td><?php echo $records[$i]['loan_amt']; ?></td>
                 <td><?php echo $records[$i]['chart_action']; ?></td>
-                <td><button class="btn btn-primary track-btn" data-req_id='<?php echo $req_id; ?>' onclick="event.preventDefault()">Track</button></td>
+                <td><button class="btn btn-primary track-btn" data-req_id='<?php echo $records[$i]['req_id']; ?>' onclick="event.preventDefault()">Track</button></td>
             </tr>
         <?php } ?>
     </tbody>
