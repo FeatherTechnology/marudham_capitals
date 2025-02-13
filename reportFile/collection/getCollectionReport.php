@@ -3,24 +3,17 @@
 session_start();
 include '../../ajaxconfig.php';
 
-$where = "1";
-
-if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'] != '' && $_POST['to_date'] != '') {
-    $from_date = date('Y-m-d', strtotime($_POST['from_date']));
-    $to_date = date('Y-m-d', strtotime($_POST['to_date']));
-    $where  = "(date(coll.coll_date) >= '" . $from_date . "') and (date(coll.coll_date) <= '" . $to_date . "') ";
-}
-
 if (isset($_SESSION["userid"])) {
     $userid = $_SESSION["userid"];
+    $report_access = '2';
 }
 if ($userid != 1) {
 
-    $userQry = $connect->query("SELECT * FROM USER WHERE user_id = $userid ");
-    while ($rowuser = $userQry->fetch()) {
+    $userQry = $connect->query("SELECT group_id, line_id, report_access FROM USER WHERE user_id = $userid ");
+    $rowuser = $userQry->fetch();
         $group_id = $rowuser['group_id'];
         $line_id = $rowuser['line_id'];
-    }
+        $report_access = $rowuser['report_access'];
 
     $line_id = explode(',', $line_id);
     $sub_area_list = array();
@@ -35,6 +28,20 @@ if ($userid != 1) {
     }
     $sub_area_list = array();
     $sub_area_list = implode(',', $sub_area_ids);
+}
+
+$where = "1";
+
+if($report_access =='1'){
+    $user_based = "coll.insert_login_id = '".$userid."'";
+}else{
+    $user_based = "";
+}
+
+if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'] != '' && $_POST['to_date'] != '') {
+    $from_date = date('Y-m-d', strtotime($_POST['from_date']));
+    $to_date = date('Y-m-d', strtotime($_POST['to_date']));
+    $where  = "(date(coll.coll_date) >= '" . $from_date . "') and (date(coll.coll_date) <= '" . $to_date . "') $user_based";
 }
 
 $statusObj = [

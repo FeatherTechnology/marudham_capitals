@@ -6,7 +6,7 @@ if (isset($_POST["coll_id"])) {
     $coll_id = $_POST["coll_id"];
 }
 
-$qry = $connect->query("SELECT * FROM `collection` WHERE coll_code='" . strip_tags($coll_id) . "'");
+$qry = $connect->query("SELECT req_id, cus_id, cus_name, coll_code, coll_mode, trans_date, coll_date, due_amt_track, penalty_track, coll_charge_track, insert_login_id FROM `collection` WHERE coll_code='" . strip_tags($coll_id) . "'");
 $row = $qry->fetch();
 
 extract($row); // Extracts the array values into variables
@@ -29,8 +29,7 @@ $net_received = $due_amt_track + $penalty_track + $coll_charge_track;
 // $due_balance = ($due_amt - $due_amt_track) < 0 ? 0 : $due_amt - $due_amt_track;
 $loan_balance = getBalance($connect, $req_id, $coll_date);
 
-$user_id = $row['insert_login_id'];
-$qry = $connect->query("SELECT fullname from `user` where `user_id` = $user_id ");
+$qry = $connect->query("SELECT fullname from `user` where `user_id` = $insert_login_id ");
 $user_name = $qry->fetch()['fullname'];
 $coll_modes = ['1' => 'Cash', '2' => 'Cheque', '3' => 'ECS', '4' => 'IMPS/NEFT/RTGS', '5' => 'UPI Transaction' ]
 ?>
@@ -103,6 +102,9 @@ $coll_modes = ['1' => 'Cash', '2' => 'Cheque', '3' => 'ECS', '4' => 'IMPS/NEFT/R
             <!-- <div>Due Balance :</div> -->
             <div>Loan Balance :</div>
             <div>Collection Mode :</div>
+            <?php if($coll_mode != 1){?>
+                <div>Transaction Date :</div>
+            <?php }?>
             <div>User Name :</div>
         </div>
         <div class="data" style="display: flex; flex-direction: column; align-items: flex-start;">
@@ -128,6 +130,9 @@ $coll_modes = ['1' => 'Cash', '2' => 'Cheque', '3' => 'ECS', '4' => 'IMPS/NEFT/R
             <!-- <div><?php #echo moneyFormatIndia($due_balance); ?></div> -->
             <div><?php echo moneyFormatIndia($loan_balance); ?></div>
             <div><?php echo $coll_modes[$coll_mode]; ?></div>
+            <?php if($coll_mode != 1){?>
+                <div><?php echo date('d-m-Y', strtotime($trans_date)); ?></div>
+            <?php }?>
             <div><?php echo $user_name; ?></div>
         </div>
     </div>

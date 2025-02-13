@@ -66,7 +66,7 @@ else if ($current_page == 'edit_concern_creation' || $current_page == 'edit_conc
 
 	$current_module = 'followup';
 } else if (
-	$current_page == 'ledger_report' || $current_page == 'request_report' || $current_page == 'cus_profile_report' || $current_page == 'loan_issue_report'
+	$current_page == 'ledger_report' || $current_page == 'request_report' || $current_page == 'cancel_revoke_report' ||  $current_page == 'cus_profile_report' || $current_page == 'loan_issue_report'
 	|| $current_page == 'collection_report' || $current_page == 'balance_report' || $current_page == 'due_list_report' || $current_page == 'closed_report' || $current_page == 'agent_report'
 ) {
 
@@ -175,6 +175,7 @@ $due_followup = '';
 $reportmodule = '';
 $ledger_report = '';
 $request_report = '';
+$cancel_revoke_report = '';
 $cus_profile_report = '';
 $loan_issue_report = '';
 $collection_report = '';
@@ -261,6 +262,7 @@ if (sizeof($getUser) > 0) {
 		$reportmodule          		     = $getUser['reportmodule'];
 		$ledger_report          		     = $getUser['ledger_report'];
 		$request_report          		     = $getUser['request_report'];
+		$cancel_revoke_report          		     = $getUser['cancel_revoke_report'];
 		$cus_profile_report          		     = $getUser['cus_profile_report'];
 		$loan_issue_report          		     = $getUser['loan_issue_report'];
 		$collection_report          		     = $getUser['collection_report'];
@@ -813,7 +815,7 @@ if (sizeof($getUser) > 0) {
 										<a href="request_report"><i class='icon-area-graph'></i>Request</a>
 									</li>
 								<?php  } ?>
-								<?php if ($request_report == 0) { ?>
+								<?php if ($cancel_revoke_report == 0) { ?>
 									<li>
 										<a href="cancel_revoke_report"><i class='icon-area-graph'></i>Cancel / Revoke</a>
 									</li>
@@ -1000,6 +1002,7 @@ $due_followup = '';
 $reportmodule = '';
 $ledger_report = '';
 $request_report = '';
+$cancel_revoke_report = '';
 $cus_profile_report = '';
 $loan_issue_report = '';
 $collection_report = '';
