@@ -3431,7 +3431,7 @@ class admin
 		'" . strip_tags($userid) . "',current_timestamp )";
 			$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
 			$req_ref_id = $mysqli->insert_id;
-			if (`$cus_data` == 'New') {
+			if ($cus_data == 'New') {
 				$CustomerInsert = "INSERT INTO customer_register (`cus_id`,`req_ref_id`, `customer_name`, `dob`, `age`, `gender`, `state`, `district`,
 				`taluk`, `area`, `sub_area`, `address`, `mobile1`, `mobile2`, `father_name`, `mother_name`, `marital`, `spouse`, `occupation_type`, `occupation`,`pic`)
 				VALUES('" . strip_tags($cus_id) . "','" . strip_tags($req_ref_id) . "','" . strip_tags($cus_name) . "','" . strip_tags($dob) . "', '" . strip_tags($age) . "', '" . strip_tags($gender) . "', '" . strip_tags($state) . "',
@@ -5384,6 +5384,40 @@ class admin
 		if (isset($_POST['cus_id'])) {
 			$cus_id =  preg_replace('/\s+/', '', $_POST['cus_id']);
 		}
+		if (isset($_POST['int_rate'])) {
+			$int_rate = $_POST['int_rate'];
+		}
+
+
+		if (isset($_POST['due_period'])) {
+			$due_period = $_POST['due_period'];
+		}
+		if (isset($_POST['doc_charge'])) {
+			$doc_charge = $_POST['doc_charge'];
+		}
+		if (isset($_POST['proc_fee'])) {
+			$proc_fee = $_POST['proc_fee'];
+		}
+		if (isset($_POST['principal_amt_cal'])) {
+			$principal_amt_cal = $_POST['principal_amt_cal'];
+		}
+		if (isset($_POST['int_amt_cal'])) {
+			$int_amt_cal = $_POST['int_amt_cal'];
+		}
+		$tot_amt_cal = '';
+		if (isset($_POST['tot_amt_cal'])) {
+			$tot_amt_cal = $_POST['tot_amt_cal'];
+		}
+		$due_amt_cal = '';
+		if (isset($_POST['due_amt_cal'])) {
+			$due_amt_cal = $_POST['due_amt_cal'];
+		}
+		if (isset($_POST['doc_charge_cal'])) {
+			$doc_charge_cal = $_POST['doc_charge_cal'];
+		}
+		if (isset($_POST['proc_fee_cal'])) {
+			$proc_fee_cal = $_POST['proc_fee_cal'];
+		}
 		if (isset($_POST['loan_amt_cal'])) {
 			$loan_amt_cal = $_POST['loan_amt_cal'];
 		}
@@ -5446,8 +5480,13 @@ class admin
 
 		$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
 
-
-		$updateQry = $mysqli->query("UPDATE acknowlegement_loan_calculation SET due_start_from = '" . strip_tags($due_start_from) . "', maturity_month = '" . strip_tags($maturity_month) . "', update_login_id = $userid,update_date = current_timestamp() WHERE req_id = $req_id ");
+		$updateQry = $mysqli->query("UPDATE acknowlegement_loan_calculation SET  
+						int_rate = '" . strip_tags($int_rate) . "', due_period = '" . strip_tags($due_period) . "', doc_charge = '" . strip_tags($doc_charge) . "', proc_fee = '" . strip_tags($proc_fee) . "', 
+						loan_amt_cal = '" . strip_tags($loan_amt_cal) . "', principal_amt_cal = '" . strip_tags($principal_amt_cal) . "', int_amt_cal = '" . strip_tags($int_amt_cal) . "', 
+						tot_amt_cal = '" . strip_tags($tot_amt_cal) . "', due_amt_cal = '" . strip_tags($due_amt_cal) . "', doc_charge_cal = '" . strip_tags($doc_charge_cal) . "', 
+						proc_fee_cal = '" . strip_tags($proc_fee_cal) . "', net_cash_cal = '" . strip_tags($net_cash_cal) . "', due_start_from = '" . strip_tags($due_start_from) . "', 
+						maturity_month = '" . strip_tags($maturity_month) . "', cus_status = 12, update_login_id = $userid, 
+						update_date = current_timestamp() WHERE req_id = $req_id ");
 		// $qry = $mysqli->query("SELECT customer_name, mobile1 from customer_register where req_ref_id = '$req_id' ");
 		// $row = $qry->fetch_assoc();
 		// $customer_name = $row['customer_name'];

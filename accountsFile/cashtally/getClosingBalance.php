@@ -40,7 +40,6 @@ if ($op_date != date('Y-m-d')) {
         $old_hand += $records[0]['hand_closing'];
         $old_agent += $records[0]['agent_closing'];
         $old_bank += $records[0]['bank_closing'];
-
         $closing_date = date('Y-m-d', strtotime($closing_date . '-1 day'));
         $records = $CBObj->getClosingBalance($closing_date, $bank_detail, $user_id);
         if ($records[0]['hand_closing'] == 0 && $records[0]['agent_closing'] == 0 && $records[0]['bank_closing'] == 0) {

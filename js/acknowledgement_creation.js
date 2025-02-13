@@ -776,9 +776,10 @@ $(document).ready(function () {
 
 $(function () {
     $('.icon-chevron-down1').parent().next('div').slideUp(); //To collapse all card on load
+// Disable all inputs except the ones you want to keep editable
+$('input').not('#int_rate, #due_period, #doc_charge, #proc_fee').attr('readonly', true);
+$('select').attr('disabled', true);
 
-    $('input').attr('readonly', true);
-    $('select').attr('disabled', true);
 
     getImage(); // To show customer image when window onload.
 
@@ -2622,9 +2623,10 @@ function getCategoryInfo() {
 //Get New Category Info
 $('#sub_category').change(function () {
     var sub_cat = $(this).val();
+    var loan_category = $('#loan_category_load').val();
     $.ajax({
         url: 'requestFile/getCategoryInfo.php',
-        data: { 'sub_cat': sub_cat },
+        data: { 'sub_cat': sub_cat ,'loan_category':loan_category},
         dataType: 'json',
         type: 'post',
         cache: false,
@@ -2731,8 +2733,9 @@ function profitCalculationInfo() {
     var sub_cat = $('#sub_category').val();
     var profit_type = $('#profit_type').val();
     var due_method = $('#due_method_scheme').val();
+    var loan_cat = $('#loan_category').val();
     if (profit_type != '') { //Call only if profit type autamatically set
-        profitCalAjax(profit_type, sub_cat); //Call for edit
+        profitCalAjax(profit_type, sub_cat,loan_cat); //Call for edit
     }
     if (due_method != '') {//Call only if due method autamatically set
         schemeAjax(due_method, sub_cat); //Call for edit
@@ -2771,7 +2774,8 @@ function profitCalculationInfo() {
 
         var profit_type = $(this).val();
         var sub_cat = $('#sub_category').val();
-        profitCalAjax(profit_type, sub_cat)
+        var loan_cat = $('#loan_category').val();
+        profitCalAjax(profit_type, sub_cat,loan_cat)
 
     });//Profit Type change event end
 
@@ -2806,7 +2810,7 @@ function profitCalculationInfo() {
 }
 
 //
-function profitCalAjax(profit_type, sub_cat) {
+function profitCalAjax(profit_type, sub_cat,loan_cat) {
     var profit_method_upd = $('#profit_method_upd').val()
     if ($('#int_rate_upd').val()) { var int_rate_upd = $('#int_rate_upd').val(); } else { var int_rate_upd = ''; }
     if ($('#due_period_upd').val()) { var due_period_upd = $('#due_period_upd').val(); } else { var due_period_upd = ''; }
@@ -2818,7 +2822,7 @@ function profitCalAjax(profit_type, sub_cat) {
         $('.scheme-calculation').hide();
         $.ajax({ // To show profit calculation infos based on sub category
             url: 'verificationFile/LoanCalculation/getProfitCalculationInfo.php',
-            data: { 'sub_cat': sub_cat },
+            data: { 'sub_cat': sub_cat ,'loan_cat':loan_cat},
             dataType: 'json',
             type: 'post',
             cache: false,

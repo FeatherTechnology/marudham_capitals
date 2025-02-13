@@ -237,6 +237,7 @@ if (sizeof($getLoanCalculation) > 0) {
 		$profit_method_lc = $getLoanCalculation['profit_method'];
 		$calc_method_lc = $getLoanCalculation['calc_method'];
 		$due_method_scheme_lc = $getLoanCalculation['due_method_scheme'];
+		$profit_method_scheme_lc = $getLoanCalculation['scheme_profit_method'];
 		$day_scheme_lc = $getLoanCalculation['day_scheme'];
 		$scheme_name_lc = $getLoanCalculation['scheme_name'];
 		$int_rate_lc = $getLoanCalculation['int_rate'];
@@ -405,6 +406,39 @@ if (sizeof($getLoanCalculation) > 0) {
 			<input type="hidden" name="sub_category_upd" id="sub_category_upd" value="<?php if (isset($sub_category_lc)) {
 																							echo $sub_category_lc;
 																						} ?>" />
+																									<input type="hidden" name="profit_type_upd" id="profit_type_upd" value="<?php if (isset($profit_type_lc)) {
+																						echo $profit_type_lc;
+																					} ?>" />
+			<input type="hidden" name="due_method_scheme_upd" id="due_method_scheme_upd" value="<?php if (isset($due_method_scheme_lc)) {
+																									echo $due_method_scheme_lc;
+																								} ?>" />
+			<input type="hidden" name="day_scheme_upd" id="day_scheme_upd" value="<?php if (isset($day_scheme_lc)) {
+																						echo $day_scheme_lc;
+																					} ?>" />
+			<input type="hidden" name="scheme_upd" id="scheme_upd" value="<?php if (isset($scheme_name_lc)) {
+																				echo $scheme_name_lc;
+																			} ?>" />
+			<input type="hidden" name="scheme_profit_method_upd" id="scheme_profit_method_upd" value="<?php if (isset($profit_method_scheme_lc)) {
+																											echo $profit_method_scheme_lc;
+																										} ?>" />
+			<input type="hidden" name="profit_method_upd" id="profit_method_upd" value="<?php if (isset($profit_method_lc)) {
+																							echo $profit_method_lc;
+																						} ?>" />
+			<input type="hidden" name="int_rate_upd" id="int_rate_upd" value="<?php if (isset($int_rate_lc)) {
+																					echo $int_rate_lc;
+																				} ?>" />
+			<input type="hidden" name="due_period_upd" id="due_period_upd" value="<?php if (isset($due_period_lc)) {
+																						echo $due_period_lc;
+																					} ?>" />
+			<input type="hidden" name="doc_charge_upd" id="doc_charge_upd" value="<?php if (isset($doc_charge_lc)) {
+																						echo $doc_charge_lc;
+																					} ?>" />
+			<input type="hidden" name="proc_fee_upd" id="proc_fee_upd" value="<?php if (isset($proc_fee_lc)) {
+																					echo $proc_fee_lc;
+																				} ?>" />
+			<input type="hidden" name="cus_profile_id" id="cus_profile_id" value="<?php if (isset($cus_Tableid)) {
+																						echo $cus_Tableid;
+																					} ?>" />
 
 			<!-- Row start -->
 			<div class="row gutters">
@@ -570,7 +604,9 @@ if (sizeof($getLoanCalculation) > 0) {
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="LoanCategory"> Loan Category </label>
-										<input type="text" class="form-control" id="loan_category" name="loan_category" readonly tabindex='12'>
+										<input type="text" class="form-control" id="loan_category" name="loan_category" value="<?php if (isset($loan_category_lc)) {
+																																	echo $loan_category_lc;
+																																} ?>" readonly tabindex='12'>
 									</div>
 								</div>
 
@@ -630,6 +666,125 @@ if (sizeof($getLoanCalculation) > 0) {
 																														} ?>' readonly tabindex='17'>
 									</div>
 								</div>
+								<hr>
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+											<div class="form-group">
+												<label for="disabledInput">Profit Type</label>&nbsp;<span class="text-danger">*</span>
+												<input type="hidden" class="form-control" id="profit_type_ack" name="profit_type_ack" value="<?php echo $profit_type_lc; ?>">
+												<select tabindex="21" type="text" class="form-control" id="profit_type" name="profit_type">
+													<option value="">Select Profit Type</option>
+													<option value="1" <?php if (isset($profit_type_lc) and $profit_type_lc == '1') echo 'selected'; ?>>Calculation</option>
+													<option value="2" <?php if (isset($profit_type_lc) and $profit_type_lc == '2') echo 'selected'; ?>>Scheme</option>
+												</select>
+												<span class="text-danger" style='display:none' id='profit_typeCheck'>Please Select Profit Type</span>
+											</div>
+										</div>
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 calculation" style="display:none">
+											<div class="form-group">
+												<label for="disabledInput">Due Method</label>&nbsp;<span class="text-danger">*</span>
+												<input tabindex="22" type="text" class="form-control" id="due_method_calc" name="due_method_calc" readonly value='Monthly'>
+											</div>
+										</div>
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 calculation" style="display:none">
+											<div class="form-group">
+												<label for="disabledInput">Due Type</label>&nbsp;<span class="text-danger">*</span>
+												<input tabindex="23" type="text" class="form-control" id="due_type" name="due_type" readonly value='<?php if (isset($due_type)) echo $due_type; ?>'>
+											</div>
+										</div>
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emi-calculation" style="display:none">
+											<div class="form-group">
+												<label for="disabledInput">Profit Method</label>&nbsp;<span class="text-danger">*</span>
+												<input type="hidden" class="form-control" id="profit_method_ack" name="profit_method_ack" value='<?php if (isset($profit_method_lc)) echo $profit_method_lc;?>'>
+												<select tabindex="24" type="text" class="form-control" id="profit_method" name="profit_method">
+													<option value="">Select Profit Method</option>
+												</select>
+												<span class="text-danger" style='display:none' id='profit_methodCheck'>Please Select Profit Method</span>
+											</div>
+										</div>
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 interest-calculation" style="display:none">
+											<div class="form-group">
+												<label for="disabledInput">Calculation Method</label>&nbsp;<span class="text-danger">*</span>
+												<input tabindex="25" type="text" class="form-control" id="calc_method" name="calc_method" readonly value='<?php if (isset($calc_method)) echo $calc_method; ?>'>
+											</div>
+										</div>
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 scheme" style="display:none">
+											<div class="form-group">
+												<label for="disabledInput">Due Method</label>&nbsp;<span class="text-danger">*</span>
+												<input type="hidden" class="form-control" id="due_method_scheme_ack" name="due_method_scheme_ack" value="<?php echo $due_method_scheme_lc; ?>">
+												<select tabindex="26" type="text" class="form-control" id="due_method_scheme" name="due_method_scheme">
+													<option value="">Select Due Method</option>
+													<option value="1" <?php if (isset($due_method_scheme_lc) and $due_method_scheme_lc == '1') echo 'selected'; ?>>Monthly</option>
+													<option value="2" <?php if (isset($due_method_scheme_lc) and $due_method_scheme_lc == '2') echo 'selected'; ?>>Weekly</option>
+													<option value="3" <?php if (isset($due_method_scheme_lc) and $due_method_scheme_lc == '3') echo 'selected'; ?>>Daily</option>
+												</select>
+												<span class="text-danger" style='display:none' id='due_method_schemeCheck'>Please Select Due Method</span>
+											</div>
+										</div>
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 day_scheme" style="display:none">
+											<div class="form-group">
+												<label for="disabledInput">Day</label>&nbsp;<span class="text-danger">*</span>
+												<input type="hidden" class="form-control" id="day_scheme_ack" name="day_scheme_ack" value="<?php echo $day_scheme_lc; ?>">
+												<select tabindex="27" type="text" class="form-control" id="day_scheme" name="day_scheme">
+													<option value="">Select a Day</option>
+													<option value="1" <?php if (isset($day_scheme_lc) and $day_scheme_lc == '1') echo 'selected'; ?>>Monday</option>
+													<option value="2" <?php if (isset($day_scheme_lc) and $day_scheme_lc == '2') echo 'selected'; ?>>Tuesday</option>
+													<option value="3" <?php if (isset($day_scheme_lc) and $day_scheme_lc == '3') echo 'selected'; ?>>Wednesdat</option>
+													<option value="4" <?php if (isset($day_scheme_lc) and $day_scheme_lc == '4') echo 'selected'; ?>>Thursday</option>
+													<option value="5" <?php if (isset($day_scheme_lc) and $day_scheme_lc == '5') echo 'selected'; ?>>Friday</option>
+													<option value="6" <?php if (isset($day_scheme_lc) and $day_scheme_lc == '6') echo 'selected'; ?>>Saturday</option>
+													<option value="7" <?php if (isset($day_scheme_lc) and $day_scheme_lc == '7') echo 'selected'; ?>>Sunday</option>
+												</select>
+												<span class="text-danger" style='display:none' id='day_schemeCheck'>Please Select Day</span>
+											</div>
+										</div>
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 scheme" style="display:none">
+											<div class="form-group">
+												<label for="disabledInput">Scheme Name</label>&nbsp;<span class="text-danger">*</span>
+												<input type="hidden" class="form-control" id="scheme_name_ack" name="scheme_name_ack" value="<?php echo $scheme_name_lc; ?>">
+												<select tabindex="28" type="text" class="form-control" id="scheme_name" name="scheme_name">
+													<option value="">Select Scheme Name</option>
+												</select>
+												<span class="text-danger" style='display:none' id='scheme_nameCheck'>Please Select Scheme Name</span>
+											</div>
+										</div>
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 scheme-calculation" style="display:none">
+											<div class="form-group">
+												<label for="scheme_profit_method">Profit Method</label>&nbsp;<span class="text-danger">*</span>
+												<input type="hidden" class="form-control" id="profit_method_scheme_ack" name="profit_method_scheme_ack" value="<?php echo $profit_method_scheme_lc; ?>">
+												<select tabindex="25" type="text" class="form-control" id="scheme_profit_method" name="scheme_profit_method">
+													<option value="">Select Profit Method</option>
+												</select>
+												<span class="text-danger" style='display:none' id='scheme_methodCheck'>Please Select Profit Method</span>
+											</div>
+										</div>
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+											<div class="form-group">
+												<label for="disabledInput">Interest Rate </label>&nbsp;<span class="text-danger min-max-int">*</span><!-- Min and max intrest rate-->
+												<input tabindex="29" type="text" class="form-control" id="int_rate" name="int_rate" value='<?php if (isset($int_rate)) echo $int_rate; ?>'>
+												<span class="text-danger" style='display:none' id='int_rateCheck'>Please Enter Interest Rate</span>
+											</div>
+										</div>
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+											<div class="form-group">
+												<label for="disabledInput">Due Period </label>&nbsp;<span class="text-danger min-max-due">*</span><!-- Min and max Profit Method-->
+												<input tabindex="30" type="text" class="form-control" id="due_period" name="due_period" value=''>
+												<span class="text-danger" style='display:none' id='due_periodCheck'>Please Enter Due Period</span>
+											</div>
+										</div>
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+											<div class="form-group">
+												<label for="disabledInput">Document Charges </label>&nbsp;<span class="text-danger min-max-doc">*</span><!-- Min and max Document charges-->
+												<input tabindex="31" type="text" class="form-control" id="doc_charge" name="doc_charge" value='<?php if (isset($doc_charge)) echo $doc_charge; ?>'>
+												<span class="text-danger" style='display:none' id='doc_chargeCheck'>Please Enter Document Charge</span>
+											</div>
+										</div>
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+											<div class="form-group">
+												<label for="disabledInput">Processing Fees</label>&nbsp;<span class="text-danger min-max-proc">*</span><!-- Min and max Processing fee-->
+												<input tabindex="32" type="text" class="form-control" id="proc_fee" name="proc_fee" value='<?php if (isset($proc_fee)) echo $proc_fee; ?>'>
+												<span class="text-danger" style='display:none' id='proc_feeCheck'>Please Enter Processing fee</span>
+											</div>
+										</div>
 
 							</div>
 						</div>
@@ -638,7 +793,7 @@ if (sizeof($getLoanCalculation) > 0) {
 
 					<!-- Loan Calculation Start -->
 					<div class="card">
-						<div class="card-header">Loan Calculation <span style="font-weight:bold" class=""></span></div>
+						<div class="card-header">Loan Calculation <span style="font-weight:bold" class=""></span><input type="button" class="btn btn-outline-secondary text-right" id="refresh_cal" name="refresh_cal" value='Calculate' style="float:right"></div>
 						<div class="card-body">
 							<div class="row">
 								<div class="col-md-12">

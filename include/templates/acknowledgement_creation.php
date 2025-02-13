@@ -2307,7 +2307,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emi-calculation" style="display:none">
 											<div class="form-group">
 												<label for="disabledInput">Profit Method</label>&nbsp;<span class="text-danger">*</span>
-												<input type="hidden" class="form-control" id="profit_method_ack" name="profit_method_ack">
+												<input type="hidden" class="form-control" id="profit_method_ack" name="profit_method_ack" value='<?php if (isset($profit_method_lc)) echo $profit_method_lc;?>'>
 												<select tabindex="24" type="text" class="form-control" id="profit_method" name="profit_method">
 													<option value="">Select Profit Method</option>
 												</select>
@@ -2406,7 +2406,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 					<!-- Loan info End -->
 					<!-- Loan Calculation Start -->
 					<div class="card">
-						<div class="card-header">Loan Calculation <span style="font-weight:bold" class=""></span><!--<input type="button" class="btn btn-outline-secondary text-right" id="refresh_cal" name="refresh_cal" value='Calculate' style="float:right">--></div>
+						<div class="card-header">Loan Calculation <span style="font-weight:bold" class=""></span><input type="button" class="btn btn-outline-secondary text-right" id="refresh_cal" name="refresh_cal" value='Calculate' style="float:right"></div>
 						<div class="card-body">
 							<div class="row">
 								<div class="col-md-12">
