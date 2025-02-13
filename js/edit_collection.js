@@ -1,22 +1,22 @@
-const subStatusMultiselect = new Choices('#sub_status_mapping', {
-    removeItemButton: true,
-    noChoicesText: 'Select Customer Status',
-    allowHTML: true
-});
+// const subStatusMultiselect = new Choices('#sub_status_mapping', {
+//     removeItemButton: true,
+//     noChoicesText: 'Select Customer Status',
+//     allowHTML: true
+// });
 
 $(document).ready(function () {
-    let Cus_Sts=$("#customer_status").val();
-    let Customer_Sts = Cus_Sts.split(',');
+    // let Cus_Sts=$("#customer_status").val();
+    // let Customer_Sts = Cus_Sts.split(',');
     
-    if(Customer_Sts!=''){
-        getcustomerStatustable(Customer_Sts);
-        getSubStsMapping();
-    }
-   
-    $('#get_cus_sts_btn').click(function () {
-        let Customer_Status=$("#sub_status_mapping").val();
-        getcustomerStatustable(Customer_Status);
-    })
+    // if(Customer_Sts!=''){
+    //     getcustomerStatustable(Customer_Sts);
+    //     getSubStsMapping();
+    // }
+ 
+    // $('#get_cus_sts_btn').click(function () {
+    //     let Customer_Status=$("#sub_status_mapping").val();
+    //     getcustomerStatustable(Customer_Status);
+    // })
    
 
 
@@ -24,11 +24,12 @@ $(document).ready(function () {
 
 
 $(function(){
-    getSubStsMapping();
+    // getSubStsMapping();
+    getcustomerStatustable();
 })
 
-function getcustomerStatustable(Customer_status){
-    if(Customer_status){
+function getcustomerStatustable(){
+    // if(Customer_status){
             
         $('#collection_table').DataTable().destroy();
          $('#collection_table').DataTable({
@@ -43,7 +44,7 @@ function getcustomerStatustable(Customer_status){
                     'data': function(data) {
                         var search = $('#search').val();
                         data.search = search;
-                        data.Customer_status=Customer_status;
+                       // data.Customer_status=Customer_status;
                     }
                 },
                 dom: 'lBfrtip',
@@ -66,29 +67,29 @@ function getcustomerStatustable(Customer_status){
                 
             });
             $(".table-responsive").show();
-            $(".subStatusCheck").hide();
+          //  $(".subStatusCheck").hide();
 
-        }
-        else{
-            $(".subStatusCheck").show();
-        }
+        // }
+        // else{
+        //     $(".subStatusCheck").show();
+        // }
 }
 
-function getSubStsMapping() {
-    let subStatus =['Legal','Error','OD','Pending','Current'];
-    let editSubStatus = $('#customer_status').val()||'';
+// function getSubStsMapping() {
+//     let subStatus =['Legal','Error','OD','Pending','Current'];
+//     let editSubStatus = $('#customer_status').val()||'';
 
-    subStatusMultiselect.clearStore();
-    $.each(subStatus, function(index, val){
-        let selected = '';
-        if(editSubStatus.includes(val)){
-            selected = 'selected';
-        }
-        let items = [
-            {value: val, label: val, selected: selected},
-        ]
-        subStatusMultiselect.setChoices(items);
-        subStatusMultiselect.init();
-    });
+//     subStatusMultiselect.clearStore();
+//     $.each(subStatus, function(index, val){
+//         let selected = '';
+//         if(editSubStatus.includes(val)){
+//             selected = 'selected';
+//         }
+//         let items = [
+//             {value: val, label: val, selected: selected},
+//         ]
+//         subStatusMultiselect.setChoices(items);
+//         subStatusMultiselect.init();
+//     });
 
-}
+// }

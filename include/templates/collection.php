@@ -8,7 +8,7 @@ $idupd = 0;
 if (isset($_GET['upd'])) {
 	$idupd = $_GET['upd'];
 	$cusidupd = $_GET['cusidupd'];
-	$customerStatus = $_GET['customerStatus'];  
+	// $customerStatus = $_GET['customerStatus'];  
 }
 if ($idupd > 0) {
 	$getLoanList = $userObj->getLoanList($mysqli, $idupd);
@@ -86,7 +86,7 @@ if ($idupd > 0) {
 </div>
 <br>
 <div class="text-right" style="margin-right: 25px;">
-	<a href="edit_collection&CustomerStatus=<?php echo $customerStatus ?>">
+	<a href="edit_collection">
 		<button type="button" class="btn btn-primary back-button"><span class="icon-arrow-left"></span>&nbsp; Back</button>
 	</a>
 	<button class="btn btn-primary" id='close_collection_card'>&times;&nbsp;&nbsp;Cancel</button>

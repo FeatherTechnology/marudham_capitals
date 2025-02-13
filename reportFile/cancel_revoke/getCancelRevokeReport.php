@@ -15,7 +15,7 @@ if (isset($_SESSION["userid"])) {
     $userid = $_SESSION["userid"];
 }
 $cus_status = "";
-
+$role_arr = [1 => 'Director', 2 => 'Agent', 3 => 'Staff'];
 // Check if type and sel_screen are selected by the user
 if (isset($_POST['type']) && isset($_POST['sel_screen'])) {
     $type = $_POST['type'];
@@ -47,9 +47,8 @@ if (isset($_POST['type']) && isset($_POST['sel_screen'])) {
                 break;
         }
     }
+}   // Append the cus_status condition if it's set
 
-   }   // Append the cus_status condition if it's set
- 
 
 
 
@@ -121,8 +120,8 @@ $column = array(
     'lcc.loan_category_creation_name',
     'req.sub_category',
     'req.loan_amt',
-    'req.user_type',
-    'req.user_name',
+    'u.role',
+    'u.fullname',
     'req.req_id',
     'req.responsible',
     'req.cus_data',
@@ -134,7 +133,9 @@ $query = "SELECT
     al.area_name,
     sal.sub_area_name,
     lcc.loan_category_creation_name,
-    ag.ag_name
+    ag.ag_name,
+    u.role,
+    u.fullname
 FROM 
     request_creation req 
 JOIN 
@@ -145,6 +146,9 @@ JOIN
     loan_category_creation lcc ON req.loan_category = lcc.loan_category_creation_id
 LEFT JOIN 
     agent_creation ag ON req.agent_id = ag.ag_id
+             
+JOIN user u ON req.update_login_id = u.user_id
+    
 LEFT JOIN 
     customer_profile cp ON req.req_id = cp.req_id
 WHERE 
@@ -157,6 +161,8 @@ if (isset($_POST['search'])) {
         $query .= " and (req.cus_id LIKE '%" . $_POST['search'] . "%' OR
                 req.cus_name LIKE '%" . $_POST['search'] . "%' OR
                 al.area_name LIKE '%" . $_POST['search'] . "%' OR
+                u.role LIKE '%" . $_POST['search'] . "%' OR
+                u.fullname LIKE '%" . $_POST['search'] . "%' OR
                 lcc.loan_category_creation_name LIKE '%" . $_POST['search'] . "%' OR
                 req.cus_data LIKE '%" . $_POST['search'] . "%' ) ";
     }
@@ -201,8 +207,8 @@ foreach ($result as $row) {
     $sub_array[] = $row['loan_category_creation_name'];
     $sub_array[] = $row['sub_category'];
     $sub_array[] = moneyFormatIndia($row['loan_amt']);
-    $sub_array[] = $row['user_type'];
-    $sub_array[] = $row['user_name'];
+    $sub_array[] = $role_arr[$row['role']];
+    $sub_array[] = $row['fullname'];
     $sub_array[] = $row['ag_name'];
     $sub_array[] = ($row['responsible'] == 0) ? 'Yes' : 'No';
     $sub_array[] = $row['cus_data'];
