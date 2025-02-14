@@ -767,7 +767,7 @@ if (sizeof($getLoanCalculation) > 0) {
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
 												<label for="disabledInput">Due Period </label>&nbsp;<span class="text-danger min-max-due">*</span><!-- Min and max Profit Method-->
-												<input tabindex="30" type="text" class="form-control" id="due_period" name="due_period" value=''>
+												<input tabindex="30" type="text" class="form-control" id="due_period" name="due_period">
 												<span class="text-danger" style='display:none' id='due_periodCheck'>Please Enter Due Period</span>
 											</div>
 										</div>
@@ -865,7 +865,7 @@ if (sizeof($getLoanCalculation) > 0) {
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
 												<label for="disabledInput">Due Start From</label>&nbsp;<span class="text-danger">*</span>
-												<input type="hidden" class="form-control" id="due_period" name="due_period" value='<?php if (isset($due_period_lc)) echo $due_period_lc; ?>'>
+											
 												<input type="hidden" class="form-control" id="profit_type" name="profit_type" value='<?php if (isset($profit_type_lc)) echo $profit_type_lc; ?>'>
 												<input type="hidden" class="form-control" id="due_method_calc" name="due_method_calc" value='Monthly'>
 												<input type="hidden" class="form-control" id="due_method_scheme" name="due_method_scheme" value='<?php if (isset($due_method_scheme_lc)) echo $due_method_scheme_lc; ?>'>
