@@ -3,29 +3,24 @@
 session_start();
 include '../../ajaxconfig.php';
 
-$where = "";
-
-if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'] != '' && $_POST['to_date'] != '') {
-    $from_date = date('Y-m-d', strtotime($_POST['from_date']));
-    $to_date = date('Y-m-d', strtotime($_POST['to_date']));
-    $where  = "and (date(cs.created_date) >= '" . $from_date . "') and (date(cs.created_date) <= '" . $to_date . "') ";
-}
-
 if (isset($_SESSION["userid"])) {
     $userid = $_SESSION["userid"];
+    $report_access = '2'; //if super Admin login use need to show overall.
 }
+
 if ($userid != 1) {
 
-    $userQry = $connect->query("SELECT * FROM USER WHERE user_id = $userid ");
-    while ($rowuser = $userQry->fetch()) {
+    $userQry = $connect->query("SELECT group_id, line_id, report_access FROM USER WHERE user_id = $userid ");
+    $rowuser = $userQry->fetch();
         $group_id = $rowuser['group_id'];
         $line_id = $rowuser['line_id'];
-    }
+        $report_access = $rowuser['report_access'];
+    
 
     $line_id = explode(',', $line_id);
     $sub_area_list = array();
     foreach ($line_id as $line) {
-        $lineQry = $connect->query("SELECT * FROM area_line_mapping where map_id = $line ");
+        $lineQry = $connect->query("SELECT sub_area_id FROM area_line_mapping where map_id = $line ");
         $row_sub = $lineQry->fetch();
         $sub_area_list[] = $row_sub['sub_area_id'];
     }
@@ -36,6 +31,21 @@ if ($userid != 1) {
     $sub_area_list = array();
     $sub_area_list = implode(',', $sub_area_ids);
 }
+
+if($report_access =='1'){
+    $user_based = "AND cs.insert_login_id = '".$userid."'";
+}else{
+    $user_based = "";
+}
+
+$where = "";
+
+if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'] != '' && $_POST['to_date'] != '') {
+    $from_date = date('Y-m-d', strtotime($_POST['from_date']));
+    $to_date = date('Y-m-d', strtotime($_POST['to_date']));
+    $where  = "and (date(cs.created_date) >= '" . $from_date . "') and (date(cs.created_date) <= '" . $to_date . "') $user_based ";
+}
+
 $closed_sts_arr = [
     '1' => 'Consider',
     '2' => 'Waiting List',

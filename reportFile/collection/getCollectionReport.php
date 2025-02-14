@@ -18,7 +18,7 @@ if ($userid != 1) {
     $line_id = explode(',', $line_id);
     $sub_area_list = array();
     foreach ($line_id as $line) {
-        $lineQry = $connect->query("SELECT * FROM area_line_mapping where map_id = $line ");
+        $lineQry = $connect->query("SELECT sub_area_id FROM area_line_mapping WHERE map_id = $line ");
         $row_sub = $lineQry->fetch();
         $sub_area_list[] = $row_sub['sub_area_id'];
     }
@@ -33,7 +33,7 @@ if ($userid != 1) {
 $where = "1";
 
 if($report_access =='1'){
-    $user_based = "coll.insert_login_id = '".$userid."'";
+    $user_based = "AND coll.insert_login_id = '".$userid."'";
 }else{
     $user_based = "";
 }
@@ -127,12 +127,7 @@ $query = "SELECT
 
             WHERE req.cus_status >= 14 
             AND $where
-            AND cp.area_confirm_subarea IN ($sub_area_list) 
-            AND (
-                coll.trans_date = '0000-00-00' 
-                OR (coll.trans_date BETWEEN '$from_date' AND '$to_date')
-            )";
-
+            AND cp.area_confirm_subarea IN ($sub_area_list) ";
 
 if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {
@@ -148,7 +143,7 @@ if (isset($_POST['search'])) {
     }
 }
 
-$query .= " GROUP BY coll.req_id ";
+$query .= " GROUP BY coll.coll_id ";
 
 
 if (isset($_POST['order'])) {
@@ -191,11 +186,7 @@ foreach ($result as $row) {
     $sub_array[] = $row['ag_name'];
     $sub_array[] = $role_arr[$row['role']];
     $sub_array[] = $row['fullname'];
-    if ($row['trans_date'] != '0000-00-00') {
-        $sub_array[] = date('d-m-Y', strtotime($row['trans_date']));
-    } else {
-        $sub_array[] = date('d-m-Y', strtotime($row['coll_date']));
-    }
+    $sub_array[] = date('d-m-Y', strtotime($row['coll_date']));
     $sub_array[] = $coll_arr[$row['coll_mode']];
     if ($row['due_type'] != 'Interest') {
         //to get the principal and interest amt separate in due amt paid
