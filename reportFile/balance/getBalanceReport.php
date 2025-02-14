@@ -3,23 +3,15 @@
 session_start();
 include '../../ajaxconfig.php';
 
-$where = "";
-$li_where = "";
-if (isset($_POST['to_date']) && $_POST['to_date'] != '') {
-    $to_date = date('Y-m-d', strtotime($_POST['to_date']));
-    $where  = " WHERE (date(coll_date) <= '$to_date')";
-    $li_where  = "AND date(li.created_date) <= date('$to_date') AND balance_amount = '0'";
-}else{
-    $to_date = date('Y-m-d');
-}
-
 $userid = $_SESSION["userid"] ?? null;
+$report_access = '2'; //if super Admin login use need to show overall.
 
 $sub_area_list = '';
 if ($userid && $userid != 1) {
-    $userQry = $connect->query("SELECT group_id, line_id FROM USER WHERE user_id = $userid");
+    $userQry = $connect->query("SELECT line_id, report_access FROM USER WHERE user_id = $userid");
     $user = $userQry->fetch();
     if ($user) {
+        $report_access = $rowuser['report_access'];
         $line_id = explode(',', $user['line_id']);
         $sub_area_list = [];
         foreach ($line_id as $line) {
@@ -30,6 +22,22 @@ if ($userid && $userid != 1) {
         }
         $sub_area_list = implode(',', array_unique($sub_area_list));
     }
+}
+
+if($report_access =='1'){
+    $user_based = "AND li.insert_login_id = '".$userid."'";
+}else{
+    $user_based = "";
+}
+
+$where = "";
+$li_where = "";
+if (isset($_POST['to_date']) && $_POST['to_date'] != '') {
+    $to_date = date('Y-m-d', strtotime($_POST['to_date']));
+    $where  = " WHERE (date(coll_date) <= '$to_date')";
+    $li_where  = "AND date(li.created_date) <= date('$to_date') AND balance_amount = '0' $user_based ";
+}else{
+    $to_date = date('Y-m-d');
 }
 
 $statusObj = [
@@ -182,8 +190,16 @@ foreach ($result as $row) {
         intVal($row['tot_amt_cal']) - intVal($row['due_amt_track']) :
         intVal($row['principal_amt_cal']) - intVal($row['princ_amt_track']);
 
-    $princ_amt = intVal($row['principal_amt_cal']) / $row['due_period'];
-    $int_amt = intVal($row['int_amt_cal']) / $row['due_period'];
+        $due_period = intVal($row['due_period']);
+
+        if ($due_period > 0) {
+            $princ_amt = intVal($row['principal_amt_cal']) / $due_period;
+            $int_amt = intVal($row['int_amt_cal']) / $due_period;
+        } else {
+            $princ_amt = 0;  // Or any default value
+            $int_amt = 0;    // Or any default value
+        }
+        
     $response = calculatePrincipalAndInterest($princ_amt, $int_amt, $balance_amt);
 
     if (intVal($response['principal_paid']) > intVal($row['loan_amt_cal'])) {

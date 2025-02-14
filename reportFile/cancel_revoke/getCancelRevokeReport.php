@@ -2,18 +2,47 @@
 session_start();
 include '../../ajaxconfig.php';
 
+if (isset($_SESSION["userid"])) {
+    $userid = $_SESSION["userid"];
+    $report_access = '2'; //if super Admin login use need to show overall.
+}
+
+if ($userid != 1) {
+
+    $userQry = $connect->query("SELECT group_id, report_access FROM USER WHERE user_id = $userid ");
+    $rowuser = $userQry->fetch();
+        $group_id = $rowuser['group_id'];
+        $report_access = $rowuser['report_access'];
+    
+    $group_id = explode(',', $group_id);
+    $sub_area_list = array();
+    foreach ($group_id as $group) {
+        $groupQry = $connect->query("SELECT sub_area_id FROM area_group_mapping WHERE map_id = $group ");
+        $row_sub = $groupQry->fetch();
+        $sub_area_list[] = $row_sub['sub_area_id'];
+    }
+    $sub_area_ids = array();
+    foreach ($sub_area_list as $subarray) {
+        $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
+    }
+    $sub_area_list = array();
+    $sub_area_list = implode(',', $sub_area_ids);
+}
 
 $where = "1";
+
+if($report_access =='1'){
+    $user_based = "AND req.update_login_id = '".$userid."'";
+}else{
+    $user_based = "";
+}
 
 if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'] != '' && $_POST['to_date'] != '') {
     $from_date = date('Y-m-d', strtotime($_POST['from_date']));
     $to_date = date('Y-m-d', strtotime($_POST['to_date']));
-    $where  = "(date(req.dor) >= '" . $from_date . "') and (date(req.dor) <= '" . $to_date . "') ";
+    $where  = "(date(req.dor) >= '" . $from_date . "') and (date(req.dor) <= '" . $to_date . "') $user_based ";
 }
 
-if (isset($_SESSION["userid"])) {
-    $userid = $_SESSION["userid"];
-}
 $cus_status = "";
 $role_arr = [1 => 'Director', 2 => 'Agent', 3 => 'Staff'];
 // Check if type and sel_screen are selected by the user
@@ -49,29 +78,6 @@ if (isset($_POST['type']) && isset($_POST['sel_screen'])) {
     }
 }   // Append the cus_status condition if it's set
 
-
-
-
-if ($userid != 1) {
-
-    $userQry = $connect->query("SELECT * FROM USER WHERE user_id = $userid ");
-    while ($rowuser = $userQry->fetch()) {
-        $group_id = $rowuser['group_id'];
-    }
-    $group_id = explode(',', $group_id);
-    $sub_area_list = array();
-    foreach ($group_id as $group) {
-        $groupQry = $connect->query("SELECT * FROM area_group_mapping where map_id = $group ");
-        $row_sub = $groupQry->fetch();
-        $sub_area_list[] = $row_sub['sub_area_id'];
-    }
-    $sub_area_ids = array();
-    foreach ($sub_area_list as $subarray) {
-        $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
-    }
-    $sub_area_list = array();
-    $sub_area_list = implode(',', $sub_area_ids);
-}
 if ($cus_status != "") {
     // Updated WHERE clause
     $where .= " AND (
