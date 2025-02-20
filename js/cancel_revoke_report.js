@@ -81,7 +81,7 @@ function cancelRevokeTable(){
         dom: 'lBfrtip',
         buttons: [{
             extend: 'excel',
-            title: "Request Report List"
+            title: "Cancel / Revoke Report List"
         },
         {
             extend: 'colvis',

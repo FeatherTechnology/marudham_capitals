@@ -45,9 +45,11 @@
 									<th>User</th>
 									<th>Receipt Date</th>
 									<th>Collection Mode</th>
+									<th>Bank Name</th>
+									<th>Transaction Date</th>
 									<th>Due Amount</th>
-									<th>Principal Amount</th>
-									<th>Interest Amount</th>
+									<!-- <th>Principal Amount</th>
+									<th>Interest Amount</th> -->
 									<th>Penalty</th>
 									<th>Fine</th>
 									<th>Total Paid</th>

@@ -8,7 +8,9 @@ $(document).ready(function () {
 
     $('#show_due_followup').click(function(){
         let cusSts = $("#sub_status_mapping").val();
-        OnLoadFunctions(cusSts);
+        let comm_date = $("#comm_date").val();
+
+        OnLoadFunctions(cusSts,comm_date);
     });
 });
 
@@ -22,8 +24,17 @@ $(function(){
         OnLoadFunctions(cusSts);
     }
 });
-
-function OnLoadFunctions(cusSts) {
+function warningSwal(title, text) {
+    Swal.fire({
+        title: title,
+        html: text,
+        icon: 'warning',
+        showConfirmButton: false,
+        timerProgressBar: true,
+        timer: 2000,
+    });
+}
+function OnLoadFunctions(cusSts,comm_date = '') {
     if(cusSts){
         $('#due_followup_table').DataTable().destroy();
         $('#due_followup_table').DataTable({
@@ -37,6 +48,7 @@ function OnLoadFunctions(cusSts) {
                     var search = $('#search').val();
                     data.search = search;
                     data.cus_sts = cusSts;
+                    data.comm_date = comm_date ? comm_date : null; // Pass comm_date or null if empty
                 }
             },
             dom: 'lBfrtip',
@@ -63,6 +75,9 @@ function OnLoadFunctions(cusSts) {
                 searchFunction('due_followup_table')
             }
         });
+    }
+    else{
+        warningSwal('Warning!', 'Select Customer Status.');
     }
 }
 

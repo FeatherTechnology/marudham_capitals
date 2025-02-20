@@ -1239,6 +1239,9 @@
     if ($current_page == 'collection_report') { ?>
         <script src="js/collection_report.js"></script>
     <?php }
+     if ($current_page == 'principal_interest_report') { ?>
+        <script src="js/principal_interest_report.js"></script>
+    <?php }
     if ($current_page == 'closed_report') { ?>
         <script src="js/closed_report.js"></script>
     <?php }

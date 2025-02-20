@@ -11,7 +11,7 @@ if ($userid && $userid != 1) {
     $userQry = $connect->query("SELECT line_id, report_access FROM USER WHERE user_id = $userid");
     $user = $userQry->fetch();
     if ($user) {
-        $report_access = $rowuser['report_access'];
+        $report_access = $user['report_access'];
         $line_id = explode(',', $user['line_id']);
         $sub_area_list = [];
         foreach ($line_id as $line) {

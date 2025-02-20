@@ -438,7 +438,10 @@ if (isset($getuserdetails['download_access'])) {
 			<?php if ($current_page == 'collection_report') { ?>
 				<?php include "include/templates/collection_report.php" ?>
 			<?php } else ?>
-
+			<!-- Principal and Interest Report -->
+			<?php if ($current_page == 'principal_interest_report') { ?>
+				<?php include "include/templates/principal_interest_report.php" ?>
+			<?php } else ?>
 			<!-- Closed Report -->
 			<?php if ($current_page == 'closed_report') { ?>
 				<?php include "include/templates/closed_report.php" ?>

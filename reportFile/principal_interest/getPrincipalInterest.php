@@ -38,23 +38,19 @@ if ($report_access == '1') {
     $user_based = "";
 }
 
-if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'] != '' && $_POST['to_date'] != '') {
-    $from_date = date('Y-m-d', strtotime($_POST['from_date']));
-    $to_date = date('Y-m-d', strtotime($_POST['to_date']));
-    $where  = "(date(coll.coll_date) >= '" . $from_date . "') and (date(coll.coll_date) <= '" . $to_date . "') $user_based";
+if (isset($_POST['from_date']) && $_POST['from_date'] != '') {
+    // Convert the input dates to month and year format
+    $from_month = date('m', strtotime($_POST['from_date']));  // Extract month from from_date
+    $from_year = date('Y', strtotime($_POST['from_date']));   // Extract year from from_date
+    // $to_month = date('m', strtotime($_POST['to_date']));      // Extract month from to_date
+    // $to_year = date('Y', strtotime($_POST['to_date']));       // Extract year from to_date
+
+    // Prepare WHERE condition to compare month and year
+    $where  = "((YEAR(coll.coll_date) ='" . $from_year . "' AND MONTH(coll.coll_date) = '" . $from_month . "')) $user_based";
 }
 
-$statusObj = [
-    '14' => 'Current',
-    '15' => 'Error',
-    '16' => 'Legal',
-    '17' => 'Current',
-    '20' => 'In Closed',
-    '21' => 'Closed',
-];
 $consider_lvl_arr = [1 => 'Bronze', 2 => 'Silver', 3 => 'Gold', 4 => 'Platinum', 5 => 'Diamond'];
 $role_arr = [1 => 'Director', 2 => 'Agent', 3 => 'Staff'];
-$coll_arr = [1 => 'Cash', 2 => 'Cheque', 3 => 'ECS', 4 => 'IMPS/NEFT/RTGS', 5 => 'UPI Transaction'];
 
 $column = array(
     'cp.id',
@@ -71,13 +67,12 @@ $column = array(
     'u.role',
     'u.fullname',
     'coll.coll_date',
-    'coll.coll_mode',
-    'b.bank_name',
-    'coll.trans_date',
-    '(coll.due_amt_track)',
+    'SUM(coll.due_amt_track)',
+    'ii.id',
+    'ii.id',
     'SUM(coll.penalty_track)',
     'SUM(coll.coll_charge_track)',
-    '(coll.total_paid_track)',
+    'SUM(coll.total_paid_track)',
     'ii.id',
     'ii.id'
 );
@@ -103,13 +98,12 @@ $query = "SELECT
                 u.fullname,
                 coll.coll_date,
                 coll.trans_date,
-                b.bank_name,
-                (coll.due_amt_track) AS due_amt_track,
-                (coll.princ_amt_track) AS princ_amt_track,
-                (coll.int_amt_track) AS int_amt_track,
-                (coll.penalty_track) AS penalty_track,
-                (coll.coll_charge_track) AS coll_charge_track,
-                (coll.total_paid_track) AS total_paid_track,
+                SUM(coll.due_amt_track) AS due_amt_track,
+                SUM(coll.princ_amt_track) AS princ_amt_track,
+                SUM(coll.int_amt_track) AS int_amt_track,
+                SUM(coll.penalty_track) AS penalty_track,
+                SUM(coll.coll_charge_track) AS coll_charge_track,
+                SUM(coll.total_paid_track) AS total_paid_track,
                 req.cus_status,
                 cls.closed_sts,
                 cls.consider_level
@@ -121,7 +115,6 @@ $query = "SELECT
             JOIN sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
             JOIN acknowlegement_loan_calculation lc ON coll.req_id = lc.req_id
             JOIN request_creation req ON coll.req_id = req.req_id
-           LEFT JOIN bank_creation b ON coll.bank_id = b.id
             JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
              JOIN user u ON coll.insert_login_id = u.user_id
             LEFT JOIN agent_creation ac ON req.agent_id = ac.ag_id
@@ -141,13 +134,11 @@ if (isset($_POST['search'])) {
                     OR sal.sub_area_name LIKE '%" . $_POST['search'] . "%'
                     OR u.role LIKE '%" . $_POST['search'] . "%'
                     OR u.fullname LIKE '%" . $_POST['search'] . "%'
-                    OR b.bank_name LIKE '%" . $_POST['search'] . "%'
-                    OR coll.trans_date LIKE '%" . $_POST['search'] . "%'
                     OR coll.coll_date LIKE '%" . $_POST['search'] . "%') ";
     }
 }
 
-$query .= " GROUP BY coll.coll_id ";
+$query .= " GROUP BY coll.req_id ";
 
 
 if (isset($_POST['order'])) {
@@ -191,41 +182,22 @@ foreach ($result as $row) {
     $sub_array[] = $role_arr[$row['role']];
     $sub_array[] = $row['fullname'];
     $sub_array[] = date('d-m-Y', strtotime($row['coll_date']));
-    $sub_array[] = $coll_arr[$row['coll_mode']];
-    if ($row['coll_mode'] != 1) {
-        $sub_array[] = $row['bank_name'];
-        $sub_array[] = date('d-m-Y', strtotime($row['trans_date']));
-    } else {
-        $sub_array[] = '';
-        $sub_array[] = '';
-    }
      $sub_array[] = moneyFormatIndia(intVal($row['due_amt_track']));
+    if ($row['due_type'] != 'Interest') {
+        //to get the principal and interest amt separate in due amt paid
+        $response = calculatePrincipalAndInterest(intVal($row['principal_amt_cal']) / $row['due_period'], intVal($row['int_amt_cal']) / $row['due_period'], intVal($row['due_amt_track']));
+        $sub_array[] = moneyFormatIndia(intVal($response['principal_paid']));
+        $rounderd_int = intVal($row['due_amt_track']) - $response['principal_paid'];
+        $sub_array[] = moneyFormatIndia(intVal($rounderd_int));
+    } else {
+        //else if its interest loan we can empty due amt coz it will not be paid on that loan, direclty show princ and int
+        $sub_array[] = '';
+        $sub_array[] = moneyFormatIndia(intval($row['princ_amt_track']));
+        $sub_array[] = moneyFormatIndia(intval($row['int_amt_track']));
+    }
     $sub_array[] = moneyFormatIndia(intval($row['penalty_track']));
     $sub_array[] = moneyFormatIndia(intval($row['coll_charge_track']));
     $sub_array[] = moneyFormatIndia(intval($row['total_paid_track']));
-
-    if ($row['cus_status'] >= '20') {
-        $sub_array[] = 'Closed';
-        if ($row['closed_sts'] != '' && $row['closed_sts'] != NULL) {
-            $rclosed = $row['closed_sts'];
-            $consider_lvl = $row['consider_level'];
-            if ($rclosed == '1') {
-                $sub_array[] = 'Consider - ' . $consider_lvl_arr[$consider_lvl];
-            } else
-                    if ($rclosed == '2') {
-                $sub_array[] = 'Waiting List';
-            } else
-                    if ($rclosed == '3') {
-                $sub_array[] = 'Block List';
-            }
-        } else {
-            $sub_array[] = $statusObj[$row['cus_status']];
-        }
-    } else {
-        $sub_array[] = 'Present';
-        $sub_array[] = $statusObj[$row['cus_status']];
-    }
-
     $data[]      = $sub_array;
     $sno = $sno + 1;
 }
@@ -276,7 +248,34 @@ function moneyFormatIndia($num)
     return $thecash;
 }
 
+function calculatePrincipalAndInterest($principal,  $interest,  $paidAmount): array
+{
+    $principal_paid = 0;
+    $interest_paid = 0;
 
+    while ($paidAmount > 0) {
+        if ($paidAmount >= $principal) {
+            $principal_paid += $principal;
+            $paidAmount -= $principal;
+        } else {
+            $principal_paid += $paidAmount;
+            break;
+        }
+
+        if ($paidAmount >= $interest) {
+            $interest_paid += $interest;
+            $paidAmount -= $interest;
+        } else {
+            $interest_paid += $paidAmount;
+            break;
+        }
+    }
+
+    return [
+        'principal_paid' => (int) $principal_paid,
+        'interest_paid' => (int) $interest_paid
+    ];
+}
 
 // Close the database connection
 $connect = null;
