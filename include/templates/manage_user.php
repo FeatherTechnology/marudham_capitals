@@ -80,6 +80,7 @@ $cancel_revoke_report = '';
 $cus_profile_report = '';
 $loan_issue_report = '';
 $collection_report = '';
+$principal_interest_report = '';
 $balance_report = '';
 $due_list_report = '';
 $closed_report = '';
@@ -215,6 +216,7 @@ if($idupd>0)
 			$cus_profile_report          		     = $getUser['cus_profile_report'];
 			$loan_issue_report          		     = $getUser['loan_issue_report'];
 			$collection_report          		     = $getUser['collection_report'];
+			$principal_interest_report          		     = $getUser['principal_interest_report'];
 			$balance_report          		     = $getUser['balance_report'];
 			$due_list_report          		     = $getUser['due_list_report'];
 			$closed_report          		     = $getUser['closed_report'];
@@ -998,6 +1000,12 @@ if($idupd>0)
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($collection_report==0){ echo'checked'; }} ?> tabindex="66" class="report-checkbox" id="collection_report" name="collection_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="collection_report">Collection</label>
+                            </div>
+                        </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($principal_interest_report==0){ echo'checked'; }} ?> tabindex="66" class="report-checkbox" id="principal_interest_report" name="principal_interest_report" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="principal_interest_report">Principal / Interest</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">

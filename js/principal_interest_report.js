@@ -2,13 +2,6 @@ $(document).ready(function () {
     
     $('#from_date').change(function(){
         const fromDate = $(this).val();
-        const toDate = $('#to_date').val();
-        $('#to_date').attr('min', fromDate);
-
-         // Check if from_date is greater than to_date
-        if (toDate && fromDate > toDate) {
-            $('#to_date').val(''); // Clear the invalid value
-        }
     });
     
     //Collection Report Table
@@ -20,8 +13,8 @@ $(document).ready(function () {
 });
 
 function collectionReportTable(){
-    $('#collection_report_table').DataTable().destroy();
-    $('#collection_report_table').DataTable({
+    $('#principal_interest_table').DataTable().destroy();
+    $('#principal_interest_table').DataTable({
         "order": [
             [0, "desc"]
         ],
@@ -29,7 +22,7 @@ function collectionReportTable(){
         'serverSide': true,
         'serverMethod': 'post',
         'ajax': {
-            'url': 'reportFile/collection/getCollectionReport.php',
+            'url': 'reportFile/principal_interest/getPrincipalInterest.php',
             'data': function (data) {
                 var search = $('input[type=search]').val();
                 data.search = search;
@@ -40,7 +33,7 @@ function collectionReportTable(){
         dom: 'lBfrtip',
         buttons: [{
             extend: 'excel',
-            title: "Collection Report List"
+            title: "Principal/Interest Report List"
         },
         {
             extend: 'colvis',
@@ -63,7 +56,7 @@ function collectionReportTable(){
             };
 
             // Array of column indices to sum
-            var columnsToSum = [17, 18, 19, 20];
+            var columnsToSum = [14,15,16,17,18,19];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {
@@ -79,7 +72,7 @@ function collectionReportTable(){
             });
         },
         'drawCallback': function() {
-            searchFunction('collection_report_table');
+            searchFunction('principal_interest_table');
         }
     });
 }

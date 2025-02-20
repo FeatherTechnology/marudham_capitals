@@ -91,6 +91,7 @@ class admin
 			$detailrecords['cus_profile_report'] = strip_tags($row->cus_profile_report);
 			$detailrecords['loan_issue_report'] = strip_tags($row->loan_issue_report);
 			$detailrecords['collection_report'] = strip_tags($row->collection_report);
+			$detailrecords['principal_interest_report'] = strip_tags($row->principal_interest_report);
 			$detailrecords['balance_report'] = strip_tags($row->balance_report);
 			$detailrecords['due_list_report'] = strip_tags($row->due_list_report);
 			$detailrecords['closed_report'] = strip_tags($row->closed_report);
@@ -2631,6 +2632,11 @@ class admin
 		} else {
 			$collection_report = 1;
 		}
+		if (isset($_POST['principal_interest_report']) &&    $_POST['principal_interest_report'] == 'Yes') {
+			$principal_interest_report = 0;
+		} else {
+			$principal_interest_report = 1;
+		}
 		if (isset($_POST['balance_report']) &&    $_POST['balance_report'] == 'Yes') {
 			$balance_report = 0;
 		} else {
@@ -2699,7 +2705,7 @@ class admin
 		`doctrackmodule`,`doctrack`,`doc_rec_access`,`updatemodule`,`update_screen`,`concernmodule`, `concern_creation`, `concern_solution`,`concern_feedback`,
 		`accountsmodule`,`cash_tally`,`cash_tally_admin`,`bank_details`,`bank_clearance`,`finance_insight`,
 		`followupmodule`, `promotion_activity`, `loan_followup`, `confirmation_followup`, `due_followup`, `reportmodule`, `ledger_report`, 
-		`request_report`, `cancel_revoke_report`, `cus_profile_report`, `loan_issue_report`, `collection_report`, `balance_report`, `due_list_report`, `closed_report`, `agent_report`,
+		`request_report`, `cancel_revoke_report`, `cus_profile_report`, `loan_issue_report`, `collection_report`,`principal_interest_report`, `balance_report`, `due_list_report`, `closed_report`, `agent_report`,
 		`search_module`,`search`,`bulk_upload_module`, `bulk_upload`, `loan_track_module`, `loan_track`,`sms_module`,`sms_generation`,`insert_login_id`,`created_date`)
         VALUES('" . strip_tags($full_name) . "','" . strip_tags($email) . "','" . strip_tags($user_name) . "','" . strip_tags($user_password) . "','" . strip_tags($role) . "',
         '" . strip_tags($role_type) . "','" . strip_tags($dir_name) . "','" . strip_tags($ag_name) . "','" . strip_tags($staff_name) . "','" . strip_tags($company_id) . "',
@@ -2717,7 +2723,7 @@ class admin
 			"',
 		'" . strip_tags($reportmodule) . "', '" . strip_tags($ledger_report) . "', '" . strip_tags($request_report) . "', '" . strip_tags($cancel_revoke_report) . "', '" . strip_tags($cus_profile_report) . "', '" . strip_tags($loan_issue_report) .
 			"',
-		'" . strip_tags($collection_report) . "', '" . strip_tags($balance_report) . "', '" . strip_tags($due_list_report) . "', '" . strip_tags($closed_report) . "', '" . strip_tags($agent_report) . "',
+		'" . strip_tags($collection_report) . "','" . strip_tags($principal_interest_report) . "', '" . strip_tags($balance_report) . "', '" . strip_tags($due_list_report) . "', '" . strip_tags($closed_report) . "', '" . strip_tags($agent_report) . "',
 		'" . strip_tags($searchmodule) . "', '" . strip_tags($search_screen) . "','" . strip_tags($bulk_upload_module) . "', '" . strip_tags($bulk_upload) . "',
 		'" . strip_tags($loan_track_module) . "', '" . strip_tags($loan_track) . "','" . strip_tags($sms_module) . "','" . strip_tags($sms_generation) . "','" . strip_tags($userid) . "',now() )";
 		// echo $insertQry;die;
@@ -3090,6 +3096,11 @@ class admin
 		} else {
 			$collection_report = 1;
 		}
+		if (isset($_POST['principal_interest_report']) &&    $_POST['principal_interest_report'] == 'Yes') {
+			$principal_interest_report = 0;
+		} else {
+			$principal_interest_report = 1;
+		}
 		if (isset($_POST['balance_report']) &&    $_POST['balance_report'] == 'Yes') {
 			$balance_report = 0;
 		} else {
@@ -3176,7 +3187,7 @@ class admin
 	`confirmation_followup`='" . strip_tags($conf_followup) . "',`due_followup`='" . strip_tags($due_followup) . "',
 	`reportmodule` = '" . strip_tags($reportmodule) . "', `ledger_report` = '" . strip_tags($ledger_report) . "', `request_report` = '" . strip_tags($request_report) . "', `cancel_revoke_report` = '". strip_tags($cancel_revoke_report)."',
 	`cus_profile_report` = '" . strip_tags($cus_profile_report) . "', `loan_issue_report` = '" . strip_tags($loan_issue_report) . "', 
-	`collection_report` = '" . strip_tags($collection_report) . "', `balance_report` = '" . strip_tags($balance_report) .
+	`collection_report` = '" . strip_tags($collection_report) . "',`principal_interest_report` = '" . strip_tags($principal_interest_report) . "',  `balance_report` = '" . strip_tags($balance_report) .
 			"', 
 	`due_list_report` = '" . strip_tags($due_list_report) . "', `closed_report` = '" . strip_tags($closed_report) . "', `agent_report` = '" . strip_tags($agent_report) . "',
 	`search_module` = '" . strip_tags($searchmodule) . "', `search` = '" . strip_tags($search_screen) . "',`bulk_upload_module` = '" . strip_tags($bulk_upload_module) . "', `bulk_upload` = '" . strip_tags($bulk_upload) .

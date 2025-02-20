@@ -6,12 +6,21 @@ include_once('../../api/config-file.php');
 if (isset($_SESSION['userid'])) {
     $user_id = $_SESSION['userid'];
 }
-
+$currentMonth = date('m');
+$currentYear = date('Y');
 $sub_status_mapping = '';
 if (isset($_POST['cus_sts'])) {
     $sub_status_mapping = implode(',', $_POST['cus_sts']);
 }
-
+$comm_date = '';
+if(isset($_POST['comm_date'])){
+$comm_date = $_POST['comm_date']; // Get the comm_date from the form
+}
+// Check if comm_date is not empty and adjust the query accordingly
+$comm_date_condition = '';
+if (!empty($comm_date)) {
+    $comm_date_condition = "AND cm.comm_date = '$comm_date'";
+}
 if ($user_id != 1) {
 
     $userQry = $connect->query("SELECT group_id, line_id FROM USER WHERE user_id = $user_id ");
@@ -56,7 +65,10 @@ $query = "SELECT
         cp.mobile1,
         ii.cus_id AS ii_cus_id,
         ii.req_id,
-        cs.sub_status
+        cs.sub_status,
+        cm.comm_err,
+        cm.hint,
+        cm.comm_date
     FROM
         acknowlegement_customer_profile cp
     JOIN in_issue ii ON
@@ -69,7 +81,9 @@ $query = "SELECT
         cp.area_confirm_subarea = salc.sub_area_id
     JOIN area_line_mapping alm ON
         cp.area_line = alm.line_name 
-    WHERE cs.payable_amnt > 0 
+    LEFT  JOIN commitment cm ON
+        cp.req_id = cm.req_id 
+    WHERE cs.payable_amnt > 0 $comm_date_condition 
         AND FIND_IN_SET(cs.sub_status,'$sub_status_mapping') 
         AND ii.status = 0 
         AND (ii.cus_status >= 14 AND ii.cus_status <= 17) $search 
@@ -104,15 +118,46 @@ foreach ($result as $row) {
     $collDate = $connect->query("SELECT CASE WHEN DAYOFMONTH(coll_date) BETWEEN 26 AND 31 THEN '26-30' WHEN DAYOFMONTH(coll_date) BETWEEN 21 AND 25 THEN '21-25' WHEN DAYOFMONTH(coll_date) BETWEEN 16 AND 20 THEN '16-20' WHEN DAYOFMONTH(coll_date) BETWEEN 11 AND 15 THEN '11-15' ELSE '1-10' END AS date_range FROM collection WHERE cus_id='$cus_id' ORDER BY coll_id DESC LIMIT 1");
     $coll_date_qry = $collDate->fetch();
     $date_range = isset($coll_date_qry['date_range']) ? $coll_date_qry['date_range'] : '';
+    // Fetch collection date range
+    $collstatus = $connect->query("
+    SELECT 
+        COALESCE(SUM(payable_amt), 0) AS total_payable, 
+        COALESCE(SUM(due_amt_track), 0) AS total_due  
+    FROM 
+        collection 
+    WHERE 
+        cus_id = '$cus_id' 
+        AND YEAR(coll_date) = '$currentYear' 
+        AND MONTH(coll_date) = '$currentMonth'
+");
+    $coll_qry = $collstatus->fetch();
 
-    // Fetch commitment details
-    $sql = $connect->query("SELECT comm_date, hint, comm_err FROM commitment WHERE cus_id='$cus_id' ORDER BY id DESC LIMIT 1");
-    if ($sql->rowCount() > 0) {
-        $row1 = $sql->fetch();
-        $hint = $row1['hint'];
-        $comm_err = ($row1['comm_err'] == '1') ? 'Error' : (($row1['comm_err'] == '2') ? 'Clear' : '');
-        $comm_date = ($row1['comm_date'] != '0000-00-00') ? date('d-m-Y', strtotime($row1['comm_date'])) : '';
+    // Fetch values from query result and assign a default value of 0 if not set
+    $total_payable = isset($coll_qry['total_payable']) ? $coll_qry['total_payable'] : 0;
+    $total_due = isset($coll_qry['total_due']) ? $coll_qry['total_due'] : 0;
+
+    // Compare total due with total payable and set paid status
+    if ($total_due == 0) {
+        $paid_status = '';
+    } elseif ($total_due >= $total_payable) {
+        $paid_status = 'Yes';
+    } else {
+        $paid_status = '';
     }
+        $hint = $row['hint'];
+        $comm_err = ($row['comm_err'] == '1') ? 'Error' : (($row['comm_err'] == '2') ? 'Clear' : '');
+        $comm_date = (!empty($row['comm_date']) && $row['comm_date'] != '0000-00-00') 
+        ? date('d-m-Y', strtotime($row['comm_date'])) 
+        : '';
+    
+    // Fetch commitment details
+    // $sql = $connect->query("SELECT comm_date, hint, comm_err FROM commitment WHERE cus_id='$cus_id' ORDER BY id DESC LIMIT 1");
+    // if ($sql->rowCount() > 0) {
+    //     $row1 = $sql->fetch();
+    //     $hint = $row1['hint'];
+    //     $comm_err = ($row1['comm_err'] == '1') ? 'Error' : (($row1['comm_err'] == '2') ? 'Clear' : '');
+    //     $comm_date = ($row1['comm_date'] != '0000-00-00') ? date('d-m-Y', strtotime($row1['comm_date'])) : '';
+    // }
 
     $data[] = [
         $finalData['sno'] = $sno,
@@ -126,6 +171,7 @@ foreach ($result as $row) {
         $finalData['sub_status'] = $row['sub_status'],
         $finalData['action'] = "<a href='due_followup&upd={$row['req_id']}&cusidupd=$cus_id&cussts=$sub_status_mapping' title='Edit details'><button class='btn btn-success' style='background-color:#009688;'>View Loans</button></a>",
         $finalData['last_paid_date'] = $date_range,
+        $finalData['paid_status'] = $paid_status,
         $finalData['hint'] = $hint,
         $finalData['comm_err'] = $comm_err,
         $finalData['comm_dat'] = $comm_date

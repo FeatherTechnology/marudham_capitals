@@ -67,7 +67,7 @@ else if ($current_page == 'edit_concern_creation' || $current_page == 'edit_conc
 	$current_module = 'followup';
 } else if (
 	$current_page == 'ledger_report' || $current_page == 'request_report' || $current_page == 'cancel_revoke_report' ||  $current_page == 'cus_profile_report' || $current_page == 'loan_issue_report'
-	|| $current_page == 'collection_report' || $current_page == 'balance_report' || $current_page == 'due_list_report' || $current_page == 'closed_report' || $current_page == 'agent_report'
+	|| $current_page == 'collection_report' ||$current_page == 'principal_interest_report' || $current_page == 'balance_report' || $current_page == 'due_list_report' || $current_page == 'closed_report' || $current_page == 'agent_report'
 ) {
 
 	$current_module = 'report';
@@ -179,6 +179,7 @@ $cancel_revoke_report = '';
 $cus_profile_report = '';
 $loan_issue_report = '';
 $collection_report = '';
+$principal_interest_report = '';
 $balance_report = '';
 $due_list_report = '';
 $closed_report = '';
@@ -266,6 +267,7 @@ if (sizeof($getUser) > 0) {
 		$cus_profile_report          		     = $getUser['cus_profile_report'];
 		$loan_issue_report          		     = $getUser['loan_issue_report'];
 		$collection_report          		     = $getUser['collection_report'];
+		$principal_interest_report          		     = $getUser['principal_interest_report'];
 		$balance_report          		     = $getUser['balance_report'];
 		$due_list_report          		     = $getUser['due_list_report'];
 		$closed_report          		     = $getUser['closed_report'];
@@ -835,6 +837,11 @@ if (sizeof($getUser) > 0) {
 										<a href="collection_report"><i class='icon-area-graph'></i>Collection</a>
 									</li>
 								<?php  } ?>
+								<?php if ($principal_interest_report == 0) { ?>
+									<li>
+										<a href="principal_interest_report"><i class='icon-area-graph'></i>Principal / Interest</a>
+									</li>
+								<?php  } ?>
 								<?php if ($balance_report == 0) { ?>
 									<li>
 										<a href="balance_report"><i class='icon-area-graph'></i>Balance</a>
@@ -1006,6 +1013,7 @@ $cancel_revoke_report = '';
 $cus_profile_report = '';
 $loan_issue_report = '';
 $collection_report = '';
+$principal_interest_report = '';
 $balance_report = '';
 $due_list_report = '';
 $closed_report = '';

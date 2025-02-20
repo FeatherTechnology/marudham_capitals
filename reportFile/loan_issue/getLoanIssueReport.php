@@ -124,10 +124,10 @@ if (isset($_POST['search'])) {
             OR sal.sub_area_name LIKE '%" . $_POST['search'] . "%' 
             OR alm.line_name LIKE '%" . $_POST['search'] . "%' 
             OR bc.branch_name LIKE '%" . $_POST['search'] . "%' 
-            OR loan_cat_name LIKE '%" . $_POST['search'] . "%' 
-            OR sub_category LIKE '%" . $_POST['search'] . "%' 
-            OR ag_name LIKE '%" . $_POST['search'] . "%' 
-            OR loan_date LIKE '%" . $_POST['search'] . "%') ";
+            OR lcc.loan_category_creation_name LIKE '%" . $_POST['search'] . "%' 
+            OR lc.sub_category LIKE '%" . $_POST['search'] . "%' 
+            OR ac.ag_name LIKE '%" . $_POST['search'] . "%' 
+            OR ii.updated_date LIKE '%" . $_POST['search'] . "%') ";
     }
 }
 
