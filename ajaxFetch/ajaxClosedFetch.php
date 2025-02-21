@@ -46,20 +46,34 @@ if ($userid == 1) {
     JOIN in_issue ii ON cp.cus_id = ii.cus_id
     JOIN area_list_creation ac ON cp.area_confirm_area = ac.area_id
     JOIN sub_area_list_creation sa ON cp.area_confirm_subarea = sa.sub_area_id
-    JOIN area_line_mapping al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
+    JOIN (
+    SELECT DISTINCT 
+      sub_area_id, 
+      line_name,
+    branch_id
+    FROM 
+      area_line_mapping
+  ) al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
     JOIN branch_creation bc ON al.branch_id = bc.branch_id
-    where ii.status = 0 and ii.cus_status = 20 GROUP BY ii.cus_id '; // Only Issued and all lines not relying on sub area
+    where ii.status = 0 and ii.cus_status = 20 '; // Only Issued and all lines not relying on sub area
 } else {
     $query = "SELECT cp.cus_id as cp_cus_id,cp.cus_name,ac.area_name, sa.sub_area_name, al.line_name, bc.branch_name,cp.mobile1, ii.cus_id as ii_cus_id, ii.req_id 
     FROM acknowlegement_customer_profile cp 
     JOIN in_issue ii ON cp.cus_id = ii.cus_id
     JOIN area_list_creation ac ON cp.area_confirm_area = ac.area_id
     JOIN sub_area_list_creation sa ON cp.area_confirm_subarea = sa.sub_area_id
-    JOIN area_line_mapping al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
+    JOIN (
+    SELECT DISTINCT 
+      sub_area_id, 
+      line_name,
+    branch_id
+    FROM 
+      area_line_mapping
+  ) al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
     JOIN branch_creation bc ON al.branch_id = bc.branch_id
-    where ii.status = 0 and ii.cus_status = 20 and cp.area_confirm_subarea IN ($sub_area_list) GROUP BY ii.cus_id "; //show only issued customers within the same lines of user. 
+    where ii.status = 0 and ii.cus_status = 20 and cp.area_confirm_subarea IN ($sub_area_list) "; //show only issued customers within the same lines of user. 
 }
-// echo $query;
+
 
 if (isset($_POST['search']) && $_POST['search'] != "") {
 
@@ -71,14 +85,10 @@ if (isset($_POST['search']) && $_POST['search'] != "") {
             OR al.line_name LIKE '%" . $_POST['search'] . "%'
             OR cp.mobile1 LIKE '%" . $_POST['search'] . "%') ";
 }
-if (isset($_POST['order'])) {
-    $query .= 'ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
-} else {
-    $query .= ' ';
-}
-
+$query .= " GROUP BY ii.cus_id ";
+$query .= " ORDER BY cp.updated_date ASC ";
 $query1 = '';
-
+// echo $query;
 if ($_POST['length'] != -1) {
     $query1 = 'LIMIT ' . $_POST['start'] . ', ' . $_POST['length'];
 }
