@@ -56,7 +56,7 @@
 					</div>
 
 					<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-						<button type="button" class="btn btn-primary" id="show_due_followup" style="margin-top:30px;">Proceed</button>
+						<button type="button" class="btn btn-primary" id="show_due_followup" style="margin-top:20px;">Proceed</button>
 					</div>
 				</div>
 
