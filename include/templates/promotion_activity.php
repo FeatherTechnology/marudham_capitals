@@ -44,6 +44,35 @@ if (sizeof($getUser) > 0) {
 			</div>
 		</div>
 
+		<div class="card filter_card" style="display: none;">
+			<div class="card-body">
+				<div class="row">
+					<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+						<div class="form-group">
+							<label for="follow_up_sts">Followup status</label>
+							<select class="form-control" name="follow_up_sts" id="follow_up_sts">
+								<option value="">Select Followup status</option>
+								<option value="tofollow">To Follow</option>
+								<option value="Interested">Interested</option>
+								<option value="NotInterested">Not Interested</option>
+							</select>
+						</div>
+					</div>
+					<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+						<div class="form-group">
+							<label for="follow_up_date">Followup Date</label>
+							<input type="date" class="form-control" name="follow_up_date" id="follow_up_date">
+						</div>
+					</div>
+					<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12" style="margin-top:20px">
+						<div class="form-group">
+							<button class="btn btn-primary" name="followup_search" id="followup_search">Search</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<div class="row gutters existing_card" style="display:none">
 			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 				<div class="card">
@@ -65,6 +94,7 @@ if (sizeof($getUser) > 0) {
 								<th>List Date</th>
 								<th>View</th>
 								<th>Action</th>
+								<th>Follow up status</th>
 								<th>Follow Date</th>
 							</thead>
 							<tbody></tbody>
@@ -190,6 +220,7 @@ if (sizeof($getUser) > 0) {
 								<th>List Date</th>
 								<th>View</th>
 								<th>Action</th>
+								<th>Follow up status</th>
 								<th>Follow Date</th>
 							</thead>
 							<tbody></tbody>

@@ -51,7 +51,7 @@ if ($result->rowCount() > 0) {
             '4' => ['status' => 'Request', 'sub_status' => 'Cancelled'],
             '5' => ['status' => 'Verification', 'sub_status' => 'Cancelled'],
             '6' => ['status' => 'Approval', 'sub_status' => 'Cancelled'],
-            '7' => ['status' => 'Issue', 'sub_status' => 'Issued'],
+            '7' => ['status' => 'Acknowledgement', 'sub_status' => 'Cancelled'],
             '8' => ['status' => 'Request', 'sub_status' => 'Revoked'],
             '9' => ['status' => 'Verification', 'sub_status' => 'Revoked'],
             '10' => ['status' => 'Verification', 'sub_status' => 'In Verification'],
