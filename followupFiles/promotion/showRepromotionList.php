@@ -82,8 +82,8 @@ if ($_POST['length'] != -1) {
     if($_POST['followUpSts']){
         $follow_up_sts = $_POST['followUpSts'];
 
-        $qry .= ($follow_up_sts =='tofollow') ? "AND np.status == '' " : "AND TRIM(REPLACE(np.status,' ','')) = '$follow_up_sts' ";
-        $qry1 .= ($follow_up_sts =='tofollow') ? "AND np.status == '' " : "AND TRIM(REPLACE(np.status,' ','')) = '$follow_up_sts' ";
+        $qry .= ($follow_up_sts =='tofollow') ? "AND np.status IS NULL " : "AND TRIM(REPLACE(np.status,' ','')) = '$follow_up_sts' ";
+        $qry1 .= ($follow_up_sts =='tofollow') ? "AND np.status IS NULL " : "AND TRIM(REPLACE(np.status,' ','')) = '$follow_up_sts' ";
     }
 
     if($_POST['followUpDate']){
