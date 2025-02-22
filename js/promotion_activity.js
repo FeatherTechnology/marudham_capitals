@@ -7,16 +7,17 @@ $(document).ready(function () {
         $(this).addClass("active");
 
         var typevalue = this.value;
-        $('.existing_card, .new_card, .new_promo_card, .loan-history-card, .doc-history-card, #close_history_card, .repromotion_card').hide();
+        $('.existing_card, .new_card, .new_promo_card, .loan-history-card, .doc-history-card, #close_history_card, .repromotion_card, .filter_card').hide();
+        $('#follow_up_sts, #follow_up_date').val('');
         if (typevalue == 'New') {
             $('.new_card, .new_promo_card').show()
             resetNewPromotionTable();
         } else if (typevalue == 'Existing') {
-            $('.existing_card').show();
-            showPromotionList('existing', 'expromotion_list');
+            $('.existing_card, .filter_card').show();
+            showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list');
         } else if (typevalue == 'Repromotion') {
-            $('.repromotion_card').show()
-            showPromotionList('repromotion', 'repromotion_list');
+            $('.repromotion_card, .filter_card').show()
+            showPromotionList('followupFiles/promotion/showRepromotionList.php', 'repromotion_list');
         }
     })
 
@@ -50,6 +51,20 @@ $(document).ready(function () {
             submitPromotion();
         }
     })
+
+    $('#followup_search').click(function(event){
+        event.preventDefault();
+        let btnName = $(".toggle-button.active").first().val();
+
+        if(btnName =='Existing'){
+            showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list');
+
+        } else if(btnName =='Repromotion'){
+            showPromotionList('followupFiles/promotion/showRepromotionList.php', 'repromotion_list');
+            
+        }
+        
+    });
 
 });
 
@@ -276,7 +291,10 @@ function intNotintOnclick() {
     })
 }
 
-function showPromotionList(type, tableid) {
+function showPromotionList(url, tableid) {
+    let followUpSts = $('#follow_up_sts').val();
+    let followUpDate = $('#follow_up_date').val();
+
     let table = $(`#${tableid}`).DataTable();
     table.destroy();
     $(`#${tableid}`).DataTable({
@@ -287,11 +305,12 @@ function showPromotionList(type, tableid) {
         'serverSide': true,
         'serverMethod': 'post',
         'ajax': {
-            'url': 'followupFiles/promotion/showPromotionList.php',
+            'url': url,
             'data': function (data) {
                 var search = $('input[type=search]').val();
                 data.search = search;
-                data.type = type;
+                data.followUpSts = followUpSts;
+                data.followUpDate = followUpDate;
             }
         },
         dom: 'lBfrtip',
@@ -342,8 +361,8 @@ function promotionListOnclick() {
 
 function promotionChartColor(tableid) {
     $(`#${tableid} tbody tr`).not('th').each(function () {
-        if (tableid == 'expromotion_list') var element = $(this).find('td:eq(14)'); // Get the text content of the 14th td element (Follow date)
-        if (tableid == 'repromotion_list') var element = $(this).find('td:eq(15)'); // Get the text content of the 14th td element (Follow date)
+        if (tableid == 'expromotion_list') var element = $(this).find('td:eq(15)'); // Get the text content of the 14th td element (Follow date)
+        if (tableid == 'repromotion_list') var element = $(this).find('td:eq(16)'); // Get the text content of the 14th td element (Follow date)
 
         let tddate = element.text();
         let datecorrection = tddate.split("-").reverse().join("-").replaceAll(/\s/g, ''); // Correct the date format
@@ -433,6 +452,7 @@ function historyTableContents(req_id, cus_id, type) {
             $('#close_history_card').show();
             $('.doc-history-card').hide();
             $('.existing_card').hide();
+            $('.filter_card').hide();
             $('.repromotion_card').hide();
 
             $.ajax({
@@ -459,6 +479,7 @@ function historyTableContents(req_id, cus_id, type) {
             $('#close_history_card').show();
             $('.loan-history-card').hide();
             $('.existing_card').hide();
+            $('.filter_card').hide();
             $('.repromotion_card').hide();
 
             $.ajax({
@@ -485,6 +506,7 @@ function historyTableContents(req_id, cus_id, type) {
             let typevalue = $(".toggle-container .active").val();//this will show back active tab's contents
             if (typevalue == 'Existing') { $('.existing_card').show(); } else { $('.repromotion_card').show(); }
 
+            $('.filter_card').show();
             $('.loan-history-card').hide();//hides loan history card
             $('.doc-history-card').hide();//hides document history card
             $('#close_history_card').hide();// Hides the close button
