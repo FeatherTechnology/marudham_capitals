@@ -431,7 +431,7 @@ if ($idupd > 0) {
 				</div>
 				<!-- Request Info ENd-->
 				<!-- Collection Info -->
-				<div class="card collection_card">
+				<div class="card collection_card" id="collection_info">
 					<div class="card-header">
 						<div class="card-title">Collection Info</div>
 					</div>

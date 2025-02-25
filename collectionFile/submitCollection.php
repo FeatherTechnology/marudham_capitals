@@ -243,7 +243,10 @@ try{
                 $substs = 'OD';
             }
 
-        } else {    
+        } elseif($sub_status == 'Error' || $sub_status == 'Legal'){
+            $substs = $sub_status;
+
+        }else {    
             $substs = 'Current';
         }
 
