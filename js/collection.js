@@ -388,6 +388,7 @@ function OnLoadFunctions(req_id, cus_id) {
         $("#loanListTableDiv").html(response);
 
         $(".collection-window").click(function () {
+          $('#collection_info input').val('');
           $(".personalinfo_card").hide();
           $(".loanlist_card").hide();
           $(".back-button").hide();

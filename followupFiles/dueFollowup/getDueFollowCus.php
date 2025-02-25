@@ -56,6 +56,7 @@ $orderDir = $_POST['order'][0]['dir'];
 $order = $columns[$_POST['order'][0]['column']] ? "ORDER BY " . $columns[$_POST['order'][0]['column']] . " $orderDir" : "";
 $search = $searchValue != '' ? "and (ii.cus_id LIKE '$searchValue%' or cp.cus_name LIKE '%$searchValue%' or alc.area_name LIKE '%$searchValue%' or salc.sub_area_name LIKE '%$searchValue%' or cp.mobile1 LIKE '$searchValue%' or cs.sub_status LIKE '%$searchValue%' )" : '';
 
+$current_date = date('Y-m-d');
 $query = "SELECT
         cp.cus_id AS cp_cus_id,
         cp.cus_name,
@@ -71,6 +72,7 @@ $query = "SELECT
         cm.comm_date
     FROM
         acknowlegement_customer_profile cp
+    JOIN acknowlegement_loan_calculation aklc ON cp.req_id=aklc.req_id
     JOIN in_issue ii ON
         cp.cus_id = ii.cus_id
     JOIN customer_status cs ON
@@ -88,6 +90,7 @@ $query = "SELECT
         AND ii.status = 0 
         AND (ii.cus_status >= 14 AND ii.cus_status <= 17) $search 
         AND cp.area_confirm_subarea IN ($sub_area_list) 
+        AND aklc.due_start_from < '$current_date'
         GROUP BY ii.cus_id, cs.cus_id $order LIMIT $start , $length"; // 14 and 17 means collection entries, 17 removed from issue list
 
 //this will only take selected req_ids which is payable > 0
