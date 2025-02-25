@@ -16,7 +16,7 @@ try {
     $connect->beginTransaction();
 
     // Get the latest loan ID
-    $selectIC = $connect->query("SELECT loan_id FROM in_issue WHERE loan_id IS NOT NULL AND loan_id != '' ORDER BY id DESC LIMIT 1 FOR UPDATE");
+    $selectIC = $connect->query("SELECT MAX(CAST(loan_id AS UNSIGNED)) AS loan_id FROM in_issue WHERE loan_id IS NOT NULL AND loan_id != '' FOR UPDATE");
 
     if ($selectIC->rowCount() > 0) {
         $row = $selectIC->fetch();
@@ -54,9 +54,6 @@ try {
         $qry = $connect->query("INSERT INTO `loan_issue` (`req_id`, `cus_id`, `issued_to`, `agent_id`, `cash`, `balance_amount`, `loan_amt`, `net_cash`, `insert_login_id`,`created_date`) 
         VALUES ('$req_id', '$cus_id', 'Agent', '$ag_id', '$net_cash', '0', '$loan_amt', '$net_cash', '$userid', now()) ");
     }
-
-
-    // $query = $connect->query(" INSERT INTO `customer_status`( `req_id`, `cus_id`, `sub_status`, `payable_amnt`, `bal_amnt`, `insert_login_id`, `created_date`) VALUES ('$req_id','$cus_id','Current','$tot_amt_cal','$tot_amt_cal','$userid', '$current_date' ) ");
     
     if((strtotime($dueStartDate) > strtotime($current_date))){
         $query = $connect->query(" INSERT INTO `customer_status`( `req_id`, `cus_id`, `sub_status`, `payable_amnt`, `bal_amnt`, `insert_login_id`, `created_date`) VALUES ('$req_id','$cus_id','Current','0','$tot_amt_cal','$userid', '$current_date' ) ");
