@@ -47,7 +47,7 @@ if (sizeof($getUser) > 0) {
 		<div class="card filter_card" style="display: none;">
 			<div class="card-body">
 				<div class="row">
-					<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+					<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12">
 						<div class="form-group">
 							<label for="follow_up_sts">Followup status</label>
 							<select class="form-control" name="follow_up_sts" id="follow_up_sts">
@@ -58,13 +58,29 @@ if (sizeof($getUser) > 0) {
 							</select>
 						</div>
 					</div>
-					<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+					<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12">
 						<div class="form-group">
-							<label for="follow_up_date">Followup Date</label>
-							<input type="date" class="form-control" name="follow_up_date" id="follow_up_date">
+							<label for="date_type">Date</label>
+							<select class="form-control" name="date_type" id="date_type">
+								<option value="">Select Date</option>
+								<option value="1">Closed Date</option>
+								<option value="2">Followup Date</option>
+							</select>
 						</div>
 					</div>
-					<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12" style="margin-top:20px">
+					<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12">
+						<div class="form-group">
+							<label for="follow_up_fromdate">From Date</label>
+							<input type="date" class="form-control" name="follow_up_fromdate" id="follow_up_fromdate">
+						</div>
+					</div>
+					<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12">
+						<div class="form-group">
+							<label for="follow_up_todate">To Date</label>
+							<input type="date" class="form-control" name="follow_up_todate" id="follow_up_todate">
+						</div>
+					</div>
+					<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12" style="margin-top:20px">
 						<div class="form-group">
 							<button class="btn btn-primary" name="followup_search" id="followup_search">Search</button>
 						</div>
@@ -91,7 +107,7 @@ if (sizeof($getUser) > 0) {
 								<th>Mobile</th>
 								<th>Status</th>
 								<th>Sub Status</th>
-								<th>List Date</th>
+								<th>Closed Date</th>
 								<th>View</th>
 								<th>Action</th>
 								<th>Follow up status</th>
@@ -202,7 +218,7 @@ if (sizeof($getUser) > 0) {
 			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 				<div class="card">
 					<div class="card-header">Repromotion</div>
-					<div class="card-body">
+					<div class="card-body" style="overflow-x: auto;">
 						<table class="table custom-table" id='repromotion_list' data-id="repromotion" style="width:100%">
 							<thead>
 								<th width='20'>S.No</th>
@@ -217,7 +233,7 @@ if (sizeof($getUser) > 0) {
 								<th>Status</th>
 								<th>Sub Status</th>
 								<th>Remarks</th>
-								<th>List Date</th>
+								<th>Closed Date</th>
 								<th>View</th>
 								<th>Action</th>
 								<th>Follow up status</th>

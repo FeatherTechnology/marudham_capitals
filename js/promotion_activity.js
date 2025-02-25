@@ -8,7 +8,7 @@ $(document).ready(function () {
 
         var typevalue = this.value;
         $('.existing_card, .new_card, .new_promo_card, .loan-history-card, .doc-history-card, #close_history_card, .repromotion_card, .filter_card').hide();
-        $('#follow_up_sts, #follow_up_date').val('');
+        $('#follow_up_sts, #date_type, #follow_up_fromdate, #follow_up_todate').val('');
         if (typevalue == 'New') {
             $('.new_card, .new_promo_card').show()
             resetNewPromotionTable();
@@ -54,6 +54,21 @@ $(document).ready(function () {
 
     $('#followup_search').click(function(event){
         event.preventDefault();
+
+        let dateType = $('#date_type').val();
+            if(dateType){
+                let fromDate = $('#follow_up_fromdate').val();  
+                let toDate = $('#follow_up_todate').val();
+                
+                if(!fromDate || !toDate){
+                    alert("Please fill the From & To date.");
+                    return;
+                }
+            } else{
+                $('#follow_up_fromdate').val('');  
+                $('#follow_up_todate').val('');
+            }
+
         let btnName = $(".toggle-button.active").first().val();
 
         if(btnName =='Existing'){
@@ -62,8 +77,18 @@ $(document).ready(function () {
         } else if(btnName =='Repromotion'){
             showPromotionList('followupFiles/promotion/showRepromotionList.php', 'repromotion_list');
             
+        }  
+    });
+
+    $('#follow_up_fromdate').change(function(){
+        const fromDate = $(this).val();
+        const toDate = $('#follow_up_todate').val();
+        $('#follow_up_todate').attr('min', fromDate);
+
+        // Check if from_date is greater than to_date
+        if (toDate && fromDate > toDate) {
+            $('#follow_up_todate').val(''); // Clear the invalid value
         }
-        
     });
 
 });
@@ -293,7 +318,9 @@ function intNotintOnclick() {
 
 function showPromotionList(url, tableid) {
     let followUpSts = $('#follow_up_sts').val();
-    let followUpDate = $('#follow_up_date').val();
+    let dateType = $('#date_type').val();
+    let followUpFromDate = $('#follow_up_fromdate').val();
+    let followUpToDate = $('#follow_up_todate').val();
 
     let table = $(`#${tableid}`).DataTable();
     table.destroy();
@@ -310,7 +337,9 @@ function showPromotionList(url, tableid) {
                 var search = $('input[type=search]').val();
                 data.search = search;
                 data.followUpSts = followUpSts;
-                data.followUpDate = followUpDate;
+                data.dateType = dateType;
+                data.followUpFromDate = followUpFromDate;
+                data.followUpToDate = followUpToDate;
             }
         },
         dom: 'lBfrtip',

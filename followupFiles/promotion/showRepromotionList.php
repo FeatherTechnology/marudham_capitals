@@ -86,12 +86,13 @@ if ($_POST['length'] != -1) {
         $qry1 .= ($follow_up_sts =='tofollow') ? "AND np.status IS NULL " : "AND TRIM(REPLACE(np.status,' ','')) = '$follow_up_sts' ";
     }
 
-    if($_POST['followUpDate']){
-        $follow_up_date = $_POST['followUpDate'];
+    if($_POST['dateType']){
+        $date_type = $_POST['dateType'];//1=Closed date, 2=Followup date.
+        $qry_date = ($date_type == '1') ? "AND req.updated_date BETWEEN '".$_POST['followUpFromDate']."' AND '".$_POST['followUpToDate']."' " : "AND np.follow_date BETWEEN '".$_POST['followUpFromDate']."' AND '".$_POST['followUpToDate']."' ";
 
-        $qry .= "AND np.follow_date = '$follow_up_date' ";
-        $qry1 .= "AND np.follow_date = '$follow_up_date' ";
-    }    
+        $qry .= $qry_date;
+        $qry1 .= $qry_date;
+    }     
     
         $qry .= "$search GROUP BY req.cus_id $order $limit ";
         $qry1 .= "$search GROUP BY req.cus_id $order ";
@@ -142,7 +143,7 @@ while ($row = $sql->fetch()) {
 
 function count_all_data($connect)
 {
-    $query = "SELECT req.cus_id, req.cus_status, req.updated_date FROM request_creation req LEFT JOIN customer_profile cp ON req.req_id = cp.req_id WHERE req.cus_status BETWEEN 4 AND 9 GROUP BY req.cus_id";
+    $query = "SELECT req.cus_id FROM request_creation req LEFT JOIN customer_profile cp ON req.req_id = cp.req_id WHERE req.cus_status BETWEEN 4 AND 9 GROUP BY req.cus_id";
     $statement = $connect->prepare($query);
     $statement->execute();
     return $statement->rowCount();
