@@ -71,19 +71,18 @@ function callOnClickEvents() {
                     type: 'post',
                     data: { 'req_id': req_id },
                     cache: false,
-                    success: function (response) {
-                        if (response.includes('Completed')) {
+                    success: function (result) {
+                        if (result.response.includes('Completed')) {
                             Swal.fire({
                                 timerProgressBar: true,
-                                timer: 2000,
-                                title: response,
+                                title: result.response,
+                                html: `<p style="font-size: 20px;">The Loan ID is: <b>${result.loanid}</b></p>`,
                                 icon: 'success',
                                 showConfirmButton: true,
                                 confirmButtonColor: '#009688'
+                            }).then((result)=>{
+                                (result.isConfirmed) ? window.location = 'edit_loan_issue' : '';
                             });
-                            setTimeout(function () {
-                                window.location = 'edit_loan_issue';
-                            }, 2000)
                         }
                     }
                 })
