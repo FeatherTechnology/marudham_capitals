@@ -20,8 +20,8 @@ $column = array(
     'cp.area_line',           
     'cp.mobile1',
     'cp.id',
-    'rcs.consider_level',
-    'rcs.created_date',
+    'cs.consider_level',
+    'cs.created_date',
     'cp.id',
     'cp.id',
     'np.status',
@@ -45,50 +45,57 @@ if ($_POST['length'] != -1) {
 
     //only closed customers who dont have any loans in current.
     // Simplified main query to fetch closed customers without loans
-    $qry = "WITH ranked_closed_status AS (
-        SELECT 
-            cs.*,
-            ROW_NUMBER() OVER (PARTITION BY cs.cus_id ORDER BY cs.created_date DESC) AS rn
-        FROM closed_status cs
-    ) SELECT cp.req_id, cp.cus_id, cp.cus_name, al.area_name, sl.sub_area_name, bc.branch_name, cp.area_group, cp.area_line, cp.mobile1, rcs.consider_level, rcs.created_date, np.status AS followup_sts, np.follow_date
-    FROM ranked_closed_status rcs
-    JOIN acknowlegement_customer_profile cp ON rcs.req_id = cp.req_id 
-    LEFT JOIN ( SELECT cus_id,req_id FROM request_creation WHERE (cus_status NOT BETWEEN 4 AND 9) AND cus_status < 20 ORDER BY req_id DESC ) rc ON rcs.cus_id = rc.cus_id  
-    LEFT JOIN area_list_creation al ON cp.area_confirm_area = al.area_id 
-    LEFT JOIN sub_area_list_creation sl ON cp.area_confirm_subarea = sl.sub_area_id 
-    LEFT JOIN area_group_mapping agm ON FIND_IN_SET(sl.sub_area_id,agm.sub_area_id) 
-    LEFT JOIN area_line_mapping alm ON FIND_IN_SET(sl.sub_area_id,alm.sub_area_id) 
-    LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
-    LEFT JOIN new_promotion np ON rcs.cus_id = np.cus_id
-    WHERE rcs.cus_sts >= '20' AND cp.area_confirm_subarea IN ($sub_area_list) AND rcs.closed_sts = 1 AND rc.cus_id IS NULL ";
+    $qry = "SELECT cp.req_id, cp.cus_id, cp.cus_name, al.area_name, sl.sub_area_name, bc.branch_name, cp.area_group, cp.area_line, cp.mobile1, cs.consider_level, cs.created_date, np.status AS followup_sts, np.follow_date 
+        FROM acknowlegement_customer_profile cp
+        JOIN (
+            SELECT req_id, cus_id, consider_level, created_date
+            FROM closed_status
+            WHERE closed_sts = 1
+            ORDER BY created_date DESC
+        ) cs ON cs.req_id = cp.req_id 
+        LEFT JOIN area_list_creation al ON cp.area_confirm_area = al.area_id 
+        LEFT JOIN sub_area_list_creation sl ON cp.area_confirm_subarea = sl.sub_area_id 
+        LEFT JOIN area_group_mapping agm ON FIND_IN_SET(sl.sub_area_id, agm.sub_area_id) 
+        LEFT JOIN area_line_mapping alm ON FIND_IN_SET(sl.sub_area_id, alm.sub_area_id) 
+        LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
+        LEFT JOIN (
+            SELECT cus_id, MAX(follow_date) AS follow_date, status
+            FROM new_promotion
+            GROUP BY cus_id
+        ) np ON cs.cus_id = np.cus_id 
+        WHERE cp.area_confirm_subarea IN ($sub_area_list) AND NOT EXISTS ( SELECT 1 FROM request_creation r WHERE r.cus_id = cs.cus_id AND r.cus_status BETWEEN 4 AND 9 ) ";
 
-    $qry1 = "WITH ranked_closed_status AS (
-        SELECT 
-            cs.*,
-            ROW_NUMBER() OVER (PARTITION BY cs.cus_id ORDER BY cs.created_date DESC) AS rn
-        FROM closed_status cs
-    ) SELECT cp.req_id
-    FROM ranked_closed_status rcs
-    JOIN acknowlegement_customer_profile cp ON rcs.req_id = cp.req_id 
-    LEFT JOIN ( SELECT cus_id,req_id FROM request_creation WHERE (cus_status NOT BETWEEN 4 AND 9) AND cus_status < 20 ORDER BY req_id DESC ) rc ON rcs.cus_id = rc.cus_id  
-    LEFT JOIN area_list_creation al ON cp.area_confirm_area = al.area_id 
-    LEFT JOIN sub_area_list_creation sl ON cp.area_confirm_subarea = sl.sub_area_id 
-    LEFT JOIN area_group_mapping agm ON FIND_IN_SET(sl.sub_area_id,agm.sub_area_id) 
-    LEFT JOIN area_line_mapping alm ON FIND_IN_SET(sl.sub_area_id,alm.sub_area_id) 
-    LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
-    LEFT JOIN new_promotion np ON rcs.cus_id = np.cus_id
-    WHERE rcs.cus_sts >= '20' AND cp.area_confirm_subarea IN  ($sub_area_list)  AND rcs.closed_sts = 1  AND rc.cus_id IS NULL ";
+    $qry1 = "SELECT cp.req_id, cp.cus_id, cp.cus_name, al.area_name, sl.sub_area_name, bc.branch_name, cp.area_group, cp.area_line, cp.mobile1, cs.consider_level, cs.created_date, np.status AS followup_sts, np.follow_date 
+        FROM acknowlegement_customer_profile cp
+        JOIN (
+            SELECT req_id, cus_id, consider_level, created_date
+            FROM closed_status
+            WHERE closed_sts = 1
+            ORDER BY created_date DESC
+        ) cs ON cs.req_id = cp.req_id 
+        LEFT JOIN area_list_creation al ON cp.area_confirm_area = al.area_id 
+        LEFT JOIN sub_area_list_creation sl ON cp.area_confirm_subarea = sl.sub_area_id 
+        LEFT JOIN area_group_mapping agm ON FIND_IN_SET(sl.sub_area_id, agm.sub_area_id) 
+        LEFT JOIN area_line_mapping alm ON FIND_IN_SET(sl.sub_area_id, alm.sub_area_id) 
+        LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
+        LEFT JOIN (
+            SELECT cus_id, MAX(follow_date) AS follow_date, status
+            FROM new_promotion
+            GROUP BY cus_id
+        ) np ON cs.cus_id = np.cus_id 
+        WHERE cp.area_confirm_subarea IN ($sub_area_list) AND NOT EXISTS ( SELECT 1 FROM request_creation r WHERE r.cus_id = cs.cus_id AND r.cus_status BETWEEN 4 AND 9 ) ";
 
     if($_POST['followUpSts']){
         $follow_up_sts = $_POST['followUpSts'];
+        $qry_sts = ($follow_up_sts =='tofollow') ? "AND np.status IS NULL " : "AND TRIM(REPLACE(np.status,' ','')) = '$follow_up_sts' ";
 
-        $qry .= ($follow_up_sts =='tofollow') ? "AND np.status IS NULL " : "AND TRIM(REPLACE(np.status,' ','')) = '$follow_up_sts' ";
-        $qry1 .= ($follow_up_sts =='tofollow') ? "AND np.status IS NULL " : "AND TRIM(REPLACE(np.status,' ','')) = '$follow_up_sts' ";
+        $qry .= $qry_sts;
+        $qry1 .= $qry_sts;
     }
 
     if($_POST['dateType']){
         $date_type = $_POST['dateType'];//1=Closed date, 2=Followup date.
-        $qry_date = ($date_type == '1') ? "AND rcs.created_date BETWEEN '".$_POST['followUpFromDate']."' AND '".$_POST['followUpToDate']."' " : "AND np.follow_date BETWEEN '".$_POST['followUpFromDate']."' AND '".$_POST['followUpToDate']."' ";
+        $qry_date = ($date_type == '1') ? "AND cs.created_date BETWEEN '".$_POST['followUpFromDate']."' AND '".$_POST['followUpToDate']."' " : "AND np.follow_date BETWEEN '".$_POST['followUpFromDate']."' AND '".$_POST['followUpToDate']."' ";
 
         $qry .= $qry_date;
         $qry1 .= $qry_date;
@@ -144,7 +151,7 @@ if ($_POST['length'] != -1) {
 
 function count_all_data($connect)
 {
-    $query = "SELECT cs.cus_id FROM closed_status cs JOIN acknowlegement_customer_profile cp ON cs.req_id = cp.req_id WHERE cs.cus_sts >= '20' and cs.closed_sts = 1";
+    $query = "SELECT cs.cus_id FROM closed_status cs JOIN acknowlegement_customer_profile cp ON cs.req_id = cp.req_id WHERE cs.closed_sts = 1";
     $statement = $connect->prepare($query);
     $statement->execute();
     return $statement->rowCount();

@@ -57,7 +57,7 @@ if ($_POST['length'] != -1) {
     LEFT JOIN area_group_mapping agm ON FIND_IN_SET(sl.sub_area_id, agm.sub_area_id) 
     LEFT JOIN area_line_mapping alm ON FIND_IN_SET(sl.sub_area_id, alm.sub_area_id) 
     LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
-    LEFT JOIN new_promotion np ON req.cus_id = np.cus_id
+    LEFT JOIN ( SELECT cus_id, MAX(follow_date) AS follow_date, status FROM new_promotion GROUP BY cus_id ) np ON req.cus_id = np.cus_id
     WHERE req.cus_status BETWEEN 4 AND 9 
     AND CASE WHEN req.cus_status IN (6, 7) THEN cp.sub_area ELSE cp.area_confirm_subarea END IN  ($sub_area_list) AND rc.cus_id IS NULL ";
 
@@ -75,15 +75,16 @@ if ($_POST['length'] != -1) {
     LEFT JOIN area_group_mapping agm ON FIND_IN_SET(sl.sub_area_id, agm.sub_area_id) 
     LEFT JOIN area_line_mapping alm ON FIND_IN_SET(sl.sub_area_id, alm.sub_area_id) 
     LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
-    LEFT JOIN new_promotion np ON req.cus_id = np.cus_id
+    LEFT JOIN ( SELECT cus_id, MAX(follow_date) AS follow_date, status FROM new_promotion GROUP BY cus_id ) np ON req.cus_id = np.cus_id
     WHERE req.cus_status BETWEEN 4 AND 9 
     AND CASE WHEN req.cus_status IN (6, 7) THEN cp.sub_area ELSE cp.area_confirm_subarea END IN  ($sub_area_list) AND rc.cus_id IS NULL ";
 
     if($_POST['followUpSts']){
         $follow_up_sts = $_POST['followUpSts'];
+        $qry_sts = ($follow_up_sts =='tofollow') ? "AND np.status IS NULL " : "AND TRIM(REPLACE(np.status,' ','')) = '$follow_up_sts' ";
 
-        $qry .= ($follow_up_sts =='tofollow') ? "AND np.status IS NULL " : "AND TRIM(REPLACE(np.status,' ','')) = '$follow_up_sts' ";
-        $qry1 .= ($follow_up_sts =='tofollow') ? "AND np.status IS NULL " : "AND TRIM(REPLACE(np.status,' ','')) = '$follow_up_sts' ";
+        $qry .= $qry_sts;
+        $qry1 .= $qry_sts;
     }
 
     if($_POST['dateType']){
@@ -123,9 +124,6 @@ while ($row = $sql->fetch()) {
     $sub_array[] = $row['mobile1'];
     $sub_array[] = $status[$row['consider_level']];
     $sub_array[] = $sub_status[$row['consider_level']]; //fetched from request table above mentioned 
-
-    $qry = $connect->query("SELECT prompt_remark FROM request_creation WHERE cus_id = '" . $row['cus_id'] . "' and prompt_remark != '' ORDER BY updated_date DESC limit 1");
-    $sub_array[] = ($qry->rowCount() > 0) ? $qry->fetch()['prompt_remark'] : '';
 
     $sub_array[] = (isset($row['updated_date'])) ? date('d-m-Y', strtotime($row['updated_date'])) : '';
 
