@@ -41,7 +41,7 @@
 		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 			<div class="table-container">
 				<div class="row">
-					<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
 						<label for="sub_status_mapping">Customer Status</label><span class="required">&nbsp;*</span>
 						<input type="hidden" name="customer_status" id="customer_status" value="<?php echo isset($_GET['cussts']) ? $_GET['cussts'] : ''; ?>">
 						<select class="form-control" id="sub_status_mapping" name="sub_status_mapping" multiple>
@@ -50,9 +50,14 @@
 						<span class='text-danger subStatusCheck' style="display:none">Please Select Customer Status</span>
 					</div>
 
-					<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
 						<label for="comm_date">Commitement Date</label>
-						<input type="date" id='comm_date' name='comm_date' class="form-control" value=''>
+						<select class="form-control" id="comm_date" name="comm_date" >
+							<option value="1">Select Commitment Date</option>
+							<option value="2">Before Date</option>
+							<option value="3">Today</option>
+							<option value="4">After Date</option>
+						</select>
 					</div>
 
 					<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
