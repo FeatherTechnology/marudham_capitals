@@ -93,7 +93,7 @@ if (sizeof($getUser) > 0) {
 			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 				<div class="card">
 					<div class="card-header">Existing Customer</div>
-					<div class="card-body">
+					<div class="card-body" style="overflow-x: auto;">
 						<table class="table custom-table" id='expromotion_list' data-id="existing" style="width: 100%;">
 							<thead>
 								<th width='20'>S.No</th>
@@ -232,7 +232,6 @@ if (sizeof($getUser) > 0) {
 								<th>Mobile</th>
 								<th>Status</th>
 								<th>Sub Status</th>
-								<th>Remarks</th>
 								<th>Closed Date</th>
 								<th>View</th>
 								<th>Action</th>

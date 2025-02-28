@@ -32,11 +32,11 @@ try {
 
     //Issue  Completed And Move to Collection = 14.
 
-    $selectIC = $connect->query("UPDATE request_creation set cus_status = 14, updated_date = now(),update_login_id = $userid WHERE  req_id = '" . $req_id . "' ") or die('Error on Request Table');
-    $selectIC = $connect->query("UPDATE customer_register set cus_status = 14 WHERE req_ref_id = '" . $req_id . "' ") or die('Error on Customer Table');
-    $selectIC = $connect->query("UPDATE in_verification set cus_status = 14, update_login_id = $userid WHERE req_id = '" . $req_id . "' ") or die('Error on inVerification Table');
-    $selectIC = $connect->query("UPDATE `in_approval` SET `cus_status`= 14,`update_login_id`= $userid WHERE  req_id = '" . $req_id . "' ") or die('Error on in_approval Table');
-    $selectIC = $connect->query("UPDATE `in_acknowledgement` SET `cus_status`= 14,`update_login_id`= $userid and `updated_date`= current_date WHERE req_id = '" . $req_id . "' ") or die('Error on in_acknowledgement Table');
+    $connect->query("UPDATE request_creation set cus_status = 14, updated_date = now(),update_login_id = $userid WHERE  req_id = '" . $req_id . "' ") or die('Error on Request Table');
+    $connect->query("UPDATE customer_register set cus_status = 14 WHERE req_ref_id = '" . $req_id . "' ") or die('Error on Customer Table');
+    $connect->query("UPDATE in_verification set cus_status = 14, update_login_id = $userid WHERE req_id = '" . $req_id . "' ") or die('Error on inVerification Table');
+    $connect->query("UPDATE `in_approval` SET `cus_status`= 14,`update_login_id`= $userid WHERE  req_id = '" . $req_id . "' ") or die('Error on in_approval Table');
+    $connect->query("UPDATE `in_acknowledgement` SET `cus_status`= 14,`update_login_id`= $userid and `updated_date`= current_date WHERE req_id = '" . $req_id . "' ") or die('Error on in_acknowledgement Table');
     $insertIssue = $connect->query("UPDATE `in_issue` SET `loan_id` = '$loan_id',`cus_status`= 14,`updated_date`=now(),`update_login_id` = $userid where req_id = '" . $req_id . "' ") or die('Error on in_issue Table');
 
     $qry = $connect->query("SELECT agent_id FROM in_verification where req_id = $req_id ");
@@ -66,13 +66,15 @@ try {
     // Commit transaction
     $connect->commit();
     $response = 'Loan Issue Completed';
-    echo json_encode($response);
+    
 } catch (Exception $e) {
     // Rollback the transaction on error
     $connect->rollBack();
-    echo "Error: " . $e->getMessage();
+    $loan_id = "";
+    $response = "Error: " . $e->getMessage();
     exit;
 }
+
 // $qry = $connect->query("SELECT customer_name, mobile1 from customer_register where req_ref_id = '$req_id' ");
 // $row = $qry->fetch();
 // $customer_name = $row['customer_name'];
@@ -91,6 +93,8 @@ try {
 // $response = file_get_contents($url);  
 // // Process your response here
 // return $response; 
+
+echo json_encode(["response" => $response, "loanid" => $loan_id]);
 
 // Close the database connection
 $connect = null;

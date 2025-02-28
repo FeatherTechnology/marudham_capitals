@@ -390,8 +390,7 @@ function promotionListOnclick() {
 
 function promotionChartColor(tableid) {
     $(`#${tableid} tbody tr`).not('th').each(function () {
-        if (tableid == 'expromotion_list') var element = $(this).find('td:eq(15)'); // Get the text content of the 14th td element (Follow date)
-        if (tableid == 'repromotion_list') var element = $(this).find('td:eq(16)'); // Get the text content of the 14th td element (Follow date)
+        var element = $(this).find('td:eq(15)'); // Get the text content of the 15th td element (Follow date)
 
         let tddate = element.text();
         let datecorrection = tddate.split("-").reverse().join("-").replaceAll(/\s/g, ''); // Correct the date format
