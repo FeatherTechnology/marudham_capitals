@@ -35,6 +35,12 @@ const bankMultiselect = new Choices('#bank_details1', {
     allowHTML: true
 
 });
+const promotionAccess = new Choices('#pro_aty_access', {
+    removeItemButton: true,
+    noChoicesText: 'Select Promotion Activity',
+    allowHTML: true
+
+});
 
 // Document is ready
 $(document).ready(function () {
@@ -340,6 +346,7 @@ $(function () {
         getGroupDropdown(branch_id_upd);
 
         getBankDetails();
+        getProAccess();
 
         var mastermodule = document.getElementById('mastermodule');
         var adminmodule = document.getElementById('adminmodule');
@@ -790,6 +797,35 @@ function getBankDetails() {
         }
     })
 }
+//Get promotion access list
+function getProAccess() {
+    var promotion_access_upd = $('#promotion_access_upd').val().split(',');
+
+    const valueToLabelMap = {
+        '1': 'Existing',
+        '2': 'New ',
+        '3': 'Repromotion' 
+    };
+    promotionAccess.clearStore();
+
+    let items = [];
+
+    $.each(valueToLabelMap, function(val, label) {
+        let selected = '';
+
+        if (promotion_access_upd.includes(val)) {
+            selected = 'selected';
+        }
+
+        items.push({
+            value: val,  
+            label: label,
+            selected: selected 
+        });
+    });
+    promotionAccess.setChoices(items);
+    promotionAccess.init();
+}
 //Screen Mapping
 //modules checkbox events
 function checkbox(checkboxesToEnable, module) {
@@ -883,6 +919,21 @@ function multiselectValue() {
     $('#group').val(sortedStr);
     var group = $('#group').val();
     if (group == '') { event.preventDefault(); $('#groupCheck').show(); } else { $('#groupCheck').hide(); }
+    //////////////////////////////////////////////////
+    var promotion_access = promotionAccess.getValue();
+    var pro_acc = '';
+    for (var i = 0; i < promotion_access.length; i++) {
+        if (i > 0) {
+            pro_acc += ',';
+        }
+        pro_acc += promotion_access[i].value;
+    }
+    var arr = pro_acc.split(",");
+    arr.sort(function (a, b) { return a - b });
+    var sortedStr = arr.join(",");
+    $('#pro_aty_access_id').val(sortedStr);
+    var pro_acc = $('#pro_aty_access_id').val();
+    if (pro_acc == '') { event.preventDefault(); $('#proCheck').show(); } else { $('#proCheck').hide(); }
     //////////////////////////////////////////////////
 }
 

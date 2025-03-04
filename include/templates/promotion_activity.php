@@ -38,9 +38,9 @@ if (sizeof($getUser) > 0) {
 
 		<div class="row gutters">
 			<div class="toggle-container col-12">
-				<input type="button" class="toggle-button" value='Existing'>
-				<input type="button" class="toggle-button" value='New'>
-				<input type="button" class="toggle-button" value='Repromotion'>
+				<input type="button" class="toggle-button" value='Existing' id="existing_button">
+				<input type="button" class="toggle-button" value='New'  id="new_button">
+				<input type="button" class="toggle-button" value='Repromotion'  id="repromotion_button">
 			</div>
 		</div>
 
