@@ -94,8 +94,30 @@ $(document).ready(function () {
 });
 
 $(function () {
-    $(".toggle-button[value='Existing']").trigger('click');
+    getPromotionAccess()
 })
+
+function getPromotionAccess(){
+    $.post('followupFiles/promotion/promotion_access.php', function(response) {
+        if (Array.isArray(response) && response.length > 0) {
+            let accessString = response[0].pro_aty_access; 
+            let accessArray = accessString.split(",").map(Number);
+            $(".toggle-button").hide();
+            accessArray.forEach(value => {
+                if (value === 1) {
+                    $("#existing_button").closest(".toggle-button").show();
+                } 
+                if (value === 2) {
+                    $("#new_button").closest(".toggle-button").show();
+                } 
+                if (value === 3) {
+                    $("#repromotion_button").closest(".toggle-button").show();
+                }
+            });
+        }
+    }, 'json');
+
+}
 
 function searchCustomer() {
     let cus_id = $('#cus_id_search').val(); let cus_name = $('#cus_name_search').val(); let cus_mob = $('#cus_mob_search').val();

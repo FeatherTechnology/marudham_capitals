@@ -29,6 +29,7 @@ class admin
 			$detailrecords['group_id']              = strip_tags($row->group_id);
 			$detailrecords['download_access']              = strip_tags($row->download_access);
 			$detailrecords['report_access']              = strip_tags($row->report_access);
+			$detailrecords['promotion_access']              = strip_tags($row->pro_aty_access);
 			$detailrecords['mastermodule']              = strip_tags($row->mastermodule);
 			$detailrecords['company_creation']              = strip_tags($row->company_creation);
 			$detailrecords['branch_creation']              = strip_tags($row->branch_creation);
@@ -2321,6 +2322,10 @@ class admin
 		if (isset($_POST['group'])) {
 			$group = $_POST['group'];
 		}
+		$pro_aty_access='';
+		if (isset($_POST['pro_aty_access_id'])) {
+			$pro_aty_access = $_POST['pro_aty_access_id'];
+		}
 		$download_access = '1';
 		if (isset($_POST['download_access'])) {
 			$download_access = $_POST['download_access'];
@@ -2698,7 +2703,7 @@ class admin
 			$sms_generation = 1;
 		}
 		$insertQry = "INSERT INTO user(`fullname`,`emailid`, `user_name`, `user_password`, `role`, `role_type`, `dir_id`,
-        `ag_id`, `staff_id`, `company_id`, `branch_id`,`loan_cat`, `agentforstaff`,`line_id`, `group_id`,`download_access`, `report_access`, `mastermodule`, `company_creation`, `branch_creation`, `loan_category`, `loan_calculation`,
+        `ag_id`, `staff_id`, `company_id`, `branch_id`,`loan_cat`, `agentforstaff`,`line_id`, `group_id`,`download_access`, `report_access`,`pro_aty_access`, `mastermodule`, `company_creation`, `branch_creation`, `loan_category`, `loan_calculation`,
         `loan_scheme`, `area_creation`, `area_mapping`, `area_approval`, `adminmodule`, `director_creation`, `agent_creation`, `staff_creation`, `manage_user`,`doc_mapping`,`bank_creation`,`requestmodule`,
         `request`,`request_list_access`,`verificationmodule`,`verification`,`approvalmodule`,`approval`,`acknowledgementmodule`,`acknowledgement`,`loanissuemodule`,`loan_issue`,
 		`collectionmodule`,`collection`,`collection_access`,`closedmodule`,`closed`,`nocmodule`,`noc`,
@@ -2710,7 +2715,7 @@ class admin
         VALUES('" . strip_tags($full_name) . "','" . strip_tags($email) . "','" . strip_tags($user_name) . "','" . strip_tags($user_password) . "','" . strip_tags($role) . "',
         '" . strip_tags($role_type) . "','" . strip_tags($dir_name) . "','" . strip_tags($ag_name) . "','" . strip_tags($staff_name) . "','" . strip_tags($company_id) . "',
         '" . strip_tags($branch_id) . "','" . strip_tags($loan_cat) . "','" . strip_tags($agentforstaff) . "','" . strip_tags($line) . "','" . strip_tags($group) . "',
-		'" . strip_tags($download_access) . "', '" . strip_tags($report_access) . "', '" . strip_tags($mastermodule) . "','" . strip_tags($company_creation) . "',
+		'" . strip_tags($download_access) . "', '" . strip_tags($report_access) . "', '" . strip_tags($pro_aty_access) . "', '" . strip_tags($mastermodule) . "','" . strip_tags($company_creation) . "',
         '" . strip_tags($branch_creation) . "','" . strip_tags($loan_category) . "','" . strip_tags($loan_calculation) . "','" . strip_tags($loan_scheme) . "','" . strip_tags($area_creation) . "',
         '" . strip_tags($area_mapping) . "','" . strip_tags($area_approval) . "','" . strip_tags($adminmodule) . "','" . strip_tags($director_creation) . "',
         '" . strip_tags($agent_creation) . "','" . strip_tags($staff_creation) . "','" . strip_tags($manage_user) . "','" . strip_tags($doc_mapping) . "','" . strip_tags($bank_creation) . "','" . strip_tags($requestmodule) . "','" . strip_tags($request) . "',
@@ -2784,6 +2789,10 @@ class admin
 		$group = '';
 		if (isset($_POST['group'])) {
 			$group = $_POST['group'];
+		}
+		$pro_aty_access='';
+		if (isset($_POST['pro_aty_access_id'])) {
+			$pro_aty_access = $_POST['pro_aty_access_id'];
 		}
 		$download_access = '1';
 		if (isset($_POST['download_access'])) {
@@ -3167,7 +3176,8 @@ class admin
 	`ag_id` = '" . strip_tags($ag_name) . "',`staff_id` = '" . strip_tags($staff_name) . "',`company_id` = '" . strip_tags($company_id) . "',`branch_id` = '" . strip_tags($branch_id) . "',
 	`loan_cat` = '" . strip_tags($loan_cat) . "',agentforstaff='" . strip_tags($agentforstaff) . "',`line_id` = '" . strip_tags($line) . "',`group_id` = '" . strip_tags($group) . "',
 	`download_access` = '" . strip_tags($download_access) . "',
-	`report_access` = '" . strip_tags($report_access) . "', `mastermodule` = '" . strip_tags($mastermodule) . "',
+	`report_access` = '" . strip_tags($report_access) . "',
+	`pro_aty_access` = '" . strip_tags($pro_aty_access) . "', `mastermodule` = '" . strip_tags($mastermodule) . "',
 	`company_creation` = '" . strip_tags($company_creation) . "',`branch_creation` = '" . strip_tags($branch_creation) . "',`loan_category` = '" . strip_tags($loan_category) . "',
 	`loan_calculation` = '" . strip_tags($loan_calculation) . "',`loan_scheme` = '" . strip_tags($loan_scheme) . "',`area_creation` = '" . strip_tags($area_creation) . "',
 	`area_mapping` = '" . strip_tags($area_mapping) . "',`area_approval` = '" . strip_tags($area_approval) . "',`adminmodule` = '" . strip_tags($adminmodule) . "',
@@ -3832,6 +3842,9 @@ class admin
 
 			$subareaQry = $mysqli->query("SELECT sub_area_name from sub_area_list_creation where sub_area_id = '" . $row['sub_area'] . "' ");
 			$reqToverify['sub_area_name'] = $subareaQry->fetch_assoc()['sub_area_name'];
+
+			$ageqry = $mysqli->query("SELECT ag_name from agent_creation where ag_id = '" . $row['agent_id'] . "' ");
+			$reqToverify['agent_name'] = $ageqry->fetch_assoc()['ag_name'];
 		}
 
 

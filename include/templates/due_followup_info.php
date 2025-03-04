@@ -70,6 +70,7 @@ if (sizeof($getRequestData) > 0) {
 		$cus_status					= $getRequestData['cus_status'];
 		$area_nameforhead 					= $getRequestData['area_name'];
 		$sub_area_nameforhead 					= $getRequestData['sub_area_name'];
+		$agent_name 					= $getRequestData['agent_name'];
 	}
 }
 
@@ -438,6 +439,12 @@ if (sizeof($getLoanCalculation) > 0) {
 									<div class="form-group">
 										<label for="user">User Name</label><span class="required">&nbsp;*</span>
 										<input type="text" class="form-control" id="user" name="user" readonly value='<?php if (isset($user_name)) echo $user_name; ?>' tabindex='2'>
+									</div>
+								</div>
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+									<div class="form-group">
+										<label for="user">Agent Name</label><span class="required">&nbsp;*</span>
+										<input type="text" class="form-control" id="agent_name" name="agent_name" readonly value='<?php if (isset($agent_name)) echo $agent_name; ?>' tabindex='2'>
 									</div>
 								</div>
 
@@ -1842,6 +1849,12 @@ if (sizeof($getLoanCalculation) > 0) {
 									<div class="form-group">
 										<label for="user">User Name</label><span class="required">&nbsp;*</span>
 										<input type="text" class="form-control" id="user" name="user" readonly value='<?php if (isset($user_name)) echo $user_name; ?>' tabindex="2">
+									</div>
+								</div>
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+									<div class="form-group">
+										<label for="user">Agent Name</label><span class="required">&nbsp;*</span>
+										<input type="text" class="form-control" id="agent_name" name="agent_name" readonly value='<?php if (isset($agent_name)) echo $agent_name; ?>' tabindex='2'>
 									</div>
 								</div>
 

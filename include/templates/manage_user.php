@@ -20,6 +20,7 @@ $line_id           = '';
 $group_id           = '';
 $download_access = '';
 $report_access = '';
+$promotion_access = '';
 $mastermodule    = '';
 $company_creation      = '';
 $branch_creation = '';
@@ -154,6 +155,7 @@ if($idupd>0)
 			$group_id          		     = $getUser['group_id'];
 			$download_access          		     = $getUser['download_access'];
 			$report_access          		     = $getUser['report_access'];
+			$promotion_access          		     = $getUser['promotion_access'];
 			$mastermodule          		     = $getUser['mastermodule'];
 			$company_creation          		     = $getUser['company_creation'];
 			$branch_creation          		     = $getUser['branch_creation'];
@@ -272,6 +274,7 @@ if($idupd>0)
 		<input type="hidden" class="form-control" value="<?php if(isset($line_id)) echo $line_id; ?>"  id="line_id_upd" name="line_id_upd" aria-describedby="id" placeholder="Enter id">
 		<input type="hidden" class="form-control" value="<?php if(isset($group_id)) echo $group_id; ?>"  id="group_id_upd" name="group_id_upd" aria-describedby="id" placeholder="Enter id">
 		<input type="hidden" class="form-control" value="<?php if(isset($bank_details)) echo $bank_details; ?>"  id="bank_details_upd" name="bank_details_upd" aria-describedby="id" placeholder="Enter id">
+		<input type="hidden" class="form-control" value="<?php if(isset($promotion_access)) echo $promotion_access; ?>"  id="promotion_access_upd" name="promotion_access_upd" aria-describedby="id" placeholder="Enter id">
 		<!-- Row start -->
 		<div class="row gutters">
 			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
@@ -514,6 +517,19 @@ if($idupd>0)
 											</select>
 										</div>
 									</div>
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label for="pro_aty_access">Promotion Activity Access</label>&nbsp;<span class="text-danger">*</span>
+											<input type='hidden' class='form-control' id='pro_aty_access_id' name='pro_aty_access_id' >
+											<select tabindex="10" type="text" class="form-control" id="pro_aty_access" name="pro_aty_access" multiple>
+												<option value="">Select Promotion Activity</option>
+												<option value="1">Existing</option>
+												<option value="2">New</option>
+												<option value="3">Repromotion</option>
+											</select>
+											<span class="text-danger" style='display:none' id='proCheck'>Please select Group Name</span>
+                                        </div>
+                                    </div>
 								</div>
 							</div>
 						</div>
