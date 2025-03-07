@@ -3517,7 +3517,7 @@ class admin
 
 	public function getRequest($mysqli, $id)
 	{
-		$qry = $mysqli->query("SELECT * FROM request_creation where status = 0 and req_id = $id and cus_status = 0");
+		$qry = $mysqli->query("SELECT * FROM request_creation where status = 0 and req_id = $id "); //and cus_status = 0
 		$detailrecords = array();
 		if ($mysqli->affected_rows > 0) {
 			$row = $qry->fetch_assoc();

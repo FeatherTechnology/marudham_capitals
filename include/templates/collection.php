@@ -440,8 +440,9 @@ if ($idupd > 0) {
 				<!-- Collection Info -->
 				<div class="card collection_card" id="collection_info">
 					<div class="card-header">
-						<div class="card-title">Collection Info</div>
+						<div class="card-title">Collection Info <span class="text-danger"> *</span></div>
 					</div>
+					<span class="text-danger" id='collectionInfoCheck' style="padding-left: 20px; display: none;"> Collection Info is mandatory</span>
 					<div class="card-body">
 						<div class="row ">
 							<!--Fields -->

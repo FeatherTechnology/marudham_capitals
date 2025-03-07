@@ -7,11 +7,14 @@ $userid = $_SESSION["userid"] ?? null;
 $report_access = '2'; //if super Admin login use need to show overall.
 
 $sub_area_list = '';
+$user_based = '';
+
 if ($userid && $userid != 1) {
     $userQry = $connect->query("SELECT line_id, report_access FROM USER WHERE user_id = $userid");
     $user = $userQry->fetch();
-    if ($user) {
-        $report_access = $user['report_access'];
+    $report_access = $user['report_access'];
+
+    if ($report_access =='1') {
         $line_id = explode(',', $user['line_id']);
         $sub_area_list = [];
         foreach ($line_id as $line) {
@@ -21,13 +24,10 @@ if ($userid && $userid != 1) {
             }
         }
         $sub_area_list = implode(',', array_unique($sub_area_list));
-    }
-}
 
-if($report_access =='1'){
-    $user_based = "AND li.insert_login_id = '".$userid."'";
-}else{
-    $user_based = "";
+        $user_based = " AND cp.area_confirm_subarea IN ($sub_area_list) AND req.insert_login_id = '$userid' ";
+        
+    }
 }
 
 $where = "";
@@ -35,7 +35,7 @@ $li_where = "";
 if (isset($_POST['to_date']) && $_POST['to_date'] != '') {
     $to_date = date('Y-m-d', strtotime($_POST['to_date']));
     $where  = " WHERE (date(coll_date) <= '$to_date')";
-    $li_where  = "AND date(li.created_date) <= date('$to_date') AND balance_amount = '0' $user_based ";
+    $li_where  = "AND date(li.created_date) <= date('$to_date') AND balance_amount = '0' ";
 }else{
     $to_date = date('Y-m-d');
 }
@@ -78,7 +78,7 @@ $column = [
 $qry = "SELECT req.req_id FROM request_creation req
     JOIN acknowlegement_customer_profile cp ON req.req_id = cp.req_id
     JOIN loan_issue li ON req.req_id = li.req_id $li_where
-    WHERE req.cus_status BETWEEN 14 AND 18  AND cp.area_confirm_subarea IN ($sub_area_list)
+    WHERE req.cus_status BETWEEN 14 AND 18  $user_based
 
     UNION
 

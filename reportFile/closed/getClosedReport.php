@@ -8,34 +8,32 @@ if (isset($_SESSION["userid"])) {
     $report_access = '2'; //if super Admin login use need to show overall.
 }
 
+$user_based = "";
+
 if ($userid != 1) {
 
-    $userQry = $connect->query("SELECT group_id, line_id, report_access FROM USER WHERE user_id = $userid ");
+    $userQry = $connect->query("SELECT line_id, report_access FROM USER WHERE user_id = $userid ");
     $rowuser = $userQry->fetch();
-        $group_id = $rowuser['group_id'];
         $line_id = $rowuser['line_id'];
         $report_access = $rowuser['report_access'];
     
+    if($report_access =='1'){
+        $line_id = explode(',', $line_id);
+        $sub_area_list = array();
+        foreach ($line_id as $line) {
+            $lineQry = $connect->query("SELECT sub_area_id FROM area_line_mapping where map_id = $line ");
+            $row_sub = $lineQry->fetch();
+            $sub_area_list[] = $row_sub['sub_area_id'];
+        }
+        $sub_area_ids = array();
+        foreach ($sub_area_list as $subarray) {
+            $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
+        }
+        $sub_area_list = array();
+        $sub_area_list = implode(',', $sub_area_ids);
 
-    $line_id = explode(',', $line_id);
-    $sub_area_list = array();
-    foreach ($line_id as $line) {
-        $lineQry = $connect->query("SELECT sub_area_id FROM area_line_mapping where map_id = $line ");
-        $row_sub = $lineQry->fetch();
-        $sub_area_list[] = $row_sub['sub_area_id'];
+        $user_based = " AND cp.area_confirm_subarea IN ($sub_area_list) AND cs.insert_login_id = '$userid' ";
     }
-    $sub_area_ids = array();
-    foreach ($sub_area_list as $subarray) {
-        $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
-    }
-    $sub_area_list = array();
-    $sub_area_list = implode(',', $sub_area_ids);
-}
-
-if($report_access =='1'){
-    $user_based = "AND cs.insert_login_id = '".$userid."'";
-}else{
-    $user_based = "";
 }
 
 $where = "";
@@ -43,8 +41,10 @@ $where = "";
 if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'] != '' && $_POST['to_date'] != '') {
     $from_date = date('Y-m-d', strtotime($_POST['from_date']));
     $to_date = date('Y-m-d', strtotime($_POST['to_date']));
-    $where  = "and (date(cs.created_date) >= '" . $from_date . "') and (date(cs.created_date) <= '" . $to_date . "') $user_based ";
+    $where  = "AND (date(cs.created_date) >= '" . $from_date . "') AND (date(cs.created_date) <= '" . $to_date . "') ";
 }
+
+$where .= $user_based;
 
 $closed_sts_arr = [
     '1' => 'Consider',
@@ -127,7 +127,7 @@ LEFT JOIN (
 ) AS coll_most_frequent ON ii.req_id = coll_most_frequent.req_id
 WHERE 
     ii.cus_status >= 20 
-    AND cp.area_confirm_subarea IN ($sub_area_list) $where ";
+    $where ";
 
 if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {

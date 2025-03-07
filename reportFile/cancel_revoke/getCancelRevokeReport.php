@@ -7,6 +7,7 @@ if (isset($_SESSION["userid"])) {
     $report_access = '2'; //if super Admin login use need to show overall.
 }
 
+$user_based = "";
 if ($userid != 1) {
 
     $userQry = $connect->query("SELECT group_id, report_access FROM USER WHERE user_id = $userid ");
@@ -14,34 +15,34 @@ if ($userid != 1) {
         $group_id = $rowuser['group_id'];
         $report_access = $rowuser['report_access'];
     
-    $group_id = explode(',', $group_id);
-    $sub_area_list = array();
-    foreach ($group_id as $group) {
-        $groupQry = $connect->query("SELECT sub_area_id FROM area_group_mapping WHERE map_id = $group ");
-        $row_sub = $groupQry->fetch();
-        $sub_area_list[] = $row_sub['sub_area_id'];
+    if($report_access =='1'){
+        $group_id = explode(',', $group_id);
+        $sub_area_list = array();
+        foreach ($group_id as $group) {
+            $groupQry = $connect->query("SELECT sub_area_id FROM area_group_mapping WHERE map_id = $group ");
+            $row_sub = $groupQry->fetch();
+            $sub_area_list[] = $row_sub['sub_area_id'];
+        }
+        $sub_area_ids = array();
+        foreach ($sub_area_list as $subarray) {
+            $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
+        }
+        $sub_area_list = array();
+        $sub_area_list = implode(',', $sub_area_ids);
+
+        $user_based = "AND (cp.area_confirm_subarea IN ($sub_area_list) OR req.sub_area IN ($sub_area_list)) AND req.update_login_id = '$userid' ";
     }
-    $sub_area_ids = array();
-    foreach ($sub_area_list as $subarray) {
-        $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
-    }
-    $sub_area_list = array();
-    $sub_area_list = implode(',', $sub_area_ids);
 }
 
 $where = "1";
 
-if($report_access =='1'){
-    $user_based = "AND req.update_login_id = '".$userid."'";
-}else{
-    $user_based = "";
-}
-
 if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'] != '' && $_POST['to_date'] != '') {
     $from_date = date('Y-m-d', strtotime($_POST['from_date']));
     $to_date = date('Y-m-d', strtotime($_POST['to_date']));
-    $where  = "(date(req.dor) >= '" . $from_date . "') and (date(req.dor) <= '" . $to_date . "') $user_based ";
+    $where  = "(date(req.dor) >= '" . $from_date . "') and (date(req.dor) <= '" . $to_date . "') ";
 }
+
+$where  .= $user_based;
 
 $cus_status = "";
 $role_arr = [1 => 'Director', 2 => 'Agent', 3 => 'Staff'];
@@ -80,18 +81,13 @@ if (isset($_POST['type']) && isset($_POST['sel_screen'])) {
 
 if ($cus_status != "") {
     // Updated WHERE clause
-    $where .= " AND (
-        (req.cus_status = '$cus_status' AND cp.area_confirm_subarea IN ($sub_area_list)) 
-        OR 
-        (req.cus_status = '$cus_status' AND req.sub_area IN ($sub_area_list))
-    )";
+    $where .= " AND req.cus_status = '$cus_status' ";
+
 } else {
-    $where .= " AND (
-(req.cus_status BETWEEN 4 AND 9 AND cp.area_confirm_subarea IN ($sub_area_list))
-OR 
-(req.cus_status BETWEEN 4 AND 9 AND req.sub_area IN ($sub_area_list))
-)";
+    $where .= " AND req.cus_status BETWEEN 4 AND 9 ";
+
 }
+
 $statusLabels = [
     '0' => "In Request",
     '1' => 'In Verification',
@@ -158,8 +154,7 @@ JOIN user u ON req.update_login_id = u.user_id
 LEFT JOIN 
     customer_profile cp ON req.req_id = cp.req_id
 WHERE 
-    " . $where . " 
-";
+    $where ";
 
 if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {

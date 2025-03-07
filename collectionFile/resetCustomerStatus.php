@@ -293,13 +293,19 @@ function calculateOthers($loan_arr, $response, $connect, $req_id)
                 //Payable amount will be pending amount added with current month due amount
                 $response['payable'] = $response['due_amt'] + $response['pending'];
 
+                if ($response['payable'] > $response['balance']) {
+                    //if payable is greater than balance then change it as balance amt coz dont collect more than balance
+                    //this case will occur when collection status becoms OD
+                    $response['payable'] = $response['balance'];
+                }
+
             } else {
-                //If still current month is not ended, then pending will be same due amt
-                $response['pending'] = $response['due_amt'] - $response['total_paid'] - $response['pre_closure'];
+                //If still current month is not ended, then pending will be same due amt // pending will be 0 if due date not exceeded
+                $response['pending'] = 0; // $response['due_amt'] - $response['total_paid'] - $response['pre_closure'] ;
                 //If still current month is not ended, then penalty will be 0
                 $response['penalty'] = 0;
                 //If still current month is not ended, then payable will be due amt
-                $response['payable'] = 0;
+                $response['payable'] = $response['due_amt'] - $response['total_paid'] - $response['pre_closure'];
 
             }
         } else {
@@ -421,13 +427,20 @@ function calculateOthers($loan_arr, $response, $connect, $req_id)
 
             //Payable amount will be pending amount added with current month due amount
             $response['payable'] = $response['due_amt'] + $response['pending'];
+
+            if ($response['payable'] > $response['balance']) {
+                //if payable is greater than balance then change it as balance amt coz dont collect more than balance
+                //this case will occur when collection status becoms OD
+                $response['payable'] = $response['balance'];
+            }
+
         } else {
-            //If still current month is not ended, then pending will be same due amt
-            $response['pending'] = $response['due_amt'] - $response['total_paid'] - $response['pre_closure'];
+            //If still current month is not ended, then pending will be same due amt // pending will be 0 if due date not exceeded
+            $response['pending'] = 0; // $response['due_amt'] - $response['total_paid'] - $response['pre_closure'] ;
             //If still current month is not ended, then penalty will be 0
             $response['penalty'] = 0;
             //If still current month is not ended, then payable will be due amt
-            $response['payable'] = 0;
+            $response['payable'] = $response['due_amt'] - $response['total_paid'] - $response['pre_closure'];
         }
     } elseif ($loan_arr['due_method_scheme'] == '3') {
         //If Due method is Daily, Calculate penalty by checking the month has ended or not
@@ -542,17 +555,27 @@ function calculateOthers($loan_arr, $response, $connect, $req_id)
 
             //Payable amount will be pending amount added with current month due amount
             $response['payable'] = $response['due_amt'] + $response['pending'];
+
+            if ($response['payable'] > $response['balance']) {
+                //if payable is greater than balance then change it as balance amt coz dont collect more than balance
+                //this case will occur when collection status becoms OD
+                $response['payable'] = $response['balance'];
+            }
+            
         } else {
-            //If still current month is not ended, then pending will be same due amt
-            $response['pending'] = $response['due_amt'] - $response['total_paid'] - $response['pre_closure'];
+            //If still current month is not ended, then pending will be same due amt// pending will be 0 if due date not exceeded
+            $response['pending'] = 0; //$response['due_amt'] - $response['total_paid'] - $response['pre_closure'] ;
             //If still current month is not ended, then penalty will be 0
             $response['penalty'] = 0;
             //If still current month is not ended, then payable will be due amt
-            $response['payable'] = 0;
+            $response['payable'] = $response['due_amt'] - $response['total_paid'] - $response['pre_closure'];
         }
     }
     if ($response['pending'] < 0) {
         $response['pending'] = 0;
+    }
+    if ($response['payable'] < 0) {
+        $response['payable'] = 0;
     }
     return $response;
 }

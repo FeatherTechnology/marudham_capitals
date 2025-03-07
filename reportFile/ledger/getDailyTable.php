@@ -4,29 +4,37 @@ include '../../ajaxconfig.php';
 
 if (isset($_SESSION["userid"])) {
     $userid = $_SESSION["userid"];
+    $report_access = '2'; //Report Access Overall
 }
+
+$user_based = '';
+
 if ($userid != 1) {
 
-    $userQry = $connect->query("SELECT * FROM USER WHERE user_id = $userid ");
-    while ($rowuser = $userQry->fetch()) {
-        $group_id = $rowuser['group_id'];
+    $userQry = $connect->query("SELECT line_id, report_access FROM USER WHERE user_id = $userid ");
+    $rowuser = $userQry->fetch();
         $line_id = $rowuser['line_id'];
-    }
+        $report_access = $rowuser['report_access'];
 
-    $line_id = explode(',', $line_id);
-    $sub_area_list = array();
-    foreach ($line_id as $line) {
-        $lineQry = $connect->query("SELECT * FROM area_line_mapping where map_id = $line ");
-        $row_sub = $lineQry->fetch();
-        $sub_area_list[] = $row_sub['sub_area_id'];
+    if ($report_access == '1') { //Report access individual.
+        $line_id = explode(',', $line_id);
+        $sub_area_list = array();
+        foreach ($line_id as $line) {
+            $lineQry = $connect->query("SELECT sub_area_id FROM area_line_mapping where map_id = $line ");
+            $row_sub = $lineQry->fetch();
+            $sub_area_list[] = $row_sub['sub_area_id'];
+        }
+        $sub_area_ids = array();
+        foreach ($sub_area_list as $subarray) {
+            $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
+        }
+        $sub_area_list = array();
+        $sub_area_list = implode(',', $sub_area_ids);
+        
+        $user_based = " AND (select area_confirm_subarea from customer_profile where req_id = cp.req_id) IN ($sub_area_list) AND cp.insert_login_id = '$userid' ";
     }
-    $sub_area_ids = array();
-    foreach ($sub_area_list as $subarray) {
-        $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
-    }
-    $sub_area_list = array();
-    $sub_area_list = implode(',', $sub_area_ids);
 }
+
 $due_amt_sum = 0;
 $opening_balance_sum = 0;
 $total_paid_sum = 0;
@@ -61,8 +69,7 @@ $qry = $connect->query("
         JOIN sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
         JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
     WHERE 
-        (ii.cus_status >= 14 && ii.cus_status < 20) AND lc.due_method_scheme = 3 and 
-        (select area_confirm_subarea from customer_profile where req_id = cp.req_id) IN ($sub_area_list)  ");
+        (ii.cus_status >= 14 && ii.cus_status < 20) AND lc.due_method_scheme = 3 $user_based");
 
 
 $rows = array();

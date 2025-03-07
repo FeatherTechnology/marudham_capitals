@@ -88,6 +88,9 @@ $idupd = 0;
 if (isset($_GET['upd'])) {
 	$idupd = $_GET['upd'];
 }
+if (isset($_GET['pgeView'])) {
+	$pgeView = $_GET['pgeView'];
+}
 if ($idupd > 0) {
 	$getRequest = $userObj->getRequest($mysqli, $idupd);
 
@@ -185,7 +188,7 @@ if ($idupd > 0) {
 </div><br>
 <div class="text-right" style="margin-right: 25px;">
 	<a href="edit_request">
-		<button type="button" class="btn btn-primary"><span class="icon-arrow-left"></span>&nbsp; Back</button>
+		<button type="button" class="btn btn-primary hidediv"><span class="icon-arrow-left"></span>&nbsp; Back</button>
 	</a>
 </div><br><br>
 <!-- Page header end -->
@@ -194,6 +197,7 @@ if ($idupd > 0) {
 <div class="main-container">
 	<!--form start-->
 	<form id="request" name="request" action="" method="post" enctype="multipart/form-data">
+		<input type="hidden" name="page_view" id="page_view" value="<?php if (isset($pgeView)) {echo $pgeView;}else{ echo '2';} ?>" />
 		<input type="hidden" id="pending_sts"> <input type="hidden" id="od_sts"> <input type="hidden" id="due_nil_sts"> <input type="hidden" id="closed_sts"><input type="hidden" id="bal_amt">
 		<?php if ($idupd == 0) { ?>
 			<input type="hidden" class="form-control" value="<?php if (isset($user_id)) echo $user_id; ?>" id="user_id_load" name="user_id_load" aria-describedby="id" placeholder="Enter id">
@@ -740,7 +744,7 @@ if ($idupd > 0) {
 				</div>
 			</div>
 		</div>
-		<div class="col-md-12 ">
+		<div class="col-md-12 hidediv">
 			<div class="text-right">
 				<button type="submit" name="submit_request" id="submit_request" class="btn btn-primary" value="Submit" tabindex="45"><span class="icon-check"></span>&nbsp;Submit</button>
 				<button type="reset" class="btn btn-outline-secondary" tabindex="46">Clear</button>

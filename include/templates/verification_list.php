@@ -69,6 +69,7 @@
 								<th>Branch</th>
 								<th>Group</th>
 								<th>Line</th>
+								<th>Mobile</th>
 								<th>Area</th>
 								<th>Sub Area</th>
 								<th>Loan Category</th>
@@ -79,6 +80,7 @@
 								<th>Agent Name</th>
 								<th>Responsible</th>
 								<th>Customer Data</th>
+								<th>Customer Type</th>
 								<th>Customer Status</th>
 								<th>Action</th>
 							</tr>

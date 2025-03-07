@@ -7,47 +7,47 @@ if (isset($_SESSION["userid"])) {
     $userid = $_SESSION["userid"];
     $report_access = '2';
 }
+
+$user_based = "";
+
 if ($userid != 1) {
 
-    $userQry = $connect->query("SELECT group_id, line_id, report_access FROM USER WHERE user_id = $userid ");
+    $userQry = $connect->query("SELECT line_id, report_access FROM USER WHERE user_id = $userid ");
     $rowuser = $userQry->fetch();
-    $group_id = $rowuser['group_id'];
     $line_id = $rowuser['line_id'];
     $report_access = $rowuser['report_access'];
 
-    $line_id = explode(',', $line_id);
-    $sub_area_list = array();
-    foreach ($line_id as $line) {
-        $lineQry = $connect->query("SELECT sub_area_id FROM area_line_mapping WHERE map_id = $line ");
-        $row_sub = $lineQry->fetch();
-        $sub_area_list[] = $row_sub['sub_area_id'];
+    if($report_access =='1'){
+        $line_id = explode(',', $line_id);
+        $sub_area_list = array();
+        foreach ($line_id as $line) {
+            $lineQry = $connect->query("SELECT sub_area_id FROM area_line_mapping WHERE map_id = $line ");
+            $row_sub = $lineQry->fetch();
+            $sub_area_list[] = $row_sub['sub_area_id'];
+        }
+        $sub_area_ids = array();
+        foreach ($sub_area_list as $subarray) {
+            $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
+        }
+        $sub_area_list = array();
+        $sub_area_list = implode(',', $sub_area_ids);
+
+        $user_based = " AND cp.area_confirm_subarea IN ($sub_area_list) AND coll.insert_login_id = '$userid' ";
     }
-    $sub_area_ids = array();
-    foreach ($sub_area_list as $subarray) {
-        $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
-    }
-    $sub_area_list = array();
-    $sub_area_list = implode(',', $sub_area_ids);
 }
 
 $where = "1";
-
-if ($report_access == '1') {
-    $user_based = "AND coll.insert_login_id = '" . $userid . "'";
-} else {
-    $user_based = "";
-}
 
 if (isset($_POST['from_date']) && $_POST['from_date'] != '') {
     // Convert the input dates to month and year format
     $from_month = date('m', strtotime($_POST['from_date']));  // Extract month from from_date
     $from_year = date('Y', strtotime($_POST['from_date']));   // Extract year from from_date
-    // $to_month = date('m', strtotime($_POST['to_date']));      // Extract month from to_date
-    // $to_year = date('Y', strtotime($_POST['to_date']));       // Extract year from to_date
 
     // Prepare WHERE condition to compare month and year
-    $where  = "((YEAR(coll.coll_date) ='" . $from_year . "' AND MONTH(coll.coll_date) = '" . $from_month . "')) $user_based";
+    $where  = "((YEAR(coll.coll_date) ='" . $from_year . "' AND MONTH(coll.coll_date) = '" . $from_month . "')) ";
 }
+
+$where  .= $user_based;
 
 $consider_lvl_arr = [1 => 'Bronze', 2 => 'Silver', 3 => 'Gold', 4 => 'Platinum', 5 => 'Diamond'];
 $role_arr = [1 => 'Director', 2 => 'Agent', 3 => 'Staff'];
@@ -121,8 +121,7 @@ $query = "SELECT
             LEFT JOIN closed_status cls ON req.req_id = cls.req_id
 
             WHERE req.cus_status >= 14 
-            AND $where
-            AND cp.area_confirm_subarea IN ($sub_area_list) ";
+            AND $where ";
 
 if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {

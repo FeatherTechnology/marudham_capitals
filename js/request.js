@@ -291,6 +291,15 @@ $(function () {//For Update
     } else {
         autocallFunctions();
     }
+
+        //If Request info open from verification.
+        let page_view = $('#page_view').val();
+
+        if(page_view =='1'){
+            $('.hidediv').hide();
+            $('form :input').prop('readonly', true);
+            $("form select, form input[type='checkbox'], form input[type='radio']").prop("disabled", true); 
+        }
 })
 
 function autocallFunctions() {//For On load

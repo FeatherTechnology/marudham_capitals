@@ -6,33 +6,33 @@ if (isset($_SESSION["userid"])) {
     $userid = $_SESSION["userid"];
     $report_access = '2'; //if super Admin login use need to show overall.
 }
+
+$user_based = "";
+
 if ($userid != 1) {
 
-    $userQry = $connect->query("SELECT group_id, line_id, report_access FROM USER WHERE user_id = $userid ");
+    $userQry = $connect->query("SELECT line_id, report_access FROM USER WHERE user_id = $userid ");
     $rowuser = $userQry->fetch();
-        $group_id = $rowuser['group_id'];
         $line_id = $rowuser['line_id'];
         $report_access = $rowuser['report_access'];
 
-    $line_id = explode(',', $line_id);
-    $sub_area_list = array();
-    foreach ($line_id as $line) {
-        $lineQry = $connect->query("SELECT sub_area_id FROM area_line_mapping where map_id = $line ");
-        $row_sub = $lineQry->fetch();
-        $sub_area_list[] = $row_sub['sub_area_id'];
-    }
-    $sub_area_ids = array();
-    foreach ($sub_area_list as $subarray) {
-        $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
-    }
-    $sub_area_list = array();
-    $sub_area_list = implode(',', $sub_area_ids);
-}
+    if($report_access =='1'){
+        $line_id = explode(',', $line_id);
+        $sub_area_list = array();
+        foreach ($line_id as $line) {
+            $lineQry = $connect->query("SELECT sub_area_id FROM area_line_mapping where map_id = $line ");
+            $row_sub = $lineQry->fetch();
+            $sub_area_list[] = $row_sub['sub_area_id'];
+        }
+        $sub_area_ids = array();
+        foreach ($sub_area_list as $subarray) {
+            $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
+        }
+        $sub_area_list = array();
+        $sub_area_list = implode(',', $sub_area_ids);
 
-if($report_access =='1'){
-    $user_based = "AND ii.insert_login_id = '".$userid."'";
-}else{
-    $user_based = "";
+        $user_based = " AND cp.area_confirm_subarea IN ($sub_area_list) AND ii.insert_login_id = '$userid' ";
+    }
 }
 
 $where = "";
@@ -40,8 +40,10 @@ $where = "";
 if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'] != '' && $_POST['to_date'] != '') {
     $from_date = date('Y-m-d', strtotime($_POST['from_date']));
     $to_date = date('Y-m-d', strtotime($_POST['to_date']));
-    $where  = " and (date(ii.updated_date) >= '" . $from_date . "') and (date(ii.updated_date) <= '" . $to_date . "') $user_based ";
+    $where  = " AND (date(ii.updated_date) >= '" . $from_date . "') AND (date(ii.updated_date) <= '" . $to_date . "') ";
 }
+
+$where  .= $user_based;
 
 $column = array(
     'ii.id',
@@ -110,7 +112,7 @@ $query = "SELECT
         LEFT JOIN verification_family_info vfi_received_by ON li.cash_guarentor_name = vfi_received_by.relation_aadhar
 
         WHERE ii.cus_status >= 14 
-        AND cp.area_confirm_subarea IN ($sub_area_list) $where";
+        $where";
 
 if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {
@@ -197,16 +199,16 @@ foreach ($result as $row) {
 
 $output = array(
     'draw' => intval($_POST['draw']),
-    'recordsTotal' => count_all_data($connect, $where, $sub_area_list),
+    'recordsTotal' => count_all_data($connect),
     'recordsFiltered' => $number_filter_row,
     'data' => $data
 );
 
 echo json_encode($output);
 
-function count_all_data($connect, $where, $sub_area_list)
+function count_all_data($connect)
 {
-    $query = "SELECT ii.id from in_issue ii JOIN acknowlegement_customer_profile cp ON ii.req_id = cp.req_id WHERE ii.cus_status >= 14  and cp.area_confirm_subarea IN ($sub_area_list) ";
+    $query = "SELECT ii.id from in_issue ii JOIN acknowlegement_customer_profile cp ON ii.req_id = cp.req_id WHERE ii.cus_status >= 14 ";
     $statement = $connect->prepare($query);
     $statement->execute();
     return $statement->rowCount();
