@@ -122,6 +122,12 @@ function callOnClickEvents() {
             }
         });
 
+        //Request info tab
+        $('.request-info').off('click').click(function () {
+            let req_id = $(this).data('reqid');
+            window.open('request&upd=' + req_id + '&pgeView=1', '_blank');
+        })
+
         hideOverlay();
     }, 1000);
 }

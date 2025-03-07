@@ -7,31 +7,31 @@ if (isset($_SESSION["userid"])) {
     $report_access = '2'; //if super Admin login use need to show overall.
 }
 
+$user_based = "";
+
 if ($userid != 1) {
     $userQry = $connect->query("SELECT group_id, report_access FROM USER WHERE user_id = $userid ");
     $rowuser = $userQry->fetch();
         $group_id = $rowuser['group_id'];
         $report_access = $rowuser['report_access'];
     
-    $group_id = explode(',', $group_id);
-    $sub_area_list = array();
-    foreach ($group_id as $group) {
-        $groupQry = $connect->query("SELECT sub_area_id FROM area_group_mapping WHERE map_id = $group ");
-        $row_sub = $groupQry->fetch();
-        $sub_area_list[] = $row_sub['sub_area_id'];
-    }
-    $sub_area_ids = array();
-    foreach ($sub_area_list as $subarray) {
-        $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
-    }
-    $sub_area_list = array();
-    $sub_area_list = implode(',', $sub_area_ids);
-}
+    if($report_access =='1'){
+        $group_id = explode(',', $group_id);
+        $sub_area_list = array();
+        foreach ($group_id as $group) {
+            $groupQry = $connect->query("SELECT sub_area_id FROM area_group_mapping WHERE map_id = $group ");
+            $row_sub = $groupQry->fetch();
+            $sub_area_list[] = $row_sub['sub_area_id'];
+        }
+        $sub_area_ids = array();
+        foreach ($sub_area_list as $subarray) {
+            $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
+        }
+        $sub_area_list = array();
+        $sub_area_list = implode(',', $sub_area_ids);
 
-if($report_access =='1'){
-    $user_based = "AND cp.insert_login_id = '".$userid."'";
-}else{
-    $user_based = "";
+        $user_based = "WHERE cp.area_confirm_subarea IN ($sub_area_list) AND cp.insert_login_id = '$userid' ";
+    }
 }
 
 $statusObj = [
@@ -131,7 +131,7 @@ $query = "SELECT
             JOIN customer_register reg ON cp.cus_id = reg.cus_id
             JOIN request_creation req ON cp.req_id = req.req_id
 
-            WHERE cp.area_confirm_subarea IN ($sub_area_list) $user_based ";
+            $user_based ";
 
 if ($_POST['search'] != "") {
     $query .= " and (cp.id LIKE '%" . $_POST['search'] . "%' OR
@@ -156,8 +156,6 @@ $query1 = "";
 if ($_POST['length'] != -1) {
     $query1 = " LIMIT " . $_POST['start'] . ", " . $_POST['length'];
 }
-
-
 
 $statement = $connect->prepare($query);
 
@@ -186,20 +184,20 @@ foreach ($result as $row) {
     $sub_array[] = moneyFormatIndia($row['loan_limit']);
     $sub_array[] = $row['area_line'];
     $sub_array[] = $row['area_group'];
-    $sub_array[] = $how_to_know_obj[$row['how_to_know']];
+    $sub_array[] = $how_to_know_obj[$row['how_to_know']] ?? '';
 
     $row['occupation_type'] = $row['occupation_type'] != '' ? $row['occupation_type'] : 0;
-    $sub_array[] = $occupationTypeObj[$row['occupation_type']];
+    $sub_array[] = $occupationTypeObj[$row['occupation_type']] ?? '';
 
     $sub_array[] = $row['occupation_details'];
 
     $row['residential_type'] = $row['residential_type'] != '' ? $row['residential_type'] : 4;
-    $sub_array[] = $residentialTypeObj[$row['residential_type'] ?? 4];
+    $sub_array[] = $residentialTypeObj[$row['residential_type'] ?? 4] ?? '';
 
     $sub_array[] = $row['residential_details'];
     $sub_array[] = $row['travel_with_company'];
     $sub_array[] = ($row['reg_blood'] != '') ? $row['reg_blood'] : $row['blood_group'];
-    $sub_array[] = $statusObj[$row['cus_status']];
+    $sub_array[] = $statusObj[$row['cus_status']] ?? '';
 
     $data[]      = $sub_array;
     $sno = $sno + 1;

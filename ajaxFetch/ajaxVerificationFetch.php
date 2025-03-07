@@ -12,15 +12,15 @@ if (isset($_SESSION["userid"])) {
 }
 if ($userid != 1) {
 
-    $userQry = $connect->query("SELECT * FROM USER WHERE user_id = $userid ");
-    while ($rowuser = $userQry->fetch()) {
+    $userQry = $connect->query("SELECT group_id, loan_cat FROM USER WHERE user_id = $userid ");
+    $rowuser = $userQry->fetch();
         $group_id = $rowuser['group_id'];
         $loan_cat = $rowuser['loan_cat'];
-    }
+    
     $group_id = explode(',', $group_id);
     $sub_area_list = array();
     foreach ($group_id as $group) {
-        $groupQry = $connect->query("SELECT * FROM area_group_mapping where map_id = $group ");
+        $groupQry = $connect->query("SELECT sub_area_id FROM area_group_mapping where map_id = $group ");
         $row_sub = $groupQry->fetch();
         $sub_area_list[] = $row_sub['sub_area_id'];
     }
@@ -45,6 +45,7 @@ $column = array(
     'bc.branch_name',
     'ag.group_name',
     'alm.line_name',
+    'v.mobile1',
     'a.area_name',
     'sa.sub_area_name',
     'lcc.loan_category_creation_name',
@@ -55,6 +56,7 @@ $column = array(
     'v.agent_id',
     'v.responsible',
     'v.cus_data',
+    'v.cus_data',
     'v.cus_status',
     'v.status'
 );
@@ -62,7 +64,7 @@ $column = array(
 
 
 if ($userid == 1) {
-    $query = 'SELECT v.*,a.area_name, sa.sub_area_name, ag.group_name, bc.branch_name, alm.line_name,lcc.loan_category_creation_name
+    $query = "SELECT v.*,a.area_name, sa.sub_area_name, ag.group_name, bc.branch_name, alm.line_name,lcc.loan_category_creation_name
     FROM in_verification v
     JOIN area_list_creation a ON v.area = a.area_id
     JOIN sub_area_list_creation sa ON v.sub_area = sa.sub_area_id
@@ -70,7 +72,7 @@ if ($userid == 1) {
     JOIN branch_creation bc ON ag.branch_id = bc.branch_id
     JOIN area_line_mapping alm ON FIND_IN_SET(sa.sub_area_id, alm.sub_area_id)
     JOIN loan_category_creation lcc ON lcc.loan_category_creation_id = v.loan_category
-    WHERE v.status = 0 and (v.cus_status NOT IN(4, 5, 6, 7, 8, 9) and v.cus_status < 14) '; //  < 14 means issued
+    WHERE v.status = 0 and (v.cus_status NOT IN(4, 5, 6, 7, 8, 9) and v.cus_status < 14) "; //  < 14 means issued
 } else {
     $query = "SELECT v.*,a.area_name, sa.sub_area_name, ag.group_name, bc.branch_name, alm.line_name,lcc.loan_category_creation_name
     FROM in_verification v
@@ -94,6 +96,7 @@ if (isset($_POST['search']) && $_POST['search'] != "") {
             OR bc.branch_name LIKE '%" . $_POST['search'] . "%'
             OR ag.group_name LIKE '%" . $_POST['search'] . "%'
             OR alm.line_name LIKE '%" . $_POST['search'] . "%'
+            OR v.mobile1 LIKE '%" . $_POST['search'] . "%'
             OR a.area_name LIKE '%" . $_POST['search'] . "%'
             OR sa.sub_area_name LIKE '%" . $_POST['search'] . "%'
             OR lcc.loan_category_creation_name LIKE '%" . $_POST['search'] . "%'
@@ -104,7 +107,7 @@ if (isset($_POST['search']) && $_POST['search'] != "") {
             OR v.cus_data LIKE '%" . $_POST['search'] . "%' ) ";
 }
 if (isset($_POST['order'])) {
-    $query .= 'ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
+    $query .= ' ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
 } else {
     $query .= ' ';
 }
@@ -131,6 +134,7 @@ $data = array();
 $sno = 1;
 foreach ($result as $row) {
     $sub_array   = array();
+    $cus_id = $row['cus_id'];
 
     $sub_array[] = $sno;
 
@@ -143,6 +147,7 @@ foreach ($result as $row) {
     $sub_array[] = $row["branch_name"];
     $sub_array[] = $row['group_name'];
     $sub_array[] = $row['line_name'];
+    $sub_array[] = $row['mobile1'];
     $sub_array[] = $row['area_name'];
     $sub_array[] = $row['sub_area_name'];
     $sub_array[] = $row["loan_category_creation_name"];
@@ -169,6 +174,18 @@ foreach ($result as $row) {
     }
 
     $sub_array[] = $row['cus_data'];
+    $result = $connect->query("SELECT cus_status FROM `in_issue` where cus_id='$cus_id' and cus_status >= 14 ");
+    $existing_type = '';
+
+    while ($res = $result->fetch()) {
+        if ($res['cus_status'] >= 14 && $res['cus_status'] < 20) {
+            $existing_type = 'Additional';
+        } else if ($res['cus_status'] >= 20 && $existing_type != 'Additional') {
+            $existing_type = 'Renewal';
+        }
+    }
+
+    $sub_array[] = $existing_type;
     $id = $row['req_id'];
 
     $cus_status = $row['cus_status'];
@@ -216,9 +233,7 @@ foreach ($result as $row) {
         $sub_array[] = 'Issued';
     }
 
-    $id          = $row['req_id'];
     $user_type = $row['user_type'];
-    $cus_id = $row['cus_id'];
 
     $action = "<div class='dropdown'>
     <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
@@ -235,6 +250,7 @@ foreach ($result as $row) {
         $action .= "<a href='' data-value ='" . $cus_id . "' data-value1 = '$id' class='customer-status' data-toggle='modal' data-target='.customerstatus'>Customer Status</a>";
         // $action .= "<a href='' data-value ='".$cus_id."' data-value1 = '$id' class='loan-summary' data-toggle='modal' data-target='.loansummary'>Loan Summary</a>";
     }
+    $action .= "<a data-reqid='$id' class='request-info' >Request Info</a>";
 
 
     $action .= "</div></div>";

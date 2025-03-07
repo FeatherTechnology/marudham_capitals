@@ -41,11 +41,14 @@ try {
 
     $qry = $connect->query("SELECT agent_id FROM in_verification where req_id = $req_id ");
     $ag_id = $qry->fetch()['agent_id'];
-    $qry = $connect->query("SELECT cus_id_loan,loan_amt_cal, net_cash_cal, tot_amt_cal,due_start_from from acknowlegement_loan_calculation where req_id = $req_id ");
+
+    $qry = $connect->query("SELECT cus_id_loan, loan_amt_cal, net_cash_cal, tot_amt_cal, due_amt_cal, due_start_from from acknowlegement_loan_calculation where req_id = $req_id ");
     $row = $qry->fetch();
     $tot_amt_cal = $row['tot_amt_cal'];
+    $due_amt_cal = $row['due_amt_cal'];
     $cus_id = $row['cus_id_loan'];
     $dueStartDate = $row['due_start_from'];
+
     if ($ag_id > 0 and $ag_id != '' and $ag_id != null) { //if agent id is mentioned for this request, then this request is directly moving to collection without issuing cash
         $loan_amt = $row['loan_amt_cal'];
         $net_cash = $row['net_cash_cal'];
@@ -56,13 +59,15 @@ try {
     }
     
     if((strtotime($dueStartDate) > strtotime($current_date))){
-        $query = $connect->query(" INSERT INTO `customer_status`( `req_id`, `cus_id`, `sub_status`, `payable_amnt`, `bal_amnt`, `insert_login_id`, `created_date`) VALUES ('$req_id','$cus_id','Current','0','$tot_amt_cal','$userid', '$current_date' ) ");
+        $cus_payable = '0';
     
-    }
-    else{
-        $query = $connect->query(" INSERT INTO `customer_status`( `req_id`, `cus_id`, `sub_status`, `payable_amnt`, `bal_amnt`, `insert_login_id`, `created_date`) VALUES ('$req_id','$cus_id','Current','$tot_amt_cal','$tot_amt_cal','$userid', '$current_date' ) ");
+    } else{
+        $cus_payable = $due_amt_cal;
+        
     }
 
+    $query = $connect->query(" INSERT INTO `customer_status`( `req_id`, `cus_id`, `sub_status`, `payable_amnt`, `bal_amnt`, `insert_login_id`, `created_date`) VALUES ('$req_id','$cus_id','Current','$cus_payable','$tot_amt_cal','$userid', '$current_date' ) ");
+    
     // Commit transaction
     $connect->commit();
     $response = 'Loan Issue Completed';

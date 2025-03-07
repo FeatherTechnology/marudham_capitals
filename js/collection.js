@@ -945,6 +945,11 @@ function getBankNames() {
 }
 
 function validations() {
+  let tot_amt = $("#tot_amt").val();
+  let paid_amt = $("#paid_amt").val();
+  let bal_amt = $("#bal_amt").val();
+  let due_amt = $("#due_amt").val();
+  let payable_amt = $("#payable_amt").val();
   let collection_mode = $("#collection_mode").val();
   let bank_id = $("#bank_id").val();
   let cheque_no = $("#cheque_no").val();
@@ -954,6 +959,51 @@ function validations() {
   let total_paid_track = $("#total_paid_track").val();
   let total_waiver = $("#total_waiver").val();
   let retVal = true;
+
+  if(tot_amt == ""){
+    $("#collectionInfoCheck").show();
+    retVal = false;
+    
+  } else {
+    $("#collectionInfoCheck").hide();
+
+  }
+
+  if(paid_amt == ""){
+    $("#collectionInfoCheck").show();
+    retVal = false;
+
+  } else {
+    $("#collectionInfoCheck").hide();
+
+  }
+
+  if(bal_amt == ""){
+    $("#collectionInfoCheck").show();
+    retVal = false;
+
+  } else {
+    $("#collectionInfoCheck").hide();
+
+  }
+
+  if(due_amt == ""){
+    $("#collectionInfoCheck").show();
+    retVal = false;
+
+  } else {
+    $("#collectionInfoCheck").hide();
+
+  }
+
+  if(payable_amt == ""){
+    $("#collectionInfoCheck").show();
+    retVal = false;
+
+  } else {
+    $("#collectionInfoCheck").hide();
+
+  }
 
   if (!collection_mode) {
     $("#collectionmodeCheck").show();

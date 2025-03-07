@@ -1,48 +1,48 @@
 <?php
-
 session_start();
 include '../../ajaxconfig.php';
 
 if (isset($_SESSION["userid"])) {
     $userid = $_SESSION["userid"];
-    $report_access = '2';
+    $report_access = '2'; //Report Access Overall
 }
+
+$user_based = '';
 if ($userid != 1) {
 
-    $userQry = $connect->query("SELECT group_id, line_id, report_access FROM USER WHERE user_id = $userid ");
+    $userQry = $connect->query("SELECT line_id, report_access FROM USER WHERE user_id = $userid ");
     $rowuser = $userQry->fetch();
-    $group_id = $rowuser['group_id'];
     $line_id = $rowuser['line_id'];
     $report_access = $rowuser['report_access'];
 
-    $line_id = explode(',', $line_id);
-    $sub_area_list = array();
-    foreach ($line_id as $line) {
-        $lineQry = $connect->query("SELECT sub_area_id FROM area_line_mapping WHERE map_id = $line ");
-        $row_sub = $lineQry->fetch();
-        $sub_area_list[] = $row_sub['sub_area_id'];
+    if ($report_access == '1') { //Report access individual.
+        $line_id = explode(',', $line_id);
+        $sub_area_list = array();
+        foreach ($line_id as $line) {
+            $lineQry = $connect->query("SELECT sub_area_id FROM area_line_mapping WHERE map_id = $line ");
+            $row_sub = $lineQry->fetch();
+            $sub_area_list[] = $row_sub['sub_area_id'];
+        }
+        $sub_area_ids = array();
+        foreach ($sub_area_list as $subarray) {
+            $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
+        }
+        $sub_area_list = array();
+        $sub_area_list = implode(',', $sub_area_ids);
+
+        $user_based = " AND cp.area_confirm_subarea IN ($sub_area_list) AND coll.insert_login_id = '$userid' ";
     }
-    $sub_area_ids = array();
-    foreach ($sub_area_list as $subarray) {
-        $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
-    }
-    $sub_area_list = array();
-    $sub_area_list = implode(',', $sub_area_ids);
 }
 
 $where = "1";
 
-if ($report_access == '1') {
-    $user_based = "AND coll.insert_login_id = '" . $userid . "'";
-} else {
-    $user_based = "";
-}
-
 if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'] != '' && $_POST['to_date'] != '') {
     $from_date = date('Y-m-d', strtotime($_POST['from_date']));
     $to_date = date('Y-m-d', strtotime($_POST['to_date']));
-    $where  = "(date(coll.coll_date) >= '" . $from_date . "') and (date(coll.coll_date) <= '" . $to_date . "') $user_based";
+    $where  = "(date(coll.coll_date) >= '" . $from_date . "') and (date(coll.coll_date) <= '" . $to_date . "') ";
 }
+
+    $where  .= $user_based;
 
 $statusObj = [
     '14' => 'Current',
@@ -83,53 +83,52 @@ $column = array(
 );
 
 $query = "SELECT 
-                cp.area_line AS line,
-                ii.loan_id,
-                ii.updated_date AS loan_date,
-                coll.cus_id,
-                coll.req_id,
-                coll.cus_name,
-                coll.coll_mode,
-                al.area_name,
-                sal.sub_area_name,
-                lcc.loan_category_creation_name AS loan_cat_name,
-                lc.sub_category,
-                lc.due_type,
-                lc.due_period,
-                lc.principal_amt_cal,
-                lc.int_amt_cal,
-                ac.ag_name,
-                u.role,
-                u.fullname,
-                coll.coll_date,
-                coll.trans_date,
-                b.bank_name,
-                (coll.due_amt_track) AS due_amt_track,
-                (coll.princ_amt_track) AS princ_amt_track,
-                (coll.int_amt_track) AS int_amt_track,
-                (coll.penalty_track) AS penalty_track,
-                (coll.coll_charge_track) AS coll_charge_track,
-                (coll.total_paid_track) AS total_paid_track,
-                req.cus_status,
-                cls.closed_sts,
-                cls.consider_level
+            cp.area_line AS line,
+            ii.loan_id,
+            ii.updated_date AS loan_date,
+            coll.cus_id,
+            coll.req_id,
+            coll.cus_name,
+            coll.coll_mode,
+            al.area_name,
+            sal.sub_area_name,
+            lcc.loan_category_creation_name AS loan_cat_name,
+            lc.sub_category,
+            lc.due_type,
+            lc.due_period,
+            lc.principal_amt_cal,
+            lc.int_amt_cal,
+            ac.ag_name,
+            u.role,
+            u.fullname,
+            coll.coll_date,
+            coll.trans_date,
+            b.bank_name,
+            (coll.due_amt_track) AS due_amt_track,
+            (coll.princ_amt_track) AS princ_amt_track,
+            (coll.int_amt_track) AS int_amt_track,
+            (coll.penalty_track) AS penalty_track,
+            (coll.coll_charge_track) AS coll_charge_track,
+            (coll.total_paid_track) AS total_paid_track,
+            req.cus_status,
+            cls.closed_sts,
+            cls.consider_level
 
-            FROM collection coll
-            JOIN acknowlegement_customer_profile cp ON coll.req_id = cp.req_id
-            JOIN in_issue ii ON coll.req_id = ii.req_id
-            JOIN area_list_creation al ON cp.area_confirm_area = al.area_id
-            JOIN sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
-            JOIN acknowlegement_loan_calculation lc ON coll.req_id = lc.req_id
-            JOIN request_creation req ON coll.req_id = req.req_id
-           LEFT JOIN bank_creation b ON coll.bank_id = b.id
-            JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
-             JOIN user u ON coll.insert_login_id = u.user_id
-            LEFT JOIN agent_creation ac ON req.agent_id = ac.ag_id
-            LEFT JOIN closed_status cls ON req.req_id = cls.req_id
+        FROM collection coll
+        JOIN acknowlegement_customer_profile cp ON coll.req_id = cp.req_id
+        JOIN in_issue ii ON coll.req_id = ii.req_id
+        JOIN area_list_creation al ON cp.area_confirm_area = al.area_id
+        JOIN sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
+        JOIN acknowlegement_loan_calculation lc ON coll.req_id = lc.req_id
+        JOIN request_creation req ON coll.req_id = req.req_id
+        LEFT JOIN bank_creation b ON coll.bank_id = b.id
+        JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
+        JOIN user u ON coll.insert_login_id = u.user_id
+        LEFT JOIN agent_creation ac ON req.agent_id = ac.ag_id
+        LEFT JOIN closed_status cls ON req.req_id = cls.req_id
 
-            WHERE req.cus_status >= 14 
-            AND $where
-            AND cp.area_confirm_subarea IN ($sub_area_list) ";
+        WHERE req.cus_status >= 14 
+        AND $where ";
 
 if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {
