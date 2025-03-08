@@ -38,11 +38,6 @@ if (isset($_POST['order'])) {
     $order = ' ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
 }
 
-$limit = '';
-if ($_POST['length'] != -1) {
-    $limit = ' LIMIT ' . $_POST['start'] . ', ' . $_POST['length'];
-}
-
     //only closed customers who dont have any loans in current.
     // Simplified main query to fetch closed customers without loans
     $qry = "SELECT cp.req_id, cp.cus_id, cp.cus_name, al.area_name, sl.sub_area_name, bc.branch_name, cp.area_group, cp.area_line, cp.mobile1, cs.consider_level, cs.created_date, np.status AS followup_sts, np.follow_date 
@@ -63,34 +58,13 @@ if ($_POST['length'] != -1) {
             FROM new_promotion
             GROUP BY cus_id
         ) np ON cs.cus_id = np.cus_id 
-        WHERE cp.area_confirm_subarea IN ($sub_area_list) AND NOT EXISTS ( SELECT 1 FROM request_creation r WHERE r.cus_id = cs.cus_id AND r.cus_status BETWEEN 4 AND 9 ) ";
-
-    $qry1 = "SELECT cp.req_id, cp.cus_id, cp.cus_name, al.area_name, sl.sub_area_name, bc.branch_name, cp.area_group, cp.area_line, cp.mobile1, cs.consider_level, cs.created_date, np.status AS followup_sts, np.follow_date 
-        FROM acknowlegement_customer_profile cp
-        JOIN (
-            SELECT req_id, cus_id, consider_level, created_date
-            FROM closed_status
-            WHERE closed_sts = 1
-            ORDER BY created_date DESC
-        ) cs ON cs.req_id = cp.req_id 
-        LEFT JOIN area_list_creation al ON cp.area_confirm_area = al.area_id 
-        LEFT JOIN sub_area_list_creation sl ON cp.area_confirm_subarea = sl.sub_area_id 
-        LEFT JOIN area_group_mapping agm ON FIND_IN_SET(sl.sub_area_id, agm.sub_area_id) 
-        LEFT JOIN area_line_mapping alm ON FIND_IN_SET(sl.sub_area_id, alm.sub_area_id) 
-        LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
-        LEFT JOIN (
-            SELECT cus_id, MAX(follow_date) AS follow_date, status
-            FROM new_promotion
-            GROUP BY cus_id
-        ) np ON cs.cus_id = np.cus_id 
-        WHERE cp.area_confirm_subarea IN ($sub_area_list) AND NOT EXISTS ( SELECT 1 FROM request_creation r WHERE r.cus_id = cs.cus_id AND r.cus_status BETWEEN 4 AND 9 ) ";
+        WHERE cp.area_confirm_subarea IN ($sub_area_list) AND NOT EXISTS ( SELECT 1 FROM request_creation r WHERE r.cus_id = cs.cus_id AND r.cus_status NOT BETWEEN 4 AND 9 AND r.cus_status < 20 ) ";
 
     if($_POST['followUpSts']){
         $follow_up_sts = $_POST['followUpSts'];
         $qry_sts = ($follow_up_sts =='tofollow') ? "AND np.status IS NULL " : "AND TRIM(REPLACE(np.status,' ','')) = '$follow_up_sts' ";
 
         $qry .= $qry_sts;
-        $qry1 .= $qry_sts;
     }
 
     if($_POST['dateType']){
@@ -98,18 +72,20 @@ if ($_POST['length'] != -1) {
         $qry_date = ($date_type == '1') ? "AND cs.created_date BETWEEN '".$_POST['followUpFromDate']."' AND '".$_POST['followUpToDate']."' " : "AND np.follow_date BETWEEN '".$_POST['followUpFromDate']."' AND '".$_POST['followUpToDate']."' ";
 
         $qry .= $qry_date;
-        $qry1 .= $qry_date;
     }    
 
-    $qry .= "$search GROUP BY cp.cus_id $order  $limit ";
-    $qry1 .= "$search GROUP BY cp.cus_id $order ";
-
-    $sql = $connect->query($qry);
+    $qry .= "$search GROUP BY cp.cus_id $order ";
 
     // Count query for filtering (use the same logic but without limit)
-    $num_qry = $connect->query($qry1);
-
+    $num_qry = $connect->query($qry);
     $number_filter_row = $num_qry->rowCount();
+    
+    $limit = '';
+    if ($_POST['length'] != -1) {
+        $limit = ' LIMIT ' . $_POST['start'] . ', ' . $_POST['length'];
+    }
+    
+    $sql = $connect->query($qry . $limit);
 
     $sub_status = [1 => 'Bronze', 2 => 'Silver', 3 => 'Gold', 4 => 'Platinum', 5 => 'Diamond'];
 
