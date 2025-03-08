@@ -10,15 +10,26 @@ $i=0;$records = array();
 $netcash = 0;
 
 
-$qry = $connect->query("SELECT id,cheque_no, cheque_value,transaction_id, transaction_value,issued_to,req_id,insert_login_id FROM `loan_issue` where (agent_id = '' or agent_id = null) and ((cheque_value!= '' or transaction_value !='') or (cheque_value!= '' and transaction_value !='')) and  bank_id = '$bank_id'  ");
+$qry = $connect->query("SELECT id, cheque_no, cheque_value, transaction_id, transaction_value, issued_to, req_id, insert_login_id 
+    FROM loan_issue li
+    WHERE 
+        (agent_id = '' OR agent_id IS NULL) 
+        AND (cheque_value != '' OR transaction_value != '') 
+        AND bank_id = '$bank_id'
+        AND NOT EXISTS (
+            SELECT 1 FROM ct_db_bissued 
+            WHERE li_user_id = li.insert_login_id 
+            AND li_id = li.id
+        ) ");
+//Query changed.
 //not used current date, bcoz if loan issued on friday payment may take time to reflect or payer may do this cash tally at any time.
 //so until this current bank account get closed it should show the amount userwise
 //not used group by and sum for cheque and transaction , bcoz all are getting summed up and giving wrong cheque numbers and trans ids
 //only single entries can be placed in tables 
 while($row = $qry->fetch()){
 
-    $dbCheck = $connect->query("SELECT * from ct_db_bissued where li_user_id = '".$row['insert_login_id']."' ");
-    if($dbCheck->rowCount() == 0){ 
+    // $dbCheck = $connect->query("SELECT * from ct_db_bissued where li_user_id = '".$row['insert_login_id']."' ");
+    // if($dbCheck->rowCount() == 0){ 
         // to check whether id of loan issue is already entered in bissued table. if done, no need to show bcoz submitted bissued no need to show in table
 
         // $netcash = $netcash + intVal($row['cash']);
@@ -50,7 +61,7 @@ while($row = $qry->fetch()){
         $role = $row1['role'];if($role == 1){$records[$i]['usertype'] = 'Director';}else if($role==3){$records[$i]['usertype'] = 'Staff';}
         $records[$i]['username'] = $row1['fullname'];
         $i++;
-    }
+    // }
 }
 
 // Close the database connection

@@ -68,7 +68,7 @@ if($crdb == 'Credit' ){
         $qry .= "ref_code, amt FROM ct_db_exf WHERE insert_login_id = '$user_id' AND trans_id = '$trans_id' AND bank_id = '$bank_id'";
         
     }elseif($clr_cat == 13){// issued
-        $qry .= "ref_code, netcash FROM ct_db_bissued WHERE insert_login_id = '$user_id' AND trans_id = '$trans_id' AND li_bank_id = '$bank_id'";
+        $qry .= "ref_code, netcash AS amt FROM ct_db_bissued WHERE insert_login_id = '$user_id' AND trans_id = '$trans_id' AND li_bank_id = '$bank_id'";
 
     }elseif($clr_cat == 14){// Expenses
         $qry .= "ref_code, amt FROM ct_db_bexpense WHERE insert_login_id = '$user_id' AND trans_id = '$trans_id' AND bank_id = '$bank_id'";
