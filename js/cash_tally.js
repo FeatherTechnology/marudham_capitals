@@ -453,14 +453,14 @@ function getClosingBalance() {
         cache: false,
         success: function (response) {
             var closing = parseInt(response[0]['closing_balance']);
-            $('#closing_balance').text(closing)
-            $('#hand_closing').text(response[0]['hand_closing'])
+            $('#closing_balance').text(moneyFormatIndia(closing))
+            $('#hand_closing').text(moneyFormatIndia(response[0]['hand_closing']))
             var i = 0;
             $.each(response, function (index, item) {
-                $('#bank_closing' + i).text(item['bank_closing'])
+                $('#bank_closing' + i).text(moneyFormatIndia(item['bank_closing']))
                 i++;
             })
-            $('#agent_closing').text(response[0]['agent_closing'])
+            $('#agent_closing').text(moneyFormatIndia(response[0]['agent_closing']))
             submitCashTally(i);
         }
     })
