@@ -4,11 +4,15 @@ include('../../ajaxconfig.php');
 
 $draw = $_POST['draw'];
 $start = $_POST['start'];
-$length = $_POST['length'];
 $searchValue = $_POST['search'];
 $orderColumnIndex = $_POST['order'][0]['column'];
 $orderColumn = $_POST['columns'][$orderColumnIndex]['data'];
 $orderDir = $_POST['order'][0]['dir'];
+
+$limit = '';
+if ($_POST['length'] != -1) {
+    $limit = ' LIMIT ' . $_POST['start'] . ', ' . $_POST['length'];
+}
 
 $columns = [
     'rc.req_id',
@@ -30,14 +34,14 @@ if (isset($_SESSION["userid"])) {
     $userid = $_SESSION["userid"];
 }
 if ($userid != 1) {
-    $userQry = $connect->query("SELECT * FROM USER WHERE user_id = $userid ");
-    while ($rowuser = $userQry->fetch()) {
+    $userQry = $connect->query("SELECT group_id FROM USER WHERE user_id = $userid ");
+    $rowuser = $userQry->fetch();
         $group_id = $rowuser['group_id'];
-    }
+    
     $group_id = explode(',', $group_id);
     $sub_area_list = array();
     foreach ($group_id as $group) {
-        $groupQry = $connect->query("SELECT * FROM area_group_mapping where map_id = $group ");
+        $groupQry = $connect->query("SELECT sub_area_id FROM area_group_mapping where map_id = $group ");
         $row_sub = $groupQry->fetch();
         $sub_area_list[] = $row_sub['sub_area_id'];
     }
@@ -63,16 +67,7 @@ if ($searchValue != '') {
 
 $orderQuery = " ORDER BY " . $columns[$orderColumnIndex] . " " . $orderDir;
 
-$sql = "WITH ConfirmedSubareas AS (
-    SELECT
-        req_id,
-        area_confirm_subarea
-    FROM
-        acknowlegement_customer_profile
-    WHERE
-        area_confirm_subarea IN (" . $sub_area_list . ")
-)
-SELECT 
+$sql = "SELECT 
     rc.*,
     alc.area_name,
     salc.sub_area_name,
@@ -83,6 +78,8 @@ SELECT
     alm.line_name
 FROM 
     request_creation rc
+JOIN 
+    acknowlegement_customer_profile acp ON rc.req_id = acp.req_id
 LEFT JOIN 
     area_list_creation alc ON rc.area = alc.area_id
 LEFT JOIN 
@@ -97,22 +94,23 @@ LEFT JOIN
     branch_creation bc ON agm.branch_id = bc.branch_id
 LEFT JOIN 
     area_line_mapping alm ON FIND_IN_SET(rc.sub_area, alm.sub_area_id)
-JOIN 
-    ConfirmedSubareas cs ON rc.req_id = cs.req_id
 WHERE 
-    rc.cus_status >= 14 " . $searchQuery . $orderQuery . " LIMIT " . $start . ", " . $length;
+    rc.cus_status >= 14 AND acp.area_confirm_subarea IN ($sub_area_list) AND NOT EXISTS (SELECT 1 FROM confirmation_followup cf WHERE cf.req_id = rc.req_id AND cf.remove_status = 1) $searchQuery $orderQuery ";
 
-$result = $connect->query($sql);
+// Count query for filtered rows
+$num_qry = $connect->query($sql);
+$number_filter_row = $num_qry->rowCount();
+
+$result = $connect->query($sql . $limit);
 $data = [];
 $sno = $start + 1;
 $status_arr = [1 => 'Completed', 2 => 'Unavailable', 3 => 'Reconfirmation'];
 
 while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
     $req_id = $row['req_id'];
-    $qry = $connect->query("SELECT remove_status FROM confirmation_followup WHERE req_id = '" . $req_id . "' ORDER BY created_date DESC limit 1");
+    $qry = $connect->query("SELECT remove_status, status FROM confirmation_followup WHERE req_id = '" . $req_id . "' ORDER BY created_date DESC limit 1");
     $rst = $qry->fetch()['remove_status'] ?? null;
     if ($qry -> rowCount() == 0 || $rst != 1) { // show below contents only if confirmation of the request id is not removed from table already
-        $statusQry = $connect->query("SELECT status FROM confirmation_followup WHERE req_id = '" . $req_id . "' ORDER BY created_date DESC limit 1");
 
         $action = "<div class='dropdown'><button class='btn btn-outline-secondary' onclick='event.preventDefault();'><i class='fa'>&#xf107;</i></button><div class='dropdown-content'>
                         <a class='conf-chart' data-cusid='" . $row['cus_id'] . "' data-reqid='" . $row['req_id'] . "' data-toggle='modal' data-target='#confChartModal'><span>Confirmation Chart</span></a>
@@ -125,17 +123,14 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                     </div></div>";
 
         $actionEdit = "<div class='dropdown'><button class='btn btn-outline-secondary' onclick='event.preventDefault();'><i class='fa'>&#xf107;</i></button><div class='dropdown-content'>";
-        if ($statusQry->rowCount() > 0) {
-            $status = $statusQry->fetch()['status'];
-            if ($status == '1') { // 1 means completed
-                $actionEdit .= "<a class='conf-remove' data-cusid='" . $row['cus_id'] . "' data-reqid='" . $row['req_id'] . "' ><span>Remove</span></a>";
-            } else {
-                $actionEdit .= "<a class='conf-edit' data-cusid='" . $row['cus_id'] . "' data-cusname='" . $row['cus_name'] . "' data-reqid='" . $row['req_id'] . "' data-toggle='modal' data-target='#addConfimation'><span>Confirmation</span></a>";
-            }
+
+        $status = $rst['status'] ?? null;
+        if ($status == '1') { // 1 means completed
+            $actionEdit .= "<a class='conf-remove' data-cusid='" . $row['cus_id'] . "' data-reqid='" . $row['req_id'] . "' ><span>Remove</span></a>";
         } else {
-            $status = NULL;
             $actionEdit .= "<a class='conf-edit' data-cusid='" . $row['cus_id'] . "' data-cusname='" . $row['cus_name'] . "' data-reqid='" . $row['req_id'] . "' data-toggle='modal' data-target='#addConfimation'><span>Confirmation</span></a>";
         }
+
         $actionEdit .= "</div></div>";
 
         $data[] = [
@@ -156,47 +151,13 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
     }
 }
 
-$totalRecordsQry = $connect->query("WITH ConfirmedSubareas AS (
-    SELECT
-        req_id,
-        area_confirm_subarea
-    FROM
-        acknowlegement_customer_profile
-    WHERE
-        area_confirm_subarea IN (" . $sub_area_list . ")
-) SELECT COUNT(*) AS total FROM request_creation rc JOIN ConfirmedSubareas cs ON rc.req_id = cs.req_id WHERE rc.cus_status >= 14 ");
+$totalRecordsQry = $connect->query("SELECT COUNT(*) AS total FROM request_creation rc WHERE rc.cus_status >= 14 ");
 $totalRecords = $totalRecordsQry->fetch()['total'];
-
-$totalFilteredRecordsQry = $connect->query("WITH ConfirmedSubareas AS (
-    SELECT
-        req_id,
-        area_confirm_subarea
-    FROM
-        acknowlegement_customer_profile
-    WHERE
-        area_confirm_subarea IN (" . $sub_area_list . ")
-) SELECT COUNT(*) AS total FROM request_creation rc JOIN ConfirmedSubareas cs ON rc.req_id = cs.req_id 
-    LEFT JOIN 
-        area_list_creation alc ON rc.area = alc.area_id
-    LEFT JOIN 
-        sub_area_list_creation salc ON rc.sub_area = salc.sub_area_id
-    LEFT JOIN 
-        loan_category_creation lcc ON rc.loan_category = lcc.loan_category_creation_id
-    LEFT JOIN 
-        agent_creation ac ON rc.agent_id = ac.ag_id
-    LEFT JOIN 
-        area_group_mapping agm ON FIND_IN_SET(rc.sub_area, agm.sub_area_id)
-    LEFT JOIN 
-        branch_creation bc ON agm.branch_id = bc.branch_id
-    LEFT JOIN 
-        area_line_mapping alm ON FIND_IN_SET(rc.sub_area, alm.sub_area_id)
-    WHERE rc.cus_status >= 14 " . $searchQuery);
-$totalFilteredRecords = $totalFilteredRecordsQry->fetch()['total'];
 
 $response = [
     "draw" => intval($draw),
     "recordsTotal" => intval($totalRecords),
-    "recordsFiltered" => intval($totalFilteredRecords),
+    "recordsFiltered" => intval($number_filter_row),
     "data" => $data
 ];
 

@@ -38,30 +38,7 @@ if (isset($_POST['order'])) {
     $order = ' ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
 }
 
-$limit = '';
-if ($_POST['length'] != -1) {
-    $limit = ' LIMIT ' . $_POST['start'] . ', ' . $_POST['length'];
-}
-
     $qry = "SELECT req.req_id, req.cus_id, cp.customer_name, al.area_name, sl.sub_area_name, bc.branch_name, agm.group_name, alm.line_name, cp.mobile1, req.cus_status AS consider_level, req.updated_date, np.status AS followup_sts, np.follow_date 
-    FROM request_creation req 
-    LEFT JOIN customer_register cp ON req.cus_id = cp.cus_id 
-    LEFT JOIN (
-        SELECT DISTINCT cus_id 
-        FROM request_creation 
-        WHERE cus_status NOT BETWEEN 4 AND 9 
-        AND cus_status < 20 
-    ) rc ON req.cus_id = rc.cus_id 
-    LEFT JOIN area_list_creation al ON al.area_id = CASE WHEN req.cus_status IN (6, 7) THEN cp.area_confirm_area ELSE cp.area END
-    LEFT JOIN sub_area_list_creation sl ON sl.sub_area_id = CASE WHEN req.cus_status IN (6, 7) THEN cp.area_confirm_subarea ELSE cp.sub_area END
-    LEFT JOIN area_group_mapping agm ON FIND_IN_SET(sl.sub_area_id, agm.sub_area_id) 
-    LEFT JOIN area_line_mapping alm ON FIND_IN_SET(sl.sub_area_id, alm.sub_area_id) 
-    LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
-    LEFT JOIN ( SELECT cus_id, MAX(follow_date) AS follow_date, status FROM new_promotion GROUP BY cus_id ) np ON req.cus_id = np.cus_id
-    WHERE req.cus_status BETWEEN 4 AND 9 
-    AND CASE WHEN req.cus_status IN (6, 7) THEN cp.sub_area ELSE cp.area_confirm_subarea END IN  ($sub_area_list) AND rc.cus_id IS NULL ";
-
-    $qry1 = "SELECT req.req_id
     FROM request_creation req 
     LEFT JOIN customer_register cp ON req.cus_id = cp.cus_id 
     LEFT JOIN (
@@ -84,7 +61,6 @@ if ($_POST['length'] != -1) {
         $qry_sts = ($follow_up_sts =='tofollow') ? "AND np.status IS NULL " : "AND TRIM(REPLACE(np.status,' ','')) = '$follow_up_sts' ";
 
         $qry .= $qry_sts;
-        $qry1 .= $qry_sts;
     }
 
     if($_POST['dateType']){
@@ -92,19 +68,22 @@ if ($_POST['length'] != -1) {
         $qry_date = ($date_type == '1') ? "AND req.updated_date BETWEEN '".$_POST['followUpFromDate']."' AND '".$_POST['followUpToDate']."' " : "AND np.follow_date BETWEEN '".$_POST['followUpFromDate']."' AND '".$_POST['followUpToDate']."' ";
 
         $qry .= $qry_date;
-        $qry1 .= $qry_date;
     }     
     
-        $qry .= "$search GROUP BY req.cus_id $order $limit ";
-        $qry1 .= "$search GROUP BY req.cus_id $order ";
+        $qry .= "$search GROUP BY req.cus_id $order ";
+
+        // Count query for filtered rows
+        $num_qry = $connect->query($qry);
+        $number_filter_row = $num_qry->rowCount();
+
+        
+    $limit = '';
+    if ($_POST['length'] != -1) {
+        $limit = ' LIMIT ' . $_POST['start'] . ', ' . $_POST['length'];
+    }
 
     // Main query to fetch customers with specific status and filter those without recent loan requests
-    $sql = $connect->query($qry);
-
-    // Count query for filtered rows
-    $num_qry = $connect->query($qry1);
-
-    $number_filter_row = $num_qry->rowCount();
+    $sql = $connect->query($qry . $limit);
 
     $status = [4 => 'Request', 5 => 'Verification', 6 => 'Approval', 7 => 'Acknowledgement', 8 => 'Request', 9 => 'Verification'];
 
