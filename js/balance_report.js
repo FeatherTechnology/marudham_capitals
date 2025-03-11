@@ -1,3 +1,9 @@
+const loanCategory = new Choices('#loan_category', {
+    removeItemButton: true,
+    noChoicesText: 'Select Category',
+    allowHTML: true
+});
+
 $(document).ready(function () {
 
     //Balance Report Table
@@ -8,7 +14,12 @@ $(document).ready(function () {
     })
 });
 
+$(function(){
+    getloancategorylist();
+});
+
 function balanceReportTable(){
+    console.log( $('#loan_category').val());
     $('#balance_report_table').DataTable().destroy();
     $('#balance_report_table').DataTable({
         "order": [
@@ -23,6 +34,7 @@ function balanceReportTable(){
                 var search = $('input[type=search]').val();
                 data.search = search;
                 data.to_date = $('#to_date').val();
+                data.loan_cat = $('#loan_category').val();
             }
         },
         dom: 'lBfrtip',
@@ -70,4 +82,27 @@ function balanceReportTable(){
             searchFunction('balance_report_table');
         }
     });
+}
+
+function getloancategorylist(){
+    $.ajax({
+        url: 'reportFile/balance/getLoanCategory.php',
+        data: {},
+        dataType: 'json',
+        type: 'post',
+        cache: false,
+        success: function (response) {
+            loanCategory.clearStore();
+            for (var i = 0; i < response.length; i++) {
+                var loan_cat_name = response[i]['loan_category_creation_name'];
+                var items = [{
+                    value: loan_cat_name,
+                    label: loan_cat_name
+                    
+                }]
+                loanCategory.setChoices(items);
+                loanCategory.init();
+            }
+        }
+    })
 }
