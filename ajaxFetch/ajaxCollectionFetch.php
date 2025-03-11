@@ -7,7 +7,7 @@ if (isset($_SESSION["userid"])) {
 }
 if ($userid != 1) {
 
-    $userQry = $connect->query("SELECT * FROM USER WHERE user_id = $userid ");
+    $userQry = $connect->query("SELECT role, group_id, line_id FROM USER WHERE user_id = $userid ");
     while ($rowuser = $userQry->fetch()) {
         $role = $rowuser['role'];
         $group_id = $rowuser['group_id'];
@@ -17,7 +17,7 @@ if ($userid != 1) {
     $line_id = explode(',', $line_id);
     $sub_area_list = array();
     foreach ($line_id as $line) {
-        $lineQry = $connect->query("SELECT * FROM area_line_mapping where map_id = $line ");
+        $lineQry = $connect->query("SELECT sub_area_id FROM area_line_mapping where map_id = $line ");
         if ($lineQry->rowCount() > 0) {
             $row_sub = $lineQry->fetch();
             $sub_area_list[] = $row_sub['sub_area_id'];
@@ -76,6 +76,11 @@ if ($userid == 1) {
         WHERE ii.status = 0 AND (ii.cus_status >= 14 AND ii.cus_status <= 17) AND (rc.user_type = 'Agent' OR (rc.agent_id != '' OR rc.agent_id != null)  OR rc.insert_login_id = '$userid' ) "; // 14 and 17 means collection entries, 17 removed from issue list
 
     }
+}
+
+if ($_POST["Customer_Status"]!='') {
+    $cus_sts = $_POST["Customer_Status"];
+    $query .= " AND cs.sub_status ='$cus_sts' ";
 }
 
 if (isset($_POST['search'])) {
@@ -137,8 +142,11 @@ foreach ($result as $row) {
 
     $cus_id = $row['cp_cus_id'];
     $id     = $row['req_id'];
-
-    $action = "<a href='collection&upd=$id&cusidupd=$cus_id' title='Edit details' ><button class='btn btn-success' style='background-color:#009688;'>View</button></a>";
+if($_POST["Customer_Status"]!=''){
+    $action = "<a href='collection&upd=$id&cusidupd=$cus_id&duestatus=due_nill' title='Edit details' ><button class='btn btn-success' style='background-color:#009688;'>View</button></a>";
+}else{
+ $action = "<a href='collection&upd=$id&cusidupd=$cus_id' title='Edit details' ><button class='btn btn-success' style='background-color:#009688;'>View</button></a>";
+}
 
     $sub_array[] = $action;
     $data[]      = $sub_array;

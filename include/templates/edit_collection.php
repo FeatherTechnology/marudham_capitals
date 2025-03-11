@@ -5,34 +5,26 @@
 		Marudham Capitals - Collection
 	</div>
 </div><br>
-<!-- <div class="text-right" style="margin-right: 25px;">
-    <a href="verification">
-        <button type="button" class="btn btn-primary"><span class="icon-add"></span>&nbsp; Add verification</button>
-    </a>
-</div><br><br> -->
 <!-- Page header end -->
 
 <!-- Main container start -->
 <div class="main-container">
 	<!-- Row start -->
+	<div class="card" style="height:110px;" id="dull_nill_div">
+		<div class="row">
+		<div class="col-12 sub_status" style="display: flex; align-items: center; justify-content: center; margin-top:13px">
+			<h4>Customer Status</h4>
+		</div>
+		<div class="col-12 sub_status" style="display: flex; align-items: center; justify-content: center; margin-top: 13px;">
+			<button type="button" class="btn btn-primary" id="due_nill_btn" value="Due Nil">Due Nill</button>
+			<button type="button" class="btn btn-primary" id="all_btn" value="All" style="display: none;">All</button>
+			</div>
+		</div>
+		<br><br>
+	</div>
 	<div class="row gutters">
 		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 			<div class="table-container">
-				<!-- <div class="row">
-					<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 sub_status">
-
-						<label for="sub_status_mapping">Customer Status</label><span class="required">&nbsp;*</span>
-						<input type="hidden" class="" id="customer_status" name="customer_status" value="">
-						<select tabindex="10" type="text" class="form-control" id="sub_status_mapping" name="sub_status_mapping" multiple>
-							<option value="">Select Customer Status</option>
-						</select>
-						<span class='text-danger subStatusCheck' style="display:none">Please Select Customer Status </span>
-
-					</div>
-					<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 sub_status" style="margin-top:24px">
-						<button type="button" class="btn btn-primary" id="get_cus_sts_btn">Proceed</button>
-					</div>
-				</div> -->
 
 				<div class="table-responsive">
 					<?php
