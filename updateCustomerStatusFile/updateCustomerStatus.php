@@ -87,6 +87,10 @@ if (date('Y-m-d', strtotime($row['due_start_from'])) > date('Y-m-d', strtotime($
         }
     }
 }
+    
+if((strtotime($row['due_start_from']) > strtotime($curdate))){ //If Due start from date is greater than curdate means payable is "0". For example curdate is "11-03-2025" and the due start date is "01-04-2025" the payable is 0 till april.
+    $payable_amnts = '0';
+}
 
 $qry = $connect->query("SELECT * FROM customer_status WHERE req_id = '$req_id' ");
 if($qry->rowCount() > 0){

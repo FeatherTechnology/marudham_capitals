@@ -83,7 +83,7 @@ $column = array(
 );
 
 $query = "SELECT 
-            cp.area_line AS line,
+            alm.line_name AS line,
             ii.loan_id,
             ii.updated_date AS loan_date,
             coll.cus_id,
@@ -119,6 +119,7 @@ $query = "SELECT
         JOIN in_issue ii ON coll.req_id = ii.req_id
         JOIN area_list_creation al ON cp.area_confirm_area = al.area_id
         JOIN sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
+        JOIN area_line_mapping alm ON FIND_IN_SET(sal.sub_area_id, alm.sub_area_id)
         JOIN acknowlegement_loan_calculation lc ON coll.req_id = lc.req_id
         JOIN request_creation req ON coll.req_id = req.req_id
         LEFT JOIN bank_creation b ON coll.bank_id = b.id

@@ -146,11 +146,6 @@ $query = " SELECT
         ) c ON c.req_id = req.req_id
         WHERE lc.req_id IN ($req_id_list) ";
 
-if(isset($_POST['loan_cat'])){
-    $loan_cat_str = "'" . implode("','", $_POST['loan_cat']) . "'";
-    $query .= " AND lcc.loan_category_creation_name IN ($loan_cat_str)";
-}
-
 if (isset($_POST['search']) && $_POST['search'] != "") {
     $search = $_POST['search'];
     $query .= " AND (

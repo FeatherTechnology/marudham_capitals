@@ -68,6 +68,8 @@ if ($cus_limit != 0) {
         $response['loan_limit'] = $loan_limit;
     } else if ($cus_limit < $loan_limit) {
         $response['loan_limit'] = $cus_limit;
+    } else if ($cus_limit == $loan_limit){
+        $response['loan_limit'] = $cus_limit;
     }
 } else {
     $response['loan_limit'] = $loan_limit;

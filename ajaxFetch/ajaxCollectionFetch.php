@@ -38,7 +38,7 @@ $column = array(
     'alc.area_name',
     'salc.sub_area_name',
     'cp.id',
-    'cp.area_line',
+    'alm.line_name',
     'cp.mobile1',
     'cp.id'
 );
@@ -46,33 +46,36 @@ $column = array(
 //$cus_sts = implode(',', $_POST['Customer_status']);
 
 if ($userid == 1) {
-    $query = "SELECT cp.cus_id AS cp_cus_id, cp.cus_name, alc.area_name, salc.sub_area_name, cp.area_line, cp.mobile1, ii.cus_id AS ii_cus_id, ii.req_id 
+    $query = "SELECT cp.cus_id AS cp_cus_id, cp.cus_name, alc.area_name, salc.sub_area_name, alm.line_name AS area_line, cp.mobile1, ii.cus_id AS ii_cus_id, ii.req_id 
     FROM acknowlegement_customer_profile cp 
     JOIN in_issue ii ON cp.cus_id = ii.cus_id 
     JOIN customer_status cs ON cp.req_id = cs.req_id 
     JOIN area_list_creation alc ON cp.area_confirm_area = alc.area_id
     JOIN sub_area_list_creation salc ON cp.area_confirm_subarea = salc.sub_area_id
+    JOIN area_line_mapping alm ON FIND_IN_SET(salc.sub_area_id, alm.sub_area_id)
     WHERE ii.status = 0 AND (ii.cus_status >= 14 AND ii.cus_status <= 17)"; // Only Issued and all lines not relying on sub area// 14 and 17 means collection entries, 17 removed from issue list
 
 } else {
 
-    if ($role != '2') {
+    if ($role != '3') {
         //show only issued customers within the same lines of user. // 14 and 17 means collection entries, 17 removed from issue list
-        $query = "SELECT cp.cus_id AS cp_cus_id, cp.cus_name, alc.area_name, salc.sub_area_name, cp.area_line, cp.mobile1, ii.cus_id AS ii_cus_id, ii.req_id 
+        $query = "SELECT cp.cus_id AS cp_cus_id, cp.cus_name, alc.area_name, salc.sub_area_name, alm.line_name AS area_line, cp.mobile1, ii.cus_id AS ii_cus_id, ii.req_id 
         FROM acknowlegement_customer_profile cp 
         JOIN in_issue ii ON cp.cus_id = ii.cus_id 
         JOIN customer_status cs ON cp.req_id = cs.req_id 
         JOIN area_list_creation alc ON cp.area_confirm_area = alc.area_id
         JOIN sub_area_list_creation salc ON cp.area_confirm_subarea = salc.sub_area_id
+        JOIN area_line_mapping alm ON FIND_IN_SET(salc.sub_area_id, alm.sub_area_id)
         WHERE ii.status = 0 AND (ii.cus_status >= 14 AND ii.cus_status <= 17) AND cp.area_confirm_subarea IN ($sub_area_list) ";
     } else { // if agent then check the possibilities
-        $query = "SELECT cp.cus_id AS cp_cus_id, cp.cus_name, alc.area_name, salc.sub_area_name, cp.area_line, cp.mobile1, ii.cus_id AS ii_cus_id, ii.req_id 
+        $query = "SELECT cp.cus_id AS cp_cus_id, cp.cus_name, alc.area_name, salc.sub_area_name, alm.line_name AS area_line, cp.mobile1, ii.cus_id AS ii_cus_id, ii.req_id 
         FROM acknowlegement_customer_profile cp 
         JOIN in_issue ii ON cp.cus_id = ii.cus_id 
         JOIN request_creation rc ON ii.req_id = rc.req_id 
         JOIN customer_status cs ON cp.req_id = cs.req_id 
         JOIN area_list_creation alc ON cp.area_confirm_area = alc.area_id
         JOIN sub_area_list_creation salc ON cp.area_confirm_subarea = salc.sub_area_id
+        JOIN area_line_mapping alm ON FIND_IN_SET(salc.sub_area_id, alm.sub_area_id)
         WHERE ii.status = 0 AND (ii.cus_status >= 14 AND ii.cus_status <= 17) AND (rc.user_type = 'Agent' OR (rc.agent_id != '' OR rc.agent_id != null)  OR rc.insert_login_id = '$userid' ) "; // 14 and 17 means collection entries, 17 removed from issue list
 
     }
@@ -90,7 +93,7 @@ if (isset($_POST['search'])) {
             OR cp.cus_name LIKE '%" . $_POST['search'] . "%' 
             OR alc.area_name LIKE '%" . $_POST['search'] . "%' 
             OR salc.sub_area_name LIKE '%" . $_POST['search'] . "%' 
-            OR cp.area_line LIKE '%" . $_POST['search'] . "%' 
+            OR alm.line_name LIKE '%" . $_POST['search'] . "%' 
             OR cp.mobile1 LIKE '%" . $_POST['search'] . "%' ) ";
     }
 }

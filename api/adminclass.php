@@ -5556,7 +5556,7 @@ class admin
 	function getLoanList($mysqli, $id)
 	{
 		$detailrecords = array();
-		$Qry = $mysqli->query("SELECT `cus_id`,`cus_name`,`mobile1`,`cus_pic`,`area_confirm_area`,`area_confirm_subarea`,`area_line` FROM `acknowlegement_customer_profile` WHERE req_id = '" . strip_tags($id) . "' ");
+		$Qry = $mysqli->query("SELECT `cus_id`,`cus_name`,`mobile1`,`cus_pic`,`area_confirm_area`,`area_confirm_subarea` FROM `acknowlegement_customer_profile` WHERE req_id = '" . strip_tags($id) . "' ");
 		if ($Qry->num_rows > 0) {
 			$row = $Qry->fetch_assoc();
 			$detailrecords = $row;
@@ -5571,9 +5571,10 @@ class admin
 		$detailrecords['sub_area_name'] = $qry->fetch_assoc()['sub_area_name'];
 
 		// Getting Line Id, Branch ID, Branch Name
-		$qry = $mysqli->query("SELECT b.branch_id, b.branch_name, l.map_id FROM branch_creation b JOIN area_line_mapping l ON l.branch_id = b.branch_id WHERE l.line_name = '" . $detailrecords['area_line'] . "'");
+		$qry = $mysqli->query("SELECT b.branch_id, b.branch_name, l.map_id, l.line_name AS area_line FROM branch_creation b JOIN area_line_mapping l ON l.branch_id = b.branch_id WHERE FIND_IN_SET(" . $detailrecords['area_confirm_subarea'] . ", l.sub_area_id) ");
 		$row = $qry->fetch_assoc();
 		$detailrecords['line_id'] = $row['map_id'];
+		$detailrecords['area_line'] = $row['area_line'];
 		$detailrecords['branch_id'] = $row['branch_id'];
 		$detailrecords['branch_name'] = $row['branch_name'];
 
