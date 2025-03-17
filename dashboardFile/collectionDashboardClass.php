@@ -21,6 +21,8 @@ class collectionClass
         $today_paid = "SELECT COALESCE(sum(c.due_amt_track +  c.princ_amt_track + c.int_amt_track ),0) as paid from `collection` c JOIN acknowlegement_customer_profile cp ON cp.req_id = c.req_id where date(c.coll_date) = '$today' AND ( DATE(c.coll_date) = '$today' || DATE(c.trans_date) = '$today' )";
         $today_penalty = "SELECT COALESCE(sum(c.penalty_track), 0) as penalty from `collection` c JOIN acknowlegement_customer_profile cp ON cp.req_id = c.req_id where date(c.coll_date) = '$today' AND ( DATE(c.coll_date) = '$today' || DATE(c.trans_date) = '$today' )";
         $today_fine = "SELECT COALESCE(sum(c.coll_charge_track), 0) as fine from `collection` c JOIN acknowlegement_customer_profile cp ON cp.req_id = c.req_id where date(c.coll_date) = '$today' AND ( DATE(c.coll_date) = '$today' || DATE(c.trans_date) = '$today' )";
+        $today_handcash = "SELECT COALESCE(sum(c.due_amt_track + c.penalty_track + c.coll_charge_track), 0) as today_hand_paid from `collection` c  where date(c.coll_date) = '$today' AND ( c.trans_date ='0000-00-00' ||  c.trans_date =''  )";
+        $today_bankcash = "SELECT COALESCE(sum(c.due_amt_track + c.penalty_track + c.coll_charge_track), 0) as today_bank_paid from `collection` c  where date(c.coll_date) = '$today' AND ( c.trans_date !='0000-00-00' ||  c.trans_date !=''  )";
 
         if (!empty($sub_area_list)) {
             $total_paid .= " AND ( CASE WHEN cp.area_confirm_subarea IS NOT NULL THEN cp.area_confirm_subarea IN ($sub_area_list) ELSE TRUE END )";
@@ -29,6 +31,8 @@ class collectionClass
             $today_paid .= " AND ( CASE WHEN cp.area_confirm_subarea IS NOT NULL THEN cp.area_confirm_subarea IN ($sub_area_list) ELSE TRUE END )";
             $today_penalty .= " AND ( CASE WHEN cp.area_confirm_subarea IS NOT NULL THEN cp.area_confirm_subarea IN ($sub_area_list) ELSE TRUE END )";
             $today_fine .= " AND ( CASE WHEN cp.area_confirm_subarea IS NOT NULL THEN cp.area_confirm_subarea IN ($sub_area_list) ELSE TRUE END )";
+            $today_handcash .= " AND ( CASE WHEN cp.area_confirm_subarea IS NOT NULL THEN cp.area_confirm_subarea IN ($sub_area_list) ELSE TRUE END )";
+            $today_bankcash .= " AND ( CASE WHEN cp.area_confirm_subarea IS NOT NULL THEN cp.area_confirm_subarea IN ($sub_area_list) ELSE TRUE END )";
         } else {
             $total_paid .= " AND c.insert_login_id = '$this->user_id' ";
             $total_penalty .= " AND c.insert_login_id = '$this->user_id' ";
@@ -36,6 +40,8 @@ class collectionClass
             $today_paid .= " AND c.insert_login_id = '$this->user_id' ";
             $today_penalty .= " AND c.insert_login_id = '$this->user_id' ";
             $today_fine .= " AND c.insert_login_id = '$this->user_id' ";
+            $today_handcash .= " AND c.insert_login_id = '$this->user_id' ";
+            $today_bankcash .= " AND c.insert_login_id = '$this->user_id' ";
         }
 
         $total_paidQry = $connect->query($total_paid);
@@ -44,6 +50,8 @@ class collectionClass
         $today_paidQry = $connect->query($today_paid);
         $today_penaltyQry = $connect->query($today_penalty);
         $today_fineQry = $connect->query($today_fine);
+        $today_handcash = $connect->query($today_handcash);
+        $today_bankcash = $connect->query($today_bankcash);
 
         $response['tot_col_paid'] = number_format($total_paidQry->fetch()['paid'], 0, '', ',');
         $response['tot_col_pen'] = number_format($total_penaltyQry->fetch()['penalty'], 0, '', ',');
@@ -51,6 +59,15 @@ class collectionClass
         $response['today_col_paid'] = number_format($today_paidQry->fetch()['paid'], 0, '', ',');
         $response['today_col_pen'] = number_format($today_penaltyQry->fetch()['penalty'], 0, '', ',');
         $response['today_col_fine'] = number_format($today_fineQry->fetch()['fine'], 0, '', ',');
+        $response['today_handcash'] = number_format($today_handcash->fetch()['today_hand_paid'], 0, '', ',');
+        $response['today_bankcash'] = number_format($today_bankcash->fetch()['today_bank_paid'], 0, '', ',');
+        // Calculate the total collection
+        $total_collection = (int) str_replace(',', '', $response['today_col_paid']) +
+            (int) str_replace(',', '', $response['today_col_pen']) +
+            (int) str_replace(',', '', $response['today_col_fine']);
+
+        // Format the total collection
+        $response['total_collection'] = number_format($total_collection, 0, '', ',');
 
         return $response;
     }

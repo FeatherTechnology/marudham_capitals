@@ -53,6 +53,8 @@
 					<?php
 					}
 					?>
+					<input type="hidden" id='duenill_id' name='duenill_id' value=<?php if(isset($_GET['duestatus'])){echo $_GET['duestatus'];}?>>
+
 					<table id="collection_table" class="table custom-table">
 						<thead>
 							<tr>
