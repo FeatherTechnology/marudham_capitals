@@ -485,6 +485,9 @@ function getCollectionDashboard() {
             $('#today_col_paid').text(data.today_col_paid)
             $('#today_col_pen').text(data.today_col_pen)
             $('#today_col_fine').text(data.today_col_fine)
+            $('#today_total_collection').text(data.total_collection)
+            $('#today_hand_cash').text(data.today_handcash)
+            $('#today_bank_cash').text(data.today_bankcash)
             $('#col_split_type').html(data.split_name);
         }, 'json').then(function () {
 

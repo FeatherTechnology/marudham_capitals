@@ -87,7 +87,7 @@ if ($idupd > 0) {
 </div>
 <br>
 <div class="text-right" style="margin-right: 25px;">
-	<a href="edit_collection">
+	<a href="edit_collection<?php if(isset($_GET['duestatus'])){echo '&duestatus='.$_GET['duestatus']; }?>">
 		<button type="button" class="btn btn-primary back-button"><span class="icon-arrow-left"></span>&nbsp; Back</button>
 	</a>
 	<button class="btn btn-primary" id='close_collection_card'>&times;&nbsp;&nbsp;Cancel</button>

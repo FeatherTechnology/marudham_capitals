@@ -81,8 +81,8 @@ if ($userid == 1) {
     }
 }
 
-if ($_POST["Customer_Status"]!='') {
-    $cus_sts = $_POST["Customer_Status"];
+if ($_POST["CustomerStatus"]!='') {
+    $cus_sts = $_POST["CustomerStatus"];
     $query .= " AND cs.sub_status ='$cus_sts' ";
 }
 
@@ -145,7 +145,7 @@ foreach ($result as $row) {
 
     $cus_id = $row['cp_cus_id'];
     $id     = $row['req_id'];
-if($_POST["Customer_Status"]!=''){
+if($_POST["CustomerStatus"]!=''){
     $action = "<a href='collection&upd=$id&cusidupd=$cus_id&duestatus=due_nill' title='Edit details' ><button class='btn btn-success' style='background-color:#009688;'>View</button></a>";
 }else{
  $action = "<a href='collection&upd=$id&cusidupd=$cus_id' title='Edit details' ><button class='btn btn-success' style='background-color:#009688;'>View</button></a>";

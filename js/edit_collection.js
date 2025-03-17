@@ -6,6 +6,7 @@ $(document).ready(function () {
         getcustomerStatustable(Customer_Status);
         $('#all_btn').show();
         $('#due_nill_btn').hide();
+        $("#duenill_id").val('');
     })
 
     $('#all_btn').click(function (event) {
@@ -13,13 +14,21 @@ $(document).ready(function () {
         getcustomerStatustable('');
         $('#all_btn').hide();
         $('#due_nill_btn').show();
+        $("#duenill_id").val('');
     })
    
 });
 
 $(function(){
     getCollectionAccess();
-    getcustomerStatustable('');
+    let duests=$("#duenill_id").val();
+    if(duests=='due_nill'){
+        $("#due_nill_btn").click();  
+    }
+    else{
+        getcustomerStatustable('');
+
+    }
 })
 
 function getcustomerStatustable(Customer_Status){
@@ -37,7 +46,7 @@ function getcustomerStatustable(Customer_Status){
             'data': function(data) {
                 var search = $('#search').val();
                 data.search = search;
-                data.Customer_Status=Customer_Status;
+                data.CustomerStatus=Customer_Status;
             }
         },
         dom: 'lBfrtip',

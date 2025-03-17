@@ -776,6 +776,39 @@ $getValues = $userObj->getDataForDashboard($mysqli, $userid);
 						</div>
 					</div>
 					<div class="row cards-row" style="display:flex;justify-content:center;">
+						<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+							<div class="card">
+								<div class="card-body counter-cards today-card">
+									<div class="form-group text-center">
+										<p class='counter-head wow fadeIn'>Today collection</p>
+										<p class="counter wow fadeInUp col-counter" id="today_total_collection"></p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+							<div class="card">
+								<div class="card-body counter-cards today-card">
+									<div class="form-group text-center">
+										<p class='counter-head wow fadeIn'>Today Hand Cash</p>
+										<p class="counter wow fadeInUp col-counter" id="today_hand_cash"></p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+							<div class="card">
+								<div class="card-body counter-cards today-card">
+									<div class="form-group text-center">
+										<p class='counter-head wow fadeIn'>Today Bank Cash</p>
+										<p class="counter wow fadeInUp col-counter" id="today_bank_cash"></p>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+					</div>
+					<div class="row cards-row" style="display:flex;justify-content:center;">
 						<div class="col-12" id="col_chart_part" style="display: none;">
 							<div class="card" style="border:3px solid #009688">
 								<div class="card-body">
