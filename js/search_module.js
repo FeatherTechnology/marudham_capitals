@@ -162,8 +162,9 @@ function callresetCustomerStatus(cus_id, callback) {
                 $('#closed_sts').val(closed_sts);
                 var bal_amt = balAmnt.join(',');
                 $('#bal_amt').val(bal_amt);
+                callback()
             };
-        }.then(callback())
+        }
     });
 }
 
