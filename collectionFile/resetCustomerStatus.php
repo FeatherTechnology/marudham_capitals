@@ -175,7 +175,7 @@ foreach ($req_arr as $req_id) {
 
 //for knowing the customer status for due followup screen
 //this will give the customer's sub status in the order of Legal, Error, OD, Due Nill, Pending, Current
-$response['follow_cus_sts'] = checkStatusOfCustomer($response, $loan_arr, $cus_id, $connect);
+$response['follow_cus_sts'] = ($i > 0) ? checkStatusOfCustomer($response, $loan_arr, $cus_id, $connect) : '';
 
 function calculateOthers($loan_arr, $response, $connect, $req_id)
 {

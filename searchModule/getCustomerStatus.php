@@ -9,7 +9,6 @@ if (isset($_POST['cus_id'])) {
 }
 
 $records = array();
-
 $result = $connect->query("SELECT req.req_id,req.prompt_remark,req.cus_status,
     CASE WHEN req.cus_status >= 14 THEN ii.updated_date ELSE req.dor END AS `updated_date`,
     CASE WHEN req.cus_status >= 14 THEN ii.loan_id ELSE req.req_code END AS `code`,

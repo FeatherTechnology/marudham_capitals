@@ -4,18 +4,12 @@
     <div style="background-color:#009688; width:100%; padding:12px; color: #ffff; font-size: 20px; border-radius:5px;">
         Marudham Capitals - Principal / Interest Report
     </div>
-
 </div><br>
-
-<div class="text-right" style="margin-right: 25px;">
-    <!-- <button class="btn btn-primary" id='close_history_card' style="display: none;" >&times;&nbsp;&nbsp;Cancel</button> -->
-</div>
 
 <!-- Main container start -->
 <div class="main-container">
     <!--form start-->
     <form id="principal_report_form" name="principal_report_form" action="" method="post" enctype="multipart/form-data">
-
 
         <div class="row gutters" id="principal_interest_card">
             <div class="toggle-container col-12">
@@ -51,8 +45,7 @@
                                     <th>Fine</th>
                                     <th>Total Paid</th>
                                 </thead>
-                                <tbody>
-                                </tbody>
+                                <tbody></tbody>
                                 <tfoot>
                                     <tr>
                                         <td colspan="11"></td>
