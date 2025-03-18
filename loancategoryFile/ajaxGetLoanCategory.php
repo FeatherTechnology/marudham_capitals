@@ -1,4 +1,5 @@
 <?php 
+//Also Using in Balance report js.
 include('../ajaxconfig.php');
 
 $loan_category_arr = array();

@@ -144,8 +144,8 @@ function callresetCustomerStatus(cus_id, callback) {
         cache: false,
         success: function (response) {
             if (response.length != 0) {
-
-                for (var i = 0; i < response['pending_customer'].length; i++) {
+                let pendingCnt = (response['pending_customer']) ? response['pending_customer'].length : 0;
+                for (var i = 0; i < pendingCnt; i++) {
                     pending_arr[i] = response['pending_customer'][i]
                     od_arr[i] = response['od_customer'][i]
                     due_nil_arr[i] = response['due_nil_customer'][i]
@@ -162,8 +162,13 @@ function callresetCustomerStatus(cus_id, callback) {
                 $('#closed_sts').val(closed_sts);
                 var bal_amt = balAmnt.join(',');
                 $('#bal_amt').val(bal_amt);
-                callback()
             };
+
+             // ✅ Call the callback properly here
+             if (typeof callback === 'function') {
+                callback();
+            }
+            
         }
     });
 }

@@ -1,13 +1,6 @@
 $(document).ready(function () {
-    
-    $('#from_date').change(function(){
-        const fromDate = $(this).val();
-    });
-    
     //Collection Report Table
-    // var collection_report_table = 
     $('#reset_btn').click(function () {
-        // collection_report_table.ajax.reload();
         collectionReportTable();
     })
 });
@@ -27,7 +20,6 @@ function collectionReportTable(){
                 var search = $('input[type=search]').val();
                 data.search = search;
                 data.from_date = $('#from_date').val();
-                data.to_date = $('#to_date').val();
             }
         },
         dom: 'lBfrtip',
