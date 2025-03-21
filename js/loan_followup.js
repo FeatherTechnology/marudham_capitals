@@ -133,7 +133,7 @@ function loanFollowupTableOnclick() {
     })
 
     $('#loan_follow_table tbody tr').not('th').each(function () {
-        let tddate = $(this).find('td:eq(14)').text(); // Get the text content of the 14th td element (Follow date)
+        let tddate = $(this).find('td:eq(15)').text(); // Get the text content of the 14th td element (Follow date)
         let datecorrection = tddate.split("-").reverse().join("-").replaceAll(/\s/g, ''); // Correct the date format
         let values = new Date(datecorrection); // Create a Date object from the corrected date
         values.setHours(0, 0, 0, 0); // Set the time to midnight for accurate date comparison
@@ -146,11 +146,11 @@ function loanFollowupTableOnclick() {
         if (tddate != '' && values != 'Invalid Date') { // Check if the extracted date and the created Date object are valid
 
             if (values < curDate) { // Compare the extracted date with the current date
-                $(this).find('td:eq(14)').css({ 'background-color': colors.past, 'color': 'white' }); // Apply styling for past dates
+                $(this).find('td:eq(15)').css({ 'background-color': colors.past, 'color': 'white' }); // Apply styling for past dates
             } else if (values > curDate) {
-                $(this).find('td:eq(14)').css({ 'background-color': colors.future, 'color': 'white' }); // Apply styling for future dates
+                $(this).find('td:eq(15)').css({ 'background-color': colors.future, 'color': 'white' }); // Apply styling for future dates
             } else {
-                $(this).find('td:eq(14)').css({ 'background-color': colors.current, 'color': 'white' }); // Apply styling for the current date
+                $(this).find('td:eq(15)').css({ 'background-color': colors.current, 'color': 'white' }); // Apply styling for the current date
             }
         }
     });

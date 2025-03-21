@@ -18,7 +18,10 @@ $status = $_POST['status'];
 $sub_status = '';
 $label = '';
 $remark = '';
-if($status == 2){
+$remove_status = '';
+if($status == 1){
+    $remove_status = 1;
+}elseif($status == 2){
     $sub_status = $_POST['sub_status'];
 }elseif($status == 3){
     $label = $_POST['label'];
@@ -43,10 +46,7 @@ if(isset($_FILES['file'])){
     $file='';
 }
 
-
-
-    $sql = $connect->query("INSERT INTO `confirmation_followup`(`req_id`, `cus_id`, `person_type`, `person_name`, `relationship`, `mobile`, `upload`, `status`, `sub_status`, `label`, `remark`, `insert_login_id`, `created_date`) 
-            VALUES ('$req_id','$cus_id','$person_type','$person_name','$relationship','$mobile','$file','$status','$sub_status','$label','$remark','$userid',NOW())");
+    $sql = $connect->query("INSERT INTO `confirmation_followup`(`req_id`, `cus_id`, `person_type`, `person_name`, `relationship`, `mobile`, `upload`, `status`, `sub_status`, `label`, `remark`, `remove_status`, `insert_login_id`, `created_date`) VALUES ('$req_id','$cus_id','$person_type','$person_name','$relationship','$mobile','$file','$status','$sub_status','$label','$remark','$remove_status','$userid',NOW())");
     
     if($sql){
         $response = 'Inserted Successfully';

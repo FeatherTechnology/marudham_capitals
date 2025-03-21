@@ -174,17 +174,17 @@ function confirmationTableOnClick() {
     //customer profile
     $('.cust-profile').off('click').click(function () {
         let req_id = $(this).data('reqid');
-        window.location.href = 'due_followup_info&upd=' + req_id + '&pgeView=1';
+        window.open('due_followup_info&upd=' + req_id + '&pgeView=1', '_blank');
     })
     //Documentaion
     $('.documentation').off('click').click(function () {
         let req_id = $(this).data('reqid');
-        window.location.href = 'due_followup_info&upd=' + req_id + '&pgeView=2';
+        window.open('due_followup_info&upd=' + req_id + '&pgeView=2', '_blank');
     })
     //Loan Calculation
     $('.loan-calc').off('click').click(function () {
         let req_id = $(this).data('reqid');
-        window.location.href = 'due_followup_info&upd=' + req_id + '&pgeView=3';
+        window.open('due_followup_info&upd=' + req_id + '&pgeView=3', '_blank');
     })
 
     //loan history and document history

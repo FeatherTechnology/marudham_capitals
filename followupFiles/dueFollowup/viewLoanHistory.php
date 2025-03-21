@@ -78,10 +78,11 @@ function moneyFormatIndia($num) {
             <td><?php echo date('d-m-Y',strtotime($row["updated_date"])); ?></td> <!-- Loan date -->
             <td><?php echo moneyFormatIndia($row["loan_amt_cal"]); ?></td> <!-- Loan Amount -->
 
-            <td><?php 
+            <td><!-- Closing Date -->
+                <?php 
                 if($closed_cnt > 0){
-                    echo date('d-m-Y',strtotime($closed_row["updated_date"])); ?> <!-- Closing Date -->
-                <?php } ?>
+                    echo date('d-m-Y',strtotime(($closed_row["updated_date"]) ? $closed_row["updated_date"] : $closed_row["created_date"]));  
+                } ?>
             </td>
             
             <td><?php if($row['cus_status'] < 20){echo 'Present';}else if($row['cus_status'] >= 20){ echo 'Closed';} ?>
