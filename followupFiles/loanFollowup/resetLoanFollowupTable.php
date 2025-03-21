@@ -131,6 +131,7 @@ foreach ($result as $row) {
     $sub_array[] = $row['branch_name'];
     $sub_array[] = $row['group_name'];
     $sub_array[] = $row['line_name'];
+    $sub_array[] = $stage_arr[$row['cus_status']];
 
     $action = "<div class='dropdown'><button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button><div class='dropdown-content'> ";
 

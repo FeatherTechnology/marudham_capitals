@@ -117,6 +117,7 @@ foreach ($result as $row) {
     $sub_array[] = $row["branch_name"];
     $sub_array[] = $row['group_name'];
     $sub_array[] = $row['line_name'];
+    $sub_array[] = $row['mobile1'];
     $sub_array[] = $row['area_name'];
     $sub_array[] = $row['sub_area_name'];
     $sub_array[] = $row["loan_category_creation_name"];

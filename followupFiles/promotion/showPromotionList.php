@@ -43,11 +43,11 @@ if (isset($_POST['order'])) {
     $qry = "SELECT cp.req_id, cp.cus_id, cp.cus_name, al.area_name, sl.sub_area_name, bc.branch_name, cp.area_group, cp.area_line, cp.mobile1, cs.consider_level, cs.created_date, np.status AS followup_sts, np.follow_date 
         FROM acknowlegement_customer_profile cp
         JOIN (
-            SELECT req_id, cus_id, consider_level, created_date
-            FROM closed_status
-            WHERE closed_sts = 1
-            ORDER BY created_date DESC
-        ) cs ON cs.req_id = cp.req_id 
+            SELECT req_id, cus_id, consider_level, MAX(created_date) AS created_date 
+            FROM closed_status 
+            WHERE closed_sts = 1 
+            GROUP BY cus_id 
+        ) cs ON cs.cus_id = cp.cus_id 
         LEFT JOIN area_list_creation al ON cp.area_confirm_area = al.area_id 
         LEFT JOIN sub_area_list_creation sl ON cp.area_confirm_subarea = sl.sub_area_id 
         LEFT JOIN area_group_mapping agm ON FIND_IN_SET(sl.sub_area_id, agm.sub_area_id) 
@@ -58,7 +58,7 @@ if (isset($_POST['order'])) {
             FROM new_promotion
             GROUP BY cus_id
         ) np ON cs.cus_id = np.cus_id 
-        WHERE cp.area_confirm_subarea IN ($sub_area_list) AND NOT EXISTS ( SELECT 1 FROM request_creation r WHERE r.cus_id = cs.cus_id AND r.cus_status NOT BETWEEN 4 AND 9 AND r.cus_status < 20 ) ";
+        WHERE cp.area_confirm_subarea IN ($sub_area_list) AND NOT EXISTS ( SELECT 1 FROM request_creation r WHERE r.cus_id = cs.cus_id AND (r.cus_status != 4 OR r.cus_status != 5 OR r.cus_status != 6 OR r.cus_status != 7 OR r.cus_status != 8 OR r.cus_status != 9) AND r.cus_status < 20 ) ";
 
     if($_POST['followUpSts']){
         $follow_up_sts = $_POST['followUpSts'];
@@ -104,14 +104,8 @@ if (isset($_POST['order'])) {
         $sub_array[] = 'Consider';
         $sub_array[] = $sub_status[$row['consider_level']]; //fetched from closed status table above mentioned    
 
-        $qry = $connect->query("SELECT created_date FROM closed_status WHERE cus_id = '" . $row['cus_id'] . "' ORDER BY id DESC limit 1");
         //take last closed date of this customer to show when this customer added to promotion list
-        if ($qry->rowCount() > 0) {
-            $ldate = $qry->fetch()['created_date'];
-            $sub_array[] = date('d-m-Y', strtotime($ldate));
-        } else {
-            $sub_array[] = '';
-        }
+        $sub_array[] = date('d-m-Y', strtotime($row['created_date']));
     
         $sub_array[] = "<div class='dropdown'><button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button><div class='dropdown-content'> <a class='promo-chart' data-id='" . $row['cus_id'] . "' data-toggle='modal' data-target='#promoChartModal'><span>Promotion Chart</span></a><a class='personal-info' data-toggle='modal' data-target='#personalInfoModal' data-cusid='" . $row['cus_id'] . "'><span>Personal Info</span></a><a class='cust-profile' data-reqid='" . $row['req_id'] . "' data-cusid='" . $row['cus_id'] . "'><span>Customer Profile</span></a><a class='loan-history' data-reqid='" . $row['req_id'] . "' data-cusid='" . $row['cus_id'] . "'><span>Loan History</span></a><a class='doc-history' data-reqid='" . $row['req_id'] . "' data-cusid='" . $row['cus_id'] . "'><span>Document History</span></a></div></div>";
 

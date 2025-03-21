@@ -213,6 +213,10 @@ include '../ajaxconfig.php';
         }
 
         //For showing data before due start date
+        $totalPaid = 0;
+        $totalPreClose = 0;
+        $totalpaid = 0;
+
         $due_amt_track = 0;
         $waiver = 0;
         $last_bal_amt = 0;
@@ -256,8 +260,12 @@ include '../ajaxconfig.php';
                     <?php if ($loan_type == 'emi') { ?>
                         <td>
                             <?php if ($row['due_amt_track'] > 0) {
+                                $totalPaid += $row['due_amt_track'];
+
                                 echo $row['due_amt_track'];
                             } elseif ($row['pre_close_waiver'] > 0) {
+                                $totalPreClose += $row['pre_close_waiver'];
+
                                 echo $row['pre_close_waiver'];
                             } ?>
                         </td>
@@ -266,8 +274,12 @@ include '../ajaxconfig.php';
                     <?php if ($loan_type == 'interest') { ?>
                         <td>
                             <?php if ($PcollectionAmnt > 0) {
+                                $totalPaidPrinc += $PcollectionAmnt;
+
                                 echo $PcollectionAmnt;
                             } elseif ($row['pre_close_waiver'] > 0) {
+                                $totalPreClose += $row['pre_close_waiver'];
+
                                 echo $row['pre_close_waiver'];
                             } ?>
                         </td>
@@ -324,9 +336,6 @@ include '../ajaxconfig.php';
             $last_princ_amt = $last_bal_amt;
         }
         $lastCusdueMonth = '1970-00-00';
-        $totalPaid = 0;
-        $totalPreClose = 0;
-        $totalpaid = 0;
         foreach ($dueMonth as $cusDueMonth) {
             if ($loanFrom['due_method_calc'] == 'Monthly' || $loanFrom['due_method_scheme'] == '1') {
                 //Query for Monthly.

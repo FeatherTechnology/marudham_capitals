@@ -56,6 +56,7 @@ if (sizeof($getUser) > 0) {
 									<th>Branch</th>
 									<th>Group</th>
 									<th>Line</th>
+									<th>Stage</th>
 									<th>View</th>
 									<th>Action</th>
 									<th>Follow Date</th>
