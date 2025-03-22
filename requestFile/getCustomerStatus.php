@@ -10,7 +10,7 @@ if (isset($_POST['cus_id'])) {
 
 $records = array();
 
-$result = $connect->query("SELECT * FROM request_creation where cus_id = '" . strip_tags($cus_id) . "' and cus_status <= 21 ORDER BY created_date DESC ");
+$result = $connect->query("SELECT * FROM request_creation where cus_id = '" . strip_tags($cus_id) . "' and cus_status <= 22 ORDER BY created_date DESC ");
 
 if ($result->rowCount() > 0) {
     $i = 0;
@@ -81,7 +81,7 @@ if ($result->rowCount() > 0) {
             $records[$i]['status'] = 'Closed';
             $records[$i]['sub_status'] = 'In Closed';
         }
-        if ($cus_status == '21') { //21 means in NOC
+        if ($cus_status >= '21') { //21 means in NOC
             // if moved from Closed, then sub status will be consider level of closed window
             $records[$i]['status'] = 'Closed';
 
