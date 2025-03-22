@@ -12,16 +12,16 @@ $records = array();
 $result = $connect->query("SELECT req.req_id,req.prompt_remark,req.cus_status,
     CASE WHEN req.cus_status >= 14 THEN ii.updated_date ELSE req.dor END AS `updated_date`,
     CASE WHEN req.cus_status >= 14 THEN ii.loan_id ELSE req.req_code END AS `code`,
-    CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.loan_category WHEN req.cus_status IN (3,13,14,15,16,17,20,21) THEN alc.loan_category ELSE req.loan_category END AS loan_category,
-    CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.sub_category WHEN req.cus_status IN (3,13,14,15,16,17,20,21) THEN alc.sub_category ELSE req.sub_category END AS sub_category,
-    CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.loan_amt WHEN req.cus_status IN (3,13,14,15,16,17,20,21) THEN alc.loan_amt ELSE req.loan_amt END AS loan_amt,
-    CASE WHEN req.cus_status IN (12,2,6,7,3,13,14,15,16,17,20,21) THEN cp.cus_name ELSE req.cus_name END AS cus_name
+    CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.loan_category WHEN req.cus_status IN (3,13,14,15,16,17,20,21,22) THEN alc.loan_category ELSE req.loan_category END AS loan_category,
+    CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.sub_category WHEN req.cus_status IN (3,13,14,15,16,17,20,21,22) THEN alc.sub_category ELSE req.sub_category END AS sub_category,
+    CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.loan_amt WHEN req.cus_status IN (3,13,14,15,16,17,20,21,22) THEN alc.loan_amt ELSE req.loan_amt END AS loan_amt,
+    CASE WHEN req.cus_status IN (12,2,6,7,3,13,14,15,16,17,20,21,22) THEN cp.cus_name ELSE req.cus_name END AS cus_name
     FROM request_creation req
     LEFT JOIN customer_profile cp ON req.req_id = cp.req_id
     LEFT JOIN verification_loan_calculation vlc ON req.req_id = vlc.req_id
     LEFT JOIN acknowlegement_loan_calculation alc ON req.req_id = alc.req_id
     LEFT JOIN in_issue ii ON req.req_id = ii.req_id
-    where req.cus_id = $cus_id and (req.cus_status <= 21) ORDER BY req.created_date DESC");
+    where req.cus_id = $cus_id and (req.cus_status <= 22) ORDER BY req.created_date DESC");
 
 if ($result->rowCount() > 0) {
     $i = 0;
@@ -62,7 +62,8 @@ if ($result->rowCount() > 0) {
             '16' => ['status' => 'Present', 'sub_status' => getCollectionStatus($connect, $cus_id, $user_id, $req_id)],
             '17' => ['status' => 'Present', 'sub_status' => getCollectionStatus($connect, $cus_id, $user_id, $req_id)],
             '20' => ['status' => 'Closed', 'sub_status' => 'In Closed'],
-            '21' => ['status' => 'Closed', 'sub_status' => 'In Closed']
+            '21' => ['status' => 'Closed', 'sub_status' => 'In Closed'],
+            '22' => ['status' => 'Closed', 'sub_status' => 'NOC Completed']
         ];
 
         // if ($cus_status != '10' && $cus_status != '11') {
@@ -70,7 +71,7 @@ if ($result->rowCount() > 0) {
             $records[$i]['status'] = $statusMapping[$cus_status]['status'];
             $records[$i]['sub_status'] = $statusMapping[$cus_status]['sub_status'];
 
-            if ($cus_status == '21') {
+            if ($cus_status >= '21') {
                 $Qry = $connect->query("SELECT closed_sts from closed_status where cus_id = $cus_id and req_id = '" . $req_id . "' ");
                 $closed_status = ['', 'Consider', 'Waiting List', 'Block List'];
                 $records[$i]['sub_status'] = $closed_status[$Qry->fetch()['closed_sts'] ?? 0];

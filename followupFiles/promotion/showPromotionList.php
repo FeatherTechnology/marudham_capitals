@@ -58,7 +58,7 @@ if (isset($_POST['order'])) {
             FROM new_promotion
             GROUP BY cus_id
         ) np ON cs.cus_id = np.cus_id 
-        WHERE cp.area_confirm_subarea IN ($sub_area_list) AND NOT EXISTS ( SELECT 1 FROM request_creation r WHERE r.cus_id = cs.cus_id AND (r.cus_status != 4 OR r.cus_status != 5 OR r.cus_status != 6 OR r.cus_status != 7 OR r.cus_status != 8 OR r.cus_status != 9) AND r.cus_status < 20 ) ";
+        WHERE cp.area_confirm_subarea IN ($sub_area_list) AND NOT EXISTS ( SELECT 1 FROM closed_status cs2 WHERE cs2.cus_id = cp.cus_id AND cs2.closed_sts IN (2,3)) AND NOT EXISTS ( SELECT 1 FROM request_creation r WHERE r.cus_id = cs.cus_id AND (r.cus_status NOT IN (4,5,6,7,8,9)) AND r.cus_status < 20 ) ";
 
     if($_POST['followUpSts']){
         $follow_up_sts = $_POST['followUpSts'];
