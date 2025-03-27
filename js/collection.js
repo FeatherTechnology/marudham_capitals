@@ -325,7 +325,28 @@ $(function () {
 
   var cus_pic = $("#cuspicupd").val();
   $("#imgshow").attr("src", "uploads/request/customer/" + cus_pic);
+
+  let agent_id = $('#agent_id').val();
+  getresponsiblecolumn(agent_id);
 });
+
+//To get Reponsible Dropdown
+function getresponsiblecolumn(ag_id) {
+  $.ajax({
+      url: 'requestFile/getResponsiblecolumn.php',
+      data: { 'ag_id': ag_id },
+      dataType: 'json',
+      type: 'post',
+      cache: false,
+      success: function (response) {
+          if (response == '0') {
+              $('.responsible').show();
+          } else {
+              $('.responsible').hide();
+          }
+      }
+  });
+}
 
 function OnLoadFunctions(req_id, cus_id) {
   //To get loan sub Status

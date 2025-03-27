@@ -287,9 +287,7 @@ if ($idupd > 0) {
 									</select>
 								</div>
 							</div>
-							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" <?php if (isset($role)) {
-																									if ($role != '1') { ?> style="display: none" <?php }
-																																			} ?>>
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" style="display: none">
 								<div class="form-group">
 									<label for="responsible">Responsible&nbsp;<span class="required">&nbsp;*</span></label>
 									<select tabindex="4" type="text" class="form-control" id="responsible" name="responsible">

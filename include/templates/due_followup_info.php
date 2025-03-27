@@ -390,6 +390,7 @@ if (sizeof($getLoanCalculation) > 0) {
 	<!-- Customer Profile form start-->
 	<div id="customer_profile" style="display: none;">
 		<form id="cus_Profiles" name="cus_Profiles" action="" method="post" enctype="multipart/form-data">
+			<input type="hidden" name="agent_id" id="agent_id" value="<?php if (isset($agent_id)) { echo $agent_id; } ?>" />
 			<input type="hidden" name="req_id" id="req_id" value="<?php if (isset($req_id)) {
 																		echo $req_id;
 																	} ?>" />
@@ -448,16 +449,10 @@ if (sizeof($getLoanCalculation) > 0) {
 									</div>
 								</div>
 
-								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" <?php if (isset($role)) {
-																										if ($role == '3') { ?> style="display: none" <?php }
-																																				} ?>>
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" style="display: none">
 									<div class="form-group">
 										<label for="responsible">Responsible&nbsp;<span class="required">&nbsp;*</span></label>
-										<input tabindex="3" type="text" class="form-control" id="responsible" name="responsible" value="<?php if (isset($responsible) and $responsible == '0') {
-																																			echo 'Yes';
-																																		} else {
-																																			echo 'No';
-																																		} ?>" readonly>
+										<input tabindex="3" type="text" class="form-control" id="responsible" name="responsible" value="<?php if (isset($responsible) and $responsible == '0') { echo 'Yes'; } else { echo 'No'; } ?>" readonly>
 									</div>
 								</div>
 
@@ -1279,16 +1274,10 @@ if (sizeof($getLoanCalculation) > 0) {
 										<input type="text" class="form-control" id="Customer_name" name="Customer_name" value='<?php if (isset($doc_cus_name)) echo $doc_cus_name; ?>' readonly tabindex="2">
 									</div>
 								</div>
-								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" <?php if (isset($role)) {
-																										if ($role == '3') { ?> style="display: none" <?php }
-																																				} ?>>
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" style="display: none">
 									<div class="form-group">
 										<label for="responsible">Responsible&nbsp;<span class="required">&nbsp;*</span></label>
-										<input tabindex="3" type="text" class="form-control" id="responsible" name="responsible" value="<?php if (isset($responsible) and $responsible == '0') {
-																																			echo 'Yes';
-																																		} else {
-																																			echo 'No';
-																																		} ?>" readonly>
+										<input tabindex="3" type="text" class="form-control" id="responsible" name="responsible" value="<?php if (isset($responsible) and $responsible == '0') { echo 'Yes'; } else { echo 'No'; } ?>" readonly>
 									</div>
 								</div>
 
@@ -1858,16 +1847,10 @@ if (sizeof($getLoanCalculation) > 0) {
 									</div>
 								</div>
 
-								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" <?php if (isset($role)) {
-																										if ($role == '3') { ?> style="display: none" <?php }
-																																				} ?>>
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" style="display: none">
 									<div class="form-group">
 										<label for="responsible">Responsible&nbsp;<span class="required">&nbsp;*</span></label>
-										<input tabindex="3" type="text" class="form-control" id="responsible" name="responsible" value="<?php if (isset($responsible) and $responsible == '0') {
-																																			echo 'Yes';
-																																		} else {
-																																			echo 'No';
-																																		} ?>" readonly>
+										<input tabindex="3" type="text" class="form-control" id="responsible" name="responsible" value="<?php if (isset($responsible) and $responsible == '0') { echo 'Yes'; } else { echo 'No'; } ?>" readonly>
 									</div>
 								</div>
 
