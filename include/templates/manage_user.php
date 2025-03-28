@@ -69,6 +69,7 @@ $cash_tally_admin = '';
 $bank_details = '';
 $bank_clearance = '';
 $finance_insight = '';
+$accounts_loan_issue = '';
 $followupmodule = '';
 $promotion_activity = '';
 $loan_followup  = '';
@@ -206,6 +207,7 @@ if($idupd>0)
 			$bank_details          		     = $getUser['bank_details'];
 			$bank_clearance          		     = $getUser['bank_clearance'];
 			$finance_insight          		     = $getUser['finance_insight'];
+			$accounts_loan_issue          		     = $getUser['accounts_loan_issue'];
 			$followupmodule          		     = $getUser['followupmodule'];
 			$promotion_activity = $getUser['promotion_activity'];
 			$loan_followup = $getUser['loan_followup'];
@@ -936,8 +938,13 @@ if($idupd>0)
                                 <label class="custom-control-label" for="finance_insight">Financial Insights</label>
                             </div>
                         </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($accounts_loan_issue==0){ echo'checked'; }} ?> tabindex="55" class="accounts-checkbox" id="accounts_loan_issue" name="accounts_loan_issue" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="accounts_loan_issue">Loan Issue</label>
+                            </div>
+                        </div>
 					</div>
-
 					<hr>
 
 					<div class="custom-control custom-checkbox">

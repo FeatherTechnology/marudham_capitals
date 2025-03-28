@@ -10,6 +10,7 @@ include '../ajaxconfig.php';
             <!-- <th> Branch Name </th> -->
             <th> Account Holder Name </th>
             <th> Account Number </th>
+            <th> Upload </th>
             <!-- <th> IFSC Code </th> -->
             <th> ACTION </th>
         </tr>
@@ -29,6 +30,7 @@ include '../ajaxconfig.php';
                 <td><?php echo $bank["bank_name"]; ?></td>
                 <td><?php echo $bank["acc_holder_name"]; ?></td>
                 <td><?php echo $bank["acc_no"]; ?></td>
+                <td> <a href="verificationFile/bankUploads/<?php echo $bank['upload']; ?>" target="_blank" style="color: #4ba39b;"> <?php echo $bank['upload']; ?> </a></td>
                 <td>
                     <a id="verification_bank_edit" value="<?php echo $bank['id']; ?>"> <span class="icon-border_color"></span></a> &nbsp
                     <a id="verification_bank_delete" value="<?php echo $bank['id']; ?>"> <span class='icon-trash-2'></span> </a>

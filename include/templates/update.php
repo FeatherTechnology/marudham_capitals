@@ -872,6 +872,7 @@ if (sizeof($documentationInfo) > 0) {
 													<th> Account Holder Name </th>
 													<th> Account Number </th>
 													<th> IFSC Code </th>
+													<th> Upload </th>
 													<th> ACTION </th>
 												</tr>
 											</thead>
@@ -1969,7 +1970,13 @@ if (sizeof($documentationInfo) > 0) {
 							<span class="text-danger" id="ifscCheck" style='display:none'> Enter IFSC Code </span>
 						</div>
 					</div>
-
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+						<div class="form-group">
+							<label for="bank_upload"> Upload</label>
+							<input type="file" class="form-control" id="bank_upload" name="bank_upload" tabindex="1">
+							<input type="hidden" id="bank_upload_id">
+						</div>
+					</div>
 					<div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12">
 						<input type="hidden" name="bankID" id="bankID">
 						<button type="button" tabindex="1" name="bankInfoBtn" id="bankInfoBtn" class="btn btn-primary" style="margin-top: 19px;">Submit</button>
@@ -1987,6 +1994,7 @@ if (sizeof($documentationInfo) > 0) {
 								<!-- <th> Branch Name </th> -->
 								<th> Account Holder Name </th>
 								<th> Account Number </th>
+								<th> Upload </th>
 								<!-- <th> IFSC Code </th> -->
 								<th> ACTION </th>
 							</tr>

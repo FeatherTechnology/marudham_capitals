@@ -1049,21 +1049,40 @@ function resetPropertyinfoList() {
 
 $(document).on("click", "#bankInfoBtn", function () {
 
+   
+    let req_id = $('#req_id').val();
     let cus_id = $('#cus_id').val();
     let bank_name = $("#bank_name").val();
     let branch_name = $("#branch_name").val();
     let account_holder_name = $("#account_holder_name").val();
     let account_number = $("#account_number").val();
     let Ifsc_code = $("#Ifsc_code").val();
+    let bank_upload = $('#bank_upload')[0].files[0]; 
+    let bank_upload_id = $('#bank_upload_id').val();
     let bankID = $("#bankID").val();
-
-    if (bank_name != "" && branch_name != "" && account_holder_name != "" && account_number != "" && Ifsc_code != "" && cus_id != "") {
+    
+    if (bank_name != "" && branch_name != "" && account_holder_name != "" && account_number != "" && Ifsc_code != "" && req_id != "") {
+        // Using FormData to send file and other data
+        let formData = new FormData();
+        formData.append('bank_name', bank_name);
+        formData.append('branch_name', branch_name);
+        formData.append('account_holder_name', account_holder_name);
+        formData.append('account_number', account_number);
+        formData.append('Ifsc_code', Ifsc_code);
+        formData.append('bank_upload', bank_upload);  // Append the file
+        formData.append('bank_upload_id', bank_upload_id);
+        formData.append('bankID', bankID);
+        formData.append('reqId', req_id);
+        formData.append('cus_id', cus_id);
+    
         $.ajax({
-            url: 'updateFile/update_bank_submit.php',
+            url: 'verificationFile/verification_bank_submit.php',
             type: 'POST',
-            data: { "bank_name": bank_name, "branch_name": branch_name, "account_holder_name": account_holder_name, "account_number": account_number, "Ifsc_code": Ifsc_code, "bankID": bankID, "cus_id": cus_id },
+            data: formData,  // Use FormData here
             cache: false,
-            success: function (response) {
+            contentType: false,  // Important: Do not process contentType
+            processData: false,  // Important: Do not process data
+            success: function(response) {
 
                 var insresult = response.includes("Inserted");
                 var updresult = response.includes("Updated");
@@ -1144,6 +1163,7 @@ function resetbankInfo() {
             $("#account_holder_name").val('');
             $("#account_number").val('');
             $("#Ifsc_code").val('');
+            $("#bank_upload").val('');
             $("#bankID").val('');
 
         }
@@ -1168,6 +1188,7 @@ $("body").on("click", "#verification_bank_edit", function () {
             $("#account_holder_name").val(result['accHolderName']);
             $("#account_number").val(result['acc_no']);
             $("#Ifsc_code").val(result['ifsc']);
+            $("#bank_upload_id").val(result['upload']);
 
         }
     });

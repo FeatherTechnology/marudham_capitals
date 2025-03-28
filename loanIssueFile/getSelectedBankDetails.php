@@ -1,11 +1,11 @@
 <?php
 require '../ajaxconfig.php';
 
-$id = $_POST['id'];
+$cus_id = $_POST['cus_id'];
 
 $bank = array();
 
-$BANKInfo = $connect->query("SELECT * FROM `verification_bank_info` WHERE id='$id' ");
+$BANKInfo = $connect->query("SELECT * FROM `verification_bank_info` WHERE cus_id='$cus_id' and issue_status =2 ");
 $bank_details = $BANKInfo->fetch();
 
 $bank['id'] = $bank_details['id'];
