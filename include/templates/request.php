@@ -285,6 +285,7 @@ if ($idupd > 0) {
 									<select tabindex="3" type="text" class="form-control" id="agent" name="agent">
 										<option value="">Select Agent Name</option>
 									</select>
+									<span class="text-danger" style='display:none' id='agentCheck'>Please Select Agent</span>
 								</div>
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" style="display: none">

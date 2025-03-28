@@ -106,7 +106,7 @@ function OnLoadFunctions(req_id, cus_id) {
     var balAmnt = [];
     $.ajax({
         url: 'closedFile/resetCustomerStsForClosed.php',
-        data: { 'cus_id': cus_id },
+        data: { 'cus_id': cus_id, 'start': 14, 'end': 20 },
         dataType: 'json',
         type: 'post',
         cache: false,
