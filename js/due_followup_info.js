@@ -150,7 +150,27 @@ $(function () {
         ],
     });
 
+    let agent_id = $('#agent_id').val();
+    getresponsiblecolumn(agent_id);
 });
+
+//To get Reponsible Dropdown
+function getresponsiblecolumn(ag_id) {
+    $.ajax({
+        url: 'requestFile/getResponsiblecolumn.php',
+        data: { 'ag_id': ag_id },
+        dataType: 'json',
+        type: 'post',
+        cache: false,
+        success: function (response) {
+            if (response == '0') {
+                $('.responsible').show();
+            } else {
+                $('.responsible').hide();
+            }
+        }
+    });
+}
 
 function getImage() { // Cus img show onload.
     let imgName = $('#cus_image').val();

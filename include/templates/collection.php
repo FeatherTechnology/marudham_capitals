@@ -39,6 +39,7 @@ if ($idupd > 0) {
 			$role = '3';
 		}
 		$user_name = $getRequestData['user_name'];
+		$agent_id = $getRequestData['agent_id'];
 		$responsible = $getRequestData['responsible'];
 		$declaration = $getRequestData['declaration'];
 		$remarks = $getRequestData['remarks'];
@@ -47,6 +48,17 @@ if ($idupd > 0) {
 
 	$getuser = $userObj->getuser($mysqli, $userid);
 	$collection_access = $getuser['collection_access'];
+	$login_user_name         = $getUser['fullname'];
+	$login_role          	 = $getUser['role'];
+	if ($login_role == '1') {
+		$login_user_type = 'Director';
+	} else
+	if ($login_role == '2') {
+		$login_user_type = 'Agent';
+	} else
+	if ($login_role == '3') {
+		$login_user_type = 'Staff';
+	}
 }
 ?>
 
@@ -100,6 +112,7 @@ if ($idupd > 0) {
 <div class="main-container">
 	<!--form start-->
 	<form id="collectionForm" name="collectionForm" action="" method="post" enctype="multipart/form-data">
+		<input type="hidden" name="agent_id" id="agent_id" value="<?php if (isset($agent_id)) { echo $agent_id; } ?>" />
 		<input type="hidden" name="idupd" id="idupd" value="<?php if (isset($idupd)) {
 																echo $idupd;
 															} ?>" />
@@ -380,18 +393,10 @@ if ($idupd > 0) {
 					<div class="card-body">
 						<div class="row">
 
-							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" <?php if (isset($role)) {
-																									if ($role == '3') { //hide if staff raised req 
-																								?> style="display: none" <?php }
-																													} //staff dont have responsible
-																															?>>
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible"  style="display: none" >
 								<div class="form-group">
 									<label for="responsible">Responsible&nbsp;<span class="required">&nbsp;*</span></label>
-									<input tabindex="8" type="text" class="form-control" id="responsible" name="responsible" value="<?php if (isset($responsible) and $responsible == '0') {
-																																		echo 'Yes';
-																																	} else {
-																																		echo 'No';
-																																	} ?>" readonly>
+									<input tabindex="8" type="text" class="form-control" id="responsible" name="responsible" value="<?php if (isset($responsible) and $responsible == '0') { echo 'Yes'; } else { echo 'No'; } ?>" readonly>
 								</div>
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
@@ -961,11 +966,11 @@ if ($idupd > 0) {
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<label for="comm_user_type">User Type</label><span class="required">&nbsp;*</span>
-								<input type="text" name="comm_user_type" id="comm_user_type" class='form-control' value='<?php echo $user_type; ?>' tabindex="1" readonly>
+								<input type="text" name="comm_user_type" id="comm_user_type" class='form-control' value='<?php echo $login_user_type; ?>' tabindex="1" readonly>
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<label for="comm_user">User Name</label><span class="required">&nbsp;*</span>
-								<input type="text" name="comm_user" id="comm_user" class='form-control' value="<?php echo $user_name; ?>" tabindex="1" readonly>
+								<input type="text" name="comm_user" id="comm_user" class='form-control' value="<?php echo $login_user_name; ?>" tabindex="1" readonly>
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<label for="comm_hint">Hint</label><span class="required">&nbsp;*</span>

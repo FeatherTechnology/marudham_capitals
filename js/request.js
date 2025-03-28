@@ -230,7 +230,7 @@ $(function () {//For Update
         var role_upd = $('#role_upd').val();
         var ag_id_upd = $('#ag_id_upd').val();
         if (ag_id_upd != '') {
-            getresponsiblecolumn(role_upd, ag_id_upd);
+            getresponsiblecolumn(ag_id_upd);
         }
         if (role_upd == '2') {
             getAgentBasedLoanCategory(ag_id_upd)
@@ -306,7 +306,7 @@ function autocallFunctions() {//For On load
     var role_load = $('#role_load').val();
     var ag_id_load = $('#ag_id_load').val();
     if (ag_id_load != '') {
-        getresponsiblecolumn(role_load, ag_id_load);
+        getresponsiblecolumn(ag_id_load);
     }
 
     if (role_load == '2') {
@@ -329,7 +329,7 @@ function autocallFunctions() {//For On load
 }
 
 //To get Reponsible Dropdown
-function getresponsiblecolumn(role, ag_id) {
+function getresponsiblecolumn(ag_id) {
     $.ajax({
         url: 'requestFile/getResponsiblecolumn.php',
         data: { 'ag_id': ag_id },
@@ -337,13 +337,13 @@ function getresponsiblecolumn(role, ag_id) {
         type: 'post',
         cache: false,
         success: function (response) {
-            if (role != '' && role == '2') {
+            // if (role != '' && role == '2') {
                 if (response == '0') {
                     $('.responsible').show();
                 } else {
                     $('.responsible').hide();
                 }
-            }
+            // }
         }
     });
 }
@@ -926,6 +926,8 @@ function getAgentBasedLoanCategory(ag_id) {
                 }));
                 $("#loan_category").prepend(firstOption);
             }
+
+            getresponsiblecolumn(ag_id); //To Hide/show responsible.
         }
     })
 }
@@ -1039,14 +1041,6 @@ function validation(submit_btn) {
     var idupd = $('#id').val();
     var role = $('#role_load').val();
     if (role == '1') {
-        var responsible = $('#responsible').val();
-        if (responsible == '') {
-            $('#responsibleCheck').show();
-            event.preventDefault();
-        } else {
-            $('#responsibleCheck').hide();
-        }
-
         var declaration = $('#declaration').val();
         if (declaration == '') {
             $('#declarationCheck').show();
@@ -1055,15 +1049,6 @@ function validation(submit_btn) {
             $('#declarationCheck').hide();
         }
     } else if (role == '2') {
-
-        var responsible = $('#responsible').val();
-        if (responsible == '' && $('.responsible').css('display') != 'none') {
-            $('#responsibleCheck').show();
-            event.preventDefault();
-        } else {
-            $('#responsibleCheck').hide();
-        }
-
         var declaration = $('#declaration').val();
         if (declaration == '') {
             $('#declarationCheck').show();
@@ -1080,6 +1065,14 @@ function validation(submit_btn) {
         } else {
             $('#remarkCheck').hide();
         }
+    }
+
+    var responsible = $('#responsible').val();
+    if (responsible == '' && $('.responsible').css('display') != 'none') {
+        $('#responsibleCheck').show();
+        event.preventDefault();
+    } else {
+        $('#responsibleCheck').hide();
     }
 
     var cus_id = $('#cus_id').val(); var cus_name = $('#cus_name').val(); var dob = $('#dob').val(); var gender = $('#gender').val(); var pic = $('#pic').val(); var state = $('#state').val();

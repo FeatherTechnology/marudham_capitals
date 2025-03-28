@@ -118,8 +118,8 @@ if (isset($getuserdetails['download_access'])) {
 										<h5><?php echo $fullname; ?></h5>
 										<p><?php echo $fullname; ?></p>
 									</div>
-									<a href="#"><i class="icon-user1"></i> My Profile</a>
-									<a href="logout.php"><i class="icon-log-out1"></i> Sign Out</a>
+									<!-- <a href="#"><i class="icon-user1"></i> My Profile</a> -->
+									<a href="logout.php" class="logout-link"><i class="icon-log-out1"></i>Log Out</a>
 								</div>
 							</div>
 						</li>
@@ -452,6 +452,10 @@ if (isset($getuserdetails['download_access'])) {
 			<?php if ($current_page == 'closed_report') { ?>
 				<?php include "include/templates/closed_report.php" ?>
 			<?php } else ?>
+			<!-- commitment Report -->
+			<?php if ($current_page == 'commitment_report') { ?>
+				<?php include "include/templates/commitment_report.php" ?>
+			<?php } else ?>
 
 			<!-- Balance Report -->
 			<?php if ($current_page == 'balance_report') { ?>
@@ -463,6 +467,10 @@ if (isset($getuserdetails['download_access'])) {
 				<?php include "include/templates/agent_report.php" ?>
 			<?php } else ?>
 
+			<!-- Due List -->
+			<?php if ($current_page == 'due_list_report') { ?>
+				<?php include "include/templates/due_list_report.php" ?>
+			<?php } else ?>
 
 			<!-- Search Module -->
 			<?php if ($current_page == 'search_module') { ?>

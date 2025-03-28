@@ -1286,11 +1286,17 @@
     if ($current_page == 'closed_report') { ?>
         <script src="js/closed_report.js"></script>
     <?php }
+    if ($current_page == 'commitment_report') { ?>
+        <script src="js/commitment_report.js"></script>
+    <?php }
     if ($current_page == 'balance_report') { ?>
         <script src="js/balance_report.js"></script>
     <?php }
     if ($current_page == 'agent_report') { ?>
         <script src="js/agent_report.js"></script>
+    <?php }
+    if ($current_page == 'due_list_report') { ?>
+        <script src="js/due_list_report.js"></script>
     <?php }
     if ($current_page == 'search_module') { ?>
         <script src="js/search_module.js"></script>
@@ -1572,9 +1578,19 @@
 
             $(document).click(function(event) {
                 var target = $(event.target);
+
+                // Close dropdown if clicking outside, but allow logout link to work
                 if (!target.closest('.dropdown').length) {
                     $('.dropdown').removeClass('active');
                 }
+            });
+
+            $(document).on('click', '.logout-link', function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                $('.dropdown').removeClass('active');
+                window.location.href = 'logout.php'; // Redirect to logout script
             });
 
             // Check if DACC is 1 and hide Excel button if true

@@ -22,10 +22,9 @@ $date = $_POST['date']; //commitement date
 $hint = $_POST['hint'];
 $err = $_POST['err'] ?? '';
 
+$sql = $connect->prepare("INSERT INTO `commitment` (`req_id`, `cus_id`, `ftype`, `fstatus`, `person_type`, `person_name`, `relationship`, `remark`, `comm_date`, `hint`, `comm_err`, `insert_login_id`, `created_date`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
 
-$sql = $connect->query("INSERT INTO `commitment`(`req_id`,`cus_id`, `ftype`, `fstatus`, `person_type`, `person_name`, `relationship`, `remark`, `comm_date`, `hint`, `comm_err`, `insert_login_id`,`created_date`) VALUES ('$req_id','$cus_id','$ftype','$fstatus','$person_type','$person_name','$relationship','$remark','$date','$hint','$err','$userid',NOW())");
-
-if ($sql) {
+if ($sql->execute([$req_id, $cus_id, $ftype, $fstatus, $person_type, $person_name, $relationship, $remark, $date, $hint, $err, $userid])) {
     $response = 'Inserted Successfully';
 } else {
     $response = 'Error While Inserting';

@@ -97,6 +97,7 @@ class admin
 			$detailrecords['balance_report'] = strip_tags($row->balance_report);
 			$detailrecords['due_list_report'] = strip_tags($row->due_list_report);
 			$detailrecords['closed_report'] = strip_tags($row->closed_report);
+			$detailrecords['commitment_report'] = strip_tags($row->commitment_report);
 			$detailrecords['agent_report'] = strip_tags($row->agent_report);
 
 			$detailrecords['search_module'] = strip_tags($row->search_module);
@@ -2663,6 +2664,11 @@ class admin
 		} else {
 			$closed_report = 1;
 		}
+		if (isset($_POST['commitment_report']) &&    $_POST['commitment_report'] == 'Yes') {
+			$commitment_report = 0;
+		} else {
+			$commitment_report = 1;
+		}
 		if (isset($_POST['agent_report']) &&    $_POST['agent_report'] == 'Yes') {
 			$agent_report = 0;
 		} else {
@@ -2716,7 +2722,7 @@ class admin
 		`doctrackmodule`,`doctrack`,`doc_rec_access`,`updatemodule`,`update_screen`,`concernmodule`, `concern_creation`, `concern_solution`,`concern_feedback`,
 		`accountsmodule`,`cash_tally`,`cash_tally_admin`,`bank_details`,`bank_clearance`,`finance_insight`,`accounts_loan_issue`,
 		`followupmodule`, `promotion_activity`, `loan_followup`, `confirmation_followup`, `due_followup`, `reportmodule`, `ledger_report`, 
-		`request_report`, `cancel_revoke_report`, `cus_profile_report`, `loan_issue_report`, `collection_report`,`principal_interest_report`, `balance_report`, `due_list_report`, `closed_report`, `agent_report`,
+		`request_report`, `cancel_revoke_report`, `cus_profile_report`, `loan_issue_report`, `collection_report`,`principal_interest_report`, `balance_report`, `due_list_report`, `closed_report`, `commitment_report`, `agent_report`,
 		`search_module`,`search`,`bulk_upload_module`, `bulk_upload`, `loan_track_module`, `loan_track`,`sms_module`,`sms_generation`,`insert_login_id`,`created_date`)
         VALUES('" . strip_tags($full_name) . "','" . strip_tags($email) . "','" . strip_tags($user_name) . "','" . strip_tags($user_password) . "','" . strip_tags($role) . "',
         '" . strip_tags($role_type) . "','" . strip_tags($dir_name) . "','" . strip_tags($ag_name) . "','" . strip_tags($staff_name) . "','" . strip_tags($company_id) . "',
@@ -2734,7 +2740,7 @@ class admin
 			"',
 		'" . strip_tags($reportmodule) . "', '" . strip_tags($ledger_report) . "', '" . strip_tags($request_report) . "', '" . strip_tags($cancel_revoke_report) . "', '" . strip_tags($cus_profile_report) . "', '" . strip_tags($loan_issue_report) .
 			"',
-		'" . strip_tags($collection_report) . "','" . strip_tags($principal_interest_report) . "', '" . strip_tags($balance_report) . "', '" . strip_tags($due_list_report) . "', '" . strip_tags($closed_report) . "', '" . strip_tags($agent_report) . "',
+		'" . strip_tags($collection_report) . "','" . strip_tags($principal_interest_report) . "', '" . strip_tags($balance_report) . "', '" . strip_tags($due_list_report) . "', '" . strip_tags($closed_report) . "', '" . strip_tags($commitment_report) . "', '" . strip_tags($agent_report) . "',
 		'" . strip_tags($searchmodule) . "', '" . strip_tags($search_screen) . "','" . strip_tags($bulk_upload_module) . "', '" . strip_tags($bulk_upload) . "',
 		'" . strip_tags($loan_track_module) . "', '" . strip_tags($loan_track) . "','" . strip_tags($sms_module) . "','" . strip_tags($sms_generation) . "','" . strip_tags($userid) . "',now() )";
 		// echo $insertQry;die;
@@ -3136,6 +3142,11 @@ class admin
 		} else {
 			$closed_report = 1;
 		}
+		if (isset($_POST['commitment_report']) &&    $_POST['commitment_report'] == 'Yes') {
+			$commitment_report = 0;
+		} else {
+			$commitment_report = 1;
+		}
 		if (isset($_POST['agent_report']) &&    $_POST['agent_report'] == 'Yes') {
 			$agent_report = 0;
 		} else {
@@ -3210,7 +3221,7 @@ class admin
 	`cus_profile_report` = '" . strip_tags($cus_profile_report) . "', `loan_issue_report` = '" . strip_tags($loan_issue_report) . "', 
 	`collection_report` = '" . strip_tags($collection_report) . "',`principal_interest_report` = '" . strip_tags($principal_interest_report) . "',  `balance_report` = '" . strip_tags($balance_report) .
 			"', 
-	`due_list_report` = '" . strip_tags($due_list_report) . "', `closed_report` = '" . strip_tags($closed_report) . "', `agent_report` = '" . strip_tags($agent_report) . "',
+	`due_list_report` = '" . strip_tags($due_list_report) . "', `closed_report` = '" . strip_tags($closed_report) . "', `commitment_report` = '" . strip_tags($commitment_report) . "', `agent_report` = '" . strip_tags($agent_report) . "',
 	`search_module` = '" . strip_tags($searchmodule) . "', `search` = '" . strip_tags($search_screen) . "',`bulk_upload_module` = '" . strip_tags($bulk_upload_module) . "', `bulk_upload` = '" . strip_tags($bulk_upload) .
 			"',
 	`loan_track_module` = '" . strip_tags($loan_track_module) . "', `loan_track` = '" . strip_tags($loan_track) . "', `sms_module` = '" . strip_tags($sms_module) . "', `sms_generation` = '" . strip_tags($sms_generation) . "',`status` = 0,`update_login_id` = '" . strip_tags($user_id) . "',`updated_date` = current_timestamp() WHERE user_id = '" . strip_tags($id) . "' ";
@@ -3867,6 +3878,10 @@ class admin
 	// Add Verification
 	public function addCustomerProfile($mysqli, $userid)
 	{
+		$responsible ='';
+		if (isset($_POST['cus_responsible'])) {
+			$responsible = $_POST['cus_responsible'];
+		}
 		if (isset($_POST['req_id'])) {
 			$req_id = $_POST['req_id'];
 		}
@@ -3902,8 +3917,19 @@ class admin
 		if (!empty($_FILES['pic']['name'])) {
 			// Delete the file from both the request and verification folders
 			$pic_req = $_POST['cus_image'];
-			unlink("uploads/request/customer/{$pic_req}");
-			unlink("uploads/verification/customer/{$pic_req}");
+
+			$customer_path = "uploads/request/customer/{$pic_req}";
+			$verification_path = "uploads/verification/customer/{$pic_req}";
+
+			// Check and delete the customer image file if it exists
+			if (file_exists($customer_path) && is_file($customer_path)) {
+				unlink($customer_path);
+			}
+
+			// Check and delete the verification image file if it exists
+			if (file_exists($verification_path) && is_file($verification_path)) {
+				unlink($verification_path);
+			}
 
 			// Get the original filename and temporary path of the uploaded file
 			$pic = $_FILES['pic']['name'];
@@ -4087,6 +4113,8 @@ class admin
 
 		$updateCus = "UPDATE `customer_register` SET  `cus_id`='" . strip_tags($cus_id) . "',`customer_name`='" . strip_tags($cus_name) . "',`gender`='" . strip_tags($gender) . "',`dob`='" . strip_tags($dob) . "',`age`='" . strip_tags($age) . "',`blood_group`='" . strip_tags($bloodGroup) . "',`mobile1`='" . strip_tags($mobile1) . "', `mobile2`='" . strip_tags($mobile2) . "',`pic`='" . strip_tags($pic_req) . "',`how_to_know`='" . strip_tags($cus_how_know) . "',`loan_count`='" . strip_tags($cus_loan_count) . "',`first_loan_date`='" . strip_tags($cus_frst_loanDate) . "',`travel_with_company`='" . strip_tags($cus_travel_cmpy) . "',`monthly_income`='" . strip_tags($cus_monthly_income) . "',`other_income`='" . strip_tags($cus_other_income) . "',`support_income`='" . strip_tags($cus_support_income) . "',`commitment`='" . strip_tags($cus_Commitment) . "',`monthly_due_capacity`='" . strip_tags($cus_monDue_capacity) . "',`loan_limit`='" . strip_tags($cus_loan_limit) . "',`about_customer`='" . strip_tags($about_cus) . "',`residential_type`='" . strip_tags($cus_res_type) . "',`residential_details`='" . strip_tags($cus_res_details) . "',`residential_address`='" . strip_tags($cus_res_address) . "',`residential_native_address`='" . strip_tags($cus_res_native) . "',`occupation_info_occ_type`='" . strip_tags($cus_occ_type) . "',`occupation_details`='" . strip_tags($cus_occ_detail) . "',`occupation_income`='" . strip_tags($cus_occ_income) . "',`occupation_address`='" . strip_tags($cus_occ_address) . "',`dow`='" . strip_tags($cus_occ_dow) . "',`abt_occ`='" . strip_tags($cus_occ_abt) . "',`area_confirm_type`='" . strip_tags($area_cnfrm) . "',`area_confirm_state`='" . strip_tags($state) . "',`area_confirm_district`='" . strip_tags($district) . "',`area_confirm_taluk`='" . strip_tags($taluk) . "',`area_confirm_area`='" . strip_tags($area) . "',`area_confirm_subarea`='" . strip_tags($sub_area) . "',`latlong`='" . strip_tags($latlong) . "',`area_group`='" . strip_tags($area_group) . "',`area_line`='" . strip_tags($area_line) . "' WHERE `cus_id`= '" . strip_tags($cus_id) . "' ";
 		$insresult = $mysqli->query($updateCus) or die("Error " . $mysqli->error);
+
+		$this->updateResponsible($mysqli, $req_id, $responsible);
 	}
 
 	// Get Customer Profile Info.
@@ -4160,6 +4188,10 @@ class admin
 	// Add Documentation
 	public function addDocumentation($mysqli, $userid)
 	{
+		$responsible = '';
+		if (isset($_POST['doc_responsible'])) {
+			$responsible = $_POST['doc_responsible'];
+		}
 		if (isset($_POST['req_id'])) {
 			$req_id = $_POST['req_id'];
 		}
@@ -4256,6 +4288,8 @@ class admin
 
 			$updDocResult = $mysqli->query($update_doc) or die("Error " . $mysqli->error);
 		}
+
+		$this->updateResponsible($mysqli, $req_id, $responsible);
 	}
 
 	// Get Documentation Info.
@@ -4391,7 +4425,11 @@ class admin
 
 	//Add Loan Calculation
 	function addVerificationLoanCalculation($mysqli, $userid)
-	{
+	{	
+		$responsible = '';
+		if (isset($_POST['loan_responsible'])) {
+			$responsible = $_POST['loan_responsible'];
+		}
 		if (isset($_POST['cus_id_loan'])) {
 			$cus_id_loan = $_POST['cus_id_loan'];
 		}
@@ -4639,7 +4677,11 @@ class admin
 			$ad_per = 0;
 		}
 
-		$mysqli->query("UPDATE in_verification set `loan_category`='" . strip_tags($loan_category) . "',`sub_category`='" . strip_tags($sub_category) . "',`tot_value`='" . strip_tags($tot_value) . "',`ad_amt`='" . strip_tags($ad_amt) . "',`ad_perc`='" . strip_tags($ad_per) . "',`loan_amt`='" . strip_tags($loan_amt) . "',`due_period`='" . strip_tags($due_period) . "' where req_id ='" . strip_tags($req_id) . "' ");
+
+		$mysqli->query("UPDATE in_verification set `loan_category`='" . strip_tags($loan_category) . "',`sub_category`='" . strip_tags($sub_category) . "',`tot_value`='" . strip_tags($tot_value) . "',`ad_amt`='" . strip_tags($ad_amt) . "',`ad_perc`='". strip_tags($ad_per)."',`loan_amt`='" . strip_tags($loan_amt) . "',`due_period`='" . strip_tags($due_period) . "' where req_id ='" . strip_tags($req_id) . "' ");
+
+		$this->updateResponsible($mysqli, $req_id, $responsible);
+
 	}
 
 	function getLoanCalculationForVerification($mysqli, $req_id)
@@ -6987,4 +7029,13 @@ class admin
 			} // customer count loop
 		} //Festival name loop
 	}
+
+	public function updateResponsible($mysqli, $req_id, $responsible){
+		$insertQry = "UPDATE request_creation set responsible = '$responsible' where req_id ='" . strip_tags($req_id) . "' ";
+		$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
+
+		$insertQry = "UPDATE in_verification set responsible = '$responsible' where req_id ='" . strip_tags($req_id) . "' ";
+		$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
+	}
+
 }//Class End
