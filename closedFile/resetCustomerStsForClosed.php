@@ -9,13 +9,21 @@ if (isset($_SESSION['userid'])) {
 // if(isset($_POST['req_id'])){
 //     $req_id = $_POST['req_id'];
 // }
-// $req_id = '11';//****************************************************************************************************************************************
+//****************************************************************************************************************************************
 if (isset($_POST['cus_id'])) {
     $cus_id = $_POST['cus_id'];
 }
-// $cus_id=123456789101;
+
+$where = "";
+if (isset($_POST['start'])) {
+    $start = $_POST['start'];
+    $end = $_POST['end'];
+
+    $where = "AND (cus_status >= $start and cus_status <= $end)"; 
+}
+
 $req_arr = array();
-$qry = $connect->query("SELECT req_id FROM in_issue where cus_id = $cus_id ORDER BY CAST(req_id AS UNSIGNED) ASC "); // and (cus_status < 21 and cus_status >= 14)"); //and (cus_status = 20)
+$qry = $connect->query("SELECT req_id FROM in_issue where cus_id = $cus_id $where ORDER BY CAST(req_id AS UNSIGNED) ASC "); // and (cus_status < 21 and cus_status >= 14)"); //and (cus_status = 20)
 while ($row = $qry->fetch()) {
     $req_arr[] = $row['req_id'];
 }
