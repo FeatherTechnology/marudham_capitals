@@ -62,7 +62,7 @@ if ($userid == 1) {
     JOIN branch_creation bc ON ag.branch_id = bc.branch_id
     JOIN area_line_mapping alm ON FIND_IN_SET(sa.sub_area_id, alm.sub_area_id)
     JOIN loan_category_creation lcc ON lcc.loan_category_creation_id = b.loan_category
-    WHERE a.status = 0 and (a.cus_status = 13) and (a.issue_by = 1) "; // Move To Issue
+    WHERE a.status = 0 and (a.cus_status = 13) and (a.issue_by = 2) "; // Move To Issue
 } else {
     $query = "SELECT a.dor,a.cus_id,a.cus_name,a.user_type,a.user_name,a.agent_id,a.responsible,a.cus_data,a.req_id,a.cus_status,a.req_id,b.sub_category,b.loan_amt,ac.area_name, sa.sub_area_name, ag.group_name, bc.branch_name, alm.line_name,lcc.loan_category_creation_name 
     FROM in_verification a 
@@ -73,7 +73,7 @@ if ($userid == 1) {
     JOIN branch_creation bc ON ag.branch_id = bc.branch_id
     JOIN area_line_mapping alm ON FIND_IN_SET(sa.sub_area_id, alm.sub_area_id)
     JOIN loan_category_creation lcc ON lcc.loan_category_creation_id = b.loan_category
-    WHERE a.status = 0 and (a.cus_status = 13) and (a.issue_by = 1) and a.sub_area IN ($sub_area_list) ";  //show only Approved Verification in Acknowledgement. // 13 Move to Issue. // 14 Move To Collection.
+    WHERE a.status = 0 and (a.cus_status = 13) and (a.issue_by = 2) and a.sub_area IN ($sub_area_list) ";  //show only Approved Verification in Acknowledgement. // 13 Move to Issue. // 14 Move To Collection.
 }
 
 if (isset($_POST['search']) && $_POST['search'] != "") {
@@ -179,7 +179,7 @@ foreach ($result as $row) {
         }
     }
 
-    $id          = $row['req_id'];
+    $id = $row['req_id'];
     $user_type = $row['user_type'];
     $cus_id = $row['cus_id'];
 
@@ -188,14 +188,15 @@ foreach ($result as $row) {
     <div class='dropdown-content'>";
 
     if ($cus_status == '13' and empty($ag_id)) { // check whether agent id is empty, if yes then show edit button, so that only 'issued to customer' entries only can edit
-        $action .= "<a href='loan_issue&upd=$id' class='customer_profile' value='$id' > Edit Loan Issue </a>";
-    } else if ($cus_status == '14') {
-        $action .= "<a href=''class='iss-remove' data-value='$id' > Remove </a>";
-    }
-
-    if ($login_user_type == 0 or $userid == 1) {
-        $action .= "<a href='' data-value ='" . $cus_id . "' data-value1 = '$id' class='customer-status' data-toggle='modal' data-target='.customerstatus'>Customer Status</a>";
-    }
+        $action .= "<a href='accounts_loan_issue&upd=$id' class='customer_profile' value='$id' > Edit Loan Issue </a>";
+    } 
+    // else if ($cus_status == '14') {
+    //     $action .= "<a href=''class='iss-remove' data-value='$id' > Remove </a>";
+    // }
+    $action .= "<a href='#' class='move_customer' data-id='$id'> Move to Loan Issue</a>";
+    // if ($login_user_type == 0 or $userid == 1) {
+    //     $action .= "<a href='' data-value ='" . $cus_id . "' data-value1 = '$id' class='customer-status' data-toggle='modal' data-target='.customerstatus'>Customer Status</a>";
+    // }
 
 
     $action .= "</div></div>";

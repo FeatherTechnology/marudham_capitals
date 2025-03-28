@@ -1,184 +1,7 @@
 $(document).ready(function () {
 
     //Hide Cash Acknowledgement card.. show only if cash enter.
-    $('#cashAck').hide();
     $('#bankInfo').hide();
-
-    // Issue Mode
-    $('#issued_mode').change(function () {
-        var mode = $(this).val();
-        // $('#cashAck').hide();
-
-        $('#cash').removeAttr('readonly');
-        $('#chequeValue').removeAttr('readonly');
-        $('#transaction_value').removeAttr('readonly');
-
-        if (mode == '0') {
-            $('.cash_issue').hide();
-            $('.checque').hide();
-            $('.transaction').hide();
-            $('.balance').hide();
-
-            $('#bankDiv').hide();//show bank id
-
-            $('.paymentType').show();
-
-            turnonCashKeyup();
-
-        } else if (mode == '1') {
-            $('.cash_issue').hide();
-            $('.checque').hide();
-            $('.transaction').hide();
-            $('#bankDiv').hide();//hide bank id
-            $('.paymentType').show();
-            $('.balance').hide();
-
-        } else {
-            $('.cash_issue').hide();
-            $('.checque').hide();
-            $('.transaction').hide();
-            $('#bankDiv').hide();//hide bank id
-            $('.paymentType').hide();
-            $('.balance').hide();
-        }
-        $('#bankInfo').hide(); // Cash Acknowledgement.
-        $('#cash').val('');
-        $('#bank_id').val('');
-        $('#chequeno').val('');
-        $('#chequeValue').val('');
-        $('#chequeRemark').val('');
-        $('#transaction_id').val('');
-        $('#transaction_value').val('');
-        $('#transaction_remark').val('');
-        $('#payment_type').val('');
-
-        hideCheckSpan()
-    })
-
-    // Payment Type
-    $('#payment_type').change(function () {
-        $('#cash').val('');
-        $('#bank_id').val('');
-        $('#chequeno').val('');
-        $('#chequeValue').val('');
-        $('#chequeRemark').val('');
-        $('#transaction_id').val('');
-        $('#transaction_value').val('');
-        $('#transaction_remark').val('');
-        var type = $(this).val();
-        var netcash = $('#net_cash').val();
-        let issue_mode = $('#issued_mode').val();
-        if(issue_mode == 0){
-            if (type == '0') {
-                $('.balance').show();
-                $('.cash_issue').show();
-                $('#cash').val('');
-                $('#cash').attr('readonly', false);
-                $('#balance').val('');
-                $('#bankDiv').hide();//hide bank id
-                $('#bankInfo').hide();//hide bank id
-                $('.checque').hide();
-                $('.transaction').hide();
-                var ag_id = $('#agent_id').val();
-                if (ag_id == '') {
-                    $('#cashAck').show(); // Cash Acknowledgement.
-                    turnonCashKeyup();
-                } else {
-                    $('#cash').off('keyup');
-                }
-    
-            } else if (type == '1') {
-                $('.balance').hide();
-                $('.cash_issue').hide();
-                $('#bankDiv').show();//show bank id
-                $('.checque').hide();
-                $('#chequeValue').val('');
-                $('#chequeValue').attr('readonly', true);
-                $('#balance').val('');
-                $('.transaction').hide();
-                $('#cashAck').hide(); // Cash Acknowledgement.
-                $('#bankInfo').show(); // Cash Acknowledgement.
-                resetbankinfoList()
-    
-            } else if (type == '2') {
-                $('.balance').hide();
-                $('.cash_issue').hide();
-                $('#bankDiv').show();//show bank id
-                $('.checque').hide();
-                $('.transaction').hide();
-                $('#transaction_value').val('');
-                $('#transaction_value').attr('readonly', true);
-                $('#balance').val('');
-                $('#cashAck').hide(); // Cash Acknowledgement.
-                $('#bankInfo').show(); 
-                resetbankinfoList();
-            } else {
-                $('.balance').hide();
-                $('.cash_issue').hide();
-                $('#bankDiv').hide();//hide bank id
-                $('.checque').hide();
-                $('.transaction').hide();
-                $('#balance').val('');
-                $('#cashAck').hide(); // Cash Acknowledgement.
-                $('#bankInfo').hide()
-            }
-        }
-        else{
-            $('.balance').hide();
-            if (type == '0') {
-                $('.cash_issue').show();
-                $('#cash').val(netcash);
-                $('#cash').attr('readonly', true);
-                $('#balance').val('0');
-                $('#bankDiv').hide();//hide bank id
-                $('.checque').hide();
-                $('.transaction').hide();
-                $('#bankInfo').hide();
-                var ag_id = $('#agent_id').val();
-                if (ag_id == '') {
-                    $('#cashAck').show(); // Cash Acknowledgement.
-                    turnonCashKeyup();
-                } else {
-                    $('#cash').off('keyup');
-                }
-    
-            } else if (type == '1') {
-                $('.cash_issue').hide();
-                $('#bankDiv').show();//show bank id
-                $('.checque').hide();
-                $('#chequeValue').val(netcash);
-                $('#chequeValue').attr('readonly', true);
-                $('#balance').val('0');
-                $('.transaction').hide();
-                $('#cashAck').hide(); // Cash Acknowledgement.
-                $('#bankInfo').show()
-                resetbankinfoList()
-    
-            } else if (type == '2') {
-                $('.cash_issue').hide();
-                $('#bankDiv').show();//show bank id
-                $('.checque').hide();
-                $('.transaction').hide();
-                $('#transaction_value').val(netcash);
-                $('#transaction_value').attr('readonly', true);
-                $('#balance').val('0');
-                $('#cashAck').hide(); // Cash Acknowledgement.
-                $('#bankInfo').show()
-                resetbankinfoList()
-    
-            } else {
-                $('.cash_issue').hide();
-                $('#bankDiv').hide();//hide bank id
-                $('.checque').hide();
-                $('.transaction').hide();
-                $('#balance').val('');
-                $('#cashAck').hide(); // Cash Acknowledgement.
-                $('#bankInfo').hide();
-            }
-        }
-
-        hideCheckSpan();
-    })
 
     {
         // Get today's date
@@ -197,155 +20,8 @@ $(document).ready(function () {
             $('#cashAck').hide();
         }
     });
- // Handle checkbox click event
-$(document).on('change', '.verification_bank_update', function () {
-    let id = $(this).val(); // Get the ID of the current row
-    let issue_status = 0;
-
-    // If the current checkbox is checked
-    if ($(this).is(':checked')) {
-        issue_status = 2; // Checked, set status to 2
-        // Disable all other checkboxes except the current one
-        $('#bank_data_table').find('input[type="checkbox"]').not(this).prop('disabled', true);
-    } else {
-        issue_status = 1; // Unchecked, set status to 1
-        // Enable all checkboxes again
-        $('#bank_data_table').find('input[type="checkbox"]').prop('disabled', false);
-    }
-
-    // AJAX request to update the issue_status
-    $.ajax({
-        url: 'loanIssueFile/updateBankStatus.php',
-        type: 'POST',
-        data: { "id": id, "issue_status": issue_status },
-        dataType: 'json',
-        cache: false,
-        success: function (response) {
-            // Handle the response if needed
-        }
-    });
-});
-
-
-    
-    $('#cash_guarentor_name').change(function () { //Select Guarantor Name relationship will show in input.
-
-        let famAdhaarNo = document.querySelector("#cash_guarentor_name").value;
-        $('#cash_guarentor').hide();
-        $('#compare_finger').val('')
-        var cusId = $('#cus_id').val();
-        if (famAdhaarNo == cusId) {
-            var cus = '1';
-        } else {
-            var cus = '2';
-        }
-
-        $.ajax({
-            url: 'loanIssueFile/getFamRelationship.php',
-            type: 'POST',
-            data: { "adhaarno": famAdhaarNo, "cus": cus, "cusId": cusId },
-            dataType: 'json',
-            cache: false,
-            success: function (result) {
-
-                $("#relationship").val(result['relation']);
-                $("#compare_finger").val(result['fpTemplate']);
-                if (result['hand'] == '1') {
-                    $('.scanBtn').removeAttr('disabled');
-                    var hand = "Put Your Left Thumb"
-                } else if (result['hand'] == '2') {
-                    $('.scanBtn').removeAttr('disabled');
-                    var hand = "Put Your Right Thumb"
-                } else {
-                    var hand = "Finger Print Not Registered";
-                    $('.scanBtn').attr('disabled', true);
-                }
-                $("#hand_type").text(hand).attr('class', 'text-danger');
-
-            }
-        });
-
-    });
-
-
-    $('.scanBtn').click(function () {
-        var g_name = $('#cash_guarentor_name').val();
-
-        if (g_name != '') {
-
-            $(this).attr('disabled', true);
-            showOverlay();//loader start
-
-            setTimeout(() => { //Set Timeout, because loadin animation will be intrupped by this capture event
-                var quality = 60; //(1 to 100) (recommended minimum 55)
-                var timeout = 10; // seconds (minimum=10(recommended), maximum=60, unlimited=0)
-                var res = CaptureFinger(quality, timeout);
-                if (res.httpStaus) {
-                    if (res.data.ErrorCode == "0") {
-                        $('#ack_fingerprint').val(res.data.AnsiTemplate); // Take ansi template that is the unique id which is passed by sensor
-                    }//Error codes and alerts below
-                    else if (res.data.ErrorCode == -1307) {
-                        alert('Connect Your Device');
-                        $(this).removeAttr('disabled');
-                    } else if (res.data.ErrorCode == -1140 || res.data.ErrorCode == 700) {
-                        alert('Timeout');
-                        $(this).removeAttr('disabled');
-                    } else if (res.data.ErrorCode == 720) {
-                        alert('Reconnect Device');
-                        $(this).removeAttr('disabled');
-                    } else if (res.data.ErrorCode == 730) {
-                        alert('Capture Finger Again');
-                        $(this).removeAttr('disabled');
-                    } else {
-                        alert('Error Code:' + res.data.ErrorCode);
-                        $(this).removeAttr('disabled');
-                    }
-                }
-                else {
-                    alert(res.err);
-                }
-
-                //Verify the finger is matched with member name
-                var compare_finger = $('#compare_finger').val()
-                var ack_fingerprint = $('#ack_fingerprint').val()
-                var res = VerifyFinger(compare_finger, ack_fingerprint)
-                if (res.httpStaus) {
-                    if (res.data.Status) {
-                        Swal.fire({
-                            title: 'Fingerprint Matching',
-                            icon: 'success',
-                            showConfirmButton: true,
-                            confirmButtonColor: '#009688'
-                        });
-                        $('#fingerValidation').val('1');
-                        $("#hand_type").text('Done').attr('class', 'text-success');
-                    } else {
-                        if (res.data.ErrorCode != "0") {
-                            alert(res.data.ErrorDescription);
-                        }
-                        else {
-                            Swal.fire({
-                                title: 'Fingerprint Not Matching',
-                                icon: 'error',
-                                showConfirmButton: true,
-                                confirmButtonColor: '#009688'
-                            });
-                            $(this).removeAttr('disabled');
-                        }
-                    }
-                } else {
-                    alert(res.err)
-                }
-
-                hideOverlay();//loader stop
-
-            }, 700) //Timeout End
-
-        } else {//If End
-            $('#cash_guarentor').show();
-        }
-
-    })//Scan button Onclick end
+ 
+ 
     function onLoadEditFunction() {//On load for Loan Calculation edit
         $('input#due_start_from').removeAttr('readonly');
         $('select#collection_method').removeAttr('disabled');
@@ -455,12 +131,73 @@ $(document).on('change', '.verification_bank_update', function () {
     })
 
 
-    $('#submit_loanIssue').click(function () { // loan Issue Submit Validation.
+    $('#submit_accountsloanIssue').click(function (event) { // loan Issue Submit Validation
         hideCheckSpan();
-        //   $('#refresh_cal').trigger('click');
-        loanIssueSumitValidation();
-
+    
+        // Run validation and only proceed if it passes
+        if (!loanIssueSumitValidation()) {
+            return; // Exit if validation fails
+        }
+    
+        let req_id = $('#req_id').val();
+        let cus_id = $('#cus_id').val();
+        let issue_to = $('#issue_to').val();
+        let net_cash = $('#net_cash').val();
+        let balance = $('#balance').val();
+        let loan_amt_cal = $('#loan_amt_cal').val();
+        let issued_mode = $('#issued_mode').val();
+        let payment_type = $('#payment_type').val();
+        let chequeno = $('#chequeno').val();
+        let chequeValue = $('#chequeValue').val();
+        let chequeRemark = $('#chequeRemark').val();
+        let transaction_id = $('#transaction_id').val();
+        let transaction_value = $('#transaction_value').val();
+        let transactionRemark = $('#transaction_remark').val();
+        let bank_id = $('#bank_id').val();
+        // Pass all data via AJAX
+        $.ajax({
+            url: 'loanIssueFile/submitLoanIssue.php',
+            type: 'POST',
+            data: {
+                "req_id": req_id,
+                "cus_id": cus_id,
+                "issue_to": issue_to,
+                "net_cash": net_cash,
+                "balance": balance,
+                "loan_amt_cal": loan_amt_cal,
+                "issued_mode": issued_mode,
+                "payment_type": payment_type,
+                "chequeno": chequeno,
+                "chequeValue": chequeValue,
+                "chequeRemark": chequeRemark,
+                "transaction_id": transaction_id,
+                "transaction_value": transaction_value,
+                "transaction_remark": transactionRemark,
+                "bank_id": bank_id
+            },
+            dataType: 'json',
+            cache: false,
+            success: function (result) {
+                if (result.response.includes('Completed')) {
+                    Swal.fire({
+                        timer: 1500, // Auto-dismiss after 1.5 seconds
+                        timerProgressBar: true,
+                        title: result.response,
+                        icon: 'success',
+                        showConfirmButton: false, // No confirmation button
+                        confirmButtonColor: '#009688'
+                    }).then(() => {
+                        // Directly redirect to the desired page after the alert is closed
+                        window.location.href = 'edit_accounts_loan_issue';
+                    });
+                }
+            },
+            error: function (error) {
+                // Handle error
+            }
+        });
     });
+    
 });
 
 
@@ -474,13 +211,16 @@ $(function () {
     getCategoryInfo(); //To show Category Info.
     getAgentDetails(); //To Get Agent Details.
     profitCalculationInfo();
-    cashAckName(); // To show Cash Acknowledgement Name.
     $('input').not('#int_rate, #due_period, #doc_charge, #proc_fee,#due_start_from,#chequeno,#chequeRemark,#transaction_id,#transaction_remark').attr('readonly', true);
     $('select').not('#issued_mode, #cash_guarentor_name,#bank_id,#payment_type,#collection_method').attr('disabled', true);
     checkBalance(); // To check in DB.
+    getBankDetails();
+
     setTimeout(() => {
+        paymentType();
         getCustomerLoanCounts();// To Get loan existing type
-    }, 1000);
+
+    }, 3000);
 
 });
 
@@ -524,19 +264,6 @@ function getCustomerLoanCounts() {
     })
 }
 
-function resetbankinfoList() {
-    let cus_id = $('#cus_id').val();
-    $.ajax({
-        url: 'loanIssueFile/bankDetails.php',
-        type: 'POST',
-        data: { "cus_id": cus_id },
-        cache: false,
-        success: function (html) {
-            $("#bankResetTable").empty();
-            $("#bankResetTable").html(html);
-        }
-    });
-}
 
 //Guarentor Name
 function guarentorName() {
@@ -1391,31 +1118,7 @@ function checkIssuedAmount(type) {
     }
 }
 
-//cash Acknowledgement Name 
-function cashAckName() {
-    let req_id = $('#req_id').val();
-    let cus_id = $('#cus_id').val();
-    let cus_name = $('#cus_name').val();
 
-    $.ajax({
-        url: 'loanIssueFile/famnameForloanIssue.php',
-        type: 'post',
-        data: { "reqId": req_id, "cus_id": cus_id },
-        dataType: 'json',
-        success: function (response) {
-
-            var len = response.length;
-            $("#cash_guarentor_name").empty();
-            $("#cash_guarentor_name").append("<option value=''>" + 'Select Guarantor' + "</option>");
-            $("#cash_guarentor_name").append("<option value='" + cus_id + "'>" + cus_name + "</option>");
-            for (var i = 0; i < len; i++) {
-                var fam_name = response[i]['fam_name'];
-                var fam_aadharno = response[i]['aadharno'];
-                $("#cash_guarentor_name").append("<option value='" + fam_aadharno + "'>" + fam_name + "</option>");
-            }
-        }
-    });
-}
 
 //To Check Loan Balance
 function checkBalance() {
@@ -1459,202 +1162,200 @@ function checkBalance() {
 
 }
 
+function getBankDetails() {
+    let cus_id = $('#cus_id').val();
+    $.ajax({
+        url: 'loanIssueFile/getSelectedBankDetails.php',
+        type: 'POST',
+        data: { "cus_id": cus_id },
+        dataType: 'json',
+        cache: false,
+        success: function (result) {
+            $("#bank_name").val(result['bankName']);
+            $("#branch_name").val(result['branch']);
+            $("#account_holder_name").val(result['accHolderName']);
+            $("#account_number").val(result['acc_no']);
+            $("#Ifsc_code").val(result['ifsc']);
+            $("#bank_upload_id").val(result['upload']);
+
+            if (result['upload']) {
+                let fileName = result['upload'];  // Assuming the server returns the file name
+                $("#viewUploadedImage")
+                    .attr("href", "verificationFile/bankUploads/" + fileName)  // Set the link to the file
+                    .text(fileName)  // Set the text to the file name
+                    .show();  // Show the link
+            } else {
+                $("#viewUploadedImage").hide();  // Hide the link if there's no file
+            }
+        }
+    });
+}
+
+function paymentType() {
+
+    $('#chequeno').val('');
+    $('#chequeValue').val('');
+    $('#chequeRemark').val('');
+    $('#transaction_id').val('');
+    $('#transaction_value').val('');
+    $('#transaction_remark').val('');
+    var type = $('#payment_type').val();
+    var netcash = $('#net_cash').val();
+    let issue_mode = $('#issued_mode').val();
+    if (issue_mode == 0) {
+        if (type == '1') {
+            $('.balance').show();
+            $('.checque').show();
+            $('#chequeValue').val('');
+            $('#chequeValue').attr('readonly', false);
+            $('.transaction').hide();
+            turnonCashKeyup();
+        } else if (type == '2') {
+            $('.balance').show();
+            $('.cash_issue').hide();
+            $('.checque').hide();
+            $('.transaction').show();
+            $('#transaction_value').val('');
+            $('#transaction_value').attr('readonly', false);
+            turnonCashKeyup();
+        } else {
+            $('.balance').hide();
+            $('.checque').hide();
+            $('.transaction').hide();
+            $('#balance').val('');
+        }
+    }
+    else {
+        $('.balance').hide();
+        if (type == '1') {
+            $('.checque').show();
+            $('#chequeValue').val(netcash);
+            $('#chequeValue').attr('readonly', true);
+            $('#balance').val('0');
+            $('.transaction').hide();
+
+        } else if (type == '2') {
+            $('.checque').hide();
+            $('.transaction').show();
+            $('#transaction_value').val(netcash);
+            $('#transaction_value').attr('readonly', true);
+            $('#balance').val('0');
+        } else {
+            $('.balance').hide();
+            $('.checque').hide();
+            $('.transaction').hide();
+            $('#balance').val('');
+        }
+    }
+
+    hideCheckSpan();
+
+}
+
 //Submit Validation
 function loanIssueSumitValidation() {
-    var issueMode = $('#issued_mode').val(); var paymenType = $('#payment_type').val(); var cash = $('#cash').val(); var chequeNum = $('#chequeno').val(); var chequeVal = $('#chequeValue').val(); var chequeRemark = $('#chequeRemark').val(); var transactionID = $('#transaction_id').val(); var transactionVal = $('#transaction_value').val(); var transactionRemark = $('#transaction_remark').val(); var guarentorName = $('#cash_guarentor_name').val();
-    // var fingerMatch = $('#fingerValidation').val();
-    var ag_id = $('#agent_id').val(); var bank_id = $('#bank_id').val();
-    //Check Issue Mode
+    var issueMode = $('#issued_mode').val();
+    var paymenType = $('#payment_type').val();
+    var chequeNum = $('#chequeno').val();
+    var chequeVal = $('#chequeValue').val();
+    var chequeRemark = $('#chequeRemark').val();
+    var transactionID = $('#transaction_id').val();
+    var transactionVal = $('#transaction_value').val();
+    var transactionRemark = $('#transaction_remark').val();
+    var bank_id = $('#bank_id').val();
+    var isValid = true; // Track validation state
+
+    // Check Issue Mode
     if (issueMode == '') {
         event.preventDefault();
         $('#issue').show();
+        isValid = false;
     } else {
         $('#issue').hide();
     }
 
-    //Issue Mode Split
-    if (issueMode == '0') {
-        //Check cheque If Cheque details enter
-        // if (chequeNum != '' || chequeVal != '' || chequeRemark != '') {
-        //     if (chequeNum == '') {
-        //         event.preventDefault();
-        //         $('#cheque_num').show();
-        //     } else {
-        //         $('#cheque_num').hide();
-        //     }
-        //     if (chequeVal == '') {
-        //         event.preventDefault();
-        //         $('#cheque_val').show();
-        //     } else {
-        //         $('#cheque_val').hide();
-        //     }
-        //     if (chequeRemark == '') {
-        //         event.preventDefault();
-        //         $('#cheque_remark').show();
-        //     } else {
-        //         $('#cheque_remark').hide();
-        //     }
-        //     if (bank_id == '') {
-        //         event.preventDefault();
-        //         $('#bank_idCheck').show();
-        //     } else {
-        //         $('#bank_idCheck').hide();
-        //     }
-
-        // }
-
-        //Check Transaction If Transaction details enter
-        // if (transactionID != '' || transactionVal != '' || transactionRemark != '') {
-        //     if (transactionID == '') {
-        //         event.preventDefault();
-        //         $('#transact_id').show();
-        //     } else {
-        //         $('#transact_id').hide();
-        //     }
-        //     if (transactionVal == '') {
-        //         event.preventDefault();
-        //         $('#transact_val').show();
-        //     } else {
-        //         $('#transact_val').hide();
-        //     }
-        //     if (transactionRemark == '') {
-        //         event.preventDefault();
-        //         $('#transact_remark').show();
-        //     } else {
-        //         $('#transact_remark').hide();
-        //     }
-        //     if (bank_id == '') {
-        //         event.preventDefault();
-        //         $('#bank_idCheck').show();
-        //     } else {
-        //         $('#bank_idCheck').hide();
-        //     }
-        // }
-
-        // if (cash != '' || chequeVal != '' || transactionVal != '') {
-        //     $('#val_check').hide();
-        // } else {
-        //     event.preventDefault();
-        //     $('#val_check').show();
-        // }
-    } //Split END//
-
-    //Issue Mode Single Payment
-    if (issueMode == '1' && issueMode == '0' ) {
+    // Issue Mode Single Payment
+    if (issueMode == '1' || issueMode == '0') {
         if (paymenType == '') {
             event.preventDefault();
             $('#pay_type').show();
+            isValid = false;
         } else {
             $('#pay_type').hide();
         }
     }
-    //Cash
-    if (paymenType == '0') {
-        if (cash == '') {
-            event.preventDefault();
-            $('#cash_amnt').show();
-        } else {
-            $('#cash_amnt').hide();
-        }
-    }
 
-    //Cheque
+    // Cheque
     if (paymenType == '1') {
-        // if (chequeNum == '') {
-        //     event.preventDefault();
-        //     $('#cheque_num').show();
-        // } else {
-        //     $('#cheque_num').hide();
-        // }
+        if (chequeNum == '') {
+            event.preventDefault();
+            $('#cheque_num').show();
+            isValid = false;
+        } else {
+            $('#cheque_num').hide();
+        }
 
-        // if (chequeVal == '') {
-        //     event.preventDefault();
-        //     $('#cheque_val').show();
-        // } else {
-        //     $('#cheque_val').hide();
-        // }
+        if (chequeVal == '') {
+            event.preventDefault();
+            $('#cheque_val').show();
+            isValid = false;
+        } else {
+            $('#cheque_val').hide();
+        }
 
-        // if (chequeRemark == '') {
-        //     event.preventDefault();
-        //     $('#cheque_remark').show();
-        // } else {
-        //     $('#cheque_remark').hide();
-        // }
+        if (chequeRemark == '') {
+            event.preventDefault();
+            $('#cheque_remark').show();
+            isValid = false;
+        } else {
+            $('#cheque_remark').hide();
+        }
+
         if (bank_id == '') {
             event.preventDefault();
             $('#bank_idCheck').show();
+            isValid = false;
         } else {
             $('#bank_idCheck').hide();
         }
-        function isAnyCheckboxChecked() {
-            return $('#bank_data_table').find('input[type="checkbox"]:checked').length > 0;
-        }
-    
-        if (!isAnyCheckboxChecked()) {
-            event.preventDefault(); // Prevent form submission if no checkbox is checked
-            alert('Please select at least one bank for verification.'); // Show error message
-        }
-        
     }
 
-    //Transaction
+    // Transaction
     if (paymenType == '2') {
-        // if (transactionID == '') {
-        //     event.preventDefault();
-        //     $('#transact_id').show();
-        // } else {
-        //     $('#transact_id').hide();
-        // }
+        if (transactionID == '') {
+            event.preventDefault();
+            $('#transact_id').show();
+            isValid = false;
+        } else {
+            $('#transact_id').hide();
+        }
 
-        // if (transactionVal == '') {
-        //     event.preventDefault();
-        //     $('#transact_val').show();
-        // } else {
-        //     $('#transact_val').hide();
-        // }
+        if (transactionVal == '') {
+            event.preventDefault();
+            $('#transact_val').show();
+            isValid = false;
+        } else {
+            $('#transact_val').hide();
+        }
 
-        // if (transactionRemark == '') {
-        //     event.preventDefault();
-        //     $('#transact_remark').show();
-        // } else {
-        //     $('#transact_remark').hide();
-        // }
+        if (transactionRemark == '') {
+            event.preventDefault();
+            $('#transact_remark').show();
+            isValid = false;
+        } else {
+            $('#transact_remark').hide();
+        }
 
         if (bank_id == '') {
             event.preventDefault();
             $('#bank_idCheck').show();
+            isValid = false;
         } else {
             $('#bank_idCheck').hide();
         }
-        function isAnyCheckboxChecked() {
-            return $('#bank_data_table').find('input[type="checkbox"]:checked').length > 0;
-        }
-    
-        if (!isAnyCheckboxChecked()) {
-            event.preventDefault(); // Prevent form submission if no checkbox is checked
-            alert('Please select Bank Info.'); // Show error message
-        }
     }
 
-    if (ag_id == '') { // check only if agent id is not set/ this issue is not for agent
-        if (cash != '') {
-            if (guarentorName == '') {
-                event.preventDefault();
-                $('#cash_guarentor').show();
-            } else {
-                $('#cash_guarentor').hide();
-            }
-
-            // if (fingerMatch != '1') {
-            //     event.preventDefault();
-            //     $('#finger_check').show();
-            // } else {
-            //     $('#finger_check').hide();
-            // }
-        }
-    }
-
-
+    return isValid; // Return validation state
 }
 
 //Span Hide

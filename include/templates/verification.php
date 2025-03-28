@@ -1101,6 +1101,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 													<th> Account Holder Name </th>
 													<th> Account Number </th>
 													<th> IFSC Code </th>
+													<th>  Upload </th>
 													<th> ACTION </th>
 												</tr>
 											</thead>
@@ -1858,8 +1859,8 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 																				echo $scheme_name_lc;
 																			} ?>" />
 			<input type="hidden" name="scheme_profit_method_upd" id="scheme_profit_method_upd" value="<?php if (isset($profit_method_scheme_lc)) {
-																				echo $profit_method_scheme_lc;
-																			} ?>" />
+																											echo $profit_method_scheme_lc;
+																										} ?>" />
 			<input type="hidden" name="profit_method_upd" id="profit_method_upd" value="<?php if (isset($profit_method_lc)) {
 																							echo $profit_method_lc;
 																						} ?>" />
@@ -2947,7 +2948,13 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 							<span class="text-danger" id="ifscCheck"> Enter IFSC Code </span>
 						</div>
 					</div>
-
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+						<div class="form-group">
+							<label for="bank_upload"> Upload</label>
+							<input type="file" class="form-control" id="bank_upload" name="bank_upload" tabindex="1">
+							<input type="hidden" id="bank_upload_id">
+						</div>
+					</div>
 					<div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12">
 						<input type="hidden" name="bankID" id="bankID">
 						<button type="button" tabindex="1" name="bankInfoBtn" id="bankInfoBtn" class="btn btn-primary" style="margin-top: 19px;">Submit</button>
@@ -2965,6 +2972,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 								<!-- <th> Branch Name </th> -->
 								<th> Account Holder Name </th>
 								<th> Account Number </th>
+								<th> Upload </th>
 								<!-- <th> IFSC Code </th> -->
 								<th> ACTION </th>
 							</tr>

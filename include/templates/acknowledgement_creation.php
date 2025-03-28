@@ -1078,6 +1078,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 													<th> Account Holder Name </th>
 													<th> Account Number </th>
 													<th> IFSC Code </th>
+													<th> Upload </th>
 													<th> ACTION </th>
 												</tr>
 											</thead>

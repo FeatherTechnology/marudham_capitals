@@ -381,7 +381,13 @@ if (isset($getuserdetails['download_access'])) {
 			<?php if ($current_page == 'finance_insight') { ?>
 				<?php include "include/templates/finance_insight.php" ?>
 			<?php } else ?>
-
+			<!--Accounts Loan Issue--->
+			<?php if ($current_page == 'edit_accounts_loan_issue') { ?>
+				<?php include "include/templates/edit_accounts_loan_issue.php" ?>
+			<?php } else ?>
+			<?php if ($current_page == 'accounts_loan_issue') { ?>
+				<?php include "include/templates/accounts_loan_issue.php" ?>
+			<?php } else ?>
 			<!-- Follow up -->
 			<?php if ($current_page == 'promotion_activity') { ?>
 				<?php include "include/templates/promotion_activity.php" ?>

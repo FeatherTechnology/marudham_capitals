@@ -678,7 +678,41 @@
                     callOnClickEvents();
                 }
             });
-
+            // accounts Loan Issue Table
+              // Loan Issue List
+              var accountsloanIssue_table = $('#accountsloanIssue_table').DataTable({
+                "order": [
+                    [0, "desc"]
+                ],
+                'processing': true,
+                'serverSide': true,
+                'serverMethod': 'post',
+                'ajax': {
+                    'url': 'ajaxFetch/ajaxAccountsLoanIssueFetch.php',
+                    'data': function(data) {
+                        var search = $('input[type=search]').val();
+                        data.search = search;
+                    }
+                },
+                dom: 'lBfrtip',
+                buttons: [{
+                        extend: 'excel',
+                        title: "Loan Issue List"
+                    },
+                    {
+                        extend: 'colvis',
+                        collectionLayout: 'fixed four-column',
+                    }
+                ],
+                "lengthMenu": [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, "All"]
+                ],
+                'drawCallback': function() {
+                    searchFunction('accountsloanIssue_table');
+                    callOnClickEvents();
+                }
+            });
             // Closed
             var closed_table = $('#closed_table').DataTable({
                 "order": [
@@ -1195,7 +1229,14 @@
     if ($current_page == 'finance_insight') { ?>
         <script src="js/finance_insight.js"></script>
     <?php }
+    // accounts loan Isue
+    if ($current_page == 'edit_accounts_loan_issue') { ?>
+        <script src="js/edit_accounts_loan_issue.js"></script>
+    <?php }
 
+    if ($current_page == 'accounts_loan_issue') { ?>
+        <script src="js/accounts_loan_issue.js"></script>
+    <?php }
     //Follow up
     if ($current_page == 'promotion_activity') { ?>
         <script src="js/promotion_activity.js"></script>
@@ -1239,7 +1280,7 @@
     if ($current_page == 'collection_report') { ?>
         <script src="js/collection_report.js"></script>
     <?php }
-     if ($current_page == 'principal_interest_report') { ?>
+    if ($current_page == 'principal_interest_report') { ?>
         <script src="js/principal_interest_report.js"></script>
     <?php }
     if ($current_page == 'closed_report') { ?>

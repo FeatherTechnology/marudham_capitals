@@ -59,7 +59,7 @@ if (
 else if ($current_page == 'edit_concern_creation' || $current_page == 'edit_concern_solution' || $current_page == 'concern_creation' || $current_page == 'concern_solution' || $current_page == 'concern_solution_view' || $current_page == 'edit_concern_feedback' || $current_page == 'concern_feedback') {
 
 	$current_module = 'concerncreation';
-} else if ($current_page == 'cash_tally' || $current_page == 'bank_clearance' || $current_page == 'edit_bank_clearance' || $current_page == 'finance_insight') {
+} else if ($current_page == 'cash_tally' || $current_page == 'bank_clearance' || $current_page == 'edit_bank_clearance' || $current_page == 'finance_insight'  || $current_page == 'edit_accounts_loan_issue' || $current_page == 'accounts_loan_issue') {
 
 	$current_module = 'accounts';
 } else if ($current_page == 'promotion_activity' || $current_page == 'loan_followup' || $current_page == 'confirmation_followup' || $current_page == 'due_followup' || $current_page == 'edit_due_followup') {
@@ -167,6 +167,7 @@ $accountsmodule = '';
 $cash_tally = '';
 $bank_clearance = '';
 $finance_insight = '';
+$accounts_loan_issue = '';
 $followupmodule = '';
 $promotion_activity = '';
 $loan_followup = '';
@@ -254,6 +255,7 @@ if (sizeof($getUser) > 0) {
 		$cash_tally          		     = $getUser['cash_tally'];
 		$bank_clearance          		     = $getUser['bank_clearance'];
 		$finance_insight          		     = $getUser['finance_insight'];
+		$accounts_loan_issue          		     = $getUser['accounts_loan_issue'];
 		$followupmodule          		     = $getUser['followupmodule'];
 		$promotion_activity          		     = $getUser['promotion_activity'];
 		$loan_followup          		     = $getUser['loan_followup'];
@@ -761,6 +763,11 @@ if (sizeof($getUser) > 0) {
 								<?php if ($finance_insight == 0) { ?>
 									<li>
 										<a href="finance_insight"><i class='icon-card_travel'></i>Financial Insights</a>
+									</li>
+								<?php  } ?>
+								<?php if ($accounts_loan_issue == 0) { ?> 
+									<li>
+										<a href="edit_accounts_loan_issue"><i class='icon-wallet'></i>Loan Issue</a>
 									</li>
 								<?php  } ?>
 							</ul>
