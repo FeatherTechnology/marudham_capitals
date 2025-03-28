@@ -457,6 +457,10 @@ if (isset($getuserdetails['download_access'])) {
 				<?php include "include/templates/agent_report.php" ?>
 			<?php } else ?>
 
+			<!-- Due List -->
+			<?php if ($current_page == 'due_list_report') { ?>
+				<?php include "include/templates/due_list_report.php" ?>
+			<?php } else ?>
 
 			<!-- Search Module -->
 			<?php if ($current_page == 'search_module') { ?>

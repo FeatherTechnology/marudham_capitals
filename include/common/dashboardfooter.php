@@ -1251,6 +1251,9 @@
     if ($current_page == 'agent_report') { ?>
         <script src="js/agent_report.js"></script>
     <?php }
+    if ($current_page == 'due_list_report') { ?>
+        <script src="js/due_list_report.js"></script>
+    <?php }
     if ($current_page == 'search_module') { ?>
         <script src="js/search_module.js"></script>
     <?php }

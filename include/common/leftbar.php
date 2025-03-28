@@ -857,6 +857,11 @@ if (sizeof($getUser) > 0) {
 										<a href="agent_report"><i class='icon-area-graph'></i>Agent</a>
 									</li>
 								<?php  } ?>
+								<?php if ($due_list_report == 0) { ?>
+									<li>
+										<a href="due_list_report"><i class='icon-area-graph'></i>Due List</a>
+									</li>
+								<?php  } ?>
 							</ul>
 						</div>
 					</li>
