@@ -67,7 +67,7 @@ else if ($current_page == 'edit_concern_creation' || $current_page == 'edit_conc
 	$current_module = 'followup';
 } else if (
 	$current_page == 'ledger_report' || $current_page == 'request_report' || $current_page == 'cancel_revoke_report' ||  $current_page == 'cus_profile_report' || $current_page == 'loan_issue_report'
-	|| $current_page == 'collection_report' ||$current_page == 'principal_interest_report' || $current_page == 'balance_report' || $current_page == 'due_list_report' || $current_page == 'closed_report' || $current_page == 'agent_report'
+	|| $current_page == 'collection_report' ||$current_page == 'principal_interest_report' || $current_page == 'balance_report' || $current_page == 'due_list_report' || $current_page == 'closed_report' || $current_page == 'commitment_report' || $current_page == 'agent_report'
 ) {
 
 	$current_module = 'report';
@@ -183,6 +183,7 @@ $principal_interest_report = '';
 $balance_report = '';
 $due_list_report = '';
 $closed_report = '';
+$commitment_report = '';
 $agent_report = '';
 $search_module = '';
 $search = '';
@@ -271,6 +272,7 @@ if (sizeof($getUser) > 0) {
 		$balance_report          		     = $getUser['balance_report'];
 		$due_list_report          		     = $getUser['due_list_report'];
 		$closed_report          		     = $getUser['closed_report'];
+		$commitment_report          		     = $getUser['commitment_report'];
 		$agent_report          		     = $getUser['agent_report'];
 
 		$search_module          		     = $getUser['search_module'];
@@ -852,6 +854,11 @@ if (sizeof($getUser) > 0) {
 										<a href="closed_report"><i class='icon-area-graph'></i>Closed</a>
 									</li>
 								<?php  } ?>
+								<?php if ($commitment_report == 0) { ?>
+									<li>
+										<a href="commitment_report"><i class='icon-area-graph'></i>Commitment</a>
+									</li>
+								<?php  } ?>
 								<?php if ($agent_report == 0) { ?>
 									<li>
 										<a href="agent_report"><i class='icon-area-graph'></i>Agent</a>
@@ -1017,6 +1024,7 @@ $principal_interest_report = '';
 $balance_report = '';
 $due_list_report = '';
 $closed_report = '';
+$commitment_report = '';
 $agent_report = '';
 $search_module = '';
 $search = '';
