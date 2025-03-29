@@ -41,59 +41,62 @@ $where = "";
 if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'] != '' && $_POST['to_date'] != '') {
     $from_date = date('Y-m-d', strtotime($_POST['from_date']));
     $to_date = date('Y-m-d', strtotime($_POST['to_date']));
-    $where  = "AND (date(c.comm_date) >= '" . $from_date . "') AND (date(c.comm_date) <= '" . $to_date . "') ";
+    $where  = "AND (date(cf.created_date) >= '" . $from_date . "') AND (date(cf.created_date) <= '" . $to_date . "') ";
 }
 
 $where .= $user_based;
 
 $role_arr = [1 => 'Director', 2 => 'Agent', 3 => 'Staff'];
-$ftype = [1 => 'Direct', 2 => 'Mobile'];
-$fstatus = [1 => 'Commitment', 2 => 'Unavailable', 3 => 'RNR', 4 => 'Not Reachable', 5 => 'Switch Off', 6 => 'Not in Use', 7 => 'Blocked'];
+$status_arr = [1=>'Completed',2=>'Unavailable',3=>'Reconfirmation'];
+$sub_status_arr = [1=>'RNR',2=>'Not Reachable',3=>'Switch off', 4=>'Blocked',5=>'Not in use'];
 $per_type_arr = [1 => 'Customer', 2 => 'Garentor', 3 => 'Family Member'];
 
 $column = array(
-    'c.id',
+    'cf.id',
     'cp.area_line',
     'ii.loan_id',
     'ii.updated_date',
-    'c.cus_id',
+    'cf.cus_id',
     'cp.cus_name',
-    'c.ftype',
-    'c.fstatus',
-    'c.person_type',
-    'c.person_name',
-    'c.relationship',
-    'c.remark',
-    'c.comm_date',
-    'u.role',
-    'u.user_name',
-    'c.hint'
+    'cf.mobile',
+    'cf.person_type',
+    'cf.person_name',
+    'cf.id',
+    'cf.id',
+    'cf.id',
+    'cf.created_date',
+    'cf.id',
+    'cf.id',
+    'cf.id',
+    'cf.id',
 );
 
 $query = "SELECT 
     cp.area_line AS line,
     ii.loan_id,
     ii.updated_date AS loan_date,
-    c.cus_id,
+    cf.cus_id,
     cp.cus_name,
-    c.ftype,
-    c.fstatus,
-    c.person_type,
-    c.person_name,
-    c.relationship,
-    c.remark,
-    c.comm_date,
+    cf.mobile,
+    cf.person_type,
+    cf.person_name,
+    cf.relationship,
+    cf.status,
+    cf.sub_status,
+    cf.created_date,
+    cf.label,
+    cf.remark,
     u.role,
-    u.user_name,
-    c.hint
+    u.fullname
+
 FROM 
-    commitment c
+    confirmation_followup cf   
 LEFT JOIN 
-    user u ON u.user_id = c.insert_login_id
+    user u ON u.user_id = cf.insert_login_id
 JOIN 
-    acknowlegement_customer_profile cp ON c.req_id = cp.req_id
+    acknowlegement_customer_profile cp ON cf.req_id = cp.req_id
 JOIN 
-    in_issue ii ON ii.req_id = c.req_id
+    in_issue ii ON ii.req_id = cf.req_id
 WHERE 1
     $where ";
 
@@ -101,19 +104,10 @@ if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {
         $query .= " and (cp.area_line LIKE '%" . $_POST['search'] . "%' OR
             ii.loan_id LIKE '%" . $_POST['search'] . "%' OR
-            ii.updated_date LIKE '%" . $_POST['search'] . "%' OR
-            c.cus_id LIKE '%" . $_POST['search'] . "%' OR
+            cf.cus_id LIKE '%" . $_POST['search'] . "%' OR
             cp.cus_name LIKE '%" . $_POST['search'] . "%' OR
-            c.ftype LIKE '%" . $_POST['search'] . "%' OR
-            c.fstatus LIKE '%" . $_POST['search'] . "%' OR
-            c.person_type LIKE '%" . $_POST['search'] . "%' OR
-            c.person_name LIKE '%" . $_POST['search'] . "%' OR
-            c.relationship LIKE '%" . $_POST['search'] . "%' OR
-            c.remark LIKE '%" . $_POST['search'] . "%' OR
-            c.comm_date LIKE '%" . $_POST['search'] . "%' OR
-            u.role LIKE '%" . $_POST['search'] . "%' OR
-            u.user_name LIKE '%" . $_POST['search'] . "%' OR
-            c.hint LIKE '%" . $_POST['search'] . "%' OR";
+            cf.mobile LIKE '%" . $_POST['search'] . "%' OR
+            cf.person_name LIKE '%" . $_POST['search'] . "%' ";
     }
 }
 
@@ -140,7 +134,32 @@ $result = $statement->fetchAll();
 
 $data = array();
 $sno = 1;
-foreach ($result as $row) {
+foreach ($result as $row) {  
+
+    $substatus='';
+    if($row['sub_status']!=''){
+        $substatus=$sub_status_arr[$row['sub_status']];
+    } 
+
+    $role='';
+    if($row['role']!=''){
+        $role=$role_arr[$row['role']];
+    } 
+
+     // Fetch person name based on person type
+    if ($row['person_type'] == 1) {
+        $name = getCustomer($connect, $row['cus_id']);
+        $relationship = "NIL";
+    } elseif ($row['person_type'] == 2) {
+        $person_name = getGarentor($connect, $row['cus_id']);
+        $name =  $person_name['name'];
+        $relationship = $person_name['relationship'];
+    } elseif ($row['person_type'] == 3) {
+        $person_name = getFamilyMember($connect, $row['person_name']);
+        $name =  $person_name['name'];
+        $relationship = $person_name['relationship'];
+    }
+
     $sub_array = array();
     $sub_array[] = $sno;
     $sub_array[] = $row['line'];
@@ -148,34 +167,17 @@ foreach ($result as $row) {
     $sub_array[] = date('d-m-Y', strtotime($row['loan_date']));
     $sub_array[] = $row['cus_id'];
     $sub_array[] = $row['cus_name'];
-    $sub_array[] = $ftype[$row['ftype']];
-    $sub_array[] = $fstatus[$row['fstatus']];
+    $sub_array[] = $row['mobile'];
     $sub_array[] = $per_type_arr[$row['person_type']];
-
-    // Fetch person name based on person type
-    if ($row['person_type'] == 1) {
-        $name = getCustomer($connect, $row['cus_id']);
-        $relationship = "NIL";
-
-    } elseif ($row['person_type'] == 2) {
-        $person_name = getGarentor($connect, $row['cus_id']);
-        $name =  $person_name['name'];
-        $relationship = $person_name['relationship'];
-
-    }elseif ($row['person_type'] == 3) {
-        $person_name = getFamilyMember($connect, $row['person_name']);
-        $name =  $person_name['name'];
-        $relationship = $person_name['relationship'];
-        
-    }
-
     $sub_array[] = $name;
     $sub_array[] = $relationship;
+    $sub_array[] = $status_arr[$row['status']];
+    $sub_array[] = $substatus;
+    $sub_array[] = $row['label'];
     $sub_array[] = $row['remark'];
-    $sub_array[] = date('d-m-Y', strtotime($row['comm_date']));
-    $sub_array[] = $role_arr[$row['role']];
-    $sub_array[] = $row['user_name'];
-    $sub_array[] = $row['hint'];
+    $sub_array[] = date('d-m-Y', strtotime($row['created_date']));
+    $sub_array[] = $role; 
+    $sub_array[] = $row['fullname'];
     $data[] = $sub_array;
     $sno = $sno + 1;
 }
@@ -212,7 +214,7 @@ function getFamilyMember($connect, $fam_id)
 
 function count_all_data($connect)
 {
-    $query = $connect->query("SELECT count(id) as count FROM commitment where 1 ");
+    $query = $connect->query("SELECT count(id) as count FROM confirmation_followup where 1 ");
     $statement = $query->fetch();
     return $statement['count'];
 }
@@ -226,28 +228,6 @@ $output = array(
 );
 
 echo json_encode($output);
-
-function moneyFormatIndia($num)
-{
-    $explrestunits = "";
-    if (strlen($num) > 3) {
-        $lastthree = substr($num, strlen($num) - 3, strlen($num));
-        $restunits = substr($num, 0, strlen($num) - 3);
-        $restunits = (strlen($restunits) % 2 == 1) ? "0" . $restunits : $restunits;
-        $expunit = str_split($restunits, 2);
-        for ($i = 0; $i < sizeof($expunit); $i++) {
-            if ($i == 0) {
-                $explrestunits .= (int)$expunit[$i] . ",";
-            } else {
-                $explrestunits .= $expunit[$i] . ",";
-            }
-        }
-        $thecash = $explrestunits . $lastthree;
-    } else {
-        $thecash = $num;
-    }
-    return $thecash;
-}
 
 // Close the database connection
 $connect = null;
