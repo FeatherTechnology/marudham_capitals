@@ -1245,8 +1245,8 @@
     if ($current_page == 'closed_report') { ?>
         <script src="js/closed_report.js"></script>
     <?php }
-    if ($current_page == 'commitment_report') { ?>
-        <script src="js/commitment_report.js"></script>
+    if ($current_page == 'confirmation_followup_report') { ?>
+        <script src="js/confirmation_followup_report.js"></script>
     <?php }
     if ($current_page == 'balance_report') { ?>
         <script src="js/balance_report.js"></script>

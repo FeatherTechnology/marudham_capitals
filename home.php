@@ -447,8 +447,8 @@ if (isset($getuserdetails['download_access'])) {
 				<?php include "include/templates/closed_report.php" ?>
 			<?php } else ?>
 			<!-- commitment Report -->
-			<?php if ($current_page == 'commitment_report') { ?>
-				<?php include "include/templates/commitment_report.php" ?>
+			<?php if ($current_page == 'confirmation_followup_report') { ?>
+				<?php include "include/templates/confirmation_followup_report.php" ?>
 			<?php } else ?>
 
 			<!-- Balance Report -->

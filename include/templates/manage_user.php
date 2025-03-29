@@ -85,7 +85,7 @@ $principal_interest_report = '';
 $balance_report = '';
 $due_list_report = '';
 $closed_report = '';
-$commitment_report = '';
+$confirmation_followup_report = '';
 $agent_report = '';
 $search_module = '';
 $search_screen = '';
@@ -223,7 +223,7 @@ if($idupd>0)
 			$balance_report          		     = $getUser['balance_report'];
 			$due_list_report          		     = $getUser['due_list_report'];
 			$closed_report          		     = $getUser['closed_report'];
-			$commitment_report          		     = $getUser['commitment_report'];
+			$confirmation_followup_report          		     = $getUser['confirmation_followup_report'];
 			$agent_report          		     = $getUser['agent_report'];
 
 			$search_module = $getUser['search_module'];
@@ -1046,8 +1046,8 @@ if($idupd>0)
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($commitment_report==0){ echo'checked'; }} ?> tabindex="70" class="report-checkbox" id="commitment_report" name="commitment_report" disabled>&nbsp;&nbsp;
-                                <label class="custom-control-label" for="commitment_report">Commitment</label>
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($confirmation_followup_report==0){ echo'checked'; }} ?> tabindex="70" class="report-checkbox" id="confirmation_followup_report" name="confirmation_followup_report" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="confirmation_followup_report">Confirmation Follow Up</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">

@@ -11,15 +11,15 @@ $(document).ready(function () {
         }
     });
 
-    //commitment Report Table
+    //confirmation Report Table
     $('#reset_btn').click(function () {
-        commitmentReportTable();
+        confirmationFollowUpReportTable();
     })
 });
 
-function commitmentReportTable(){
-    $('#commitment_report_table').DataTable().destroy();
-    $('#commitment_report_table').DataTable({
+function confirmationFollowUpReportTable(){
+    $('#confirmation_followup_report_table').DataTable().destroy();
+    $('#confirmation_followup_report_table').DataTable({
         "order": [
             [0, "desc"]
         ],
@@ -27,7 +27,7 @@ function commitmentReportTable(){
         'serverSide': true,
         'serverMethod': 'post',
         'ajax': {
-            'url': 'reportFile/commitment/getCommitmentReport.php',
+            'url': 'reportFile/confirmation/getConfirmationReport.php',
             'data': function (data) {
                 var search = $('input[type=search]').val();
                 data.search = search;
@@ -50,7 +50,7 @@ function commitmentReportTable(){
             [10, 25, 50, "All"]
         ],
         'drawCallback': function() {
-            searchFunction('commitment_report_table');
+            searchFunction('confirmation_followup_report_table');
         }
     });
 }
