@@ -1020,6 +1020,7 @@ $accountsmodule = '';
 $cash_tally = '';
 $bank_clearance = '';
 $finance_insight = '';
+$accounts_loan_issue = '';
 $followupmodule = '';
 $promotion_activity = '';
 $loan_followup = '';
