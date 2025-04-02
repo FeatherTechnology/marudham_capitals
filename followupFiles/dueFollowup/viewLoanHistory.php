@@ -51,7 +51,7 @@ function moneyFormatIndia($num) {
         from acknowlegement_loan_calculation lc JOIN in_issue ii ON lc.req_id = ii.req_id JOIN request_creation rc ON ii.req_id = rc.req_id 
         JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id JOIN user us ON us.user_id = $user_id
         LEFT JOIN customer_status cs ON ii.req_id = cs.req_id
-        WHERE lc.cus_id_loan = $cus_id and (ii.cus_status >= 14 and ii.cus_status <= 22)"); //Customer status greater than or equal to 14 because, after issued data only we need  
+        WHERE lc.cus_id_loan = $cus_id and (ii.cus_status >= 14 and ii.cus_status <= 22) ORDER BY CAST(ii.req_id AS UNSIGNED) ASC "); //Customer status greater than or equal to 14 because, after issued data only we need  
 
         $i = 1;
         $curdate = date('Y-m-d');

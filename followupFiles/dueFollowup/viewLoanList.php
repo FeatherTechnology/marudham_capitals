@@ -1,13 +1,5 @@
 <?php
-session_start();
 include '../../ajaxconfig.php';
-
-if(isset($_SESSION["userid"])){
-    $user_id = $_SESSION["userid"];
-}
-?>
-
-<?php
 function moneyFormatIndia($num) {
     $explrestunits = "";
     if (strlen($num) > 3) {
@@ -37,6 +29,7 @@ function moneyFormatIndia($num) {
             <th>Loan Category</th>
             <th>Sub Category</th>
             <th>Agent</th>
+            <th>Responsible</th>
             <th>Loan Amount</th>
             <th>Collection Format</th>
             <th>Status</th>
@@ -49,17 +42,14 @@ function moneyFormatIndia($num) {
     <tbody>
 
         <?php
-        $req_id = $_POST['req_id'];
         $cus_id = $_POST['cus_id'];
-        $run = $connect->query("SELECT lc.due_start_from,lc.loan_category,lc.sub_category,lc.loan_amt_cal,lc.due_amt_cal,lc.net_cash_cal,lc.collection_method,ii.loan_id,ii.req_id,ii.updated_date,ii.cus_status,
-        rc.agent_id,lcc.loan_category_creation_name as loan_catrgory_name, us.collection_access, cs.sub_status
-        from acknowlegement_loan_calculation lc 
+        $run = $connect->query("SELECT ii.loan_id, lcc.loan_category_creation_name as loan_catrgory_name, lc.sub_category, rc.agent_id, rc.responsible, lc.loan_amt_cal, lc.collection_method, ii.cus_status, ii.req_id, cs.sub_status
+        FROM acknowlegement_loan_calculation lc 
         LEFT JOIN in_issue ii ON lc.req_id = ii.req_id 
         LEFT JOIN request_creation rc ON ii.req_id = rc.req_id 
         LEFT JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id 
-        LEFT JOIN user us ON us.user_id = '$user_id'
         LEFT JOIN customer_status cs ON ii.req_id = cs.req_id
-        WHERE lc.cus_id_loan = '$cus_id' and (ii.cus_status >= 14 and ii.cus_status < 20)"); //Customer status greater than or equal to 14 because, after issued data only we need
+        WHERE lc.cus_id_loan = '$cus_id' AND (ii.cus_status >= 14 AND ii.cus_status < 20)"); //Customer status greater than or equal to 14 because, after issued data only we need
 
         $i = 1;
         $curdate = date('Y-m-d');
@@ -79,6 +69,7 @@ function moneyFormatIndia($num) {
                         } 
                         ?>
                 </td>
+                <td><?php echo ($row["responsible"] =='0') ? 'Yes' : 'No'; ?></td>
                 <td><?php echo moneyFormatIndia($row["loan_amt_cal"]); ?></td>
                 <td><?php if($row["collection_method"] == '1'){ echo 'By Self';}else if($row["collection_method"] == '2'){ echo 'Spot Collection';}else if($row["collection_method"] == '3'){ echo 'Cheque Collection';}else if($row["collection_method"] == '4'){ echo 'ECS';} ?></td>
                 <td><?php echo 'Present'; ?></td>
@@ -88,7 +79,7 @@ function moneyFormatIndia($num) {
 
                             }else if($row['cus_status'] > '20'){// if status is closed(21) or more than that(22), then show closed status
 
-                                $closedSts = $connect->query("SELECT * FROM `closed_status` WHERE `req_id` ='".strip_tags($ii_req_id)."' ");
+                                $closedSts = $connect->query("SELECT * FROM `closed_status` WHERE `req_id` ='".$row['req_id']."' ");
                                 $closedStsrow = $closedSts->fetch();
                                 $rclosed = $closedStsrow['closed_sts'];
                                 $consider_lvl = $closedStsrow['consider_level'];
@@ -160,16 +151,9 @@ function moneyFormatIndia($num) {
                     collectionLayout: 'fixed four-column',
                 }
             ],
-            // "createdRow": function(row, data, dataIndex) {
-            //     $(row).find('td:first').html(dataIndex + 1);
-            // },
-            // "drawCallback": function(settings) {
-            //     this.api().column(0).nodes().each(function(cell, i) {
-            //         cell.innerHTML = i + 1;
-            //     });
-            // },
         });
     });
+
     $('button').click(function(){
         event.preventDefault();
     })
@@ -186,8 +170,6 @@ function moneyFormatIndia($num) {
         }
     });
     $('.due-chart, .penalty-chart, .coll-charge-chart, .coll-charge, .add-commitment-chart, .commitment-chart').css('color','black');
-
-    
 </script>
 
 <?php
