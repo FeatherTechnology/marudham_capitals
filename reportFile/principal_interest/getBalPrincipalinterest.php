@@ -167,6 +167,8 @@ if (isset($_POST['search']) && $_POST['search'] != "") {
     )";
 }
 
+    $query .= " GROUP BY lc.req_id";
+    
 $orderColumn = $_POST['order'][0]['column'] ?? null;
 $orderDir = $_POST['order'][0]['dir'] ?? 'ASC';
 if ($orderColumn !== null) {
@@ -207,13 +209,13 @@ foreach ($result as $row) {
             $int_amt = 0;    // Or any default value
         }
         
-    // $response = calculatePrincipalAndInterest($princ_amt, $int_amt, $balance_amt);
+    $response = calculatePrincipalAndInterest($princ_amt, $int_amt, $balance_amt);
 
-    // if (intVal($response['principal_paid']) > intVal($row['loan_amt_cal'])) {
-    //     $diff = intVal($response['principal_paid']) - intVal($row['loan_amt_cal']);
-    //     $response['interest_paid'] += $diff;
-    //     $response['principal_paid'] = intVal($row['loan_amt_cal']);
-    // }
+    if (intVal($response['principal_paid']) > intVal($row['loan_amt_cal'])) {
+        $diff = intVal($response['principal_paid']) - intVal($row['loan_amt_cal']);
+        $response['interest_paid'] += $diff;
+        $response['principal_paid'] = intVal($row['loan_amt_cal']);
+    }
 
     $bal_due = round($balance_amt / $row['due_amt_cal'], 1);
 
@@ -234,6 +236,8 @@ foreach ($result as $row) {
     $sub_array[] = $row['due_period'];
     $sub_array[] = moneyFormatIndia($row['tot_amt_cal']);
     $sub_array[] = moneyFormatIndia($balance_amt);
+    $sub_array[] = moneyFormatIndia($response['principal_paid']);
+    $sub_array[] = moneyFormatIndia($response['interest_paid']);
     $sub_array[] = $bal_due;
     $sub_array[] = 'Present';
     $sub_array[] = $statusObj[$row['cus_status']];
@@ -280,31 +284,31 @@ function moneyFormatIndia($num)
     return $thecash;
 }
 
-// function calculatePrincipalAndInterest($principal, $interest, $paidAmount)
-// {
-//     $principal_paid = 0;
-//     $interest_paid = 0;
+function calculatePrincipalAndInterest($principal, $interest, $paidAmount)
+{
+    $principal_paid = 0;
+    $interest_paid = 0;
 
-//     while ($paidAmount > 0) {
-//         if ($paidAmount >= $principal) {
-//             $principal_paid += $principal;
-//             $paidAmount -= $principal;
-//         } else {
-//             $principal_paid += $paidAmount;
-//             break;
-//         }
+    while ($paidAmount > 0) {
+        if ($paidAmount >= $principal) {
+            $principal_paid += $principal;
+            $paidAmount -= $principal;
+        } else {
+            $principal_paid += $paidAmount;
+            break;
+        }
 
-//         if ($paidAmount >= $interest) {
-//             $interest_paid += $interest;
-//             $paidAmount -= $interest;
-//         } else {
-//             $interest_paid += $paidAmount;
-//             break;
-//         }
-//     }
+        if ($paidAmount >= $interest) {
+            $interest_paid += $interest;
+            $paidAmount -= $interest;
+        } else {
+            $interest_paid += $paidAmount;
+            break;
+        }
+    }
 
-//     return [
-//         'principal_paid' => (int)$principal_paid,
-//         'interest_paid' => (int)$interest_paid,
-//     ];
-// }
+    return [
+        'principal_paid' => (int)$principal_paid,
+        'interest_paid' => (int)$interest_paid,
+    ];
+}
