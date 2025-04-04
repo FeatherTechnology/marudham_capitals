@@ -13,6 +13,13 @@ const areaMultiselect1 = new Choices('#area_dummy1', {
     placeholderValue: 'Select Area Name',
     allowHTML: true
 });
+const areaMultiselect2 = new Choices('#area_dummy2', {
+    removeItemButton: true,
+    noChoicesText: null,
+    placeholder: true,
+    placeholderValue: 'Select Area Name',
+    allowHTML: true
+});
 const intance = new Choices('#sub_area_dummy', {
     removeItemButton: true,
     noChoicesText: null,
@@ -21,6 +28,13 @@ const intance = new Choices('#sub_area_dummy', {
     allowHTML: true
 });
 const intance1 = new Choices('#sub_area_dummy1', {
+    removeItemButton: true,
+    noChoicesText: null,
+    placeholder: true,
+    placeholderValue: 'Select Sub Area Name',
+    allowHTML: true
+});
+const intance2 = new Choices('#sub_area_dummy2', {
     removeItemButton: true,
     noChoicesText: null,
     placeholder: true,
@@ -53,10 +67,15 @@ $(document).ready(function () {
         }));
         $("#area1").prepend(firstOption);
     }
+    {//To Order Alphabetically
+        var firstOption = $("#area2 option:first-child");
+        $("#area2").html($("#area2 option:not(:first-child)").sort(function (a, b) {
+            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
+        }));
+        $("#area2").prepend(firstOption);
+    }
 
     // ************************************************************** Line Mapping *************************************************************************************** 
-
-
 
     $('#area_dummy').change(function () {
         //Area Multi select store
@@ -77,10 +96,10 @@ $(document).ready(function () {
         getAreaBasedSubArea(areaselected);
     })
 
-    if ($('#type').val() == 'line') { // loan only if line
-        var companySelected = $('#company_id').val();
-        getBranchDropdown(companySelected);
-    }
+    // if ($('#type').val() == 'line') { // loan only if line
+    //     var companySelected = $('#company_id').val();
+    //     getBranchDropdown(companySelected);
+    // }
 
     //on submit add sub area list to hidden input
     $('#submit_area_mapping_line').click(function () {
@@ -151,10 +170,10 @@ $(document).ready(function () {
     });
 
     // $('#company_id1').change(function(){
-    if ($('#type').val() == 'group') {
-        var companySelected = $('#company_id1').val();
-        getBranchDropdown1(companySelected);
-    }
+    // if ($('#type').val() == 'group') {
+    //     var companySelected = $('#company_id1').val();
+    //     getBranchDropdown1(companySelected);
+    // }
     // })
     //on submit add sub area list to hidden input
     $('#submit_area_mapping_group').click(function () {
@@ -202,6 +221,80 @@ $(document).ready(function () {
         $('#sub_area1').val(sortedStr);
     })
 
+
+    // ************************************************************** Due Followup Mapping *************************************************************************************** 
+
+    $('#area_dummy2').change(function () {
+        //Area Multi select store
+        var area_list = areaMultiselect2.getValue();
+        var area = '';
+        for (var i = 0; i < area_list.length; i++) {
+            if (i > 0) {
+                area += ',';
+            }
+            area += area_list[i].value;
+        }
+        var arr = area.split(",");
+        arr.sort(function (a, b) { return a - b });
+        var sortedStr = arr.join(",");
+        $('#area').val(sortedStr);
+        var areaselected = $('#area').val();
+
+        getAreaBasedSubArea2(areaselected);
+    })
+
+    // if ($('#type').val() == 'duefollowup') { // load only if line
+    //     var companySelected = $('#company_id2').val();
+    //     getBranchDropdown2(companySelected);
+    // }
+
+    //on submit add sub area list to hidden input
+    $('#submit_area_mapping_duefollowup').click(function () {
+        var sub_area_list = intance2.getValue();
+        var area_list = areaMultiselect2.getValue();
+
+        //Validation
+        var duefollowup_name = $('#duefollowup_name').val(); var company_name = $('#company_name2').val(); var branch = $('#branch2').val();
+        if (duefollowup_name == '' || company_name == '' || branch == '' || area_list.length == 0 || sub_area_list.length == 0) {
+            Swal.fire({
+                timerProgressBar: true,
+                timer: 2000,
+                title: 'Please Fill out Mandatory fields!',
+                icon: 'error',
+                showConfirmButton: true
+            });
+            event.preventDefault();
+        }
+
+        //Area Multi select store
+        var area_list = areaMultiselect2.getValue();
+        var area = '';
+        for (var i = 0; i < area_list.length; i++) {
+            if (i > 0) {
+                area += ',';
+            }
+            area += area_list[i].value;
+        }
+        var arr = area.split(",");
+        arr.sort(function (a, b) { return a - b });
+        var sortedStr = arr.join(",");
+        $('#area2').val(sortedStr);
+
+        //Sub area multi select store
+        var sub_area_list = intance2.getValue();
+        var sub_area = '';
+        for (var i = 0; i < sub_area_list.length; i++) {
+            if (i > 0) {
+                sub_area += ',';
+            }
+            sub_area += sub_area_list[i].value;
+        }
+        var arr = sub_area.split(",");
+        arr.sort(function (a, b) { return a - b });
+        var sortedStr = arr.join(",");
+        $('#sub_area2').val(sortedStr);
+    });
+
 });//document ready end
 
 //on page load for Edit page
@@ -212,15 +305,21 @@ $(function () {
     if (type == 'line') {
         getArea();
         let area = $('#area_id_upd').val();
-        let company_id_upd = $('#company_id_upd').val();
+        // let company_id_upd = $('#company_id_upd').val();
         getAreaBasedSubArea(area);
-        getBranchDropdown(company_id_upd)
+        getBranchDropdown()
     } else if (type == 'group') {
         getArea1();
         let area = $('#area_id1_upd').val();
-        let company_id_upd = $('#company_id_upd1').val();
+        // let company_id_upd = $('#company_id_upd1').val();
         getAreaBasedSubArea1(area);
-        getBranchDropdown1(company_id_upd)
+        getBranchDropdown1()
+    } else if (type == 'duefollowup') {
+        getArea2();
+        let area = $('#area_id2_upd').val();
+        // let company_id_upd = $('#company_id_upd2').val();
+        getAreaBasedSubArea2(area);
+        getBranchDropdown2()
     }
 
 })
@@ -299,6 +398,45 @@ function getArea1() {
                 ];
                 areaMultiselect1.setChoices(items);
                 areaMultiselect1.init();
+
+            }
+        }
+    });
+}
+//Get Area 
+function getArea2() {
+    var area_id_upd = $('#area_id2_upd').val();
+    var values = area_id_upd.split(',');
+    var map = 'duefollowup';
+    $.ajax({
+        url: 'areaMapping/ajaxGetArea.php',
+        type: 'post',
+        data: { 'map': map },
+        dataType: 'json',
+        success: function (response) {
+
+            areaMultiselect2.clearStore();
+            var len = response.length;
+            for (var i = 0; i < len; i++) {
+                var area_id = response[i]['area_id'];
+                var area_name = response[i]['area_name'];
+                var checked = '';
+                var checked = response[i]['disabled'];
+                var selected = '';
+                if (area_id_upd != '' && values.includes(area_id.toString())) {
+                    selected = 'selected';
+                    checked = false;
+                }
+                var items = [
+                    {
+                        value: area_id,
+                        label: area_name,
+                        selected: selected,
+                        disabled: checked,
+                    }
+                ];
+                areaMultiselect2.setChoices(items);
+                areaMultiselect2.init();
 
             }
         }
@@ -388,9 +526,52 @@ function getAreaBasedSubArea1(area) {
     });
 }
 
+//Get Area Based Sub Area
+function getAreaBasedSubArea2(area) {
+    var sub_area_upd = $('#sub_area_upd2').val();
+    var values = sub_area_upd.split(',');
+    var map = 'duefollowup';
+    $.ajax({
+        url: 'areaMapping/ajaxGetSubArea.php',
+        type: 'post',
+        data: { 'area': area, 'map': map },
+        dataType: 'json',
+        success: function (response) {
+
+            intance2.clearStore();
+            var len = response.length;
+            for (var i = 0; i < len; i++) {
+                for (var j = 0; j < response[i].length; j++) {
+
+                    var sub_area_id = response[i][j]['sub_area_id'];
+                    var sub_area_name = response[i][j]['sub_area_name'];
+                    var checked = response[i][j]['disabled'];
+                    var selected = '';
+                    if (sub_area_upd != '' && values.includes(sub_area_id.toString())) {
+                        selected = 'selected';
+                        checked = false;
+                    }
+                    var items = [
+                        {
+                            value: sub_area_id,
+                            label: sub_area_name,
+                            selected: selected,
+                            disabled: checked,
+                        }
+                    ];
+                    intance2.setChoices(items);
+                    intance2.init();
+                }
+
+            }
+        }
+    });
+}
+
 //Get BranchDropdown Based on Company id
-function getBranchDropdown(company_id) {
+function getBranchDropdown() {
     var branch_id_upd = $('#branch_id_upd').val();
+    var company_id = (!$('#company_id_upd').val()) ? $('#company_id').val() : $('#company_id_upd').val();
     $.ajax({
         url: 'areaMapping/getBranchDropdown.php',
         type: 'post',
@@ -417,9 +598,11 @@ function getBranchDropdown(company_id) {
         }
     })
 }
+
 //Get BranchDropdown Based on Company id
-function getBranchDropdown1(company_id) {
+function getBranchDropdown1() {
     var branch_id_upd = $('#branch_id_upd1').val();
+    var company_id = (!$('#company_id_upd1').val()) ? $('#company_id1').val() : $('#company_id_upd1').val();
     $.ajax({
         url: 'areaMapping/getBranchDropdown.php',
         type: 'post',
@@ -443,6 +626,38 @@ function getBranchDropdown1(company_id) {
                     return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
                 }));
                 $("#branch1").prepend(firstOption);
+            }
+        }
+    })
+}
+
+//Get BranchDropdown Based on Company id
+function getBranchDropdown2(company_id) {
+    var branch_id_upd = $('#branch_id_upd2').val();
+    var company_id = (!$('#company_id_upd2').val()) ? $('#company_id2').val() : $('#company_id_upd2').val();
+    $.ajax({
+        url: 'areaMapping/getBranchDropdown.php',
+        type: 'post',
+        dataType: 'json',
+        data: { 'company_id': company_id },
+        cache: false,
+        success: function (response) {
+
+            $('#branch2').empty();
+            $('#branch2').append('<option>Select Branch</option>');
+            for (var i = 0; i < response.length; i++) {
+                var selected = '';
+                if (branch_id_upd != '' && branch_id_upd == response[i]['branch_id']) {
+                    selected = "selected";
+                }
+                $('#branch2').append("<option value = '" + response[i]['branch_id'] + "' " + selected + " > " + response[i]['branch_name'] + " </option>");
+            }
+            {//To Order Alphabetically
+                var firstOption = $("#branch2 option:first-child");
+                $("#branch2").html($("#branch2 option:not(:first-child)").sort(function (a, b) {
+                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
+                }));
+                $("#branch2").prepend(firstOption);
             }
         }
     })

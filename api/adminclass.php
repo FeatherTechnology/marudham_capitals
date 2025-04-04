@@ -1491,6 +1491,30 @@ class admin
 		VALUES('" . strip_tags($line_name) . "','" . strip_tags($area_id) . "', '" . strip_tags($sub_area) . "', '" . strip_tags($company_id) . "','" . strip_tags($branch_id) . "', '" . strip_tags($userid) . "',current_timestamp() )";
 		$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
 	}
+
+	// Add Area Mapping for Line
+	public function addAreaMappingDuefollowup($mysqli, $userid)
+	{
+		if (isset($_POST['duefollowup_name'])) {
+			$duefollowup_name = $_POST['duefollowup_name'];
+		}
+		if (isset($_POST['company_id2'])) {
+			$company_id = $_POST['company_id2'];
+		}
+		if (isset($_POST['branch2'])) {
+			$branch_id = $_POST['branch2'];
+		}
+		if (isset($_POST['area2'])) {
+			$area_id = $_POST['area2'];
+		}
+		$sub_area = '';
+		if (isset($_POST['sub_area2'])) {
+			$sub_area = $_POST['sub_area2'];
+		}
+		$insertQry = "INSERT INTO area_duefollowup_mapping(duefollowup_name, area_id, sub_area_id, company_id, branch_id, insert_login_id, created_date)
+		VALUES('" . strip_tags($duefollowup_name) . "','" . strip_tags($area_id) . "', '" . strip_tags($sub_area) . "', '" . strip_tags($company_id) . "','" . strip_tags($branch_id) . "', '" . strip_tags($userid) . "',current_timestamp() )";
+		$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
+	}
 	// Add Area Mapping for Group
 	public function addAreaMappingGroup($mysqli, $userid)
 	{
@@ -1539,6 +1563,30 @@ class admin
 		updated_date = current_timestamp(), status=0 WHERE map_id = '" . $id . "' ";
 		$result = $mysqli->query($updateQry) or die("Error " . $mysqli->error);
 	}
+
+	// Update Area Mapping Line
+	public function updateAreaMappingDuefollowup($mysqli, $id, $userid)
+	{
+		if (isset($_POST['duefollowup_name'])) {
+			$duefollowup_name = $_POST['duefollowup_name'];
+		}
+		if (isset($_POST['company_id2'])) {
+			$company_id = $_POST['company_id2'];
+		}
+		if (isset($_POST['branch2'])) {
+			$branch_id = $_POST['branch2'];
+		}
+		if (isset($_POST['area2'])) {
+			$area_id = $_POST['area2'];
+		}
+		$sub_area_id = '';
+		if (isset($_POST['sub_area2'])) {
+			$sub_area_id = $_POST['sub_area2'];
+		}
+		$updateQry = "UPDATE area_duefollowup_mapping set duefollowup_name='" . strip_tags($duefollowup_name) . "', area_id='" . strip_tags($area_id) . "', sub_area_id='" . strip_tags($sub_area_id) . "', company_id='" . strip_tags($company_id) . "',branch_id= '" . strip_tags($branch_id) . "', update_login_id='" . strip_tags($userid) . "', 
+		updated_date = current_timestamp(), status=0 WHERE map_id = '" . $id . "' ";
+		$result = $mysqli->query($updateQry) or die("Error " . $mysqli->error);
+	}
 	// Update Area Mapping Group
 	public function updateAreaMappingGroup($mysqli, $id, $userid)
 	{
@@ -1581,6 +1629,24 @@ class admin
 		}
 		return $detailrecords;
 	}
+
+	// Get Area Mapping
+	public function getAreaMappingDuefollowup($mysqli, $id)
+	{
+		$selectQry = "SELECT * FROM area_duefollowup_mapping WHERE map_id='" . mysqli_real_escape_string($mysqli, $id) . "' ";
+		$res = $mysqli->query($selectQry) or die("Error in Get All Records" . $mysqli->error);
+		$detailrecords = array();
+		if ($mysqli->affected_rows > 0) {
+			$row = $res->fetch_object();
+			$detailrecords['map_id']      = $row->map_id;
+			$detailrecords['duefollowup_name']    = $row->duefollowup_name;
+			$detailrecords['area_id']    = $row->area_id;
+			$detailrecords['sub_area_id']    = $row->sub_area_id;
+			$detailrecords['company_id']       = $row->company_id;
+			$detailrecords['branch_id']       = $row->branch_id;
+		}
+		return $detailrecords;
+	}
 	// Get Area Mapping
 	public function getAreaMappingGroup($mysqli, $id)
 	{
@@ -1603,6 +1669,13 @@ class admin
 	public function deleteAreaMappingLine($mysqli, $id, $userid)
 	{
 		$branchDelete = "UPDATE area_line_mapping set status='1', delete_login_id='" . strip_tags($userid) . "' WHERE map_id = '" . strip_tags($id) . "' ";
+		$runQry = $mysqli->query($branchDelete) or die("Error in delete query" . $mysqli->error);
+	}
+
+	//  Delete Area Mapping
+	public function deleteAreaMappingDuefollowup($mysqli, $id, $userid)
+	{
+		$branchDelete = "UPDATE area_duefollowup_mapping set status='1', delete_login_id='" . strip_tags($userid) . "' WHERE map_id = '" . strip_tags($id) . "' ";
 		$runQry = $mysqli->query($branchDelete) or die("Error in delete query" . $mysqli->error);
 	}
 	//  Delete Area Mapping
