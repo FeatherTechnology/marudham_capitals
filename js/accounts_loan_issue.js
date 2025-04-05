@@ -132,6 +132,7 @@ $(document).ready(function () {
 
 
     $('#submit_accountsloanIssue').click(function (event) { // loan Issue Submit Validation
+        event.preventDefault();
         hideCheckSpan();
     
         // Run validation and only proceed if it passes
