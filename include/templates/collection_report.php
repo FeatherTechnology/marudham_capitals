@@ -4,18 +4,12 @@
 	<div style="background-color:#009688; width:100%; padding:12px; color: #ffff; font-size: 20px; border-radius:5px;">
 		Marudham Capitals - Collection Report
 	</div>
-
 </div><br>
-
-<div class="text-right" style="margin-right: 25px;">
-	<!-- <button class="btn btn-primary" id='close_history_card' style="display: none;" >&times;&nbsp;&nbsp;Cancel</button> -->
-</div>
 
 <!-- Main container start -->
 <div class="main-container">
 	<!--form start-->
 	<form id="collection_report_form" name="collection_report_form" action="" method="post" enctype="multipart/form-data">
-
 
 		<div class="row gutters" id="collection_card">
 			<div class="toggle-container col-12">
@@ -43,6 +37,7 @@
 									<th>Agent</th>
 									<th>User Type</th>
 									<th>User</th>
+									<th>Collection Method</th>
 									<th>Receipt Date</th>
 									<th>Collection Mode</th>
 									<th>Bank Name</th>
@@ -61,6 +56,7 @@
 								<tfoot>
 									<tr>
 										<td colspan="14"></td>
+										<td></td>
 										<td></td>
 										<td></td>
 										<td></td>
