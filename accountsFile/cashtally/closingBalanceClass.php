@@ -17,19 +17,19 @@ class ClosingBalanceClass
         $handCreditQry = $this->db->query("SELECT
         SUM(amt) AS hand_credits
         FROM (
-            (SELECT COALESCE(SUM(rec_amt), 0) AS amt FROM ct_hand_collection WHERE date(created_date) = '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(rec_amt), 0) AS amt FROM ct_hand_collection WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
             UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bank_withdraw WHERE date(created_date) = '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bank_withdraw WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
             UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hoti WHERE date(created_date) = '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hoti WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
             UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hinvest WHERE date(created_date) = '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hinvest WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
             UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hexchange WHERE date(created_date) = '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hexchange WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
             UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hel WHERE date(created_date) = '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hel WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
             UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hdeposit WHERE date(created_date) = '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hdeposit WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
         ) AS Hand_Credit_Closing
     ");
 
@@ -38,19 +38,19 @@ class ClosingBalanceClass
         $handDebitQry = $this->db->query("SELECT
         SUM(amt) AS hand_debits
         FROM (
-            (SELECT COALESCE(SUM(amount), 0) AS amt FROM ct_db_bank_deposit WHERE date(created_date) = '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amount), 0) AS amt FROM ct_db_bank_deposit WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
             UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hinvest WHERE date(created_date) = '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hinvest WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
             UNION ALL
-            (SELECT COALESCE(SUM(netcash), 0) AS amt FROM ct_db_hissued WHERE date(created_date) = '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(netcash), 0) AS amt FROM ct_db_hissued WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
             UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hel WHERE date(created_date) = '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hel WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
             UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hexchange WHERE date(created_date) = '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hexchange WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
             UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hexpense WHERE date(created_date) = '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hexpense WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
             UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hdeposit WHERE date(created_date) = '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hdeposit WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
         ) AS Hand_Debit_Closing
     ");
 
@@ -177,7 +177,7 @@ class ClosingBalanceClass
         $agentCreditQry = $this->db->query("SELECT
         SUM(amt) AS agent_credit
         FROM (
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hag WHERE date(created_date) = '$closing_date' AND FIND_IN_SET(ag_id,'$ag_ids') $user_where ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hag WHERE date(created_date) <= '$closing_date' AND FIND_IN_SET(ag_id,'$ag_ids') $user_where ORDER BY created_date DESC LIMIT 1)
             
         ) AS Agent_Credit_Closing
     ");
@@ -187,7 +187,7 @@ class ClosingBalanceClass
         $agentDebitQry = $this->db->query("SELECT
         SUM(amt) AS agent_debit
         FROM (
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hag WHERE date(created_date) = '$closing_date' AND FIND_IN_SET(ag_id,'$ag_ids') $user_where ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hag WHERE date(created_date) <= '$closing_date' AND FIND_IN_SET(ag_id,'$ag_ids') $user_where ORDER BY created_date DESC LIMIT 1)
             
         ) AS Agent_Debit_Closing
     ");
