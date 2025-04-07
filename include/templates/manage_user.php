@@ -65,6 +65,7 @@ $concern_solution = '';
 $concern_feedback = '';
 $accountsmodule = '';
 $cash_tally = '';
+$due_followup_lines='';
 $cash_tally_admin = '';
 $bank_details = '';
 $bank_clearance = '';
@@ -213,6 +214,7 @@ if($idupd>0)
 			$loan_followup = $getUser['loan_followup'];
 			$conf_followup = $getUser['confirmation_followup'];
 			$due_followup = $getUser['due_followup'];
+			$due_followup_lines = $getUser['due_followup_lines'];
 			
 			$reportmodule          		     = $getUser['reportmodule'];
 			$ledger_report          		     = $getUser['ledger_report'];
@@ -279,6 +281,7 @@ if($idupd>0)
 		<input type="hidden" class="form-control" value="<?php if(isset($group_id)) echo $group_id; ?>"  id="group_id_upd" name="group_id_upd" aria-describedby="id" placeholder="Enter id">
 		<input type="hidden" class="form-control" value="<?php if(isset($bank_details)) echo $bank_details; ?>"  id="bank_details_upd" name="bank_details_upd" aria-describedby="id" placeholder="Enter id">
 		<input type="hidden" class="form-control" value="<?php if(isset($promotion_access)) echo $promotion_access; ?>"  id="promotion_access_upd" name="promotion_access_upd" aria-describedby="id" placeholder="Enter id">
+		<input type="hidden" class="form-control" value="<?php if(isset($due_followup_lines)) echo $due_followup_lines; ?>"  id="due_followup_lines_upd" name="due_followup_lines_upd" aria-describedby="id" placeholder="Enter id">
 		<!-- Row start -->
 		<div class="row gutters">
 			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
@@ -977,6 +980,16 @@ if($idupd>0)
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($due_followup==0){ echo'checked'; }} ?> tabindex="60" class="followup-checkbox" id="due_followup" name="due_followup" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="due_followup">Due Followup</label>
+                            </div>
+                        </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 due_followupline_div"  style='display:none; margin-top: 15px;'>
+                            <div class="custom-control custom-checkbox">
+                                <label class="custom-control-label" for="due_followup_lines">Due Followup lines</label>
+								<input type='hidden' id='due_follup_line_id' name='due_follup_line_id' value=''>
+                                <select class='form-control' id='due_follup_lines' name='due_follup_lines' multiple>
+									<option value="">Select Due Followup Lines</option>
+								</select>
+								<span class='text-danger duefollowupCheck' style="display:none">Please Select Due Followup Lines</span>
                             </div>
                         </div>
 					</div>

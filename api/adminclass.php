@@ -85,6 +85,7 @@ class admin
 			$detailrecords['loan_followup']              = strip_tags($row->loan_followup);
 			$detailrecords['confirmation_followup']              = strip_tags($row->confirmation_followup);
 			$detailrecords['due_followup']              = strip_tags($row->due_followup);
+			$detailrecords['due_followup_lines']              = strip_tags($row->due_followup_lines);
 
 			$detailrecords['reportmodule'] = strip_tags($row->reportmodule);
 			$detailrecords['ledger_report'] = strip_tags($row->ledger_report);
@@ -2569,6 +2570,9 @@ class admin
 		if (isset($_POST['bank_details'])) {
 			$bank_details = $_POST['bank_details'];
 		}
+		if (isset($_POST['due_follup_line_id'])) {
+			$due_follup_line = $_POST['due_follup_line_id'];
+		}
 		if (isset($_POST['bank_clearance']) &&    $_POST['bank_clearance'] == 'Yes') {
 			$bank_clearance = 0;
 		} else {
@@ -2721,7 +2725,7 @@ class admin
 		`collectionmodule`,`collection`,`collection_access`,`closedmodule`,`closed`,`nocmodule`,`noc`,
 		`doctrackmodule`,`doctrack`,`doc_rec_access`,`updatemodule`,`update_screen`,`concernmodule`, `concern_creation`, `concern_solution`,`concern_feedback`,
 		`accountsmodule`,`cash_tally`,`cash_tally_admin`,`bank_details`,`bank_clearance`,`finance_insight`,`accounts_loan_issue`,
-		`followupmodule`, `promotion_activity`, `loan_followup`, `confirmation_followup`, `due_followup`, `reportmodule`, `ledger_report`, 
+		`followupmodule`, `promotion_activity`, `loan_followup`, `confirmation_followup`, `due_followup`,`due_followup_lines`, `reportmodule`, `ledger_report`, 
 		`request_report`, `cancel_revoke_report`, `cus_profile_report`, `loan_issue_report`, `collection_report`,`principal_interest_report`, `balance_report`, `due_list_report`, `closed_report`, `confirmation_followup_report`, `agent_report`,
 		`search_module`,`search`,`bulk_upload_module`, `bulk_upload`, `loan_track_module`, `loan_track`,`sms_module`,`sms_generation`,`insert_login_id`,`created_date`)
         VALUES('" . strip_tags($full_name) . "','" . strip_tags($email) . "','" . strip_tags($user_name) . "','" . strip_tags($user_password) . "','" . strip_tags($role) . "',
@@ -2735,7 +2739,7 @@ class admin
         '" . strip_tags($acknowledgementmodule) . "','" . strip_tags($acknowledgement) . "','" . strip_tags($loanissuemodule) . "','" . strip_tags($loan_issue) . "',
 		'" . strip_tags($collectionmodule) . "','" . strip_tags($collection) . "','" . strip_tags($collection_access) . "','" . strip_tags($closedmodule) . "','" . strip_tags($closed) . "',
 		'" . strip_tags($nocmodule) . "','" . strip_tags($noc) . "','" . strip_tags($doctrackmodule) . "','" . strip_tags($doctrack) . "','" . strip_tags($doc_rec_access) . "','" . strip_tags($updatemodule) . "','" . strip_tags($update_screen) . "','" . strip_tags($concernmodule) . "','" . strip_tags($concernCreation) . "','" . strip_tags($concernSolution) . "','" . strip_tags($concernFeedback) . "',
-		'" . strip_tags($accountsmodule) . "','" . strip_tags($cash_tally) . "','" . strip_tags($cash_tally_admin) . "','" . strip_tags($bank_details) . "','" . strip_tags($bank_clearance) . "','" . strip_tags($finance_insight) . "','" . strip_tags($accounts_loan_issue) . "',
+		'" . strip_tags($accountsmodule) . "','" . strip_tags($cash_tally) . "','" . strip_tags($cash_tally_admin) . "','" . strip_tags($bank_details) . "','" . strip_tags($due_follup_line) . "','" . strip_tags($bank_clearance) . "','" . strip_tags($finance_insight) . "','" . strip_tags($accounts_loan_issue) . "',
 		'" . strip_tags($followupmodule) . "','" . strip_tags($promotion_activity) . "','" . strip_tags($loan_followup) . "','" . strip_tags($conf_followup) . "','" . strip_tags($due_followup) .
 			"',
 		'" . strip_tags($reportmodule) . "', '" . strip_tags($ledger_report) . "', '" . strip_tags($request_report) . "', '" . strip_tags($cancel_revoke_report) . "', '" . strip_tags($cus_profile_report) . "', '" . strip_tags($loan_issue_report) .
@@ -3047,6 +3051,9 @@ class admin
 		if (isset($_POST['bank_details'])) {
 			$bank_details = $_POST['bank_details'];
 		}
+		if (isset($_POST['due_follup_line_id'])) {
+			$due_follup_line = $_POST['due_follup_line_id'];
+		}
 		if (isset($_POST['bank_clearance']) &&    $_POST['bank_clearance'] == 'Yes') {
 			$bank_clearance = 0;
 		} else {
@@ -3213,7 +3220,7 @@ class admin
 	`doctrack` = '" . strip_tags($doctrack) . "',`doc_rec_access` = '" . strip_tags($doc_rec_access) . "',
 	`updatemodule` = '" . strip_tags($updatemodule) . "',`update_screen` = '" . strip_tags($update_screen) . "',
 	`concernmodule`='" . strip_tags($concernmodule) . "',`concern_creation`='" . strip_tags($concernCreation) . "',`concern_solution`='" . strip_tags($concernSolution) . "',`concern_feedback`='" . strip_tags($concernFeedback) . "',
-	`accountsmodule`='" . strip_tags($accountsmodule) . "',`cash_tally`='" . strip_tags($cash_tally) . "',`cash_tally_admin`='" . strip_tags($cash_tally_admin) . "',`bank_details`='" . strip_tags($bank_details) . "',
+	`accountsmodule`='" . strip_tags($accountsmodule) . "',`cash_tally`='" . strip_tags($cash_tally) . "',`cash_tally_admin`='" . strip_tags($cash_tally_admin) . "',`bank_details`='" . strip_tags($bank_details) . "',`due_followup_lines`='" . strip_tags($due_follup_line) . "',
 	`bank_clearance`='" . strip_tags($bank_clearance) . "',	`finance_insight`='" . strip_tags($finance_insight) . "',`accounts_loan_issue`='" . strip_tags($accounts_loan_issue) . "',
 	`followupmodule`='" . strip_tags($followupmodule) . "',	`promotion_activity`='" . strip_tags($promotion_activity) . "',`loan_followup`='" . strip_tags($loan_followup) . "',
 	`confirmation_followup`='" . strip_tags($conf_followup) . "',`due_followup`='" . strip_tags($due_followup) . "',

@@ -41,7 +41,11 @@ const promotionAccess = new Choices('#pro_aty_access', {
     allowHTML: true
 
 });
-
+const dueFollowupLines = new Choices('#due_follup_lines', {
+    removeItemButton: true,
+    noChoicesText: 'Select Due Followup Lines',
+    allowHTML: true
+});
 // Document is ready
 $(document).ready(function () {
 
@@ -178,6 +182,22 @@ $(document).ready(function () {
         $('#bank_details').val(sortedStr);
 
     })
+    $('#due_follup_lines').change(function () {
+        var due_follup_lines = dueFollowupLines.getValue();
+        var due_follup_lines_id = '';
+        for (var i = 0; i < due_follup_lines.length; i++) {
+            if (i > 0) {
+                due_follup_lines_id += ',';
+            }
+            due_follup_lines_id += due_follup_lines[i].value;
+        }
+        var arr = due_follup_lines_id.split(",");
+        arr.sort(function (a, b) { return a - b });
+        var sortedStr = arr.join(",");
+
+        $('#due_follup_line_id').val(sortedStr);
+
+    })
 
     //modules checkbox events
     $("#adminmodule").on("change", function () {
@@ -306,6 +326,15 @@ $(document).ready(function () {
             $('.bank_details').hide()
         }
     })
+    $('#due_followup').click(function () {
+        var due_followup = document.querySelector('#due_followup');
+        if (due_followup.checked) {
+            getdueFollupLineDropdown();
+            $('.due_followupline_div').show()
+        } else {
+            $('.due_followupline_div').hide()
+        }
+    })
 
     $('#submit_manage_user').click(function () {
 
@@ -346,6 +375,7 @@ $(function () {
         getGroupDropdown(branch_id_upd);
 
         getBankDetails();
+        getdueFollupLineDropdown();
         getProAccess();
 
         var mastermodule = document.getElementById('mastermodule');
@@ -726,6 +756,44 @@ function getLineDropdown(branch_id) {
     })
 }
 
+// linedropdown in duefollowup
+function getdueFollupLineDropdown() {
+    var dueFollowUp_upd = $('#due_followup_lines_upd').val().split(',');
+    if (dueFollowUp_upd != '') {
+        $('.due_followupline_div').show();
+    }
+    
+    $.ajax({
+        url: 'manageUser/getDueFollowUpLineName.php',
+        data: { },
+        dataType: 'json',
+        type: 'post',
+        cache: false,
+        success: function (response) {
+            dueFollowupLines.clearStore();
+            for (var i = 0; i < response.length; i++) {
+                var map_id = response[i]['map_id'];
+                var duefollowup_name = response[i]['duefollowup_name'];
+                var selected = '';
+                if (dueFollowUp_upd != '') {
+                    for (var j = 0; j < dueFollowUp_upd.length; j++) {
+                        if (dueFollowUp_upd[j] == map_id) {
+                            selected = 'selected';
+                        }
+                    }
+                }
+                var items = [{
+                    value: map_id,
+                    label: duefollowup_name,
+                    selected: selected
+                }]
+                dueFollowupLines.setChoices(items);
+                dueFollowupLines.init();
+            }
+        }
+    })
+}
+
 //get Group Dropdown
 function getGroupDropdown(branch_id) {
     var group_id_upd = $('#group_id_upd').val().split(',');
@@ -1032,6 +1100,19 @@ function validation() {
         // }else{
         //     $('.bankdetailsCheck').hide();
         // }
+    }
+    var due_followup = document.querySelector('#due_followup');
+    var dueFollowupLine = dueFollowupLines.getValue();
+    if (!due_followup.checked) {
+        $('#due_follup_line_id').val('')
+    } else{
+         if(dueFollowupLine.length == 0){
+            event.preventDefault();
+            $('.due_followupline_div').show();
+            $('.duefollowupCheck').show();
+        }else{
+            $('.duefollowupCheck').hide();
+        }
     }
 }
 

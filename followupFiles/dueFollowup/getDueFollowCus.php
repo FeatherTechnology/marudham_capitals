@@ -9,22 +9,21 @@ if (isset($_SESSION['userid'])) {
 
 if ($user_id != 1) {
 
-    $userQry = $connect->query("SELECT group_id, line_id ,loan_cat, ag_id FROM USER WHERE user_id = $user_id ");
-    while ($rowuser = $userQry->fetch()) {
-        $group_id = $rowuser['group_id'];
-        $line_id = $rowuser['line_id'];
+    $userQry = $connect->query("SELECT due_followup_lines ,loan_cat, ag_id FROM USER WHERE user_id = $user_id ");
+    $rowuser = $userQry->fetch();
+        $due_followup_lines = $rowuser['due_followup_lines'];
         $loncat_id = $rowuser['loan_cat'];
         $age_id = $rowuser['ag_id'];
-    }
+    
     if($age_id ===''){
         $loan_agnt=" AND iv.loan_category IN ($loncat_id) ";
     } else {
         $loan_agnt="AND iv.agent_id IN ($age_id) AND iv.loan_category IN ($loncat_id) ";
 }
-    $line_id = explode(',', $line_id);
+    $due_followup_lines = explode(',', $due_followup_lines);
     $sub_area_list = array();
-    foreach ($line_id as $line) {
-        $lineQry = $connect->query("SELECT sub_area_id FROM area_line_mapping where map_id = $line ");
+    foreach ($due_followup_lines as $line) {
+        $lineQry = $connect->query("SELECT sub_area_id FROM area_duefollowup_mapping where map_id = $line ");
         $row_sub = $lineQry->fetch();
         $sub_area_list[] = $row_sub['sub_area_id'];
     }
