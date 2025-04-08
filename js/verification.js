@@ -6,6 +6,8 @@ const personMultiselect = new Choices('#verification_person', {
     allowHTML: true
 });
 
+let storeDocInfo = {};
+
 $(document).ready(function () {
 
     $('input[data-type="adhaar-number"]:not(#cus_id)').keyup(function () { /// AAdhar Validation 
@@ -366,11 +368,11 @@ $(document).ready(function () {
         if (verify == 'documentation') {
             $('#customer_profile').hide(); $('#cus_document').show(); $('#customer_loan_calc').hide();
             // getDocumentHistory();
-
+            getDocumentFunc();
         }
         if (verify == 'loan_calc') {
             $('#customer_profile').hide(); $('#cus_document').hide(); $('#customer_loan_calc').show();
-            initialize()
+            initialize();
         }
     })
 
@@ -990,6 +992,48 @@ $(document).ready(function () {
         }, 500);
     }
 
+    ///Hide AND Show doc Card START
+    $('#choose_document').change(function() {
+        let doc = $(this).val();
+    
+        // Hide all sections initially
+        $('.doc_card').hide();
+    
+        // Show the selected document section
+        switch (doc) {
+            case '1': $('#signed_doc_card').show(); break;
+            case '2': $('#cheque_info_card').show(); break;
+            case '3': $('#mortgage_info_card').show(); break;
+            case '4': $('#endorsement_info_card').show(); break;
+            case '5': $('#gold_info_card').show(); break;
+            case '6': $('#documents_info_card').show(); break;
+            default: $('.doc_card').hide();
+        }
+    
+        // Check if previous data exists in storeDocInfo and show relevant sections
+        if (storeDocInfo.signDocInfo) {
+            $('#signed_doc_card').show();
+        } 
+        if (storeDocInfo.chequeInfo) {
+            $('#cheque_info_card').show();
+        } 
+        if (storeDocInfo.mortgageInfo) {
+            $('#mortgage_info_card').show();
+        } 
+        if (storeDocInfo.endorseInfo) {
+            $('#endorsement_info_card').show();
+        } 
+        if (storeDocInfo.goldInfo) {
+            $('#gold_info_card').show();
+        }
+        if (storeDocInfo.docInfo) {
+            $('#documents_info_card').show();
+        }
+    });
+
+    
+    ///Hide AND Show doc Card END
+
 });   ////////Document Ready End
 
 $(function () {
@@ -1019,19 +1063,19 @@ $(function () {
     resetkycinfoList(); //KYC Info List.
 
     //Documentation
-    getstaffCode(); // Atuo Generate Doc ID.
+    // getstaffCode(); // Atuo Generate Doc ID.
 
-    resetsignInfo(); // Signed Doc info Reset.
-    resetsigninfoList(); // Signed Doc List Reset.
+    // resetsignInfo(); // Signed Doc info Reset.
+    // resetsigninfoList(); // Signed Doc List Reset.
 
-    resetchequeInfo(); // Cheque Info Reset.
-    chequeinfoList(); // Cheque Info List.
+    // resetchequeInfo(); // Cheque Info Reset.
+    // chequeinfoList(); // Cheque Info List.
 
-    resetgoldInfo(); // Gold Info Reset.
-    goldinfoList(); // Gold Info List.
+    // resetgoldInfo(); // Gold Info Reset.
+    // goldinfoList(); // Gold Info List.
 
-    resetdocInfo(); // Document Info Reset.
-    docinfoList(); // Document Info List.
+    // resetdocInfo(); // Document Info Reset.
+    // docinfoList(); // Document Info List.
 
     resetfeedback(); //Reset Feedback Modal Table.
     feedbackList(); // Feedback List.
@@ -1082,8 +1126,27 @@ $(function () {
         ],
     });
 
-
+    let agent_id = $('#agent_id').val();
+    getresponsiblecolumn(agent_id);
 });
+
+//To get Reponsible Dropdown
+function getresponsiblecolumn(ag_id) {
+    $.ajax({
+        url: 'requestFile/getResponsiblecolumn.php',
+        data: { 'ag_id': ag_id },
+        dataType: 'json',
+        type: 'post',
+        cache: false,
+        success: function (response) {
+            if (response == '0') {
+                $('.responsible').show();
+            } else {
+                $('.responsible').hide();
+            }
+        }
+    });
+}
 
 function getImage() { // Cus img show onload.
     let imgName = $('#cus_image').val();
@@ -2794,6 +2857,13 @@ function validation(submit_btn) {
     var cus_how_know = $('#cus_how_know').val(); var cus_monthly_income = $('#cus_monthly_income').val(); var cus_other_income = $('#cus_other_income').val(); var cus_support_income = $('#cus_support_income').val(); var cus_Commitment = $('#cus_Commitment').val(); var cus_monDue_capacity = $('#cus_monDue_capacity').val(); var cus_loan_limit = $('#cus_loan_limit').val(); var about_cus = $('#about_cus').val();
     var req_id = $('#req_id').val();
 
+    var responsible = $('#cus_responsible').val();
+    if (responsible == '' && $('.responsible').css('display') != 'none') {
+        $('#cusResponsibleCheck').show();
+        event.preventDefault();
+    } else {
+        $('#cusResponsibleCheck').hide();
+    }
 
     if (cus_id == '') {
         event.preventDefault();
@@ -3263,6 +3333,18 @@ function resetsigninfoList() {
             $("#relation_doc").hide();
             $("#doc_Count").val('');
             $("#signedID").val('');
+
+            let hasRecords = ($('#signed_table').DataTable().rows().count() > 0);
+            if(hasRecords){
+                $('#signed_doc_card').show();
+
+            } else{
+                $('#signed_doc_card').hide();
+
+            }
+
+            storeDocInfo.signDocInfo = hasRecords;
+
         }
     });
 }
@@ -3414,6 +3496,17 @@ function chequeinfoList() {
             $("#chequebank_name").val('');
             $("#cheque_count").val('');
             $("#chequeID").val('');
+
+            let hasRecords = ($('#cheque_table').DataTable().rows().count() > 0);
+            if(hasRecords){
+                $('#cheque_info_card').show();
+
+            } else{
+                $('#cheque_info_card').hide();
+
+            }
+
+            storeDocInfo.chequeInfo = hasRecords;
         }
     });
 }
@@ -3571,6 +3664,17 @@ function goldinfoList() {
             $("#gold_Value").val('');
             $("#gold_upload").val('');
             $("#goldID").val('');
+ 
+            let hasRecords = ($('#gold_table').DataTable().rows().count() > 0);
+            if(hasRecords){
+                $('#gold_info_card').show();
+
+            } else{
+                $('#gold_info_card').hide();
+
+            }
+
+            storeDocInfo.goldInfo = hasRecords;
         }
     });
 }
@@ -3741,6 +3845,17 @@ function docinfoList() {
             $("#docholder_name").val('');
             $("#docholder_relationship_name").val('');
             $("#doc_relation").val('');
+
+            let hasRecords = ($('#document_table').DataTable().rows().count() > 0);
+            if(hasRecords){
+                $('#documents_info_card').show();
+
+            } else{
+                $('#documents_info_card').hide();
+
+            }
+
+            storeDocInfo.docInfo = hasRecords;
         }
     });
 }
@@ -3872,6 +3987,14 @@ function doc_submit_validation(submit_btn) {
     var en_Company = $('#en_Company').val(); var en_Model = $('#en_Model').val(); var document_name = $('#document_name').val(); var document_details = $('#document_details').val(); var document_type = $('#document_type').val(); var document_holder = $('#document_holder').val();
     var req_id = $('#req_id').val();
 
+    var responsible = $('#doc_responsible').val();
+    if (responsible == '' && $('.responsible').css('display') != 'none') {
+        $('#docResponsibleCheck').show();
+        event.preventDefault();
+    } else {
+        $('#docResponsibleCheck').hide();
+    }
+
     if (cus_id_doc == '') {
         Swal.fire({
             timerProgressBar: true,
@@ -3967,6 +4090,42 @@ function doc_submit_validation(submit_btn) {
 
     submit_btn.removeAttr('disabled');
 
+}
+
+async function getDocumentFunc(){
+    getstaffCode(); // Atuo Generate Doc ID.
+
+    // await resetsignInfo(); // Signed Doc info Reset.
+    await resetsigninfoList(); // Signed Doc List Reset.
+
+    // await resetchequeInfo(); // Cheque Info Reset.
+    await chequeinfoList(); // Cheque Info List.
+
+    // await resetgoldInfo(); // Gold Info Reset.
+    await goldinfoList(); // Gold Info List.
+
+    // await resetdocInfo(); // Document Info Reset.
+    await docinfoList(); // Document Info List.
+
+    let mort = ($('#mortgage_process').val() == '0') ? true : false;
+    if(mort){
+        $('#mortgage_info_card').show();
+
+    } else{
+        $('#mortgage_info_card').hide();
+
+    }
+    storeDocInfo.mortgageInfo = mort;
+
+    let endorse = ($('#endorsement_process').val() == '0') ? true : false;
+    if(endorse){
+        $('#endorsement_info_card').show();
+
+    } else{
+        $('#endorsement_info_card').hide();
+
+    }
+    storeDocInfo.endorseInfo = endorse;
 }
 //////////////////////////////////////////////////// Documentation  END////////////////////////////////////////
 
@@ -4245,9 +4404,10 @@ function getCategoryInfo() {
 //Get New Category Info
 $('#sub_category').change(function () {
     var sub_cat = $(this).val();
+    var loan_cat = $('#loan_category').val();
     $.ajax({
         url: 'requestFile/getCategoryInfo.php',
-        data: { 'sub_cat': sub_cat },
+        data: { 'sub_cat': sub_cat, 'loan_category':loan_cat },
         dataType: 'json',
         type: 'post',
         cache: false,
@@ -4308,8 +4468,8 @@ function getLoaninfo(sub_cat_id) {
                 $('#loan_amt').attr('readonly', true);
 
                 $('#tot_value').unbind('blur').blur(function () {// to calculate loan amount ant advance percentage
-                    var amt = $('#tot_value').val();
-                    var advance = $('#ad_amt').val();
+                    var amt = $('#tot_value').val() || 0;
+                    var advance = $('#ad_amt').val() || 0;
                     var loan_amt = parseInt(amt) - parseInt(advance);
 
                     if (amt <= parseInt(response['loan_limit'])) {
@@ -5384,6 +5544,14 @@ function loan_calc_validation(submit_btn) {
     var tot_amt_cal = $('#tot_amt_cal').val(); var due_amt_cal = $('#due_amt_cal').val(); var doc_charge_cal = $('#doc_charge_cal').val(); var proc_fee_cal = $('#proc_fee_cal').val();
     var net_cash_cal = $('#net_cash_cal').val(); var due_start_from = $('#due_start_from').val(); var maturity_month = $('#maturity_month').val(); var collection_method = $('#collection_method').val();
     var Communitcation_to_cus = $('#Communitcation_to_cus').val(); var verification_location = $('#verification_location').val();
+
+    var responsible = $('#loan_responsible').val();
+    if (responsible == '' && $('.responsible').css('display') != 'none') {
+        $('#loanResponsibleCheck').show();
+        event.preventDefault();
+    } else {
+        $('#loanResponsibleCheck').hide();
+    }
 
     //Verification Person Multi select store
     var person_list = personMultiselect.getValue();

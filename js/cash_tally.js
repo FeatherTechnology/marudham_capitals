@@ -501,7 +501,7 @@ function submitCashTally(i) {
         $('#submit_cash_tally').off('click');
         $('#submit_cash_tally').click(function () {
             event.preventDefault();
-            if (getBankCollectionSubmit() == 0 && getIssuedSubmitCheck() == 0) {
+            // if (getBankCollectionSubmit() == 0 && getIssuedSubmitCheck() == 0) {
 
                 if (confirm('Are You sure to close this Day?')) {
 
@@ -558,16 +558,16 @@ function submitCashTally(i) {
                 } else {
                     return false;
                 }
-            } else {
-                Swal.fire({
-                    title: 'Submittion Error',
-                    html: 'Please check: <br>1.Bank Collection <br> 2.Hand & Bank Issued<br> has submitted before Closing!',
-                    icon: 'error',
-                    showConfirmButton: true,
-                    confirmButtonColor: '#009688'
-                });
+            // } else {
+            //     Swal.fire({
+            //         title: 'Submittion Error',
+            //         html: 'Please check: <br>1.Bank Collection <br> 2.Hand & Bank Issued<br> has submitted before Closing!',
+            //         icon: 'error',
+            //         showConfirmButton: true,
+            //         confirmButtonColor: '#009688'
+            //     });
 
-            }
+            // }
         })
     } else {
         $('#submit_cash_tally').off('click');
@@ -859,13 +859,13 @@ function getCollectionDetails() {
     })
 }
 
-function collectBtnClick(user_id) {
-    // $('.collect_btn').click(function(){
-    var user_id = $(user_id).data('value');
+function collectBtnClick(button) {
+    var user_id = $(button).data('value');
+    var branch_id = $(button).data('id');
     var op_date = $('#op_date').text();
     $.ajax({
         url: 'accountsFile/cashtally/receiveAmtModal.php',
-        data: { 'user_id': user_id, 'op_date': op_date },
+        data: { 'user_id': user_id, 'branch_id': branch_id, 'op_date': op_date },
         type: 'post',
         cache: false,
         success: function (response) {
@@ -897,10 +897,11 @@ function collectBtnClick(user_id) {
                             }).then(function (result) {
                                 if (result.isConfirmed) {
                                     var user_id = $('#user_id_rec').val();
+                                    var branch_id = $('#branch_id_rec').val();
                                     var op_date = $('#op_date').text();
                                     $.ajax({
                                         url: 'accountsFile/cashtally/receiveAmtModal.php',
-                                        data: { 'user_id': user_id, 'op_date': op_date },
+                                        data: { 'user_id': user_id, 'branch_id': branch_id,'op_date': op_date },
                                         type: 'post',
                                         cache: false,
                                         success: function (response) {
@@ -1054,7 +1055,7 @@ function getBankDepositDetails() {
         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
             <div class="form-group">
                 <label for="amt_bdep">Amount</label>
-                <input type="number" id="amt_bdep" name="amt_bdep" class="form-control" placeholder="Please Enter Amount" onkeydown="validateHandCash(this)">
+                <input type="number" id="amt_bdep" name="amt_bdep" class="form-control" placeholder="Please Enter Amount" onkeyup="validateHandCash(this)">
                 <span class="text-danger" id='amt_bdepCheck' style="display:none">Please Enter Amount</span>
             </div>
         </div>
@@ -1612,7 +1613,7 @@ function getHandExchangeInputs() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
         <div class="form-group">
             <label for="amt_hed">Amount</label>
-            <input type="number" id="amt_hed" name="amt_hed" class="form-control" placeholder="Enter Amount" onkeydown="validateHandCash(this)">
+            <input type="number" id="amt_hed" name="amt_hed" class="form-control" placeholder="Enter Amount" onkeyup="validateHandCash(this)">
             <span class="text-danger" id='amt_hedCheck' style="display:none">Please Enter Amount</span>
         </div>
     </div>
@@ -2503,7 +2504,7 @@ function hexpenseModalBtnClick() {
                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
                         <div class="form-group">
                             <label for="vou_id_hexp">Voucher ID</label><span class='text-danger'>&nbsp;*</span>
-                            <input type='number' id="vou_id_hexp" name="vou_id_hexp" class="form-control" placeholder="Enter Voucher ID">
+                            <input type='number' id="vou_id_hexp" name="vou_id_hexp" class="form-control" placeholder="Enter Voucher ID" readonly>
                             <span id='vou_id_hexpCheck' class="text-danger" style="display:none">Please Enter Voucher ID</span>
                         </div>
                     </div>
@@ -2524,7 +2525,7 @@ function hexpenseModalBtnClick() {
                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
                         <div class="form-group">
                             <label for="amt_hexp">Amount</label><span class='text-danger'>&nbsp;*</span>
-                            <input type="number" id="amt_hexp" name="amt_hexp" class="form-control" placeholder="Enter Amount" onkeydown="validateHandCash(this)">
+                            <input type="number" id="amt_hexp" name="amt_hexp" class="form-control" placeholder="Enter Amount" onkeyup="validateHandCash(this)">
                             <span id='amt_hexpCheck' class="text-danger" style="display:none">Please Enter Amount</span>
                         </div>
                     </div>
@@ -2572,6 +2573,12 @@ function hexpenseModalBtnClick() {
                 $("#cat_hexp").prepend(firstOption);
             }
         }
+    }).then(function(){
+        //Auto Generate Voucher ID.
+        $.post('accountsFile/cashtally/expense/autoGenerateVoucherId.php',{},function(response){
+            $('#vou_id_hexp').val(response);
+        }, 'json');
+
     }).then(function () {
         $('#submit_hexp').click(function () {
             if (hexpenseValidation() == 0) {
@@ -4672,7 +4679,7 @@ function getDHagDetails() {
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
                 <div class="form-group">
                     <label for="amt_ag">Amount</label><span class='text-danger'>&nbsp;*</span>
-                    <input type="number" id="amt_ag" name="amt_ag" class="form-control" placeholder="Enter Amount" onkeydown="validateHandCash(this)">
+                    <input type="number" id="amt_ag" name="amt_ag" class="form-control" placeholder="Enter Amount" onkeyup="validateHandCash(this)">
                     <span id='amt_agCheck' class="text-danger" style="display:none">Please Enter Amount</span>
                 </div>
             </div>
@@ -4944,7 +4951,7 @@ function getDBagDetails() {
 
 //this function will check the amount entered were lesser or equal to hand closing balance
 function validateHandCash(amt) {
-    let hand_cl = $('#hand_closing').text()
+    let hand_cl = $('#hand_closing').text().replace(/,/g, '')
     if (parseInt(hand_cl) <= parseInt(amt.value)) {
         alert('Enter Lesser Amount !');
         $(amt).val('');

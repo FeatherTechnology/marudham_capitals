@@ -1,8 +1,5 @@
 <?php
-session_start();
-$user_id = $_SESSION["userid"];
 include('../ajaxconfig.php');
-
 
 if (isset($_POST['cus_id'])) {
     $cus_id = preg_replace('/\D/', '', $_POST['cus_id']);
@@ -10,7 +7,7 @@ if (isset($_POST['cus_id'])) {
 
 $records = array();
 
-$result = $connect->query("SELECT * FROM request_creation where cus_id = '" . strip_tags($cus_id) . "' and cus_status <= 22 ORDER BY created_date DESC ");
+$result = $connect->query("SELECT req_id, dor, loan_category, sub_category, loan_amt, prompt_remark, cus_status FROM request_creation where cus_id = '" . strip_tags($cus_id) . "' and cus_status <= 22 ORDER BY created_date DESC ");
 
 if ($result->rowCount() > 0) {
     $i = 0;
@@ -75,7 +72,7 @@ if ($result->rowCount() > 0) {
         }
         if ($cus_status >= '14' and $cus_status <= '17') {
             $records[$i]['status'] = 'Present';
-            $records[$i]['sub_status'] = getCollectionStatus($connect, $cus_id, $user_id, $req_id);
+            $records[$i]['sub_status'] = getCollectionStatus($connect, $cus_id, $req_id);
         }
         if ($cus_status == '20') {
             $records[$i]['status'] = 'Closed';
@@ -159,7 +156,7 @@ if ($result->rowCount() > 0) {
     });
 </script>
 <?php
-function getCollectionStatus($connect, $cus_id, $user_id, $req_id)
+function getCollectionStatus($connect, $cus_id, $req_id)
 {
 
     $pending_sts = isset($_POST["pending_sts"]) ? explode(',', $_POST["pending_sts"]) : null;
@@ -171,10 +168,9 @@ function getCollectionStatus($connect, $cus_id, $user_id, $req_id)
 
     $retVal = '';
 
-    $run = $connect->query("SELECT lc.due_start_from,lc.loan_category,lc.sub_category,lc.loan_amt_cal,lc.due_amt_cal,lc.net_cash_cal,lc.collection_method,ii.loan_id,ii.req_id,ii.updated_date,ii.cus_status,
-        rc.agent_id,lcc.loan_category_creation_name as loan_catrgory_name, us.collection_access
-        from acknowlegement_loan_calculation lc JOIN in_issue ii ON lc.req_id = ii.req_id JOIN request_creation rc ON ii.req_id = rc.req_id 
-        JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id JOIN user us ON us.user_id = $user_id
+    $run = $connect->query("SELECT lc.due_start_from, ii.cus_status
+        FROM acknowlegement_loan_calculation lc 
+        JOIN in_issue ii ON lc.req_id = ii.req_id 
         WHERE lc.cus_id_loan = $cus_id and (ii.cus_status >= 14 and ii.cus_status < 20)"); //Customer status greater than or equal to 14 because, after issued data only we need
 
     $curdate = date('Y-m-d');

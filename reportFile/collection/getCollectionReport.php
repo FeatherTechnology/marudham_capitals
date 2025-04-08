@@ -55,6 +55,7 @@ $statusObj = [
 $consider_lvl_arr = [1 => 'Bronze', 2 => 'Silver', 3 => 'Gold', 4 => 'Platinum', 5 => 'Diamond'];
 $role_arr = [1 => 'Director', 2 => 'Agent', 3 => 'Staff'];
 $coll_arr = [1 => 'Cash', 2 => 'Cheque', 3 => 'ECS', 4 => 'IMPS/NEFT/RTGS', 5 => 'UPI Transaction'];
+$coll_method = [1 => 'By Self', 2 => 'On Spot'];
 
 $column = array(
     'cp.id',
@@ -70,6 +71,7 @@ $column = array(
     'cp.id',
     'u.role',
     'u.fullname',
+    'coll.coll_location',
     'coll.coll_date',
     'coll.coll_mode',
     'b.bank_name',
@@ -101,6 +103,7 @@ $query = "SELECT
             ac.ag_name,
             u.role,
             u.fullname,
+            coll.coll_location,
             coll.coll_date,
             coll.trans_date,
             b.bank_name,
@@ -141,6 +144,7 @@ if (isset($_POST['search'])) {
                     OR sal.sub_area_name LIKE '%" . $_POST['search'] . "%'
                     OR u.role LIKE '%" . $_POST['search'] . "%'
                     OR u.fullname LIKE '%" . $_POST['search'] . "%'
+                    OR coll.coll_location LIKE '%" . $_POST['search'] . "%'
                     OR b.bank_name LIKE '%" . $_POST['search'] . "%'
                     OR coll.trans_date LIKE '%" . $_POST['search'] . "%'
                     OR coll.coll_date LIKE '%" . $_POST['search'] . "%') ";
@@ -190,6 +194,7 @@ foreach ($result as $row) {
     $sub_array[] = $row['ag_name'];
     $sub_array[] = $role_arr[$row['role']];
     $sub_array[] = $row['fullname'];
+    $sub_array[] = $coll_method[$row['coll_location']];
     $sub_array[] = date('d-m-Y', strtotime($row['coll_date']));
     $sub_array[] = $coll_arr[$row['coll_mode']];
     if ($row['coll_mode'] != 1) {

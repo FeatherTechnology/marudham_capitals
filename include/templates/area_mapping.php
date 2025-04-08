@@ -44,6 +44,24 @@ if (isset($_POST['submit_area_mapping_group']) && $_POST['submit_area_mapping_gr
 	}
 }
 
+if (isset($_POST['submit_area_mapping_duefollowup']) && $_POST['submit_area_mapping_duefollowup'] != '') {
+	if (isset($_POST['id']) && $_POST['id'] > 0 && is_numeric($_POST['id'])) {
+		$id = $_POST['id'];
+		$userObj->updateAreaMappingDuefollowup($mysqli, $id, $userid);
+?>
+		<script>
+			location.href = '<?php echo $HOSTPATH;  ?>edit_area_mapping&msc=2&type=duefollowup';
+		</script>
+	<?php	} else {
+		$userObj->addAreaMappingDuefollowup($mysqli, $userid);
+	?>
+		<script>
+			location.href = '<?php echo $HOSTPATH;  ?>edit_area_mapping&msc=1&type=duefollowup';
+		</script>
+	<?php
+	}
+}
+
 $del = 0;
 if (isset($_GET['del'])) {
 	$del = $_GET['del'];
@@ -65,6 +83,14 @@ if ($del > 0) {
 	?>
 		<script>
 			location.href = '<?php echo $HOSTPATH;  ?>edit_area_mapping&msc=3&type=group';
+		</script>
+	<?php
+	}
+	if ($type == 'duefollowup') {
+		$userObj->deleteAreaMappingDuefollowup($mysqli, $del, $userid);
+	?>
+		<script>
+			location.href = '<?php echo $HOSTPATH;  ?>edit_area_mapping&msc=3&type=duefollowup';
 		</script>
 	<?php
 	}
@@ -108,6 +134,20 @@ if ($idupd > 0) {
 			}
 		}
 		$area_array = explode(',', $area_id1);
+	} else if ($type == 'duefollowup') {
+
+		$getAreaMappingDuefollowup = $userObj->getAreaMappingDuefollowup($mysqli, $idupd);
+		if (sizeof($getAreaMappingDuefollowup) > 0) {
+			for ($i = 0; $i < sizeof($getAreaMappingDuefollowup); $i++) {
+				$map_id2                	 = $getAreaMappingDuefollowup['map_id'];
+				$duefollowup_name          	 = $getAreaMappingDuefollowup['duefollowup_name'];
+				$area_id2         		     = $getAreaMappingDuefollowup['area_id'];
+				$sub_area_id2      			 = $getAreaMappingDuefollowup['sub_area_id'];
+				$company_id2     			 = $getAreaMappingDuefollowup['company_id'];
+				$branch_id2      			 = $getAreaMappingDuefollowup['branch_id'];
+			}
+		}
+		$area_array = explode(',', $area_id1);
 	}
 }
 
@@ -139,20 +179,24 @@ if (isset($_GET['type'])) {
 <div class="main-container">
 	<!--form start-->
 	<form id="report_creation" name="report_creation" action="" method="post" enctype="multipart/form-data">
-		<input type="hidden" class="form-control" value="<?php if (isset($idupd)) echo $idupd; ?>" id="id" name="id" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if (isset($type)) echo $type; ?>" id="type" name="type" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if (isset($map_id)) echo $map_id; ?>" id="map_id_upd" name="map_id_upd" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if (isset($map_id1)) echo $map_id1; ?>" id="map_id1_upd" name="map_id1_upd" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if (isset($line_name)) echo $line_name; ?>" id="line_name_upd" name="line_name_upd" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if (isset($group_name)) echo $group_name; ?>" id="group_name_upd" name="group_name_upd" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if (isset($company_id)) echo $company_id; ?>" id="company_id_upd" name="company_id_upd" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if (isset($company_id1)) echo $company_id1; ?>" id="company_id_upd1" name="company_id_upd1" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if (isset($branch_id)) echo $branch_id; ?>" id="branch_id_upd" name="branch_id_upd" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if (isset($branch_id1)) echo $branch_id1; ?>" id="branch_id_upd1" name="branch_id_upd1" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if (isset($area_id)) echo $area_id; ?>" id="area_id_upd" name="area_id_upd" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if (isset($area_id1)) echo $area_id1; ?>" id="area_id1_upd" name="area_id1_upd" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if (isset($sub_area_id)) echo $sub_area_id; ?>" id="sub_area_upd" name="sub_area_upd" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if (isset($sub_area_id1)) echo $sub_area_id1; ?>" id="sub_area_upd1" name="sub_area_upd1" aria-describedby="id" placeholder="Enter id">
+		<input type="hidden" class="form-control" value="<?php if (isset($idupd)) echo $idupd; ?>" id="id" name="id" aria-describedby="id">
+		<input type="hidden" class="form-control" value="<?php if (isset($type)) echo $type; ?>" id="type" name="type" aria-describedby="id">
+		<input type="hidden" class="form-control" value="<?php if (isset($map_id)) echo $map_id; ?>" id="map_id_upd" name="map_id_upd" aria-describedby="id">
+		<input type="hidden" class="form-control" value="<?php if (isset($map_id1)) echo $map_id1; ?>" id="map_id1_upd" name="map_id1_upd" aria-describedby="id">
+		<input type="hidden" class="form-control" value="<?php if (isset($line_name)) echo $line_name; ?>" id="line_name_upd" name="line_name_upd" aria-describedby="id">
+		<input type="hidden" class="form-control" value="<?php if (isset($group_name)) echo $group_name; ?>" id="group_name_upd" name="group_name_upd" aria-describedby="id">
+		<input type="hidden" class="form-control" value="<?php if (isset($company_id)) echo $company_id; ?>" id="company_id_upd" name="company_id_upd" aria-describedby="id">
+		<input type="hidden" class="form-control" value="<?php if (isset($company_id1)) echo $company_id1; ?>" id="company_id_upd1" name="company_id_upd1" aria-describedby="id">
+		<input type="hidden" class="form-control" value="<?php if (isset($company_id2)) echo $company_id2; ?>" id="company_id_upd2" name="company_id_upd2" aria-describedby="id">
+		<input type="hidden" class="form-control" value="<?php if (isset($branch_id)) echo $branch_id; ?>" id="branch_id_upd" name="branch_id_upd" aria-describedby="id">
+		<input type="hidden" class="form-control" value="<?php if (isset($branch_id1)) echo $branch_id1; ?>" id="branch_id_upd1" name="branch_id_upd1" aria-describedby="id">
+		<input type="hidden" class="form-control" value="<?php if (isset($branch_id2)) echo $branch_id2; ?>" id="branch_id_upd2" name="branch_id_upd2" aria-describedby="id">
+		<input type="hidden" class="form-control" value="<?php if (isset($area_id)) echo $area_id; ?>" id="area_id_upd" name="area_id_upd" aria-describedby="id">
+		<input type="hidden" class="form-control" value="<?php if (isset($area_id1)) echo $area_id1; ?>" id="area_id1_upd" name="area_id1_upd" aria-describedby="id">
+		<input type="hidden" class="form-control" value="<?php if (isset($area_id2)) echo $area_id2; ?>" id="area_id2_upd" name="area_id2_upd" aria-describedby="id">
+		<input type="hidden" class="form-control" value="<?php if (isset($sub_area_id)) echo $sub_area_id; ?>" id="sub_area_upd" name="sub_area_upd" aria-describedby="id">
+		<input type="hidden" class="form-control" value="<?php if (isset($sub_area_id1)) echo $sub_area_id1; ?>" id="sub_area_upd1" name="sub_area_upd1" aria-describedby="id">
+		<input type="hidden" class="form-control" value="<?php if (isset($sub_area_id2)) echo $sub_area_id2; ?>" id="sub_area_upd2" name="sub_area_upd2" aria-describedby="id">
 
 		<!-- Row start -->
 		<div class="row gutters">
@@ -296,6 +340,68 @@ if (isset($_GET['type'])) {
 					</div>
 				</div>
 
+				<!-- ************************************************************** Due Followup Mapping *************************************************************************************** -->
+				<div class="card duefollowup_mapping" <?php if (isset($type) and $type != 'duefollowup') { ?> style="display:none" <?php } ?>>
+					<div class="card-header">
+						<div class="card-title">General Info (Due Followup)</div>
+					</div>
+					<div class="card-body">
+						<div class="row ">
+							<!--Fields -->
+							<div class="col-md-12 ">
+								<div class="row">
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+										<div class="form-group">
+											<label for="disabledInput">Due Followup Name</label>&nbsp;<span class="text-danger">*</span>
+											<input type="text" name="duefollowup_name" id="duefollowup_name" value="<?php if (isset($duefollowup_name)) echo $duefollowup_name; ?>" placeholder="Enter Due Followup Name" class="form-control" tabindex="1">
+										</div>
+									</div>
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+										<div class="form-group">
+											<label for="disabledInput">Company Name</label>&nbsp;<span class="text-danger">*</span>
+											<input type="hidden" id='company_id2' name="company_id2" value='<?php echo $companyName[0]['company_id'] ?>'>
+											<input type="text" class="form-control" id='company_name2' name="company_name2" value='<?php echo $companyName[0]['company_name'] ?>' readonly tabindex='2'>
+										</div>
+									</div>
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+										<div class="form-group">
+											<label for="disabledInput">Branch Name</label>&nbsp;<span class="text-danger">*</span>
+											<select type="text" class="form-control" id="branch2" name="branch2" tabindex='3'>
+												<option value="">Select Branch</option>
+											</select>
+										</div>
+									</div>
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+										<div class="form-group">
+											<label for="disabledInput">Area</label>&nbsp;<span class="text-danger">*</span>
+											<input type="hidden" id="area2" name="area2" value="">
+											<select type="text" class="form-control" id="area_dummy2" name="area_dummy2" multiple tabindex='4'>
+												<option value="">Select Area</option>
+											</select>
+										</div>
+									</div>
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+										<div class="form-group">
+											<label for="disabledInput">Sub Area</label>&nbsp;<span class="text-danger">*</span>
+											<input type="hidden" id="sub_area2" name="sub_area2" value="">
+											<select type="text" class="form-control" id="sub_area_dummy2" name="sub_area_dummy2" multiple tabindex='5'>
+
+											</select>
+										</div>
+									</div>
+
+								</div>
+							</div>
+						</div>
+						<div class="col-md-12 ">
+							<div class="text-right">
+								<button type="submit" name="submit_area_mapping_duefollowup" id="submit_area_mapping_duefollowup" class="btn btn-primary" value="Submit" tabindex="6"><span class="icon-check"></span>&nbsp;Submit</button>
+								<button type="reset" class="btn btn-outline-secondary" tabindex="7">Clear</button>
+							</div>
+						</div>
+
+					</div>
+				</div>
 
 			</div>
 		</div>
