@@ -352,20 +352,20 @@ if (isset($_GET['type'])) {
 								<div class="row">
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
-											<label for="disabledInput">Due Followup Name</label>&nbsp;<span class="text-danger">*</span>
+											<label for="duefollowup_name">Due Followup Name</label>&nbsp;<span class="text-danger">*</span>
 											<input type="text" name="duefollowup_name" id="duefollowup_name" value="<?php if (isset($duefollowup_name)) echo $duefollowup_name; ?>" placeholder="Enter Due Followup Name" class="form-control" tabindex="1">
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
-											<label for="disabledInput">Company Name</label>&nbsp;<span class="text-danger">*</span>
+											<label for="company_name2">Company Name</label>&nbsp;<span class="text-danger">*</span>
 											<input type="hidden" id='company_id2' name="company_id2" value='<?php echo $companyName[0]['company_id'] ?>'>
 											<input type="text" class="form-control" id='company_name2' name="company_name2" value='<?php echo $companyName[0]['company_name'] ?>' readonly tabindex='2'>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
-											<label for="disabledInput">Branch Name</label>&nbsp;<span class="text-danger">*</span>
+											<label for="branch2">Branch Name</label>&nbsp;<span class="text-danger">*</span>
 											<select type="text" class="form-control" id="branch2" name="branch2" tabindex='3'>
 												<option value="">Select Branch</option>
 											</select>
@@ -373,7 +373,16 @@ if (isset($_GET['type'])) {
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
-											<label for="disabledInput">Area</label>&nbsp;<span class="text-danger">*</span>
+											<label for="due_line">Line</label>&nbsp;<span class="text-danger">*</span>
+											<input type="hidden" id="dueline" name="dueline" value="">
+											<select type="text" class="form-control" id="due_line" name="due_line" multiple tabindex='4'>
+												<option value="">Select Line</option>
+											</select>
+										</div>
+									</div>
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+										<div class="form-group">
+											<label for="area_dummy2">Area</label>&nbsp;<span class="text-danger">*</span>
 											<input type="hidden" id="area2" name="area2" value="">
 											<select type="text" class="form-control" id="area_dummy2" name="area_dummy2" multiple tabindex='4'>
 												<option value="">Select Area</option>
@@ -382,11 +391,23 @@ if (isset($_GET['type'])) {
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
-											<label for="disabledInput">Sub Area</label>&nbsp;<span class="text-danger">*</span>
+											<label for="sub_area_dummy2">Sub Area</label>&nbsp;<span class="text-danger">*</span>
 											<input type="hidden" id="sub_area2" name="sub_area2" value="">
 											<select type="text" class="form-control" id="sub_area_dummy2" name="sub_area_dummy2" multiple tabindex='5'>
 
 											</select>
+										</div>
+									</div>
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+										<div class="form-group">
+											<label for="cus_count">Customer Count</label>&nbsp;<span class="text-danger">*</span>
+											<input type="text" class="form-control" id="cus_count" name="cus_count" readonly tabindex='6'>
+										</div>
+									</div>
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+										<div class="form-group">
+											<label for="loan_count">Loan Count</label>&nbsp;<span class="text-danger">*</span>
+											<input type="text" class="form-control" id="loan_count" name="loan_count" readonly tabindex='7'>
 										</div>
 									</div>
 

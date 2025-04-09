@@ -41,6 +41,13 @@ const intance2 = new Choices('#sub_area_dummy2', {
     placeholderValue: 'Select Sub Area Name',
     allowHTML: true
 });
+const dueLine = new Choices('#due_line', {
+    removeItemButton: true,
+    noChoicesText: null,
+    placeholder: true,
+    placeholderValue: 'Select Line Name',
+    allowHTML: true
+});
 
 
 // Document is ready
@@ -222,26 +229,61 @@ $(document).ready(function () {
     })
 
 
-    // ************************************************************** Due Followup Mapping *************************************************************************************** 
+    // ************************************************************** Due Followup Mapping ****************************************************************** 
 
-    $('#area_dummy2').change(function () {
-        //Area Multi select store
-        var area_list = areaMultiselect2.getValue();
-        var area = '';
-        for (var i = 0; i < area_list.length; i++) {
-            if (i > 0) {
-                area += ',';
-            }
-            area += area_list[i].value;
+    $('#branch2').change(function(){
+        let branchId = $(this).val();
+        if(branchId !=''){
+            getLineNameDropdown(branchId);
         }
-        var arr = area.split(",");
-        arr.sort(function (a, b) { return a - b });
-        var sortedStr = arr.join(",");
-        $('#area').val(sortedStr);
-        var areaselected = $('#area').val();
+    });
+    
+    $('#area_dummy2').change(function () {
+        // Get values from multiselect and sort
+        const area_list = areaMultiselect2.getValue();
+        const sortedStr = area_list
+            .map(item => item.value)
+            .sort((a, b) => a - b)
+            .join(',');
+    
+        $('#area2').val(sortedStr);
+    
+        getAreaBasedSubArea2(sortedStr);
+    });
+    
+    $('#due_line').change(function () {
+        // Get values from multiselect and sort
+        const lineList = dueLine.getValue();
+        const lineSortedStr = lineList
+            .map(item => item.value)
+            .sort((a, b) => a - b)
+            .join(',');
+    
+        $('#dueline').val(lineSortedStr);
+    
+        if(lineSortedStr){
+            getArea2(lineSortedStr);
+        }
+    });
 
-        getAreaBasedSubArea2(areaselected);
-    })
+    // $('#area_dummy2').change(function () {
+    //     //Area Multi select store
+    //     var area_list = areaMultiselect2.getValue();
+    //     var area = '';
+    //     for (var i = 0; i < area_list.length; i++) {
+    //         if (i > 0) {
+    //             area += ',';
+    //         }
+    //         area += area_list[i].value;
+    //     }
+    //     var arr = area.split(",");
+    //     arr.sort(function (a, b) { return a - b });
+    //     var sortedStr = arr.join(",");
+    //     $('#area2').val(sortedStr);
+    //     var areaselected = $('#area2').val();
+
+    //     getAreaBasedSubArea2(areaselected);
+    // })
 
     // if ($('#type').val() == 'duefollowup') { // load only if line
     //     var companySelected = $('#company_id2').val();
@@ -315,10 +357,10 @@ $(function () {
         getAreaBasedSubArea1(area);
         getBranchDropdown1()
     } else if (type == 'duefollowup') {
-        getArea2();
-        let area = $('#area_id2_upd').val();
-        // let company_id_upd = $('#company_id_upd2').val();
-        getAreaBasedSubArea2(area);
+        // getArea2();
+        // let area = $('#area_id2_upd').val();
+        // // let company_id_upd = $('#company_id_upd2').val();
+        // getAreaBasedSubArea2(area);
         getBranchDropdown2()
     }
 
@@ -404,14 +446,14 @@ function getArea1() {
     });
 }
 //Get Area 
-function getArea2() {
+function getArea2(lineName) {
     var area_id_upd = $('#area_id2_upd').val();
     var values = area_id_upd.split(',');
     var map = 'duefollowup';
     $.ajax({
-        url: 'areaMapping/ajaxGetArea.php',
+        url: 'areaMapping/ajaxGetMappedArea.php',
         type: 'post',
-        data: { 'map': map },
+        data: { 'map': map, 'lineName': lineName },
         dataType: 'json',
         success: function (response) {
 
@@ -644,7 +686,7 @@ function getBranchDropdown2(company_id) {
         success: function (response) {
 
             $('#branch2').empty();
-            $('#branch2').append('<option>Select Branch</option>');
+            $('#branch2').append('<option value="">Select Branch</option>');
             for (var i = 0; i < response.length; i++) {
                 var selected = '';
                 if (branch_id_upd != '' && branch_id_upd == response[i]['branch_id']) {
@@ -661,4 +703,23 @@ function getBranchDropdown2(company_id) {
             }
         }
     })
+}
+
+function getLineNameDropdown(branchid){
+    $.post('areaMapping/getLineName.php',{branchid}, function(response){
+        dueLine.clearStore();
+        $.each(response, function(index, val){
+            let selected ='';
+            let item = [
+                {
+                    value: val.line_name,
+                    label: val.line_name,
+                    selected: selected,
+                }
+            ];
+            dueLine.setChoices(item);
+            dueLine.init();
+        });
+
+    },'json');
 }
