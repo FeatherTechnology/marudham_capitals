@@ -375,8 +375,13 @@ $(function () {
         getGroupDropdown(branch_id_upd);
 
         getBankDetails();
-        getdueFollupLineDropdown();
         getProAccess();
+
+        var due_followup = document.querySelector('#due_followup');
+        if (due_followup.checked) {
+            getdueFollupLineDropdown();
+            $('.due_followupline_div').show()
+        }
 
         var mastermodule = document.getElementById('mastermodule');
         var adminmodule = document.getElementById('adminmodule');
