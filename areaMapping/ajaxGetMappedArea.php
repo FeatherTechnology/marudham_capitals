@@ -3,12 +3,12 @@ include('../ajaxconfig.php');
 
 $detailrecords = array();
 
-if (isset($_POST['lineName'])) {
-    $lineName = $_POST['lineName'];
+if (isset($_POST['lineid'])) {
+    $lineid = $_POST['lineid'];
 
-    $selectQry = "SELECT area_id FROM area_line_mapping WHERE status = 0 AND FIND_IN_SET(line_name, ?) ";
+    $selectQry = "SELECT area_id FROM area_line_mapping WHERE status = 0 AND FIND_IN_SET(map_id, ?) ";
     $stmt = $connect->prepare($selectQry);
-    $stmt->execute([$lineName]);
+    $stmt->execute([$lineid]);
 
     $j = 0;
 

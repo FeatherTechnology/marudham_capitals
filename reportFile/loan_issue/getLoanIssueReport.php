@@ -92,6 +92,7 @@ $query = "SELECT
         lc.proc_fee_cal,
         lc.tot_amt_cal,
         lc.net_cash_cal,
+        li.payment_type,
         li.relationship as rec_relationship,
         vfi_received_by.famname as received_by,
         vfi_received_by.relationship as rel_name
@@ -109,7 +110,7 @@ $query = "SELECT
         LEFT JOIN loan_issue li ON li.req_id = ii.req_id
         LEFT JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
         LEFT JOIN agent_creation ac ON req.agent_id = ac.ag_id
-        LEFT JOIN verification_family_info vfi_received_by ON li.cash_guarentor_name = vfi_received_by.relation_aadhar
+        LEFT JOIN verification_family_info vfi_received_by ON li.relationship !='Customer' AND li.cash_guarentor_name = vfi_received_by.relation_aadhar
 
         WHERE ii.cus_status >= 14 
         $where";
@@ -182,7 +183,7 @@ foreach ($result as $row) {
     $sub_array[] = moneyFormatIndia($row['tot_amt_cal']);
     $sub_array[] = moneyFormatIndia($row['net_cash_cal']);
 
-    if ($row['rec_relationship'] == 'Customer') {
+    if ($row['rec_relationship'] == 'Customer' || $row['payment_type'] == '1' || $row['payment_type'] == '2') {
         //if loan issued to customer then direclty place customer name from cp table
         $sub_array[] = $row['cus_name'];
         $sub_array[] = 'Customer';
