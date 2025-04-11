@@ -7,11 +7,12 @@ if (isset($_SESSION["userid"])) {
 }
 if ($userid != 1) {
 
-    $userQry = $connect->query("SELECT role, group_id, line_id FROM USER WHERE user_id = $userid ");
+    $userQry = $connect->query("SELECT role, group_id, line_id, ag_id FROM USER WHERE user_id = $userid ");
     while ($rowuser = $userQry->fetch()) {
         $role = $rowuser['role'];
         $group_id = $rowuser['group_id'];
         $line_id = $rowuser['line_id'];
+        $ag_id = $rowuser['ag_id'];
     }
 
     $line_id = explode(',', $line_id);
@@ -66,7 +67,8 @@ if ($userid == 1) {
         JOIN area_list_creation alc ON cp.area_confirm_area = alc.area_id
         JOIN sub_area_list_creation salc ON cp.area_confirm_subarea = salc.sub_area_id
         JOIN area_line_mapping alm ON FIND_IN_SET(salc.sub_area_id, alm.sub_area_id)
-        WHERE ii.status = 0 AND (ii.cus_status >= 14 AND ii.cus_status <= 17) AND cp.area_confirm_subarea IN ($sub_area_list) ";
+        left JOIN request_creation rc ON ii.req_id = rc.req_id 
+        WHERE ii.status = 0 AND (ii.cus_status >= 14 AND ii.cus_status <= 17) AND cp.area_confirm_subarea IN ($sub_area_list) and rc.agent_id = $ag_id ";
     } else { // if agent then check the possibilities
         $query = "SELECT cp.cus_id AS cp_cus_id, cp.cus_name, alc.area_name, salc.sub_area_name, alm.line_name AS area_line, cp.mobile1, ii.cus_id AS ii_cus_id, ii.req_id 
         FROM acknowlegement_customer_profile cp 
@@ -76,7 +78,7 @@ if ($userid == 1) {
         JOIN area_list_creation alc ON cp.area_confirm_area = alc.area_id
         JOIN sub_area_list_creation salc ON cp.area_confirm_subarea = salc.sub_area_id
         JOIN area_line_mapping alm ON FIND_IN_SET(salc.sub_area_id, alm.sub_area_id)
-        WHERE ii.status = 0 AND (ii.cus_status >= 14 AND ii.cus_status <= 17) AND (rc.user_type = 'Agent' OR (rc.agent_id != '' OR rc.agent_id != null)  OR rc.insert_login_id = '$userid' ) "; // 14 and 17 means collection entries, 17 removed from issue list
+        WHERE ii.status = 0 AND (ii.cus_status >= 14 AND ii.cus_status <= 17) AND (rc.user_type = 'Agent' OR (rc.agent_id != '' OR rc.agent_id != null)  OR rc.insert_login_id = '$userid' ) AND cp.area_confirm_subarea IN ($sub_area_list) "; // 14 and 17 means collection entries, 17 removed from issue list
 
     }
 }
