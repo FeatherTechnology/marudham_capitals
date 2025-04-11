@@ -40,6 +40,10 @@ if (isset($_POST['to_date']) && $_POST['to_date'] != '') {
     $to_date = date('Y-m-d', strtotime($_POST['to_date']));
     $where  = "(date(coll.coll_date) <= '" . $to_date . "') ";
     $li_where  = "AND date(li.created_date) <= date('$to_date') AND balance_amount = '0' ";
+} else {
+    $to_date = date('Y-m-d');
+    $where  = "(date(coll.coll_date) <= '" . $to_date . "') ";
+    $li_where  = "AND date(li.created_date) <= date('$to_date') AND balance_amount = '0' ";
 }
 
     $where  .= $user_based;
@@ -204,16 +208,20 @@ $data = array();
 $sno = 1;
 foreach ($result as $row) {
     $start = strtotime($row['due_start_from']);
-    $end = strtotime("$to_date");
-    // $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start));
+    
+    if (strtotime($row['maturity_date']) < strtotime($to_date)) {
+        $end = strtotime($row['maturity_date']);
+    } else {
+        $end = strtotime($to_date);
+    }
     $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
-    $balance_amount = ($row['bal_amt'] - $row['due_amt_track']);
+    $balance_amount = $row['tot_amt_cal'] - $row['total_due_amt'];
     $paid_due = $row['total_due_amt'] / $row['due_amt_cal'];
     $balance_due = (float)$row['due_period'] - $paid_due;
     $pending_amount = max( ($row['pending'] - $row['due_amt_track']),0);
     $pending_due =  $pending_amount  / $row['due_amt_cal'];
-    // $payable_amount =  $row['payable_amt'] - $row['total_paid_track'];
     $payable_amount = ($months * $row['due_amt_cal'] ) - $row['total_due_amt'];
+
     $sub_array   = array();
     $sub_array[] = $sno;
     $sub_array[] = $row['line'];

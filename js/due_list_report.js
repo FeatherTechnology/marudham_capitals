@@ -38,7 +38,8 @@ function requestReportTable(){
             [10, 25, 50, "All"]
         ],
         'drawCallback': function () {
-            searchFunction('request_report_table');
-        }  
+            searchFunction('due_list_report_table');
+        },
+        
     });
 }
