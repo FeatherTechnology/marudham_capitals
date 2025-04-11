@@ -13,7 +13,7 @@ $bankID                = $_POST['bankID'];
 if(!empty($_FILES['bank_upload']['name'])){
     $upload    = $_FILES['bank_upload']['name'];
 
-    $path = "bankUploads/";
+    $path = "../uploads/bankUploads/";
     $fileName = $_FILES['bank_upload']['name'];
     $filePath = $_FILES['bank_upload']['tmp_name'];
 
@@ -43,7 +43,7 @@ if ($bankID == '') {
         // we need to unlink old files
         $qry = $connect->query("SELECT upload FROM `verification_bank_info` where id='" . strip_tags($bankID) . "' ");
         $old_pic = $qry->fetch()['upload'];
-        unlink("bankUploads/" . $old_pic);
+        unlink("../uploads/bankUploads/" . $old_pic);
     } else {
         $bank_upload_id = $_POST['bank_upload_id'];
     }

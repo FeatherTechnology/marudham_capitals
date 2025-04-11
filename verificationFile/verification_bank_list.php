@@ -30,7 +30,7 @@ include '../ajaxconfig.php';
                 <td> <?php echo $bank['acc_holder_name']; ?></td>
                 <td> <?php echo $bank['acc_no']; ?></td>
                 <td> <?php echo $bank['ifsc_code']; ?></td>
-                <td> <a href="verificationFile/bankUploads/<?php echo $bank['upload']; ?>" target="_blank" style="color: #4ba39b;"> <?php echo $bank['upload']; ?> </a></td>
+                <td> <a href="uploads/bankUploads/<?php echo $bank['upload']; ?>" target="_blank" style="color: #4ba39b;"> <?php echo $bank['upload']; ?> </a></td>
             </tr>
 
         <?php  } ?>
