@@ -112,6 +112,7 @@ $req_id_list = implode(',', $req_id_list);
     lc.due_period,
     lc.tot_amt_cal,
     lc.sub_category,
+    lc.due_start_from,
     alm.line_name AS line,
     ii.loan_id,
     al.area_name,
@@ -126,7 +127,7 @@ $req_id_list = implode(',', $req_id_list);
     IFNULL(NULLIF(c.total_paid_track, ''), 0) AS total_paid_track,
     IFNULL(NULLIF(c.due_amt_track, ''), 0) AS due_amt_track,
     IFNULL(NULLIF(c.total_due_amt, ''), 0) AS total_due_amt,
-    IFNULL(NULLIF(c.bal_amt, ''), 0) AS bal_amt,
+    IFNULL(NULLIF(c.bal_amt, ''), lc.tot_amt_cal) AS bal_amt,
     IFNULL(NULLIF(c.coll_id, ''), 0) AS coll_id
 FROM
     acknowlegement_loan_calculation lc
@@ -146,33 +147,34 @@ JOIN request_creation req ON lc.req_id = req.req_id
 LEFT JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
 LEFT JOIN agent_creation ac ON req.agent_id = ac.ag_id
 LEFT JOIN closed_status cls ON req.req_id = cls.req_id
-LEFT JOIN ( SELECT 
-        c.req_id,
-        c.pending_amt AS pending,
-        c.payable_amt,
-        c.total_paid_track,
-        c.due_amt_track,
-        c.bal_amt,
-        c.coll_id,
-        ( SELECT SUM(due_amt_track)FROM collection  WHERE req_id = c.req_id AND coll_date <= '$to_date') AS total_due_amt
-    FROM collection c
-    JOIN (  SELECT req_id, MAX(coll_date) AS last_coll_date FROM collection  WHERE 
-            req_id IN ($req_id_list) AND (DATE(coll_date) <= '$to_date') GROUP BY req_id) latest ON c.req_id = latest.req_id AND c.coll_date = latest.last_coll_date ) c ON lc.req_id = c.req_id 
+LEFT JOIN ( SELECT c.req_id,
+           c.pending_amt AS pending,
+           c.payable_amt,
+           c.total_paid_track,
+           c.due_amt_track,
+           c.bal_amt,
+           c.coll_id,
+           ( SELECT SUM(due_amt_track) FROM collection  WHERE req_id = c.req_id AND DATE(coll_date) <= '$to_date' ) AS total_due_amt
+            FROM collection c
+            INNER JOIN (SELECT req_id, MAX(coll_id) AS max_coll_id FROM collection WHERE req_id IN ($req_id_list)
+            AND DATE(coll_date) = ( SELECT MAX(DATE(coll_date)) FROM collection c2 WHERE c2.req_id = collection.req_id AND DATE(c2.coll_date) <= '$to_date'
+            ) GROUP BY req_id
+           ) latest
+    ON c.req_id = latest.req_id AND c.coll_id = latest.max_coll_id ) c ON lc.req_id = c.req_id 
 WHERE
     lc.req_id IN ($req_id_list) ";
 
 
 
-        if (isset($_POST['search'])) {
-            if ($_POST['search'] != "") {
-                $query .= " and (ii.loan_id LIKE '%" . $_POST['search'] . "%'
-                            OR ii.updated_date LIKE '%" . $_POST['search'] . "%'
-                            OR lc.cus_id_loan LIKE '%" . $_POST['search'] . "%'
-                            OR lc.cus_name_loan LIKE '%" . $_POST['search'] . "%'
-                            OR al.area_name LIKE '%" . $_POST['search'] . "%'
-                            OR sal.sub_area_name LIKE '%" . $_POST['search'] . "%'
-                            OR lcc.loan_category_creation_name LIKE '%" . $_POST['search'] . "%')";
-                            
+if (isset($_POST['search'])) {
+        if ($_POST['search'] != "") {
+            $query .= " and (ii.loan_id LIKE '%" . $_POST['search'] . "%'
+                        OR ii.updated_date LIKE '%" . $_POST['search'] . "%'
+                        OR lc.cus_id_loan LIKE '%" . $_POST['search'] . "%'
+                        OR lc.cus_name_loan LIKE '%" . $_POST['search'] . "%'
+                        OR al.area_name LIKE '%" . $_POST['search'] . "%'
+                        OR sal.sub_area_name LIKE '%" . $_POST['search'] . "%'
+                        OR lcc.loan_category_creation_name LIKE '%" . $_POST['search'] . "%') ";           
             }
         }
  if (isset($_POST['order'])) {
@@ -201,13 +203,17 @@ $result = $statement->fetchAll();
 $data = array();
 $sno = 1;
 foreach ($result as $row) {
-    
+    $start = strtotime($row['due_start_from']);
+    $end = strtotime("$to_date");
+    // $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start));
+    $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
     $balance_amount = ($row['bal_amt'] - $row['due_amt_track']);
     $paid_due = $row['total_due_amt'] / $row['due_amt_cal'];
     $balance_due = (float)$row['due_period'] - $paid_due;
     $pending_amount = max( ($row['pending'] - $row['due_amt_track']),0);
     $pending_due =  $pending_amount  / $row['due_amt_cal'];
-    $payable_amount =  $row['payable_amt'] - $row['total_paid_track'];
+    // $payable_amount =  $row['payable_amt'] - $row['total_paid_track'];
+    $payable_amount = ($months * $row['due_amt_cal'] ) - $row['total_due_amt'];
     $sub_array   = array();
     $sub_array[] = $sno;
     $sub_array[] = $row['line'];
