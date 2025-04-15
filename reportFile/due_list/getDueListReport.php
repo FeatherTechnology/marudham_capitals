@@ -215,12 +215,18 @@ foreach ($result as $row) {
         $end = strtotime($to_date);
     }
     $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
+
+    $pending_month = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start));
+    if (date('d', $end) >= date('d', $start) && date('m', $end) != date('m', $start)) {
+        $pending_month += 1;
+    }
+    
     $balance_amount = $row['tot_amt_cal'] - $row['total_due_amt'];
     $paid_due = $row['total_due_amt'] / $row['due_amt_cal'];
     $balance_due = (float)$row['due_period'] - $paid_due;
-    $pending_amount = max( ($row['pending'] - $row['due_amt_track']),0);
-    $pending_due =  $pending_amount  / $row['due_amt_cal'];
     $payable_amount = ($months * $row['due_amt_cal'] ) - $row['total_due_amt'];
+    $pending_amount = ($pending_month * $row['due_amt_cal'] ) - $row['total_due_amt'];
+    $pending_due =  $pending_amount  / $row['due_amt_cal'];
 
     $sub_array   = array();
     $sub_array[] = $sno;
@@ -241,7 +247,7 @@ foreach ($result as $row) {
     $sub_array[] = moneyFormatIndia($row['tot_amt_cal']);
     $sub_array[] = isset($balance_amount) && $balance_amount >= 0 ? moneyFormatIndia($balance_amount) : $row['tot_amt_cal'];
     $sub_array[] = isset($balance_due) && $balance_due >= 0 ? number_format($balance_due , 1, '.', ''): 0 ;
-    $sub_array[] = moneyFormatIndia($pending_amount) ;
+    $sub_array[] = isset($pending_amount) && $pending_amount >= 0 ? moneyFormatIndia($pending_amount) : 0;
     $sub_array[] = isset($pending_due) && $pending_due >= 0 ? number_format($pending_due , 1, '.', ''): 0;
     $sub_array[] = isset($row['od_months']) && $row['od_months'] >= 0 ? $row['od_months'] : 0;;
     $sub_array[] = isset($payable_amount) && $payable_amount >= 0 ? moneyFormatIndia($payable_amount) : 0;
