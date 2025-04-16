@@ -863,9 +863,10 @@ function collectBtnClick(button) {
     var user_id = $(button).data('value');
     var branch_id = $(button).data('id');
     var op_date = $('#op_date').text();
+    var user_branch_id = $('#user_branch_id').val();
     $.ajax({
         url: 'accountsFile/cashtally/receiveAmtModal.php',
-        data: { 'user_id': user_id, 'branch_id': branch_id, 'op_date': op_date },
+        data: { 'user_id': user_id, 'branch_id': branch_id, 'op_date': op_date, 'user_branch_id': user_branch_id },
         type: 'post',
         cache: false,
         success: function (response) {
@@ -899,9 +900,10 @@ function collectBtnClick(button) {
                                     var user_id = $('#user_id_rec').val();
                                     var branch_id = $('#branch_id_rec').val();
                                     var op_date = $('#op_date').text();
+                                    var user_branch_id = $('#user_branch_id').val();
                                     $.ajax({
                                         url: 'accountsFile/cashtally/receiveAmtModal.php',
-                                        data: { 'user_id': user_id, 'branch_id': branch_id,'op_date': op_date },
+                                        data: { 'user_id': user_id, 'branch_id': branch_id,'op_date': op_date, 'user_branch_id': user_branch_id },
                                         type: 'post',
                                         cache: false,
                                         success: function (response) {
