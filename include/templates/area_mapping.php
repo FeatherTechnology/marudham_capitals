@@ -388,7 +388,7 @@ if (isset($_GET['type'])) {
 										<div class="form-group">
 											<label for="area_dummy2">Area</label>&nbsp;<span class="text-danger">*</span>
 											<input type="hidden" id="area2" name="area2" value="">
-											<select type="text" class="form-control" id="area_dummy2" name="area_dummy2" multiple tabindex='4'>
+											<select type="text" class="form-control" id="area_dummy2" name="area_dummy2" multiple tabindex='5'>
 												<option value="">Select Area</option>
 											</select>
 										</div>
@@ -397,7 +397,7 @@ if (isset($_GET['type'])) {
 										<div class="form-group">
 											<label for="sub_area_dummy2">Sub Area</label>&nbsp;<span class="text-danger">*</span>
 											<input type="hidden" id="sub_area2" name="sub_area2" value="">
-											<select type="text" class="form-control" id="sub_area_dummy2" name="sub_area_dummy2" multiple tabindex='5'>
+											<select type="text" class="form-control" id="sub_area_dummy2" name="sub_area_dummy2" multiple tabindex='6'>
 
 											</select>
 										</div>
@@ -405,13 +405,13 @@ if (isset($_GET['type'])) {
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
 											<label for="cus_count">Customer Count</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" class="form-control" id="cus_count" name="cus_count" value="<?php if(isset($cus_count)) echo $cus_count; ?>" readonly tabindex='6'>
+											<input type="text" class="form-control" id="cus_count" name="cus_count" value="<?php if(isset($cus_count)) echo $cus_count; ?>" readonly tabindex='7'>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
 											<label for="loan_count">Loan Count</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" class="form-control" id="loan_count" name="loan_count" value="<?php if(isset($loan_count)) echo $loan_count; ?>" readonly tabindex='7'>
+											<input type="text" class="form-control" id="loan_count" name="loan_count" value="<?php if(isset($loan_count)) echo $loan_count; ?>" readonly tabindex='8'>
 										</div>
 									</div>
 
@@ -420,8 +420,9 @@ if (isset($_GET['type'])) {
 						</div>
 						<div class="col-md-12 ">
 							<div class="text-right">
-								<button type="submit" name="submit_area_mapping_duefollowup" id="submit_area_mapping_duefollowup" class="btn btn-primary" value="Submit" tabindex="6"><span class="icon-check"></span>&nbsp;Submit</button>
-								<button type="reset" class="btn btn-outline-secondary" tabindex="7">Clear</button>
+								<button class="btn btn-primary" tabindex="9" id="refresh_count">Refresh</button>
+								<button type="submit" name="submit_area_mapping_duefollowup" id="submit_area_mapping_duefollowup" class="btn btn-primary" value="Submit" tabindex="10"><span class="icon-check"></span>&nbsp;Submit</button>
+								<button type="reset" class="btn btn-outline-secondary" tabindex="11">Clear</button>
 							</div>
 						</div>
 

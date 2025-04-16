@@ -272,6 +272,17 @@ $(document).ready(function () {
         }
     });
 
+    $('#refresh_count').click(function(event){
+        event.preventDefault();
+        // Get values from multiselect and sort
+        const area_list = areaMultiselect2.getValue();
+        const sortedStr = area_list
+            .map(item => item.value)
+            .sort((a, b) => a - b)
+            .join(',');
+            
+        getCusLoanCount(sortedStr);
+    })
     //on submit add sub area list to hidden input
     $('#submit_area_mapping_duefollowup').click(function () {
         var due_line = dueLine.getValue();

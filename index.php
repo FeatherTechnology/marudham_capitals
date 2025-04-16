@@ -2,6 +2,9 @@
 //this screen is only for login page*****
 date_default_timezone_set('Asia/Calcutta');
 @session_start();
+session_unset();
+session_destroy();
+session_start();
 
 //below code is for redirecting user to dashboard if already logged in, even directly changes url
 $userid  = isset($_SESSION['userid']) ? $_SESSION['userid'] : "";
