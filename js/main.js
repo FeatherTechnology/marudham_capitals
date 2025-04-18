@@ -1,4 +1,3 @@
-
 // Todays Date
 // $(function () {
 // 	var interval = setInterval(function () {
@@ -9,7 +8,6 @@
 // 	}, 6000);
 // });
 
-
 // $(function () {
 // 	console.log("hi");
 // 	var interval = setInterval(function () {
@@ -18,15 +16,10 @@
 // 	}, 100);
 // });
 
-
-
-
 // Loading
 $(function () {
 	$("#loading-wrapper").fadeOut(3000);
 });
-
-
 
 // Textarea characters left
 $(function () {
@@ -48,14 +41,10 @@ $(function () {
 	});
 });
 
-
-
 // Todo list
 $('.todo-body').on('click', 'li.todo-list', function () {
 	$(this).toggleClass('done');
 });
-
-
 
 // Tasks
 (function ($) {
@@ -70,21 +59,15 @@ $('.todo-body').on('click', 'li.todo-list', function () {
 	});
 })(jQuery);
 
-
-
 // Tasks Important Active
 $('.task-actions').on('click', '.important', function () {
 	$(this).toggleClass('active');
 });
 
-
-
 // Tasks Important Active
 $('.task-actions').on('click', '.star', function () {
 	$(this).toggleClass('active');
 });
-
-
 
 // Countdown
 $(document).ready(function () {
@@ -134,11 +117,6 @@ $(document).ready(function () {
 
 });
 
-
-
-
-
-
 // Bootstrap JS ***********
 
 // Tooltip
@@ -150,17 +128,8 @@ $(function () {
 	$('[data-toggle="popover"]').popover()
 })
 
-
-
-
-
-
-
-
-
 // Custom Sidebar JS
 jQuery(function ($) {
-
 	// Dropdown menu
 	$(".sidebar-dropdown > a").click(function () {
 		$(".sidebar-submenu").slideUp(200);
@@ -174,14 +143,10 @@ jQuery(function ($) {
 		}
 	});
 
-
-
 	//toggle sidebar
 	$("#toggle-sidebar").click(function () {
 		$(".page-wrapper").toggleClass("toggled");
 	});
-
-
 
 	// Pin sidebar on click
 	$("#pin-sidebar").click(function () {
@@ -207,8 +172,6 @@ jQuery(function ($) {
 		}
 	});
 
-
-
 	// Pinned sidebar
 	$(function () {
 		$("#sidebar").hover(
@@ -225,15 +188,10 @@ jQuery(function ($) {
 		)
 	});
 
-
-
-
 	// Toggle sidebar overlay
 	$("#overlay").click(function () {
 		$(".page-wrapper").toggleClass("toggled");
 	});
-
-
 
 	// Added by Srinu 
 	$(function () {
@@ -252,6 +210,4 @@ jQuery(function ($) {
 			}
 		});
 	});
-
-
 });

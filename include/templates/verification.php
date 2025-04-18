@@ -1735,7 +1735,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 					<!-- Gold Info START-->
 					<div class="card doc_card" id="gold_info_card" style="display: none;">
 						<div class="card-header"> Gold Info
-							<button type="button" class="btn btn-primary" id="add_gold" name="add_gold" data-toggle="modal" data-target=".addGold" style="padding: 5px 35px;  float: right;" tabindex="28"><span class="icon-add" onclick="resetgoldInfo()"></span></button>
+							<button type="button" class="btn btn-primary" id="add_gold" name="add_gold" data-toggle="modal" data-target=".addGold" style="padding: 5px 35px;  float: right;" tabindex="28" onclick="resetgoldInfo()"><span class="icon-add"></span></button>
 						</div>
 						<span class="text-danger" style='display:none' id='Gold_infoCheck'>Please Fill Gold Info </span>
 						<div class="card-body">
@@ -1770,7 +1770,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 					<!-- Documents Info START-->
 					<div class="card doc_card" id="documents_info_card" style="display: none;">
 						<div class="card-header"> Documents Info
-							<button type="button" class="btn btn-primary" id="add_document" name="add_document" data-toggle="modal" data-target=".addDocument" style="padding: 5px 35px;  float: right;" tabindex="29"><span class="icon-add" onclick="resetdocInfo()"></span></button>
+							<button type="button" class="btn btn-primary" id="add_document" name="add_document" data-toggle="modal" data-target=".addDocument" style="padding: 5px 35px;  float: right;" tabindex="29" onclick="resetdocInfo()"><span class="icon-add"></span></button>
 						</div>
 						<div class="card-body">
 

@@ -3147,7 +3147,7 @@ function mortgageHolderName() {
     });
 }
 
-function docHolderName() {
+function docHolderName(callback) {
     let cus_id = $('#cus_id').val();
 
     $.ajax({
@@ -3173,6 +3173,9 @@ function docHolderName() {
                 $("#docholder_relationship_name").prepend(firstOption);
             }
 
+            if(typeof callback === "function"){
+                callback();
+            }
         }
     });
 }
@@ -3743,9 +3746,9 @@ $("body").on("click", "#doc_info_edit", function () {
         data: { "id": id },
         dataType: 'json',
         cache: false,
-        beforeSend: function () {
-            docHolderName();
-        },
+        // beforeSend: function () {
+        //     docHolderName();
+        // },
         success: function (response) {
 
             $("#doc_info_id").val(response['doc_id']);
@@ -3760,7 +3763,9 @@ $("body").on("click", "#doc_info_edit", function () {
             } else {
                 $("#docholder_name").hide();
                 $("#docholder_relationship_name").show();
-                $("#docholder_relationship_name").val(response['relation_name']);
+                docHolderName( function(){
+                    $("#docholder_relationship_name").val(response['relation_name'])
+                });
             }
             $("#doc_relation").val(response['relation']);
 
@@ -3815,12 +3820,14 @@ function resetdocInfo() {
             $("#docModalDiv").empty();
             $("#docModalDiv").html(html);
 
+            $("#doc_info_id").val('');
             $("#document_name").val('');
             $("#document_details").val('');
             $("#document_type").val('');
             $("#document_holder").val('');
             $("#docholder_name").val('');
             $("#relation_name").val('');
+            $("#docholder_relationship_name").val('');
             $("#doc_relation").val('');
 
         }
@@ -3838,11 +3845,13 @@ function docinfoList() {
             $("#DocResetTableDiv").empty();
             $("#DocResetTableDiv").html(html);
 
+            $("#doc_info_id").val('');
             $("#document_name").val('');
             $("#document_details").val('');
             $("#document_type").val('');
             $("#document_holder").val('');
             $("#docholder_name").val('');
+            $("#relation_name").val('');
             $("#docholder_relationship_name").val('');
             $("#doc_relation").val('');
 
