@@ -1523,7 +1523,6 @@
             return false;
         };
 
-
         function moneyFormatIndia(num) {
             var isNegative = false;
             if (num < 0) {
@@ -1601,7 +1600,6 @@
             }
         }
 
-
         ////////// Show Loader if ajax function is called inside anywhere in entire project  ////////
 
         $(document).ajaxStart(function() {
@@ -1617,7 +1615,6 @@
                 const fileSize = input.files[0].size; // Get the size of the selected file
                 const maxSize = targetSizeKB * 1024; // Maximum size in bytes (200 KB)
                 if (fileSize > maxSize) {
-                    console.log("hjhhhh");
                     const file = input.files[0];
                     const reader = new FileReader();
                     reader.onload = (event) => {

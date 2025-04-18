@@ -1377,16 +1377,38 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 					</div>
 					<!-- Documentations Info  End-->
 
-					<!-- Signed Doc Info START -->
+					<!-- Choosing Document START -->
 					<div class="card">
+						<div class="card-header"> Documents</div>
+						<div class="card-body">
+							<div class="row">
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+									<div class="form-group">
+										<label for="doc_id">Documents</label>
+										<select class="form-control" name="choose_document" id="choose_document">
+											<option value="0">Select Document</option>
+											<option value="1">Signed Doc</option>
+											<option value="2">Cheque</option>
+											<option value="3">Mortgage</option>
+											<option value="4">Endorsement</option>
+											<option value="5">Gold</option>
+											<option value="6">Documents</option>
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Choosing Document END -->
+
+					<!-- Signed Doc Info START -->
+					<div class="card doc_card" id="signed_doc_card" style="display: none;">
 						<div class="card-header"> Signed Doc Info
-							<button type="button" class="btn btn-primary" id="add_sign_doc" name="add_sign_doc" data-toggle="modal" data-target=".addSignDoc" style="padding: 5px 35px;  float: right;" tabindex="9"><span class="icon-add"></span></button>
+							<button type="button" class="btn btn-primary" id="add_sign_doc" name="add_sign_doc" data-toggle="modal" data-target=".addSignDoc" style="padding: 5px 35px;  float: right;" tabindex="9" onclick="resetsignInfo()"><span class="icon-add"></span></button>
 						</div>
 						<span class="text-danger" style='display:none' id='signed_infoCheck'>Please Fill Signed Doc Info </span>
 						<div class="card-body">
-
 							<div class="row">
-
 								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 									<div class="form-group table-responsive" id="signDocResetTable">
 										<table class="table custom-table">
@@ -1398,29 +1420,23 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 													<th> Count </th>
 												</tr>
 											</thead>
-											<tbody>
-
-											</tbody>
+											<tbody></tbody>
 										</table>
 									</div>
 								</div>
-
 							</div>
-
 						</div>
 					</div>
 					<!-- Signed Doc Info END -->
 
 					<!-- Cheque Info START -->
-					<div class="card">
+					<div class="card doc_card" id="cheque_info_card" style="display: none;">
 						<div class="card-header"> Cheque Info
-							<button type="button" class="btn btn-primary" id="add_Cheque" name="add_Cheque" data-toggle="modal" data-target=".addCheque" style="padding: 5px 35px;  float: right;" tabindex="10"><span class="icon-add"></span></button>
+							<button type="button" class="btn btn-primary" id="add_Cheque" name="add_Cheque" data-toggle="modal" data-target=".addCheque" style="padding: 5px 35px;  float: right;" tabindex="10" onclick="resetchequeInfo()"><span class="icon-add"></span></button>
 						</div>
 						<span class="text-danger" style='display:none' id='Cheque_infoCheck'>Please Fill Cheque Info </span>
 						<div class="card-body">
-
 							<div class="row">
-
 								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 									<div class="form-group table-responsive" id="ChequeResetTable">
 										<table class="table custom-table">
@@ -1434,26 +1450,20 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 													<th> Cheque No </th>
 												</tr>
 											</thead>
-											<tbody>
-
-											</tbody>
+											<tbody></tbody>
 										</table>
 									</div>
 								</div>
-
 							</div>
-
 						</div>
 					</div>
 					<!-- Cheque Info END -->
 
 					<!-- Mortgage Info START-->
-
-					<div class="card">
+					<div class="card doc_card" id="mortgage_info_card" style="display: none;">
 						<div class="card-header"> Mortgage Info </div>
 						<div class="card-body">
 							<div class="row">
-
 								<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 									<div class="form-group">
 										<label for="MortgageProcess"> Mortgage Process</label> <span class="required">&nbsp;*</span>
@@ -1599,7 +1609,6 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 										</div>
 									</div>
 
-
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="pendingDocument"> Pending </label> <span class="required">&nbsp;*</span>
@@ -1610,21 +1619,17 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 										</div>
 									</div>
 
-
 								</div>
-
 							</div>
 						</div>
 					</div>
 					<!-- Mortgage Info  End-->
 
 					<!-- Endorsement Info START-->
-
-					<div class="card">
+					<div class="card doc_card" id="endorsement_info_card" style="display: none;">
 						<div class="card-header"> Endorsement Info </div>
 						<div class="card-body">
 							<div class="row">
-
 								<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 									<div class="form-group">
 										<label for="EndorsementProcess"> Endorsement Process</label> <span class="required">&nbsp;*</span>
@@ -1774,15 +1779,15 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 										</label>
 									</div>
 								</div>
-
 							</div>
 						</div>
 					</div>
 					<!-- Endorsement Info  End-->
+
 					<!-- Gold Info Start -->
-					<div class="card">
+					<div class="card doc_card" id="gold_info_card" style="display: none;">
 						<div class="card-header"> Gold Info
-							<button type="button" class="btn btn-primary" id="add_gold" name="add_gold" data-toggle="modal" data-target=".addGold" style="padding: 5px 35px;  float: right;" tabindex='41'><span class="icon-add"></span></button>
+							<button type="button" class="btn btn-primary" id="add_gold" name="add_gold" data-toggle="modal" data-target=".addGold" style="padding: 5px 35px;  float: right;" tabindex='41' onclick="resetgoldInfo()"><span class="icon-add"></span></button>
 						</div>
 						<span class="text-danger" style='display:none' id='Gold_infoCheck'>Please Fill Gold Info </span>
 						<div class="card-body">
@@ -1801,8 +1806,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 													<th> Upload </th>
 												</tr>
 											</thead>
-											<tbody>
-											</tbody>
+											<tbody></tbody>
 										</table>
 									</div>
 								</div>
@@ -1810,11 +1814,11 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 						</div>
 					</div>
 					<!-- Gold Info End -->
-					<!-- Documents Info START-->
 
-					<div class="card">
+					<!-- Documents Info START-->
+					<div class="card doc_card" id="documents_info_card" style="display: none;">
 						<div class="card-header"> Documents Info
-							<button type="button" class="btn btn-primary" id="add_document" name="add_document" data-toggle="modal" data-target=".addDocument" style="padding: 5px 35px;  float: right;" tabindex="42"><span class="icon-add"></span></button>
+							<button type="button" class="btn btn-primary" id="add_document" name="add_document" data-toggle="modal" data-target=".addDocument" style="padding: 5px 35px;  float: right;" tabindex="42" onclick="resetdocInfo()"><span class="icon-add"></span></button>
 						</div>
 						<div class="card-body">
 							<div class="row">
@@ -1832,13 +1836,10 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 													<th> Relationship</th>
 												</tr>
 											</thead>
-											<tbody>
-
-											</tbody>
+											<tbody></tbody>
 										</table>
 									</div>
 								</div>
-
 							</div>
 						</div>
 					</div>
