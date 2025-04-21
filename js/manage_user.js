@@ -46,6 +46,11 @@ const dueFollowupLines = new Choices('#due_follup_lines', {
     noChoicesText: 'Select Due Followup Lines',
     allowHTML: true
 });
+const updateScreen = new Choices('#update_screen', {
+    removeItemButton: true,
+    noChoicesText: 'Select Update Screen',
+    allowHTML: true
+});
 // Document is ready
 $(document).ready(function () {
 

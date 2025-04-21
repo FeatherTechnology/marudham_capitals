@@ -850,6 +850,17 @@ if($idupd>0)
                                 <label class="custom-control-label" for="update">Update</label>
                             </div>
                         </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 update_screen_div"  style='display:block;'>
+                            <div class="custom-control custom-checkbox">
+								<input type='hidden' id='update_screen_id' name='update_screen_id' value=''>
+                                <select class='form-control' id='update_screen' name='update_screen' multiple>
+									<option value="">Select Update screen</option>
+									<option value="1">Customer Profile</option>
+									<option value="2">Documentation</option>
+								</select>
+								<span class='text-danger updateScreenCheck' style="display:none">Please Select Update Screen</span>
+                            </div>
+                        </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($doctrack==0){ echo'checked'; }} ?> tabindex="45" class="update-checkbox" id="doctrack" name="doctrack" disabled>&nbsp;&nbsp;
@@ -984,7 +995,7 @@ if($idupd>0)
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 due_followupline_div"  style='display:none; margin-top: 15px;'>
                             <div class="custom-control custom-checkbox">
-                                <label class="custom-control-label" for="due_followup_lines">Due Followup lines</label>
+                                <label class="custom-control-label" for="due_follup_lines">Due Followup lines</label>
 								<input type='hidden' id='due_follup_line_id' name='due_follup_line_id' value=''>
                                 <select class='form-control' id='due_follup_lines' name='due_follup_lines' multiple>
 									<option value="">Select Due Followup Lines</option>
