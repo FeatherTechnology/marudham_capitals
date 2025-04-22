@@ -5,8 +5,18 @@ if (isset($_GET['upd'])) {
 }
 
 @session_start();
+$update_screen_id = ''; // Default value
+$selected_screens = [];
+
 if (isset($_SESSION['userid'])) {
-	$userid = $_SESSION['userid'];
+    $userid = $_SESSION['userid'];
+    $getUser = $userObj->getuser($mysqli, $userid); 
+
+    // Check if user record exists and update_screen_id is not empty
+    if (!empty($getUser) && !empty($getUser['update_screen_id'])) {
+        $update_screen_id = $getUser['update_screen_id'];
+        $selected_screens = array_filter(explode(',', $update_screen_id));
+    }
 }
 
 if (isset($_POST['submit_update_cus_profile']) && $_POST['submit_update_cus_profile'] != '') {
@@ -233,8 +243,18 @@ if (sizeof($documentationInfo) > 0) {
 
 	<div class="col-md-12">
 		<div class="form-group" style="text-align:center">
-			<input type="radio" name="verification_type" id="cus_profile" value="cus_profile"></input><label for='cus_profile'>&nbsp;&nbsp; Customer Profile </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<input type="radio" name="verification_type" id="documentation" value="documentation"></input><label for='documentation'>&nbsp;&nbsp; Documentation </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<?php if (!empty($selected_screens)) { ?>
+				<?php if (in_array("1", $selected_screens)) { ?>
+					<input type="radio" name="verification_type" id="cus_profile" value="cus_profile">
+					<label for="cus_profile">&nbsp;&nbsp; Customer Profile </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<?php } ?>
+				<?php if (in_array("2", $selected_screens)) { ?>
+					<input type="radio" name="verification_type" id="documentation" value="documentation">
+					<label for="documentation">&nbsp;&nbsp; Documentation </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<?php } ?>
+			<?php } else { ?>
+				<span style="color: red;">No update screens assigned to this user.</span>
+			<?php } ?>
 			<!-- <input type="radio" name="verification_type" id="customer_old" value="customer_old"></input><label for='customer_old'>&nbsp;&nbsp; Old Data </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -->
 		</div>
 	</div>

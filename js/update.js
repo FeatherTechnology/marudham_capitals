@@ -462,24 +462,24 @@ $(function () {
 
     getImage(); // To show customer image when window onload.
 
-    resetFamInfo(); //Call Family Info Table Initially.
-    resetFamDetails();
-    closeFamModal();
+    // resetFamInfo(); //Call Family Info Table Initially.
+    // resetFamDetails();
+    // closeFamModal();
 
-    resetpropertyInfo() // Property Info Modal Table Reset.
+    // resetpropertyInfo() // Property Info Modal Table Reset.
     resetPropertyinfoList() //Property Info List.
 
-    resetbankInfo(); // Bank info Modal Table Reset.
+    // resetbankInfo(); // Bank info Modal Table Reset.
     resetbankinfoList(); //Bank Info List.
 
     resetkycinfoList(); //KYC Info List.
 
     //Documentation
 
-    getDocumentHistory();//for document history table
+    // getDocumentHistory();//for document history table
 
 
-    resetfeedback(); //Reset Feedback Modal Table.
+    // resetfeedback(); //Reset Feedback Modal Table.
     feedbackList(); // Feedback List.
 
     getCustomerLoanCounts();//to get closed customer details

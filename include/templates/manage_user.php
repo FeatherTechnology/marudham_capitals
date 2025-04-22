@@ -125,8 +125,7 @@ $del=$_GET['del'];
 if($del>0)
 {
 	$userObj->deleteUser($mysqli,$del, $userid); 
-	//die;
-	?>
+?>
 	<script>location.href='<?php echo $HOSTPATH;  ?>edit_manage_user&msc=3';</script>
 <?php	
 }
@@ -198,6 +197,7 @@ if($idupd>0)
 			$doc_rec_access 				= $getUser['doc_rec_access'];
 			$updatemodule 				= $getUser['updatemodule'];
 			$update_screen 				= $getUser['update_screen'];
+			$update_screen_id 				= $getUser['update_screen_id'];
 			$concernmodule          		     = $getUser['concernmodule'];
 			$concern_creation          		     = $getUser['concern_creation'];
 			$concern_solution          		     = $getUser['concern_solution'];
@@ -241,9 +241,6 @@ if($idupd>0)
 		}
 	}
 }
-// print_r($getUser);
-
-
 ?>
 
 <!-- Page header start -->
@@ -265,23 +262,23 @@ if($idupd>0)
 <div class="main-container">
 	<!--form start-->
 	<form id = "manage_user_form" name="manage_user_form" action="" method="post" enctype="multipart/form-data"> 
-		<input type="hidden" class="form-control" value="<?php if(isset($idupd)) echo $idupd; ?>"  id="id" name="id" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if(isset($user_id)) echo $user_id; ?>"  id="user_id_upd" name="user_id_upd" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if(isset($role)) echo $role; ?>"  id="role_upd" name="role_upd" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if(isset($role_type)) echo $role_type; ?>"  id="role_type_upd" name="role_type_upd" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if(isset($dir_id)) echo $dir_id; ?>"  id="dir_id_upd" name="dir_id_upd" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if(isset($ag_id)) echo $ag_id; ?>"  id="ag_id_upd" name="ag_id_upd" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if(isset($staff_id)) echo $staff_id; ?>"  id="staff_id_upd" name="staff_id_upd" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if(isset($company_id)) echo $company_id; ?>"  id="company_id_upd" name="company_id_upd" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if(isset($branch_id)) echo $branch_id; ?>"  id="branch_id_upd" name="branch_id_upd" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if(isset($agentforstaff)) echo $agentforstaff; ?>"  id="agentforstaff_upd" name="agentforstaff_upd" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if(isset($loan_cat)) echo $loan_cat; ?>"  id="loan_cat_upd" name="loan_cat_upd" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if(isset($agent_id)) echo $agent_id; ?>"  id="agent_id_upd" name="agent_id_upd" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if(isset($line_id)) echo $line_id; ?>"  id="line_id_upd" name="line_id_upd" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if(isset($group_id)) echo $group_id; ?>"  id="group_id_upd" name="group_id_upd" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if(isset($bank_details)) echo $bank_details; ?>"  id="bank_details_upd" name="bank_details_upd" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if(isset($promotion_access)) echo $promotion_access; ?>"  id="promotion_access_upd" name="promotion_access_upd" aria-describedby="id" placeholder="Enter id">
-		<input type="hidden" class="form-control" value="<?php if(isset($due_followup_lines)) echo $due_followup_lines; ?>"  id="due_followup_lines_upd" name="due_followup_lines_upd" aria-describedby="id" placeholder="Enter id">
+		<input type="hidden" class="form-control" value="<?php if(isset($idupd)) echo $idupd; ?>"  id="id" name="id">
+		<input type="hidden" class="form-control" value="<?php if(isset($user_id)) echo $user_id; ?>"  id="user_id_upd" name="user_id_upd">
+		<input type="hidden" class="form-control" value="<?php if(isset($role)) echo $role; ?>"  id="role_upd" name="role_upd">
+		<input type="hidden" class="form-control" value="<?php if(isset($role_type)) echo $role_type; ?>"  id="role_type_upd" name="role_type_upd">
+		<input type="hidden" class="form-control" value="<?php if(isset($dir_id)) echo $dir_id; ?>"  id="dir_id_upd" name="dir_id_upd">
+		<input type="hidden" class="form-control" value="<?php if(isset($ag_id)) echo $ag_id; ?>"  id="ag_id_upd" name="ag_id_upd">
+		<input type="hidden" class="form-control" value="<?php if(isset($staff_id)) echo $staff_id; ?>"  id="staff_id_upd" name="staff_id_upd">
+		<input type="hidden" class="form-control" value="<?php if(isset($company_id)) echo $company_id; ?>"  id="company_id_upd" name="company_id_upd">
+		<input type="hidden" class="form-control" value="<?php if(isset($branch_id)) echo $branch_id; ?>"  id="branch_id_upd" name="branch_id_upd">
+		<input type="hidden" class="form-control" value="<?php if(isset($agentforstaff)) echo $agentforstaff; ?>"  id="agentforstaff_upd" name="agentforstaff_upd">
+		<input type="hidden" class="form-control" value="<?php if(isset($loan_cat)) echo $loan_cat; ?>"  id="loan_cat_upd" name="loan_cat_upd">
+		<input type="hidden" class="form-control" value="<?php if(isset($agent_id)) echo $agent_id; ?>"  id="agent_id_upd" name="agent_id_upd">
+		<input type="hidden" class="form-control" value="<?php if(isset($line_id)) echo $line_id; ?>"  id="line_id_upd" name="line_id_upd">
+		<input type="hidden" class="form-control" value="<?php if(isset($group_id)) echo $group_id; ?>"  id="group_id_upd" name="group_id_upd">
+		<input type="hidden" class="form-control" value="<?php if(isset($bank_details)) echo $bank_details; ?>"  id="bank_details_upd" name="bank_details_upd">
+		<input type="hidden" class="form-control" value="<?php if(isset($promotion_access)) echo $promotion_access; ?>"  id="promotion_access_upd" name="promotion_access_upd">
+		<input type="hidden" class="form-control" value="<?php if(isset($due_followup_lines)) echo $due_followup_lines; ?>"  id="due_followup_lines_upd" name="due_followup_lines_upd">
 		<!-- Row start -->
 		<div class="row gutters">
 			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
@@ -522,6 +519,7 @@ if($idupd>0)
 												<option value="1" <?php if($report_access == '1') echo 'selected';?> >Individual</option>
 												<option value="2" <?php if($report_access == '2') echo 'selected';?> >Overall</option>
 											</select>
+											<span class="text-danger" style='display:none' id='reportAccessCheck'>Please select Report Access</span>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
@@ -850,9 +848,9 @@ if($idupd>0)
                                 <label class="custom-control-label" for="update">Update</label>
                             </div>
                         </div>
-						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 update_screen_div"  style='display:block;'>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 update_screen_div"  style='display:none;'>
                             <div class="custom-control custom-checkbox">
-								<input type='hidden' id='update_screen_id' name='update_screen_id' value=''>
+								<input type='hidden' id='update_screen_id' name='update_screen_id' value='<?php if(isset($update_screen_id)) echo $update_screen_id; ?>'>
                                 <select class='form-control' id='update_screen' name='update_screen' multiple>
 									<option value="">Select Update screen</option>
 									<option value="1">Customer Profile</option>
