@@ -534,7 +534,7 @@ if($idupd>0)
 												<option value="2">New</option>
 												<option value="3">Repromotion</option>
 											</select>
-											<span class="text-danger" style='display:none' id='proCheck'>Please select Group Name</span>
+											<span class="text-danger" style='display:none' id='proCheck'>Please select Promotion Activity Access</span>
                                         </div>
                                     </div>
 								</div>
