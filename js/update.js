@@ -459,7 +459,25 @@ $(document).ready(function () {
 
 $(function () {
     //  $('.icon-chevron-down1').parent().next('div').slideUp(); //To collapse all card on load
+    let selectedScreens = $('#selected_screens').val();
+    
+    // Convert the string to an array
+    let selectedArray = selectedScreens.split(',');
+    
+    if (selectedArray.length === 1 && selectedArray.includes('1')) {
+        callCustomerProfileFunctn();
 
+    } else if (selectedArray.length === 1 && selectedArray.includes('2')) {
+        getDocumentHistory();
+
+    } else if (selectedArray.includes('1') && selectedArray.includes('2')) {
+        callCustomerProfileFunctn(); getDocumentHistory();
+    
+    }
+    
+}); //OnLoad function.
+
+function callCustomerProfileFunctn(){
     getImage(); // To show customer image when window onload.
 
     // resetFamInfo(); //Call Family Info Table Initially.
@@ -473,12 +491,6 @@ $(function () {
     resetbankinfoList(); //Bank Info List.
 
     resetkycinfoList(); //KYC Info List.
-
-    //Documentation
-
-    // getDocumentHistory();//for document history table
-
-
     // resetfeedback(); //Reset Feedback Modal Table.
     feedbackList(); // Feedback List.
 
@@ -566,8 +578,12 @@ $(function () {
         ],
     });
 
+}
 
-});
+function callDocFunctn(){
+    //Documentation
+    getDocumentHistory();//for document history table
+}
 
 function getImage() { // Cus img show onload.
     let imgName = $('#cus_image').val();
@@ -2374,7 +2390,7 @@ function getDocumentHistory() {
                 $('.dropdown').not($(this).parent()).children().css('border-color', '');// to set other dropdown buttons as normal
                 $(this).parent().prev().css('border-color', 'red');// showing selected loan's dropdown button highlighted
 
-                $('.edit-document-card').show();
+                // $('.edit-document-card').show();
                 // $('.documentation-card').hide();
 
                 var req_id = $(this).data('reqid'); var cus_id = $(this).data('cusid'); var cus_name = $(this).data('cusname')
@@ -2494,6 +2510,15 @@ function resetSignedDocList(req_id, cus_id) {
             $("#doc_Count").val('');
             $("#signedID").val('');
             $("#signdoc_upd").val('');
+
+            let hasRecords = ($('#signed_table').DataTable().rows().count() > 0);
+            if(hasRecords){
+                $('#signed_doc_card').show();
+
+            } else{
+                $('#signed_doc_card').hide();
+
+            }
         }
     }).then(function () {
         $('#signed_table').DataTable({
@@ -2539,6 +2564,15 @@ function resetChequeList(req_id, cus_id) {
             $("#cheque_count").val('');
             $("#cheque_upd").val('');
             $("#chequeID").val('');
+            
+            let hasRecords = ($('#cheque_table').DataTable().rows().count() > 0);
+            if(hasRecords){
+                $('#cheque_info_card').show();
+
+            } else{
+                $('#cheque_info_card').hide();
+
+            }
         }
     }).then(function () {
         $('#cheque_table').DataTable({
@@ -2581,6 +2615,15 @@ function resetGoldList(req_id, cus_id) {
             $("#gold_Weight").val('');
             $("#gold_Value").val('');
             $("#goldID").val('');
+             
+            let hasRecords = ($('#gold_table').DataTable().rows().count() > 0);
+            if(hasRecords){
+                $('#gold_info_card').show();
+
+            } else{
+                $('#gold_info_card').hide();
+
+            }
         }
     }).then(function () {
         $('#gold_table').DataTable({
@@ -2625,6 +2668,15 @@ function resetDocmentList(req_id, cus_id) {
             $("#doc_relation").val('');
             $("#document_info_upd").val('');
             $("#doc_info_id").val('');
+            
+            let hasRecords = ($('#document_table').DataTable().rows().count() > 0);
+            if(hasRecords){
+                $('#documents_info_card').show();
+
+            } else{
+                $('#documents_info_card').hide();
+
+            }
         }
     }).then(function () {
         $('#document_table').DataTable({
@@ -2918,6 +2970,16 @@ function getMortgageInfo(req_id, cus_id) {
             } else {
                 $('#mortgage_div').hide();
             }
+
+            // let mort = ($('#mortgage_process').val() == '0') ? true : false;
+            // if(mort){
+            //     $('#mortgage_info_card').show();
+        
+            // } else{
+            //     $('#mortgage_info_card').hide();
+        
+            // }
+
         }
     })
 }
@@ -2979,6 +3041,16 @@ function getEndorsementInfo(req_id, cus_id) {
             } else {
                 $('#end_process_div').hide();
             }
+            
+            // let endorse = ($('#endorsement_process').val() == '0') ? true : false;
+            // if(endorse){
+            //     $('#endorsement_info_card').show();
+
+            // } else{
+            //     $('#endorsement_info_card').hide();
+
+            // }
+
         }
     })
 }

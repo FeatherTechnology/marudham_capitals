@@ -243,6 +243,7 @@ if (sizeof($documentationInfo) > 0) {
 
 	<div class="col-md-12">
 		<div class="form-group" style="text-align:center">
+			<input type="hidden" name="selected_screens" id="selected_screens" value="<?php if (isset($selected_screens)) { echo implode(',', $selected_screens); } ?>" > 
 			<?php if (!empty($selected_screens)) { ?>
 				<?php if (in_array("1", $selected_screens)) { ?>
 					<input type="radio" name="verification_type" id="cus_profile" value="cus_profile">
@@ -839,7 +840,7 @@ if (sizeof($documentationInfo) > 0) {
 					<!-- Property info START -->
 					<div class="card">
 						<div class="card-header"> Property info <span style="font-weight:bold" class=""></span>
-							<button type="button" class="btn btn-primary" id="property_add" name="property_add" data-toggle="modal" data-target=".addproperty" style="padding: 5px 35px;  float: right; " onclick="propertyHolder()" tabindex='43'><span class="icon-add"></span></button>
+							<button type="button" class="btn btn-primary" id="property_add" name="property_add" data-toggle="modal" data-target=".addproperty" style="padding: 5px 35px;  float: right; " onclick="propertyHolder(); resetpropertyInfo();" tabindex='43'><span class="icon-add"></span></button>
 						</div>
 						<span class="text-danger" style='display:none' id='property_infoCheck'>Please Fill Property Info </span>
 						<div class="card-body">
@@ -874,7 +875,7 @@ if (sizeof($documentationInfo) > 0) {
 					<!-- Bank info START -->
 					<div class="card">
 						<div class="card-header"> Bank info <span style="font-weight:bold" class=""></span>
-							<button type="button" class="btn btn-primary" id="bank_add" name="bank_add" data-toggle="modal" data-target=".addbank" style="padding: 5px 35px;  float: right;" tabindex='44'><span class="icon-add"></span></button>
+							<button type="button" class="btn btn-primary" id="bank_add" name="bank_add" data-toggle="modal" data-target=".addbank" style="padding: 5px 35px;  float: right;" tabindex='44' onclick="resetbankInfo();"><span class="icon-add"></span></button>
 						</div>
 						<span class="text-danger" style='display:none' id='bank_infoCheck'>Please Fill Bank Info </span>
 						<div class="card-body">
@@ -1063,7 +1064,7 @@ if (sizeof($documentationInfo) > 0) {
 							<hr>
 							<div class="row">
 								<div class="col-12">
-									<button type="button" class="btn btn-primary" id="add_cus_label" name="add_cus_label" data-toggle="modal" data-target=".addCusLabel" style="padding: 5px 35px; float: right;" tabindex="56"><span class="icon-add"></span></button>
+									<button type="button" class="btn btn-primary" id="add_cus_label" name="add_cus_label" data-toggle="modal" data-target=".addCusLabel" style="padding: 5px 35px; float: right;" tabindex="56" onclick="resetfeedback();"><span class="icon-add"></span></button>
 								</div>
 							</div> <br>
 
@@ -1189,7 +1190,7 @@ if (sizeof($documentationInfo) > 0) {
 				<!-- Document History END -->
 
 				<!-- Signed Doc Info START -->
-				<div class="card edit-document-card" style='display:none'>
+				<div class="card edit-document-card" id="signed_doc_card" style='display:none'>
 					<div class="card-header"> Signed Doc Info
 						<button type="button" class="btn btn-primary" id="add_sign_doc" name="add_sign_doc" data-toggle="modal" data-target=".addSignDoc" style="padding: 5px 35px;  float: right;" tabindex="6"><span class="icon-add"></span></button>
 					</div>
@@ -1211,7 +1212,7 @@ if (sizeof($documentationInfo) > 0) {
 				<!-- Signed Doc Info END -->
 
 				<!-- Cheque Info START -->
-				<div class="card edit-document-card" style='display:none'>
+				<div class="card edit-document-card" id="cheque_info_card" style='display:none'>
 					<div class="card-header"> Cheque Info
 						<button type="button" class="btn btn-primary" id="add_Cheque" name="add_Cheque" data-toggle="modal" data-target=".addCheque" style="padding: 5px 35px;  float: right;" tabindex="7"><span class="icon-add"></span></button>
 					</div>
@@ -1234,7 +1235,7 @@ if (sizeof($documentationInfo) > 0) {
 
 				<!-- Mortgage Info START-->
 				<form id="mort_form" name="mort_form" action="" method="post" enctype="multipart/form-data">
-					<div class="card edit-document-card" style='display:none'>
+					<div class="card edit-document-card" id="mortgage_info_card" style='display:none'>
 						<div class="card-header"> Mortgage Info </div>
 						<div class="card-body" id="mortdivform">
 							<div class="row">
@@ -1410,7 +1411,7 @@ if (sizeof($documentationInfo) > 0) {
 
 				<!-- Endorsement Info START-->
 				<form id="end_form" name="end_form" action="" method="post" enctype="multipart/form-data">
-					<div class="card edit-document-card" style='display:none'>
+					<div class="card edit-document-card" id="endorsement_info_card" style='display:none'>
 						<div class="card-header"> Endorsement Info </div>
 						<div class="card-body">
 							<div class="row">
@@ -1576,7 +1577,7 @@ if (sizeof($documentationInfo) > 0) {
 				</form>
 				<!-- Endorsement Info  End-->
 				<!-- Gold Info Start -->
-				<div class="card edit-document-card" style='display:none'>
+				<div class="card edit-document-card" id="gold_info_card" style='display:none'>
 					<div class="card-header"> Gold Info
 						<button type="button" class="btn btn-primary" id="add_gold" name="add_gold" data-toggle="modal" data-target=".addGold" style="padding: 5px 35px;  float: right;" tabindex='41'><span class="icon-add"></span></button>
 					</div>
@@ -1594,7 +1595,7 @@ if (sizeof($documentationInfo) > 0) {
 				<!-- Gold Info End -->
 				<!-- Documents Info START-->
 
-				<div class="card edit-document-card" style='display:none'>
+				<div class="card edit-document-card" id="documents_info_card" style='display:none'>
 					<div class="card-header"> Documents Info
 						<button type="button" class="btn btn-primary" id="add_document" name="add_document" data-toggle="modal" data-target=".addDocument" style="padding: 5px 35px;  float: right;" tabindex="42"><span class="icon-add"></span></button>
 					</div>
