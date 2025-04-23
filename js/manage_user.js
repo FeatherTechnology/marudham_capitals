@@ -1039,6 +1039,8 @@ function multiselectValue() {
     var group = $('#group').val();
     if (group == '') { event.preventDefault(); $('#groupCheck').show(); } else { $('#groupCheck').hide(); }
     //////////////////////////////////////////////////
+    var isPromotionChecked = $('#promotion_activity').is(':checked');
+    if(isPromotionChecked){
     var promotion_access = promotionAccess.getValue();
     var pro_acc = '';
     for (var i = 0; i < promotion_access.length; i++) {
@@ -1052,7 +1054,8 @@ function multiselectValue() {
     var sortedStr = arr.join(",");
     $('#pro_aty_access_id').val(sortedStr);
     var pro_acc = $('#pro_aty_access_id').val();
-    if (pro_acc == '') { event.preventDefault(); $('#proCheck').show(); } else { $('#proCheck').hide(); }
+    if (pro_acc == '') { event.preventDefault(); $('#proCheck').show(); } else { $('#proCheck').hide(); }  
+}
     //////////////////////////////////////////////////
 }
 
