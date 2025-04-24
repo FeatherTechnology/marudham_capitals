@@ -1,3 +1,5 @@
+let storeDocInfo = {};
+
 $(document).ready(function () {
 
     //Show Remark and Address when select other in Relationship.
@@ -455,6 +457,48 @@ $(document).ready(function () {
         }
     })
 
+    //////////////////////////////////////////// Documentation START //////////////////////////////////////////////
+    ///Hide AND Show doc Card START
+    $('#choose_document').change(function() {
+        let doc = $(this).val();
+    
+        // Hide all sections initially
+        $('.edit-document-card').hide();
+    
+        // Show the selected document section
+        switch (doc) {
+            case '1': $('#signed_doc_card').show(); break;
+            case '2': $('#cheque_info_card').show(); break;
+            case '3': $('#mortgage_info_card').show(); break;
+            case '4': $('#endorsement_info_card').show(); break;
+            case '5': $('#gold_info_card').show(); break;
+            case '6': $('#documents_info_card').show(); break;
+            default: $('.edit-document-card').hide();
+        }
+    
+        // Check if previous data exists in storeDocInfo and show relevant sections
+        if (storeDocInfo.signDocInfo) {
+            $('#signed_doc_card').show();
+        } 
+        if (storeDocInfo.chequeInfo) {
+            $('#cheque_info_card').show();
+        } 
+        if (storeDocInfo.mortgageInfo) {
+            $('#mortgage_info_card').show();
+        } 
+        if (storeDocInfo.endorseInfo) {
+            $('#endorsement_info_card').show();
+        } 
+        if (storeDocInfo.goldInfo) {
+            $('#gold_info_card').show();
+        }
+        if (storeDocInfo.docInfo) {
+            $('#documents_info_card').show();
+        }
+    });
+    ///Hide AND Show doc Card END
+    //////////////////////////////////////////// Documentation END //////////////////////////////////////////////
+
 });   ////////Document Ready End
 
 $(function () {
@@ -480,18 +524,14 @@ $(function () {
 function callCustomerProfileFunctn(){
     getImage(); // To show customer image when window onload.
 
-    // resetFamInfo(); //Call Family Info Table Initially.
-    // resetFamDetails();
-    // closeFamModal();
+    closeFamModal();
 
-    // resetpropertyInfo() // Property Info Modal Table Reset.
     resetPropertyinfoList() //Property Info List.
 
-    // resetbankInfo(); // Bank info Modal Table Reset.
     resetbankinfoList(); //Bank Info List.
 
     resetkycinfoList(); //KYC Info List.
-    // resetfeedback(); //Reset Feedback Modal Table.
+
     feedbackList(); // Feedback List.
 
     getCustomerLoanCounts();//to get closed customer details
@@ -597,8 +637,6 @@ function getImage() { // Cus img show onload.
     } else {
         $('#imgshows').attr('src', 'img/avatar.png');
     }
-
-    closeFamModal();
 }
 
 function getCustomerLoanCounts() {
@@ -666,8 +704,6 @@ $(document).on("click", "#submitFamInfoBtn", function () {
                 }
 
                 resetFamInfo();
-                resetFamDetails();
-                closeFamModal();
             }
         });
     }
@@ -809,9 +845,6 @@ $("body").on("click", "#verification_fam_delete", function () {
                     setTimeout(function () {
                         $('#FamDeleteOk').fadeOut('fast');
                     }, 2000);
-                    resetFamInfo();
-                    resetFamDetails();
-                    closeFamModal();
                 }
                 else {
 
@@ -819,11 +852,10 @@ $("body").on("click", "#verification_fam_delete", function () {
                     setTimeout(function () {
                         $('#FamDeleteNotOk').fadeOut('fast');
                     }, 2000);
-                    resetFamInfo();
-                    resetFamDetails();
-                    closeFamModal();
 
                 }
+
+                resetFamInfo();
             }
         });
     }
@@ -834,7 +866,6 @@ $("body").on("click", "#verification_fam_delete", function () {
 //FamilyModal Close
 function closeFamModal() {
 
-    let cus_id = $('#cus_id').val();
     $.post('verificationFile/verificationFam.php', { "cus_id": $('#cus_id').val() }, function (data) {
 
         let guarentor_name_upd = $('#guarentor_name_upd').val();
@@ -850,7 +881,7 @@ function closeFamModal() {
         }
 
     }, 'json')
-    resetFamInfo();
+
     resetFamDetails();
 }
 
@@ -1385,6 +1416,7 @@ function resetkycInfo() {
         success: function (html) {
             $("#kycTable").empty();
             $("#kycTable").html(html);
+
             $(".fam_mem_div").hide();
             $('.name_div').hide();
             $("#fam_mem").val('');
@@ -1414,32 +1446,33 @@ $("body").on("click", "#verification_kyc_edit", function () {
 
             $("#kycID").val(result['id']);
             $("#proofof").val(result['proofOf']);
-            if (result['proofOf'] == 2) {
-                getfamilyforKyc();
-                setTimeout(() => {
-                    $("#fam_mem").val(result['fam_mem']);
-                }, 1000);
+
+            if (result['proofOf'] == 1) { //Guarentor
+                let famId = $("#guarentor_name").val();
+                $.post('verificationFile/verification_guarantor.php', { "famid": famId}, function (response) {
+                    $('.name_div').show();
+                    $('#proofofname').val(response['famname']);
+                }, 'json')
+
+                $("#fam_mem").val('');
+                $('.fam_mem_div').hide();
+                
+            } else if (result['proofOf'] == 2) { //Family Members
+                getfamilyforKyc(result['fam_mem']);
+                // setTimeout(() => {
+                //     $("#fam_mem").val(result['fam_mem']);
+                // }, 1000);
                 $('.fam_mem_div').show();
                 $('.name_div').hide();
-            } else {
+                
+            } else { //Customer
                 $("#fam_mem").val('');
                 $('.fam_mem_div').hide();
                 $('.name_div').show();
                 let cus_name = $('#cus_name').val();
                 $('#proofofname').val(cus_name);
+                
             }
-            if (result['proofOf'] == 1) {
-                $("#fam_mem").val(result['fam_mem']);
-                setTimeout(() => {
-                    let famId = $("#guarentor_name").val();
-                    $.post('verificationFile/verification_guarantor.php', { "famid": famId}, function (response) {
-                        $('.name_div').show();
-                        $('#proofofname').val(response['famname']);
-                    }, 'json')
-                }, 700);
-                $("#fam_mem").val('');
-                $('.fam_mem_div').hide();
-            } 
       
             $("#proof_type").val(result['proofType']);
             $("#proof_number").val(result['proofNo']);
@@ -1498,8 +1531,6 @@ function resetkycinfoList() {
         success: function (html) {
             $("#kycListTable").empty();
             $("#kycListTable").html(html);
-
-            resetkycInfo();
         }
     });
 }
@@ -1509,26 +1540,26 @@ $('#proofof').change(function () {
     let cus_id = $('#cus_id').val();
     let proof = $('#proofof').val();
     let famId = document.querySelector("#guarentor_name").value;
+    
     if (proof == '0') {
         $.post('verificationFile/get_proof_of_name.php', { req_id, cus_id, proof }, function (response) {
             $('.name_div').show();
             $('#proofofname').val(response);
         }, 'json')
-    } else {
-        $('.name_div').hide()
-    }
-    if (proof == '1') {
+        
+    } else if (proof == '1') {
         $.post('verificationFile/verification_guarantor.php', { "famid": famId}, function (response) {
             $('.name_div').show();
             $('#proofofname').val(response['famname']);
         }, 'json')
+        
     } else {
         $('.name_div').hide()
     }
+
     if (proof != '2' && proof != '') { // if proof of is not family members then check for other's proofs entered already 
         $('.fam_mem_div').hide();//hide fam div on other proof of selected
         $('#fam_mem').val('');
-
         $.ajax({
             url: 'verificationFile/verification_proof_type.php',
             type: 'POST',
@@ -1545,17 +1576,22 @@ $('#proofof').change(function () {
 
             }
         });
+        
     } else if (proof == '2') { // if proof of is family members then show family members dropdown 
         getfamilyforKyc();
+        
     } else {
         $('.fam_mem_div').hide();
         $('#fam_mem').val('');
+        
     }
+    
+});
 
-})
-function getfamilyforKyc() {
+function getfamilyforKyc(famMemEdit) {
     let req_id = $('#req_id').val();
     let cus_id = $('#cus_id').val();
+    
     $.ajax({
         url: 'verificationFile/verification_proof_fam.php',
         data: { "reqId": req_id, cus_id },
@@ -1567,13 +1603,17 @@ function getfamilyforKyc() {
             $('#fam_mem').empty();
             $('#fam_mem').append(`<option value=""> Select Family Member </option>`);
             $.each(response, function (index, value) {
-                $('#fam_mem').append("<option value='" + value.id + "'>" + value.fam_mem + "</option>");
+                let selected ='';
+                if(famMemEdit == value.id){
+                    selected = 'selected';
+                }
+
+                $('#fam_mem').append("<option value='" + value.id + "' "+ selected +">" + value.fam_mem + "</option>");
             });
         }
 
     }).then(function () {
-        $('#fam_name').unbind('click');
-        $('#fam_mem').change(function () {
+        $('#fam_mem').off().change(function () {
             let req_id = $('#req_id').val(); let proof = $('#proofof').val(); let fam_name = $(this).val();
             $.ajax({
                 url: 'verificationFile/verification_proof_type.php',
@@ -2390,6 +2430,7 @@ function getDocumentHistory() {
                 $('.dropdown').not($(this).parent()).children().css('border-color', '');// to set other dropdown buttons as normal
                 $(this).parent().prev().css('border-color', 'red');// showing selected loan's dropdown button highlighted
 
+                $('.choosing-document-card').show();
                 // $('.edit-document-card').show();
                 // $('.documentation-card').hide();
 
@@ -2519,8 +2560,12 @@ function resetSignedDocList(req_id, cus_id) {
                 $('#signed_doc_card').hide();
 
             }
+
+            storeDocInfo.signDocInfo = hasRecords;
+
         }
     }).then(function () {
+        $('#signed_table').DataTable().destroy();
         $('#signed_table').DataTable({
             'processing': true,
             'iDisplayLength': 5,
@@ -2573,8 +2618,12 @@ function resetChequeList(req_id, cus_id) {
                 $('#cheque_info_card').hide();
 
             }
+
+            storeDocInfo.chequeInfo = hasRecords;
+
         }
     }).then(function () {
+        $('#cheque_table').DataTable().destroy();
         $('#cheque_table').DataTable({
             'processing': true,
             'iDisplayLength': 5,
@@ -2624,8 +2673,12 @@ function resetGoldList(req_id, cus_id) {
                 $('#gold_info_card').hide();
 
             }
+
+            storeDocInfo.goldInfo = hasRecords;
+
         }
     }).then(function () {
+        $('#gold_table').DataTable().destroy();
         $('#gold_table').DataTable({
             'processing': true,
             'iDisplayLength': 5,
@@ -2677,8 +2730,12 @@ function resetDocmentList(req_id, cus_id) {
                 $('#documents_info_card').hide();
 
             }
+            
+            storeDocInfo.docInfo = hasRecords;
+
         }
     }).then(function () {
+        $('#document_table').DataTable().destroy();
         $('#document_table').DataTable({
             'processing': true,
             'iDisplayLength': 5,
@@ -2971,14 +3028,16 @@ function getMortgageInfo(req_id, cus_id) {
                 $('#mortgage_div').hide();
             }
 
-            // let mort = ($('#mortgage_process').val() == '0') ? true : false;
-            // if(mort){
-            //     $('#mortgage_info_card').show();
+            let mort = ($('#mortgage_process').val() == '0') ? true : false;
+            if(mort){
+                $('#mortgage_info_card').show();
         
-            // } else{
-            //     $('#mortgage_info_card').hide();
+            } else{
+                $('#mortgage_info_card').hide();
         
-            // }
+            }
+
+            storeDocInfo.mortgageInfo = mort;
 
         }
     })
@@ -3042,14 +3101,16 @@ function getEndorsementInfo(req_id, cus_id) {
                 $('#end_process_div').hide();
             }
             
-            // let endorse = ($('#endorsement_process').val() == '0') ? true : false;
-            // if(endorse){
-            //     $('#endorsement_info_card').show();
+            let endorse = ($('#endorsement_process').val() == '0') ? true : false;
+            if(endorse){
+                $('#endorsement_info_card').show();
 
-            // } else{
-            //     $('#endorsement_info_card').hide();
+            } else{
+                $('#endorsement_info_card').hide();
 
-            // }
+            }
+
+            storeDocInfo.endorseInfo = endorse;
 
         }
     })

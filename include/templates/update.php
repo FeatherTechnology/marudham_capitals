@@ -529,7 +529,7 @@ if (sizeof($documentationInfo) > 0) {
 					<!-- Family info START -->
 					<div class="card">
 						<div class="card-header">Family Info <span style="font-weight:bold" class=""></span>
-							<button type="button" class="btn btn-primary" id="add_group" name="add_group" data-toggle="modal" data-target=".addGroup" style="padding: 5px 35px; float: right;" tabindex='21'><span class="icon-add"></span></button>
+							<button type="button" class="btn btn-primary" id="add_group" name="add_group" data-toggle="modal" data-target=".addGroup" style="padding: 5px 35px; float: right;" tabindex='21' onclick="resetFamInfo();"><span class="icon-add"></span></button>
 						</div>
 						<span class="text-danger" style='display:none' id='family_infoCheck'>Please Fill Family Info </span>
 						<div class="card-body">
@@ -913,7 +913,7 @@ if (sizeof($documentationInfo) > 0) {
 					<!-- KYC info START -->
 					<div class="card">
 						<div class="card-header"> KYC info<span class="required">&nbsp;*</span><span style="font-weight:bold" class=""></span>
-							<button type="button" class="btn btn-primary" id="kyc_add" name="kyc_add" data-toggle="modal" data-target=".addkyc" style="padding: 5px 35px; float: right; " tabindex='45'><span class="icon-add"></span></button>
+							<button type="button" class="btn btn-primary" id="kyc_add" name="kyc_add" data-toggle="modal" data-target=".addkyc" style="padding: 5px 35px; float: right; " tabindex='45' onclick="resetkycInfo();"><span class="icon-add"></span></button>
 						</div>
 						<span class="text-danger" style='display:none' id='kyc_infoCheck'>Please Fill KYC Info </span>
 						<div class="card-body">
@@ -1188,6 +1188,30 @@ if (sizeof($documentationInfo) > 0) {
 					</div>
 				</div>
 				<!-- Document History END -->
+
+				<!-- Choosing Document START -->
+				<div class="card choosing-document-card" style='display:none'>
+					<div class="card-header"> Documents</div>
+					<div class="card-body">
+						<div class="row">
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+								<div class="form-group">
+									<label for="doc_id">Documents</label>
+									<select class="form-control" name="choose_document" id="choose_document">
+										<option value="0">Select Document</option>
+										<option value="1">Signed Doc</option>
+										<option value="2">Cheque</option>
+										<option value="3">Mortgage</option>
+										<option value="4">Endorsement</option>
+										<option value="5">Gold</option>
+										<option value="6">Documents</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Choosing Document END -->
 
 				<!-- Signed Doc Info START -->
 				<div class="card edit-document-card" id="signed_doc_card" style='display:none'>
@@ -1794,7 +1818,7 @@ if (sizeof($documentationInfo) > 0) {
 				</div>
 				</br>
 
-				<div id="updatedFamTable" class=" table-responsive">
+				<div id="updatedFamTable" class="table-responsive">
 					<table class="table custom-table modalTable">
 						<thead>
 							<tr>
@@ -2747,7 +2771,7 @@ if (sizeof($documentationInfo) > 0) {
 
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
-							<label for="upload"> Upload </label>
+							<label for="upload"> Upload </label> <span class="required">&nbsp;*</span>
 							<input type="file" onchange="compressImage(this,400)" class="form-control" id="upload" name="upload" accept=".pdf,.jpg,.png,.jpeg" tabindex='1'>
 							<span class="text-danger" id="proofUploadCheck" style="display:none"> Please Upload File </span>
 						</div>
