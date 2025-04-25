@@ -48,13 +48,13 @@ if (isset($_POST['comm_date'])) {
     $comm_date = $_POST['comm_date']; // Get the comm_date from the form
 
     if($comm_date == '2'){ //Before Date
-        $qry_cndtn = "AND cm.comm_date < '$current_date' AND cm.comm_date IS NOT NULL or cm.comm_date!='0000-00-00' ";
+        $qry_cndtn = "AND cm.comm_date < '$current_date' AND (cm.comm_date IS NOT NULL or cm.comm_date != '0000-00-00') ";
 
     }elseif($comm_date =='3'){ //Today
         $qry_cndtn = "AND cm.comm_date = '$current_date' ";
 
     }elseif($comm_date =='4'){ //After Date
-        $qry_cndtn = "AND cm.comm_date > '$current_date' AND cm.comm_date IS NOT NULL   or cm.comm_date!='0000-00-00' ";
+        $qry_cndtn = "AND cm.comm_date > '$current_date' AND (cm.comm_date IS NOT NULL OR cm.comm_date != '0000-00-00') ";
         
     }
     elseif($comm_date =='5'){ //After Date

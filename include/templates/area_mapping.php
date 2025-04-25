@@ -370,7 +370,8 @@ if (isset($_GET['type'])) {
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
 											<label for="branch2">Branch Name</label>&nbsp;<span class="text-danger">*</span>
-											<select type="text" class="form-control" id="branch2" name="branch2" tabindex='3'>
+											<input type="hidden" id="branch2" name="branch2" value="">
+											<select type="text" class="form-control" id="branch_name2" name="branch_name2" multiple tabindex='3'>
 												<option value="">Select Branch</option>
 											</select>
 										</div>

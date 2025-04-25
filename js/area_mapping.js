@@ -41,6 +41,13 @@ const intance2 = new Choices('#sub_area_dummy2', {
     placeholderValue: 'Select Sub Area Name',
     allowHTML: true
 });
+const branch_name2 = new Choices('#branch_name2', {
+    removeItemButton: true,
+    noChoicesText: null,
+    placeholder: true,
+    placeholderValue: 'Select Branch Name',
+    allowHTML: true
+});
 const dueLine = new Choices('#due_line', {
     removeItemButton: true,
     noChoicesText: null,
@@ -231,16 +238,27 @@ $(document).ready(function () {
 
     // ************************************************************** Due Followup Mapping ****************************************************************** 
 
-    $('#branch2').change(function(){
-        let branchId = $(this).val();
-        areaMultiselect2.clearStore();
-        intance2.clearStore();
-        dueLine.clearStore();
-        $('#cus_count, #loan_count').val('');
+    $('#branch_name2').change(function(){
+        // Get values from multiselect and sort
+        const branchList = branch_name2.getValue();
+        const branchSortedStr = branchList
+            .map(item => item.value)
+            .sort((a, b) => a - b)
+            .join(',');
+    
+        $('#branch2').val(branchSortedStr);
 
-        if(branchId !=''){
-            getLineNameDropdown(branchId);
+        if(branchSortedStr !=''){
+            getLineNameDropdown(branchSortedStr);
+
+        }else{
+            areaMultiselect2.clearStore();
+            intance2.clearStore();
+            dueLine.clearStore();
+            $('#cus_count, #loan_count').val('');
+            
         }
+
     });
     
     $('#area_dummy2').change(function () {
@@ -290,7 +308,7 @@ $(document).ready(function () {
         var sub_area_list = intance2.getValue();
 
         //Validation
-        var duefollowup_name = $('#duefollowup_name').val(); var company_name = $('#company_name2').val(); var branch = $('#branch2').val(); var cuscnt = $('#cus_count').val(); var loancnt = $('#loan_count').val();
+        var duefollowup_name = $('#duefollowup_name').val(); var company_name = $('#company_name2').val(); var cuscnt = $('#cus_count').val(); var loancnt = $('#loan_count').val();
         if (duefollowup_name == '' || company_name == '' || branch == '' || due_line.length == 0 || area_list.length == 0 || sub_area_list.length == 0 || cuscnt == '' || loancnt == '' ) {
             Swal.fire({
                 timerProgressBar: true,
@@ -301,6 +319,10 @@ $(document).ready(function () {
             });
             event.preventDefault();
         }
+
+        // Area line multi-select
+        const branchNameStr = getSortedCommaSeparatedValues(branch_name2);
+        $('#branch2').val(branchNameStr);
 
         // Area line multi-select
         const dueLineStr = getSortedCommaSeparatedValues(dueLine);
@@ -664,7 +686,6 @@ function getBranchDropdown1() {
 
 //Get BranchDropdown Based on Company id
 function getBranchDropdown2(company_id) {
-    var branch_id_upd = $('#branch_id_upd2').val();
     var company_id = (!$('#company_id_upd2').val()) ? $('#company_id2').val() : $('#company_id_upd2').val();
     $.ajax({
         url: 'areaMapping/getBranchDropdown.php',
@@ -674,22 +695,23 @@ function getBranchDropdown2(company_id) {
         cache: false,
         success: function (response) {
 
-            $('#branch2').empty();
-            $('#branch2').append('<option value="">Select Branch</option>');
-            for (var i = 0; i < response.length; i++) {
-                var selected = '';
-                if (branch_id_upd != '' && branch_id_upd == response[i]['branch_id']) {
-                    selected = "selected";
+            branch_name2.clearStore();
+            var branch_id_upd = $('#branch_id_upd2').val().split(',');
+            $.each(response, function(index, val){
+                let selected ='';
+                if (branch_id_upd != '' && branch_id_upd.includes(val.branch_id.toString())) {
+                    selected = 'selected';
                 }
-                $('#branch2').append("<option value = '" + response[i]['branch_id'] + "' " + selected + " > " + response[i]['branch_name'] + " </option>");
-            }
-            {//To Order Alphabetically
-                var firstOption = $("#branch2 option:first-child");
-                $("#branch2").html($("#branch2 option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#branch2").prepend(firstOption);
-            }
+                let item = [
+                    {
+                        value: val.branch_id,
+                        label: val.branch_name,
+                        selected: selected,
+                    }
+                ];
+                branch_name2.setChoices(item);
+                branch_name2.init();
+            });
         }
     })
 }
