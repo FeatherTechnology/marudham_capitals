@@ -1295,6 +1295,9 @@
     if ($current_page == 'agent_report') { ?>
         <script src="js/agent_report.js"></script>
     <?php }
+    if ($current_page == 'no_due_pay_report') { ?>
+        <script src="js/no_due_pay_report.js"></script>
+    <?php }
     if ($current_page == 'due_list_report') { ?>
         <script src="js/due_list_report.js"></script>
     <?php }
