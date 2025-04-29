@@ -679,8 +679,8 @@
                 }
             });
             // accounts Loan Issue Table
-              // Loan Issue List
-              var accountsloanIssue_table = $('#accountsloanIssue_table').DataTable({
+            // Loan Issue List
+            var accountsloanIssue_table = $('#accountsloanIssue_table').DataTable({
                 "order": [
                     [0, "desc"]
                 ],
@@ -1772,6 +1772,74 @@
                             }, 1500)
                         }
                     });
+                }
+            });
+        }
+
+        function paginationFunction(table_name) {
+            var table = $(`#${table_name}`).DataTable();
+            var pagination = $(`#${table_name}_paginate`);
+            var pageInfo = table.page.info();
+            var currentPage = pageInfo.page;
+            var totalPages = pageInfo.pages;
+            var maxVisiblePages = 6;
+
+            pagination.empty();
+
+            // Page range
+            let startPage = currentPage + 1;
+            let endPage = startPage + maxVisiblePages - 1;
+
+            if (endPage > totalPages) {
+                endPage = totalPages;
+                startPage = Math.max(endPage - maxVisiblePages + 1, 1);
+            }
+
+            // Previous
+            if (currentPage > 0) {
+                pagination.append('<span class="paginate_button previous">Previous</span>');
+            }
+
+            // Page numbers
+            for (let i = startPage; i <= endPage; i++) {
+                pagination.append('<span class="paginate_button ' + (i - 1 === currentPage ? 'current' : '') + '" data-page="' + (i - 1) + '">' + i + '</span>');
+            }
+
+            // Next
+            if (currentPage < totalPages - 1) {
+                pagination.append('<span class="paginate_button next">Next</span>');
+            }
+
+            // Add Jump-to-Page
+            if ($('#jumpToPage').length === 0) {
+                pagination.append(`
+            <input type="number" id="jumpToPage" min="1" max="${totalPages}" 
+                style="width: 40px; height: 30px; margin-left: 10px;" placeholder="Page">
+        `);
+            }
+
+            // Button click events
+            pagination.off('click').on('click', '.paginate_button', function() {
+                var btn = $(this);
+                if (btn.hasClass('previous')) {
+                    table.page('previous').draw('page');
+                } else if (btn.hasClass('next')) {
+                    table.page('next').draw('page');
+                } else {
+                    var page = parseInt(btn.attr('data-page'));
+                    table.page(page).draw('page');
+                }
+            });
+
+            // Enter key for jump
+            $('#jumpToPage').off('keypress').on('keypress', function(e) {
+                if (e.which === 13) {
+                    var page = parseInt($(this).val(), 10);
+                    if (!isNaN(page) && page > 0 && page <= totalPages) {
+                        table.page(page - 1).draw('page');
+                    } else {
+                        alert('Invalid page number');
+                    }
                 }
             });
         }
