@@ -6,7 +6,7 @@ const subStatusMultiselect = new Choices('#sub_status_mapping', {
 
 $(document).ready(function () {
 
-    $('#show_due_followup').click(function(){
+    $('#show_due_followup').click(function () {
         let cusSts = $("#sub_status_mapping").val();
         let comm_date = $("#comm_date").val();
 
@@ -14,13 +14,13 @@ $(document).ready(function () {
     });
 });
 
-$(function(){
+$(function () {
     getSubStsMapping(); //Call Customer status dropdown.
 
-    let cus_Sts=$("#customer_status").val();
+    let cus_Sts = $("#customer_status").val();
     let cusSts = cus_Sts.split(',');
-    
-    if(cusSts!=''){
+
+    if (cusSts != '') {
         OnLoadFunctions(cusSts, '');
     }
 });
@@ -34,51 +34,50 @@ function warningSwal(title, text) {
         timer: 2000,
     });
 }
+
 function OnLoadFunctions(cusSts, comm_date) {
-    if(cusSts){
-        $('#due_followup_table').DataTable().destroy();
-        $('#due_followup_table').DataTable({
-            "order": [[0, "desc"]],
-            "processing": true,
-            "serverSide": true,
-            "serverMethod": 'post',
-            "ajax": {
-                "url": 'followupFiles/dueFollowup/getDueFollowCus.php',
-                "data": function (data) {
-                    var search = $('#search').val();
-                    data.search = search;
-                    data.cus_sts = cusSts;
-                    data.comm_date = comm_date; // Pass comm_date or null if empty
-                }
-            },
-            dom: 'lBfrtip',
-            buttons: [
-                {
-                    extend: 'excel',
-                    title: "Due Followup List"
-                },
-                {
-                    extend: 'colvis',
-                    collectionLayout: 'fixed four-column',
-                }
-            ],
-            "lengthMenu": [
-                [10, 10, 25, 50, -1],
-                [10, 10, 25, 50, "All"]
-            ],
-            "createdRow": function (row, data, dataIndex) {
-                // Add serial number in the first column
-                $('td', row).eq(0).html(dataIndex + 1);
-            },
-            "drawCallback": function () {
-                enableDateColoring();
-                searchFunction('due_followup_table')
-            }
-        });
-    }
-    else{
+    if (!cusSts) {
         warningSwal('Warning!', 'Select Customer Status.');
+        return;
     }
+
+    $('#due_followup_table').DataTable().destroy();
+    var table = $('#due_followup_table').DataTable({
+        "stateSave": true,
+        "order": [[0, "desc"]],
+        "processing": true,
+        "serverSide": true,
+        "serverMethod": 'post',
+        "ajax": {
+            "url": 'followupFiles/dueFollowup/getDueFollowCus.php',
+            "data": function (data) {
+                var search = $('#search').val();
+                data.search = search;
+                data.cus_sts = cusSts;
+                data.comm_date = comm_date;
+            }
+        },
+        dom: 'lBfrtip',
+        buttons: [
+            { extend: 'excel', title: "Due Followup List" },
+            { extend: 'colvis', collectionLayout: 'fixed four-column' }
+        ],
+        "lengthMenu": [
+            [10, 25, 50, -1],
+            [10, 25, 50, "All"]
+        ],
+        "createdRow": function (row, data, dataIndex) {
+            var pageInfo = table.page.info();
+            var serialNumber = pageInfo.start + dataIndex + 1;
+            $('td', row).eq(0).html(serialNumber);
+        },
+        "pagingType": "simple_numbers",
+        "drawCallback": function () {
+            enableDateColoring();
+            searchFunction('due_followup_table');
+            paginationFunction('due_followup_table');
+        }
+    });
 }
 
 function enableDateColoring() {
@@ -108,17 +107,17 @@ function enableDateColoring() {
 }
 
 function getSubStsMapping() {
-    let subStatus =['Legal','Error','OD','Pending','Current'];
-    let editSubStatus = $('#customer_status').val()||'';
+    let subStatus = ['Legal', 'Error', 'OD', 'Pending', 'Current'];
+    let editSubStatus = $('#customer_status').val() || '';
 
     subStatusMultiselect.clearStore();
-    $.each(subStatus, function(index, val){
+    $.each(subStatus, function (index, val) {
         let selected = '';
-        if(editSubStatus.includes(val)){
+        if (editSubStatus.includes(val)) {
             selected = 'selected';
         }
         let items = [
-            {value: val, label: val, selected: selected},
+            { value: val, label: val, selected: selected },
         ]
         subStatusMultiselect.setChoices(items);
         subStatusMultiselect.init();
