@@ -141,6 +141,7 @@ if ($idupd > 0) {
 			for ($i = 0; $i < sizeof($getAreaMappingDuefollowup); $i++) {
 				$map_id2                	 = $getAreaMappingDuefollowup['map_id'];
 				$duefollowup_name          	 = $getAreaMappingDuefollowup['duefollowup_name'];
+				$loan_category_id          	 = $getAreaMappingDuefollowup['loan_category_id'];
 				$due_line_name          	 = $getAreaMappingDuefollowup['line_name'];
 				$area_id2         		     = $getAreaMappingDuefollowup['area_id'];
 				$sub_area_id2      			 = $getAreaMappingDuefollowup['sub_area_id'];
@@ -157,8 +158,6 @@ if ($idupd > 0) {
 if (isset($_GET['type'])) {
 	$type = $_GET['type'];
 }
-
-
 ?>
 
 <!-- Page header start -->
@@ -173,9 +172,6 @@ if (isset($_GET['type'])) {
 		<button type="button" class="btn btn-primary"><span class="icon-arrow-left"></span>&nbsp; Back</button>
 	</a>
 </div><br><br>
-
-<head>
-</head>
 <!-- Page header end -->
 
 <!-- Main container start -->
@@ -201,6 +197,7 @@ if (isset($_GET['type'])) {
 		<input type="hidden" value="<?php if (isset($sub_area_id1)) echo $sub_area_id1; ?>" id="sub_area_upd1" name="sub_area_upd1">
 		<input type="hidden" value="<?php if (isset($sub_area_id2)) echo $sub_area_id2; ?>" id="sub_area_upd2" name="sub_area_upd2">
 		<input type="hidden" value="<?php if (isset($due_line_name)) echo $due_line_name; ?>" id="due_line_name" name="due_line_name">
+		<input type="hidden" value="<?php if(isset($loan_category_id)) echo $loan_category_id; ?>" id="loan_cat_upd" name="loan_cat_upd">
 
 		<!-- Row start -->
 		<div class="row gutters">
@@ -374,8 +371,19 @@ if (isset($_GET['type'])) {
 											<select type="text" class="form-control" id="branch_name2" name="branch_name2" multiple tabindex='3'>
 												<option value="">Select Branch</option>
 											</select>
+											<span class="text-danger" style='display:none' id='branchName2Check'>Please select Branch name</span>
 										</div>
 									</div>
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 loancat_div">
+                                        <div class="form-group">
+                                            <label for="disabledInput">Loan Category</label>&nbsp;<span class="text-danger">*</span>
+											<input type='hidden' class='form-control' id='loan_cat' name='loan_cat' >
+											<select tabindex="9" type="text" class="form-control" id="loan_cat1" name="loan_cat1" multiple>
+												<option value="">Select Loan Category</option>
+											</select>
+											<span class="text-danger" style='display:none' id='loan_catCheck'>Please select Loan Category</span>
+                                        </div>
+                                    </div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
 											<label for="due_line">Line</label>&nbsp;<span class="text-danger">*</span>
@@ -383,6 +391,7 @@ if (isset($_GET['type'])) {
 											<select type="text" class="form-control" id="due_line" name="due_line" multiple tabindex='4'>
 												<option value="">Select Line</option>
 											</select>
+											<span class="text-danger" style='display:none' id='dueLineCheck'>Please select Line</span>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
@@ -392,6 +401,7 @@ if (isset($_GET['type'])) {
 											<select type="text" class="form-control" id="area_dummy2" name="area_dummy2" multiple tabindex='5'>
 												<option value="">Select Area</option>
 											</select>
+											<span class="text-danger" style='display:none' id='dueAreaCheck'>Please select Area</span>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
@@ -401,6 +411,7 @@ if (isset($_GET['type'])) {
 											<select type="text" class="form-control" id="sub_area_dummy2" name="sub_area_dummy2" multiple tabindex='6'>
 
 											</select>
+											<span class="text-danger" style='display:none' id='dueSubAreaCheck'>Please select Sub Area</span>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">

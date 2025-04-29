@@ -18,7 +18,8 @@ const areaMultiselect2 = new Choices('#area_dummy2', {
     noChoicesText: null,
     placeholder: true,
     placeholderValue: 'Select Area Name',
-    allowHTML: true
+    allowHTML: true,
+    shouldSort: false
 });
 const intance = new Choices('#sub_area_dummy', {
     removeItemButton: true,
@@ -39,7 +40,8 @@ const intance2 = new Choices('#sub_area_dummy2', {
     noChoicesText: null,
     placeholder: true,
     placeholderValue: 'Select Sub Area Name',
-    allowHTML: true
+    allowHTML: true,
+    shouldSort: false
 });
 const branch_name2 = new Choices('#branch_name2', {
     removeItemButton: true,
@@ -55,7 +57,12 @@ const dueLine = new Choices('#due_line', {
     placeholderValue: 'Select Line Name',
     allowHTML: true
 });
+const loanCatMultiselect = new Choices('#loan_cat1', {
+    removeItemButton: true,
+    noChoicesText: 'Select Loan Category',
+    allowHTML: true
 
+});
 
 // Document is ready
 $(document).ready(function () {
@@ -263,9 +270,14 @@ $(document).ready(function () {
     
     $('#area_dummy2').change(function () {
         // Get values from multiselect and sort
-        const area_list = areaMultiselect2.getValue();
-        const sortedStr = area_list
+        const area_list = areaMultiselect2.getValue(); // returns array of objects like [{value: "1", label: "Area 1"}, ...]
+    
+        // Handle Select All logic
+        selectAllAreas(area_list, areaMultiselect2);
+    
+        const sortedStr = areaMultiselect2.getValue()
             .map(item => item.value)
+            .filter(val => val !== 'select_all') // exclude 'select_all' from final string
             .sort((a, b) => a - b)
             .join(',');
     
@@ -274,6 +286,16 @@ $(document).ready(function () {
         getAreaBasedSubArea2(sortedStr);
         getCusLoanCount(sortedStr);
     });
+    
+    $('#sub_area_dummy2').change(function () {
+        // Get values from multiselect and sort
+        const subarea_list = intance2.getValue(); // returns array of objects like [{value: "1", label: "Area 1"}, ...]
+    
+        // Handle Select All logic
+        selectAllAreas(subarea_list, intance2);
+
+    });
+    
     
     $('#due_line').change(function () {
         // Get values from multiselect and sort
@@ -289,6 +311,17 @@ $(document).ready(function () {
             getArea2(lineSortedStr);
         }
     });
+    
+    $('#loan_cat1').change(function () {
+        // Get values from multiselect and sort
+        const loanList = loanCatMultiselect.getValue();
+        const loanSortedStr = loanList
+            .map(item => item.value)
+            .sort((a, b) => a - b)
+            .join(',');
+    
+        $('#loan_cat').val(loanSortedStr);
+    });
 
     $('#refresh_count').click(function(event){
         event.preventDefault();
@@ -303,16 +336,17 @@ $(document).ready(function () {
     })
     //on submit add sub area list to hidden input
     $('#submit_area_mapping_duefollowup').click(function () {
+        var branchName = branch_name2.getValue();
+        var loanCategory = loanCatMultiselect.getValue();
         var due_line = dueLine.getValue();
         var area_list = areaMultiselect2.getValue();
         var sub_area_list = intance2.getValue();
 
         //Validation
         var duefollowup_name = $('#duefollowup_name').val(); var company_name = $('#company_name2').val(); var cuscnt = $('#cus_count').val(); var loancnt = $('#loan_count').val();
-        if (duefollowup_name == '' || company_name == '' || branch == '' || due_line.length == 0 || area_list.length == 0 || sub_area_list.length == 0 || cuscnt == '' || loancnt == '' ) {
+        if (duefollowup_name == '' || company_name == '' || branchName.length == 0 || loanCategory.length == 0 || due_line.length == 0 || area_list.length == 0 || sub_area_list.length == 0 || cuscnt == '' || loancnt == '' ) {
             Swal.fire({
                 timerProgressBar: true,
-                // timer: 2000,
                 title: 'Please Fill out Mandatory fields!',
                 icon: 'error',
                 showConfirmButton: true
@@ -320,11 +354,11 @@ $(document).ready(function () {
             event.preventDefault();
         }
 
-        // Area line multi-select
+        // Branch line multi-select
         const branchNameStr = getSortedCommaSeparatedValues(branch_name2);
         $('#branch2').val(branchNameStr);
 
-        // Area line multi-select
+        // Line multi-select
         const dueLineStr = getSortedCommaSeparatedValues(dueLine);
         $('#dueline').val(dueLineStr);
 
@@ -334,31 +368,32 @@ $(document).ready(function () {
 
         // Sub-area multi-select
         const subAreaStr = getSortedCommaSeparatedValues(intance2);
-        $('#sub_area2').val(subAreaStr);
-        
+        $('#sub_area2').val(subAreaStr);        
+
+        // Loan Category multi-select
+        const loanCategoryStr = getSortedCommaSeparatedValues(loanCatMultiselect);
+        $('#loan_cat').val(loanCategoryStr);
+
     });
 
 });//document ready end
 
 //on page load for Edit page
 $(function () {
-    let map_id = $('#map_id_upd').val();
-    let map_id1 = $('#map_id1_upd').val();
     let type = $('#type').val();
     if (type == 'line') {
         getArea();
         let area = $('#area_id_upd').val();
-        // let company_id_upd = $('#company_id_upd').val();
         getAreaBasedSubArea(area);
         getBranchDropdown()
     } else if (type == 'group') {
         getArea1();
         let area = $('#area_id1_upd').val();
-        // let company_id_upd = $('#company_id_upd1').val();
         getAreaBasedSubArea1(area);
-        getBranchDropdown1()
+        getBranchDropdown1();
     } else if (type == 'duefollowup') {
-        getBranchDropdown2()
+        getBranchDropdown2();
+        getLoanCatDropdown();
         let upd = $('#id').val();
         if(upd > 0){
             let branchid = $('#branch_id_upd2').val();
@@ -463,36 +498,55 @@ function getArea2(lineid) {
         data: { 'map': map, 'lineid': lineid },
         dataType: 'json',
         success: function (response) {
-
             areaMultiselect2.clearStore();
+        
+            // Start with "Select All" manually
+            var items = [
+                {
+                    value: 'select_all',
+                    label: 'Select All',
+                    selected: '',
+                    disabled: ''
+                }
+            ];
+        
             var len = response.length;
+            var areaItems = [];
+        
             for (var i = 0; i < len; i++) {
                 var area_id = response[i]['area_id'];
                 var area_name = response[i]['area_name'];
-                var checked = '';
                 var checked = response[i]['disabled'];
                 var selected = '';
-                if (area_id_upd != '' && values.includes(area_id.toString())) {
+        
+                if (area_id_upd && values.includes(area_id.toString())) {
                     selected = 'selected';
                     checked = false;
                 }
-                if (areaid != '' && areaid.includes(area_id.toString())) {
+                if (areaid && areaid.includes(area_id.toString())) {
                     selected = 'selected';
                     checked = false;
                 }
-                var items = [
-                    {
-                        value: area_id,
-                        label: area_name,
-                        selected: selected,
-                        disabled: checked,
-                    }
-                ];
-                areaMultiselect2.setChoices(items);
-                areaMultiselect2.init();
-
+        
+                areaItems.push({
+                    value: area_id,
+                    label: area_name,
+                    selected: selected,
+                    disabled: checked
+                });
             }
+        
+            // Sort the area items alphabetically by label
+            areaItems.sort(function (a, b) {
+                return a.label.localeCompare(b.label);
+            });
+        
+            // Merge "Select All" with sorted area items
+            items = items.concat(areaItems);
+        
+            areaMultiselect2.setChoices(items, 'value', 'label', true);
         }
+        
     });
 }
 
@@ -592,7 +646,20 @@ function getAreaBasedSubArea2(area) {
         success: function (response) {
 
             intance2.clearStore();
+                    
+            // Start with "Select All" manually
+            var items = [
+                {
+                    value: 'select_all',
+                    label: 'Select All',
+                    selected: '',
+                    disabled: ''
+                }
+            ];
+
             var len = response.length;
+            var subareaItems = [];
+
             for (var i = 0; i < len; i++) {
                 for (var j = 0; j < response[i].length; j++) {
 
@@ -604,19 +671,28 @@ function getAreaBasedSubArea2(area) {
                         selected = 'selected';
                         checked = false;
                     }
-                    var items = [
-                        {
-                            value: sub_area_id,
-                            label: sub_area_name,
-                            selected: selected,
-                            disabled: checked,
-                        }
-                    ];
-                    intance2.setChoices(items);
-                    intance2.init();
+
+                    subareaItems.push({
+                        value: sub_area_id,
+                        label: sub_area_name,
+                        selected: selected,
+                        disabled: checked
+                    });
+
                 }
 
             }
+      
+            // Sort the area items alphabetically by label
+            subareaItems.sort(function (a, b) {
+                return a.label.localeCompare(b.label);
+            });
+        
+            // Merge "Select All" with sorted area items
+            items = items.concat(subareaItems);
+        
+            intance2.setChoices(items, 'value', 'label', true);
+
         }
     });
 }
@@ -753,4 +829,59 @@ function getSortedCommaSeparatedValues(multiselectInstance) {
     const values = selected.map(item => parseInt(item.value, 10));
     values.sort((a, b) => a - b);
     return values.join(',');
+}
+
+//get Loan category Dropdown
+function getLoanCatDropdown() {
+    var loan_cat_upd = $('#loan_cat_upd').val().split(',');
+    $.ajax({
+        url: 'manageUser/getLoanCatDropdown.php',
+        data: {},
+        dataType: 'json',
+        type: 'post',
+        cache: false,
+        success: function (response) {
+            loanCatMultiselect.clearStore();
+            for (var i = 0; i < response.length; i++) {
+                var loan_cat_id = response[i]['loan_cat_id'];
+                var loan_cat_name = response[i]['loan_cat_name'];
+                var selected = '';
+                if (loan_cat_upd != '') {
+                    for (var j = 0; j < loan_cat_upd.length; j++) {
+                        if (loan_cat_upd[j] == loan_cat_id) {
+                            selected = 'selected';
+                        }
+                    }
+                }
+                var items = [{
+                    value: loan_cat_id,
+                    label: loan_cat_name,
+                    selected: selected
+                }]
+                loanCatMultiselect.setChoices(items);
+                loanCatMultiselect.init();
+            }
+        }
+    })
+}
+
+function selectAllAreas(selectedList, choicesInstance) {
+    const selectedValues = selectedList.map(item => item.value);
+
+    if (selectedValues.includes('select_all')) {
+        const allChoices = choicesInstance._store.choices
+            .filter(choice => choice.value !== 'select_all' && !choice.disabled);
+
+        const allValues = allChoices.map(choice => choice.value);
+
+        const alreadySelectedAll = allValues.every(val => selectedValues.includes(val));
+
+        // Remove current selections
+        choicesInstance.removeActiveItems();
+
+        if (!alreadySelectedAll) {
+            // Select all except 'select_all'
+            choicesInstance.setChoiceByValue(allValues);
+        }
+    }
 }
