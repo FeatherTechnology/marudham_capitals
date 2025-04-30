@@ -9,31 +9,40 @@ if (isset($_SESSION['userid'])) {
 
 if ($user_id != 1) {
 
-    $userQry = $connect->query("SELECT due_followup_lines, loan_cat, ag_id FROM USER WHERE user_id = $user_id ");
-    $rowuser = $userQry->fetch();
-        $due_followup_lines = $rowuser['due_followup_lines'];
-        $loncat_id = $rowuser['loan_cat'];
-        $ag_id = $rowuser['ag_id'];
-    
-    if($ag_id ==''){
-        $loan_agnt = " AND iv.loan_category IN ($loncat_id) ";
-    } else {
-        $loan_agnt = " AND iv.agent_id IN ($ag_id) AND iv.loan_category IN ($loncat_id) ";
-    }
+    $user_id = (int)$user_id;
+    $userQry = $connect->query("SELECT due_followup_lines, ag_id FROM USER WHERE user_id = $user_id");
 
-    $due_followup_lines = explode(',', $due_followup_lines);
-    $area_list = array();
-    foreach ($due_followup_lines as $line) {
-        $lineQry = $connect->query("SELECT area_id FROM area_duefollowup_mapping where map_id = $line ");
-        $row_sub = $lineQry->fetch();
-        $area_list[] = $row_sub['area_id'];
+    if ($rowuser = $userQry->fetch()) {
+        $due_followup_lines = $rowuser['due_followup_lines'];
+        $ag_id = $rowuser['ag_id'];
+
+        // Process due followup lines
+        $due_followup_lines = explode(',', $due_followup_lines);
+        $area_ids = [];
+        $loan_cat_ids = [];
+
+        foreach ($due_followup_lines as $line) {
+            $line = (int)trim($line); // Ensure safety
+            $lineQry = $connect->query("SELECT area_id, loan_category_id FROM area_duefollowup_mapping WHERE map_id = $line");
+
+            if ($row_sub = $lineQry->fetch()) {
+                $area_ids = array_merge($area_ids, explode(',', $row_sub['area_id']));
+                $loan_cat_ids = array_merge($loan_cat_ids, explode(',', $row_sub['loan_category_id']));
+            }
+        }
+
+        // Remove duplicates and implode to string
+        $area_list = implode(',', array_unique(array_filter($area_ids)));
+        $loan_cat_list = implode(',', array_unique(array_filter($loan_cat_ids)));
+
+        // Prepare loan agent condition
+        if (empty($ag_id)) {
+            $loan_agnt = " AND iv.loan_category IN ($loan_cat_list) ";
+        } else {
+            $loan_agnt = " AND iv.agent_id IN ($ag_id) AND iv.loan_category IN ($loan_cat_list) ";
+        }
+
     }
-    $area_ids = array();
-    foreach ($area_list as $subarray) {
-        $area_ids = array_merge($area_ids, explode(',', $subarray));
-    }
-    $area_list = array();
-    $area_list = implode(',', $area_ids);
 }
 
 $current_date = date('Y-m-d');
@@ -48,7 +57,7 @@ if (isset($_POST['comm_date'])) {
     $comm_date = $_POST['comm_date']; // Get the comm_date from the form
 
     if($comm_date == '2'){ //Before Date
-        $qry_cndtn = "AND cm.comm_date < '$current_date' AND (cm.comm_date IS NOT NULL or cm.comm_date != '0000-00-00') ";
+        $qry_cndtn = "AND cm.comm_date < '$current_date' AND (cm.comm_date IS NOT NULL OR cm.comm_date != '0000-00-00') ";
 
     }elseif($comm_date =='3'){ //Today
         $qry_cndtn = "AND cm.comm_date = '$current_date' ";
@@ -74,7 +83,7 @@ $searchValue = $_POST['search'];
 
 $data = [];
 
-$columns = ['cp.id', 'cp.cus_id', 'cp.cus_name', 'alc.area_name', 'salc.sub_area_name', 'bc.branch_name', 'cp.area_line', 'cp.mobile1', 'cs.sub_status', 'cp.id', 'lpd.date_range', 'c.total_due_paid', 'cm.comm_err', 'cm.hint', 'cm.comm_date'];
+$columns = ['cp.id', 'cp.cus_id', 'cp.cus_name', 'alc.area_name', 'salc.sub_area_name', 'bc.branch_name', 'cp.area_line', 'cp.mobile1', 'cs.sub_status', 'cp.id', 'cs.last_paid_date', 'cs.current_month_paid', 'cm.comm_err', 'cm.hint', 'cm.comm_date'];
 
 $orderDir = $_POST['order'][0]['dir'];
 $order = $columns[$_POST['order'][0]['column']] ? "ORDER BY " . $columns[$_POST['order'][0]['column']] . " $orderDir" : "";
@@ -91,11 +100,11 @@ $query = "SELECT
     ii.cus_id AS ii_cus_id,
     ii.req_id,
     cs.sub_status,
-    c.total_due_paid,
+    cs.current_month_paid,
     cm.comm_err,
     cm.hint,
     cm.comm_date,
-    COALESCE(lpd.date_range, '') AS last_paid_date
+    cs.last_paid_date
 FROM
     acknowlegement_customer_profile cp
 JOIN in_issue ii ON
@@ -121,28 +130,6 @@ LEFT JOIN (
     FROM commitment 
     GROUP BY cus_id
 ) cm ON cp.cus_id = cm.cus_id
-LEFT JOIN (
-    SELECT
-        cus_id, COALESCE(SUM(due_amt_track), 0) AS total_due_paid  
-    FROM 
-        collection 
-    WHERE YEAR(coll_date) = YEAR('$current_date') 
-        AND MONTH(coll_date) = MONTH('$current_date')
-    GROUP BY cus_id
-) c ON c.cus_id = cp.cus_id
-LEFT JOIN (
-    SELECT 
-        cus_id, 
-        CASE 
-            WHEN DAYOFMONTH(MAX(coll_date)) BETWEEN 26 AND 31 THEN '26-30' 
-            WHEN DAYOFMONTH(MAX(coll_date)) BETWEEN 21 AND 25 THEN '21-25' 
-            WHEN DAYOFMONTH(MAX(coll_date)) BETWEEN 16 AND 20 THEN '16-20' 
-            WHEN DAYOFMONTH(MAX(coll_date)) BETWEEN 11 AND 15 THEN '11-15' 
-            ELSE '1-10' 
-        END AS date_range
-    FROM collection 
-    GROUP BY cus_id
-) lpd ON cp.cus_id = lpd.cus_id
 WHERE 
     cs.payable_amnt > 0 
     $comm_date_condition 
@@ -167,11 +154,38 @@ foreach ($result as $row) {
     $cus_name = $row['cus_name'];
     $area_name = $row['area_name'];
     $sub_area_name = $row['sub_area_name'];
-    $last_paid_date = $row['last_paid_date'];
+    // $last_paid_date = $row['last_paid_date'];
     $branch_name = '';
     $comm_date = '';
     $hint = '';
     $comm_err = '';
+
+    switch($row['last_paid_date']){
+        case 1:
+            $last_paid_date = '1-10';
+            break;
+            
+        case 2:
+            $last_paid_date = '11-15';
+            break;
+
+        case 3:
+            $last_paid_date = '16-20';
+            break;
+
+        case 4:
+            $last_paid_date = '21-25';
+            break;
+
+        case 5:
+            $last_paid_date = '26-30';
+            break;
+
+        default:
+            $last_paid_date = '';
+            break;
+    }
+
     $qry1 = $connect->query("SELECT 
         cus_id, 
         MIN(CASE 
@@ -218,7 +232,7 @@ foreach ($result as $row) {
     // $coll_date_qry = $collDate->fetch();
     // $date_range = isset($coll_date_qry['date_range']) ? $coll_date_qry['date_range'] : '';
 
-    $paid_status = ($row['total_due_paid'] > 0) ? 'Yes' : '';
+    $paid_status = ($row['current_month_paid'] == 1) ? 'Yes' : '';
 
     $hint = $row['hint'];
     $comm_err = ($row['comm_err'] == '1') ? 'Error' : (($row['comm_err'] == '2') ? 'Clear' : '');

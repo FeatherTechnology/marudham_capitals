@@ -284,7 +284,7 @@ $(document).ready(function () {
         $('#area2').val(sortedStr);
     
         getAreaBasedSubArea2(sortedStr);
-        getCusLoanCount(sortedStr);
+        getCusLoanCount();
     });
     
     $('#sub_area_dummy2').change(function () {
@@ -321,18 +321,13 @@ $(document).ready(function () {
             .join(',');
     
         $('#loan_cat').val(loanSortedStr);
+
+        getCusLoanCount();
     });
 
     $('#refresh_count').click(function(event){
-        event.preventDefault();
-        // Get values from multiselect and sort
-        const area_list = areaMultiselect2.getValue();
-        const sortedStr = area_list
-            .map(item => item.value)
-            .sort((a, b) => a - b)
-            .join(',');
-            
-        getCusLoanCount(sortedStr);
+        event.preventDefault();            
+        getCusLoanCount();
     })
     //on submit add sub area list to hidden input
     $('#submit_area_mapping_duefollowup').click(function () {
@@ -505,8 +500,7 @@ function getArea2(lineid) {
                 {
                     value: 'select_all',
                     label: 'Select All',
-                    selected: '',
-                    disabled: ''
+                    selected: ''
                 }
             ];
         
@@ -516,23 +510,19 @@ function getArea2(lineid) {
             for (var i = 0; i < len; i++) {
                 var area_id = response[i]['area_id'];
                 var area_name = response[i]['area_name'];
-                var checked = response[i]['disabled'];
                 var selected = '';
         
                 if (area_id_upd && values.includes(area_id.toString())) {
                     selected = 'selected';
-                    checked = false;
                 }
                 if (areaid && areaid.includes(area_id.toString())) {
                     selected = 'selected';
-                    checked = false;
                 }
         
                 areaItems.push({
                     value: area_id,
                     label: area_name,
-                    selected: selected,
-                    disabled: checked
+                    selected: selected
                 });
             }
         
@@ -652,8 +642,7 @@ function getAreaBasedSubArea2(area) {
                 {
                     value: 'select_all',
                     label: 'Select All',
-                    selected: '',
-                    disabled: ''
+                    selected: ''
                 }
             ];
 
@@ -665,18 +654,15 @@ function getAreaBasedSubArea2(area) {
 
                     var sub_area_id = response[i][j]['sub_area_id'];
                     var sub_area_name = response[i][j]['sub_area_name'];
-                    var checked = response[i][j]['disabled'];
                     var selected = '';
                     if (sub_area_upd != '' && values.includes(sub_area_id.toString())) {
                         selected = 'selected';
-                        checked = false;
                     }
 
                     subareaItems.push({
                         value: sub_area_id,
                         label: sub_area_name,
-                        selected: selected,
-                        disabled: checked
+                        selected: selected
                     });
 
                 }
@@ -815,8 +801,19 @@ function getLineNameDropdown(branchid){
     },'json');
 }
 
-function getCusLoanCount(areaid){
-    $.post('areaMapping/getCusAndLoanCount.php',{areaid}, function(response){
+function getCusLoanCount(){
+    const areaid = areaMultiselect2.getValue()
+        .map(item => item.value)
+        .filter(val => val !== 'select_all') // exclude 'select_all' from final string
+        .sort((a, b) => a - b)
+        .join(',');
+
+    const loanCatId = loanCatMultiselect.getValue()
+        .map(item => item.value)
+        .sort((a, b) => a - b)
+        .join(',');
+
+    $.post('areaMapping/getCusAndLoanCount.php',{areaid, loanCatId}, function(response){
         let cusCnt = (response.cus_count) ? response.cus_count : 0;
         let loanCnt = (response.loan_count) ? response.loan_count : 0;
         $('#cus_count').val(cusCnt);

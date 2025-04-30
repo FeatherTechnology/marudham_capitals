@@ -92,11 +92,33 @@ if((strtotime($row['due_start_from']) > strtotime($curdate))){ //If Due start fr
     $payable_amnts = '0';
 }
 
+$lpdqry = $connect->query("SELECT
+        CASE 
+            WHEN DAYOFMONTH(MAX(coll_date)) BETWEEN 1 AND 10 THEN '1' 
+            WHEN DAYOFMONTH(MAX(coll_date)) BETWEEN 11 AND 15 THEN '2' 
+            WHEN DAYOFMONTH(MAX(coll_date)) BETWEEN 16 AND 20 THEN '3' 
+            WHEN DAYOFMONTH(MAX(coll_date)) BETWEEN 21 AND 25 THEN '4' 
+            WHEN DAYOFMONTH(MAX(coll_date)) BETWEEN 26 AND 31 THEN '5' 
+            ELSE '0' 
+        END AS date_range
+    FROM collection 
+    WHERE req_id = '$req_id' ");
+
+    $lpd = $lpdqry->fetch()['date_range']; 
+
+
+$cmpqry = $connect->query("SELECT COALESCE(SUM(due_amt_track), 0) AS total_due_paid FROM collection WHERE YEAR(coll_date) = YEAR(CURDATE()) AND MONTH(coll_date) = MONTH(CURDATE()) AND req_id = '$req_id' ");
+    $cmp = $cmpqry->fetch()['total_due_paid']; 
+    $paid_status = ($cmp > 0) ? '1' : '2'; //1  => YES, 2 => NO.
+
+
 $qry = $connect->query("SELECT * FROM customer_status WHERE req_id = '$req_id' ");
 if($qry->rowCount() > 0){
-    $query = $connect->query("UPDATE `customer_status` SET `sub_status`='$sub_sts', `payable_amnt` = '$payable_amnts', `bal_amnt`='$bal_amt', `insert_login_id`='$userid',`created_date`=now() WHERE `req_id`='$req_id' ");
+    $query = $connect->query("UPDATE `customer_status` SET `sub_status`='$sub_sts', `payable_amnt` = '$payable_amnts', `bal_amnt`='$bal_amt', `last_paid_date`= '$lpd', `current_month_paid`='$paid_status', `insert_login_id`='$userid', `created_date`=NOW() WHERE `req_id`='$req_id' ");
+
 }else{
-    $query = $connect->query("INSERT INTO `customer_status`( `req_id`, `cus_id`, `sub_status`, `payable_amnt`, `bal_amnt`, `insert_login_id`, `created_date`) VALUES ('$req_id','$cus_id', '$sub_sts', '$payable_amnts', '$bal_amt', '$userid', now() )");
+    $query = $connect->query("INSERT INTO `customer_status`( `req_id`, `cus_id`, `sub_status`, `payable_amnt`, `bal_amnt`, `last_paid_date`, `current_month_paid`,`insert_login_id`, `created_date`) VALUES ('$req_id', '$cus_id', '$sub_sts', '$payable_amnts', '$bal_amt', '$lpd', '$paid_status', '$userid', NOW() )");
+    
 }
 
 if($query){
