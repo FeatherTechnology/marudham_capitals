@@ -50,7 +50,7 @@ if (isset($_POST['from_date']) && $_POST['from_date'] != '') {
     AND (
         (lc.maturity_month >= '$full_date' AND cs.bal_amnt > 0)
         OR ii.cus_status = 14
-    )";
+    ) AND lc.due_start_from <= '$full_date'  AND (lc.tot_amt_cal - IFNULL(col_sum.total_due_amt_tract, 0)) > 0 ";
 }
 
     $where  .= $user_based;
@@ -191,7 +191,14 @@ $data = array();
 $sno = 1;
 foreach ($result as $row) {
     $start = strtotime($row['due_start_from']);
-    $end = strtotime($full_date ); 
+    
+    if(strtotime($row['maturity_month']) < strtotime($full_date)){
+        $end = strtotime($row['maturity_month'] );
+    }
+    else{
+        $end = strtotime($full_date ); 
+    }
+
     $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
     $payable_amount = ($months * $row['due_amt_cal'] ) - $row['total_due_amt'];
 
