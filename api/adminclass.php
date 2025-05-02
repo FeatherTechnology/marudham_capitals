@@ -1515,17 +1515,20 @@ class admin
 		if (isset($_POST['loan_cat'])) {
 			$loan_cat = $_POST['loan_cat'];
 		}
-		$sub_area = '';
-		if (isset($_POST['sub_area2'])) {
-			$sub_area = $_POST['sub_area2'];
+		if (isset($_POST['customer_status'])) {
+			$customer_status = $_POST['customer_status'];
 		}
+		// $sub_area = '';
+		// if (isset($_POST['sub_area2'])) {
+		// 	$sub_area = $_POST['sub_area2'];
+		// }
 		if (isset($_POST['cus_count'])) {
 			$cus_count = $_POST['cus_count'];
 		}
 		if (isset($_POST['loan_count'])) {
 			$loan_count = $_POST['loan_count'];
 		}
-		$insertQry = "INSERT INTO area_duefollowup_mapping(duefollowup_name, loan_category_id, line_name, area_id, sub_area_id, cus_count, loan_count, company_id, branch_id, insert_login_id, created_date) VALUES('" . strip_tags($duefollowup_name) . "', '". strip_tags($loan_cat) ."', '" . strip_tags($line_name) . "', '" . strip_tags($area_id) . "', '" . strip_tags($sub_area) . "', '" . strip_tags($cus_count) . "', '" . strip_tags($loan_count) . "', '" . strip_tags($company_id) . "','" . strip_tags($branch_id) . "', '" . strip_tags($userid) . "', CURRENT_TIMESTAMP() )";
+		$insertQry = "INSERT INTO area_duefollowup_mapping(duefollowup_name, loan_category_id, line_name, customer_status, area_id, cus_count, loan_count, company_id, branch_id, insert_login_id, created_date) VALUES('" . strip_tags($duefollowup_name) . "', '". strip_tags($loan_cat) ."', '" . strip_tags($line_name) . "', '". strip_tags($customer_status) ."', '" . strip_tags($area_id) . "', '" . strip_tags($cus_count) . "', '" . strip_tags($loan_count) . "', '" . strip_tags($company_id) . "','" . strip_tags($branch_id) . "', '" . strip_tags($userid) . "', CURRENT_TIMESTAMP() )";
 		$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
 	}
 	// Add Area Mapping for Group
@@ -1595,20 +1598,23 @@ class admin
 		if (isset($_POST['loan_cat'])) {
 			$loan_cat = $_POST['loan_cat'];
 		}
+		if (isset($_POST['customer_status'])) {
+			$customer_status = $_POST['customer_status'];
+		}
 		if (isset($_POST['area2'])) {
 			$area_id = $_POST['area2'];
 		}
-		$sub_area_id = '';
-		if (isset($_POST['sub_area2'])) {
-			$sub_area_id = $_POST['sub_area2'];
-		}
+		// $sub_area_id = '';
+		// if (isset($_POST['sub_area2'])) {
+		// 	$sub_area_id = $_POST['sub_area2'];
+		// }
 		if (isset($_POST['cus_count'])) {
 			$cus_count = $_POST['cus_count'];
 		}
 		if (isset($_POST['loan_count'])) {
 			$loan_count = $_POST['loan_count'];
 		}
-		$updateQry = "UPDATE area_duefollowup_mapping set duefollowup_name='" . strip_tags($duefollowup_name) . "', loan_category_id = '" . strip_tags($loan_cat) ."', line_name='" . strip_tags($line_name) . "', area_id='" . strip_tags($area_id) . "', sub_area_id='" . strip_tags($sub_area_id) . "', cus_count='" . strip_tags($cus_count) . "', loan_count='" . strip_tags($loan_count) . "', company_id='" . strip_tags($company_id) . "', branch_id= '" . strip_tags($branch_id) . "', update_login_id='" . strip_tags($userid) . "', updated_date = current_timestamp(), status=0 WHERE map_id = '" . $id . "' ";
+		$updateQry = "UPDATE area_duefollowup_mapping set duefollowup_name='" . strip_tags($duefollowup_name) . "', loan_category_id = '" . strip_tags($loan_cat) ."', line_name='" . strip_tags($line_name) . "', customer_status ='". strip_tags($customer_status) ."', area_id='" . strip_tags($area_id) . "', cus_count='" . strip_tags($cus_count) . "', loan_count='" . strip_tags($loan_count) . "', company_id='" . strip_tags($company_id) . "', branch_id= '" . strip_tags($branch_id) . "', update_login_id='" . strip_tags($userid) . "', updated_date = current_timestamp(), status=0 WHERE map_id = '" . $id . "' ";
 		$result = $mysqli->query($updateQry) or die("Error " . $mysqli->error);
 	}
 	// Update Area Mapping Group
@@ -1667,7 +1673,7 @@ class admin
 			$detailrecords['loan_category_id']    = $row->loan_category_id;
 			$detailrecords['line_name']    = $row->line_name;
 			$detailrecords['area_id']    = $row->area_id;
-			$detailrecords['sub_area_id']    = $row->sub_area_id;
+			$detailrecords['customer_status']    = $row->customer_status;
 			$detailrecords['cus_count']    = $row->cus_count;
 			$detailrecords['loan_count']    = $row->loan_count;
 			$detailrecords['company_id']       = $row->company_id;

@@ -144,7 +144,7 @@ if ($idupd > 0) {
 				$loan_category_id          	 = $getAreaMappingDuefollowup['loan_category_id'];
 				$due_line_name          	 = $getAreaMappingDuefollowup['line_name'];
 				$area_id2         		     = $getAreaMappingDuefollowup['area_id'];
-				$sub_area_id2      			 = $getAreaMappingDuefollowup['sub_area_id'];
+				$cus_sts      			     = $getAreaMappingDuefollowup['customer_status'];
 				$cus_count      			 = $getAreaMappingDuefollowup['cus_count'];
 				$loan_count      			 = $getAreaMappingDuefollowup['loan_count'];
 				$company_id2     			 = $getAreaMappingDuefollowup['company_id'];
@@ -195,7 +195,7 @@ if (isset($_GET['type'])) {
 		<input type="hidden" value="<?php if (isset($area_id2)) echo $area_id2; ?>" id="area_id2_upd" name="area_id2_upd">
 		<input type="hidden" value="<?php if (isset($sub_area_id)) echo $sub_area_id; ?>" id="sub_area_upd" name="sub_area_upd">
 		<input type="hidden" value="<?php if (isset($sub_area_id1)) echo $sub_area_id1; ?>" id="sub_area_upd1" name="sub_area_upd1">
-		<input type="hidden" value="<?php if (isset($sub_area_id2)) echo $sub_area_id2; ?>" id="sub_area_upd2" name="sub_area_upd2">
+		<input type="hidden" value="<?php if (isset($cus_sts)) echo $cus_sts; ?>" id="cus_sts" name="cus_sts">
 		<input type="hidden" value="<?php if (isset($due_line_name)) echo $due_line_name; ?>" id="due_line_name" name="due_line_name">
 		<input type="hidden" value="<?php if(isset($loan_category_id)) echo $loan_category_id; ?>" id="loan_cat_upd" name="loan_cat_upd">
 
@@ -367,8 +367,7 @@ if (isset($_GET['type'])) {
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
 											<label for="branch2">Branch Name</label>&nbsp;<span class="text-danger">*</span>
-											<input type="hidden" id="branch2" name="branch2" value="">
-											<select type="text" class="form-control" id="branch_name2" name="branch_name2" multiple tabindex='3'>
+											<select type="text" class="form-control" id="branch2" name="branch2" tabindex='3'>
 												<option value="">Select Branch</option>
 											</select>
 											<span class="text-danger" style='display:none' id='branchName2Check'>Please select Branch name</span>
@@ -395,6 +394,14 @@ if (isset($_GET['type'])) {
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+										<label for="sub_status_mapping">Customer Status</label><span class="required">&nbsp;*</span>
+										<input type="hidden" name="customer_status" id="customer_status" value="">
+										<select class="form-control" id="sub_status_mapping" name="sub_status_mapping" multiple>
+											<option value="">Select Customer Status</option>
+										</select>
+										<span class='text-danger subStatusCheck' style="display:none">Please Select Customer Status</span>
+									</div>
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
 											<label for="area_dummy2">Area</label>&nbsp;<span class="text-danger">*</span>
 											<input type="hidden" id="area2" name="area2" value="">
@@ -404,7 +411,7 @@ if (isset($_GET['type'])) {
 											<span class="text-danger" style='display:none' id='dueAreaCheck'>Please select Area</span>
 										</div>
 									</div>
-									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+									<!-- <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
 											<label for="sub_area_dummy2">Sub Area</label>&nbsp;<span class="text-danger">*</span>
 											<input type="hidden" id="sub_area2" name="sub_area2" value="">
@@ -413,7 +420,7 @@ if (isset($_GET['type'])) {
 											</select>
 											<span class="text-danger" style='display:none' id='dueSubAreaCheck'>Please select Sub Area</span>
 										</div>
-									</div>
+									</div> -->
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
 											<label for="cus_count">Customer Count</label>&nbsp;<span class="text-danger">*</span>
