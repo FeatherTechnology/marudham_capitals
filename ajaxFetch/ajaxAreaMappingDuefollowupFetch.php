@@ -10,28 +10,26 @@ $column = array(
     'adm.map_id',
     'adm.duefollowup_name',
     'c.company_name',
-    'b.branch_name',
+    'bc.branch_name',
     'adm.map_id',
     'adm.status',
     'adm.status'
 );
 
-$query = "SELECT adm.*, c.company_name, 
-        (SELECT GROUP_CONCAT(bc.branch_name SEPARATOR ', ')
-        FROM branch_creation bc
-        WHERE FIND_IN_SET(bc.branch_id, adm.branch_id) AND bc.status = 0) AS branch_name,
+$query = "SELECT adm.*, c.company_name, bc.branch_name,
         (SELECT GROUP_CONCAT(alc.area_name SEPARATOR ', ')
         FROM area_list_creation alc
         WHERE FIND_IN_SET(alc.area_id, adm.area_id) AND alc.status = 0) AS area_names
         FROM area_duefollowup_mapping adm
         JOIN company_creation c ON c.company_id = adm.company_id
+        JOIN branch_creation bc ON adm.branch_id = bc.branch_id
         WHERE 1 ";
 
 if (isset($_POST['search']) && $_POST['search'] != "") {
     $search = $_POST['search'];
     $query .= "AND (adm.duefollowup_name LIKE '%" . $search . "%'
             OR c.company_name LIKE '%" . $search . "%'
-            OR b.branch_name LIKE '%" . $search . "%'
+            OR bc.branch_name LIKE '%" . $search . "%'
             OR (SELECT GROUP_CONCAT(alc.area_name SEPARATOR ', ')
                 FROM area_list_creation alc
                 WHERE FIND_IN_SET(alc.area_id, adm.area_id) AND alc.status = 0) LIKE '%" . $search . "%') ";

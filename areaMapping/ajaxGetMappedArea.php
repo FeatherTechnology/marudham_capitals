@@ -8,7 +8,7 @@ if (isset($_POST['lineid']) && isset($_POST['loanCatId']) && isset($_POST['branc
     $loan_cat_area_id = $_POST['loanCatId'];
     $branchid = $_POST['branchid'];
 
-    $qry = $connect->query("SELECT `area_id` FROM `area_duefollowup_mapping` WHERE `loan_category_id` IN ($loan_cat_area_id) AND `branch_id` = $branchid ");
+    $qry = $connect->query("SELECT `area_id` FROM `area_duefollowup_mapping` WHERE `loan_category_id` = $loan_cat_area_id AND `branch_id` = $branchid ");
     $excludeAreaIds = [];
     if($qry->rowCount() > 0){
         while($duerow = $qry->fetchObject()){

@@ -50,12 +50,7 @@ const dueLine = new Choices('#due_line', {
     placeholderValue: 'Select Line Name',
     allowHTML: true
 });
-const loanCatMultiselect = new Choices('#loan_cat1', {
-    removeItemButton: true,
-    noChoicesText: 'Select Loan Category',
-    allowHTML: true
 
-});
 const subStatusMultiselect = new Choices('#sub_status_mapping', {
     removeItemButton: true,
     noChoicesText: 'Select Customer Status',
@@ -302,14 +297,9 @@ $(document).ready(function () {
     });
     
     $('#loan_cat1').change(function () {
-        // Get values from multiselect and sort
-        const loanList = loanCatMultiselect.getValue();
-        const loanSortedStr = loanList
-            .map(item => item.value)
-            .sort((a, b) => a - b)
-            .join(',');
-    
-        $('#loan_cat').val(loanSortedStr);
+       
+        const loanList = $('#loan_cat1').val();
+        $('#loan_cat').val(loanList);
 
         getCusLoanCount();
     });
@@ -325,7 +315,7 @@ $(document).ready(function () {
     })
     //on submit add sub area list to hidden input
     $('#submit_area_mapping_duefollowup').click(function () {
-        var loanCategory = loanCatMultiselect.getValue();
+        var loanCategory = $('#loan_cat1').val();
         var due_line = dueLine.getValue();
         var area_list = areaMultiselect2.getValue();
         // var sub_area_list = intance2.getValue();
@@ -333,7 +323,7 @@ $(document).ready(function () {
 
         //Validation
         var duefollowup_name = $('#duefollowup_name').val(); var company_name = $('#company_name2').val(); var branch = $('#branch2').val(); var cuscnt = $('#cus_count').val(); var loancnt = $('#loan_count').val();
-        if (duefollowup_name == '' || company_name == '' || branch == '' || loanCategory.length == 0 || due_line.length == 0 || subStatus.length == 0 || area_list.length == 0 || cuscnt == '' || loancnt == '' ) {
+        if (duefollowup_name == '' || company_name == '' || branch == '' || loanCategory == '' || due_line.length == 0 || subStatus.length == 0 || area_list.length == 0 || cuscnt == '' || loancnt == '' ) {
             Swal.fire({
                 timerProgressBar: true,
                 title: 'Please Fill out Mandatory fields!',
@@ -355,9 +345,7 @@ $(document).ready(function () {
         // const subAreaStr = getSortedCommaSeparatedValues(intance2);
         // $('#sub_area2').val(subAreaStr);        
 
-        // Loan Category multi-select
-        const loanCategoryStr = getSortedCommaSeparatedValues(loanCatMultiselect);
-        $('#loan_cat').val(loanCategoryStr);
+        $('#loan_cat').val(loanCategory);
 
         // Sub Status multi-select
         getSubStatusValues();
@@ -488,7 +476,7 @@ function getArea2(lineid) {
         var branchid = $('#branch2').val();
         var values = area_id_upd.split(',');
         var map = 'duefollowup';
-        const loanCat = getSortedCommaSeparatedValues(loanCatMultiselect);
+        var loanCat = $('#loan_cat1').val();
         $.ajax({
             url: 'areaMapping/ajaxGetMappedArea.php',
             type: 'post',
@@ -838,17 +826,20 @@ function getCusLoanCount(){
         .sort((a, b) => a - b)
         .join(',');
 
-    const loanCatId = loanCatMultiselect.getValue()
-        .map(item => item.value)
-        .sort((a, b) => a - b)
-        .join(',');
+    var loanCatId = $('#loan_cat1').val();
 
     const subStatus = subStatusMultiselect.getValue()
         .map(item => item.value)
         .sort((a, b) => a.localeCompare(b))
         .join(',');
 
-    $.post('areaMapping/getCusAndLoanCount.php',{areaid, loanCatId, subStatus}, function(response){
+        const lineList = dueLine.getValue();
+        const mapId = lineList
+            .map(item => item.value)
+            .sort((a, b) => a - b)
+            .join(',');
+
+    $.post('areaMapping/getCusAndLoanCount.php',{areaid, loanCatId, subStatus, mapId}, function(response){
         let cusCnt = (response.cus_count) ? response.cus_count : 0;
         let loanCnt = (response.loan_count) ? response.loan_count : 0;
         $('#cus_count').val(cusCnt);
@@ -874,32 +865,27 @@ function getLoanCatDropdown() {
             type: 'post',
             cache: false,
             success: function (response) {
-                console.log('loan category')
-                loanCatMultiselect.clearStore();
+                $('#loan_cat1').empty();
+                $('#loan_cat1').append('<option value="">Select Loan category</option>');
                 for (var i = 0; i < response.length; i++) {
-                    var loan_cat_id = response[i]['loan_cat_id'];
-                    var loan_cat_name = response[i]['loan_cat_name'];
                     var selected = '';
-                    if (loan_cat_upd != '') {
-                        for (var j = 0; j < loan_cat_upd.length; j++) {
-                            if (loan_cat_upd[j] == loan_cat_id) {
-                                selected = 'selected';
-                            }
-                        }
+                    if (loan_cat_upd != '' && loan_cat_upd == response[i]['loan_cat_id']) {
+                        selected = "selected";
                     }
-                    var items = [{
-                        value: loan_cat_id,
-                        label: loan_cat_name,
-                        selected: selected
-                    }]
-                    loanCatMultiselect.setChoices(items);
-                    loanCatMultiselect.init();
+                    $('#loan_cat1').append("<option value = '" + response[i]['loan_cat_id'] + "' " + selected + " > " + response[i]['loan_cat_name'] + " </option>");
                 }
-                
-                resolve(); // Notify completion
+                {//To Order Alphabetically
+                    var firstOption = $("#loan_cat1 option:first-child");
+                    $("#loan_cat1").html($("#loan_cat1 option:not(:first-child)").sort(function (a, b) {
+                        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
+                    }));
+                    $("#loan_cat1").prepend(firstOption);
+                }
+
+                resolve();
             },
             error: function (xhr, status, error) {
-                reject(error); // Handle errors
+                reject(error); 
             }
         });
     });

@@ -377,7 +377,7 @@ if (isset($_GET['type'])) {
                                         <div class="form-group">
                                             <label for="disabledInput">Loan Category</label>&nbsp;<span class="text-danger">*</span>
 											<input type='hidden' class='form-control' id='loan_cat' name='loan_cat' >
-											<select tabindex="9" type="text" class="form-control" id="loan_cat1" name="loan_cat1" multiple>
+											<select tabindex="9" type="text" class="form-control" id="loan_cat1" name="loan_cat1">
 												<option value="">Select Loan Category</option>
 											</select>
 											<span class="text-danger" style='display:none' id='loan_catCheck'>Please select Loan Category</span>

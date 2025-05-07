@@ -34,7 +34,7 @@ if (isset($_POST['payable'])) {
 }
 
 $curdate = date('Y-m-d');
-$qry = $connect->query("SELECT lc.cus_id_loan, lc.due_start_from, ii.cus_status
+$qry = $connect->query("SELECT lc.cus_id_loan, lc.due_start_from, lc.due_method_scheme, ii.cus_status
         FROM acknowlegement_loan_calculation lc 
         LEFT JOIN in_issue ii ON lc.req_id = ii.req_id 
         WHERE lc.req_id = '$req_id' ");
@@ -87,9 +87,32 @@ if (date('Y-m-d', strtotime($row['due_start_from'])) > date('Y-m-d', strtotime($
         }
     }
 }
+
+//If Due start from date is greater than curdate means payable is "0". For example curdate is "11-03-2025" and the due start date is "01-04-2025" the payable is 0 till april.
+if ($row['due_method_scheme'] == '2') { // Weekly
+    // Use 'o-W' for year + ISO week number (e.g., 2025-14)
+    $due_start = date('o-W', strtotime($row['due_start_from']));
+    $cur_week = date('o-W', strtotime($curdate));
     
-if((strtotime($row['due_start_from']) > strtotime($curdate))){ //If Due start from date is greater than curdate means payable is "0". For example curdate is "11-03-2025" and the due start date is "01-04-2025" the payable is 0 till april.
-    $payable_amnts = '0';
+    if ($due_start > $cur_week) {
+        $payable_amnts = '0';
+    }
+
+} else if ($row['due_method_scheme'] == '3') { // Daily
+    $due_start = date('Y-m-d', strtotime($row['due_start_from']));
+    $cur_day = date('Y-m-d', strtotime($curdate));
+
+    if ($due_start > $cur_day) {
+        $payable_amnts = '0';
+    }
+
+} else { // Monthly (default)
+    $due_start = date('Y-m', strtotime($row['due_start_from']));
+    $cur_month = date('Y-m', strtotime($curdate));
+
+    if ($due_start > $cur_month) {
+        $payable_amnts = '0';
+    }
 }
 
 $lpdqry = $connect->query("SELECT
