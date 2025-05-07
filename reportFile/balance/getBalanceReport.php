@@ -114,7 +114,9 @@ $query = " SELECT
             c.due_amt_track,
             c.princ_amt_track,
             c.int_amt_track,
-            req.cus_status
+            req.cus_status,
+            ack.updated_date,
+            lc.due_start_from
         FROM 
             acknowlegement_loan_calculation lc
         JOIN 
@@ -135,6 +137,7 @@ $query = " SELECT
             loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
         LEFT JOIN 
             agent_creation ac ON req.agent_id = ac.ag_id
+        JOIN in_acknowledgement ack ON ack.req_id = req.req_id
         LEFT JOIN (
             SELECT 
                 req_id, 
@@ -193,6 +196,18 @@ $sno = 1;
 
 foreach ($result as $row) {
     $sub_array = [];
+    $start = strtotime($row['due_start_from']);
+    
+    if(strtotime($row['maturity_month']) < strtotime($to_date)){
+        $end = strtotime($row['maturity_month'] );
+    }
+    else{
+        $end = strtotime($to_date ); 
+    }
+
+    $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
+    $payable_amount = ($months * $row['due_amt_cal'] ) - $row['due_amt_track'];
+
     $balance_amt = ($row['due_type'] != 'Interest') ?
         intVal($row['tot_amt_cal']) - intVal($row['due_amt_track']) :
         intVal($row['principal_amt_cal']) - intVal($row['princ_amt_track']);
@@ -236,7 +251,28 @@ foreach ($result as $row) {
     $sub_array[] = moneyFormatIndia($balance_amt);
     $sub_array[] = $bal_due;
     $sub_array[] = 'Present';
-    $sub_array[] = $statusObj[$row['cus_status']];
+    $payable_amount = max(0, $payable_amount);
+    if($row['cus_status'] = 15 && $row['updated_date'] < strtotime($to_date)){
+        $sub_array[] = 'Error';
+    }
+    else if($row['cus_status'] = 16 && $row['updated_date'] < strtotime($to_date)){
+        $sub_array[] = 'Legal';
+    }
+    else if($payable_amount <= $row['due_amt_cal'] && $row['maturity_month'] >= strtotime($to_date)){
+        $sub_array[] = 'Current';
+    }
+    else if($payable_amount > $row['due_amt_cal'] && $row['maturity_month'] > strtotime($to_date)){
+        $sub_array[] = 'Pending';
+    }
+    else if (($payable_amount > 0  && $row['maturity_month'] < strtotime($to_date) )){
+        $sub_array[] = 'OD';
+    }
+    else if($payable_amount == 0  && $row['maturity_month'] > strtotime($to_date)){
+        $sub_array[] = 'Due Nil';
+    }
+    else {
+        $sub_array[] = 'No Result';
+    }
     $data[] = $sub_array;
     $sno++;
 }

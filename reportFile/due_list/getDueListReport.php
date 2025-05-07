@@ -122,6 +122,7 @@ $req_id_list = implode(',', $req_id_list);
     cls.closed_sts,
     cls.consider_level,
     req.cus_status,
+    ack.updated_date,
     IFNULL(NULLIF(c.pending, ''), 0) AS pending,
     IFNULL(NULLIF(c.payable_amt, ''), 0) AS payable_amt,
     IFNULL(NULLIF(c.total_paid_track, ''), 0) AS total_paid_track,
@@ -144,6 +145,7 @@ JOIN sub_area_list_creation sal ON
 JOIN area_line_mapping alm ON
     FIND_IN_SET( sal.sub_area_id, alm.sub_area_id )
 JOIN request_creation req ON lc.req_id = req.req_id
+JOIN in_acknowledgement ack ON inck.req_id = req.req_id
 LEFT JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
 LEFT JOIN agent_creation ac ON req.agent_id = ac.ag_id
 LEFT JOIN closed_status cls ON req.req_id = cls.req_id
@@ -251,28 +253,34 @@ foreach ($result as $row) {
     $sub_array[] = isset($pending_due) && $pending_due >= 0 ? number_format($pending_due , 1, '.', ''): 0;
     $sub_array[] = isset($row['od_months']) && $row['od_months'] >= 0 ? $row['od_months'] : 0;;
     $sub_array[] = isset($payable_amount) ? moneyFormatIndia($payable_amount) : 0;
+    $sub_array[] = 'Present';
+    $payable_amount = max(0, $payable_amount);
+    $pending_amount = max(0, $pending_amount);
 
-    if ($row['cus_status'] >= '20') {
-        $sub_array[] = 'Closed';
-        if ($row['closed_sts'] != '' && $row['closed_sts'] != NULL) {
-            $rclosed = $row['closed_sts'];
-            $consider_lvl = $row['consider_level'];
-            if ($rclosed == '1') {
-                $sub_array[] = 'Consider - ' . $consider_lvl_arr[$consider_lvl];
-            } else
-                    if ($rclosed == '2') {
-                $sub_array[] = 'Waiting List';
-            } else
-                    if ($rclosed == '3') {
-                $sub_array[] = 'Block List';
-            }
-        } else {
-            $sub_array[] = $statusObj[$row['cus_status']];
+
+        if($row['cus_status'] = 15 && $row['updated_date'] < strtotime($to_date)){
+            $sub_array[] = 'Error';
         }
-    } else {
-        $sub_array[] = 'Present';
-        $sub_array[] = $statusObj[$row['cus_status']];
-    }
+        else if($row['cus_status'] = 16 && $row['updated_date'] < strtotime($to_date)){
+            $sub_array[] = 'Legal';
+        }
+        else if($payable_amount <= $row['due_amt_cal'] && $pending_amount == 0  && $row['maturity_month'] >= strtotime($to_date)){
+            $sub_array[] = 'Current';
+        }
+        else if($payable_amount > $row['due_amt_cal'] && $row['maturity_month'] > strtotime($to_date)){
+            $sub_array[] = 'Pending';
+        }
+        else if (($payable_amount >= $row['due_amt_cal']  && $pending_amount > 0 && $row['maturity_month'] < strtotime($to_date) )){
+            $sub_array[] = 'OD';
+        }
+        else if($payable_amount == 0  && $pending_amount == 0 && $row['maturity_month'] > strtotime($to_date)){
+            $sub_array[] = 'Due Nil';
+        }
+        else {
+            $sub_array[] = 'No Result';
+        }
+    
+
 
     $data[]      = $sub_array;
     $sno = $sno + 1;
