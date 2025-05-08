@@ -254,7 +254,7 @@ if (sizeof($documentationInfo) > 0) {
 					<label for="documentation">&nbsp;&nbsp; Documentation </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<?php } ?>
 			<?php } else { ?>
-				<span style="color: red;">No update screens assigned to this user.</span>
+				<span style="color: red; font-size: x-large;">No update screens assigned to this user.</span>
 			<?php } ?>
 			<!-- <input type="radio" name="verification_type" id="customer_old" value="customer_old"></input><label for='customer_old'>&nbsp;&nbsp; Old Data </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -->
 		</div>

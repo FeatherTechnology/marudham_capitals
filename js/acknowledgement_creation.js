@@ -2565,24 +2565,23 @@ $('#submit_loan_calculation').click(function (e) {
     // loan_calc_validation(submit_btn);
 
     e.preventDefault(); // stop default form submit
-    console.log("0. Submit clicked");
 
     const submit_btn = $(this);
     submit_btn.prop('disabled', true);
 
     // Call your calculation directly
-    performLoanCalculation();
-    console.log("3. Validation starts");
+    performLoanCalculation(function(){
+        
+        // Now validate
+        const isValid = loan_calc_validation(submit_btn);
+    
+        if (isValid) {
+            submitLoanCalculation(submit_btn);
+        } else {
+            submit_btn.prop('disabled', false);
+        }
+    });
 
-    // Now validate
-    const isValid = loan_calc_validation(submit_btn);
-    console.log("4. Validation result:", isValid);
-
-    if (isValid) {
-        $('#cus_loancalc').submit();
-    } else {
-        submit_btn.prop('disabled', false);
-    }
 
 });
 
@@ -2779,7 +2778,6 @@ $('#sub_category').change(function () {
                 // unbind the event handler
                 $(document).off('click', '.add_category_info');
                 $(document).on('click', '.add_category_info', function () {
-                    console.log(category_content)
                     $('#moduleTable tbody').append(category_content);
                 });
 
@@ -3730,8 +3728,7 @@ function getSchemePreIntreset() {
 // }
 
 
-function performLoanCalculation(){
-    console.log("1. Start calculation");
+function performLoanCalculation(callback){
 
     var profit_method = $('#profit_method').val(); // if profit method changes, due type is EMI
     if (profit_method == 'after_intrest') {
@@ -3771,7 +3768,8 @@ function performLoanCalculation(){
         }
     }
 
-    console.log("2. End calculation");
+    if (typeof callback === 'function') callback();
+
 }
 
 //Validation for Loan calculation
@@ -3934,6 +3932,34 @@ function loan_calc_validation(submit_btn) {
     submit_btn.removeAttr('disabled');
     return isValid;
 
+}
+
+function submitLoanCalculation(submit_btn) {
+    const form = document.getElementById("cus_loancalc");
+    const formData = new FormData(form);
+
+    $.ajax({
+        url: "verificationFile/LoanCalculation/submitLoanCalculation.php",
+        type: "POST",
+        data: formData,
+        contentType: false, // Important for file upload
+        processData: false, // Prevent jQuery from processing the data
+        dataType: "json",
+        success: function (response) {
+            if (response["info"].includes("Success")) {
+                alert(response.info);
+                showOverlay(); //Reload takes few milliseconds to start so in mean time showing overlay to restrict user access.
+                location.reload();
+            } else {
+                alert("Error on Submit");
+            }
+            submit_btn.prop("disabled", false);
+        },
+        error: function () {
+            alert("Server error during submission.");
+            submit_btn.prop("disabled", false);
+        }
+    });
 }
 
 //////////////////////////////////////////////////////////////////// Loan Calculation Functions End ///////////////////////////////////////////////////////////////////////////////
