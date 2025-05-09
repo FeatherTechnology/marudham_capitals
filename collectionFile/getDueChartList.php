@@ -573,7 +573,7 @@ include '../ajaxconfig.php';
                                 <?php 
                                     //if payable is greater than balance then change it as balance amt coz dont collect more than balance
                                     //this case will occur when collection status becoms OD
-                                    $payableval = ($a <= 1 ) ? 0 : $due_amt_1 + $pendingval;
+                                    $payableval = ($i < 1 ) ? 0 : $due_amt_1 + $pendingval;
                                     echo ($payableval > $bal_amt) ? $bal_amt : $payableval;
                                     // $LDObj = new GetLoanDetails($connect, $req_id, $cusDueMonth,'Due Chart');
                                     // echo $LDObj->response['payable']; 

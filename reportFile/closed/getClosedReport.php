@@ -87,6 +87,7 @@ $query = "SELECT
     cp.cus_name,
     al.area_name,
     sal.sub_area_name,
+    ac.ag_name,
     lcc.loan_category_creation_name AS loan_cat_name,
     lc.sub_category,
     lc.loan_amt_cal,
@@ -109,6 +110,10 @@ LEFT JOIN
     loan_category_creation lcc ON lcc.loan_category_creation_id = lc.loan_category
 LEFT JOIN 
     closed_status cs ON ii.req_id = cs.req_id
+LEFT JOIN 
+    in_verification iv ON ii.req_id = iv.req_id
+LEFT JOIN 
+    agent_creation ac ON iv.agent_id = ac.ag_id
 LEFT JOIN (
     SELECT 
         req_id, 
@@ -180,6 +185,7 @@ foreach ($result as $row) {
     $sub_array[] = $row['sub_area_name'];
     $sub_array[] = $row['loan_cat_name'];
     $sub_array[] = $row['sub_category'];
+    $sub_array[] = $row['ag_name'];
     $sub_array[] = moneyFormatIndia($row['loan_amt_cal']);
     $sub_array[] = date('d-m-Y', strtotime($row['maturity_month']));
     $sub_array[] = date('d-m-Y', strtotime($row['created_date']));
