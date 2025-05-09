@@ -145,7 +145,7 @@ JOIN sub_area_list_creation sal ON
 JOIN area_line_mapping alm ON
     FIND_IN_SET( sal.sub_area_id, alm.sub_area_id )
 JOIN request_creation req ON lc.req_id = req.req_id
-JOIN in_acknowledgement ack ON inck.req_id = req.req_id
+JOIN in_acknowledgement ack ON ack.req_id = req.req_id
 LEFT JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
 LEFT JOIN agent_creation ac ON req.agent_id = ac.ag_id
 LEFT JOIN closed_status cls ON req.req_id = cls.req_id
