@@ -86,6 +86,7 @@ $collection_report = '';
 $principal_interest_report = '';
 $balance_report = '';
 $due_list_report = '';
+$in_closed_report = '';
 $closed_report = '';
 $confirmation_followup_report = '';
 $agent_report = '';
@@ -227,6 +228,7 @@ if($idupd>0)
 			$principal_interest_report          		     = $getUser['principal_interest_report'];
 			$balance_report          		     = $getUser['balance_report'];
 			$due_list_report          		     = $getUser['due_list_report'];
+			$in_closed_report          		     = $getUser['in_closed_report'];
 			$closed_report          		     = $getUser['closed_report'];
 			$confirmation_followup_report          		     = $getUser['confirmation_followup_report'];
 			$agent_report          		     = $getUser['agent_report'];
@@ -1069,6 +1071,12 @@ if($idupd>0)
                                 <label class="custom-control-label" for="due_list_report">Due List</label>
                             </div>
                         </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+							<div class="custom-control custom-checkbox">
+								<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($in_closed_report==0){ echo'checked'; }} ?> tabindex="69" class="report-checkbox" id="in_closed_report" name="in_closed_report" disabled>&nbsp;&nbsp;
+								<label class="custom-control-label" for="in_closed_report">In Closed</label>
+							</div>
+						</div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($closed_report==0){ echo'checked'; }} ?> tabindex="69" class="report-checkbox" id="closed_report" name="closed_report" disabled>&nbsp;&nbsp;
