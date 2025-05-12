@@ -2424,7 +2424,7 @@ function getDocumentHistory() {
                 $('#docHistoryDiv').html(response);
             }
         }).then(function () {
-            $('.edit-doc').unbind('click');
+            $('.edit-doc').off('click');
             $('.edit-doc').click(function () {
 
                 $('.dropdown').not($(this).parent()).children().css('border-color', '');// to set other dropdown buttons as normal
