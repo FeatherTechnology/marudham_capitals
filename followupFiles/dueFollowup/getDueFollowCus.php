@@ -74,7 +74,7 @@ if (isset($_POST['comm_date'])) {
         $qry_cndtn = "AND cm.comm_date > '$current_date' AND (cm.comm_date IS NOT NULL OR cm.comm_date != '0000-00-00') ";
         
     }
-    elseif($comm_date =='5'){ //After Date
+    elseif($comm_date =='5'){ //To Follow Date
         $qry_cndtn = "AND cm.comm_date IS NULL ";
         
     }else{

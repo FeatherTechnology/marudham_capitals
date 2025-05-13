@@ -61,7 +61,7 @@ $closed_lvl_arr = [
 
 $column = array(
     'ii.id',
-    'cp.area_line',
+    'alm.line_name',
     'ii.loan_id',
     'ii.updated_date',
     'cp.cus_id',
@@ -70,16 +70,17 @@ $column = array(
     'sal.sub_area_name',
     'lcc.loan_category_creation_name',
     'lc.sub_category',
-    'ii.id',
+    'ac.ag_name',
+    'lc.loan_amt_cal',
     'lc.maturity_month',
     'cs.created_date',
     'ii.id',
-    'ii.id',
-    'ii.id'
+    'cs.closed_sts',
+    'cs.consider_level'
 );
 
 $query = "SELECT 
-    cp.area_line AS line,
+    alm.line_name AS line,
     ii.loan_id,
     ii.updated_date AS loan_date,
     cp.req_id,
@@ -106,6 +107,8 @@ JOIN
     area_list_creation al ON cp.area_confirm_area = al.area_id
 JOIN 
     sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
+JOIN
+    area_line_mapping alm ON FIND_IN_SET(al.area_id, alm.area_id)
 LEFT JOIN 
     loan_category_creation lcc ON lcc.loan_category_creation_id = lc.loan_category
 LEFT JOIN 
@@ -136,15 +139,18 @@ WHERE
 
 if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {
-        $query .= " and (cp.area_line LIKE '%" . $_POST['search'] . "%' OR
+        $query .= " and (alm.line_name LIKE '%" . $_POST['search'] . "%' OR
             ii.loan_id LIKE '%" . $_POST['search'] . "%' OR
             ii.updated_date LIKE '%" . $_POST['search'] . "%' OR
             cp.cus_id LIKE '%" . $_POST['search'] . "%' OR
             cp.cus_name LIKE '%" . $_POST['search'] . "%' OR
             al.area_name LIKE '%" . $_POST['search'] . "%' OR
             sal.sub_area_name LIKE '%" . $_POST['search'] . "%' OR
+            lcc.loan_category_creation_name LIKE '%" . $_POST['search'] . "%' OR
             lc.sub_category LIKE '%" . $_POST['search'] . "%' OR
             lc.maturity_month LIKE '%" . $_POST['search'] . "%' OR
+            cs.closed_sts LIKE '%" . $_POST['search'] . "%' OR
+            cs.consider_level LIKE '%" . $_POST['search'] . "%' OR
             cs.created_date LIKE '%" . $_POST['search'] . "%' ) ";
     }
 }

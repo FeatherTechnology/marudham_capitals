@@ -59,16 +59,16 @@ $coll_method = [1 => 'By Self', 2 => 'On Spot'];
 
 $column = array(
     'cp.id',
-    'cp.id',
+    'alm.line_name',
     'ii.loan_id',
     'ii.updated_date',
     'coll.cus_id',
     'coll.cus_name',
     'al.area_name',
     'sal.sub_area_name',
-    'cp.id',
-    'cp.id',
-    'cp.id',
+    'lcc.loan_category_creation_name',
+    'lc.sub_category',
+    'ac.ag_name',
     'u.role',
     'u.fullname',
     'coll.coll_location',
@@ -137,11 +137,15 @@ $query = "SELECT
 if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {
         $query .= " and (ii.loan_id LIKE '%" . $_POST['search'] . "%'
+                    OR alm.line_name LIKE '%" . $_POST['search'] . "%'
                     OR ii.updated_date LIKE '%" . $_POST['search'] . "%'
                     OR coll.cus_id LIKE '%" . $_POST['search'] . "%'
                     OR coll.cus_name LIKE '%" . $_POST['search'] . "%'
                     OR al.area_name LIKE '%" . $_POST['search'] . "%'
                     OR sal.sub_area_name LIKE '%" . $_POST['search'] . "%'
+                    OR lcc.loan_category_creation_name LIKE '%" . $_POST['search'] . "%'
+                    OR lc.sub_category LIKE '%" . $_POST['search'] . "%'
+                    OR ac.ag_name LIKE '%" . $_POST['search'] . "%'
                     OR u.role LIKE '%" . $_POST['search'] . "%'
                     OR u.fullname LIKE '%" . $_POST['search'] . "%'
                     OR coll.coll_location LIKE '%" . $_POST['search'] . "%'

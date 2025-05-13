@@ -1099,6 +1099,16 @@ $(function () {
         getAreaBasedSubArea(area_upd);
     }
 
+    var role_upd = $('#role_upd').val();
+
+    if (role_upd == '3') { //Staff
+        var userid_upd = $('#userid_upd').val();
+        getStaffBasedAgent(userid_upd);//create agent dropdown based on staff name using user id
+            
+    } else if (role_upd == '1') { //Director
+        getAllAgentDropdown();//for directors
+
+    }
 
     $('.modalTable').DataTable({
         'processing': true,
@@ -1128,6 +1138,11 @@ $(function () {
 
     let agent_id = $('#agent_id').val();
     getresponsiblecolumn(agent_id);
+
+    var pge = $('#pge').val();
+    if(pge =='1'){ //verification.
+        $('#cus_agent_name').attr('disabled', true);
+    }
 });
 
 //To get Reponsible Dropdown
@@ -2113,29 +2128,29 @@ function resetbankinfoList() {
 
 ////////////////////////// KYC Info ////////////////////////////////////////////////
 
-$('#proof_number').keyup(function () {
-    // let proof_type = $('#proof_type').val();
-    // if(proof_type == 1){
-    //     var value = $(this).val();
-    //     value = value.replace(/\D/g, "").split(/(?:([\d]{4}))/g).filter(s => s.length > 0).join(" ");
-    //     $(this).val(value);
-    //     $(this).attr('maxlength','14')
-    // }else if(proof_type == 3){
-    //     var value = $(this).val();
-    //     value = value.replace(/\D/g, "").match(/.{1,2}/g).join("/"); // Modify this line
-    //     $(this).val(value);
-    // }else if(proof_type == 4){
-    //     var value = $(this).val();
-    //     value = value.replace(/\D/g, "").match(/.{1,2}/g).join("-"); // Modify this line
-    //     $(this).val(value);
-    // }
-    // else{
-    //     $(this).removeAttr('maxlength');//remove maxlength when other than adhar due to unkown count of number 
-    // }
-});
-$('#proof_type').change(function () {
-    // $('#proof_number').val('')
-})
+// $('#proof_number').keyup(function () {
+//     // let proof_type = $('#proof_type').val();
+//     // if(proof_type == 1){
+//     //     var value = $(this).val();
+//     //     value = value.replace(/\D/g, "").split(/(?:([\d]{4}))/g).filter(s => s.length > 0).join(" ");
+//     //     $(this).val(value);
+//     //     $(this).attr('maxlength','14')
+//     // }else if(proof_type == 3){
+//     //     var value = $(this).val();
+//     //     value = value.replace(/\D/g, "").match(/.{1,2}/g).join("/"); // Modify this line
+//     //     $(this).val(value);
+//     // }else if(proof_type == 4){
+//     //     var value = $(this).val();
+//     //     value = value.replace(/\D/g, "").match(/.{1,2}/g).join("-"); // Modify this line
+//     //     $(this).val(value);
+//     // }
+//     // else{
+//     //     $(this).removeAttr('maxlength');//remove maxlength when other than adhar due to unkown count of number 
+//     // }
+// });
+// $('#proof_type').change(function () {
+//     // $('#proof_number').val('')
+// })
 
 $(document).on("click", "#kycInfoBtn", function () {
 
@@ -2839,6 +2854,72 @@ function feedbackList() {
     });
 }
 //Customer Feedback Modal End
+
+////////////////////////// Agent dropdown START ////////////////////////////////////
+//Fetch Agent dropdown based on staffs from manage user
+function getStaffBasedAgent(user_id_load) {
+    var ag_id_upd = $('#agent_id').val();
+    $.ajax({
+        url: 'requestFile/getStaffBasedAgent.php',
+        data: { 'user_id': user_id_load },
+        dataType: 'json',
+        type: 'post',
+        cache: false,
+        success: function (response) {
+            $('#cus_agent_name').empty();
+            $('#cus_agent_name').append("<option value='' >Select Agent Name</option>");
+            for (var i = 0; i < response.length; i++) {
+                var selected = '';
+                if (ag_id_upd != 'undefined' && ag_id_upd != '' && ag_id_upd == response[i]['ag_id']) {
+                    selected = "selected";
+                }
+                $('#cus_agent_name').append("<option value='" + response[i]['ag_id'] + "' " + selected + ">" + response[i]['ag_name'] + " </option>");
+            }
+            {//To Order Alphabetically
+                var firstOption = $("#cus_agent_name option:first-child");
+                $("#cus_agent_name").html($("#cus_agent_name option:not(:first-child)").sort(function (a, b) {
+                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
+                }));
+                $("#cus_agent_name").prepend(firstOption);
+            }
+        }
+    })
+}
+
+//Fetch all agent list for director login
+function getAllAgentDropdown() {
+    var ag_id_upd = $('#agent_id').val();
+    $.ajax({
+        url: 'requestFile/getAllAgentDropdown.php',
+        data: {},
+        dataType: 'json',
+        type: 'post',
+        cache: false,
+        success: function (response) {
+            $('#cus_agent_name').empty();
+            $('#cus_agent_name').append("<option value='' >Select Agent Name</option>");
+            for (var i = 0; i < response.length; i++) {
+                var selected = '';
+                if (ag_id_upd != 'undefined' && ag_id_upd != '' && ag_id_upd == response[i]['ag_id']) {
+                    selected = 'selected';
+                }
+                $('#cus_agent_name').append("<option value='" + response[i]['ag_id'] + "' " + selected + ">" + response[i]['ag_name'] + " </option>");
+            }
+            {//To Order Alphabetically
+                var firstOption = $("#cus_agent_name option:first-child");
+                $("#cus_agent_name").html($("#cus_agent_name option:not(:first-child)").sort(function (a, b) {
+                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
+                }));
+                $("#cus_agent_name").prepend(firstOption);
+            }
+        }
+    })
+}
+
+$('#cus_agent_name').change(function () {
+    getresponsiblecolumn($(this).val()); //To Hide/show responsible.
+})
+////////////////////////// Agent dropdown END ////////////////////////////////////
 
 ////////////////////////////////////////////////Submit Verification //////////////////////////////////////////////////////////////////////////////
 
