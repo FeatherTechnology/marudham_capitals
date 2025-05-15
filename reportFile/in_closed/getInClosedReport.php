@@ -37,18 +37,19 @@ if ($userid != 1) {
 }
 
 $where = "";
-
+$from_date = "";
+$to_date = "";
 if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'] != '' && $_POST['to_date'] != '') {
     $from_date = date('Y-m-d', strtotime($_POST['from_date']));
     $to_date = date('Y-m-d', strtotime($_POST['to_date']));
-    $where  = "AND (date(iv.updated_date) >= '" . $from_date . "') AND (date(iv.updated_date) <= '" . $to_date . "') ";
+    $where  = "AND cc.closing_date BETWEEN '$from_date' AND '$to_date'  AND NOT EXISTS (SELECT * FROM closed_status cs WHERE cs.req_id = ii.req_id AND cs.created_date BETWEEN '$from_date' AND '$to_date')";
 }
 
 $where .= $user_based;
 
 $column = array(
     'ii.id',
-    'cp.area_line',
+    'alm.line_name',
     'ii.loan_id',
     'ii.updated_date',
     'cp.cus_id',
@@ -65,7 +66,7 @@ $column = array(
 );
 
 $query = "SELECT 
-    cp.area_line AS line,
+    alm.line_name AS line,
     ii.loan_id,
     ii.updated_date AS loan_date,
     cp.req_id,
@@ -90,12 +91,16 @@ JOIN
     area_list_creation al ON cp.area_confirm_area = al.area_id
 JOIN 
     sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
+JOIN
+    area_line_mapping alm ON FIND_IN_SET(al.area_id, alm.area_id)
 LEFT JOIN 
     loan_category_creation lcc ON lcc.loan_category_creation_id = lc.loan_category
 LEFT JOIN 
     in_verification iv ON ii.req_id = iv.req_id
 LEFT JOIN 
     agent_creation ac ON iv.agent_id = ac.ag_id
+JOIN 
+    closing_customer cc ON ii.req_id = cc.req_id
 LEFT JOIN (
     SELECT 
         req_id, 
@@ -112,13 +117,11 @@ LEFT JOIN (
     ) AS ranked_coll
     WHERE row_num = 1
 ) AS coll_most_frequent ON ii.req_id = coll_most_frequent.req_id
-WHERE 
-    ii.cus_status = 20 
-    $where ";
+WHERE 1 $where ";
 
 if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {
-        $query .= " and (cp.area_line LIKE '%" . $_POST['search'] . "%' OR
+        $query .= " and (alm.line_name LIKE '%" . $_POST['search'] . "%' OR
             ii.loan_id LIKE '%" . $_POST['search'] . "%' OR
             ii.updated_date LIKE '%" . $_POST['search'] . "%' OR
             cp.cus_id LIKE '%" . $_POST['search'] . "%' OR
@@ -182,16 +185,16 @@ foreach ($result as $row) {
     $sno++;
 }
 
-function count_all_data($connect)
+function count_all_data($connect, $from_date, $to_date)
 {
-    $query = $connect->query("SELECT count(req_id) as req_count FROM request_creation where cus_status = 20 ");
+    $query = $connect->query("SELECT count(req_id) as req_count FROM closing_customer cc where cc.closing_date BETWEEN '$from_date' AND '$to_date' ");
     $statement = $query->fetch();
     return $statement['req_count'];
 }
 
 $output = array(
     'draw' => intval($_POST['draw']),
-    'recordsTotal' => count_all_data($connect),
+    'recordsTotal' => count_all_data($connect, $from_date, $to_date),
     'recordsFiltered' => $number_filter_row,
     'data' => $data
 );
