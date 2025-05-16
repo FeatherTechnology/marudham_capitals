@@ -50,7 +50,7 @@ if (isset($_POST['from_date']) && $_POST['from_date'] != '') {
     AND (
         (lc.maturity_month >= '$full_date' AND cs.bal_amnt > 0)
         OR ii.cus_status = 14
-    ) AND lc.due_start_from <= '$full_date'  AND (lc.tot_amt_cal - IFNULL(col_sum.total_due_amt_tract, 0)) > 0 ";
+    ) AND lc.due_start_from <= '$full_date'  AND (lc.tot_amt_cal - IFNULL(col_sum.total_due_amt_tract, 0)) > 0";
 }
 
     $where  .= $user_based;
@@ -108,7 +108,7 @@ $query = "SELECT
     cls.consider_level,
     req.cus_name,
     req.cus_status,
-    ack.updated_date,
+     ack.updated_date,
     IFNULL(col_sum.total_due_amt_tract, 0) AS total_due_amt
 FROM
     in_issue ii
@@ -195,10 +195,10 @@ foreach ($result as $row) {
     $start = strtotime($row['due_start_from']);
     
     if(strtotime($row['maturity_month']) < strtotime($full_date)){
-        $end = strtotime($row['maturity_month'] );
+        $end = strtotime($row['maturity_month']);
     }
     else{
-        $end = strtotime($full_date ); 
+        $end = strtotime($full_date); 
     }
 
     $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
@@ -220,30 +220,9 @@ foreach ($result as $row) {
     $sub_array[] = $role_arr[$row['role']];
     $sub_array[] = $row['fullname'];
     $sub_array[] = $row['due_amt_cal'];
-    $sub_array[] = isset($payable_amount) && $payable_amount >= 0 ? moneyFormatIndia($payable_amount) : 0;
+    $sub_array[] = isset($payable_amount)  && $payable_amount > 0 ? moneyFormatIndia($payable_amount) : 0;
     $sub_array[] = 'Present';
     $payable_amount = max(0, $payable_amount);
-    // if ($row['cus_status'] >= '20') {
-    //     $sub_array[] = 'Closed';
-    //     if ($row['closed_sts'] != '' && $row['closed_sts'] != NULL) {
-    //         $rclosed = $row['closed_sts'];
-    //         $consider_lvl = $row['consider_level'];
-    //         if ($rclosed == '1') {
-    //             $sub_array[] = 'Consider - ' . $consider_lvl_arr[$consider_lvl];
-    //         } else
-    //                 if ($rclosed == '2') {
-    //             $sub_array[] = 'Waiting List';
-    //         } else
-    //                 if ($rclosed == '3') {
-    //             $sub_array[] = 'Block List';
-    //         }
-    //     } else {
-    //         $sub_array[] = $statusObj[$row['cus_status']];
-    //     }
-    // } else {
-    //     $sub_array[] = 'Present';
-    //     $sub_array[] = $statusObj[$row['cus_status']];
-    // }
     if($row['cus_status'] = 15 && $row['updated_date'] < strtotime($full_date)){
         $sub_array[] = 'Error';
     }
