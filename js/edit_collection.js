@@ -31,13 +31,17 @@ $(function(){
     }
 })
 
-function getcustomerStatustable(Customer_Status){
+function getcustomerStatustable(Customer_Status) {
+    // Get the current page index before destroying the table
+    var table = $('#collection_table').DataTable();
 
-    $('#collection_table').DataTable().destroy();
-    $('#collection_table').DataTable({
-        "order": [
-            [0, "desc"]
-        ],
+    // Destroy the existing DataTable
+    table.destroy();
+
+    // Reinitialize the DataTable with stateSave option to retain state
+    var newTable = $('#collection_table').DataTable({
+        "stateSave": true,  // Retain state (pagination, search, etc.)
+        "order": [[0, "desc"]],
         'processing': true,
         'serverSide': true,
         'serverMethod': 'post',
@@ -46,11 +50,12 @@ function getcustomerStatustable(Customer_Status){
             'data': function(data) {
                 var search = $('#search').val();
                 data.search = search;
-                data.CustomerStatus=Customer_Status;
+                data.CustomerStatus = Customer_Status;
             }
         },
         dom: 'lBfrtip',
-        buttons: [{
+        buttons: [
+            {
                 extend: 'excel',
                 title: "Collection List"
             },
@@ -59,15 +64,25 @@ function getcustomerStatustable(Customer_Status){
                 collectionLayout: 'fixed four-column',
             }
         ],
-        "lengthMenu": [
-            [10, 25, 50, -1],
-            [10, 25, 50, "All"]
-        ],
+        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+        "pageLength": 10, // Default 10 rows per page
+        "paging": true,
+        "pagingType": "full_numbers", // Show all page numbers
+        "language": {
+            "paginate": {
+                "first": "First",
+                "last": "Last",
+                "next": "Next",
+                "previous": "Previous"
+            }
+        },
         'drawCallback': function() {
             searchFunction('collection_table');
+            paginationFunction('collection_table');
         }
-        
     });
+
+    // No need to manually restore the page; it's handled automatically by stateSave
     $(".table-responsive").show();
 }
 

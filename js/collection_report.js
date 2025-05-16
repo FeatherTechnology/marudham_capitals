@@ -12,9 +12,7 @@ $(document).ready(function () {
     });
     
     //Collection Report Table
-    // var collection_report_table = 
     $('#reset_btn').click(function () {
-        // collection_report_table.ajax.reload();
         collectionReportTable();
     })
 });
@@ -63,7 +61,7 @@ function collectionReportTable(){
             };
 
             // Array of column indices to sum
-            var columnsToSum = [17, 18, 19, 20];
+            var columnsToSum = [18, 19, 20, 21];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {

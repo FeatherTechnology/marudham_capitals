@@ -452,7 +452,7 @@ if (isset($getuserdetails['download_access'])) {
 			<?php if ($current_page == 'closed_report') { ?>
 				<?php include "include/templates/closed_report.php" ?>
 			<?php } else ?>
-			<!-- commitment Report -->
+			<!-- confirmation Report -->
 			<?php if ($current_page == 'confirmation_followup_report') { ?>
 				<?php include "include/templates/confirmation_followup_report.php" ?>
 			<?php } else ?>
@@ -465,6 +465,11 @@ if (isset($getuserdetails['download_access'])) {
 			<!-- Agent Report -->
 			<?php if ($current_page == 'agent_report') { ?>
 				<?php include "include/templates/agent_report.php" ?>
+			<?php } else ?>
+			
+			<!-- No Due Pay Report -->
+			<?php if ($current_page == 'no_due_pay_report') { ?>
+				<?php include "include/templates/no_due_pay_report.php" ?>
 			<?php } else ?>
 
 			<!-- Due List -->

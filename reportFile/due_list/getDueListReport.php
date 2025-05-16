@@ -39,11 +39,16 @@ $where = "1";
 if (isset($_POST['to_date']) && $_POST['to_date'] != '') {
     $to_date = date('Y-m-d', strtotime($_POST['to_date']));
     $where  = "(date(coll.coll_date) <= '" . $to_date . "') ";
+    $li_where  = "AND date(li.created_date) <= date('$to_date') AND balance_amount = '0' ";
+} else {
+    $to_date = date('Y-m-d');
+    $where  = "(date(coll.coll_date) <= '" . $to_date . "') ";
+    $li_where  = "AND date(li.created_date) <= date('$to_date') AND balance_amount = '0' ";
 }
 
     $where  .= $user_based;
-
-$statusObj = [
+    $consider_lvl_arr = [1 => 'Bronze', 2 => 'Silver', 3 => 'Gold', 4 => 'Platinum', 5 => 'Diamond'];
+    $statusObj = [
         '14' => 'Current',
         '15' => 'Error',
         '16' => 'Legal',
@@ -51,11 +56,12 @@ $statusObj = [
         '20' => 'In Closed',
         '21' => 'Closed',
     ];
-
     $column = array(
-        'lc.id',
+        'ii.loan_id',
         'alm.line_name',
         'ii.loan_id',
+        'lc.cus_id_loan',
+        'lc.cus_name_loan',
         'lc.due_start_from',
         'lc.maturity_date',
         'coll.cus_id',
@@ -69,84 +75,116 @@ $statusObj = [
         'lc.due_amt_cal',
         'lc.due_period',
         'lc.tot_amt_cal',
-        'lc.id',
-        'lc.id',
-        'lc.id',
-        'lc.id',
-        'lc.id',
-        'lc.id',
-        'lc.id',
-        'lc.id'
+        'ii.loan_id',
+        'ii.loan_id',
+        'ii.loan_id',
+        'ii.loan_id',
+        'ii.loan_id',
+        'ii.loan_id',
+        'ii.loan_id',
+        'ii.loan_id'
     );
 
-    $query = "SELECT 
+$qry = " SELECT req.req_id FROM request_creation req JOIN acknowlegement_customer_profile cp ON req.req_id = cp.req_id
+        JOIN customer_status cs ON req.req_id = cs.req_id
+        JOIN loan_issue li ON req.req_id = li.req_id  AND DATE(li.created_date) <= DATE('$to_date')  AND balance_amount = '0'
+        WHERE req.cus_status BETWEEN 14 AND 18  AND ( cs.sub_status != 'Due Nil' OR (cs.sub_status = 'Due Nil' AND cs.created_date > '$to_date') )
+
+        UNION 
+
+        SELECT li.req_id FROM loan_issue li JOIN closing_customer cc ON li.req_id = cc.req_id LEFT JOIN ( SELECT req_id, MAX(coll_date) AS max_coll_date FROM collection WHERE coll_date <= '$to_date' GROUP BY req_id ) AS latest_collection ON li.req_id = latest_collection.req_id LEFT JOIN collection c ON latest_collection.req_id = c.req_id AND latest_collection.max_coll_date = c.coll_date WHERE DATE(cc.closing_date) > DATE('$to_date') AND DATE(li.created_date) <= DATE('$to_date') AND ( c.req_id IS NULL OR (c.bal_amt - c.due_amt_track) > 0 )";
+   
+$run = $connect->query($qry);
+$req_id_list = [];
+while ($row = $run->fetch()) {
+    $req_id_list[] = $row['req_id'];
+}
+$req_id_list = implode(',', $req_id_list);
+
+
+    $query = "SELECT
     ii.updated_date AS loan_date,
     lc.maturity_month AS maturity_date,
-    coll.cus_id,
-    coll.cus_name,
-    lc.id,
+    lc.cus_id_loan,
+    lc.cus_name_loan,
     lc.loan_amt,
     lc.due_amt_cal,
     lc.due_period,
     lc.tot_amt_cal,
     lc.sub_category,
+    lc.due_start_from,
     alm.line_name AS line,
     ii.loan_id,
     al.area_name,
     sal.sub_area_name,
     lcc.loan_category_creation_name AS loan_cat_name,
     ac.ag_name,
-    req.cus_status,
     cls.closed_sts,
     cls.consider_level,
-    (SELECT SUM(c.paid_amt) FROM collection c WHERE c.req_id = coll.req_id and date(coll.coll_date)<=$to_date ) AS total_due_amt,
-    coll.pending_amt AS pending,
-    coll.payable_amt,  
-    coll.total_paid_track,  
-    coll.bal_amt,  
-    coll.penalty,  
-    coll.coll_charge,  
-    coll.due_amt_track,  
-      CASE 
-    WHEN lc.maturity_month < '$to_date' 
-         AND (coll.bal_amt + coll.penalty + coll.coll_charge - coll.total_paid_track) > 0  
-    THEN TIMESTAMPDIFF(MONTH, lc.maturity_month, '$to_date')  
-    ELSE 0
-END AS od_months
-FROM collection coll
-JOIN acknowlegement_customer_profile cp ON coll.req_id = cp.req_id
-JOIN in_issue ii ON coll.req_id = ii.req_id
-JOIN area_list_creation al ON cp.area_confirm_area = al.area_id
-JOIN sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
-JOIN area_line_mapping alm ON FIND_IN_SET(sal.sub_area_id, alm.sub_area_id)
-JOIN acknowlegement_loan_calculation lc ON coll.req_id = lc.req_id
-JOIN request_creation req ON coll.req_id = req.req_id
-JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
+    req.cus_status,
+    ack.updated_date,
+    IFNULL(NULLIF(c.pending, ''), 0) AS pending,
+    IFNULL(NULLIF(c.payable_amt, ''), 0) AS payable_amt,
+    IFNULL(NULLIF(c.total_paid_track, ''), 0) AS total_paid_track,
+    IFNULL(NULLIF(c.due_amt_track, ''), 0) AS due_amt_track,
+    IFNULL(NULLIF(c.total_due_amt, ''), 0) AS total_due_amt,
+    IFNULL(NULLIF(c.bal_amt, ''), lc.tot_amt_cal) AS bal_amt,
+    IFNULL(NULLIF(c.coll_id, ''), 0) AS coll_id
+FROM
+    acknowlegement_loan_calculation lc
+JOIN acknowlegement_customer_profile cp ON
+    lc.req_id = cp.req_id
+JOIN in_issue ii ON
+    lc.req_id = ii.req_id
+JOIN loan_issue li ON
+    lc.req_id = li.req_id
+JOIN area_list_creation al ON
+    cp.area_confirm_area = al.area_id
+JOIN sub_area_list_creation sal ON
+    cp.area_confirm_subarea = sal.sub_area_id
+JOIN area_line_mapping alm ON
+    FIND_IN_SET( sal.sub_area_id, alm.sub_area_id )
+JOIN request_creation req ON lc.req_id = req.req_id
+JOIN in_acknowledgement ack ON ack.req_id = req.req_id
+LEFT JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
 LEFT JOIN agent_creation ac ON req.agent_id = ac.ag_id
 LEFT JOIN closed_status cls ON req.req_id = cls.req_id
-WHERE $where
-AND coll.coll_date = (
-    SELECT c.coll_date 
-    FROM collection c 
-    WHERE c.req_id = coll.req_id
-    ORDER BY YEAR(c.coll_date) DESC, MONTH(c.coll_date) DESC, DAY(c.coll_date) DESC
-    LIMIT 1
-) and req.cus_status >= 14";
+LEFT JOIN ( SELECT c.req_id,
+           c.pending_amt AS pending,
+           c.payable_amt,
+           c.total_paid_track,
+           c.due_amt_track,
+           c.bal_amt,
+           c.coll_id,
+           ( SELECT SUM(due_amt_track) FROM collection  WHERE req_id = c.req_id AND DATE(coll_date) <= '$to_date' ) AS total_due_amt
+            FROM collection c
+            INNER JOIN (SELECT req_id, MAX(coll_id) AS max_coll_id FROM collection WHERE req_id IN ($req_id_list)
+            AND DATE(coll_date) = ( SELECT MAX(DATE(coll_date)) FROM collection c2 WHERE c2.req_id = collection.req_id AND DATE(c2.coll_date) <= '$to_date'
+            ) GROUP BY req_id
+           ) latest
+    ON c.req_id = latest.req_id AND c.coll_id = latest.max_coll_id ) c ON lc.req_id = c.req_id 
+WHERE
+    lc.req_id IN ($req_id_list) ";
 
 
-        if (isset($_POST['search'])) {
-            if ($_POST['search'] != "") {
-                $query .= " and (ii.loan_id LIKE '%" . $_POST['search'] . "%'
-                            OR ii.updated_date LIKE '%" . $_POST['search'] . "%'
-                            OR coll.cus_id LIKE '%" . $_POST['search'] . "%'
-                            OR coll.cus_name LIKE '%" . $_POST['search'] . "%'
-                            OR al.area_name LIKE '%" . $_POST['search'] . "%'
-                            OR sal.sub_area_name LIKE '%" . $_POST['search'] . "%'
-                            OR lcc.loan_category_creation_name LIKE '%" . $_POST['search'] . "%')";
-                            
+
+if (isset($_POST['search'])) {
+        if ($_POST['search'] != "") {
+            $query .= " and (ii.loan_id LIKE '%" . $_POST['search'] . "%'
+                        OR ii.updated_date LIKE '%" . $_POST['search'] . "%'
+                        OR lc.cus_id_loan LIKE '%" . $_POST['search'] . "%'
+                        OR lc.cus_name_loan LIKE '%" . $_POST['search'] . "%'
+                        OR al.area_name LIKE '%" . $_POST['search'] . "%'
+                        OR sal.sub_area_name LIKE '%" . $_POST['search'] . "%'
+                        OR lcc.loan_category_creation_name LIKE '%" . $_POST['search'] . "%') ";           
             }
         }
-        
+ if (isset($_POST['order'])) {
+  $query .= " ORDER BY " . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'];
+} else {
+  $query .= ' ';
+}
+
 $query1 = "";
 if ($_POST['length'] != -1) {
     $query1 = " LIMIT " . $_POST['start'] . ", " . $_POST['length'];
@@ -167,21 +205,39 @@ $result = $statement->fetchAll();
 $data = array();
 $sno = 1;
 foreach ($result as $row) {
+    if (strtotime($row['maturity_date']) < strtotime($to_date)) {
+        $end = strtotime($row['maturity_date']);
+        $start = strtotime($row['due_start_from']);
+        $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
+
+        $pending_month = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start));
+        if (date('d', $end) >= date('d', $start) && date('m', $end) != date('m', $start)) {
+            $pending_month += 1;
+        }
+        
+    } else {
+        $start = strtotime($row['due_start_from']);
+        $end = strtotime($to_date);
+        $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
+        $pending_month =  max(0, (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)));
+
+    }
     
-    $balance_amount = ($row['bal_amt'] - $row['due_amt_track']);
+    $balance_amount = $row['tot_amt_cal'] - $row['total_due_amt'];
     $paid_due = $row['total_due_amt'] / $row['due_amt_cal'];
-    $balance_due =  $row['due_period'] - $paid_due;
-    $pending_amount = max( ($row['pending'] - $row['due_amt_track']),0);
+    $balance_due = (float)$row['due_period'] - $paid_due;
+    $payable_amount = ($months * $row['due_amt_cal'] ) - $row['total_due_amt'];
+    $pending_amount = ($pending_month * $row['due_amt_cal'] ) - $row['total_due_amt'];
     $pending_due =  $pending_amount  / $row['due_amt_cal'];
-    $payable_amount =  $row['payable_amt'] - $row['total_paid_track'];
+
     $sub_array   = array();
     $sub_array[] = $sno;
     $sub_array[] = $row['line'];
     $sub_array[] = $row['loan_id'];
     $sub_array[] = date('d-m-Y', strtotime($row['loan_date']));
     $sub_array[] = date('d-m-Y', strtotime($row['maturity_date']));
-    $sub_array[] = $row['cus_id'];
-    $sub_array[] = $row['cus_name'];
+    $sub_array[] = $row['cus_id_loan'];
+    $sub_array[] = $row['cus_name_loan'];
     $sub_array[] = $row['area_name'];
     $sub_array[] = $row['sub_area_name'];
     $sub_array[] = $row['loan_cat_name'];
@@ -191,34 +247,40 @@ foreach ($result as $row) {
     $sub_array[] = moneyFormatIndia($row['due_amt_cal']);
     $sub_array[] = $row['due_period'];
     $sub_array[] = moneyFormatIndia($row['tot_amt_cal']);
-    $sub_array[] = isset($balance_amount) && $balance_amount >= 0 ? moneyFormatIndia($balance_amount) : 0;
-    $sub_array[] = isset($balance_due) && $balance_due >= 0 ? $balance_due : 0; ;
-    $sub_array[] = moneyFormatIndia($pending_amount) ;
-    $sub_array[] = isset($pending_due) && $pending_due >= 0 ? number_format($pending_due , 2, '.', ''): 0;
+    $sub_array[] = isset($balance_amount) && $balance_amount >= 0 ? moneyFormatIndia($balance_amount) : $row['tot_amt_cal'];
+    $sub_array[] = isset($balance_due) && $balance_due >= 0 ? number_format($balance_due , 1, '.', ''): 0 ;
+    $sub_array[] = isset($pending_amount) ? moneyFormatIndia($pending_amount) : 0;
+    $sub_array[] = isset($pending_due) && $pending_due >= 0 ? number_format($pending_due , 1, '.', ''): 0;
     $sub_array[] = isset($row['od_months']) && $row['od_months'] >= 0 ? $row['od_months'] : 0;;
-    $sub_array[] = isset($payable_amount) && $payable_amount >= 0 ? moneyFormatIndia($payable_amount) : 0;
+    $sub_array[] = isset($payable_amount) ? moneyFormatIndia($payable_amount) : 0;
+    $sub_array[] = 'Present';
+    $payable_amount = max(0, $payable_amount);
+    $pending_amount = max(0, $pending_amount);
 
-    if ($row['cus_status'] >= '20') {
-        $sub_array[] = 'Closed';
-        if ($row['closed_sts'] != '' && $row['closed_sts'] != NULL) {
-            $rclosed = $row['closed_sts'];
-            $consider_lvl = $row['consider_level'];
-            if ($rclosed == '1') {
-                $sub_array[] = 'Consider - ' . $consider_lvl_arr[$consider_lvl];
-            } else
-                    if ($rclosed == '2') {
-                $sub_array[] = 'Waiting List';
-            } else
-                    if ($rclosed == '3') {
-                $sub_array[] = 'Block List';
-            }
-        } else {
-            $sub_array[] = $statusObj[$row['cus_status']];
+
+        if($row['cus_status'] = 15 && $row['updated_date'] < strtotime($to_date)){
+            $sub_array[] = 'Error';
         }
-    } else {
-        $sub_array[] = 'Present';
-        $sub_array[] = $statusObj[$row['cus_status']];
-    }
+        else if($row['cus_status'] = 16 && $row['updated_date'] < strtotime($to_date)){
+            $sub_array[] = 'Legal';
+        }
+        else if($payable_amount <= $row['due_amt_cal'] && $pending_amount == 0  && $row['maturity_month'] >= strtotime($to_date)){
+            $sub_array[] = 'Current';
+        }
+        else if($payable_amount > $row['due_amt_cal'] && $row['maturity_month'] > strtotime($to_date)){
+            $sub_array[] = 'Pending';
+        }
+        else if (($payable_amount >= $row['due_amt_cal']  && $pending_amount > 0 && $row['maturity_month'] < strtotime($to_date) )){
+            $sub_array[] = 'OD';
+        }
+        else if($payable_amount == 0  && $pending_amount == 0 && $row['maturity_month'] > strtotime($to_date)){
+            $sub_array[] = 'Due Nil';
+        }
+        else {
+            $sub_array[] = 'No Result';
+        }
+    
+
 
     $data[]      = $sub_array;
     $sno = $sno + 1;
@@ -226,7 +288,7 @@ foreach ($result as $row) {
 
 function count_all_data($connect)
 {
-    $query = $connect->query("SELECT COUNT(subquery.coll_id) AS count_result FROM ( SELECT coll.coll_id FROM collection coll JOIN request_creation req ON coll.req_id = req.req_id WHERE req.cus_status = 14 GROUP BY coll.req_id ) AS subquery ");
+    $query = $connect->query("SELECT count(req_id) as count_result  FROM request_creation WHERE cus_status BETWEEN 14 AND 18");
     $statement = $query->fetch();
     return intVal($statement['count_result']);
 }

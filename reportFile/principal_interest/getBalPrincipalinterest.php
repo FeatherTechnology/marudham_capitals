@@ -114,9 +114,7 @@ $query = " SELECT
             c.due_amt_track,
             c.princ_amt_track,
             c.int_amt_track,
-            req.cus_status,
-            ack.updated_date,
-            lc.due_start_from
+            req.cus_status
         FROM 
             acknowlegement_loan_calculation lc
         JOIN 
@@ -137,7 +135,6 @@ $query = " SELECT
             loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
         LEFT JOIN 
             agent_creation ac ON req.agent_id = ac.ag_id
-        JOIN in_acknowledgement ack ON ack.req_id = req.req_id
         LEFT JOIN (
             SELECT 
                 req_id, 
@@ -170,6 +167,8 @@ if (isset($_POST['search']) && $_POST['search'] != "") {
     )";
 }
 
+    $query .= " GROUP BY lc.req_id";
+    
 $orderColumn = $_POST['order'][0]['column'] ?? null;
 $orderDir = $_POST['order'][0]['dir'] ?? 'ASC';
 if ($orderColumn !== null) {
@@ -196,18 +195,6 @@ $sno = 1;
 
 foreach ($result as $row) {
     $sub_array = [];
-    $start = strtotime($row['due_start_from']);
-    
-    if(strtotime($row['maturity_month']) < strtotime($to_date)){
-        $end = strtotime($row['maturity_month'] );
-    }
-    else{
-        $end = strtotime($to_date ); 
-    }
-
-    $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
-    $payable_amount = ($months * $row['due_amt_cal'] ) - $row['due_amt_track'];
-
     $balance_amt = ($row['due_type'] != 'Interest') ?
         intVal($row['tot_amt_cal']) - intVal($row['due_amt_track']) :
         intVal($row['principal_amt_cal']) - intVal($row['princ_amt_track']);
@@ -222,13 +209,13 @@ foreach ($result as $row) {
             $int_amt = 0;    // Or any default value
         }
         
-    // $response = calculatePrincipalAndInterest($princ_amt, $int_amt, $balance_amt);
+    $response = calculatePrincipalAndInterest($princ_amt, $int_amt, $balance_amt);
 
-    // if (intVal($response['principal_paid']) > intVal($row['loan_amt_cal'])) {
-    //     $diff = intVal($response['principal_paid']) - intVal($row['loan_amt_cal']);
-    //     $response['interest_paid'] += $diff;
-    //     $response['principal_paid'] = intVal($row['loan_amt_cal']);
-    // }
+    if (intVal($response['principal_paid']) > intVal($row['loan_amt_cal'])) {
+        $diff = intVal($response['principal_paid']) - intVal($row['loan_amt_cal']);
+        $response['interest_paid'] += $diff;
+        $response['principal_paid'] = intVal($row['loan_amt_cal']);
+    }
 
     $bal_due = round($balance_amt / $row['due_amt_cal'], 1);
 
@@ -249,30 +236,11 @@ foreach ($result as $row) {
     $sub_array[] = $row['due_period'];
     $sub_array[] = moneyFormatIndia($row['tot_amt_cal']);
     $sub_array[] = moneyFormatIndia($balance_amt);
+    $sub_array[] = moneyFormatIndia($response['principal_paid']);
+    $sub_array[] = moneyFormatIndia($response['interest_paid']);
     $sub_array[] = $bal_due;
     $sub_array[] = 'Present';
-    $payable_amount = max(0, $payable_amount);
-    if($row['cus_status'] = 15 && $row['updated_date'] < strtotime($to_date)){
-        $sub_array[] = 'Error';
-    }
-    else if($row['cus_status'] = 16 && $row['updated_date'] < strtotime($to_date)){
-        $sub_array[] = 'Legal';
-    }
-    else if($payable_amount <= $row['due_amt_cal'] && $row['maturity_month'] >= strtotime($to_date)){
-        $sub_array[] = 'Current';
-    }
-    else if($payable_amount > $row['due_amt_cal'] && $row['maturity_month'] > strtotime($to_date)){
-        $sub_array[] = 'Pending';
-    }
-    else if (($payable_amount > 0  && $row['maturity_month'] < strtotime($to_date) )){
-        $sub_array[] = 'OD';
-    }
-    else if($payable_amount == 0  && $row['maturity_month'] > strtotime($to_date)){
-        $sub_array[] = 'Due Nil';
-    }
-    else {
-        $sub_array[] = 'No Result';
-    }
+    $sub_array[] = $statusObj[$row['cus_status']];
     $data[] = $sub_array;
     $sno++;
 }
@@ -316,31 +284,31 @@ function moneyFormatIndia($num)
     return $thecash;
 }
 
-// function calculatePrincipalAndInterest($principal, $interest, $paidAmount)
-// {
-//     $principal_paid = 0;
-//     $interest_paid = 0;
+function calculatePrincipalAndInterest($principal, $interest, $paidAmount)
+{
+    $principal_paid = 0;
+    $interest_paid = 0;
 
-//     while ($paidAmount > 0) {
-//         if ($paidAmount >= $principal) {
-//             $principal_paid += $principal;
-//             $paidAmount -= $principal;
-//         } else {
-//             $principal_paid += $paidAmount;
-//             break;
-//         }
+    while ($paidAmount > 0) {
+        if ($paidAmount >= $principal) {
+            $principal_paid += $principal;
+            $paidAmount -= $principal;
+        } else {
+            $principal_paid += $paidAmount;
+            break;
+        }
 
-//         if ($paidAmount >= $interest) {
-//             $interest_paid += $interest;
-//             $paidAmount -= $interest;
-//         } else {
-//             $interest_paid += $paidAmount;
-//             break;
-//         }
-//     }
+        if ($paidAmount >= $interest) {
+            $interest_paid += $interest;
+            $paidAmount -= $interest;
+        } else {
+            $interest_paid += $paidAmount;
+            break;
+        }
+    }
 
-//     return [
-//         'principal_paid' => (int)$principal_paid,
-//         'interest_paid' => (int)$interest_paid,
-//     ];
-// }
+    return [
+        'principal_paid' => (int)$principal_paid,
+        'interest_paid' => (int)$interest_paid,
+    ];
+}

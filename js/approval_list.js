@@ -70,6 +70,7 @@ function callOnClickEvents() {
         $('.move_acknowledgement').click(function () {
             var req_id = $(this).val();
             let cus_id = $(this).data('cusid');
+            var button = $(this)
             $.post('approveFile/check_customer_limit.php', { cus_id }, function (response) {
                 let cus_limit = response['cus_limit'];
                 if (cus_limit == '') {
@@ -86,6 +87,7 @@ function callOnClickEvents() {
                         confirmButtonText: 'Yes'
                     }).then((result) => {
                         if (result.isConfirmed) {
+                            button.prop('disabled', true);
                             $.ajax({
                                 url: 'approveFile/sendToAcknowledgement.php',
                                 dataType: 'json',
@@ -93,6 +95,7 @@ function callOnClickEvents() {
                                 data: { 'req_id': req_id },
                                 cache: false,
                                 success: function (response) {
+                                   
                                     if (response.includes('Approved')) {
                                         Swal.fire({
                                             timerProgressBar: true,
@@ -101,10 +104,10 @@ function callOnClickEvents() {
                                             icon: 'success',
                                             showConfirmButton: true,
                                             confirmButtonColor: '#009688'
-                                        });
-                                        setTimeout(function () {
-                                            window.location = 'approval_list';
-                                        }, 2000)
+                                        }).then(function () {
+                                             window.location = 'approval_list';
+                                             button.prop('disabled', false);
+                                        })
                                     }
                                 }
                             })

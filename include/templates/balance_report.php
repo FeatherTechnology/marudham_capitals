@@ -1,3 +1,11 @@
+<style>
+	#report_type{
+		width: 200px;
+		height: 43px;
+		margin-bottom: 25px;
+	}
+</style>
+
 <link rel="stylesheet" type="text/css" href="css/ledger_report.css">
 <br><br>
 <div class="page-header">
@@ -7,30 +15,74 @@
 
 </div><br>
 
-<div class="text-right" style="margin-right: 25px;">
-	<!-- <button class="btn btn-primary" id='close_history_card' style="display: none;" >&times;&nbsp;&nbsp;Cancel</button> -->
-</div>
-
 <!-- Main container start -->
 <div class="main-container">
 	<!--form start-->
 	<form id="balance_report_form" name="balance_report_form" action="" method="post" enctype="multipart/form-data">
-
-
 		<div class="row gutters" id="balance_card">
 			<div class="toggle-container col-12">
+
 				<input type="date" id='to_date' name='to_date' class="toggle-button" value='' style="margin-bottom: 25px;">
+				
 				<select type="text" class="form-control" id="loan_category" name="loan_category" multiple >
 					<option value="">Select Loan Category</option>
 				</select>
+
+				<select type="text" class="toggle-button" name="report_type" id="report_type">
+					<option value="">Select report type</option>
+					<option value="1">Balance</option>
+					<option value="2">Principal/Interest</option>
+				</select>
+
 				<input type="button" id='reset_btn' name='reset_btn' class="toggle-button" style="background-color: #009688;color:white; margin-bottom:25px" value='Reload'>
 			</div>
 			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 				<div class="card">
 					<div class="card-header">Balance Report</div>
 					<div class="card-body">
+
 						<div id="balance_table_div" class="table-divs" style="overflow-x: auto;">
 							<table id="balance_report_table" class="table custom-table">
+								<thead>
+									<th>S.No</th>
+									<th>Line</th>
+									<th>Loan ID</th>
+									<th>Loan Date</th>
+									<th>Maturity Date</th>
+									<th>Cust. ID</th>
+									<th>Cust. Name</th>
+									<th>Area</th>
+									<th>Sub Area</th>
+									<th>Loan Category</th>
+									<th>Sub Category</th>
+									<th>Agent</th>
+									<th>Loan Amount</th>
+									<th>Due Amount</th>
+									<th>No of Due</th>
+									<th>Total Amount</th>
+									<th>Balance Amount</th>
+									<th>No of Balance Due</th>
+									<th>Status</th>
+									<th>Sub Status</th>
+								</thead>
+								<tbody></tbody>
+								<tfoot>
+									<tr>
+										<td colspan="12"></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td colspan="3"></td>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+
+
+						<div id="princ_intrst_table_div" class="table-divs" style="overflow-x: auto; display: none;">
+							<table id="princ_intrst_table" class="table custom-table">
 								<thead>
 									<th>S.No</th>
 									<th>Line</th>
@@ -64,17 +116,16 @@
 										<td></td>
 										<td></td>
 										<td></td>
-										<td></td>
-										<td></td>
 										<td colspan="3"></td>
 									</tr>
 								</tfoot>
 							</table>
 						</div>
+						
+
 					</div>
 				</div>
 			</div>
 		</div>
-
 	</form>
 </div>

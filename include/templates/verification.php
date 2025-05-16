@@ -368,6 +368,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 	<!-- Customer Profile form start-->
 	<div id="customer_profile" style="display: none;">
 		<form id="cus_Profiles" name="cus_Profiles" action="" method="post" enctype="multipart/form-data">
+			<input type="hidden" name="agent_id" id="agent_id" value="<?php if (isset($agent_id)) {echo $agent_id;} ?>" />
 			<input type="hidden" name="req_id" id="req_id" value="<?php if (isset($req_id)) {
 																		echo $req_id;
 																	} ?>" />
@@ -432,18 +433,15 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 									</div>
 								</div>
 
-								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" <?php if (isset($role)) {
-																										if ($role == '3') { //hide if staff raised req 
-																									?> style="display: none" <?php }
-																														} //staff dont have responsible
-																																?>>
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" style="display: none">
 									<div class="form-group">
-										<label for="responsible">Responsible&nbsp;<span class="required">&nbsp;*</span></label>
-										<input tabindex="3" type="text" class="form-control" id="responsible" name="responsible" value="<?php if (isset($responsible) and $responsible == '0') {
-																																			echo 'Yes';
-																																		} else {
-																																			echo 'No';
-																																		} ?>" readonly>
+										<label for="cus_responsible">Responsible&nbsp;<span class="required">&nbsp;*</span></label>
+										<select tabindex="3" type="text" class="form-control" id="cus_responsible" name="cus_responsible">
+											<option value="">Select Responsible</option>
+											<option value="0" <?php if (isset($responsible) and $responsible == '0') echo 'selected'; ?>>Yes</option>
+											<option value="1" <?php if (isset($responsible) and $responsible == '1') echo 'selected'; ?>>No</option>
+										</select>
+										<span class="text-danger" style='display:none' id='cusResponsibleCheck'>Please Select Responsible</span>
 									</div>
 								</div>
 
@@ -1376,16 +1374,15 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 									</div>
 								</div>
 
-								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" <?php if (isset($role)) {
-																										if ($role == '3') { ?> style="display: none" <?php }
-																																				} ?>>
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" style="display: none">
 									<div class="form-group">
-										<label for="responsible">Responsible&nbsp;<span class="required">&nbsp;*</span></label>
-										<input type="text" class="form-control" id="responsible" name="responsible" value="<?php if (isset($responsible) and $responsible == '0') {
-																																echo 'Yes';
-																															} else {
-																																echo 'No';
-																															} ?>" readonly tabindex="3">
+										<label for="doc_responsible">Responsible&nbsp;<span class="required">&nbsp;*</span></label>
+										<select tabindex="3" type="text" class="form-control" id="doc_responsible" name="doc_responsible">
+											<option value="">Select Responsible</option>
+											<option value="0" <?php if (isset($responsible) and $responsible == '0') echo 'selected'; ?>>Yes</option>
+											<option value="1" <?php if (isset($responsible) and $responsible == '1') echo 'selected'; ?>>No</option>
+										</select>
+										<span class="text-danger" style='display:none' id='docResponsibleCheck'>Please Select Responsible</span>
 									</div>
 								</div>
 
@@ -1448,11 +1445,34 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 					</div>
 					<!-- Document History END -->
 
+					<!-- Choosing Document START -->
+					<div class="card">
+						<div class="card-header"> Documents</div>
+						<div class="card-body">
+							<div class="row">
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+									<div class="form-group">
+										<label for="doc_id">Documents</label>
+										<select class="form-control" name="choose_document" id="choose_document">
+											<option value="0">Select Document</option>
+											<option value="1">Signed Doc</option>
+											<option value="2">Cheque</option>
+											<option value="3">Mortgage</option>
+											<option value="4">Endorsement</option>
+											<option value="5">Gold</option>
+											<option value="6">Documents</option>
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Choosing Document END -->
 
 					<!-- Signed Doc Info START -->
-					<div class="card">
+					<div class="card doc_card" id="signed_doc_card" style="display: none;">
 						<div class="card-header"> Signed Doc Info
-							<button type="button" class="btn btn-primary" id="add_sign_doc" name="add_sign_doc" data-toggle="modal" data-target=".addSignDoc" style="padding: 5px 35px;  float: right;" tabindex="9"><span class="icon-add"></span></button>
+							<button type="button" class="btn btn-primary" id="add_sign_doc" name="add_sign_doc" data-toggle="modal" data-target=".addSignDoc" style="padding: 5px 35px;  float: right;" tabindex="9" onclick="resetsignInfo()"><span class="icon-add"></span></button>
 						</div>
 						<span class="text-danger" style='display:none' id='signed_infoCheck'>Please Fill Signed Doc Info </span>
 						<div class="card-body">
@@ -1484,9 +1504,9 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 					<!-- Signed Doc Info END -->
 
 					<!-- Cheque Info START -->
-					<div class="card">
+					<div class="card doc_card" id="cheque_info_card" style="display: none;">
 						<div class="card-header"> Cheque Info
-							<button type="button" class="btn btn-primary" id="add_Cheque" name="add_Cheque" data-toggle="modal" data-target=".addCheque" style="padding: 5px 35px;  float: right;" tabindex="10"><span class="icon-add"></span></button>
+							<button type="button" class="btn btn-primary" id="add_Cheque" name="add_Cheque" data-toggle="modal" data-target=".addCheque" style="padding: 5px 35px;  float: right;" tabindex="10" onclick="resetchequeInfo()"><span class="icon-add"></span></button>
 						</div>
 						<span class="text-danger" style='display:none' id='Cheque_infoCheck'>Please Fill Cheque Info </span>
 						<div class="card-body">
@@ -1520,8 +1540,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 					<!-- Cheque Info END -->
 
 					<!-- Mortgage Info START-->
-
-					<div class="card">
+					<div class="card doc_card" id="mortgage_info_card" style="display: none;">
 						<div class="card-header"> Mortgage Info </div>
 						<div class="card-body">
 							<div class="row">
@@ -1532,7 +1551,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 										<select type="text" class="form-control" id="mortgage_process" name="mortgage_process" tabindex="11">
 											<option value=""> Select Mortgage Process </option>
 											<option value="0" <?php if (isset($mortgage_process) and $mortgage_process == '0') echo 'selected'; ?>> YES </option>
-											<option value="1" <?php if (isset($mortgage_process) and $mortgage_process == '1') echo 'selected'; ?>> NO </option>
+											<option value="1" <?php if (isset($mortgage_process) and $mortgage_process == '1') echo 'selected'; ?> selected> NO </option>
 										</select>
 										<span class="text-danger" id="mortgageprocessCheck"> Select Mortgage Process </span>
 									</div>
@@ -1615,8 +1634,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 					<!-- Mortgage Info  End-->
 
 					<!-- Endorsement Info START-->
-
-					<div class="card">
+					<div class="card doc_card" id="endorsement_info_card" style="display: none;">
 						<div class="card-header"> Endorsement Info </div>
 						<div class="card-body">
 							<div class="row">
@@ -1627,7 +1645,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 										<select type="text" class="form-control" id="endorsement_process" name="endorsement_process" tabindex="20">
 											<option value=""> Select Endorsement Process </option>
 											<option value="0" <?php if (isset($endorsement_process) and $endorsement_process == '0') echo 'selected'; ?>> YES </option>
-											<option value="1" <?php if (isset($endorsement_process) and $endorsement_process == '1') echo 'selected'; ?>> NO </option>
+											<option value="1" <?php if (isset($endorsement_process) and $endorsement_process == '1') echo 'selected'; ?> selected> NO </option>
 										</select>
 										<span class="text-danger" id="endorsementprocessCheck"> Select Endorsement Process </span>
 									</div>
@@ -1715,9 +1733,9 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 					<!-- Endorsement Info  End-->
 
 					<!-- Gold Info START-->
-					<div class="card">
+					<div class="card doc_card" id="gold_info_card" style="display: none;">
 						<div class="card-header"> Gold Info
-							<button type="button" class="btn btn-primary" id="add_gold" name="add_gold" data-toggle="modal" data-target=".addGold" style="padding: 5px 35px;  float: right;" tabindex="28"><span class="icon-add"></span></button>
+							<button type="button" class="btn btn-primary" id="add_gold" name="add_gold" data-toggle="modal" data-target=".addGold" style="padding: 5px 35px;  float: right;" tabindex="28" onclick="resetgoldInfo()"><span class="icon-add"></span></button>
 						</div>
 						<span class="text-danger" style='display:none' id='Gold_infoCheck'>Please Fill Gold Info </span>
 						<div class="card-body">
@@ -1750,10 +1768,9 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 					</div>
 
 					<!-- Documents Info START-->
-
-					<div class="card">
+					<div class="card doc_card" id="documents_info_card" style="display: none;">
 						<div class="card-header"> Documents Info
-							<button type="button" class="btn btn-primary" id="add_document" name="add_document" data-toggle="modal" data-target=".addDocument" style="padding: 5px 35px;  float: right;" tabindex="29"><span class="icon-add"></span></button>
+							<button type="button" class="btn btn-primary" id="add_document" name="add_document" data-toggle="modal" data-target=".addDocument" style="padding: 5px 35px;  float: right;" tabindex="29" onclick="resetdocInfo()"><span class="icon-add"></span></button>
 						</div>
 						<div class="card-body">
 
@@ -1903,16 +1920,15 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 									</div>
 								</div>
 
-								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" <?php if (isset($role)) {
-																										if ($role == '3') { ?> style="display: none" <?php }
-																																				} ?>>
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" style="display: none">
 									<div class="form-group">
-										<label for="responsible">Responsible&nbsp;<span class="required">&nbsp;*</span></label>
-										<input type="text" class="form-control" id="responsible" name="responsible" value="<?php if (isset($responsible) and $responsible == '0') {
-																																echo 'Yes';
-																															} else {
-																																echo 'No';
-																															} ?>" readonly tabindex="3">
+										<label for="loan_responsible">Responsible&nbsp;<span class="required">&nbsp;*</span></label>
+										<select tabindex="3" type="text" class="form-control" id="loan_responsible" name="loan_responsible">
+											<option value="">Select Responsible</option>
+											<option value="0" <?php if (isset($responsible) and $responsible == '0') echo 'selected'; ?>>Yes</option>
+											<option value="1" <?php if (isset($responsible) and $responsible == '1') echo 'selected'; ?>>No</option>
+										</select>
+										<span class="text-danger" style='display:none' id='loanResponsibleCheck'>Please Select Responsible</span>
 									</div>
 								</div>
 

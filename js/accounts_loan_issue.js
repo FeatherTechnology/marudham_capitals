@@ -1182,7 +1182,7 @@ function getBankDetails() {
             if (result['upload']) {
                 let fileName = result['upload'];  // Assuming the server returns the file name
                 $("#viewUploadedImage")
-                    .attr("href", "verificationFile/bankUploads/" + fileName)  // Set the link to the file
+                    .attr("href", "../uploads/bankUploads/" + fileName)  // Set the link to the file
                     .text(fileName)  // Set the text to the file name
                     .show();  // Show the link
             } else {

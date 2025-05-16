@@ -5,12 +5,30 @@ const loanCategory = new Choices('#loan_category', {
 });
 
 $(document).ready(function () {
-
     //Balance Report Table
-    // var balance_report_table = 
     $('#reset_btn').click(function () {
-        // balance_report_table.ajax.reload();
-        balanceReportTable();
+        let reportType = $('#report_type').val();
+        let url;
+        let tid;
+
+        if(reportType =='1'){//Balance
+            url = 'reportFile/balance/getBalanceReport.php';
+            tid = 'balance_report_table';
+            $('#balance_table_div').show();
+            $('#princ_intrst_table_div').hide();
+
+        }else if(reportType =='2'){ //Priciple / Interest
+            url = 'reportFile/principal_interest/getBalPrincipalinterest.php';
+            tid = 'princ_intrst_table';
+            $('#balance_table_div').hide();
+            $('#princ_intrst_table_div').show();
+
+        }else{
+            alert("Kindly select Report type.");
+            return;
+        }
+
+        balanceReportTable(url, tid);
     })
 });
 
@@ -18,10 +36,9 @@ $(function(){
     getloancategorylist();
 });
 
-function balanceReportTable(){
-    console.log( $('#loan_category').val());
-    $('#balance_report_table').DataTable().destroy();
-    $('#balance_report_table').DataTable({
+function balanceReportTable(url, tid){
+    $('#'+tid).DataTable().destroy();
+    $('#'+tid).DataTable({
         "order": [
             [0, "desc"]
         ],
@@ -29,7 +46,7 @@ function balanceReportTable(){
         'serverSide': true,
         'serverMethod': 'post',
         'ajax': {
-            'url': 'reportFile/balance/getBalanceReport.php',
+            'url': url,
             'data': function (data) {
                 var search = $('input[type=search]').val();
                 data.search = search;
@@ -63,7 +80,7 @@ function balanceReportTable(){
             };
 
             // Array of column indices to sum
-            var columnsToSum = [12, 13, 15, 16, 17, 18];
+            var columnsToSum = [12, 13, 15, 16];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {
@@ -79,14 +96,14 @@ function balanceReportTable(){
             });
         },
         'drawCallback': function() {
-            searchFunction('balance_report_table');
+            searchFunction(tid);
         }
     });
 }
 
 function getloancategorylist(){
     $.ajax({
-        url: 'reportFile/balance/getLoanCategory.php',
+        url: 'loancategoryFile/ajaxGetLoanCategory.php',
         data: {},
         dataType: 'json',
         type: 'post',
@@ -94,11 +111,11 @@ function getloancategorylist(){
         success: function (response) {
             loanCategory.clearStore();
             for (var i = 0; i < response.length; i++) {
+                var loan_cat_id = response[i]['loan_category_creation_id'];
                 var loan_cat_name = response[i]['loan_category_creation_name'];
                 var items = [{
-                    value: loan_cat_name,
-                    label: loan_cat_name
-                    
+                    value: loan_cat_id,
+                    label: loan_cat_name                 
                 }]
                 loanCategory.setChoices(items);
                 loanCategory.init();

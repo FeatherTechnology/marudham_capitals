@@ -65,6 +65,7 @@ $concern_solution = '';
 $concern_feedback = '';
 $accountsmodule = '';
 $cash_tally = '';
+$due_followup_lines='';
 $cash_tally_admin = '';
 $bank_details = '';
 $bank_clearance = '';
@@ -88,6 +89,7 @@ $due_list_report = '';
 $closed_report = '';
 $confirmation_followup_report = '';
 $agent_report = '';
+$no_due_pay_report = '';
 $search_module = '';
 $search_screen = '';
 $bulk_upload_module = '';
@@ -213,6 +215,7 @@ if($idupd>0)
 			$loan_followup = $getUser['loan_followup'];
 			$conf_followup = $getUser['confirmation_followup'];
 			$due_followup = $getUser['due_followup'];
+			$due_followup_lines = $getUser['due_followup_lines'];
 			
 			$reportmodule          		     = $getUser['reportmodule'];
 			$ledger_report          		     = $getUser['ledger_report'];
@@ -227,6 +230,7 @@ if($idupd>0)
 			$closed_report          		     = $getUser['closed_report'];
 			$confirmation_followup_report          		     = $getUser['confirmation_followup_report'];
 			$agent_report          		     = $getUser['agent_report'];
+			$no_due_pay_report          		     = $getUser['no_due_pay_report'];
 
 			$search_module = $getUser['search_module'];
 			$search_screen = $getUser['search'];
@@ -279,6 +283,7 @@ if($idupd>0)
 		<input type="hidden" class="form-control" value="<?php if(isset($group_id)) echo $group_id; ?>"  id="group_id_upd" name="group_id_upd" aria-describedby="id" placeholder="Enter id">
 		<input type="hidden" class="form-control" value="<?php if(isset($bank_details)) echo $bank_details; ?>"  id="bank_details_upd" name="bank_details_upd" aria-describedby="id" placeholder="Enter id">
 		<input type="hidden" class="form-control" value="<?php if(isset($promotion_access)) echo $promotion_access; ?>"  id="promotion_access_upd" name="promotion_access_upd" aria-describedby="id" placeholder="Enter id">
+		<input type="hidden" class="form-control" value="<?php if(isset($due_followup_lines)) echo $due_followup_lines; ?>"  id="due_followup_lines_upd" name="due_followup_lines_upd" aria-describedby="id" placeholder="Enter id">
 		<!-- Row start -->
 		<div class="row gutters">
 			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
@@ -531,7 +536,7 @@ if($idupd>0)
 												<option value="2">New</option>
 												<option value="3">Repromotion</option>
 											</select>
-											<span class="text-danger" style='display:none' id='proCheck'>Please select Group Name</span>
+											<span class="text-danger" style='display:none' id='proCheck'>Please select Promotion Activity Access</span>
                                         </div>
                                     </div>
 								</div>
@@ -979,6 +984,16 @@ if($idupd>0)
                                 <label class="custom-control-label" for="due_followup">Due Followup</label>
                             </div>
                         </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 due_followupline_div"  style='display:none; margin-top: 15px;'>
+                            <div class="custom-control custom-checkbox">
+                                <label class="custom-control-label" for="due_followup_lines">Due Followup lines</label>
+								<input type='hidden' id='due_follup_line_id' name='due_follup_line_id' value=''>
+                                <select class='form-control' id='due_follup_lines' name='due_follup_lines' multiple>
+									<option value="">Select Due Followup Lines</option>
+								</select>
+								<span class='text-danger duefollowupCheck' style="display:none">Please Select Due Followup Lines</span>
+                            </div>
+                        </div>
 					</div>
 						</br></br>
 					<hr>
@@ -1063,13 +1078,19 @@ if($idupd>0)
                                 <label class="custom-control-label" for="agent_report">Agent</label>
                             </div>
                         </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($no_due_pay_report==0){ echo'checked'; }} ?> tabindex="72" class="report-checkbox" id="no_due_pay_report" name="no_due_pay_report" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="no_due_pay_report">No Due Pay </label>
+                            </div>
+                        </div>
 					</div>
 
 					
 					<hr>
 
 					<div class="custom-control custom-checkbox">
-						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($search_module==0){ echo'checked'; }} ?> tabindex="72" class="" id="searchmodule" name="searchmodule" >&nbsp;&nbsp;
+						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($search_module==0){ echo'checked'; }} ?> tabindex="73" class="" id="searchmodule" name="searchmodule" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="searchmodule">
 							<h5>Search</h5>
 						</label>
@@ -1078,7 +1099,7 @@ if($idupd>0)
 					<div class="row">
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($search_screen==0){ echo'checked'; }} ?> tabindex="73" class="search-checkbox" id="search_screen" name="search_screen" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($search_screen==0){ echo'checked'; }} ?> tabindex="74" class="search-checkbox" id="search_screen" name="search_screen" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="search_screen">Search</label>
                             </div>
                         </div>
@@ -1088,7 +1109,7 @@ if($idupd>0)
 					<hr>
 
 					<div class="custom-control custom-checkbox">
-						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($bulk_upload_module==0){ echo'checked'; }} ?> tabindex="74" class="" id="bulk_upload_module" name="bulk_upload_module" >&nbsp;&nbsp;
+						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($bulk_upload_module==0){ echo'checked'; }} ?> tabindex="75" class="" id="bulk_upload_module" name="bulk_upload_module" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="bulk_upload_module">
 							<h5>Bulk Upload</h5>
 						</label>
@@ -1097,7 +1118,7 @@ if($idupd>0)
 					<div class="row">
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($bulk_upload==0){ echo'checked'; }} ?> tabindex="75" class="bulk_upload-checkbox" id="bulk_upload" name="bulk_upload" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($bulk_upload==0){ echo'checked'; }} ?> tabindex="76" class="bulk_upload-checkbox" id="bulk_upload" name="bulk_upload" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="bulk_upload">Bulk Upload</label>
                             </div>
                         </div>
@@ -1106,7 +1127,7 @@ if($idupd>0)
 					<hr>
 
 					<div class="custom-control custom-checkbox">
-						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($loan_track_module==0){ echo'checked'; }} ?> tabindex="76" class="" id="loan_track_module" name="loan_track_module" >&nbsp;&nbsp;
+						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($loan_track_module==0){ echo'checked'; }} ?> tabindex="77" class="" id="loan_track_module" name="loan_track_module" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="loan_track_module">
 							<h5>Loan Track</h5>
 						</label>

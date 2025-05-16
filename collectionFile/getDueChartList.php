@@ -135,35 +135,13 @@ include '../ajaxconfig.php';
         if ($loanFrom['due_method_calc'] == 'Monthly' || $loanFrom['due_method_scheme'] == '1') {
             //Query for Monthly.
             $run = $connect->query("SELECT c.coll_code, c.due_amt, c.tot_amt, c.pending_amt, c.payable_amt, c.coll_date, c.trans_date, c.due_amt_track, c.princ_amt_track, c.int_amt_track, c.bal_amt, c.coll_charge_track, c.coll_location, c.pre_close_waiver, u.fullname, u.role
-            FROM `collection` c
-            LEFT JOIN user u ON c.insert_login_id = u.user_id
-            WHERE c.`req_id` = '$req_id' AND (c.due_amt_track != '' or c.pre_close_waiver!='' OR c.princ_amt_track != '' OR c.int_amt_track != '')
-            AND(
-                (
-                    ( MONTH(c.coll_date) >= MONTH('$issued') AND YEAR(c.coll_date) = YEAR('$issued') )
-                    AND 
-                    ( 
-                        (
-                            YEAR(c.coll_date) = YEAR('$due_start_from') AND MONTH(c.coll_date) < MONTH('$due_start_from')
-                        ) OR (
-                            YEAR(c.coll_date) < YEAR('$due_start_from')
-                        )
-                    )
-                ) 
-                OR
-                (
-                    ( MONTH(c.trans_date) >= MONTH('$issued') AND YEAR(c.trans_date) = YEAR('$issued') )
-                    AND 
-                    ( 
-                        (
-                            YEAR(c.trans_date) = YEAR('$due_start_from') AND MONTH(c.trans_date) < MONTH('$due_start_from')
-                        ) OR (
-                            YEAR(c.trans_date) < YEAR('$due_start_from')
-                        )
-                            AND c.trans_date != '0000-00-00'
-                    )
-                )
-            )");
+            FROM `collection` c LEFT JOIN USER u ON c.insert_login_id = u.user_id
+            WHERE c.`req_id` = '$req_id' AND( c.due_amt_track != '' OR c.pre_close_waiver != '' OR c.princ_amt_track != '' OR c.int_amt_track != '' ) 
+            AND
+             ( (c.coll_date BETWEEN '$issued' and '$due_start_from')
+         OR 
+        ( (c.trans_date BETWEEN '$issued' and '$due_start_from') AND (c.trans_date != '0000-00-00') ) )");
+        
         } else
         if ($loanFrom['due_method_scheme'] == '2') {
             //Query For Weekly.
