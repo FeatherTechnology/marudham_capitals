@@ -3971,12 +3971,12 @@ class admin
 	public function addCustomerProfile($mysqli, $userid)
 	{
 		$responsible ='';
-		if (isset($_POST['cus_responsible'])) {
-			$responsible = $_POST['cus_responsible'];
+			if (isset($_POST['responsible_hidden'])) {
+			$responsible = $_POST['responsible_hidden'];
 		}
 		$cus_agent_name ='';
-		if (isset($_POST['cus_agent_name'])) {
-			$cus_agent_name = $_POST['cus_agent_name'];
+		if (isset($_POST['agent_id_hidden'])) {
+			$cus_agent_name = $_POST['agent_id_hidden'];
 		}
 		if (isset($_POST['req_id'])) {
 			$req_id = $_POST['req_id'];
