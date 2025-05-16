@@ -92,7 +92,7 @@ $qry = " SELECT req.req_id FROM request_creation req JOIN acknowlegement_custome
 
         UNION 
 
-        SELECT li.req_id FROM loan_issue li JOIN closing_customer cc ON li.req_id = cc.req_id LEFT JOIN ( SELECT req_id, MAX(coll_date) AS max_coll_date FROM collection WHERE coll_date <= '$to_date' GROUP BY req_id ) AS latest_collection ON li.req_id = latest_collection.req_id LEFT JOIN collection c ON latest_collection.req_id = c.req_id AND latest_collection.max_coll_date = c.coll_date WHERE DATE(cc.closing_date) > DATE('$to_date') AND DATE(li.created_date) <= DATE('$to_date') AND ( c.req_id IS NULL OR (c.bal_amt - c.due_amt_track) > 0 )";
+        SELECT li.req_id FROM loan_issue li JOIN closing_customer cc ON li.req_id = cc.req_id LEFT JOIN ( SELECT req_id, MAX(coll_date) AS max_coll_date FROM collection WHERE coll_date <= '$to_date' GROUP BY req_id ) AS latest_collection ON li.req_id = latest_collection.req_id LEFT JOIN collection c ON latest_collection.req_id = c.req_id AND latest_collection.max_coll_date = c.coll_date WHERE DATE(cc.closing_date) >= DATE('$to_date') AND DATE(li.created_date) <= DATE('$to_date') AND ( c.req_id IS NULL OR (c.bal_amt - c.due_amt_track) > 0 )";
    
 $run = $connect->query($qry);
 $req_id_list = [];
@@ -156,10 +156,10 @@ LEFT JOIN ( SELECT c.req_id,
            c.due_amt_track,
            c.bal_amt,
            c.coll_id,
-           ( SELECT SUM(due_amt_track) FROM collection  WHERE req_id = c.req_id AND DATE(coll_date) <= '$to_date' ) AS total_due_amt
+           ( SELECT SUM(due_amt_track) FROM collection  WHERE req_id = c.req_id AND DATE(coll_date) < '$to_date' ) AS total_due_amt
             FROM collection c
             INNER JOIN (SELECT req_id, MAX(coll_id) AS max_coll_id FROM collection WHERE req_id IN ($req_id_list)
-            AND DATE(coll_date) = ( SELECT MAX(DATE(coll_date)) FROM collection c2 WHERE c2.req_id = collection.req_id AND DATE(c2.coll_date) <= '$to_date'
+            AND DATE(coll_date) = ( SELECT MAX(DATE(coll_date)) FROM collection c2 WHERE c2.req_id = collection.req_id AND DATE(c2.coll_date) < '$to_date'
             ) GROUP BY req_id
            ) latest
     ON c.req_id = latest.req_id AND c.coll_id = latest.max_coll_id ) c ON lc.req_id = c.req_id 
@@ -219,7 +219,7 @@ foreach ($result as $row) {
         $start = strtotime($row['due_start_from']);
         $end = strtotime($to_date);
         $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
-        $pending_month =  max(0, (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)));
+        $pending_month = max(0, (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)));
 
     }
     
@@ -257,29 +257,28 @@ foreach ($result as $row) {
     $payable_amount = max(0, $payable_amount);
     $pending_amount = max(0, $pending_amount);
 
-
-        if($row['cus_status'] = 15 && $row['updated_date'] < strtotime($to_date)){
-            $sub_array[] = 'Error';
-        }
-        else if($row['cus_status'] = 16 && $row['updated_date'] < strtotime($to_date)){
-            $sub_array[] = 'Legal';
-        }
-        else if($payable_amount <= $row['due_amt_cal'] && $pending_amount == 0  && $row['maturity_month'] >= strtotime($to_date)){
-            $sub_array[] = 'Current';
-        }
-        else if($payable_amount > $row['due_amt_cal'] && $row['maturity_month'] > strtotime($to_date)){
-            $sub_array[] = 'Pending';
-        }
-        else if (($payable_amount >= $row['due_amt_cal']  && $pending_amount > 0 && $row['maturity_month'] < strtotime($to_date) )){
-            $sub_array[] = 'OD';
-        }
-        else if($payable_amount == 0  && $pending_amount == 0 && $row['maturity_month'] > strtotime($to_date)){
-            $sub_array[] = 'Due Nil';
-        }
-        else {
-            $sub_array[] = 'No Result';
-        }
+    if($row['cus_status'] =='15' && strtotime($row['updated_date']) < strtotime($to_date)){
+        $sub_array[] = 'Error';
+    }
+    else if($row['cus_status'] =='16' && strtotime($row['updated_date'])< strtotime($to_date)){
+        $sub_array[] = 'Legal';
+    }
+    else if($payable_amount == 0  && $pending_amount == 0  && $balance_amount == 0){
+        $sub_array[] = 'Due Nil';
+    }
+    else if($payable_amount <= $row['due_amt_cal'] && $pending_amount == 0  && strtotime($row['maturity_date']) >= strtotime($to_date) && $balance_amount != 0 ){
+        $sub_array[] = 'Current';
+    }
+    else if($balance_amount > 0 && strtotime($row['maturity_date']) > strtotime($to_date)){
+        $sub_array[] = 'Pending';
+    }
+    else if ((($payable_amount > $row['due_amt_cal']  || $pending_amount > 0) && strtotime($row['maturity_date']) < strtotime($to_date) )){
+        $sub_array[] = 'OD';
+    }
     
+    else {
+        $sub_array[] = 'No Result';
+    }
 
 
     $data[]      = $sub_array;
