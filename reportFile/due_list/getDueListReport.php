@@ -60,17 +60,20 @@ if (isset($_POST['to_date']) && $_POST['to_date'] != '') {
         'ii.loan_id',
         'alm.line_name',
         'ii.loan_id',
-        'lc.cus_id_loan',
-        'lc.cus_name_loan',
+        'ii.updated_date',
         'lc.due_start_from',
         'lc.maturity_date',
-        'coll.cus_id',
-        'coll.cus_name',
+        'lc.cus_id_loan',
+        'lc.cus_name_loan',
+        'cp.mobile1',
         'al.area_name',
         'sal.sub_area_name',
         'lcc.loan_category_creation_name',
         'lc.sub_category',
         'ac.ag_name',
+        'vfi.famname',
+        'vfi.relationship',
+        'vfi.relation_Mobile',
         'lc.loan_amt',
         'lc.due_amt_cal',
         'lc.due_period',
@@ -113,6 +116,7 @@ $req_id_list = implode(',', $req_id_list);
     lc.tot_amt_cal,
     lc.sub_category,
     lc.due_start_from,
+    cp.mobile1,
     alm.line_name AS line,
     ii.loan_id,
     al.area_name,
@@ -123,6 +127,9 @@ $req_id_list = implode(',', $req_id_list);
     cls.consider_level,
     req.cus_status,
     ack.updated_date,
+    vfi.famname,
+    vfi.relationship,
+    vfi.relation_Mobile,
     IFNULL(NULLIF(c.pending, ''), 0) AS pending,
     IFNULL(NULLIF(c.payable_amt, ''), 0) AS payable_amt,
     IFNULL(NULLIF(c.total_paid_track, ''), 0) AS total_paid_track,
@@ -134,6 +141,7 @@ FROM
     acknowlegement_loan_calculation lc
 JOIN acknowlegement_customer_profile cp ON
     lc.req_id = cp.req_id
+LEFT JOIN verification_family_info vfi ON cp.guarentor_name = vfi.id
 JOIN in_issue ii ON
     lc.req_id = ii.req_id
 JOIN loan_issue li ON
@@ -172,10 +180,20 @@ if (isset($_POST['search'])) {
         if ($_POST['search'] != "") {
             $query .= " and (ii.loan_id LIKE '%" . $_POST['search'] . "%'
                         OR ii.updated_date LIKE '%" . $_POST['search'] . "%'
+                        OR lc.due_start_from, LIKE '%" . $_POST['search'] . "%'
+                        OR lc.maturity_month, LIKE '%" . $_POST['search'] . "%'
                         OR lc.cus_id_loan LIKE '%" . $_POST['search'] . "%'
                         OR lc.cus_name_loan LIKE '%" . $_POST['search'] . "%'
+                        OR cp.mobile1 LIKE '%" . $_POST['search'] . "%'
                         OR al.area_name LIKE '%" . $_POST['search'] . "%'
                         OR sal.sub_area_name LIKE '%" . $_POST['search'] . "%'
+                        OR lc.sub_category LIKE '%" . $_POST['search'] . "%'
+                        OR ac.ag_name LIKE '%" . $_POST['search'] . "%'
+                        OR vfi.famname LIKE '%" . $_POST['search'] . "%'
+                        OR vfi.relationship LIKE '%" . $_POST['search'] . "%'
+                        OR vfi.relation_Mobile LIKE '%" . $_POST['search'] . "%'
+                        OR lc.loan_amt LIKE '%" . $_POST['search'] . "%'
+                        OR lc.due_amt_cal LIKE '%" . $_POST['search'] . "%'
                         OR lcc.loan_category_creation_name LIKE '%" . $_POST['search'] . "%') ";           
             }
         }
@@ -235,14 +253,19 @@ foreach ($result as $row) {
     $sub_array[] = $row['line'];
     $sub_array[] = $row['loan_id'];
     $sub_array[] = date('d-m-Y', strtotime($row['loan_date']));
+    $sub_array[] = date('d-m-Y', strtotime($row['due_start_from']));
     $sub_array[] = date('d-m-Y', strtotime($row['maturity_date']));
     $sub_array[] = $row['cus_id_loan'];
     $sub_array[] = $row['cus_name_loan'];
+    $sub_array[] = $row['mobile1'];
     $sub_array[] = $row['area_name'];
     $sub_array[] = $row['sub_area_name'];
     $sub_array[] = $row['loan_cat_name'];
     $sub_array[] = $row['sub_category'];
     $sub_array[] = $row['ag_name'];
+    $sub_array[] = $row['famname'];
+    $sub_array[] = $row['relationship'];
+    $sub_array[] = $row['relation_Mobile'];
     $sub_array[] = moneyFormatIndia($row['loan_amt']);
     $sub_array[] = moneyFormatIndia($row['due_amt_cal']);
     $sub_array[] = $row['due_period'];
