@@ -497,6 +497,96 @@ $(document).ready(function () {
         }
     });
     ///Hide AND Show doc Card END
+
+    /* ********************************************** Sign doc ********************************************** */
+    $("#sign_type").change(function () {
+        // Signed Type
+        let type = $(this).val();
+
+        $("#guar_name_div").hide();
+        $("#relation_doc").hide();
+        
+        if (type == "1") {
+            // if guarentor , then show guarentor name
+        getGuarentorName();
+        }
+        if (type == "3" || type == "2") {
+            // if type is combined or family member then show family members
+            //for combined, it will represents who is signed with customer in the same document.
+        $("#relation_doc").show();
+        signTypeRelation();
+    } else {
+        $("#signType_relationship").empty();
+        }
+    });
+    /* ********************************************** Sign doc END********************************************** */
+
+    /* ********************************************** cheque START ********************************************** */
+    
+    $("#holder_type").change(function () {
+        // Cheque info
+        let type = $(this).val();
+        let req_id = $("#req_id").val();
+
+        if (type == "0") {
+            $("#holder_name").show();
+            $("#holder_relationship_name").hide();
+
+            $.ajax({
+                type: "POST",
+                url: "verificationFile/documentation/check_holder_name.php",
+                data: { type: type, reqId: req_id },
+                dataType: "json",
+                cache: false,
+                success: function (result) {
+                $("#holder_name").val(result["name"]);
+                $("#cheque_relation").val("NIL");
+                },
+            });
+        } else if (type == "1") {
+            $("#holder_name").show();
+            $("#holder_relationship_name").hide();
+
+            $.ajax({
+                type: "POST",
+                url: "verificationFile/documentation/check_holder_name.php",
+                data: { type: type, reqId: req_id },
+                dataType: "json",
+                cache: false,
+                success: function (result) {
+                $("#holder_name").val(result["name"]);
+                $("#cheque_relation").val(result["relationship"]);
+                },
+            });
+        } else if (type == "2") {
+            $("#holder_name").hide();
+            $("#holder_relationship_name").show();
+            $("#cheque_relation").val("");
+
+            chequeHolderName(); // Holder Name From Family Table.
+        } else {
+            $("#holder_name").show();
+            $("#holder_relationship_name").hide();
+            $("#holder_name").val("");
+            $("#cheque_relation").val("");
+        }
+    });
+
+    $("#holder_relationship_name").change(function () {
+        let fam_id = $(this).val();
+        $.ajax({
+        url: "verificationFile/documentation/find_cheque_relation.php",
+        type: "POST",
+        data: { fam_id: fam_id },
+        dataType: "json",
+        success: function (response) {
+            $("#cheque_relation").val(response);
+        },
+        });
+    });
+
+    /* ********************************************** cheque END ********************************************** */
+
     //////////////////////////////////////////// Documentation END //////////////////////////////////////////////
 
 });   ////////Document Ready End
@@ -3454,6 +3544,9 @@ function submitSignedDoc(req_id, cus_id) {
 
     let files = $("#signdoc_upd")[0].files;
     let signedID = $("#signedID").val();
+    let sign_type = $("#sign_type").val();
+    let doc_Count = $("#doc_Count").val();
+    let signType_relationship = $("#signType_relationship").val();
 
     if (files.length > 0) {
 
@@ -3465,6 +3558,9 @@ function submitSignedDoc(req_id, cus_id) {
         formdata.append('req_id', req_id)
         formdata.append('cus_id', cus_id)
         formdata.append('signedID', signedID)
+        formdata.append('sign_type', sign_type)
+        formdata.append('doc_Count', doc_Count)
+        formdata.append('signType_relationship', signType_relationship)
 
         $.ajax({
             type: 'POST',
@@ -3616,6 +3712,7 @@ function submitCheque(req_id, cus_id) {
     let holder_type = $("#holder_type").val();
     let holder_name = $("#holder_name").val();
     let holder_relationship_name = $("#holder_relationship_name").val();
+    let cheque_relation = $("#cheque_relation").val();
     let chequebank_name = $("#chequebank_name").val();
     let cheque_count = $("#cheque_count").val();
 
@@ -3625,7 +3722,7 @@ function submitCheque(req_id, cus_id) {
         chequeArr[i] = $(this).val();//store each numbers in an array
         i++;
     })
-
+  if ( holder_type != "" && chequebank_name != "" && cheque_count != "" && req_id != "") {
     if (files.length == cheque_count && !chequeArr.includes('')) { // !chequeArr.includes('') will check if any of array values is empty
 
         $('#chequeupdCheck').hide();
@@ -3639,6 +3736,7 @@ function submitCheque(req_id, cus_id) {
         formdata.append('holder_type', holder_type)
         formdata.append('holder_name', holder_name)
         formdata.append('holder_relationship_name', holder_relationship_name)
+        formdata.append('cheque_relation', cheque_relation)
         formdata.append('chequebank_name', chequebank_name)
         formdata.append('cheque_count', cheque_count)
 
@@ -3674,7 +3772,25 @@ function submitCheque(req_id, cus_id) {
     } else {
         $('#chequeupdCheck').show();
     }
+    } else {
+        if (holder_type == "") {
+        $("#holdertypeCheck").show();
+        } else {
+        $("#holdertypeCheck").hide();
+        }
 
+        if (chequebank_name == "") {
+        $("#chequebankCheck").show();
+        } else {
+        $("#chequebankCheck").hide();
+        }
+
+        if (cheque_count == "") {
+        $("#chequeCountCheck").show();
+        } else {
+        $("#chequeCountCheck").hide();
+        }
+    }
 }
 
 /************************ Cheque Modal Events ************************/
@@ -4041,4 +4157,102 @@ function showCustomerOldData() {
     })
 }
 
+function getGuarentorName() {
+  let req_id = $("#req_id").val();
+  let cus_id = $("#cus_id").val();
+  $.ajax({
+    url: "verificationFile/getGuarentorName.php",
+    type: "post",
+    data: { req_id: req_id, cus_id: cus_id },
+    cache: false,
+    success: function (response) {
+      $("#guar_name_div").show();
+      $("#guar_name").val(response);
+    },
+  });
+}
 
+// Signed Doc
+function signTypeRelation() {
+  let cus_id = $("#cus_id").val();
+  $.ajax({
+    url: "verificationFile/verificationFam.php",
+    type: "post",
+    data: { cus_id: cus_id },
+    dataType: "json",
+    cache: false,
+    success: function (response) {
+      var len = response.length;
+      $("#signType_relationship").empty();
+      $("#signType_relationship").append(
+        "<option value=''>" + "Select Relationship" + "</option>"
+      );
+      for (var i = 0; i < len - 1; i++) {
+        //-1 because last name will be customer name
+        var fam_name = response[i]["fam_name"];
+        var fam_id = response[i]["fam_id"];
+        var relationship = response[i]["relationship"];
+        $("#signType_relationship").append(
+          "<option value='" +
+            fam_id +
+            "'>" +
+            fam_name +
+            " - " +
+            relationship +
+            "</option>"
+        );
+      }
+      {
+        //To Order ag_group Alphabetically
+        var firstOption = $("#signType_relationship option:first-child");
+        $("#signType_relationship").html(
+          $("#signType_relationship option:not(:first-child)").sort(function (
+            a,
+            b
+          ) {
+            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
+          })
+        );
+        $("#signType_relationship").prepend(firstOption);
+      }
+    },
+  });
+}
+
+//Cheque Holder Name
+function chequeHolderName() {
+  let cus_id = $("#cus_id").val();
+  $.ajax({
+    url: "verificationFile/verificationFam.php",
+    type: "post",
+    data: { cus_id: cus_id },
+    dataType: "json",
+    success: function (response) {
+      var len = response.length;
+      $("#holder_relationship_name").empty();
+      $("#holder_relationship_name").append(
+        "<option value=''>" + "Select Holder Name" + "</option>"
+      );
+      for (var i = 0; i < len - 1; i++) {
+        //-1 because last one name will be customer name
+        var fam_name = response[i]["fam_name"];
+        var fam_id = response[i]["fam_id"];
+        $("#holder_relationship_name").append(
+          "<option value='" + fam_id + "'>" + fam_name + "</option>"
+        );
+      }
+      {
+        //To Order ag_group Alphabetically
+        var firstOption = $("#holder_relationship_name option:first-child");
+        $("#holder_relationship_name").html(
+          $("#holder_relationship_name option:not(:first-child)").sort(
+            function (a, b) {
+              return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
+            }
+          )
+        );
+        $("#holder_relationship_name").prepend(firstOption);
+      }
+    },
+  });
+}

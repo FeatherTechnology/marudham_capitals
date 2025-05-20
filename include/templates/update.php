@@ -2106,7 +2106,7 @@ if (sizeof($documentationInfo) > 0) {
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="SignType"> Sign Type </label> <span class="required">&nbsp;*</span>
-								<select type="text" class="form-control" id="sign_type" name="sign_type" disabled tabindex='1'>
+								<select type="text" class="form-control" id="sign_type" name="sign_type" tabindex='2'>
 									<option value=""> Select Sign Type </option>
 									<option value="0"> Customer </option>
 									<option value="1"> Guarantor </option>
@@ -2117,11 +2117,17 @@ if (sizeof($documentationInfo) > 0) {
 							</div>
 						</div>
 
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" style="display: none;" id="guar_name_div">
+							<div class="form-group">
+								<label for="guar_name"> Guarentor Name </label>
+								<input type="text" class="form-control" id="guar_name" name="guar_name" readonly tabindex='3'>
+							</div>
+						</div>
 
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" style="display: none;" id="relation_doc">
 							<div class="form-group">
 								<label for="signRelationship"> Relationship </label>
-								<select type="text" class="form-control" id="signType_relationship" name="signType_relationship" disabled tabindex='1'>
+								<select type="text" class="form-control" id="signType_relationship" name="signType_relationship" tabindex='4'>
 									<option value=""> Select Relationship </option>
 								</select>
 							</div>
@@ -2130,22 +2136,22 @@ if (sizeof($documentationInfo) > 0) {
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="Count"> Count </label> <span class="required">&nbsp;*</span>
-								<input type="number" class="form-control" id="doc_Count" name="doc_Count" placeholder="Enter Count" readonly tabindex='1'>
+								<input type="number" class="form-control" id="doc_Count" name="doc_Count" placeholder="Enter Count" tabindex='5'>
 								<span class="text-danger" id="docCountCheck" style='display:none'> Enter Count </span>
 							</div>
 						</div>
 
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
-								<label for="upd"> Uploads </label>
-								<input type="file" onchange="compressImage(this,400)" class="form-control" id="signdoc_upd" name="signdoc_upd[]" multiple onchange="filesCount()" tabindex='1'>
+								<label for="upd"> Uploads </label> <span class="required">&nbsp;*</span>
+								<input type="file" onchange="compressImage(this,400)" class="form-control" id="signdoc_upd" name="signdoc_upd[]" multiple onchange="filesCount()" tabindex='6'>
 								<span class="text-danger" id="docupdCheck" style="display: none;"> Upload Document </span>
 							</div>
 						</div>
 
 						<div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12">
 							<input type="hidden" name="signedID" id="signedID">
-							<button type="button" name="signInfoBtn" id="signInfoBtn" class="btn btn-primary" style="margin-top: 19px;" disabled tabindex='1'>Submit</button>
+							<button type="button" name="signInfoBtn" id="signInfoBtn" class="btn btn-primary" style="margin-top: 19px;"  tabindex='7'>Submit</button>
 						</div>
 
 					</div>
@@ -2216,7 +2222,7 @@ if (sizeof($documentationInfo) > 0) {
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="Holdertype "> Holder type </label> <span class="required">&nbsp;*</span>
-								<select type="text" class="form-control" id="holder_type" name="holder_type" disabled tabindex='1'>
+								<select type="text" class="form-control" id="holder_type" name="holder_type" tabindex='1'>
 									<option value=""> Select Holder type </option>
 									<option value="0"> Customer </option>
 									<option value="1"> Guarantor </option>
@@ -2229,9 +2235,9 @@ if (sizeof($documentationInfo) > 0) {
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="HolderName "> Holder Name </label>
-								<input type="text" class="form-control" id="holder_name" name="holder_name" readonly tabindex='1'>
+								<input type="text" class="form-control" id="holder_name" name="holder_name" readonly tabindex='2'>
 
-								<select type="text" class="form-control" id="holder_relationship_name" name="holder_relationship_name" style="display: none;" disabled>
+								<select type="text" class="form-control" id="holder_relationship_name" name="holder_relationship_name" style="display: none;" >
 									<option value=""> Select Holder Name </option>
 								</select>
 							</div>
@@ -2241,7 +2247,7 @@ if (sizeof($documentationInfo) > 0) {
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="chequeRelationship"> Relationship </label>
-								<input type="text" class="form-control" id="cheque_relation" name="cheque_relation" readonly tabindex='1'>
+								<input type="text" class="form-control" id="cheque_relation" name="cheque_relation" readonly tabindex='3'>
 
 							</div>
 						</div>
@@ -2249,7 +2255,7 @@ if (sizeof($documentationInfo) > 0) {
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="BankName"> Bank Name </label> <span class="required">&nbsp;*</span>
-								<input type="text" class="form-control" id="chequebank_name" name="chequebank_name" placeholder="Enter Bank Name" onkeydown="return /[a-z ]/i.test(event.key)" readonly tabindex='1'>
+								<input type="text" class="form-control" id="chequebank_name" name="chequebank_name" placeholder="Enter Bank Name" onkeydown="return /[a-z ]/i.test(event.key)" tabindex='4'>
 								<span class="text-danger" id="chequebankCheck" style='display:none'> Enter Bank Name </span>
 							</div>
 						</div>
@@ -2257,7 +2263,7 @@ if (sizeof($documentationInfo) > 0) {
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="chequeNo"> Cheque Count </label> <span class="required">&nbsp;*</span>
-								<input type="number" class="form-control" id="cheque_count" name="cheque_count" placeholder="Enter Cheque Count" readonly tabindex='1'>
+								<input type="number" class="form-control" id="cheque_count" name="cheque_count" placeholder="Enter Cheque Count" tabindex='5'>
 								<span class="text-danger" id="chequeCountCheck" style='display:none'> Enter Cheque Count </span>
 							</div>
 						</div>
@@ -2265,7 +2271,7 @@ if (sizeof($documentationInfo) > 0) {
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="upd"> Uploads </label>
-								<input type="file" onchange="compressImage(this,400)" class="form-control" id="cheque_upd" name="cheque_upd[]" multiple onchange="chequefilesCount()" tabindex='1'>
+								<input type="file" class="form-control" id="cheque_upd" name="cheque_upd[]" onchange="chequefilesCount();compressImage(this,400);" multiple tabindex='6'>
 								<span class="text-danger" id="chequeupdCheck" style='display:none'> Upload Cheque </span>
 							</div>
 						</div>
@@ -2276,7 +2282,7 @@ if (sizeof($documentationInfo) > 0) {
 					<div class="row">
 						<div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12">
 							<input type="hidden" name="chequeID" id="chequeID">
-							<button type="button" name="chequeInfoBtn" id="chequeInfoBtn" class="btn btn-primary" style="margin-top: 19px;" disabled tabindex='1'>Submit</button>
+							<button type="button" name="chequeInfoBtn" id="chequeInfoBtn" class="btn btn-primary" style="margin-top: 19px;" tabindex='7'>Submit</button>
 						</div>
 					</div>
 					</br>
