@@ -32,14 +32,19 @@
                                 <th>Line</th>
                                 <th>Loan ID</th>
                                 <th>Loan Date</th>
+                                <th>Due start Date</th>
                                 <th>Maturity Date</th>
                                 <th>Customer ID</th>
                                 <th>Customer Name</th>
+                                <th>Mobile Number</th>
                                 <th>Area</th>
                                 <th>Sub Area</th>
                                 <th>Loan Category</th>
                                 <th>Sub Category</th>
                                 <th>Agent</th>
+                                <th>Guarantor Name</th>
+                                <th>Guarantor Relationship</th>
+                                <th>Guarantor Mobile</th>
                                 <th>Loan Amount</th>
                                 <th>Due Amount</th>
                                 <th>Number Of Dues</th>
