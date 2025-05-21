@@ -2581,7 +2581,7 @@ if (sizeof($documentationInfo) > 0) {
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="Documentname "> Document name </label> <span class="required">&nbsp;*</span>
-								<input type="text" class="form-control" id="document_name" name="document_name" placeholder="Enter Document name" value="" tabindex="1" readonly />
+								<input type="text" class="form-control" id="document_name" name="document_name" placeholder="Enter Document name" value="" tabindex="1" />
 								<span class="text-danger" id="documentnameCheck" style='display:none'> Enter Document name </span>
 							</div>
 						</div>
@@ -2589,7 +2589,7 @@ if (sizeof($documentationInfo) > 0) {
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="DocumentDeatails "> Document Details </label> <span class="required">&nbsp;*</span>
-								<input type="text" class="form-control" id="document_details" name="document_details" placeholder="Enter Document Details" value="" tabindex="1" readonly />
+								<input type="text" class="form-control" id="document_details" name="document_details" placeholder="Enter Document Details" value="" tabindex="1" />
 								<span class="text-danger" id="documentdetailsCheck" style='display:none'> Enter Document Details </span>
 							</div>
 						</div>
@@ -2597,7 +2597,7 @@ if (sizeof($documentationInfo) > 0) {
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="Documenttype"> Document Type </label> <span class="required">&nbsp;*</span>
-								<select type="text" class="form-control" id="document_type" name="document_type" tabindex="1" disabled>
+								<select type="text" class="form-control" id="document_type" name="document_type" tabindex="1">
 									<option value=''> Select Document Type </option>
 									<option value='0'> Original </option>
 									<option value='1'> Xerox </option>
@@ -2609,7 +2609,7 @@ if (sizeof($documentationInfo) > 0) {
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="DocumentHolder"> Document Holder </label> <span class="required">&nbsp;*</span>
-								<select type="text" class="form-control" id="document_holder" name="document_holder" tabindex="1" disabled>
+								<select type="text" class="form-control" id="document_holder" name="document_holder" tabindex="1">
 									<option value=""> Select Holder type </option>
 									<option value="0"> Customer </option>
 									<option value="1"> Guarantor </option>
@@ -2624,7 +2624,7 @@ if (sizeof($documentationInfo) > 0) {
 								<label for="docholdername"> Holder Name </label>
 								<input type="text" class="form-control" id="docholder_name" name="docholder_name" value="" readonly tabindex="1" readonly>
 
-								<select type="text" class="form-control" id="docholder_relationship_name" name="docholder_relationship_name" style="display: none;" tabindex="1" disabled>
+								<select type="text" class="form-control" id="docholder_relationship_name" name="docholder_relationship_name" style="display: none;" tabindex="1">
 									<option value=""> Select Relationship </option>
 								</select>
 							</div>
@@ -2640,7 +2640,7 @@ if (sizeof($documentationInfo) > 0) {
 
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
-								<label for="DocumentUpd"> Document Uploads </label>
+								<label for="DocumentUpd"> Document Uploads </label> <span class="required">&nbsp;*</span>
 								<input type="file" onchange="compressImage(this,400)" class="form-control" id="document_info_upd" name="document_info_upd[]" multiple tabindex="1">
 								<span class="text-danger" id="docinfoupdCheck" style='display:none'> Please Select Document </span>
 							</div>

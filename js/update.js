@@ -586,6 +586,77 @@ $(document).ready(function () {
     });
 
     /* ********************************************** cheque END ********************************************** */
+    
+    /* ********************************************** Document info START ********************************************** */
+
+    $("#document_holder").change(function () {
+        let type = $(this).val();
+        let req_id = $("#req_id").val();
+
+        if (type == "0") {
+        //Customer
+        $("#docholder_name").show();
+        $("#docholder_relationship_name").val("");
+        $("#docholder_relationship_name").hide();
+
+        $.ajax({
+            type: "POST",
+            url: "verificationFile/documentation/check_holder_name.php",
+            data: { type: type, reqId: req_id },
+            dataType: "json",
+            cache: false,
+            success: function (result) {
+            $("#docholder_name").val(result["name"]);
+            $("#doc_relation").val("NIL");
+            },
+        });
+        } else if (type == "1") {
+        //Guarentor
+        $("#docholder_name").show();
+        $("#docholder_relationship_name").val("");
+        $("#docholder_relationship_name").hide();
+
+        $.ajax({
+            type: "POST",
+            url: "verificationFile/documentation/check_holder_name.php",
+            data: { type: type, reqId: req_id },
+            dataType: "json",
+            cache: false,
+            success: function (result) {
+            $("#docholder_name").val(result["name"]);
+            $("#doc_relation").val(result["relationship"]);
+            },
+        });
+        } else if (type == "2") {
+        //Family member
+        $("#docholder_name").hide();
+        $("#docholder_relationship_name").show();
+        $("#docholder_name").val("");
+        $("#doc_relation").val("");
+
+        docHolderName();
+        } else {
+        $("#docholder_name").show();
+        $("#docholder_relationship_name").hide();
+        $("#docholder_name").val("");
+        $("#doc_relation").val("");
+        }
+    });
+
+    $("#docholder_relationship_name").change(function () {
+        let fam_id = $(this).val();
+        $.ajax({
+        url: "verificationFile/documentation/find_cheque_relation.php",
+        type: "POST",
+        data: { fam_id: fam_id },
+        dataType: "json",
+        success: function (response) {
+            $("#doc_relation").val(response);
+        },
+        });
+    });
+
+    /* ********************************************** Document info END ********************************************** */
 
     //////////////////////////////////////////// Documentation END //////////////////////////////////////////////
 
@@ -3548,9 +3619,7 @@ function submitSignedDoc(req_id, cus_id) {
     let doc_Count = $("#doc_Count").val();
     let signType_relationship = $("#signType_relationship").val();
 
-    if (files.length > 0) {
-
-        $('#docupdCheck').hide();
+    if (sign_type != "" && doc_Count != "" && files.length > 0 && files.length == doc_Count) {
 
         for (var i = 0; i < files.length; i++) {
             formdata.append('signdoc_upd[]', files[i])
@@ -3587,7 +3656,24 @@ function submitSignedDoc(req_id, cus_id) {
             }
         });
     } else {
-        $('#docupdCheck').show();
+
+        if (sign_type == "") {
+            $("#signTypeCheck").show();
+        } else {
+            $("#signTypeCheck").hide();
+        }
+
+        if (doc_Count == "") {
+            $("#docCountCheck").show();
+        } else {
+            $("#docCountCheck").hide();
+        }
+
+        if(files.length <= 0 || files.length != doc_Count){
+            $('#docupdCheck').show();
+        }else{
+            $('#docupdCheck').hide();
+        }
     }
 
 }
@@ -3722,10 +3808,7 @@ function submitCheque(req_id, cus_id) {
         chequeArr[i] = $(this).val();//store each numbers in an array
         i++;
     })
-  if ( holder_type != "" && chequebank_name != "" && cheque_count != "" && req_id != "") {
-    if (files.length == cheque_count && !chequeArr.includes('')) { // !chequeArr.includes('') will check if any of array values is empty
-
-        $('#chequeupdCheck').hide();
+  if ( holder_type != "" && chequebank_name != "" && cheque_count != "" && req_id != "" && files.length == cheque_count && !chequeArr.includes('')) { // !chequeArr.includes('') will check if any of array values is empty
 
         for (var i = 0; i < files.length; i++) {
             formdata.append('cheque_upd[]', files[i])
@@ -3769,9 +3852,7 @@ function submitCheque(req_id, cus_id) {
                 resetchequeInfo(req_id, cus_id);
             }
         });
-    } else {
-        $('#chequeupdCheck').show();
-    }
+
     } else {
         if (holder_type == "") {
         $("#holdertypeCheck").show();
@@ -3789,6 +3870,12 @@ function submitCheque(req_id, cus_id) {
         $("#chequeCountCheck").show();
         } else {
         $("#chequeCountCheck").hide();
+        }
+
+        if (files.length != cheque_count || chequeArr.includes('')) {
+            $('#chequeupdCheck').show();
+        } else {
+            $('#chequeupdCheck').hide();
         }
     }
 }
@@ -3855,12 +3942,6 @@ function submitGoldInfo(req_id, cus_id) {
 
     if (goldValidation() == true) {
 
-        // let formdata = $('#goldform').serializeArray();
-        // formdata.push({ name: 'req_id', value: req_id })
-        // formdata.push({ name: 'cus_id', value: cus_id })
-
-        // let req_id = $('#req_id').val();
-        // let cus_id = $('#cus_id').val();
         let gold_sts = $("#gold_sts").val();
         let gold_type = $("#gold_type").val();
         let Purity = $("#Purity").val();
@@ -3978,6 +4059,12 @@ function resetdocInfo(req_id, cus_id) {
             $("#doc_relation").val('');
             $("#document_info_upd").val('');
 
+            $("#documentnameCheck").hide();
+            $("#documentdetailsCheck").hide();
+            $("#documentTypeCheck").hide();
+            $("#docholderCheck").hide();
+            $('#docinfoupdCheck').hide();
+
         }
     }).then(function () {
         docInfoEditEvent();
@@ -4028,17 +4115,30 @@ function submitDocument(req_id, cus_id) {
 
     let files = $("#document_info_upd")[0].files;
     let doc_info_id = $("#doc_info_id").val();
+    let doc_name = $("#document_name").val();
+    let doc_details = $("#document_details").val();
+    let doc_type = $("#document_type").val();
+    let doc_holder = $("#document_holder").val();
+    let holder_name = $("#docholder_name").val();
+    let relation_name = $("#docholder_relationship_name").val();
+    let relation = $("#doc_relation").val();
 
-    if (files.length > 0 && doc_info_id != '') {
-
-        $('#docinfoupdCheck').hide();
-
+    if ( doc_name != "" && doc_details != "" && doc_type != "" && doc_holder != "" && files.length > 0 ) {
+            
         for (var i = 0; i < files.length; i++) {
             formdata.append('document_info_upd[]', files[i])
         }
+        
         formdata.append('req_id', req_id)
         formdata.append('cus_id', cus_id)
         formdata.append('doc_info_id', doc_info_id)
+        formdata.append('doc_name', doc_name)
+        formdata.append('doc_details', doc_details)
+        formdata.append('doc_type', doc_type)
+        formdata.append('doc_holder', doc_holder)
+        formdata.append('holder_name', holder_name)
+        formdata.append('relation_name', relation_name)
+        formdata.append('relation', relation)
 
         $.ajax({
             url: 'updateFile/doc_info_submit.php',
@@ -4074,8 +4174,38 @@ function submitDocument(req_id, cus_id) {
                 resetdocInfo(req_id, cus_id);
             }
         });
+
     } else {
-        $('#docinfoupdCheck').show();
+
+        if (!doc_name){
+            $("#documentnameCheck").show();
+        }else{
+            $("#documentnameCheck").hide();
+        }
+
+        if (!doc_details){
+            $("#documentdetailsCheck").show();
+        }else{
+            $("#documentdetailsCheck").hide();
+        }
+
+        if (!doc_type){
+            $("#documentTypeCheck").show();
+        }else{
+            $("#documentTypeCheck").hide();
+        }
+
+        if (!doc_holder){
+            $("#docholderCheck").show();
+        }else{
+            $("#docholderCheck").hide();
+        } 
+
+        if(files.length <= 0){
+            $('#docinfoupdCheck').show();
+        } else {
+            $('#docinfoupdCheck').hide();
+        }
     }
 
 }
@@ -4252,6 +4382,48 @@ function chequeHolderName() {
           )
         );
         $("#holder_relationship_name").prepend(firstOption);
+      }
+    },
+  });
+}
+
+function docHolderName(callback) {
+  let cus_id = $("#cus_id").val();
+
+  $.ajax({
+    url: "verificationFile/verificationFam.php",
+    type: "post",
+    data: { cus_id: cus_id },
+    dataType: "json",
+    success: function (response) {
+      var len = response.length;
+      $("#docholder_relationship_name").empty();
+      $("#docholder_relationship_name").append(
+        "<option value=''>" + "Select Holder Name" + "</option>"
+      );
+      for (var i = 0; i < len - 1; i++) {
+        // -1 because this ajax's response will contain customer value at the last of the response for verification person
+        var fam_name = response[i]["fam_name"];
+        var fam_id = response[i]["fam_id"];
+        $("#docholder_relationship_name").append(
+          "<option value='" + fam_id + "'>" + fam_name + "</option>"
+        );
+      }
+      {
+        //To Order ag_group Alphabetically
+        var firstOption = $("#docholder_relationship_name option:first-child");
+        $("#docholder_relationship_name").html(
+          $("#docholder_relationship_name option:not(:first-child)").sort(
+            function (a, b) {
+              return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
+            }
+          )
+        );
+        $("#docholder_relationship_name").prepend(firstOption);
+      }
+
+      if (typeof callback === "function") {
+        callback();
       }
     },
   });

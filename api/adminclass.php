@@ -4385,7 +4385,7 @@ class admin
 			$updDocResult = $mysqli->query($update_doc) or die("Error " . $mysqli->error);
 		}
 
-		$this->updateResponsible($mysqli, $req_id, $responsible);
+		// $this->updateResponsible($mysqli, $req_id, $responsible);
 	}
 
 	// Get Documentation Info.
@@ -4776,7 +4776,7 @@ class admin
 
 		$mysqli->query("UPDATE in_verification set `loan_category`='" . strip_tags($loan_category) . "',`sub_category`='" . strip_tags($sub_category) . "',`tot_value`='" . strip_tags($tot_value) . "',`ad_amt`='" . strip_tags($ad_amt) . "',`ad_perc`='". strip_tags($ad_per)."',`loan_amt`='" . strip_tags($loan_amt) . "',`due_period`='" . strip_tags($due_period) . "' where req_id ='" . strip_tags($req_id) . "' ");
 
-		$this->updateResponsible($mysqli, $req_id, $responsible);
+		// $this->updateResponsible($mysqli, $req_id, $responsible);
 	}
 
 	function getLoanCalculationForVerification($mysqli, $req_id)
