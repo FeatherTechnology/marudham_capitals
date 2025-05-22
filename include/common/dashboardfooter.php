@@ -1934,25 +1934,26 @@
 
         let warningTimeout, logoutTimeout;
         let swalOpen = false;
-        const idleTime = 30 * 10 * 1000; // 10 minutes
-        const warningDuration = 10 * 1000; // 10 seconds warning
+        const idleTime = 30 * 1000; // 10 minutes in milliseconds
+        const warningDuration = 10 * 1000; // 10 seconds warning before logout
+        // Start the warning + logout timers
         function startTimers() {
             clearTimeout(warningTimeout);
             clearTimeout(logoutTimeout);
-            // Start warning 10 seconds before logout
             warningTimeout = setTimeout(showWarning, idleTime - warningDuration);
         }
-
+        // Reset the timers (called on activity)
         function resetTimers() {
-            // If user interacts during warning period, cancel logout
             if (swalOpen) {
-                hideWarning(); // this sets swalOpen = false and closes alert
+                hideWarning();
             }
             clearTimeout(warningTimeout);
             clearTimeout(logoutTimeout);
             startTimers();
+            // Broadcast activity to other tabs
+            localStorage.setItem("activity-sync", Date.now());
         }
-
+        // Show SweetAlert warning
         function swalsError(title, text) {
             Swal.fire({
                 icon: 'warning',
@@ -1965,7 +1966,7 @@
                 showConfirmButton: false
             });
         }
-
+        // Show warning before logout
         function showWarning() {
             swalOpen = true;
             swalsError('Warning', 'Session will expire in 10 seconds due to inactivity');
@@ -1975,23 +1976,29 @@
                 }
             }, warningDuration);
         }
-
+        // Close SweetAlert and reset state
         function hideWarning() {
             swalOpen = false;
             Swal.close();
         }
-        // Detect all user activity
+        // Detect user activity
         window.onload = startTimers;
-        // Mouse, scroll, click
+        // Mouse, scroll, click events
         ['mousemove', 'click', 'scroll'].forEach(evt => {
             window.addEventListener(evt, resetTimers);
         });
-        // Keys (handled through a unified function)
+        // Key activity handler
         function handleKeyEvent(e) {
             resetTimers();
         }
         ['keydown', 'keypress', 'keyup'].forEach(evt => {
             window.addEventListener(evt, handleKeyEvent);
+        });
+        // Sync activity across tabs using localStorage
+        window.addEventListener("storage", function(event) {
+            if (event.key === "activity-sync") {
+                resetTimers();
+            }
         });
 
     //////////////////////////////////////////////////////////// Session Logut Time End ////////////////////////////////////////////////////////////////////////////////////

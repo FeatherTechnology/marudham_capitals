@@ -6,16 +6,10 @@
 	</div>
 
 </div><br>
-
-<div class="text-right" style="margin-right: 25px;">
-	<!-- <button class="btn btn-primary" id='close_history_card' style="display: none;" >&times;&nbsp;&nbsp;Cancel</button> -->
-</div>
-
 <!-- Main container start -->
 <div class="main-container">
 	<!--form start-->
 	<form id="loan_issue_report_form" name="loan_issue_report_form" action="" method="post" enctype="multipart/form-data">
-
 
 		<div class="row gutters" id="loan_issue_card">
 			<div class="toggle-container col-12">
@@ -32,6 +26,7 @@
 								<thead>
 									<th>S.No</th>
 									<th>Loan ID</th>
+									<th>Doc ID</th>
 									<th>Cust. ID</th>
 									<th>Cust. Name</th>
 									<th>Guarantor Name</th>
@@ -62,7 +57,7 @@
 								<tbody></tbody>
 								<tfoot>
 									<tr>
-										<td colspan="15"></td>
+										<td colspan="16"></td>
 										<td></td>
 										<td></td>
 										<td></td>

@@ -53,6 +53,7 @@ $column = [
     'lc.loan_cal_id',
     'alm.line_name',
     'ii.loan_id',
+    'ad.doc_id',
     'ii.updated_date',
     'lc.maturity_month',
     'cp.cus_id',
@@ -94,6 +95,7 @@ $req_id_list = implode(',', $req_id_list);
 $query = " SELECT 
             alm.line_name AS line,
             ii.loan_id,
+            ad.doc_id,
             ii.updated_date AS loan_date,
             lc.maturity_month,
             cp.cus_id,
@@ -119,6 +121,8 @@ $query = " SELECT
             acknowlegement_loan_calculation lc
         JOIN 
             acknowlegement_customer_profile cp ON lc.req_id = cp.req_id
+        JOIN 
+            acknowlegement_documentation ad ON lc.req_id = ad.req_id
         JOIN 
             in_issue ii ON lc.req_id = ii.req_id
         JOIN 
@@ -158,6 +162,7 @@ if (isset($_POST['search']) && $_POST['search'] != "") {
     $query .= " AND (
         alm.line_name LIKE '%$search%' OR
         ii.loan_id LIKE '%$search%' OR
+        ad.doc_id LIKE '%$search%' OR
         ii.updated_date LIKE '%$search%' OR
         lc.maturity_month LIKE '%$search%' OR
         cp.cus_id LIKE '%$search%' OR
@@ -222,6 +227,7 @@ foreach ($result as $row) {
     $sub_array[] = $sno;
     $sub_array[] = $row['line'];
     $sub_array[] = $row['loan_id'];
+    $sub_array[] = $row['doc_id'];
     $sub_array[] = date('d-m-Y', strtotime($row['loan_date']));
     $sub_array[] = date('d-m-Y', strtotime($row['maturity_month']));
     $sub_array[] = $row['cus_id'];

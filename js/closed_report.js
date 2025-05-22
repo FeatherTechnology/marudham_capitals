@@ -12,9 +12,7 @@ $(document).ready(function () {
     });
 
     //Closed Report Table
-    // var closed_report_table = 
     $('#reset_btn').click(function () {
-        // closed_report_table.ajax.reload();
         closedReportTable();
     })
 });
@@ -63,7 +61,7 @@ function closedReportTable(){
             };
 
             // Array of column indices to sum
-            var columnsToSum = [11];
+            var columnsToSum = [12];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {

@@ -48,6 +48,7 @@ $where  .= $user_based;
 $column = array(
     'ii.id',
     'ii.loan_id',
+    'ad.doc_id',
     'ii.cus_id',
     'cp.cus_name',
     'fam.famname',
@@ -78,6 +79,7 @@ $column = array(
 
 $query = "SELECT 
         ii.loan_id,
+        ad.doc_id,
         cp.cus_id,
         cp.cus_name,
         fam.famname,
@@ -109,6 +111,7 @@ $query = "SELECT
 
         FROM in_issue ii
         LEFT JOIN acknowlegement_customer_profile cp ON ii.req_id = cp.req_id
+        LEFT JOIN acknowlegement_documentation ad ON ii.req_id = ad.req_id
         LEFT JOIN acknowlegement_loan_calculation lc ON ii.req_id = lc.req_id
         LEFT JOIN in_verification iv ON ii.req_id = iv.req_id
         LEFT JOIN verification_family_info fam ON cp.guarentor_name = fam.id
@@ -130,6 +133,7 @@ if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {
 
         $query .= " and (ii.loan_id LIKE '" . $_POST['search'] . "%' 
+            OR ad.doc_id LIKE '%" . $_POST['search'] . "%'
             OR ii.cus_id LIKE '%" . $_POST['search'] . "%'
             OR cp.cus_name LIKE '%" . $_POST['search'] . "%' 
             OR fam.famname LIKE '%" . $_POST['search'] . "%' 
@@ -175,6 +179,7 @@ foreach ($result as $row) {
     $sub_array   = array();
     $sub_array[] = $sno;
     $sub_array[] = $row['loan_id'];
+    $sub_array[] = $row['doc_id'];
     $sub_array[] = $row['cus_id'];
     $sub_array[] = $row['cus_name'];
     $sub_array[] = $row['famname'];
