@@ -3550,6 +3550,10 @@ function resetsignInfo(req_id, cus_id) {
             $("#signedID").val('');
             $("#signdoc_upd").val('');
 
+            //to hide span after submit.
+            $("#signTypeCheck").hide();
+            $("#docCountCheck").hide();
+            $('#docupdCheck').hide();
         }
     }).then(function () {
         signInfoEditEvent();//call for event listener
@@ -3706,6 +3710,12 @@ function resetchequeInfo(req_id, cus_id) {
             $("#cheque_upd").val('');
             $("#chequeID").val('');
 
+            //to hide span after submit.
+            $("#holdertypeCheck").hide();
+            $("#chequebankCheck").hide();
+            $("#chequeCountCheck").hide();
+            $('#chequeupdCheck').hide();
+
         }
     }).then(function () {
         chequeInfoEditEvent();//call for event listener
@@ -3808,6 +3818,7 @@ function submitCheque(req_id, cus_id) {
         chequeArr[i] = $(this).val();//store each numbers in an array
         i++;
     })
+
   if ( holder_type != "" && chequebank_name != "" && cheque_count != "" && req_id != "" && files.length == cheque_count && !chequeArr.includes('')) { // !chequeArr.includes('') will check if any of array values is empty
 
         for (var i = 0; i < files.length; i++) {
@@ -3855,21 +3866,21 @@ function submitCheque(req_id, cus_id) {
 
     } else {
         if (holder_type == "") {
-        $("#holdertypeCheck").show();
+            $("#holdertypeCheck").show();
         } else {
-        $("#holdertypeCheck").hide();
+            $("#holdertypeCheck").hide();
         }
 
         if (chequebank_name == "") {
-        $("#chequebankCheck").show();
+            $("#chequebankCheck").show();
         } else {
-        $("#chequebankCheck").hide();
+            $("#chequebankCheck").hide();
         }
 
         if (cheque_count == "") {
-        $("#chequeCountCheck").show();
+            $("#chequeCountCheck").show();
         } else {
-        $("#chequeCountCheck").hide();
+            $("#chequeCountCheck").hide();
         }
 
         if (files.length != cheque_count || chequeArr.includes('')) {
