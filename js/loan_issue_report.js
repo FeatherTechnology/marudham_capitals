@@ -80,6 +80,7 @@ function loanIssueReportTable(){
         },
         'drawCallback': function () {
             searchFunction('loan_issue_report_table');
+            paginationFunction('loan_issue_report_table');
         }
     });
 }

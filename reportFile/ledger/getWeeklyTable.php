@@ -229,6 +229,7 @@ $weeks = generateWeeks($startDate, $endDate);
             ],
             'drawCallback': function() {
                 searchFunction('weekly_table');
+                paginationFunction('weekly_table');
             }
         });
     });

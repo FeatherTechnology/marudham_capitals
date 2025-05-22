@@ -70,6 +70,7 @@ function mothlyDT() {
         ],
         "drawCallback": function () {
             searchFunction('loan_scheme_monthly_table');
+            paginationFunction('loan_scheme_monthly_table');
         }
     });
 }
@@ -110,6 +111,7 @@ function weeklyDT() {
         ],
         "drawCallback": function () {
             searchFunction('loan_scheme_weekly_table');
+            paginationFunction('loan_scheme_weekly_table');
         }
     });
 }
@@ -150,6 +152,7 @@ function dailyDT() {
         ],
         "drawCallback": function () {
             searchFunction('loan_scheme_daily_table');
+            paginationFunction('loan_scheme_daily_table');
         }
     });
 }

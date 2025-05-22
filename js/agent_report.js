@@ -80,6 +80,7 @@ function agentReportTable(){
         },
         'drawCallback': function() {
             searchFunction('agent_report_table');
+            paginationFunction('agent_report_table');
         }
     });
 }

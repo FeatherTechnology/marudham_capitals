@@ -40,9 +40,9 @@ function getcustomerStatustable(Customer_Status) {
 
     // Reinitialize the DataTable with stateSave option to retain state
     var newTable = $('#collection_table').DataTable({
-        "stateSave": true,  // Retain state (pagination, search, etc.)
         "order": [[0, "desc"]],
         'processing': true,
+        "displayStart": getDisplayStart('collection_table'),
         'serverSide': true,
         'serverMethod': 'post',
         'ajax': {

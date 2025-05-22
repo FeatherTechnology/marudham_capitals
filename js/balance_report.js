@@ -97,6 +97,7 @@ function balanceReportTable(url, tid){
         },
         'drawCallback': function() {
             searchFunction(tid);
+            paginationFunction('tid');
         }
     });
 }

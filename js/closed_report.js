@@ -80,6 +80,7 @@ function closedReportTable(){
         },
         'drawCallback': function() {
             searchFunction('closed_report_table');
+            paginationFunction('closed_report_table');
         }
     });
 }

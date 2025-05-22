@@ -119,11 +119,15 @@
     <script type="text/javascript" src="jsd/datatables.min.js"></script>
     <!-- <script type="text/javascript" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script> -->
     <script type="text/javascript" language="javascript">
+        // Detect page reload once when the page loads
+        const isPageReloaded = performance.getEntriesByType("navigation")[0]?.type === "reload";
+
         $(document).ready(function() {
             var company_creation_table = $('#company_creation_table').DataTable({
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('company_creation_table'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -153,6 +157,7 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('company_creation_table');
+                    paginationFunction('company_creation_table');
                     toggleAddButton();
                 }
             });
@@ -161,6 +166,7 @@
                 "order": [
                     [0, "asc"]
                 ],
+                "displayStart": getDisplayStart('branch_creation_info'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -190,6 +196,7 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('branch_creation_info');
+                    paginationFunction('branch_creation_info');
                 }
             });
 
@@ -197,6 +204,7 @@
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('loan_creation_table'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -226,6 +234,7 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('loan_creation_table');
+                    paginationFunction('loan_creation_table');
                 }
             });
 
@@ -234,6 +243,7 @@
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('loan_calculation_info'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -261,6 +271,7 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('loan_calculation_info');
+                    paginationFunction('loan_calculation_info');
                 }
             });
 
@@ -268,6 +279,7 @@
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('area_creation_info'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -297,15 +309,16 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('area_creation_info');
+                    paginationFunction('area_creation_info');
                 }
             });
-
 
             // Director Creation datatable
             var director_creation_table = $('#director_creation_table').DataTable({
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('director_creation_table'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -332,13 +345,16 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('director_creation_table');
+                    paginationFunction('director_creation_table');
                 }
             });
+
             // Agent Creation datatable
             var agent_creation_table = $('#agent_creation_table').DataTable({
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('agent_creation_table', 10),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -365,6 +381,7 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('agent_creation_table');
+                    paginationFunction('agent_creation_table');
                 }
             });
             // Staff Creation datatable
@@ -372,6 +389,7 @@
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('staff_creation_table'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -398,6 +416,7 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('staff_creation_table');
+                    paginationFunction('staff_creation_table');
                 }
             });
 
@@ -406,6 +425,7 @@
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('bank_creation_table'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -432,6 +452,7 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('bank_creation_table');
+                    paginationFunction('bank_creation_table');
                 }
             });
 
@@ -440,6 +461,7 @@
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('manage_user_table'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -466,6 +488,7 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('manage_user_table');
+                    paginationFunction('manage_user_table');
                 }
             });
             // Documentation Mapping datatable
@@ -507,6 +530,7 @@
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('request_table'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -533,6 +557,7 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('request_table');
+                    paginationFunction('request_table');
                     callOnClickEvents();
                 }
             });
@@ -543,6 +568,7 @@
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('verification_table'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -569,6 +595,7 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('verification_table');
+                    paginationFunction('verification_table');
                     callOnClickEvents();
                 }
             });
@@ -579,6 +606,7 @@
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('approval_table'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -605,6 +633,7 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('approval_table');
+                    paginationFunction('approval_table');
                     callOnClickEvents();
                 }
             });
@@ -614,6 +643,7 @@
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('acknowledge_table'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -640,6 +670,7 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('acknowledge_table');
+                    paginationFunction('acknowledge_table');
                     callOnClickEvents();
                 }
             });
@@ -649,6 +680,7 @@
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('loanIssue_table'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -675,6 +707,7 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('loanIssue_table');
+                    paginationFunction('loanIssue_table');
                     callOnClickEvents();
                 }
             });
@@ -684,6 +717,7 @@
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('accountsloanIssue_table'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -710,6 +744,7 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('accountsloanIssue_table');
+                    paginationFunction('accountsloanIssue_table');
                     callOnClickEvents();
                 }
             });
@@ -718,6 +753,7 @@
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('closed_table'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -744,6 +780,7 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('closed_table');
+                    paginationFunction('closed_table');
                     setNOCButton();
                 }
             });
@@ -753,6 +790,7 @@
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('noc_table'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -779,6 +817,7 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('noc_table');
+                    paginationFunction('noc_table');
                     callOnClickEvents();
                 }
             });
@@ -788,6 +827,7 @@
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('update_table'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -814,6 +854,7 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('update_table');
+                    paginationFunction('update_table');
                 }
             });
             //Document Track Table
@@ -821,6 +862,7 @@
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('doc_track_table'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -847,6 +889,7 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('doc_track_table');
+                    paginationFunction('doc_track_table');
                     getDocOnClickFunction();
                 }
             });
@@ -855,6 +898,7 @@
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('concern_table'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -881,6 +925,7 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('concern_table');
+                    paginationFunction('concern_table');
                 }
             });
 
@@ -889,6 +934,7 @@
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('concern_solution_table'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -915,6 +961,7 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('concern_solution_table');
+                    paginationFunction('concern_solution_table');
                 }
             });
             //Concern Feedback Table
@@ -922,6 +969,7 @@
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('concern_feedback_table'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -948,6 +996,7 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('concern_feedback_table');
+                    paginationFunction('concern_feedback_table');
                 }
             });
 
@@ -956,6 +1005,7 @@
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('customer_birthday_table'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -982,6 +1032,7 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('customer_birthday_table');
+                    paginationFunction('customer_birthday_table');
                 }
             });
 
@@ -989,6 +1040,7 @@
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('loan_follow_table'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -1015,6 +1067,7 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('loan_follow_table');
+                    paginationFunction('loan_follow_table');
                     loanFollowupTableOnclick();
                 }
             });
@@ -1023,6 +1076,7 @@
                 "order": [
                     [0, "desc"]
                 ],
+                "displayStart": getDisplayStart('conf_follow_table'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
@@ -1049,6 +1103,7 @@
                 ],
                 'drawCallback': function() {
                     searchFunction('conf_follow_table');
+                    paginationFunction('conf_follow_table');
                     confirmationTableOnClick();
                 }
             });
@@ -1773,71 +1828,165 @@
             });
         }
 
-        function paginationFunction(table_name) {
-            var table = $(`#${table_name}`).DataTable();
-            var pagination = $(`#${table_name}_paginate`);
-            var pageInfo = table.page.info();
-            var currentPage = pageInfo.page;
-            var totalPages = pageInfo.pages;
-            var maxVisiblePages = 6;
+ ///////////////////////////////////////////////////////////////////// Pagination  Start //////////////////////////////////////////////////////////////////////////////////
+
+        function paginationFunction(tableId) {
+            const table = $(`#${tableId}`).DataTable();
+            const pagination = $(`#${tableId}_paginate`);
+            const pageInfo = table.page.info();
+
+            // If no data, show disabled pagination
+            if (pageInfo.pages === 0) {
+                pagination.html('<span class="paginate_button disabled">No pages</span>');
+                return;
+            }
+
+            const currentPage = pageInfo.page;
+            const totalPages = pageInfo.pages;
+            const maxVisible = 6;
+
+            // Save current page
+            localStorage.setItem(`${tableId}_currentPage`, currentPage);
 
             pagination.empty();
 
-            // Page range
-            let startPage = currentPage + 1;
-            let endPage = startPage + maxVisiblePages - 1;
+            const addButton = (label, pageNum, isActive = false, isDisabled = false) => {
+                const classList = ['paginate_button'];
+                if (isActive) classList.push('current');
+                if (isDisabled) classList.push('disabled');
+                pagination.append(`<span class="${classList.join(' ')}" data-page="${pageNum}">${label}</span>`);
+            };
 
-            if (endPage > totalPages) {
-                endPage = totalPages;
-                startPage = Math.max(endPage - maxVisiblePages + 1, 1);
+            // Show even for 1 page
+            addButton('Previous', currentPage - 1, false, currentPage === 0);
+
+            // Always show first page
+            addButton(1, 0, currentPage === 0);
+
+            if (totalPages > 1) {
+                let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+                let end = start + maxVisible - 1;
+
+                if (end >= totalPages - 1) {
+                    end = totalPages - 2;
+                    start = Math.max(1, end - maxVisible + 1);
+                }
+
+                if (start > 1) pagination.append('<span class="paginate_ellipsis">...</span>');
+
+                for (let i = start; i <= end; i++) {
+                    addButton(i + 1, i, currentPage === i);
+                }
+
+                if (end < totalPages - 2) pagination.append('<span class="paginate_ellipsis">...</span>');
+
+                // Always show last page
+                addButton(totalPages, totalPages - 1, currentPage === totalPages - 1);
             }
 
-            // Previous
-            if (currentPage > 0) {
-                pagination.append('<span class="paginate_button previous">Previous</span>');
+            addButton('Next', currentPage + 1, false, currentPage === totalPages - 1 || totalPages === 1);
+
+            // Jump to page input (always render it)
+            if ($(`#${tableId}_jumpToPage`).length === 0) {
+                pagination.append(`<input type="number" id="${tableId}_jumpToPage" min="1" max="${totalPages}" placeholder="Page" style="width: 40px; height: 30px; margin-left: 10px;" />`);
             }
 
-            // Page numbers
-            for (let i = startPage; i <= endPage; i++) {
-                pagination.append('<span class="paginate_button ' + (i - 1 === currentPage ? 'current' : '') + '" data-page="' + (i - 1) + '">' + i + '</span>');
-            }
-
-            // Next
-            if (currentPage < totalPages - 1) {
-                pagination.append('<span class="paginate_button next">Next</span>');
-            }
-
-            // Add Jump-to-Page
-            if ($('#jumpToPage').length === 0) {
-                pagination.append(`
-            <input type="number" id="jumpToPage" min="1" max="${totalPages}" 
-                style="width: 40px; height: 30px; margin-left: 10px;" placeholder="Page">
-        `);
-            }
-
-            // Button click events
+            // Handle pagination click
             pagination.off('click').on('click', '.paginate_button', function() {
-                var btn = $(this);
-                if (btn.hasClass('previous')) {
-                    table.page('previous').draw('page');
-                } else if (btn.hasClass('next')) {
-                    table.page('next').draw('page');
-                } else {
-                    var page = parseInt(btn.attr('data-page'));
+                if ($(this).hasClass('disabled')) return;
+                const page = parseInt($(this).attr('data-page'));
+                if (!isNaN(page)) {
                     table.page(page).draw('page');
                 }
             });
 
-            // Enter key for jump
-            $('#jumpToPage').off('keypress').on('keypress', function(e) {
-                if (e.which === 13) {
-                    var page = parseInt($(this).val(), 10);
-                    if (!isNaN(page) && page > 0 && page <= totalPages) {
-                        table.page(page - 1).draw('page');
+            // Handle jump input
+            $(`#${tableId}_jumpToPage`).off('keypress').on('keypress', function(e) {
+                if (e.which === 13 || e.which === 9 ) {
+                    const inputPage = parseInt($(this).val(), 10);
+                    if (!isNaN(inputPage) && inputPage > 0 && inputPage <= totalPages) {
+                        table.page(inputPage - 1).draw('page');
                     } else {
-                        alert('Invalid page number');
+                        alert(`Please enter a valid page number (1 - ${totalPages})`);
                     }
                 }
             });
         }
+
+        function getDisplayStart(tableId, pageLength = 10) {
+            if (isPageReloaded) {
+                localStorage.removeItem(`${tableId}_currentPage`);
+                return 0;
+            }
+            const savedPage = localStorage.getItem(`${tableId}_currentPage`);
+            return savedPage ? parseInt(savedPage) * pageLength : 0;
+        }
+
+///////////////////////////////////////////////////////////////////// Pagination  End //////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////// Session Logut Time Start /////////////////////////////////////////////////////////////////////////////
+
+        let warningTimeout, logoutTimeout;
+        let swalOpen = false;
+        const idleTime = 30 * 10 * 1000; // 10 minutes
+        const warningDuration = 10 * 1000; // 10 seconds warning
+        function startTimers() {
+            clearTimeout(warningTimeout);
+            clearTimeout(logoutTimeout);
+            // Start warning 10 seconds before logout
+            warningTimeout = setTimeout(showWarning, idleTime - warningDuration);
+        }
+
+        function resetTimers() {
+            // If user interacts during warning period, cancel logout
+            if (swalOpen) {
+                hideWarning(); // this sets swalOpen = false and closes alert
+            }
+            clearTimeout(warningTimeout);
+            clearTimeout(logoutTimeout);
+            startTimers();
+        }
+
+        function swalsError(title, text) {
+            Swal.fire({
+                icon: 'warning',
+                title: title,
+                text: text,
+                timer: warningDuration,
+                timerProgressBar: true,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false
+            });
+        }
+
+        function showWarning() {
+            swalOpen = true;
+            swalsError('Warning', 'Session will expire in 10 seconds due to inactivity');
+            logoutTimeout = setTimeout(() => {
+                if (swalOpen) {
+                    window.location.href = 'logout.php';
+                }
+            }, warningDuration);
+        }
+
+        function hideWarning() {
+            swalOpen = false;
+            Swal.close();
+        }
+        // Detect all user activity
+        window.onload = startTimers;
+        // Mouse, scroll, click
+        ['mousemove', 'click', 'scroll'].forEach(evt => {
+            window.addEventListener(evt, resetTimers);
+        });
+        // Keys (handled through a unified function)
+        function handleKeyEvent(e) {
+            resetTimers();
+        }
+        ['keydown', 'keypress', 'keyup'].forEach(evt => {
+            window.addEventListener(evt, handleKeyEvent);
+        });
+
+    //////////////////////////////////////////////////////////// Session Logut Time End ////////////////////////////////////////////////////////////////////////////////////
     </script>
