@@ -12,7 +12,6 @@
 	<div style="background-color:#009688; width:100%; padding:12px; color: #ffff; font-size: 20px; border-radius:5px;">
 		Marudham Capitals - Balance Report
 	</div>
-
 </div><br>
 
 <!-- Main container start -->
@@ -47,6 +46,7 @@
 									<th>S.No</th>
 									<th>Line</th>
 									<th>Loan ID</th>
+									<th>Doc ID</th>
 									<th>Loan Date</th>
 									<th>Maturity Date</th>
 									<th>Cust. ID</th>
@@ -68,7 +68,7 @@
 								<tbody></tbody>
 								<tfoot>
 									<tr>
-										<td colspan="12"></td>
+										<td colspan="13"></td>
 										<td></td>
 										<td></td>
 										<td></td>
@@ -87,6 +87,7 @@
 									<th>S.No</th>
 									<th>Line</th>
 									<th>Loan ID</th>
+									<th>Doc ID</th>
 									<th>Loan Date</th>
 									<th>Maturity Date</th>
 									<th>Cust. ID</th>
@@ -110,7 +111,7 @@
 								<tbody></tbody>
 								<tfoot>
 									<tr>
-										<td colspan="12"></td>
+										<td colspan="13"></td>
 										<td></td>
 										<td></td>
 										<td></td>
@@ -122,7 +123,6 @@
 							</table>
 						</div>
 						
-
 					</div>
 				</div>
 			</div>

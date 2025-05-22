@@ -1466,7 +1466,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 							<div class="row">
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
-										<label for="doc_id">Documents</label>
+										<label for="choose_document">Documents</label>
 										<select class="form-control" name="choose_document" id="choose_document">
 											<option value="0">Select Document</option>
 											<option value="1">Signed Doc</option>

@@ -4,7 +4,6 @@
 	<div style="background-color:#009688; width:100%; padding:12px; color: #ffff; font-size: 20px; border-radius:5px;">
 		Marudham Capitals - In Closed Report
 	</div>
-
 </div><br>
 
 <!-- Main container start -->
@@ -28,6 +27,7 @@
 									<th>S.No</th>
 									<th>Line</th>
 									<th>Loan ID</th>
+									<th>Doc ID</th>
 									<th>Loan Date</th>
 									<th>Cust. ID</th>
 									<th>Cust. Name</th>
@@ -40,13 +40,11 @@
 									<th>Maturity Date</th>
 									<th>Closed Date</th>
 									<th>Collection Format</th>
-									<!-- <th>Status</th>
-									<th>Sub Status</th> -->
 								</thead>
 								<tbody></tbody>
 								<tfoot>
 									<tr>
-										<td colspan="11"></td>
+										<td colspan="12"></td>
 										<td></td>
 										<td colspan="3"></td>
 									</tr>

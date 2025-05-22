@@ -4,18 +4,12 @@
 	<div style="background-color:#009688; width:100%; padding:12px; color: #ffff; font-size: 20px; border-radius:5px;">
 		Marudham Capitals - Closed Report
 	</div>
-
 </div><br>
-
-<div class="text-right" style="margin-right: 25px;">
-	<!-- <button class="btn btn-primary" id='close_history_card' style="display: none;" >&times;&nbsp;&nbsp;Cancel</button> -->
-</div>
 
 <!-- Main container start -->
 <div class="main-container">
 	<!--form start-->
 	<form id="closed_report_form" name="closed_report_form" action="" method="post" enctype="multipart/form-data">
-
 
 		<div class="row gutters" id="closed_card">
 			<div class="toggle-container col-12">
@@ -33,6 +27,7 @@
 									<th>S.No</th>
 									<th>Line</th>
 									<th>Loan ID</th>
+									<th>Doc ID</th>
 									<th>Loan Date</th>
 									<th>Cust. ID</th>
 									<th>Cust. Name</th>
@@ -51,7 +46,7 @@
 								<tbody></tbody>
 								<tfoot>
 									<tr>
-										<td colspan="11"></td>
+										<td colspan="12"></td>
 										<td></td>
 										<td colspan="5"></td>
 									</tr>

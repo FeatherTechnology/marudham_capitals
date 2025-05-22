@@ -98,7 +98,7 @@ else if ($current_page == 'edit_concern_creation' || $current_page == 'edit_conc
 
 		sidebarLinks.forEach(function(link) {
 			var href = link.getAttribute('href');
-			if (href === currentPage || href.includes(currentPage)) {
+			if (href === currentPage) { //|| href.includes(currentPage)
 				link.style.backgroundColor = '#646969d9';
 			}
 		});
