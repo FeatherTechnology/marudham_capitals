@@ -115,7 +115,8 @@ if (isset($_POST['search'])) {
             cf.mobile LIKE '%" . $_POST['search'] . "%' OR
             cf.status LIKE '%" . $_POST['search'] . "%' OR
             cf.sub_status LIKE '%" . $_POST['search'] . "%' OR
-            cf.person_name LIKE '%" . $_POST['search'] . "%' ";
+            cf.person_name LIKE '%" . $_POST['search'] . "%' )";
+
     }
 }
 

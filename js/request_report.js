@@ -54,6 +54,7 @@ function requestReportTable(){
         ],
         'drawCallback': function () {
             searchFunction('request_report_table');
+            paginationFunction('request_report_table');
         },
         "footerCallback": function (row, data, start, end, display) {
             var api = this.api();

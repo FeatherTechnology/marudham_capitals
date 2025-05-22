@@ -42,6 +42,7 @@ function resetLoanFollowupTable(){
         ],
         'drawCallback': function() {
             searchFunction('loan_follow_table');
+            paginationFunction('loan_follow_table');
             loanFollowupTableOnclick();
         }
     });

@@ -380,7 +380,7 @@ function showPromotionList(url, tableid) {
         ],
         'drawCallback': function () {
             searchFunction(tableid);
-
+            paginationFunction(tableid);
             intNotintOnclick();
             promoChartOnclick();
             promotionListOnclick();

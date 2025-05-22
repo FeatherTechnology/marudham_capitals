@@ -64,6 +64,7 @@ function dT1() {
         ],
         "drawCallback": function () {
             searchFunction('area_mapping_line_info');
+            paginationFunction('area_mapping_line_info');
         }
     });
 }
@@ -103,6 +104,7 @@ function dT2(){
         ],
         "drawCallback": function () {
             searchFunction('area_mapping_group_info');
+            paginationFunction('area_mapping_group_info');
         }
     });
 }
@@ -142,6 +144,7 @@ function dT3() {
         ],
         "drawCallback": function () {
             searchFunction('area_mapping_duefollowup_info');
+            paginationFunction('area_mapping_duefollowup_info');
         }
     });
 }

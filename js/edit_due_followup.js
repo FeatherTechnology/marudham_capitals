@@ -43,9 +43,9 @@ function OnLoadFunctions(cusSts, comm_date) {
 
     $('#due_followup_table').DataTable().destroy();
     var table = $('#due_followup_table').DataTable({
-        "stateSave": true,
         "order": [[0, "desc"]],
         "processing": true,
+        "displayStart": getDisplayStart('due_followup_table'),
         "serverSide": true,
         "serverMethod": 'post',
         "ajax": {

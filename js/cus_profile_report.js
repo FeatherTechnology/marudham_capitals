@@ -31,6 +31,7 @@ $(document).ready(function () {
         ],
         'drawCallback': function () {
             searchFunction('cust_profile_report_table');
+            paginationFunction('cust_profile_report_table');
         }
     });
 

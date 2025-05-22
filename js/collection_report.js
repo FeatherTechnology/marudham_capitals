@@ -78,6 +78,7 @@ function collectionReportTable(){
         },
         'drawCallback': function() {
             searchFunction('collection_report_table');
+            paginationFunction('collection_report_table');
         }
     });
 }

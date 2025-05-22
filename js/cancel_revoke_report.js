@@ -94,6 +94,7 @@ function cancelRevokeTable(){
         ],
         'drawCallback': function () {
             searchFunction('cancel_revoke_table');
+            paginationFunction('cancel_revoke_table');
         },
         "footerCallback": function (row, data, start, end, display) {
             var api = this.api();
