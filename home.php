@@ -448,6 +448,10 @@ if (isset($getuserdetails['download_access'])) {
 			<?php if ($current_page == 'principal_interest_report') { ?>
 				<?php include "include/templates/principal_interest_report.php" ?>
 			<?php } else ?>
+			<!-- In Closed Report -->
+			<?php if ($current_page == 'in_closed_report') { ?>
+				<?php include "include/templates/in_closed_report.php" ?>
+			<?php } else ?>
 			<!-- Closed Report -->
 			<?php if ($current_page == 'closed_report') { ?>
 				<?php include "include/templates/closed_report.php" ?>

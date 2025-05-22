@@ -54,16 +54,16 @@ $role_arr = [1 => 'Director', 2 => 'Agent', 3 => 'Staff'];
 
 $column = array(
     'cp.id',
-    'cp.id',
+    'alm.line_name',
     'ii.loan_id',
     'ii.updated_date',
     'coll.cus_id',
     'coll.cus_name',
     'al.area_name',
     'sal.sub_area_name',
-    'cp.id',
-    'cp.id',
-    'cp.id',
+    'lcc.loan_category_creation_name',
+    'lc.sub_category',
+    'ac.ag_name',
     'u.role',
     'u.fullname',
     'coll.coll_date',
@@ -72,65 +72,67 @@ $column = array(
     'ii.id',
     'SUM(coll.penalty_track)',
     'SUM(coll.coll_charge_track)',
-    'SUM(coll.total_paid_track)',
-    'ii.id',
-    'ii.id'
+    'SUM(coll.total_paid_track)'
 );
 
 $query = "SELECT 
-                cp.area_line AS line,
-                ii.loan_id,
-                ii.updated_date AS loan_date,
-                coll.cus_id,
-                coll.req_id,
-                coll.cus_name,
-                coll.coll_mode,
-                al.area_name,
-                sal.sub_area_name,
-                lcc.loan_category_creation_name AS loan_cat_name,
-                lc.sub_category,
-                lc.due_type,
-                lc.due_period,
-                lc.principal_amt_cal,
-                lc.int_amt_cal,
-                ac.ag_name,
-                u.role,
-                u.fullname,
-                coll.coll_date,
-                coll.trans_date,
-                SUM(coll.due_amt_track) AS due_amt_track,
-                SUM(coll.princ_amt_track) AS princ_amt_track,
-                SUM(coll.int_amt_track) AS int_amt_track,
-                SUM(coll.penalty_track) AS penalty_track,
-                SUM(coll.coll_charge_track) AS coll_charge_track,
-                SUM(coll.total_paid_track) AS total_paid_track,
-                req.cus_status,
-                cls.closed_sts,
-                cls.consider_level
+            alm.line_name AS line,
+            ii.loan_id,
+            ii.updated_date AS loan_date,
+            coll.cus_id,
+            coll.req_id,
+            coll.cus_name,
+            coll.coll_mode,
+            al.area_name,
+            sal.sub_area_name,
+            lcc.loan_category_creation_name AS loan_cat_name,
+            lc.sub_category,
+            lc.due_type,
+            lc.due_period,
+            lc.principal_amt_cal,
+            lc.int_amt_cal,
+            ac.ag_name,
+            u.role,
+            u.fullname,
+            coll.coll_date,
+            coll.trans_date,
+            SUM(coll.due_amt_track) AS due_amt_track,
+            SUM(coll.princ_amt_track) AS princ_amt_track,
+            SUM(coll.int_amt_track) AS int_amt_track,
+            SUM(coll.penalty_track) AS penalty_track,
+            SUM(coll.coll_charge_track) AS coll_charge_track,
+            SUM(coll.total_paid_track) AS total_paid_track,
+            req.cus_status,
+            cls.closed_sts,
+            cls.consider_level
 
-            FROM collection coll
-            JOIN acknowlegement_customer_profile cp ON coll.req_id = cp.req_id
-            JOIN in_issue ii ON coll.req_id = ii.req_id
-            JOIN area_list_creation al ON cp.area_confirm_area = al.area_id
-            JOIN sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
-            JOIN acknowlegement_loan_calculation lc ON coll.req_id = lc.req_id
-            JOIN request_creation req ON coll.req_id = req.req_id
-            JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
-             JOIN user u ON coll.insert_login_id = u.user_id
-            LEFT JOIN agent_creation ac ON req.agent_id = ac.ag_id
-            LEFT JOIN closed_status cls ON req.req_id = cls.req_id
+        FROM collection coll
+        JOIN acknowlegement_customer_profile cp ON coll.req_id = cp.req_id
+        JOIN in_issue ii ON coll.req_id = ii.req_id
+        JOIN area_list_creation al ON cp.area_confirm_area = al.area_id
+        JOIN sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
+        JOIN area_line_mapping alm ON FIND_IN_SET(al.area_id, alm.area_id)
+        JOIN acknowlegement_loan_calculation lc ON coll.req_id = lc.req_id
+        JOIN request_creation req ON coll.req_id = req.req_id
+        JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
+        JOIN user u ON coll.insert_login_id = u.user_id
+        LEFT JOIN agent_creation ac ON req.agent_id = ac.ag_id
+        LEFT JOIN closed_status cls ON req.req_id = cls.req_id
 
-            WHERE req.cus_status >= 14 
-            AND $where ";
+        WHERE req.cus_status >= 14 
+        AND $where ";
 
 if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {
         $query .= " and (ii.loan_id LIKE '%" . $_POST['search'] . "%'
+                    OR alm.line_name LIKE '%" . $_POST['search'] . "%'
                     OR ii.updated_date LIKE '%" . $_POST['search'] . "%'
                     OR coll.cus_id LIKE '%" . $_POST['search'] . "%'
                     OR coll.cus_name LIKE '%" . $_POST['search'] . "%'
                     OR al.area_name LIKE '%" . $_POST['search'] . "%'
                     OR sal.sub_area_name LIKE '%" . $_POST['search'] . "%'
+                    OR lcc.loan_category_creation_name LIKE '%" . $_POST['search'] . "%'
+                    OR lc.sub_category LIKE '%" . $_POST['search'] . "%'
                     OR u.role LIKE '%" . $_POST['search'] . "%'
                     OR u.fullname LIKE '%" . $_POST['search'] . "%'
                     OR coll.coll_date LIKE '%" . $_POST['search'] . "%') ";

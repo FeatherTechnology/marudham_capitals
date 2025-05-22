@@ -39,17 +39,7 @@ foreach($area_array as $area1){
                     $disabled=false;
                 }
                 $records[$j][$i]['disabled'] = $disabled;
-            }else if($map == 'duefollowup'){
-                $checkQry=$connect->query("SELECT * FROM area_duefollowup_mapping where status=0 and FIND_IN_SET($sub_area_id,sub_area_id)");
-                if ($checkQry->rowCount()>0){
-                    $disabled = true;
-                }
-                else{
-                    $disabled=false;
-                }
-                $records[$j][$i]['disabled'] = $disabled;
             }
-            $checkres = $checkQry->fetch();
             $i++;
         }
         $j++;

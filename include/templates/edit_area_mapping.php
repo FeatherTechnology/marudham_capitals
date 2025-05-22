@@ -192,7 +192,6 @@
 								<th>Company Name</th>
 								<th>Branch Name</th>
 								<th>Area Name</th>
-								<th>Sub Area</th>
 								<th>Status</th>
 								<th>Action</th>
 							</tr>

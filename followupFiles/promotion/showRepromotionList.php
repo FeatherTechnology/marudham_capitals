@@ -54,7 +54,7 @@ if (isset($_POST['order'])) {
     LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
     LEFT JOIN ( SELECT cus_id, MAX(follow_date) AS follow_date, status FROM new_promotion GROUP BY cus_id ) np ON req.cus_id = np.cus_id
     WHERE req.cus_status BETWEEN 4 AND 9 
-    AND CASE WHEN req.cus_status IN (6, 7) THEN cp.sub_area ELSE cp.area_confirm_subarea END IN  ($sub_area_list) AND rc.cus_id IS NULL ";
+    AND CASE WHEN req.cus_status IN (6, 7) THEN cp.area_confirm_subarea ELSE cp.sub_area END IN  ($sub_area_list) AND rc.cus_id IS NULL ";
 
     if($_POST['followUpSts']){
         $follow_up_sts = $_POST['followUpSts'];

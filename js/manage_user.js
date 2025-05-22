@@ -46,6 +46,11 @@ const dueFollowupLines = new Choices('#due_follup_lines', {
     noChoicesText: 'Select Due Followup Lines',
     allowHTML: true
 });
+const updateScreen = new Choices('#update_screen', {
+    removeItemButton: true,
+    noChoicesText: 'Select Update Screen',
+    allowHTML: true
+});
 // Document is ready
 $(document).ready(function () {
 
@@ -182,6 +187,7 @@ $(document).ready(function () {
         $('#bank_details').val(sortedStr);
 
     })
+
     $('#due_follup_lines').change(function () {
         var due_follup_lines = dueFollowupLines.getValue();
         var due_follup_lines_id = '';
@@ -198,6 +204,17 @@ $(document).ready(function () {
         $('#due_follup_line_id').val(sortedStr);
 
     })
+
+    $('#update_screen').change(function () {
+        // Get values from multiselect and sort
+        const screenList = updateScreen.getValue();
+        const screenSortedStr = screenList
+            .map(item => item.value)
+            .sort((a, b) => a - b)
+            .join(',');
+    
+        $('#update_screen_id').val(screenSortedStr);
+    });
 
     //modules checkbox events
     $("#adminmodule").on("change", function () {
@@ -335,6 +352,22 @@ $(document).ready(function () {
             $('.due_followupline_div').hide()
         }
     })
+    
+    $('#updatemodule').click(function () {
+        var update_screen = document.querySelector('#updatemodule');
+        if (!update_screen.checked) {
+            $('.update_screen_div').hide();
+        }
+    });
+
+    $('#update').click(function () {
+        var update_screen = document.querySelector('#update');
+        if (update_screen.checked) {
+            $('.update_screen_div').show();
+        } else {
+            $('.update_screen_div').hide();
+        }
+    });
 
     $('#submit_manage_user').click(function () {
 
@@ -381,6 +414,19 @@ $(function () {
         if (due_followup.checked) {
             getdueFollupLineDropdown();
             $('.due_followupline_div').show()
+        }
+
+        var update_screen = document.querySelector('#update');
+        if (update_screen.checked) {
+            let editVal = $('#update_screen_id').val();
+            if (editVal) {
+                let selectedValues = editVal.split(',');
+                selectedValues.forEach(value => {
+                    updateScreen.setChoiceByValue(value.trim());
+                });
+            }
+
+            $('.update_screen_div').show()
         }
 
         var mastermodule = document.getElementById('mastermodule');
@@ -1122,6 +1168,32 @@ function validation() {
             $('.duefollowupCheck').hide();
         }
     }
+
+    var update = document.querySelector('#update');
+    var update_screen = updateScreen.getValue();
+    if (!update.checked) {
+        $('#update_screen_id').val('')
+    } else{
+         if(update_screen.length == 0){
+            event.preventDefault();
+            $('.update_screen_div').show();
+            $('.updateScreenCheck').show();
+        }else{
+            $('.updateScreenCheck').hide();
+        }
+    }
+
+    var reportmodule = document.querySelector('#reportmodule');
+    if (!reportmodule.checked) {
+        $('#report_access').val('')
+    } else{
+        var reportAccess = $('#report_access').val();
+         if(reportAccess == ''){
+            event.preventDefault();
+            $('#reportAccessCheck').show();
+        }
+    }
+
 }
 
 

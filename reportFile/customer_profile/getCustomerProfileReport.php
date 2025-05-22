@@ -92,8 +92,8 @@ $column = array(
     'sal.sub_area_name',
     'cp.mobile1',
     'reg.loan_limit',
-    'cp.area_line',
-    'cp.area_group',
+    'alm.line_name',
+    'agm.group_name',
     'cp.id',
     'cp.occupation_type',
     'cp.occupation_details',
@@ -107,8 +107,8 @@ $column = array(
 $query = "SELECT 
             cp.cus_id,cp.cus_name,
             cp.mobile1,
-            cp.area_line,
-            cp.area_group,
+            alm.line_name,
+            agm.group_name,
             cp.occupation_type,
             cp.occupation_details,
             cp.residential_type,
@@ -128,6 +128,8 @@ $query = "SELECT
             JOIN verification_family_info fam ON cp.guarentor_name = fam.id
             JOIN area_list_creation al ON cp.area_confirm_area = al.area_id
             JOIN sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
+            JOIN area_line_mapping alm ON FIND_IN_SET(al.area_id, alm.area_id)
+            JOIN area_group_mapping agm ON FIND_IN_SET(al.area_id, agm.area_id)
             JOIN customer_register reg ON cp.cus_id = reg.cus_id
             JOIN request_creation req ON cp.req_id = req.req_id
 
@@ -138,8 +140,8 @@ if ($_POST['search'] != "") {
             cp.cus_id LIKE '%" . $_POST['search'] . "%' OR
             cp.cus_name LIKE '%" . $_POST['search'] . "%' OR
             cp.mobile1 LIKE '%" . $_POST['search'] . "%' OR
-            cp.area_line LIKE '%" . $_POST['search'] . "%' OR
-            cp.area_group LIKE '%" . $_POST['search'] . "%' OR
+            alm.line_name LIKE '%" . $_POST['search'] . "%' OR
+            agm.group_name LIKE '%" . $_POST['search'] . "%' OR
             cp.occupation_type LIKE '%" . $_POST['search'] . "%' OR
             cp.occupation_details LIKE '%" . $_POST['search'] . "%' OR
             cp.residential_type LIKE '%" . $_POST['search'] . "%' OR
@@ -182,8 +184,8 @@ foreach ($result as $row) {
     $sub_array[] = $row['sub_area_name'];
     $sub_array[] = $row['mobile1'];
     $sub_array[] = moneyFormatIndia($row['loan_limit']);
-    $sub_array[] = $row['area_line'];
-    $sub_array[] = $row['area_group'];
+    $sub_array[] = $row['line_name'];
+    $sub_array[] = $row['group_name'];
     $sub_array[] = $how_to_know_obj[$row['how_to_know']] ?? '';
 
     $row['occupation_type'] = $row['occupation_type'] != '' ? $row['occupation_type'] : 0;

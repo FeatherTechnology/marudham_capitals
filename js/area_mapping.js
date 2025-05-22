@@ -18,7 +18,8 @@ const areaMultiselect2 = new Choices('#area_dummy2', {
     noChoicesText: null,
     placeholder: true,
     placeholderValue: 'Select Area Name',
-    allowHTML: true
+    allowHTML: true,
+    shouldSort: false
 });
 const intance = new Choices('#sub_area_dummy', {
     removeItemButton: true,
@@ -34,13 +35,14 @@ const intance1 = new Choices('#sub_area_dummy1', {
     placeholderValue: 'Select Sub Area Name',
     allowHTML: true
 });
-const intance2 = new Choices('#sub_area_dummy2', {
-    removeItemButton: true,
-    noChoicesText: null,
-    placeholder: true,
-    placeholderValue: 'Select Sub Area Name',
-    allowHTML: true
-});
+// const intance2 = new Choices('#sub_area_dummy2', {
+//     removeItemButton: true,
+//     noChoicesText: null,
+//     placeholder: true,
+//     placeholderValue: 'Select Sub Area Name',
+//     allowHTML: true,
+//     shouldSort: false
+// });
 const dueLine = new Choices('#due_line', {
     removeItemButton: true,
     noChoicesText: null,
@@ -49,7 +51,11 @@ const dueLine = new Choices('#due_line', {
     allowHTML: true
 });
 
-
+const subStatusMultiselect = new Choices('#sub_status_mapping', {
+    removeItemButton: true,
+    noChoicesText: 'Select Customer Status',
+    allowHTML: true
+});
 // Document is ready
 $(document).ready(function () {
 
@@ -233,29 +239,47 @@ $(document).ready(function () {
 
     $('#branch2').change(function(){
         let branchId = $(this).val();
-        areaMultiselect2.clearStore();
-        intance2.clearStore();
-        dueLine.clearStore();
-        $('#cus_count, #loan_count').val('');
 
-        if(branchId !=''){
+        if(branchId){
             getLineNameDropdown(branchId);
+
+        }else{
+            areaMultiselect2.clearStore();
+            // intance2.clearStore();
+            dueLine.clearStore();
+            $('#cus_count, #loan_count').val('');
+            
         }
+
     });
     
     $('#area_dummy2').change(function () {
         // Get values from multiselect and sort
-        const area_list = areaMultiselect2.getValue();
-        const sortedStr = area_list
+        const area_list = areaMultiselect2.getValue(); // returns array of objects like [{value: "1", label: "Area 1"}, ...]
+    
+        // Handle Select All logic
+        selectAllAreas(area_list, areaMultiselect2);
+    
+        const sortedStr = areaMultiselect2.getValue()
             .map(item => item.value)
+            .filter(val => val !== 'select_all') // exclude 'select_all' from final string
             .sort((a, b) => a - b)
             .join(',');
     
         $('#area2').val(sortedStr);
     
-        getAreaBasedSubArea2(sortedStr);
-        getCusLoanCount(sortedStr);
+        // getAreaBasedSubArea2(sortedStr);
+        getCusLoanCount();
     });
+    
+    // $('#sub_area_dummy2').change(function () {
+    //     // Get values from multiselect and sort
+    //     const subarea_list = intance2.getValue(); // returns array of objects like [{value: "1", label: "Area 1"}, ...]
+    
+    //     // Handle Select All logic
+    //     selectAllAreas(subarea_list, intance2);
+
+    // });
     
     $('#due_line').change(function () {
         // Get values from multiselect and sort
@@ -271,30 +295,37 @@ $(document).ready(function () {
             getArea2(lineSortedStr);
         }
     });
+    
+    $('#loan_cat1').change(function () {
+       
+        const loanList = $('#loan_cat1').val();
+        $('#loan_cat').val(loanList);
+
+        getCusLoanCount();
+    });
+
+    $('#sub_status_mapping').change(function(){
+        getSubStatusValues();
+        getCusLoanCount();
+    });
 
     $('#refresh_count').click(function(event){
-        event.preventDefault();
-        // Get values from multiselect and sort
-        const area_list = areaMultiselect2.getValue();
-        const sortedStr = area_list
-            .map(item => item.value)
-            .sort((a, b) => a - b)
-            .join(',');
-            
-        getCusLoanCount(sortedStr);
+        event.preventDefault();            
+        getCusLoanCount();
     })
     //on submit add sub area list to hidden input
     $('#submit_area_mapping_duefollowup').click(function () {
+        var loanCategory = $('#loan_cat1').val();
         var due_line = dueLine.getValue();
         var area_list = areaMultiselect2.getValue();
-        var sub_area_list = intance2.getValue();
+        // var sub_area_list = intance2.getValue();
+        var subStatus = subStatusMultiselect.getValue();
 
         //Validation
         var duefollowup_name = $('#duefollowup_name').val(); var company_name = $('#company_name2').val(); var branch = $('#branch2').val(); var cuscnt = $('#cus_count').val(); var loancnt = $('#loan_count').val();
-        if (duefollowup_name == '' || company_name == '' || branch == '' || due_line.length == 0 || area_list.length == 0 || sub_area_list.length == 0 || cuscnt == '' || loancnt == '' ) {
+        if (duefollowup_name == '' || company_name == '' || branch == '' || loanCategory == '' || due_line.length == 0 || subStatus.length == 0 || area_list.length == 0 || cuscnt == '' || loancnt == '' ) {
             Swal.fire({
                 timerProgressBar: true,
-                // timer: 2000,
                 title: 'Please Fill out Mandatory fields!',
                 icon: 'error',
                 showConfirmButton: true
@@ -302,7 +333,7 @@ $(document).ready(function () {
             event.preventDefault();
         }
 
-        // Area line multi-select
+        // Line multi-select
         const dueLineStr = getSortedCommaSeparatedValues(dueLine);
         $('#dueline').val(dueLineStr);
 
@@ -310,41 +341,49 @@ $(document).ready(function () {
         const areaStr = getSortedCommaSeparatedValues(areaMultiselect2);
         $('#area2').val(areaStr);
 
-        // Sub-area multi-select
-        const subAreaStr = getSortedCommaSeparatedValues(intance2);
-        $('#sub_area2').val(subAreaStr);
+        // // Sub-area multi-select
+        // const subAreaStr = getSortedCommaSeparatedValues(intance2);
+        // $('#sub_area2').val(subAreaStr);        
+
+        $('#loan_cat').val(loanCategory);
+
+        // Sub Status multi-select
+        getSubStatusValues();
         
+
     });
 
 });//document ready end
 
 //on page load for Edit page
 $(function () {
-    let map_id = $('#map_id_upd').val();
-    let map_id1 = $('#map_id1_upd').val();
     let type = $('#type').val();
     if (type == 'line') {
         getArea();
         let area = $('#area_id_upd').val();
-        // let company_id_upd = $('#company_id_upd').val();
         getAreaBasedSubArea(area);
         getBranchDropdown()
     } else if (type == 'group') {
         getArea1();
         let area = $('#area_id1_upd').val();
-        // let company_id_upd = $('#company_id_upd1').val();
         getAreaBasedSubArea1(area);
-        getBranchDropdown1()
+        getBranchDropdown1();
     } else if (type == 'duefollowup') {
-        getBranchDropdown2()
-        let upd = $('#id').val();
-        if(upd > 0){
-            let branchid = $('#branch_id_upd2').val();
-            let lineid = $('#due_line_name').val();
-            getLineNameDropdown(branchid);
-            getArea2(lineid);
-            let area = $('#area_id2_upd').val();
-            getAreaBasedSubArea2(area);
+        initform();
+
+        async function initform(){
+            await getBranchDropdown2();
+            await getLoanCatDropdown();
+            await getSubStsMapping();
+            let upd = $('#id').val();
+            if(upd > 0){
+                let branchid = $('#branch_id_upd2').val();
+                let lineid = $('#due_line_name').val();
+                await getLineNameDropdown(branchid);
+                await getArea2(lineid);
+                // let area = $('#area_id2_upd').val();
+                // await getAreaBasedSubArea2(area);
+            }
         }
     }
 
@@ -431,46 +470,73 @@ function getArea1() {
 }
 //Get Area 
 function getArea2(lineid) {
-    var area_id_upd = $('#area_id2_upd').val();
-    var areaid = $('#area2').val();
-    var values = area_id_upd.split(',');
-    var map = 'duefollowup';
-    $.ajax({
-        url: 'areaMapping/ajaxGetMappedArea.php',
-        type: 'post',
-        data: { 'map': map, 'lineid': lineid },
-        dataType: 'json',
-        success: function (response) {
-
-            areaMultiselect2.clearStore();
-            var len = response.length;
-            for (var i = 0; i < len; i++) {
-                var area_id = response[i]['area_id'];
-                var area_name = response[i]['area_name'];
-                var checked = '';
-                var checked = response[i]['disabled'];
-                var selected = '';
-                if (area_id_upd != '' && values.includes(area_id.toString())) {
-                    selected = 'selected';
-                    checked = false;
-                }
-                if (areaid != '' && areaid.includes(area_id.toString())) {
-                    selected = 'selected';
-                    checked = false;
-                }
+    return new Promise((resolve, reject) => {
+        var area_id_upd = $('#area_id2_upd').val();
+        var areaid = $('#area2').val();
+        var branchid = $('#branch2').val();
+        var values = area_id_upd.split(',');
+        var map = 'duefollowup';
+        var loanCat = $('#loan_cat1').val();
+        $.ajax({
+            url: 'areaMapping/ajaxGetMappedArea.php',
+            type: 'post',
+            data: { 'map': map, 'lineid': lineid, 'loanCatId': loanCat, 'branchid': branchid },
+            dataType: 'json',
+            success: function (response) {
+                areaMultiselect2.clearStore();
+            
+                // Start with "Select All" manually
                 var items = [
                     {
+                        value: 'select_all',
+                        label: 'Select All',
+                        selected: '',
+                        disabled: ''
+                    }
+                ];
+            
+                var len = response.length;
+                var areaItems = [];
+            
+                for (var i = 0; i < len; i++) {
+                    var area_id = response[i]['area_id'];
+                    var area_name = response[i]['area_name'];
+                    var checked = response[i]['disabled'];
+                    var selected = '';
+            
+                    if (area_id_upd && values.includes(area_id.toString())) {
+                        selected = 'selected';
+                        checked = false;
+                    }
+                    if (areaid && areaid.includes(area_id.toString())) {
+                        selected = 'selected';
+                        checked = false;
+                    }
+            
+                    areaItems.push({
                         value: area_id,
                         label: area_name,
                         selected: selected,
-                        disabled: checked,
-                    }
-                ];
-                areaMultiselect2.setChoices(items);
-                areaMultiselect2.init();
-
+                        disabled: checked
+                    });
+                }
+            
+                // Sort the area items alphabetically by label
+                areaItems.sort(function (a, b) {
+                    return a.label.localeCompare(b.label);
+                });
+            
+                // Merge "Select All" with sorted area items
+                items = items.concat(areaItems);
+            
+                areaMultiselect2.setChoices(items, 'value', 'label', true);
+                resolve(); // Notify completion
+            },
+            error: function (xhr, status, error) {
+                reject(error); // Handle errors
             }
-        }
+        });
+        
     });
 }
 
@@ -558,46 +624,70 @@ function getAreaBasedSubArea1(area) {
 }
 
 //Get Area Based Sub Area
-function getAreaBasedSubArea2(area) {
-    var sub_area_upd = $('#sub_area_upd2').val();
-    var values = sub_area_upd.split(',');
-    var map = 'duefollowup';
-    $.ajax({
-        url: 'areaMapping/ajaxGetSubArea.php',
-        type: 'post',
-        data: { 'area': area, 'map': map },
-        dataType: 'json',
-        success: function (response) {
+// function getAreaBasedSubArea2(area) {
+//     return new Promise((resolve, reject) => {
+//         var sub_area_upd = $('#sub_area_upd2').val();
+//         var values = sub_area_upd.split(',');
+//         var map = 'duefollowup';
+//         $.ajax({
+//             url: 'areaMapping/ajaxGetSubArea.php',
+//             type: 'post',
+//             data: { 'area': area, 'map': map },
+//             dataType: 'json',
+//             success: function (response) {
 
-            intance2.clearStore();
-            var len = response.length;
-            for (var i = 0; i < len; i++) {
-                for (var j = 0; j < response[i].length; j++) {
+//                 intance2.clearStore();
+                        
+//                 // Start with "Select All" manually
+//                 var items = [
+//                     {
+//                         value: 'select_all',
+//                         label: 'Select All',
+//                         selected: ''
+//                     }
+//                 ];
 
-                    var sub_area_id = response[i][j]['sub_area_id'];
-                    var sub_area_name = response[i][j]['sub_area_name'];
-                    var checked = response[i][j]['disabled'];
-                    var selected = '';
-                    if (sub_area_upd != '' && values.includes(sub_area_id.toString())) {
-                        selected = 'selected';
-                        checked = false;
-                    }
-                    var items = [
-                        {
-                            value: sub_area_id,
-                            label: sub_area_name,
-                            selected: selected,
-                            disabled: checked,
-                        }
-                    ];
-                    intance2.setChoices(items);
-                    intance2.init();
-                }
+//                 var len = response.length;
+//                 var subareaItems = [];
 
-            }
-        }
-    });
-}
+//                 for (var i = 0; i < len; i++) {
+//                     for (var j = 0; j < response[i].length; j++) {
+
+//                         var sub_area_id = response[i][j]['sub_area_id'];
+//                         var sub_area_name = response[i][j]['sub_area_name'];
+//                         var selected = 'selected';
+//                         // if (sub_area_upd != '' && values.includes(sub_area_id.toString())) {
+//                         //     selected = 'selected';
+//                         // }
+
+//                         subareaItems.push({
+//                             value: sub_area_id,
+//                             label: sub_area_name,
+//                             selected: selected
+//                         });
+
+//                     }
+
+//                 }
+        
+//                 // Sort the area items alphabetically by label
+//                 subareaItems.sort(function (a, b) {
+//                     return a.label.localeCompare(b.label);
+//                 });
+            
+//                 // Merge "Select All" with sorted area items
+//                 items = items.concat(subareaItems);
+            
+//                 intance2.setChoices(items, 'value', 'label', true);
+
+//                 resolve(); // Notify completion
+//             },
+//             error: function (xhr, status, error) {
+//                 reject(error); // Handle errors
+//             }
+//         });
+//     });
+// }
 
 //Get BranchDropdown Based on Company id
 function getBranchDropdown() {
@@ -663,62 +753,93 @@ function getBranchDropdown1() {
 }
 
 //Get BranchDropdown Based on Company id
-function getBranchDropdown2(company_id) {
-    var branch_id_upd = $('#branch_id_upd2').val();
-    var company_id = (!$('#company_id_upd2').val()) ? $('#company_id2').val() : $('#company_id_upd2').val();
-    $.ajax({
-        url: 'areaMapping/getBranchDropdown.php',
-        type: 'post',
-        dataType: 'json',
-        data: { 'company_id': company_id },
-        cache: false,
-        success: function (response) {
+function getBranchDropdown2() {
+    return new Promise((resolve, reject) => {
+        var branch_id_upd = $('#branch_id_upd2').val();
+        var company_id = (!$('#company_id_upd2').val()) ? $('#company_id2').val() : $('#company_id_upd2').val();
+        $.ajax({
+            url: 'areaMapping/getBranchDropdown.php',
+            type: 'post',
+            dataType: 'json',
+            data: { 'company_id': company_id },
+            cache: false,
+            success: function (response) {
 
-            $('#branch2').empty();
-            $('#branch2').append('<option value="">Select Branch</option>');
-            for (var i = 0; i < response.length; i++) {
-                var selected = '';
-                if (branch_id_upd != '' && branch_id_upd == response[i]['branch_id']) {
-                    selected = "selected";
+                $('#branch2').empty();
+                $('#branch2').append('<option value="">Select Branch</option>');
+                for (var i = 0; i < response.length; i++) {
+                    var selected = '';
+                    if (branch_id_upd != '' && branch_id_upd == response[i]['branch_id']) {
+                        selected = "selected";
+                    }
+                    $('#branch2').append("<option value = '" + response[i]['branch_id'] + "' " + selected + " > " + response[i]['branch_name'] + " </option>");
                 }
-                $('#branch2').append("<option value = '" + response[i]['branch_id'] + "' " + selected + " > " + response[i]['branch_name'] + " </option>");
+                {//To Order Alphabetically
+                    var firstOption = $("#branch2 option:first-child");
+                    $("#branch2").html($("#branch2 option:not(:first-child)").sort(function (a, b) {
+                        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
+                    }));
+                    $("#branch2").prepend(firstOption);
+                }
+
+                resolve(); // Notify completion
+            },
+            error: function (xhr, status, error) {
+                reject(error); // Handle errors
             }
-            {//To Order Alphabetically
-                var firstOption = $("#branch2 option:first-child");
-                $("#branch2").html($("#branch2 option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#branch2").prepend(firstOption);
-            }
-        }
-    })
+        });
+    });
 }
 
 function getLineNameDropdown(branchid){
-    $.post('areaMapping/getLineName.php',{branchid}, function(response){
-        dueLine.clearStore();
-        let line = $('#due_line_name').val().split(',');
-        $.each(response, function(index, val){
-            let selected ='';
-            if (line != '' && line.includes(val.map_id.toString())) {
-                selected = 'selected';
-            }
-            let item = [
-                {
-                    value: val.map_id,
-                    label: val.line_name,
-                    selected: selected,
+    return new Promise((resolve, reject) => {
+        $.post('areaMapping/getLineName.php',{branchid}, function(response){
+            dueLine.clearStore();
+            let line = $('#due_line_name').val().split(',');
+            $.each(response, function(index, val){
+                let selected ='';
+                if (line != '' && line.includes(val.map_id.toString())) {
+                    selected = 'selected';
                 }
-            ];
-            dueLine.setChoices(item);
-            dueLine.init();
-        });
+                let item = [
+                    {
+                        value: val.map_id,
+                        label: val.line_name,
+                        selected: selected,
+                    }
+                ];
+                dueLine.setChoices(item);
+                dueLine.init();
+            });
 
-    },'json');
+            resolve(); // Resolve once dropdown is populated
+        }, 'json').fail(function(xhr, status, error) {
+            reject(error); // Reject if there's an error
+        });
+    });
 }
 
-function getCusLoanCount(areaid){
-    $.post('areaMapping/getCusAndLoanCount.php',{areaid}, function(response){
+function getCusLoanCount(){
+    const areaid = areaMultiselect2.getValue()
+        .map(item => item.value)
+        .filter(val => val !== 'select_all') // exclude 'select_all' from final string
+        .sort((a, b) => a - b)
+        .join(',');
+
+    var loanCatId = $('#loan_cat1').val();
+
+    const subStatus = subStatusMultiselect.getValue()
+        .map(item => item.value)
+        .sort((a, b) => a.localeCompare(b))
+        .join(',');
+
+        const lineList = dueLine.getValue();
+        const mapId = lineList
+            .map(item => item.value)
+            .sort((a, b) => a - b)
+            .join(',');
+
+    $.post('areaMapping/getCusAndLoanCount.php',{areaid, loanCatId, subStatus, mapId}, function(response){
         let cusCnt = (response.cus_count) ? response.cus_count : 0;
         let loanCnt = (response.loan_count) ? response.loan_count : 0;
         $('#cus_count').val(cusCnt);
@@ -731,4 +852,91 @@ function getSortedCommaSeparatedValues(multiselectInstance) {
     const values = selected.map(item => parseInt(item.value, 10));
     values.sort((a, b) => a - b);
     return values.join(',');
+}
+
+//get Loan category Dropdown
+function getLoanCatDropdown() {
+    return new Promise((resolve, reject) => {
+        var loan_cat_upd = $('#loan_cat_upd').val().split(',');
+        $.ajax({
+            url: 'manageUser/getLoanCatDropdown.php',
+            data: {},
+            dataType: 'json',
+            type: 'post',
+            cache: false,
+            success: function (response) {
+                $('#loan_cat1').empty();
+                $('#loan_cat1').append('<option value="">Select Loan category</option>');
+                for (var i = 0; i < response.length; i++) {
+                    var selected = '';
+                    if (loan_cat_upd != '' && loan_cat_upd == response[i]['loan_cat_id']) {
+                        selected = "selected";
+                    }
+                    $('#loan_cat1').append("<option value = '" + response[i]['loan_cat_id'] + "' " + selected + " > " + response[i]['loan_cat_name'] + " </option>");
+                }
+                {//To Order Alphabetically
+                    var firstOption = $("#loan_cat1 option:first-child");
+                    $("#loan_cat1").html($("#loan_cat1 option:not(:first-child)").sort(function (a, b) {
+                        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
+                    }));
+                    $("#loan_cat1").prepend(firstOption);
+                }
+
+                resolve();
+            },
+            error: function (xhr, status, error) {
+                reject(error); 
+            }
+        });
+    });
+}
+
+function selectAllAreas(selectedList, choicesInstance) {
+    const selectedValues = selectedList.map(item => item.value);
+
+    if (selectedValues.includes('select_all')) {
+        const allChoices = choicesInstance._store.choices
+            .filter(choice => choice.value !== 'select_all' && !choice.disabled);
+
+        const allValues = allChoices.map(choice => choice.value);
+
+        const alreadySelectedAll = allValues.every(val => selectedValues.includes(val));
+
+        // Remove current selections
+        choicesInstance.removeActiveItems();
+
+        if (!alreadySelectedAll) {
+            // Select all except 'select_all'
+            choicesInstance.setChoiceByValue(allValues);
+        }
+    }
+}
+
+function getSubStsMapping() {
+    return new Promise((resolve, reject) => {
+        let subStatus = ['Legal', 'Error', 'OD', 'Pending', 'Current'];
+        let editSubStatus = $('#cus_sts').val() || '';
+
+        subStatusMultiselect.clearStore();
+
+        let items = subStatus.map(val => ({
+            value: val,
+            label: val,
+            selected: editSubStatus.includes(val)
+        }));
+
+        subStatusMultiselect.setChoices(items);
+        subStatusMultiselect.init();
+
+        resolve(); // Mark as done
+    });
+}
+
+function getSubStatusValues(){
+    const subStatusArr = subStatusMultiselect.getValue();
+    var subStsStr = subStatusArr
+        .map(item => item.value)
+        .sort((a, b) => a.localeCompare(b))
+        .join(',');
+    $('#customer_status').val(subStsStr);
 }

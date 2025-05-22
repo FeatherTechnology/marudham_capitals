@@ -87,7 +87,7 @@ function getFamilyMember($connect,$fam_id){
                 </td>
                 
                 <td><?php echo $row['remark']; ?></td>
-                <td><?php if($row['comm_date'] != '0000-00-00'){ echo date('d-m-Y',strtotime($row['comm_date'])); }else{ echo 'NIL'; } ?></td>
+                <td><?php if($row['comm_date'] != '0000-00-00' && !empty($row['comm_date'])){ echo date('d-m-Y',strtotime($row['comm_date'])); }else{ echo ''; } ?></td>
                 <td><?php echo $row['role']; ?></td>
                 <td><?php echo $row['fullname']; ?></td>
                 <td><?php echo $row['hint']; ?></td>

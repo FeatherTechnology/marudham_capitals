@@ -43,6 +43,7 @@
 									<th>Loan Category</th>
 									<th>Sub Category</th>
 									<th>Agent</th>
+									<th>Responsible</th>
 									<th>Loan Date</th>
 									<th>Loan Amount</th>
 									<th>Principal Amount</th>
@@ -51,13 +52,17 @@
 									<th>Processing Fee</th>
 									<th>Total Amount</th>
 									<th>Net Cash</th>
+									<th>Due Amount</th>
+									<th>No of Due</th>
+									<th>First Loan Date</th>
+									<th>Maturity Date</th>
 									<th>Received By</th>
 									<th>Relation Name</th>
 								</thead>
 								<tbody></tbody>
 								<tfoot>
 									<tr>
-										<td colspan="14"></td>
+										<td colspan="15"></td>
 										<td></td>
 										<td></td>
 										<td></td>
@@ -65,7 +70,8 @@
 										<td></td>
 										<td></td>
 										<td></td>
-										<td colspan="2"></td>
+										<td></td>
+										<td colspan="5"></td>
 									</tr>
 								</tfoot>
 							</table>
