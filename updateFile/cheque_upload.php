@@ -1,24 +1,36 @@
 <?php
 require '../ajaxconfig.php';
 
-$req_id              = $_POST['req_id'];
-$cus_id = preg_replace('/\D/', '', $_POST['cus_id']);
-$holder_type           = $_POST['holder_type'];
-$chequebank_name              = $_POST['chequebank_name'];
-$cheque_count              = $_POST['cheque_count'];
-$chequeID              = $_POST['chequeID'];
-$cheque_upd_no         = explode(',',$_POST['cheque_upd_no']);//stored each numbers in an array
+$req_id             = $_POST['req_id'];
+$cus_id             = preg_replace('/\D/', '', $_POST['cus_id']);
+$holder_type        = $_POST['holder_type'];
+$chequebank_name    = $_POST['chequebank_name'];
+$cheque_count       = $_POST['cheque_count'];
+$chequeID           = $_POST['chequeID'];
+$cheque_relation    = $_POST['cheque_relation'];
+$cheque_upd_no      = explode(',',$_POST['cheque_upd_no']);//stored each numbers in an array
+$filesArray         = $_FILES['cheque_upd'];//files passed as array
 
 if($holder_type == '0' || $holder_type == '1'){
-    $holderName = $_POST['holder_name'];
+    $holder_name = $_POST['holder_name'];
 }else{
-    $holderName = $_POST['holder_relationship_name'];
+    $holder_relationship_name = $_POST['holder_relationship_name'];
 }
+
+$holderName = ($holder_type == '0' || $holder_type == '1') ? $holder_name : $holder_relationship_name;
 
 // $connect->query("DELETE FROM `cheque_upd` WHERE `cheque_table_id`='$chequeID'");
 // $connect->query("DELETE FROM `cheque_no_list` WHERE `cheque_table_id`='$chequeID'");
 
-$filesArray = $_FILES['cheque_upd'];//files passed as array
+if ($chequeID == '') {
+
+    $qry = $connect->query("SELECT id FROM `customer_profile` WHERE `req_id` = $req_id");
+    $cus_profile_id = $qry->fetch()['id'];
+
+    $insert_qry = $connect->query("INSERT INTO `cheque_info`(`cus_id`,`req_id`, `cus_profile_id`, `holder_type`, `holder_name`, `holder_relationship_name`, `cheque_relation`, `chequebank_name`, `cheque_count`) VALUES ('$cus_id','$req_id','$cus_profile_id','$holder_type','$holder_name','$holder_relationship_name','$cheque_relation','$chequebank_name','$cheque_count')");
+
+    $chequeID = $connect->lastInsertId();
+}
 
 foreach($filesArray['name'] as $key=>$val)
 {

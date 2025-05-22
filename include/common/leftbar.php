@@ -67,7 +67,7 @@ else if ($current_page == 'edit_concern_creation' || $current_page == 'edit_conc
 	$current_module = 'followup';
 } else if (
 	$current_page == 'ledger_report' || $current_page == 'request_report' || $current_page == 'cancel_revoke_report' ||  $current_page == 'cus_profile_report' || $current_page == 'loan_issue_report'
-	|| $current_page == 'collection_report' ||$current_page == 'principal_interest_report' || $current_page == 'balance_report' || $current_page == 'due_list_report' || $current_page == 'closed_report' || $current_page == 'confirmation_followup_report' || $current_page == 'agent_report'
+	|| $current_page == 'collection_report' ||$current_page == 'principal_interest_report' || $current_page == 'balance_report' || $current_page == 'due_list_report' || $current_page == 'in_closed_report' || $current_page == 'closed_report' || $current_page == 'confirmation_followup_report' || $current_page == 'agent_report'|| $current_page == 'no_due_pay_report'
 ) {
 
 	$current_module = 'report';
@@ -183,9 +183,11 @@ $collection_report = '';
 $principal_interest_report = '';
 $balance_report = '';
 $due_list_report = '';
+$in_closed_report = '';
 $closed_report = '';
 $confirmation_followup_report = '';
 $agent_report = '';
+$no_due_pay_report = '';
 $search_module = '';
 $search = '';
 $bulk_upload_module = '';
@@ -273,9 +275,11 @@ if (sizeof($getUser) > 0) {
 		$principal_interest_report          		     = $getUser['principal_interest_report'];
 		$balance_report          		     = $getUser['balance_report'];
 		$due_list_report          		     = $getUser['due_list_report'];
+		$in_closed_report          		     = $getUser['in_closed_report'];
 		$closed_report          		     = $getUser['closed_report'];
 		$confirmation_followup_report          		     = $getUser['confirmation_followup_report'];
 		$agent_report          		     = $getUser['agent_report'];
+		$no_due_pay_report          		     = $getUser['no_due_pay_report'];
 
 		$search_module          		     = $getUser['search_module'];
 		$search          		     = $getUser['search'];
@@ -856,6 +860,11 @@ if (sizeof($getUser) > 0) {
 										<a href="balance_report"><i class='icon-area-graph'></i>Balance</a>
 									</li>
 								<?php  } ?>
+								<?php if ($in_closed_report == 0) { ?>
+									<li>
+										<a href="in_closed_report"><i class='icon-area-graph'></i>In Closed</a>
+									</li>
+								<?php  } ?>
 								<?php if ($closed_report == 0) { ?>
 									<li>
 										<a href="closed_report"><i class='icon-area-graph'></i>Closed</a>
@@ -874,6 +883,11 @@ if (sizeof($getUser) > 0) {
 								<?php if ($due_list_report == 0) { ?>
 									<li>
 										<a href="due_list_report"><i class='icon-area-graph'></i>Due List</a>
+									</li>
+								<?php  } ?>
+								<?php if ($no_due_pay_report == 0) { ?>
+									<li>
+										<a href="no_due_pay_report"><i class='icon-area-graph'></i>No Due Pay</a>
 									</li>
 								<?php  } ?>
 							</ul>
@@ -1036,9 +1050,11 @@ $collection_report = '';
 $principal_interest_report = '';
 $balance_report = '';
 $due_list_report = '';
+$in_closed_report = '';
 $closed_report = '';
 $confirmation_followup_report = '';
 $agent_report = '';
+$no_due_pay_report = '';
 $search_module = '';
 $search = '';
 $bulk_upload_module = '';

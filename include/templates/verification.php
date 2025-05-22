@@ -402,10 +402,10 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 			<input type="hidden" name="cus_Tableid" id="cus_Tableid" value="<?php if (isset($cus_Tableid)) {
 																				echo $cus_Tableid;
 																			} ?>" />
-			<input type="hidden" name="approvalaccess" id="approvalaccess" value="<?php if (isset($approvalaccess)) {
-																						echo $approvalaccess;
-																					} ?>" />
-
+			<input type="hidden" name="approvalaccess" id="approvalaccess" value="<?php if (isset($approvalaccess)) {echo $approvalaccess;} ?>" />
+			<input type="hidden" name="role_upd" id="role_upd" value="<?php if (isset($role)) echo $role; ?>" />
+			<input type="hidden" name="userid_upd" id="userid_upd" value="<?php if (isset($userid)) echo $userid; ?>" />
+			<input type="hidden" name="pge" id="pge" value="<?php if (isset($pge)) echo $pge; ?>" />
 			<!-- Row start -->
 			<div class="row gutters">
 				<!-- Request Info -->
@@ -428,8 +428,14 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 								</div>
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
-										<label for="user">Agent Name</label><span class="required">&nbsp;*</span>
-										<input type="text" class="form-control" id="agent_name" name="agent_name" readonly value='<?php if (isset($agent_name)) echo $agent_name; ?>' tabindex='2'>
+										<!-- <label for="user">Agent Name</label><span class="required">&nbsp;*</span>
+										<input type="text" class="form-control" id="agent_name" name="agent_name" readonly value='<?php if (isset($agent_name)) echo $agent_name; ?>' tabindex='2'> -->
+										<label for="cus_agent_name">Agent</label>
+										<select tabindex="3" type="text" class="form-control" id="cus_agent_name" name="cus_agent_name">
+											<option value="">Select Agent Name</option>
+										</select>
+										<input type="hidden" id="agent_id_hidden" name="agent_id_hidden" value='<?php if (isset($agent_id)) echo $agent_id; ?>' readonly>
+										<span class="text-danger" style='display:none' id='agentCheck'>Please Select Agent</span>
 									</div>
 								</div>
 
@@ -441,6 +447,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 											<option value="0" <?php if (isset($responsible) and $responsible == '0') echo 'selected'; ?>>Yes</option>
 											<option value="1" <?php if (isset($responsible) and $responsible == '1') echo 'selected'; ?>>No</option>
 										</select>
+										<input type="hidden" id="responsible_hidden" name="responsible_hidden" value='<?php if (isset($responsible)) echo $responsible; ?>' readonly>
 										<span class="text-danger" style='display:none' id='cusResponsibleCheck'>Please Select Responsible</span>
 									</div>
 								</div>
@@ -1371,6 +1378,13 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 									<div class="form-group">
 										<label for="Customer_name"> Customer Name </label> <span class="required"> * </span>
 										<input type="text" class="form-control" id="Customer_name" name="Customer_name" value='<?php if (isset($doc_cus_name)) echo $doc_cus_name; ?>' readonly tabindex="2">
+									</div>
+								</div>
+
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+									<div class="form-group">
+										<label for="user">Agent Name</label><span class="required">&nbsp;*</span>
+										<input type="text" class="form-control" id="agent_name" name="agent_name" readonly value='<?php if (isset($agent_name)) echo $agent_name; ?>' tabindex='2'>
 									</div>
 								</div>
 

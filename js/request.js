@@ -214,10 +214,10 @@ $(document).ready(function () {
         }
     })
 
-    $('#submit_request').click(function () {
+    $('#submit_request').click(function (event) {
         var submit_btn = $(this);
         submit_btn.attr('disabled', true);
-        validation(submit_btn);
+        validation(submit_btn, event);
     })
 
 });// Document ready end
@@ -1037,7 +1037,7 @@ function callresetCustomerStatus(cus_id) {
 }
 
 //Validations
-function validation(submit_btn) {
+function validation(submit_btn, event) {
     var idupd = $('#id').val();
     var role = $('#role_load').val();
     if (role == '1') {

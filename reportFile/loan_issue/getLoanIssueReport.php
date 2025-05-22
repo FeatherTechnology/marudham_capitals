@@ -59,16 +59,21 @@ $column = array(
     'lcc.loan_category_creation_name',
     'lc.sub_category',
     'ac.ag_name',
+    'iv.responsible',
     'ii.updated_date',
-    'ii.id',
-    'ii.id',
-    'ii.id',
-    'ii.id',
-    'ii.id',
-    'ii.id',
-    'ii.id',
-    'ii.id',
-    'ii.id',
+    'lc.loan_amt_cal',
+    'lc.principal_amt_cal',
+    'lc.int_amt_cal',
+    'lc.doc_charge_cal',
+    'lc.proc_fee_cal',
+    'lc.tot_amt_cal',
+    'lc.net_cash_cal',
+    'lc.due_amt_cal',
+    'lc.due_period',
+    'lc.due_start_from',
+    'lc.maturity_month',
+    'vfi_received_by.famname',
+    'vfi_received_by.relationship',
 );
 
 $query = "SELECT 
@@ -84,6 +89,7 @@ $query = "SELECT
         lcc.loan_category_creation_name as loan_cat_name,
         lc.sub_category,
         ac.ag_name,
+        iv.responsible,
         ii.updated_date as loan_date,
         lc.loan_amt_cal,
         lc.principal_amt_cal,
@@ -92,6 +98,10 @@ $query = "SELECT
         lc.proc_fee_cal,
         lc.tot_amt_cal,
         lc.net_cash_cal,
+        lc.due_amt_cal,
+        lc.due_period,
+        lc.due_start_from,
+        lc.maturity_month,
         li.payment_type,
         li.relationship as rec_relationship,
         vfi_received_by.famname as received_by,
@@ -100,6 +110,7 @@ $query = "SELECT
         FROM in_issue ii
         LEFT JOIN acknowlegement_customer_profile cp ON ii.req_id = cp.req_id
         LEFT JOIN acknowlegement_loan_calculation lc ON ii.req_id = lc.req_id
+        LEFT JOIN in_verification iv ON ii.req_id = iv.req_id
         LEFT JOIN verification_family_info fam ON cp.guarentor_name = fam.id
         LEFT JOIN area_list_creation al ON cp.area_confirm_area = al.area_id
         LEFT JOIN sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
@@ -130,6 +141,7 @@ if (isset($_POST['search'])) {
             OR lcc.loan_category_creation_name LIKE '%" . $_POST['search'] . "%' 
             OR lc.sub_category LIKE '%" . $_POST['search'] . "%' 
             OR ac.ag_name LIKE '%" . $_POST['search'] . "%' 
+            OR iv.responsible LIKE '%" . $_POST['search'] . "%' 
             OR ii.updated_date LIKE '%" . $_POST['search'] . "%') ";
     }
 }
@@ -174,6 +186,7 @@ foreach ($result as $row) {
     $sub_array[] = $row['loan_cat_name'];
     $sub_array[] = $row['sub_category'];
     $sub_array[] = $row['ag_name'];
+    $sub_array[] = (!empty($row['ag_name'])) ? (($row['responsible'] == '0') ? 'Yes': 'No') : '';
     $sub_array[] = date('d-m-Y', strtotime($row['loan_date']));
     $sub_array[] = moneyFormatIndia($row['loan_amt_cal']);
     $sub_array[] = moneyFormatIndia($row['principal_amt_cal']);
@@ -182,6 +195,10 @@ foreach ($result as $row) {
     $sub_array[] = moneyFormatIndia($row['proc_fee_cal']);
     $sub_array[] = moneyFormatIndia($row['tot_amt_cal']);
     $sub_array[] = moneyFormatIndia($row['net_cash_cal']);
+    $sub_array[] = moneyFormatIndia($row['due_amt_cal']);
+    $sub_array[] = $row['due_period'];
+    $sub_array[] = date('d-m-Y', strtotime($row['due_start_from']));
+    $sub_array[] = date('d-m-Y', strtotime($row['maturity_month']));
 
     if ($row['rec_relationship'] == 'Customer' || $row['payment_type'] == '1' || $row['payment_type'] == '2') {
         //if loan issued to customer then direclty place customer name from cp table

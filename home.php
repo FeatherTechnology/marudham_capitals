@@ -448,6 +448,10 @@ if (isset($getuserdetails['download_access'])) {
 			<?php if ($current_page == 'principal_interest_report') { ?>
 				<?php include "include/templates/principal_interest_report.php" ?>
 			<?php } else ?>
+			<!-- In Closed Report -->
+			<?php if ($current_page == 'in_closed_report') { ?>
+				<?php include "include/templates/in_closed_report.php" ?>
+			<?php } else ?>
 			<!-- Closed Report -->
 			<?php if ($current_page == 'closed_report') { ?>
 				<?php include "include/templates/closed_report.php" ?>
@@ -465,6 +469,11 @@ if (isset($getuserdetails['download_access'])) {
 			<!-- Agent Report -->
 			<?php if ($current_page == 'agent_report') { ?>
 				<?php include "include/templates/agent_report.php" ?>
+			<?php } else ?>
+			
+			<!-- No Due Pay Report -->
+			<?php if ($current_page == 'no_due_pay_report') { ?>
+				<?php include "include/templates/no_due_pay_report.php" ?>
 			<?php } else ?>
 
 			<!-- Due List -->

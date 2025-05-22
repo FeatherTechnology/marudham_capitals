@@ -12,16 +12,14 @@ $(document).ready(function () {
     });
 
     //Closed Report Table
-    // var closed_report_table = 
     $('#reset_btn').click(function () {
-        // closed_report_table.ajax.reload();
         closedReportTable();
     })
 });
 
 function closedReportTable(){
-    $('#closed_report_table').DataTable().destroy();
-    $('#closed_report_table').DataTable({
+    $('#in_closed_report_table').DataTable().destroy();
+    $('#in_closed_report_table').DataTable({
         "order": [
             [0, "desc"]
         ],
@@ -29,7 +27,7 @@ function closedReportTable(){
         'serverSide': true,
         'serverMethod': 'post',
         'ajax': {
-            'url': 'reportFile/closed/getClosedReport.php',
+            'url': 'reportFile/in_closed/getInClosedReport.php',
             'data': function (data) {
                 var search = $('input[type=search]').val();
                 data.search = search;
@@ -79,8 +77,7 @@ function closedReportTable(){
             });
         },
         'drawCallback': function() {
-            searchFunction('closed_report_table');
-            paginationFunction('closed_report_table');
+            searchFunction('in_closed_report_table');
         }
     });
 }

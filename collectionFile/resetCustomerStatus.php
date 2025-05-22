@@ -10,20 +10,20 @@ if (isset($_GET['cus_id'])) {
 }
 
 $req_arr = array();
-if(isset($cus_id)){
+if (isset($cus_id)) {
     $qry = $connect->query("SELECT req_id FROM in_issue where cus_id = $cus_id and (cus_status >= 14 and cus_status < 20) ORDER BY CAST(req_id AS UNSIGNED) ASC ");
     while ($row = $qry->fetch()) {
         $req_arr[] = $row['req_id'];
     }
 }
 
-if(isset($_POST['reqID'])){
+if (isset($_POST['reqID'])) {
     $reqid = $_POST['reqID'];
     $req_arr[] = $reqid;
-    
+
     $qry = $connect->query("SELECT cus_id FROM in_issue where req_id = $reqid ");
-        $row = $qry->fetch();
-        $cus_id = $row['cus_id'];
+    $row = $qry->fetch();
+    $cus_id = $row['cus_id'];
 }
 
 
@@ -208,12 +208,7 @@ function calculateOthers($loan_arr, $response, $connect, $req_id)
             }
 
             $response['count_of_month'] = $count;
-            //To check over due, if current date is greater than maturity minth, then i will be OD
-            if ($current_date_obj > $end_date_obj) {
-                $response['od'] = true;
-            } else {
-                $response['od'] = false;
-            }
+
 
             //To check whether due has been nil with other charges
 
@@ -264,7 +259,12 @@ function calculateOthers($loan_arr, $response, $connect, $req_id)
             } else {
                 $response['due_nil'] = false;
             }
-
+            //To check over due, if current date is greater than maturity minth, then i will be OD
+            if ($current_date_obj > $end_date_obj && $due_nil_check > 0) {
+                $response['od'] = true;
+            } else {
+                $response['od'] = false;
+            }
 
             // //Insert Penalty once again because its showing extra one penalty in collection for current month
             // $qry = $connect->query("INSERT into penalty_charges (`req_id`,`penalty_date`, `penalty`, `created_date`) values ('$req_id','$penalty_raised_date','$penalty',current_timestamp)");
@@ -298,7 +298,6 @@ function calculateOthers($loan_arr, $response, $connect, $req_id)
                     //this case will occur when collection status becoms OD
                     $response['payable'] = $response['balance'];
                 }
-
             } else {
                 //If still current month is not ended, then pending will be same due amt // pending will be 0 if due date not exceeded
                 $response['pending'] = 0; // $response['due_amt'] - $response['total_paid'] - $response['pre_closure'] ;
@@ -306,7 +305,6 @@ function calculateOthers($loan_arr, $response, $connect, $req_id)
                 $response['penalty'] = 0;
                 //If still current month is not ended, then payable will be due amt
                 $response['payable'] = $response['due_amt'] - $response['total_paid'] - $response['pre_closure'];
-
             }
         } else {
             $interest_details = calculateInterestLoan($connect, $loan_arr, $response, $req_id);
@@ -348,12 +346,6 @@ function calculateOthers($loan_arr, $response, $connect, $req_id)
             $count++; //Count represents how many months are exceeded
         }
         $response['count_of_month'] = $count;
-        //To check over due, if current date is greater than maturity minth, then i will be OD
-        if ($current_date_obj > $end_date_obj) {
-            $response['od'] = true;
-        } else {
-            $response['od'] = false;
-        }
 
         //To check whether due has been nil with other charges
 
@@ -404,6 +396,12 @@ function calculateOthers($loan_arr, $response, $connect, $req_id)
         } else {
             $response['due_nil'] = false;
         }
+        //To check over due, if current date is greater than maturity minth, then i will be OD
+        if ($current_date_obj > $end_date_obj && $due_nil_check > 0) {
+            $response['od'] = true;
+        } else {
+            $response['od'] = false;
+        }
 
         if ($count > 0) {
 
@@ -433,7 +431,6 @@ function calculateOthers($loan_arr, $response, $connect, $req_id)
                 //this case will occur when collection status becoms OD
                 $response['payable'] = $response['balance'];
             }
-
         } else {
             //If still current month is not ended, then pending will be same due amt // pending will be 0 if due date not exceeded
             $response['pending'] = 0; // $response['due_amt'] - $response['total_paid'] - $response['pre_closure'] ;
@@ -476,12 +473,6 @@ function calculateOthers($loan_arr, $response, $connect, $req_id)
         }
         $response['count_of_month'] = $count;
 
-        //To check over due, if current date is greater than maturity minth, then i will be OD
-        if ($current_date_obj > $end_date_obj) {
-            $response['od'] = true;
-        } else {
-            $response['od'] = false;
-        }
 
         //To check whether due has been nil with other charges
 
@@ -532,6 +523,12 @@ function calculateOthers($loan_arr, $response, $connect, $req_id)
         } else {
             $response['due_nil'] = false;
         }
+        //To check over due, if current date is greater than maturity minth, then i will be OD
+        if ($current_date_obj > $end_date_obj && $due_nil_check > 0) {
+            $response['od'] = true;
+        } else {
+            $response['od'] = false;
+        }
 
         if ($count > 0) {
 
@@ -561,7 +558,6 @@ function calculateOthers($loan_arr, $response, $connect, $req_id)
                 //this case will occur when collection status becoms OD
                 $response['payable'] = $response['balance'];
             }
-            
         } else {
             //If still current month is not ended, then pending will be same due amt// pending will be 0 if due date not exceeded
             $response['pending'] = 0; //$response['due_amt'] - $response['total_paid'] - $response['pre_closure'] ;

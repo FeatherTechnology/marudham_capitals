@@ -237,16 +237,16 @@ if (sizeof($documentationInfo) > 0) {
 ////////   Documentation End ////////////
 
 ///////// Loan Calculation ///////////////
-if (isset($_POST['submit_loan_calculation']) && $_POST['submit_loan_calculation'] != '') {
-	$userObj->addAcknowledgementLoanCalculation($mysqli, $userid);
+// if (isset($_POST['submit_loan_calculation']) && $_POST['submit_loan_calculation'] != '') {
+// 	$userObj->addAcknowledgementLoanCalculation($mysqli, $userid);
 
 ?>
 	<script>
-		alert('Loan Calculation Details Submitted');
+		// alert('Loan Calculation Details Submitted');
 	</script>
 
 <?php
-}
+// }
 
 $getCusInfoForLoanCal = $userObj->getAcknowlegeCusInfoForLoanCal($mysqli, $idupd);
 if (sizeof($getCusInfoForLoanCal) > 0) {
@@ -2339,7 +2339,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 													<option value="">Select a Day</option>
 													<option value="1" <?php if (isset($day_scheme_lc) and $day_scheme_lc == '1') echo 'selected'; ?>>Monday</option>
 													<option value="2" <?php if (isset($day_scheme_lc) and $day_scheme_lc == '2') echo 'selected'; ?>>Tuesday</option>
-													<option value="3" <?php if (isset($day_scheme_lc) and $day_scheme_lc == '3') echo 'selected'; ?>>Wednesdat</option>
+													<option value="3" <?php if (isset($day_scheme_lc) and $day_scheme_lc == '3') echo 'selected'; ?>>Wednesday</option>
 													<option value="4" <?php if (isset($day_scheme_lc) and $day_scheme_lc == '4') echo 'selected'; ?>>Thursday</option>
 													<option value="5" <?php if (isset($day_scheme_lc) and $day_scheme_lc == '5') echo 'selected'; ?>>Friday</option>
 													<option value="6" <?php if (isset($day_scheme_lc) and $day_scheme_lc == '6') echo 'selected'; ?>>Saturday</option>

@@ -215,8 +215,7 @@ function customerStatusOnClickEvents() {
     $('.due-chart').off('click').click(function () {
         let req_id = $(this).attr('value');
         let cus_id = $(this).data('cusid');
-        dueChartList(req_id, cus_id); // To show Due Chart List.
-        setTimeout(() => {
+        dueChartList(req_id, cus_id, function(){
             $('.print_due_coll').off('click').click(function () {
                 var id = $(this).attr('value');
                 Swal.fire({
@@ -247,7 +246,7 @@ function customerStatusOnClickEvents() {
                     }
                 })
             })
-        }, 1000)
+        });
     })
     $('.penalty-chart').off('click').click(function () {
         let req_id = $(this).attr('value');
@@ -386,9 +385,7 @@ function customerStatusOnClickEvents() {
 }
 
 //Due Chart List
-function dueChartList(req_id, cus_id) {
-    // var req_id = $('#idupd').val()
-    // const cus_id = $('#cusidupd').val()
+function dueChartList(req_id, cus_id, callback) {
     $.ajax({
         url: 'collectionFile/getDueChartList.php',
         data: { 'req_id': req_id, 'cus_id': cus_id },
@@ -397,6 +394,10 @@ function dueChartList(req_id, cus_id) {
         success: function (response) {
             $('#dueChartTableDiv').empty()
             $('#dueChartTableDiv').html(response)
+
+            if(typeof callback === 'function'){
+                callback();
+            }
         }
     }).then(function () {
 
@@ -404,8 +405,8 @@ function dueChartList(req_id, cus_id) {
             $('#dueChartTitle').text('Due Chart ( ' + response['due_method'] + ' - ' + response['loan_type'] + ' )');
         }, 'json');
     })
-
 }
+
 //Penalty Chart List
 function penaltyChartList(req_id, cus_id) {
     $.ajax({

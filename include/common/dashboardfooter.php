@@ -1338,6 +1338,9 @@
     if ($current_page == 'principal_interest_report') { ?>
         <script src="js/principal_interest_report.js"></script>
     <?php }
+    if ($current_page == 'in_closed_report') { ?>
+        <script src="js/in_closed_report.js"></script>
+    <?php }
     if ($current_page == 'closed_report') { ?>
         <script src="js/closed_report.js"></script>
     <?php }
@@ -1349,6 +1352,9 @@
     <?php }
     if ($current_page == 'agent_report') { ?>
         <script src="js/agent_report.js"></script>
+    <?php }
+    if ($current_page == 'no_due_pay_report') { ?>
+        <script src="js/no_due_pay_report.js"></script>
     <?php }
     if ($current_page == 'due_list_report') { ?>
         <script src="js/due_list_report.js"></script>

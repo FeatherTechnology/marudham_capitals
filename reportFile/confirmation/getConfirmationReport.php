@@ -53,7 +53,7 @@ $per_type_arr = [1 => 'Customer', 2 => 'Garentor', 3 => 'Family Member'];
 
 $column = array(
     'cf.id',
-    'cp.area_line',
+    'alm.line_name',
     'ii.loan_id',
     'ii.updated_date',
     'cf.cus_id',
@@ -61,18 +61,18 @@ $column = array(
     'cf.mobile',
     'cf.person_type',
     'cf.person_name',
-    'cf.id',
-    'cf.id',
-    'cf.id',
+    'cf.relationship',
+    'cf.status',
+    'cf.sub_status',
+    'cf.label',
+    'cf.remark',
     'cf.created_date',
-    'cf.id',
-    'cf.id',
-    'cf.id',
-    'cf.id',
+    'u.role',
+    'u.fullname',
 );
 
 $query = "SELECT 
-    cp.area_line AS line,
+    alm.line_name AS line,
     ii.loan_id,
     ii.updated_date AS loan_date,
     cf.cus_id,
@@ -97,17 +97,26 @@ JOIN
     acknowlegement_customer_profile cp ON cf.req_id = cp.req_id
 JOIN 
     in_issue ii ON ii.req_id = cf.req_id
+JOIN 
+    area_list_creation al ON cp.area_confirm_area = al.area_id
+JOIN 
+    sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
+JOIN
+    area_line_mapping alm ON FIND_IN_SET(al.area_id, alm.area_id)
 WHERE 1
     $where ";
 
 if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {
-        $query .= " and (cp.area_line LIKE '%" . $_POST['search'] . "%' OR
+        $query .= " and (alm.line_name LIKE '%" . $_POST['search'] . "%' OR
             ii.loan_id LIKE '%" . $_POST['search'] . "%' OR
             cf.cus_id LIKE '%" . $_POST['search'] . "%' OR
             cp.cus_name LIKE '%" . $_POST['search'] . "%' OR
             cf.mobile LIKE '%" . $_POST['search'] . "%' OR
+            cf.status LIKE '%" . $_POST['search'] . "%' OR
+            cf.sub_status LIKE '%" . $_POST['search'] . "%' OR
             cf.person_name LIKE '%" . $_POST['search'] . "%' )";
+
     }
 }
 
