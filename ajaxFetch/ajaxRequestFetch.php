@@ -139,6 +139,8 @@ foreach ($result as $row) {
 
     if ($row['responsible'] == '0') {
         $sub_array[] = 'Yes';
+    }else if (!empty($ag_id) && $row['responsible'] != '0') {
+        $sub_array[] = 'No';
     } else {
         $sub_array[] = '';
     }

@@ -39,6 +39,7 @@ function requestReportTable(){
         ],
         'drawCallback': function () {
             searchFunction('due_list_report_table');
+            paginationFunction('due_list_report_table');
         },
         
     });

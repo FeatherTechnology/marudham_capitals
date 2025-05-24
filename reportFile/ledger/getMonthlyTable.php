@@ -228,6 +228,7 @@ $months = generateMonths($startDate, $endDate);
             ],
             'drawCallback': function() {
                 searchFunction('monthly_table');
+                paginationFunction('monthly_table');
             }
         });
     });

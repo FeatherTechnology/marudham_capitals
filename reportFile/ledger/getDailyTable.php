@@ -186,6 +186,7 @@ while ($row = $qry->fetch()) {
             ],
             'drawCallback': function() {
                 searchFunction('daily_table');
+                paginationFunction('daily_table');
             }
         });
     });

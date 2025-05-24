@@ -67,6 +67,7 @@ function dT1() {
         ],
         'drawCallback': function () {
             searchFunction('area_status_table');
+            paginationFunction('area_status_table');
         }
     });
 }
@@ -105,6 +106,7 @@ function dT2() {
         ],
         'drawCallback': function () {
             searchFunction('sub_area_status_table');
+            paginationFunction('sub_area_status_table');
         }
     });
 }

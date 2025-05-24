@@ -1,4 +1,5 @@
 <?php 
+//Also using in Due followup mapping screen.
 include('../ajaxconfig.php');
 
 
@@ -8,6 +9,7 @@ $records = array();
     $result=$connect->query("SELECT lcc.loan_category_creation_id, lcc.loan_category_creation_name
     FROM loan_category_creation lcc
     INNER JOIN loan_category lc ON lc.loan_category_name = lcc.loan_category_creation_id
+    WHERE lc.status = 0
     GROUP BY lc.loan_category_name");
 
     while( $row = $result->fetch()){

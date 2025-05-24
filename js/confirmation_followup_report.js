@@ -51,6 +51,7 @@ function confirmationFollowUpReportTable(){
         ],
         'drawCallback': function() {
             searchFunction('confirmation_followup_report_table');
+            paginationFunction('confirmation_followup_report_table');
         }
     });
 }

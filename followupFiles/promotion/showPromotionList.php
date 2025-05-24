@@ -16,8 +16,8 @@ $column = array(
     'al.area_name',           
     'sl.sub_area_name',       
     'bc.branch_name',         
-    'cp.area_group',                   
-    'cp.area_line',           
+    'agm.group_name',                   
+    'alm.line_name',           
     'cp.mobile1',
     'cp.id',
     'cs.consider_level',
@@ -30,7 +30,7 @@ $column = array(
 
 $search = '';
 if (isset($_POST['search']) && $_POST['search'] != "") {
-    $search = " and (cp.cus_id LIKE '%" . $_POST['search'] . "%' or cp.cus_name LIKE '%" . $_POST['search'] . "%' or al.area_name LIKE '%" . $_POST['search'] . "%'or sl.sub_area_name LIKE '%" . $_POST['search'] . "%' or bc.branch_name LIKE '%" . $_POST['search'] . "%' or cp.area_group LIKE '%" . $_POST['search'] . "%' or cp.area_line LIKE '%" . $_POST['search'] . "%' or cp.mobile1 LIKE '%" . $_POST['search'] . "%'  or np.status LIKE '%" . $_POST['search'] . "%' ) ";
+    $search = " and (cp.cus_id LIKE '%" . $_POST['search'] . "%' or cp.cus_name LIKE '%" . $_POST['search'] . "%' or al.area_name LIKE '%" . $_POST['search'] . "%'or sl.sub_area_name LIKE '%" . $_POST['search'] . "%' or bc.branch_name LIKE '%" . $_POST['search'] . "%' or agm.group_name LIKE '%" . $_POST['search'] . "%' or alm.line_name LIKE '%" . $_POST['search'] . "%' or cp.mobile1 LIKE '%" . $_POST['search'] . "%'  or np.status LIKE '%" . $_POST['search'] . "%' ) ";
 }
 
 $order = '';
@@ -40,7 +40,7 @@ if (isset($_POST['order'])) {
 
     //only closed customers who dont have any loans in current.
     // Simplified main query to fetch closed customers without loans
-    $qry = "SELECT cp.req_id, cp.cus_id, cp.cus_name, al.area_name, sl.sub_area_name, bc.branch_name, cp.area_group, cp.area_line, cp.mobile1, cs.consider_level, cs.created_date, np.status AS followup_sts, np.follow_date 
+    $qry = "SELECT cp.req_id, cp.cus_id, cp.cus_name, al.area_name, sl.sub_area_name, bc.branch_name,agm.group_name, alm.line_name, cp.mobile1, cs.consider_level, cs.created_date, np.status AS followup_sts, np.follow_date 
         FROM acknowlegement_customer_profile cp
         JOIN (
             SELECT req_id, cus_id, consider_level, MAX(created_date) AS created_date 
@@ -98,8 +98,8 @@ if (isset($_POST['order'])) {
         $sub_array[] = $row['area_name'];
         $sub_array[] = $row['sub_area_name'];
         $sub_array[] = $row['branch_name'];
-        $sub_array[] = $row['area_group'];
-        $sub_array[] = $row['area_line'];
+        $sub_array[] = $row['group_name'];
+        $sub_array[] = $row['line_name'];
         $sub_array[] = $row['mobile1'];
         $sub_array[] = 'Consider';
         $sub_array[] = $sub_status[$row['consider_level']]; //fetched from closed status table above mentioned    

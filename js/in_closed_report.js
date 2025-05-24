@@ -10,16 +10,16 @@ $(document).ready(function () {
             $('#to_date').val(''); // Clear the invalid value
         }
     });
-    
-    //Collection Report Table
+
+    //Closed Report Table
     $('#reset_btn').click(function () {
-        collectionReportTable();
+        closedReportTable();
     })
 });
 
-function collectionReportTable(){
-    $('#collection_report_table').DataTable().destroy();
-    $('#collection_report_table').DataTable({
+function closedReportTable(){
+    $('#in_closed_report_table').DataTable().destroy();
+    $('#in_closed_report_table').DataTable({
         "order": [
             [0, "desc"]
         ],
@@ -27,7 +27,7 @@ function collectionReportTable(){
         'serverSide': true,
         'serverMethod': 'post',
         'ajax': {
-            'url': 'reportFile/collection/getCollectionReport.php',
+            'url': 'reportFile/in_closed/getInClosedReport.php',
             'data': function (data) {
                 var search = $('input[type=search]').val();
                 data.search = search;
@@ -38,7 +38,7 @@ function collectionReportTable(){
         dom: 'lBfrtip',
         buttons: [{
             extend: 'excel',
-            title: "Collection Report List"
+            title: "Closed Report List"
         },
         {
             extend: 'colvis',
@@ -61,7 +61,7 @@ function collectionReportTable(){
             };
 
             // Array of column indices to sum
-            var columnsToSum = [18, 19, 20, 21];
+            var columnsToSum = [12];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {
@@ -77,8 +77,7 @@ function collectionReportTable(){
             });
         },
         'drawCallback': function() {
-            searchFunction('collection_report_table');
-            paginationFunction('collection_report_table');
+            searchFunction('in_closed_report_table');
         }
     });
 }

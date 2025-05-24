@@ -18,7 +18,7 @@ if ($person_type == 3) {
 }
 $relationship = $_POST['relationship'];
 $remark = $_POST['remark'];
-$date = $_POST['date']; //commitement date
+$date =  !empty($_POST['date']) ? $_POST['date'] : null; //commitement date
 $hint = $_POST['hint'];
 $err = $_POST['err'] ?? '';
 

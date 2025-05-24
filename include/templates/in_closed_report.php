@@ -2,16 +2,16 @@
 <br><br>
 <div class="page-header">
 	<div style="background-color:#009688; width:100%; padding:12px; color: #ffff; font-size: 20px; border-radius:5px;">
-		Marudham Capitals - Closed Report
+		Marudham Capitals - In Closed Report
 	</div>
 </div><br>
 
 <!-- Main container start -->
 <div class="main-container">
 	<!--form start-->
-	<form id="closed_report_form" name="closed_report_form" action="" method="post" enctype="multipart/form-data">
+	<form id="in_closed_report_form" name="in_closed_report_form" action="" method="post" enctype="multipart/form-data">
 
-		<div class="row gutters" id="closed_card">
+		<div class="row gutters" id="in_closed_card">
 			<div class="toggle-container col-12">
 				<input type="date" id='from_date' name='from_date' class="toggle-button" value=''>
 				<input type="date" id='to_date' name='to_date' class="toggle-button" value=''>
@@ -19,10 +19,10 @@
 			</div>
 			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 				<div class="card">
-					<div class="card-header">Closed Report</div>
+					<div class="card-header">In Closed Report</div>
 					<div class="card-body">
-						<div id="closed_table_div" class="table-divs" style="overflow-x: auto;">
-							<table id="closed_report_table" class="table custom-table">
+						<div id="in_closed_table_div" class="table-divs" style="overflow-x: auto;">
+							<table id="in_closed_report_table" class="table custom-table">
 								<thead>
 									<th>S.No</th>
 									<th>Line</th>
@@ -40,15 +40,13 @@
 									<th>Maturity Date</th>
 									<th>Closed Date</th>
 									<th>Collection Format</th>
-									<th>Status</th>
-									<th>Sub Status</th>
 								</thead>
 								<tbody></tbody>
 								<tfoot>
 									<tr>
 										<td colspan="12"></td>
 										<td></td>
-										<td colspan="5"></td>
+										<td colspan="3"></td>
 									</tr>
 								</tfoot>
 							</table>

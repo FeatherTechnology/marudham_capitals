@@ -116,6 +116,8 @@ $req_id_list = implode(',', $req_id_list);
     lc.tot_amt_cal,
     lc.sub_category,
     lc.due_start_from,
+    lc.due_method_scheme,
+    lc.due_method_calc,
     cp.mobile1,
     alm.line_name AS line,
     ii.loan_id,
@@ -229,9 +231,6 @@ foreach ($result as $row) {
         $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
 
         $pending_month = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start));
-        if (date('d', $end) >= date('d', $start) && date('m', $end) != date('m', $start)) {
-            $pending_month += 1;
-        }
         
     } else {
         $start = strtotime($row['due_start_from']);
@@ -289,16 +288,21 @@ foreach ($result as $row) {
     else if($payable_amount == 0  && $pending_amount == 0  && $balance_amount == 0){
         $sub_array[] = 'Due Nil';
     }
-    else if($payable_amount <= $row['due_amt_cal'] && $pending_amount == 0  && strtotime($row['maturity_date']) >= strtotime($to_date) && $balance_amount != 0 ){
+    else if($payable_amount <= $row['due_amt_cal'] && $pending_amount == 0  &&  ((($row['due_method_scheme'] === '1' || $row['due_method_calc'] ==='Monthly') && date('Y-m', strtotime($row['maturity_date'])) >= date('Y-m', strtotime($to_date))) ||(($row['due_method_scheme'] != '1'|| $row['due_method_calc'] !='Monthly') && strtotime($row['maturity_date']) >= strtotime($to_date))) && $balance_amount != 0 ){
         $sub_array[] = 'Current';
     }
-    else if($balance_amount > 0 && strtotime($row['maturity_date']) > strtotime($to_date)){
+    else if($pending_amount > 0 &&  (
+            (($row['due_method_scheme'] === '1' || $row['due_method_calc'] ==='Monthly') && date('Y-m', strtotime($row['maturity_date'])) >= date('Y-m', strtotime($to_date))) || (($row['due_method_scheme'] != '1'|| $row['due_method_calc'] !='Monthly') && strtotime($row['maturity_date']) > strtotime($to_date))
+        )){
         $sub_array[] = 'Pending';
     }
-    else if ((($payable_amount > $row['due_amt_cal']  || $pending_amount > 0) && strtotime($row['maturity_date']) < strtotime($to_date) )){
-        $sub_array[] = 'OD';
-    }
-    
+    else if (
+    (
+        ($balance_amount  > 0) &&((($row['due_method_scheme'] === '1' || $row['due_method_calc'] ==='Monthly') && date('Y-m', strtotime($row['maturity_date'])) < date('Y-m', strtotime($to_date))) ||(($row['due_method_scheme'] != '1'|| $row['due_method_calc'] !='Monthly') && strtotime($row['maturity_date']) < strtotime($to_date)))
+    )) 
+    {
+    $sub_array[] = 'OD';
+}
     else {
         $sub_array[] = 'No Result';
     }

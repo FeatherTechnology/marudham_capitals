@@ -80,7 +80,7 @@ function balanceReportTable(url, tid){
             };
 
             // Array of column indices to sum
-            var columnsToSum = [12, 13, 15, 16];
+            var columnsToSum = [13, 14, 16, 17];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {
@@ -97,6 +97,7 @@ function balanceReportTable(url, tid){
         },
         'drawCallback': function() {
             searchFunction(tid);
+            paginationFunction('tid');
         }
     });
 }

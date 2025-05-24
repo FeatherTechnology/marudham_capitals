@@ -12,9 +12,7 @@ $(document).ready(function () {
     });
 
     //Closed Report Table
-    // var closed_report_table = 
     $('#reset_btn').click(function () {
-        // closed_report_table.ajax.reload();
         closedReportTable();
     })
 });
@@ -63,7 +61,7 @@ function closedReportTable(){
             };
 
             // Array of column indices to sum
-            var columnsToSum = [10];
+            var columnsToSum = [12];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {
@@ -80,6 +78,7 @@ function closedReportTable(){
         },
         'drawCallback': function() {
             searchFunction('closed_report_table');
+            paginationFunction('closed_report_table');
         }
     });
 }

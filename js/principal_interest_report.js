@@ -65,6 +65,7 @@ function collectionReportTable(){
         },
         'drawCallback': function() {
             searchFunction('principal_interest_table');
+            paginationFunction('principal_interest_table');
         }
     });
 }

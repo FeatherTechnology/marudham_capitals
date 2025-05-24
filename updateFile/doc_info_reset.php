@@ -37,8 +37,8 @@ if(isset($_POST['cus_id'])){
                 $holder_name = $row["holder_name"];
             }
 
-            // $docUpd = explode(',',$row["doc_upload"]);
-            $docUpd = $row["doc_upload"];
+            $docUpd = explode(',',$row["doc_upload"]);
+            // $docUpd = $row["doc_upload"];
         ?>
 
             <tr>
@@ -49,7 +49,11 @@ if(isset($_POST['cus_id'])){
                 <td><?php if($row["doc_holder"] == '0'){ echo 'Customer';}else if($row["doc_holder"] == '1'){echo 'Guarentor'; }elseif($row["doc_holder"] == '2'){echo 'Family Member';} ?></td>
                 <td><?php echo $holder_name; ?></td>
                 <td><?php echo $row["relation"]; ?></td>
-                <td><?php echo $docUpd; ?></td>
+                <td><?php $text='';
+                foreach($docUpd as $upd){
+                    $text .= '<a href="uploads/verification/doc_info/'.$upd.'" target="_blank" title="View Document" > ' .$upd.  '</a>, ';
+                }
+                echo rtrim($text,', ');// to trim the comma at end ?></td>
 
                 <td>
                     <?php

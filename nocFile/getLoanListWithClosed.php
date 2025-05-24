@@ -102,6 +102,7 @@ function moneyFormatIndia($num)
     <thead>
         <tr>
             <th width='50'>Loan ID</th>
+            <th>Doc ID</th>
             <th>Loan Category</th>
             <th>Sub Category</th>
             <th>Agent</th>
@@ -117,22 +118,20 @@ function moneyFormatIndia($num)
     <tbody>
 
         <?php
-        $req_id = $_POST['req_id'];
         $cus_id = $_POST['cus_id'];
-        $run = $connect->query("SELECT lc.loan_category,lc.sub_category,lc.loan_amt_cal,lc.due_amt_cal,lc.net_cash_cal,lc.collection_method,ii.req_id,ii.updated_date,ii.cus_status,
-        rc.agent_id,lcc.loan_category_creation_name as loan_catrgory_name, us.collection_access
-        from acknowlegement_loan_calculation lc JOIN in_issue ii ON lc.req_id = ii.req_id JOIN request_creation rc ON ii.req_id = rc.req_id 
-        JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id JOIN user us ON us.user_id = $user_id
+        $run = $connect->query("SELECT ii.loan_id, ad.doc_id, lcc.loan_category_creation_name as loan_catrgory_name, lc.sub_category, rc.agent_id, ii.updated_date, lc.loan_amt_cal, ii.req_id
+        FROM acknowlegement_loan_calculation lc JOIN acknowlegement_documentation ad ON lc.req_id = ad.req_id JOIN in_issue ii ON lc.req_id = ii.req_id JOIN request_creation rc ON ii.req_id = rc.req_id JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id JOIN user us ON us.user_id = $user_id
         WHERE lc.cus_id_loan = $cus_id and ii.cus_status = 21 "); //21 means loan has been closed form closed window for noc
 
-        $i = 1;
+        // $i = 1;
         while ($row = $run->fetch()) {
-            $qry = $connect->query("SELECT closed_sts,consider_level,created_date FROM `closed_status` WHERE req_id = '" . $row['req_id'] . "' ");
+            $qry = $connect->query("SELECT created_date, closed_sts, consider_level FROM `closed_status` WHERE req_id = '" . $row['req_id'] . "' ");
 
             $runqry = $qry->fetch();
         ?>
             <tr>
-                <td></td>
+                <td><?php echo $row["loan_id"]; ?></td>
+                <td><?php echo $row["doc_id"]; ?></td>
                 <td><?php echo $row["loan_catrgory_name"]; ?></td>
                 <td><?php echo $row["sub_category"]; ?></td>
                 <td>
@@ -173,7 +172,8 @@ function moneyFormatIndia($num)
 
             </tr>
 
-        <?php $i++;
+        <?php 
+        // $i++;
         } ?>
     </tbody>
 </table>
@@ -187,13 +187,13 @@ function moneyFormatIndia($num)
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"]
             ],
-            "createdRow": function(row, data, dataIndex) {
-                $(row).find('td:first').html(dataIndex + 1);
-            },
+            // "createdRow": function(row, data, dataIndex) {
+            //     $(row).find('td:first').html(dataIndex + 1);
+            // },
             "drawCallback": function(settings) {
-                this.api().column(0).nodes().each(function(cell, i) {
-                    cell.innerHTML = i + 1;
-                });
+                // this.api().column(0).nodes().each(function(cell, i) {
+                //     cell.innerHTML = i + 1;
+                // });
                 searchFunction('loanListTable');
             },
             dom: 'lBfrtip',

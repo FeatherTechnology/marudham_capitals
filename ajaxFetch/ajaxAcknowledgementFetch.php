@@ -150,12 +150,13 @@ foreach ($result as $row) {
         $sub_array[] = '';
     }
 
-    if ($row['responsible'] == '0') {
+     if ($row['responsible'] == '0') {
         $sub_array[] = 'Yes';
+    }else if (!empty($ag_id) && $row['responsible'] != '0') {
+        $sub_array[] = 'No';
     } else {
         $sub_array[] = '';
     }
-
     $sub_array[] = $row['cus_data'];
     $id = $row['req_id'];
     $cus_id = $row['cus_id'];

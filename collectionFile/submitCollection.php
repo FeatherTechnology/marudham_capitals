@@ -251,8 +251,31 @@ try{
         }
 
     }
+
+    $cur_day = date('j'); // Day of the month without leading zeros
+
+    if ($cur_day >= 1 && $cur_day <= 10) {
+        $lpd = '1';
+
+    } elseif ($cur_day >= 11 && $cur_day <= 15) {
+        $lpd = '2';
+
+    } elseif ($cur_day >= 16 && $cur_day <= 20) {
+        $lpd = '3';
+
+    } elseif ($cur_day >= 21 && $cur_day <= 25) {
+        $lpd = '4';
+
+    } elseif ($cur_day >= 26 && $cur_day <= 31) {
+        $lpd = '5';
+
+    } else {
+        $lpd = '0';
+
+    }
+    //Current_month_paid = YES/1, if either partial amount or full amount of payable paid in collection. 
     
-    $query = $connect->query("UPDATE `customer_status` SET `cus_id`='$cus_id',`sub_status`='$substs',`payable_amnt` = '$payable_amnts', `bal_amnt`='$bal_amnts',`insert_login_id`='$userid',`created_date`='$cur_date' WHERE `req_id`='$req_id' ");
+    $query = $connect->query("UPDATE `customer_status` SET `cus_id`='$cus_id',`sub_status`='$substs',`payable_amnt` = '$payable_amnts', `bal_amnt`='$bal_amnts', `last_paid_date`= '$lpd', `current_month_paid`='1', `insert_login_id`='$userid',`created_date`='$cur_date' WHERE `req_id`='$req_id' ");
     
 
     // $qry = $connect->query("SELECT customer_name, mobile1 from customer_register where req_ref_id = '$req_id' ");
