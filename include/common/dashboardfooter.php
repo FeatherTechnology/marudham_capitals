@@ -1665,10 +1665,14 @@
 
         $(document).ajaxStart(function() {
             showOverlay();
+            // Stop session timers while AJAX is in progress
+            clearTimeout(warningTimeout);
+            clearTimeout(logoutTimeout);
         });
 
         $(document).ajaxStop(function() {
             hideOverlay();
+            resetTimers(); // Reset again after AJAX completes
         });
 
         function compressImage(input, targetSizeKB) {
@@ -1930,12 +1934,12 @@
 
 ///////////////////////////////////////////////////////////////////// Pagination  End //////////////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////// Session Logut Time Start /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////// Session Logout Time Start /////////////////////////////////////////////////////////////////////////////
 
         let warningTimeout, logoutTimeout;
         let swalOpen = false;
-        const idleTime = 30 * 1000; // 10 minutes in milliseconds
-        const warningDuration = 10 * 1000; // 10 seconds warning before logout
+        const idleTime = 600000; // 10 minutes in milliseconds
+        const warningDuration = 10000; // 10 seconds warning before logout
         // Start the warning + logout timers
         function startTimers() {
             clearTimeout(warningTimeout);
