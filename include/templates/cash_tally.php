@@ -175,14 +175,14 @@ if ($bank_qry->num_rows > 0) {
 											<input type="radio" id="hand_cash_radio" name="cash_type" value='0' />&emsp;<label class='radio-style'>Hand Cash</label>&emsp;
 										</div>
 									</div>
-									<?php /* if (isset($bank_details) && $bank_details != null) {
-										for ($i = 0; $i < sizeof($bank_name_arr); $i++) { */ ?>
-											<!-- <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12" style="max-width: 30%;">
+									<?php  if (isset($bank_details) && $bank_details != null) {
+										for ($i = 0; $i < sizeof($bank_name_arr); $i++) {  ?>
+											<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12" style="max-width: 30%;">
 												<div class="form-group">
-													<input type="radio" id="bank_cash_radio" name="cash_type" value="<?php //echo $bank_id_arr[$i]; ?>" class="bank_cash_radio" />&emsp;<label class='radio-style'><?php //echo $bank_name_arr[$i]; ?></label>
+													<input type="radio" id="bank_cash_radio" name="cash_type" value="<?php echo $bank_id_arr[$i]; ?>" class="bank_cash_radio" />&emsp;<label class='radio-style'><?php echo $bank_name_arr[$i]; ?></label>
 												</div>
-											</div> -->
-									<?php /* }} */?>
+											</div> 
+									<?php  }}?>
 									<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12">
 										<div class="form-group">
 											<!-- <button type="button" name="blnc_sheet_btn" id="blnc_sheet_btn" class="btn btn-primary" data-toggle='modal' data-target='.blncModal' onclick="hideAllCardsfunction()">Balance Sheet</button> -->

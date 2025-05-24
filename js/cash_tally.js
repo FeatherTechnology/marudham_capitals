@@ -384,14 +384,14 @@ function getOpeningDate() {
         cache: false,
         success: function (response) {
             $('#op_date').text(response['opening_date']);
-            // $('#opening_balance').text(response['opening_bal']);
-            // $('#hand_opening').text(response['op_hand']);
-            // $('#bank_opening').text(response['op_bank']);
-            // $('#agent_opening').text(response['op_agent']);
+            $('#opening_balance').text(response['opening_bal']);
+            $('#hand_opening').text(response['op_hand']);
+            $('#bank_opening').text(response['op_bank']);
+            $('#agent_opening').text(response['op_agent']);
             $('#oldclosingbal').val(response['closing_bal']);
-            // $('#hand_closing').text(response['cl_hand']);
-            // $('#bank_closing').text(response['cl_bank']);
-            // $('#agent_closing').text(response['cl_agent']);
+            $('#hand_closing').text(response['cl_hand']);
+            $('#bank_closing').text(response['cl_bank']);
+            $('#agent_closing').text(response['cl_agent']);
         }
     }).then(function () {
         getOpeningBalance();
@@ -501,7 +501,7 @@ function submitCashTally(i) {
         $('#submit_cash_tally').off('click');
         $('#submit_cash_tally').click(function () {
             event.preventDefault();
-            // if (getBankCollectionSubmit() == 0 && getIssuedSubmitCheck() == 0) {
+            if (getBankCollectionSubmit() == 0 && getIssuedSubmitCheck() == 0) {
 
                 if (confirm('Are You sure to close this Day?')) {
 
@@ -558,16 +558,16 @@ function submitCashTally(i) {
                 } else {
                     return false;
                 }
-            // } else {
-            //     Swal.fire({
-            //         title: 'Submittion Error',
-            //         html: 'Please check: <br>1.Bank Collection <br> 2.Hand & Bank Issued<br> has submitted before Closing!',
-            //         icon: 'error',
-            //         showConfirmButton: true,
-            //         confirmButtonColor: '#009688'
-            //     });
+            } else {
+                Swal.fire({
+                    title: 'Submittion Error',
+                    html: 'Please check: <br>1.Bank Collection <br> 2.Hand & Bank Issued<br> has submitted before Closing!',
+                    icon: 'error',
+                    showConfirmButton: true,
+                    confirmButtonColor: '#009688'
+                });
 
-            // }
+            }
         })
     } else {
         $('#submit_cash_tally').off('click');
@@ -1013,7 +1013,7 @@ function getBankCollectionDetails(bank_id) {
                             confirmButtonColor: '#009688'
                         });
                     }
-                    // $('#bank_credit_amt').val('');
+                    //  $('#bank_credit_amt').val('');
                     getBankCollectionDetails(bank_id);
                     getClosingBalance();
                 }
@@ -1308,7 +1308,7 @@ function getCashWithdrawalDetails() {
         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
             <div class="form-group">
                 <label for="amt_cwd">Amount</label>
-                <input type="number" id="amt_cwd" name="amt_cwd" class="form-control" placeholder="Enter Amount">
+                <input type="number" id="amt_cwd" name="amt_cwd" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)">
                 <span class="text-danger" id='amt_cwdCheck' style="display:none">Please Enter Amount</span>
             </div>
         </div>
@@ -1889,7 +1889,7 @@ function getBankExchangeInputs() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
         <div class="form-group">
             <label for="amt_bex">Amount</label>
-            <input type="number" id="amt_bex" name="amt_bex" class="form-control" placeholder="Enter Amount">
+            <input type="number" id="amt_bex" name="amt_bex" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)">
             <span id="amt_bexCheck" class="text-danger" style="display:none">Please Enter Amount</span>
         </div>
     </div>
@@ -1920,15 +1920,14 @@ function getBankExchangeInputs() {
             $('#to_bank_bex').empty();
             $('#to_bank_bex').append("<option value=''>Select Bank Name</option>");
             for (var i = 1; i < response.length; i++) {
-                $('#to_bank_bex').append("<option value='" + response[i]['to_bank_id'] + "'>" + response[i]['to_bank_name'] + "</option>");
+                $('#to_bank_bex').append("<option value='" + response[i]['bank_user_id'] + "'>" + response[i]['to_bank_name'] + "</option>");
             }
-
             //to fetch user name based on to bank id selected
             $('#to_bank_bex').change(function () {
                 var to_bank_id = $(this).val();
                 if (to_bank_id != '') {
                     for (var i = 1; i < response.length; i++) {
-                        if (to_bank_id == response[i]['to_bank_id']) {
+                        if (to_bank_id == response[i]['bank_user_id']) {
                             $('#user_id_bex').val(response[i]['bank_user_id'])
                             $('#user_name_bex').val(response[i]['bank_user_name'])
                         }
@@ -2791,7 +2790,7 @@ function bexpenseModalBtnClick() {
                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
                         <div class="form-group">
                             <label for="amt_bexp">Amount</label><span class='text-danger'>&nbsp;*</span>
-                            <input type="number" id="amt_bexp" name="amt_bexp" class="form-control" placeholder="Enter Amount">
+                            <input type="number" id="amt_bexp" name="amt_bexp" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)">
                             <span id='amt_bexpCheck' class="text-danger" style="display:none">Please Enter Amount</span>
                         </div>
                     </div>
@@ -4888,7 +4887,7 @@ function getDBagDetails() {
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
                 <div class="form-group">
                     <label for="amt_ag">Amount</label><span class='text-danger'>&nbsp;*</span>
-                    <input type="number" id="amt_ag" name="amt_ag" class="form-control" placeholder="Enter Amount">
+                    <input type="number" id="amt_ag" name="amt_ag" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)">
                     <span id='amt_agCheck' class="text-danger" style="display:none">Please Enter Amount</span>
                 </div>
             </div>
@@ -4962,6 +4961,35 @@ function validateHandCash(amt) {
         return true;
     }
 }
+//this function will check the amount entered were lesser or equal to hand closing balance
+function validateBankCash(amt) {
+    var cash_type = $('input[name=cash_type]:checked').val(); // selected bank ID
+    var entered_amt = parseInt(amt.value) || 0;
+
+    if (cash_type) {
+        // Extract bank IDs from hidden input
+        var raw_ids = $('#untrkd_ids').val().split(','); 
+        var bank_ids = raw_ids.filter(id => id.trim() !== '').map(id => id.replace('untrkd', ''));
+        // Find the index of the selected bank ID
+        var index = bank_ids.indexOf(cash_type);
+        if (index === -1) {
+            console.error("Bank ID not found");
+            return true; // allow by default
+        }
+        // Get the label with ID: bank_closing{index}
+        var label = $('#bank_closing' + index);
+        var bank_closing_label = label.text().replace(/,/g, '');
+        var bank_closing = parseInt(bank_closing_label) || 0;
+        if (entered_amt > bank_closing) {
+            alert('Enter Lesser Amount !');
+            $(amt).val('');
+            return false;
+        }
+    }
+    return true;
+}
+
+
 
 //Validate credit and debit based on the names
 function validateNamedHandCash(name, amt, source, cash_type) {
