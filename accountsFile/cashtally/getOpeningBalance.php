@@ -21,7 +21,7 @@ if ($op_date == date('Y-m-d')) { // check whether opening date is current date
 
     $old_hand = 0;
     $old_agent = 0;
-    $old_bank = 0;
+    $old_bank = array();
     $old_bank_unt = 0;
 
     $records = getOpeningBalance($connect, $op_date, $bank_detail, $user_id);
@@ -32,7 +32,10 @@ if ($op_date == date('Y-m-d')) { // check whether opening date is current date
     while ($records[0]['hand_opening'] != 0 || $records[0]['agent_opening'] != 0  || $records[0]['bank_opening'] != 0) {
         $old_hand += intVal($records[0]['hand_opening']);
         $old_agent += intVal($records[0]['agent_opening']);
-        $old_bank += intVal($records[0]['bank_opening']);
+
+        foreach ($records as $key => $value) {
+            $old_bank[] = $value['bank_opening'];
+        }
         $old_bank_unt += intVal($records[0]['bank_untrkd']);
 
         $op_date = date('Y-m-d', strtotime($op_date . '-1 day'));
@@ -43,7 +46,9 @@ if ($op_date == date('Y-m-d')) { // check whether opening date is current date
     $records[0]['opening_balance'] = $opening_balance;
     $records[0]['hand_opening'] = intVal($records[0]['hand_opening']) + intVal($old_hand);
     $records[0]['agent_opening'] = intVal($records[0]['agent_opening']) + intVal($old_agent);
-    $records[0]['bank_opening'] = intVal($records[0]['bank_opening']) + intVal($old_bank);
+    foreach ($records as $key => $value) {
+        $records[$key]['bank_opening'] = $value['bank_opening'] + $old_bank[$key];
+    }
     $records[0]['bank_untrkd'] = intVal($records[0]['bank_untrkd']) + intVal($old_bank_unt);
 }
 echo json_encode($records);

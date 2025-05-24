@@ -10,19 +10,25 @@ $li_count = 0;
 $submitted_count = 0;
 
 // $qry = $connect->query("SELECT COUNT(*) as li_count,created_date,insert_login_id FROM `loan_issue` where (agent_id = '' or agent_id = null) and date(created_date) = '$op_date' ");
-$qry = $connect->query("SELECT COUNT(*) AS total_loan_count, 
-    SUM(CASE 
-        WHEN payment_type = '1' OR payment_type = '2' THEN 1 
-        ELSE 0 
-    END) AS bank_loan_count, 
-    COUNT(DISTINCT CASE 
-        WHEN cash != '' THEN payment_type 
-        ELSE NULL 
-    END) AS cash_loan_count
-FROM loan_issue 
-WHERE 
-    (agent_id = '' OR agent_id IS NULL) 
-    AND DATE(created_date) = '$op_date' ");
+$qry = $connect->query("SELECT
+    COUNT(*) AS total_loan_count,
+
+    -- Count of bank loans (payment_type 1 or 2)
+    SUM(CASE WHEN li.payment_type IN ('1', '2') THEN 1 ELSE 0 END) AS bank_loan_count,
+
+    -- Hand cash count: 1 if user has at least one hand cash loan (payment_type = 0)
+    MAX(CASE WHEN li.payment_type = '0' THEN 1 ELSE 0 END) AS hand_cash_count
+
+FROM
+    loan_issue li
+
+WHERE
+    (li.agent_id = '' OR li.agent_id IS NULL)
+    AND DATE(li.created_date) = '$op_date'
+
+GROUP BY
+    li.insert_login_id;
+ ");
 if ($qry->rowCount() > 0) {
 
     $row = $qry->fetch();
