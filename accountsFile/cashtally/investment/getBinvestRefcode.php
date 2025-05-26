@@ -43,7 +43,7 @@ if ($codeAvailable->rowCount() > 0) {
 }
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-$ref_code = str_replace(`"`,'',$ref_code);
+$ref_code = str_replace('"','',$ref_code);
 
 echo $ref_code;
 
