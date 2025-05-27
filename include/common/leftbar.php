@@ -712,9 +712,9 @@ if (sizeof($getUser) > 0) {
 								<?php  } ?>
 
 								<?php if ($doctrack == 0) { ?>
-									<li>
+									<!-- <li>
 										<a href="update_customer_status"><i class='icon-broken_image'></i>Update Customer Status</a>
-									</li>
+									</li> -->
 								<?php  } ?>
 
 							</ul>

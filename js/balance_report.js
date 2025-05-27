@@ -10,16 +10,19 @@ $(document).ready(function () {
         let reportType = $('#report_type').val();
         let url;
         let tid;
+        let colArr;
 
         if(reportType =='1'){//Balance
             url = 'reportFile/balance/getBalanceReport.php';
             tid = 'balance_report_table';
+            colArr = [13, 14, 16, 17, 19, 20];
             $('#balance_table_div').show();
             $('#princ_intrst_table_div').hide();
 
         }else if(reportType =='2'){ //Priciple / Interest
             url = 'reportFile/principal_interest/getBalPrincipalinterest.php';
             tid = 'princ_intrst_table';
+            colArr = [13, 14, 16, 17, 18, 19, 21, 22];
             $('#balance_table_div').hide();
             $('#princ_intrst_table_div').show();
 
@@ -28,7 +31,7 @@ $(document).ready(function () {
             return;
         }
 
-        balanceReportTable(url, tid);
+        balanceReportTable(url, tid, colArr);
     })
 });
 
@@ -36,7 +39,7 @@ $(function(){
     getloancategorylist();
 });
 
-function balanceReportTable(url, tid){
+function balanceReportTable(url, tid, columnsToSum){
     $('#'+tid).DataTable().destroy();
     $('#'+tid).DataTable({
         "order": [
@@ -80,7 +83,7 @@ function balanceReportTable(url, tid){
             };
 
             // Array of column indices to sum
-            var columnsToSum = [13, 14, 16, 17];
+            // var columnsToSum = [13, 14, 16, 17, 19, 20];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {
@@ -97,7 +100,7 @@ function balanceReportTable(url, tid){
         },
         'drawCallback': function() {
             searchFunction(tid);
-            paginationFunction('tid');
+            paginationFunction(tid);
         }
     });
 }

@@ -416,11 +416,11 @@ function getOpeningBalance() {
                 $('#bank_opening' + j).text('0')
             }
 
-            $('#opening_balance').text(oldclosingbal)
-            $('#hand_opening').text(response[0]['hand_opening'])
+            $('#opening_balance').text(moneyFormatIndia(oldclosingbal))
+            $('#hand_opening').text(moneyFormatIndia(response[0]['hand_opening']))
             var i = 0;
             $.each(response, function (index, item) {
-                $('#bank_opening' + i).text(item['bank_opening'])
+                $('#bank_opening' + i).text(moneyFormatIndia(item['bank_opening']))
                 i++;
             })
 
@@ -436,7 +436,7 @@ function getOpeningBalance() {
                 })
             }
 
-            $('#agent_opening').text(response[0]['agent_opening'])
+            $('#agent_opening').text(moneyFormatIndia(response[0]['agent_opening']))
         }
     })
 }
