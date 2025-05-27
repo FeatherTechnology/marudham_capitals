@@ -62,6 +62,8 @@
 									<th>Total Amount</th>
 									<th>Balance Amount</th>
 									<th>No of Balance Due</th>
+									<th>Penalty</th>
+									<th>Fine</th>
 									<th>Status</th>
 									<th>Sub Status</th>
 								</thead>
@@ -74,7 +76,10 @@
 										<td></td>
 										<td></td>
 										<td></td>
-										<td colspan="3"></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td colspan="2"></td>
 									</tr>
 								</tfoot>
 							</table>
@@ -105,6 +110,8 @@
 									<th>Principal Amount</th>
 									<th>Interest Amount</th>
 									<th>No of Balance Due</th>
+									<th>Penalty</th>
+									<th>Fine</th>
 									<th>Status</th>
 									<th>Sub Status</th>
 								</thead>
@@ -117,7 +124,12 @@
 										<td></td>
 										<td></td>
 										<td></td>
-										<td colspan="3"></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td colspan="2"></td>
 									</tr>
 								</tfoot>
 							</table>

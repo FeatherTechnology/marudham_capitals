@@ -116,6 +116,12 @@ $query = " SELECT
             c.due_amt_track,
             c.princ_amt_track,
             c.int_amt_track,
+            c.penalty, 
+            c.fine, 
+            c.penalty_track, 
+            c.fine_track,
+            c.penalty_waiver,
+            c.fine_waiver,
             req.cus_status
         FROM 
             acknowlegement_loan_calculation lc
@@ -144,7 +150,13 @@ $query = " SELECT
                 req_id, 
                 SUM(due_amt_track) AS due_amt_track, 
                 SUM(princ_amt_track) AS princ_amt_track, 
-                SUM(int_amt_track) AS int_amt_track 
+                SUM(int_amt_track) AS int_amt_track,
+                SUM(penalty) AS penalty, 
+                SUM(coll_charge) AS fine, 
+                SUM(penalty_track) AS penalty_track, 
+                SUM(coll_charge_track) AS fine_track,
+                SUM(penalty_waiver) AS penalty_waiver,
+                SUM(coll_charge_waiver) AS fine_waiver 
             FROM 
                 collection $where
             GROUP BY 
@@ -224,6 +236,10 @@ foreach ($result as $row) {
 
     $bal_due = round($balance_amt / $row['due_amt_cal'], 1);
 
+    $penalty = intval($row['penalty']) - (intval($row['penalty_track']) + intval($row['penalty_waiver']));
+
+    $fine = intval($row['fine']) - (intval($row['fine_track']) + intval($row['fine_waiver']));
+
     $sub_array[] = $sno;
     $sub_array[] = $row['line'];
     $sub_array[] = $row['loan_id'];
@@ -245,6 +261,8 @@ foreach ($result as $row) {
     $sub_array[] = moneyFormatIndia($response['principal_paid']);
     $sub_array[] = moneyFormatIndia($response['interest_paid']);
     $sub_array[] = $bal_due;
+    $sub_array[] = moneyFormatIndia($penalty);
+    $sub_array[] = moneyFormatIndia($fine);
     $sub_array[] = 'Present';
     $sub_array[] = $statusObj[$row['cus_status']];
     $data[] = $sub_array;
