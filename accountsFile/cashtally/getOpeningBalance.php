@@ -46,9 +46,11 @@ if ($op_date == date('Y-m-d')) { // check whether opening date is current date
     $records[0]['opening_balance'] = $opening_balance;
     $records[0]['hand_opening'] = intVal($records[0]['hand_opening']) + intVal($old_hand);
     $records[0]['agent_opening'] = intVal($records[0]['agent_opening']) + intVal($old_agent);
-    foreach ($records as $key => $value) {
-        $records[$key]['bank_opening'] = $value['bank_opening'] + $old_bank[$key];
-    }
+  foreach ($records as $key => $value) {
+    $old_bank_value = isset($old_bank[$key]) ? $old_bank[$key] : 0;
+    $records[$key]['bank_opening'] = $value['bank_opening'] + $old_bank_value;
+}
+
     $records[0]['bank_untrkd'] = intVal($records[0]['bank_untrkd']) + intVal($old_bank_unt);
 }
 echo json_encode($records);
@@ -80,7 +82,6 @@ function getOpeningBalance($connect, $op_date, $bank_detail, $user_id)
     ");
 
     $handCredit = $handCreditQry->fetch()['hand_credits'];
-
     $handDebitQry = $connect->query("SELECT
         SUM(amt) AS hand_debits
         FROM (

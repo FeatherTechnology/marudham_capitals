@@ -217,37 +217,13 @@ $(document).ready(function () {
             $('#blncSheetDiv').empty()
             $('#IDE_Div').show()
 
-            $('#IDE_type').off().change(function () {
-                let IDE_type_arr = { 1: 'inv', 2: 'dep', 3: 'el' };
-                let IDE_type = $(this).val();
-                let opt_for = IDE_type_arr[IDE_type];
-                $("#opt_for").val(opt_for);
+            // $('#IDE_type').change(function () {
+            //     let IDE_type_arr = { 1: 'inv', 2: 'dep', 3: 'el' };
+            //     let IDE_type = $(this).val();
+            //     let opt_for = IDE_type_arr[IDE_type];
+            //     $("#opt_for").val(opt_for);
+            // });
 
-                // to get name detail creation table 
-                $.ajax({
-                    url: 'accountsFile/cashtally/getNameBasedDetails.php',
-                    data: { opt_for },
-                    dataType: 'json',
-                    type: 'post',
-                    cache: false,
-                    success: function (response) {
-                        $('#IDE_name_list').empty();
-                        $('#IDE_name_list').append("<option value=''>Select Name</option>");
-                        $.each(response, function (index, item) {
-                            $("#IDE_name_list").append("<option value='" + item['name_id'] + "'>" + item['name'] + "</option>");
-                        });
-
-                        $('#IDE_name_list').off().change(function () {
-                            var name_id = $(this).val();// get the name table id
-                            $.each(response, function (index, item) {
-                                if (name_id == item['name_id']) {
-                                    $('#IDE_name_area').val(item['area']);
-                                }
-                            })
-                        })
-                    }
-                })
-            })
         } else if (sheet_type == 7) {
             $('#blncSheetDiv').empty()
             $('#ag_typeDiv').show()
@@ -284,11 +260,21 @@ $(document).ready(function () {
 
     $('#IDE_type').change(function () {
         $('#blncSheetDiv').empty();
+        $('#IDE_Div').show();
         $('.IDE_nameDiv').hide();
-        $('#IDE_view_type').val(''); $('#IDE_name_list').val('');
-    })
+        $('#IDE_view_type').val(''); 
+        $('#IDE_name_list').val('');
+
+        let IDE_type_arr = { 1: 'inv', 2: 'dep', 3: 'el' };
+        let IDE_type = $(this).val();
+        let opt_for = IDE_type_arr[IDE_type];
+        $("#opt_for").val(opt_for);
+
+    });
+
     $('#IDE_view_type').change(function () {
-        $('#blncSheetDiv').empty()
+        $('#blncSheetDiv').empty();
+        $('#IDE_name_area').val('');//reset area value.
 
         var view_type = $(this).val();//overall/Individual
         var type = $('#IDE_type').val(); //investment/Deposit/EL
@@ -299,6 +285,7 @@ $(document).ready(function () {
             getIDEBalanceSheet();
         } else if (view_type == 2 && type != '') {
             $('.IDE_nameDiv').show()
+            getNameBasedDetails();
         } else {
             $('.IDE_nameDiv').hide()
         }
@@ -1549,6 +1536,41 @@ function getIDEBalanceSheet() {
             $('#blncSheetDiv').html(response)
         }
     })
+}
+
+function getNameBasedDetails(){
+    // to get name detail creation table 
+    let opt_for = $('#opt_for').val();
+    $.ajax({
+        url: 'accountsFile/cashtally/getNameBasedDetails.php',
+        data: { opt_for },
+        dataType: 'json',
+        type: 'post',
+        cache: false,
+        success: function (response) {
+            $('#IDE_name_list').empty();
+            $('#IDE_name_list').append("<option value=''>Select Name</option>");
+            $.each(response, function (index, item) {
+                $("#IDE_name_list").append("<option value='" + item['name_id'] + "'>" + item['name'] + "</option>");
+            });
+
+            $('#IDE_name_list').change(function () {
+                var name_id = $(this).val();// get the name table id
+                if(!name_id){
+                    $('#IDE_name_area').val('');
+                    
+                }else{
+                    $.each(response, function (index, item) {
+                        if (name_id == item['name_id']) {
+                            $('#IDE_name_area').val(item['area']);
+                        }
+                    });
+                }
+
+            });//IDE Name list change END.
+            
+        }
+    });
 }
 
 function getAgBalancesheet() {
