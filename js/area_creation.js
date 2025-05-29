@@ -432,7 +432,7 @@ function getAreaBasedSubArea(area) {
                 var sub_area_name = response[i]['sub_area_name'];
                 var checked = response[i]['disabled'];
                 var selected = '';
-                if (sub_area_upd != '' && values.includes(sub_area_id)) {
+                if (sub_area_upd != '' && values.includes(sub_area_id.toString())) {
                     selected = 'selected';
                     checked = false;
                 }
