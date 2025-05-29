@@ -124,7 +124,10 @@ $query = " SELECT
             c.fine_waiver,
             req.cus_status,
             ack.updated_date,
-            lc.due_start_from
+            lc.due_start_from,
+            lc.due_method_scheme,
+            lc.due_method_calc,
+            lc.maturity_month AS maturity_date
         FROM 
             acknowlegement_loan_calculation lc
         JOIN 
@@ -149,22 +152,24 @@ $query = " SELECT
             agent_creation ac ON req.agent_id = ac.ag_id
         JOIN in_acknowledgement ack ON ack.req_id = req.req_id
         LEFT JOIN (
-            SELECT 
-                req_id, 
-                SUM(due_amt_track) AS due_amt_track, 
-                SUM(princ_amt_track) AS princ_amt_track, 
-                SUM(int_amt_track) AS int_amt_track,
-                SUM(penalty) AS penalty, 
-                SUM(coll_charge) AS fine, 
-                SUM(penalty_track) AS penalty_track, 
-                SUM(coll_charge_track) AS fine_track,
-                SUM(penalty_waiver) AS penalty_waiver,
-                SUM(coll_charge_waiver) AS fine_waiver
-            FROM 
-                collection $where
-            GROUP BY 
-                req_id
-        ) c ON c.req_id = req.req_id
+    SELECT 
+        c.req_id, 
+        SUM(c.due_amt_track) AS due_amt_track, 
+        SUM(c.princ_amt_track) AS princ_amt_track, 
+        SUM(c.int_amt_track) AS int_amt_track,
+        SUM(c.coll_charge) AS fine, 
+        SUM(c.penalty_track) AS penalty_track, 
+        SUM(c.coll_charge_track) AS fine_track,
+        SUM(c.penalty_waiver) AS penalty_waiver,
+        SUM(c.coll_charge_waiver) AS fine_waiver,
+        COALESCE(p.total_penalty, 0) AS penalty
+    FROM  collection c
+    LEFT JOIN (
+        SELECT req_id, SUM(penalty) AS total_penalty
+        FROM   penalty_charges 
+        WHERE DATE(created_date) <= '$to_date' GROUP BY req_id) p ON p.req_id = c.req_id
+    $where
+    GROUP BY c.req_id ) c ON c.req_id = req.req_id
         WHERE lc.req_id IN ($req_id_list) ";
 
 if(isset($_POST['loan_cat'])){
@@ -213,31 +218,48 @@ $sno = 1;
 
 foreach ($result as $row) {
     $sub_array = [];
-    $start = strtotime($row['due_start_from']);
     
-    if(strtotime($row['maturity_month']) < strtotime($to_date)){
-        $end = strtotime($row['maturity_month'] );
-    }
-    else{
-        $end = strtotime($to_date ); 
+    // if(strtotime($row['maturity_month']) < strtotime($to_date)){
+    //     $end = strtotime($row['maturity_month'] );
+    // }
+    // else{
+    //     $end = strtotime($to_date ); 
+    // }
+    if (strtotime($row['maturity_date']) < strtotime($to_date)) {
+        $end = strtotime($row['maturity_date']);
+        $start = strtotime($row['due_start_from']);
+        $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
+
+        $pending_month = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start));
+        
+    } else {
+        $start = strtotime($row['due_start_from']);
+        $end = strtotime($to_date);
+        $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
+        $pending_month = max(0, (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)));
+
     }
 
-    $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
+    // $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
+    // $payable_amount = ($months * $row['due_amt_cal'] ) - $row['due_amt_track'];
+     $paid_due = $row['due_amt_track'] / $row['due_amt_cal'];
+    $balance_due = (float)$row['due_period'] - $paid_due;
     $payable_amount = ($months * $row['due_amt_cal'] ) - $row['due_amt_track'];
+    $pending_amount = ($pending_month * $row['due_amt_cal'] ) - $row['due_amt_track'];
 
-    $balance_amt = ($row['due_type'] != 'Interest') ?
+    $balance_amount = ($row['due_type'] != 'Interest') ?
         intVal($row['tot_amt_cal']) - intVal($row['due_amt_track']) :
         intVal($row['principal_amt_cal']) - intVal($row['princ_amt_track']);
 
-        $due_period = intVal($row['due_period']);
+        // $due_period = intVal($row['due_period']);
 
-        if ($due_period > 0) {
-            $princ_amt = intVal($row['principal_amt_cal']) / $due_period;
-            $int_amt = intVal($row['int_amt_cal']) / $due_period;
-        } else {
-            $princ_amt = 0;  // Or any default value
-            $int_amt = 0;    // Or any default value
-        }
+        // if ($due_period > 0) {
+        //     $princ_amt = intVal($row['principal_amt_cal']) / $due_period;
+        //     $int_amt = intVal($row['int_amt_cal']) / $due_period;
+        // } else {
+        //     $princ_amt = 0;  // Or any default value
+        //     $int_amt = 0;    // Or any default value
+        // }
         
     // $response = calculatePrincipalAndInterest($princ_amt, $int_amt, $balance_amt);
 
@@ -247,7 +269,7 @@ foreach ($result as $row) {
     //     $response['principal_paid'] = intVal($row['loan_amt_cal']);
     // }
 
-    $bal_due = round($balance_amt / $row['due_amt_cal'], 1);
+    // $bal_due = round($balance_amount / $row['due_amt_cal'], 1);
 
     $penalty = intval($row['penalty']) - (intval($row['penalty_track']) + intval($row['penalty_waiver']));
 
@@ -270,29 +292,36 @@ foreach ($result as $row) {
     $sub_array[] = moneyFormatIndia($row['due_amt_cal']);
     $sub_array[] = $row['due_period'];
     $sub_array[] = moneyFormatIndia($row['tot_amt_cal']);
-    $sub_array[] = moneyFormatIndia($balance_amt);
-    $sub_array[] = $bal_due;
+    $sub_array[] = moneyFormatIndia($balance_amount);
+    $sub_array[] = floor($balance_due *100) / 100;
     $sub_array[] = moneyFormatIndia($penalty);
     $sub_array[] = moneyFormatIndia($fine);
     $sub_array[] = 'Present';
     $payable_amount = max(0, $payable_amount);
-    if($row['cus_status'] = 15 && $row['updated_date'] < strtotime($to_date)){
+    $pending_amount = max(0, $pending_amount);
+    if($row['cus_status'] =='15' && strtotime($row['updated_date']) < strtotime($to_date)){
         $sub_array[] = 'Error';
     }
-    else if($row['cus_status'] = 16 && $row['updated_date'] < strtotime($to_date)){
+    else if($row['cus_status'] =='16' && strtotime($row['updated_date'])< strtotime($to_date)){
         $sub_array[] = 'Legal';
     }
-    else if($payable_amount <= $row['due_amt_cal'] && $row['maturity_month'] >= strtotime($to_date)){
+    else if($payable_amount == 0  && $pending_amount == 0  && $balance_amount == 0){
+        $sub_array[] = 'Due Nil';
+    }
+    else if($payable_amount <= $row['due_amt_cal'] && $pending_amount == 0  &&  ((($row['due_method_scheme'] === '1' || $row['due_method_calc'] ==='Monthly') && date('Y-m', strtotime($row['maturity_date'])) >= date('Y-m', strtotime($to_date))) ||(($row['due_method_scheme'] != '1'|| $row['due_method_calc'] !='Monthly') && strtotime($row['maturity_date']) >= strtotime($to_date))) && $balance_amount != 0 ){
         $sub_array[] = 'Current';
     }
-    else if($payable_amount > $row['due_amt_cal'] && $row['maturity_month'] > strtotime($to_date)){
+    else if($pending_amount > 0 &&  (
+            (($row['due_method_scheme'] === '1' || $row['due_method_calc'] ==='Monthly') && date('Y-m', strtotime($row['maturity_date'])) >= date('Y-m', strtotime($to_date))) || (($row['due_method_scheme'] != '1'|| $row['due_method_calc'] !='Monthly') && strtotime($row['maturity_date']) > strtotime($to_date))
+        )){
         $sub_array[] = 'Pending';
     }
-    else if (($payable_amount > 0  && $row['maturity_month'] < strtotime($to_date) )){
-        $sub_array[] = 'OD';
-    }
-    else if($payable_amount == 0  && $row['maturity_month'] > strtotime($to_date)){
-        $sub_array[] = 'Due Nil';
+    else if (
+    (
+        ($balance_amount  > 0) &&((($row['due_method_scheme'] === '1' || $row['due_method_calc'] ==='Monthly') && date('Y-m', strtotime($row['maturity_date'])) < date('Y-m', strtotime($to_date))) ||(($row['due_method_scheme'] != '1'|| $row['due_method_calc'] !='Monthly') && strtotime($row['maturity_date']) < strtotime($to_date)))
+    )) 
+    {
+    $sub_array[] = 'OD';
     }
     else {
         $sub_array[] = 'No Result';
