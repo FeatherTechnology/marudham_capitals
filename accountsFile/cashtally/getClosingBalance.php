@@ -52,13 +52,13 @@ if ($op_date != date('Y-m-d')) {
 } 
 
 // now reassign latest closing date to returing variable. 
-$records[0]['closing_balance'] = $records[0]['closing_balance'] + $closing_balance; 
-$records[0]['hand_closing'] = $records[0]['hand_closing'] + $old_hand; 
-$records[0]['agent_closing'] = $records[0]['agent_closing'] + $old_agent; 
+// $records[0]['closing_balance'] = $records[0]['closing_balance'] + $closing_balance; 
+// $records[0]['hand_closing'] = $records[0]['hand_closing'] + $old_hand; 
+// $records[0]['agent_closing'] = $records[0]['agent_closing'] + $old_agent; 
 
-foreach ($records as $key => $value) {
-    $records[$key]['bank_closing'] = $value['bank_closing'] + $old_bank[$key];
-}
+// foreach ($records as $key => $value) {
+//     $records[$key]['bank_closing'] = $value['bank_closing'] + $old_bank[$key];
+// }
 
 echo json_encode($records); 
 // Close the database connection 
