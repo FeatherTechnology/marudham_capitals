@@ -156,18 +156,23 @@ $query = " SELECT
         c.req_id, 
         SUM(c.due_amt_track) AS due_amt_track, 
         SUM(c.princ_amt_track) AS princ_amt_track, 
-        SUM(c.int_amt_track) AS int_amt_track,
-        SUM(c.coll_charge) AS fine, 
+        SUM(c.int_amt_track) AS int_amt_track, 
         SUM(c.penalty_track) AS penalty_track, 
         SUM(c.coll_charge_track) AS fine_track,
         SUM(c.penalty_waiver) AS penalty_waiver,
         SUM(c.coll_charge_waiver) AS fine_waiver,
-        COALESCE(p.total_penalty, 0) AS penalty
+        COALESCE(p.total_penalty, 0) AS penalty,
+        COALESCE(ch.total_fine, 0) AS fine
     FROM  collection c
     LEFT JOIN (
         SELECT req_id, SUM(penalty) AS total_penalty
         FROM   penalty_charges 
         WHERE DATE(created_date) <= '$to_date' GROUP BY req_id) p ON p.req_id = c.req_id
+    LEFT JOIN (
+        SELECT req_id, SUM(coll_charge) AS total_fine
+        FROM collection_charges 
+        WHERE DATE(created_date) <= '$to_date'
+        GROUP BY req_id ) ch ON ch.req_id = c.req_id    
     $where
     GROUP BY c.req_id ) c ON c.req_id = req.req_id
         WHERE lc.req_id IN ($req_id_list) ";

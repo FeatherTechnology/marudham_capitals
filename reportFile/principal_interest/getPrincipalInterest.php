@@ -48,8 +48,6 @@ if (isset($_POST['from_date']) && $_POST['from_date'] != '') {
 }
 
 $where  .= $user_based;
-
-$consider_lvl_arr = [1 => 'Bronze', 2 => 'Silver', 3 => 'Gold', 4 => 'Platinum', 5 => 'Diamond'];
 $role_arr = [1 => 'Director', 2 => 'Agent', 3 => 'Staff'];
 
 $column = array(
@@ -91,6 +89,7 @@ $query = "SELECT
             lc.due_period,
             lc.principal_amt_cal,
             lc.int_amt_cal,
+            lc.tot_amt_cal,
             ac.ag_name,
             u.role,
             u.fullname,
@@ -169,6 +168,9 @@ $data = array();
 $sno = 1;
 foreach ($result as $row) {
     $sub_array   = array();
+    $principal_calc= $row['principal_amt_cal'] / $row['tot_amt_cal'] ;
+    $intrest_calc= $row['int_amt_cal'] / $row['tot_amt_cal'] ;
+
     $sub_array[] = $sno;
     $sub_array[] = $row['line'];
     $sub_array[] = $row['loan_id'];
@@ -186,10 +188,15 @@ foreach ($result as $row) {
      $sub_array[] = moneyFormatIndia(intVal($row['due_amt_track']));
     if ($row['due_type'] != 'Interest') {
         //to get the principal and interest amt separate in due amt paid
-        $response = calculatePrincipalAndInterest(intVal($row['principal_amt_cal']) / $row['due_period'], intVal($row['int_amt_cal']) / $row['due_period'], intVal($row['due_amt_track']));
-        $sub_array[] = moneyFormatIndia(intVal($response['principal_paid']));
-        $rounderd_int = intVal($row['due_amt_track']) - $response['principal_paid'];
-        $sub_array[] = moneyFormatIndia(intVal($rounderd_int));
+        // $response = calculatePrincipalAndInterest(intVal($row['principal_amt_cal']) / $row['due_period'], intVal($row['int_amt_cal']) / $row['due_period'], intVal($row['due_amt_track']));
+        // $sub_array[] = moneyFormatIndia(intVal($response['principal_paid']));
+        // $rounderd_int = intVal($row['due_amt_track']) - $response['principal_paid'];
+        // $sub_array[] = moneyFormatIndia(intVal($rounderd_int));
+        $principle = $row['due_amt_track'] * $principal_calc;
+        $intrest = $row['due_amt_track'] * $intrest_calc;
+        $sub_array[] = round($principle, 1);
+        $sub_array[] = round($intrest, 1);
+
     } else {
         //else if its interest loan we can empty due amt coz it will not be paid on that loan, direclty show princ and int
         $sub_array[] = '';
@@ -249,34 +256,34 @@ function moneyFormatIndia($num)
     return $thecash;
 }
 
-function calculatePrincipalAndInterest($principal,  $interest,  $paidAmount): array
-{
-    $principal_paid = 0;
-    $interest_paid = 0;
+// function calculatePrincipalAndInterest($principal,  $interest,  $paidAmount): array
+// {
+//     $principal_paid = 0;
+//     $interest_paid = 0;
 
-    while ($paidAmount > 0) {
-        if ($paidAmount >= $principal) {
-            $principal_paid += $principal;
-            $paidAmount -= $principal;
-        } else {
-            $principal_paid += $paidAmount;
-            break;
-        }
+//     while ($paidAmount > 0) {
+//         if ($paidAmount >= $principal) {
+//             $principal_paid += $principal;
+//             $paidAmount -= $principal;
+//         } else {
+//             $principal_paid += $paidAmount;
+//             break;
+//         }
 
-        if ($paidAmount >= $interest) {
-            $interest_paid += $interest;
-            $paidAmount -= $interest;
-        } else {
-            $interest_paid += $paidAmount;
-            break;
-        }
-    }
+//         if ($paidAmount >= $interest) {
+//             $interest_paid += $interest;
+//             $paidAmount -= $interest;
+//         } else {
+//             $interest_paid += $paidAmount;
+//             break;
+//         }
+//     }
 
-    return [
-        'principal_paid' => (int) $principal_paid,
-        'interest_paid' => (int) $interest_paid
-    ];
-}
+//     return [
+//         'principal_paid' => (int) $principal_paid,
+//         'interest_paid' => (int) $interest_paid
+//     ];
+// }
 
 // Close the database connection
 $connect = null;
