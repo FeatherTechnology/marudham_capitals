@@ -389,7 +389,7 @@ function getOpeningDate() {
 function getOpeningBalance() {
     var op_date = $('#op_date').text();
     var bank_detail = $('#user_bank_details').val();
-    var oldclosingbal = $('#oldclosingbal').val();
+    var oldclosingbal = $('#oldclosingbal').val().replace(/,/g,'');
     var bank_detail_arr = $('#user_bank_details').val().split(',');
     $.ajax({
         url: 'accountsFile/cashtally/getOpeningBalance.php',
