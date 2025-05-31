@@ -36,7 +36,7 @@ if($qry){
 }
 
 ///////////////////// To get, to bank dropdowns and account number ////////////////////
-$qry = $connect->query("SELECT bc.id as bank_id,bc.short_name,bc.acc_no,us.fullname,us.user_id from bank_creation bc LEFT JOIN user us ON FIND_IN_SET(bc.id,us.bank_details) where bc.id != '$bank_id' ");
+$qry = $connect->query("SELECT bc.id as bank_id, bc.short_name, bc.acc_no, us.fullname, us.user_id from bank_creation bc LEFT JOIN user us ON FIND_IN_SET(bc.id,us.bank_details) where bc.id != '$bank_id' GROUP BY bc.acc_no ");
 if($qry){
     $i=1;
     while($row = $qry->fetch()){

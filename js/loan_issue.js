@@ -200,6 +200,7 @@ $(document).ready(function () {
  // Handle checkbox click event
 $(document).on('change', '.verification_bank_update', function () {
     let id = $(this).val(); // Get the ID of the current row
+    let cusid = $('#cus_id').val(); 
     let issue_status = 0;
 
     // If the current checkbox is checked
@@ -217,7 +218,7 @@ $(document).on('change', '.verification_bank_update', function () {
     $.ajax({
         url: 'loanIssueFile/updateBankStatus.php',
         type: 'POST',
-        data: { "id": id, "issue_status": issue_status },
+        data: { "cusid": cusid, "id": id, "issue_status": issue_status },
         dataType: 'json',
         cache: false,
         success: function (response) {
@@ -455,6 +456,168 @@ $(document).on('change', '.verification_bank_update', function () {
     })
 
 
+    //////////////////////////////////////////////////////////// Bank Info START ///////////////////////////////////////////////////////
+
+    $(document).on("click", "#bankInfoBtn", function () {
+        let req_id = $("#req_id").val();
+        let cus_id = $("#cus_id").val();
+        let bank_name = $("#bank_name").val();
+        let branch_name = $("#branch_name").val();
+        let account_holder_name = $("#account_holder_name").val();
+        let account_number = $("#account_number").val();
+        let Ifsc_code = $("#Ifsc_code").val();
+        let bank_upload = $("#bank_upload")[0].files[0];
+        let bank_upload_id = $("#bank_upload_id").val();
+        let bankID = $("#bankID").val();
+
+        if ( bank_name != "" && branch_name != "" && account_holder_name != "" && account_number != "" && Ifsc_code != "" && req_id != "" ) {
+
+            // Using FormData to send file and other data
+            let formData = new FormData();
+            formData.append("bank_name", bank_name);
+            formData.append("branch_name", branch_name);
+            formData.append("account_holder_name", account_holder_name);
+            formData.append("account_number", account_number);
+            formData.append("Ifsc_code", Ifsc_code);
+            formData.append("bank_upload", bank_upload); // Append the file
+            formData.append("bank_upload_id", bank_upload_id);
+            formData.append("bankID", bankID);
+            formData.append("reqId", req_id);
+            formData.append("cus_id", cus_id);
+
+            $.ajax({
+                url: "verificationFile/verification_bank_submit.php",
+                type: "POST",
+                data: formData, // Use FormData here
+                cache: false,
+                contentType: false, // Important: Do not process contentType
+                processData: false, // Important: Do not process data
+                success: function (response) {
+                    var insresult = response.includes("Inserted");
+                    var updresult = response.includes("Updated");
+                    if (insresult) {
+                        $("#bankInsertOk").show();
+                        setTimeout(function () {
+                            $("#bankInsertOk").fadeOut("fast");
+                        }, 2000);
+
+                    } else if (updresult) {
+                        $("#bankUpdateok").show();
+                        setTimeout(function () {
+                            $("#bankUpdateok").fadeOut("fast");
+                        }, 2000);
+
+                    } else {
+                        $("#bankNotOk").show();
+                        setTimeout(function () {
+                            $("#bankNotOk").fadeOut("fast");
+                        }, 2000);
+
+                    }
+
+                    resetbankInfo();
+                },
+            });
+
+            $("#bankNameCheck").hide();
+            $("#branchCheck").hide();
+            $("#accholdCheck").hide();
+            $("#accnoCheck").hide();
+            $("#ifscCheck").hide();
+
+        } else {
+
+            if (bank_name == "") {
+                $("#bankNameCheck").show();
+            } else {
+                $("#bankNameCheck").hide();
+            }
+
+            if (branch_name == "") {
+                $("#branchCheck").show();
+            } else {
+                $("#branchCheck").hide();
+            }
+
+            if (account_holder_name == "") {
+                $("#accholdCheck").show();
+            } else {
+                $("#accholdCheck").hide();
+            }
+
+            if (account_number == "") {
+                $("#accnoCheck").show();
+            } else {
+                $("#accnoCheck").hide();
+            }
+
+            if (Ifsc_code == "") {
+                $("#ifscCheck").show();
+            } else {
+                $("#ifscCheck").hide();
+            }
+
+        }
+    });
+
+    $("body").on("click", "#verification_bank_edit", function () {
+        let id = $(this).attr("value");
+
+        $.ajax({
+            url: "verificationFile/verification_bank_edit.php",
+            type: "POST",
+            data: { id: id },
+            dataType: "json",
+            cache: false,
+            success: function (result) {
+                $("#bankID").val(result["id"]);
+                $("#bank_name").val(result["bankName"]);
+                $("#branch_name").val(result["branch"]);
+                $("#account_holder_name").val(result["accHolderName"]);
+                $("#account_number").val(result["acc_no"]);
+                $("#Ifsc_code").val(result["ifsc"]);
+                $("#bank_upload_id").val(result["upload"]);
+            },
+        });
+    });
+
+    $("body").on("click", "#verification_bank_delete", function () {
+        var isok = confirm("Do you want delete this Bank Info?");
+        if (isok == false) {
+            return false;
+        } else {
+            var bankid = $(this).attr("value");
+
+            $.ajax({
+            url: "verificationFile/verification_bank_delete.php",
+            type: "POST",
+            data: { bankid: bankid },
+            cache: false,
+            success: function (response) {
+                var delresult = response.includes("Deleted");
+
+                if (delresult) {
+                    $("#bankDeleteOk").show();
+                    setTimeout(function () {
+                        $("#bankDeleteOk").fadeOut("fast");
+                    }, 2000);
+
+                } else {
+                    $("#bankDeleteNotOk").show();
+                    setTimeout(function () {
+                        $("#bankDeleteNotOk").fadeOut("fast");
+                    }, 2000);
+                }
+
+                resetbankInfo();
+            },
+            });
+        }
+    });
+
+    //////////////////////////////////////////////////////////// Bank Info END ///////////////////////////////////////////////////////
+
+
     $('#submit_loanIssue').click(function () { // loan Issue Submit Validation.
         hideCheckSpan();
         //   $('#refresh_cal').trigger('click');
@@ -475,7 +638,7 @@ $(function () {
     getAgentDetails(); //To Get Agent Details.
     profitCalculationInfo();
     cashAckName(); // To show Cash Acknowledgement Name.
-    $('input').not('#int_rate, #due_period, #doc_charge, #proc_fee,#due_start_from,#chequeno,#chequeRemark,#transaction_id,#transaction_remark').attr('readonly', true);
+    $('input').not('#int_rate, #due_period, #doc_charge, #proc_fee,#due_start_from,#chequeno,#chequeRemark,#transaction_id,#transaction_remark, #bank_name, #branch_name, #account_holder_name, #account_number, #Ifsc_code, #bank_upload').attr('readonly', true);
     $('select').not('#issued_mode, #cash_guarentor_name,#bank_id,#payment_type,#collection_method').attr('disabled', true);
     checkBalance(); // To check in DB.
     setTimeout(() => {
@@ -1461,7 +1624,7 @@ function checkBalance() {
 
 //Submit Validation
 function loanIssueSumitValidation() {
-    var issueMode = $('#issued_mode').val(); var paymenType = $('#payment_type').val(); var cash = $('#cash').val(); var chequeNum = $('#chequeno').val(); var chequeVal = $('#chequeValue').val(); var chequeRemark = $('#chequeRemark').val(); var transactionID = $('#transaction_id').val(); var transactionVal = $('#transaction_value').val(); var transactionRemark = $('#transaction_remark').val(); var guarentorName = $('#cash_guarentor_name').val();
+    var issueMode = $('#issued_mode').val(); var paymenType = $('#payment_type').val(); var cash = $('#cash').val(); var guarentorName = $('#cash_guarentor_name').val();
     // var fingerMatch = $('#fingerValidation').val();
     var ag_id = $('#agent_id').val(); var bank_id = $('#bank_id').val();
     //Check Issue Mode
@@ -1472,82 +1635,14 @@ function loanIssueSumitValidation() {
         $('#issue').hide();
     }
 
-    //Issue Mode Split
-    if (issueMode == '0') {
-        //Check cheque If Cheque details enter
-        // if (chequeNum != '' || chequeVal != '' || chequeRemark != '') {
-        //     if (chequeNum == '') {
-        //         event.preventDefault();
-        //         $('#cheque_num').show();
-        //     } else {
-        //         $('#cheque_num').hide();
-        //     }
-        //     if (chequeVal == '') {
-        //         event.preventDefault();
-        //         $('#cheque_val').show();
-        //     } else {
-        //         $('#cheque_val').hide();
-        //     }
-        //     if (chequeRemark == '') {
-        //         event.preventDefault();
-        //         $('#cheque_remark').show();
-        //     } else {
-        //         $('#cheque_remark').hide();
-        //     }
-        //     if (bank_id == '') {
-        //         event.preventDefault();
-        //         $('#bank_idCheck').show();
-        //     } else {
-        //         $('#bank_idCheck').hide();
-        //     }
-
-        // }
-
-        //Check Transaction If Transaction details enter
-        // if (transactionID != '' || transactionVal != '' || transactionRemark != '') {
-        //     if (transactionID == '') {
-        //         event.preventDefault();
-        //         $('#transact_id').show();
-        //     } else {
-        //         $('#transact_id').hide();
-        //     }
-        //     if (transactionVal == '') {
-        //         event.preventDefault();
-        //         $('#transact_val').show();
-        //     } else {
-        //         $('#transact_val').hide();
-        //     }
-        //     if (transactionRemark == '') {
-        //         event.preventDefault();
-        //         $('#transact_remark').show();
-        //     } else {
-        //         $('#transact_remark').hide();
-        //     }
-        //     if (bank_id == '') {
-        //         event.preventDefault();
-        //         $('#bank_idCheck').show();
-        //     } else {
-        //         $('#bank_idCheck').hide();
-        //     }
-        // }
-
-        // if (cash != '' || chequeVal != '' || transactionVal != '') {
-        //     $('#val_check').hide();
-        // } else {
-        //     event.preventDefault();
-        //     $('#val_check').show();
-        // }
-    } //Split END//
-
-    //Issue Mode Single Payment
-    if (issueMode == '1' && issueMode == '0' ) {
-        if (paymenType == '') {
-            event.preventDefault();
-            $('#pay_type').show();
-        } else {
-            $('#pay_type').hide();
-        }
+    //check payment type
+    if (paymenType == '') {
+        event.preventDefault();
+        $('#pay_type').show();
+    } else {
+        $('#pay_type').hide();
     }
+
     //Cash
     if (paymenType == '0') {
         if (cash == '') {
@@ -1558,76 +1653,12 @@ function loanIssueSumitValidation() {
         }
     }
 
-    //Cheque
-    if (paymenType == '1') {
-        // if (chequeNum == '') {
-        //     event.preventDefault();
-        //     $('#cheque_num').show();
-        // } else {
-        //     $('#cheque_num').hide();
-        // }
-
-        // if (chequeVal == '') {
-        //     event.preventDefault();
-        //     $('#cheque_val').show();
-        // } else {
-        //     $('#cheque_val').hide();
-        // }
-
-        // if (chequeRemark == '') {
-        //     event.preventDefault();
-        //     $('#cheque_remark').show();
-        // } else {
-        //     $('#cheque_remark').hide();
-        // }
+    if(paymenType == '1' || paymenType == '2'){
         if (bank_id == '') {
             event.preventDefault();
             $('#bank_idCheck').show();
         } else {
             $('#bank_idCheck').hide();
-        }
-        function isAnyCheckboxChecked() {
-            return $('#bank_data_table').find('input[type="checkbox"]:checked').length > 0;
-        }
-    
-        if (!isAnyCheckboxChecked()) {
-            event.preventDefault(); // Prevent form submission if no checkbox is checked
-            alert('Please select at least one bank for verification.'); // Show error message
-        }
-        
-    }
-
-    //Transaction
-    if (paymenType == '2') {
-        // if (transactionID == '') {
-        //     event.preventDefault();
-        //     $('#transact_id').show();
-        // } else {
-        //     $('#transact_id').hide();
-        // }
-
-        // if (transactionVal == '') {
-        //     event.preventDefault();
-        //     $('#transact_val').show();
-        // } else {
-        //     $('#transact_val').hide();
-        // }
-
-        // if (transactionRemark == '') {
-        //     event.preventDefault();
-        //     $('#transact_remark').show();
-        // } else {
-        //     $('#transact_remark').hide();
-        // }
-
-        if (bank_id == '') {
-            event.preventDefault();
-            $('#bank_idCheck').show();
-        } else {
-            $('#bank_idCheck').hide();
-        }
-        function isAnyCheckboxChecked() {
-            return $('#bank_data_table').find('input[type="checkbox"]:checked').length > 0;
         }
     
         if (!isAnyCheckboxChecked()) {
@@ -1653,11 +1684,35 @@ function loanIssueSumitValidation() {
             // }
         }
     }
-
-
 }
 
 //Span Hide
 function hideCheckSpan() {
     $('#cheque_num').hide(); $('#cheque_val').hide(); $('#cheque_remark').hide(); $('#transact_id').hide(); $('#transact_val').hide(); $('#transact_remark').hide(); $('#pay_type').hide(); $('#cash_amnt').hide(); $('#cash_guarentor').hide(); $('#val_check').hide(); $('#bank_idCheck').hide();
+}
+
+function isAnyCheckboxChecked() {
+    return $('#bank_data_table').find('input[type="checkbox"]:checked').length > 0;
+}
+
+function resetbankInfo() {
+  let cus_id = $("#cus_id").val();
+  $.ajax({
+    url: "verificationFile/verification_bank_reset.php",
+    type: "POST",
+    data: { cus_id: cus_id },
+    cache: false,
+    success: function (html) {
+      $("#bankTable").empty();
+      $("#bankTable").html(html);
+
+      $("#bank_name").val("");
+      $("#branch_name").val("");
+      $("#account_holder_name").val("");
+      $("#account_number").val("");
+      $("#Ifsc_code").val("");
+      $("#bank_upload").val("");
+      $("#bankID").val("");
+    },
+  });
 }

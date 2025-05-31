@@ -982,6 +982,12 @@ function validations() {
   let total_waiver = $("#total_waiver").val();
   let retVal = true;
 
+  $("#due_amt_track").trigger("blur"); 
+  $("#penalty_track").trigger("blur"); 
+  $("#coll_charge_track").trigger("blur"); 
+  $("#penalty_waiver").trigger("blur"); 
+  $("#coll_charge_waiver").trigger("blur"); 
+
   if(tot_amt == ""){
     $("#collectionInfoCheck").show();
     retVal = false;

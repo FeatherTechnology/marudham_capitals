@@ -2559,15 +2559,12 @@ $('#due_start_from').change(function () {
 })
 
 $('#submit_loan_calculation').click(function (e) {
-    // $('#refresh_cal').trigger('click'); //For calculate once again if user missed to refresh calculation
-    // var submit_btn = $(this);
-    // submit_btn.attr('disabled', true);
-    // loan_calc_validation(submit_btn);
-
     e.preventDefault(); // stop default form submit
 
     const submit_btn = $(this);
     submit_btn.prop('disabled', true);
+
+    $('#due_start_from').trigger('change'); //For calculate once again if user missed to refresh due dates.
 
     // Call your calculation directly
     performLoanCalculation(function(){

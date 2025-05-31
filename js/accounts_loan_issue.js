@@ -1177,12 +1177,11 @@ function getBankDetails() {
             $("#account_holder_name").val(result['accHolderName']);
             $("#account_number").val(result['acc_no']);
             $("#Ifsc_code").val(result['ifsc']);
-            $("#bank_upload_id").val(result['upload']);
 
             if (result['upload']) {
                 let fileName = result['upload'];  // Assuming the server returns the file name
                 $("#viewUploadedImage")
-                    .attr("href", "../uploads/bankUploads/" + fileName)  // Set the link to the file
+                    .attr("href", "uploads/bankUploads/" + fileName)  // Set the link to the file
                     .text(fileName)  // Set the text to the file name
                     .show();  // Show the link
             } else {
