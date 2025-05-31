@@ -55,15 +55,6 @@ if (isset($_POST['from_date']) && $_POST['from_date'] != '') {
 
     $where  .= $user_based;
 
-$statusObj = [
-    '14' => 'Current',
-    '15' => 'Error',
-    '16' => 'Legal',
-    '17' => 'Current',
-    '20' => 'In Closed',
-    '21' => 'Closed',
-];
-$consider_lvl_arr = [1 => 'Bronze', 2 => 'Silver', 3 => 'Gold', 4 => 'Platinum', 5 => 'Diamond'];
 $role_arr = [1 => 'Director', 2 => 'Agent', 3 => 'Staff'];
 
 $column = array(
@@ -99,7 +90,12 @@ $query = "SELECT
     lcc.loan_category_creation_name AS loan_cat_name,
     lc.sub_category,
     lc.due_amt_cal,
-    lc.maturity_month,
+    lc.tot_amt_cal,
+    lc.due_period,
+    lc.due_start_from,
+    lc.due_method_scheme,
+    lc.due_method_calc,
+    lc.maturity_month as maturity_date,
     lc.due_start_from,
     ac.ag_name,
     u.role,
@@ -192,24 +188,34 @@ $result = $statement->fetchAll();
 $data = array();
 $sno = 1;
 foreach ($result as $row) {
-    $start = strtotime($row['due_start_from']);
-    
-    if(strtotime($row['maturity_month']) < strtotime($full_date)){
-        $end = strtotime($row['maturity_month']);
-    }
-    else{
-        $end = strtotime($full_date); 
-    }
+    if (strtotime($row['maturity_date']) < strtotime($full_date)) {
+        $end = strtotime($row['maturity_date']);
+        $start = strtotime($row['due_start_from']);
+        $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
 
-    $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
+        $pending_month = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start));
+        
+    } else {
+        $start = strtotime($row['due_start_from']);
+        $end = strtotime($full_date);
+        $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
+        $pending_month = max(0, (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)));
+
+    }
+    
+    $balance_amount = $row['tot_amt_cal'] - $row['total_due_amt'];
+    $paid_due = $row['total_due_amt'] / $row['due_amt_cal'];
+    $balance_due = (float)$row['due_period'] - $paid_due;
     $payable_amount = ($months * $row['due_amt_cal'] ) - $row['total_due_amt'];
+    $pending_amount = ($pending_month * $row['due_amt_cal'] ) - $row['total_due_amt'];
+    $pending_due =  $pending_amount  / $row['due_amt_cal'];
 
     $sub_array   = array();
     $sub_array[] = $sno;
     $sub_array[] = $row['line'];
     $sub_array[] = $row['loan_id'];
     $sub_array[] = date('d-m-Y', strtotime($row['loan_date']));
-    $sub_array[] = date('d-m-Y', strtotime($row['maturity_month']));
+    $sub_array[] = date('d-m-Y', strtotime($row['maturity_date']));
     $sub_array[] = $row['cus_id'];
     $sub_array[] = $row['cus_name'];
     $sub_array[] = $row['area_name'];
@@ -223,23 +229,31 @@ foreach ($result as $row) {
     $sub_array[] = isset($payable_amount)  && $payable_amount > 0 ? moneyFormatIndia($payable_amount) : 0;
     $sub_array[] = 'Present';
     $payable_amount = max(0, $payable_amount);
-    if($row['cus_status'] = 15 && $row['updated_date'] < strtotime($full_date)){
+    $pending_amount = max(0, $pending_amount);
+
+    if($row['cus_status'] =='15' && strtotime($row['updated_date']) < strtotime($full_date)){
         $sub_array[] = 'Error';
     }
-    else if($row['cus_status'] = 16 && $row['updated_date'] < strtotime($full_date)){
+    else if($row['cus_status'] =='16' && strtotime($row['updated_date'])< strtotime($full_date)){
         $sub_array[] = 'Legal';
     }
-    else if($payable_amount <= $row['due_amt_cal'] && $row['maturity_month'] >= strtotime($full_date)){
+    else if($payable_amount == 0  && $pending_amount == 0  && $balance_amount == 0){
+        $sub_array[] = 'Due Nil';
+    }
+    else if($payable_amount <= $row['due_amt_cal'] && $pending_amount == 0  &&  ((($row['due_method_scheme'] === '1' || $row['due_method_calc'] ==='Monthly') && date('Y-m', strtotime($row['maturity_date'])) >= date('Y-m', strtotime($full_date))) ||(($row['due_method_scheme'] != '1'|| $row['due_method_calc'] !='Monthly') && strtotime($row['maturity_date']) >= strtotime($full_date))) && $balance_amount != 0 ){
         $sub_array[] = 'Current';
     }
-    else if($payable_amount > $row['due_amt_cal'] && $row['maturity_month'] > strtotime($full_date)){
+    else if($pending_amount > 0 &&  (
+            (($row['due_method_scheme'] === '1' || $row['due_method_calc'] ==='Monthly') && date('Y-m', strtotime($row['maturity_date'])) >= date('Y-m', strtotime($full_date))) || (($row['due_method_scheme'] != '1'|| $row['due_method_calc'] !='Monthly') && strtotime($row['maturity_date']) > strtotime($full_date))
+        )){
         $sub_array[] = 'Pending';
     }
-    else if (($payable_amount > 0  && $row['maturity_month'] < strtotime($full_date) )){
-        $sub_array[] = 'OD';
-    }
-    else if($payable_amount == 0  && $row['maturity_month'] > strtotime($full_date)){
-        $sub_array[] = 'Due Nil';
+    else if (
+    (
+        ($balance_amount  > 0) &&((($row['due_method_scheme'] === '1' || $row['due_method_calc'] ==='Monthly') && date('Y-m', strtotime($row['maturity_date'])) < date('Y-m', strtotime($full_date))) ||(($row['due_method_scheme'] != '1'|| $row['due_method_calc'] !='Monthly') && strtotime($row['maturity_date']) < strtotime($full_date)))
+    )) 
+    {
+    $sub_array[] = 'OD';
     }
     else {
         $sub_array[] = 'No Result';

@@ -1,6 +1,6 @@
 <?php
 
-include('../ajaxconfig.php');
+include 'C:/xampp/htdocs/marudham_capitals/ajaxconfig.php';
 
 if (isset($_POST['cus_id'])) {
     $cus_id = preg_replace('/\D/', '', $_POST['cus_id']);
