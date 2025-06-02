@@ -122,7 +122,7 @@ $query = " SELECT
             c.fine_track,
             c.penalty_waiver,
             c.fine_waiver,
-            req.cus_status,
+            iv.cus_status,
             ack.updated_date,
             lc.due_start_from,
             lc.due_method_scheme,
@@ -145,12 +145,12 @@ $query = " SELECT
         JOIN 
             area_line_mapping alm ON FIND_IN_SET(sal.sub_area_id, alm.sub_area_id)
         JOIN 
-            request_creation req ON lc.req_id = req.req_id
+            in_verification iv ON lc.req_id = iv.req_id
         LEFT JOIN 
             loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
         LEFT JOIN 
-            agent_creation ac ON req.agent_id = ac.ag_id
-        JOIN in_acknowledgement ack ON ack.req_id = req.req_id
+            agent_creation ac ON iv.agent_id = ac.ag_id
+        JOIN in_acknowledgement ack ON ack.req_id = iv.req_id
         LEFT JOIN (
     SELECT 
         c.req_id, 
@@ -174,7 +174,7 @@ $query = " SELECT
         WHERE DATE(created_date) <= '$to_date'
         GROUP BY req_id ) ch ON ch.req_id = c.req_id    
     $where
-    GROUP BY c.req_id ) c ON c.req_id = req.req_id
+    GROUP BY c.req_id ) c ON c.req_id = iv.req_id
         WHERE lc.req_id IN ($req_id_list) ";
 
 if(isset($_POST['loan_cat'])){

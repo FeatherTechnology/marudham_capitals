@@ -439,15 +439,20 @@ function getClosingBalance() {
         dataType: 'json',
         cache: false,
         success: function (response) {
-            var closing = parseInt(response[0]['closing_balance']);
-            $('#closing_balance').text(moneyFormatIndia(closing))
+            // var closing = parseInt(response[0]['closing_balance']);
             $('#hand_closing').text(moneyFormatIndia(response[0]['hand_closing']))
             var i = 0;
+            let bankCash = 0;
             $.each(response, function (index, item) {
                 $('#bank_closing' + i).text(moneyFormatIndia(item['bank_closing']))
+                bankCash +=item['bank_closing'];
                 i++;
             })
-            $('#agent_closing').text(moneyFormatIndia(response[0]['agent_closing']))
+            $('#agent_closing').text(moneyFormatIndia(response[0]['agent_closing']));
+
+            var closing = parseInt(response[0]['hand_closing'] + bankCash + response[0]['agent_closing']);
+            $('#closing_balance').text(moneyFormatIndia(closing));
+
             submitCashTally(i);
         }
     })
@@ -1945,7 +1950,7 @@ function getBankExchangeInputs() {
             $('#to_bank_bex').empty();
             $('#to_bank_bex').append("<option value=''>Select Bank Name</option>");
             for (var i = 1; i < response.length; i++) {
-                $('#to_bank_bex').append("<option value='" + response[i]['bank_user_id'] + "'>" + response[i]['to_bank_name'] + "</option>");
+                $('#to_bank_bex').append("<option value='" + response[i]['to_bank_id'] + "'>" + response[i]['to_bank_name'] + "</option>");
             }
             //to fetch user name based on to bank id selected
             // $('#to_bank_bex').change(function () {

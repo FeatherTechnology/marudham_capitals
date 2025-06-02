@@ -22,12 +22,16 @@ if ($op_date == date('Y-m-d')) { // check whether opening date is current date
     $old_hand = 0;
     $old_agent = 0;
     $old_bank = array();
-    $old_bank_unt = 0;
+    $old_bank_unt = array();
 
     $records = getOpeningBalance($connect, $op_date, $bank_detail, $user_id);
 
     //if while loop gets true, then the function will load the old opening balance.. so store latest opening balance
     $opening_balance = $records[0]['opening_balance'];
+
+    // inside the while loop
+    $old_bank_unt = array_fill(0, count(explode(',', $records[0]['bank_untrkd'])), 0); // init array
+
 
     while ($records[0]['hand_opening'] != 0 || $records[0]['agent_opening'] != 0  || $records[0]['bank_opening'] != 0) {
         $old_hand += intVal($records[0]['hand_opening']);
@@ -36,7 +40,9 @@ if ($op_date == date('Y-m-d')) { // check whether opening date is current date
         foreach ($records as $key => $value) {
             $old_bank[] = $value['bank_opening'];
         }
-        $old_bank_unt += intVal($records[0]['bank_untrkd']);
+        // $old_bank_unt += intVal($records[0]['bank_untrkd']);
+         $old_bank_unt = addBankUntrkd(implode(',', $old_bank_unt), $records[0]['bank_untrkd']);
+
 
         $op_date = date('Y-m-d', strtotime($op_date . '-1 day'));
         $records = getOpeningBalance($connect, $op_date, $bank_detail, $user_id);
@@ -46,12 +52,13 @@ if ($op_date == date('Y-m-d')) { // check whether opening date is current date
     $records[0]['opening_balance'] = $opening_balance;
     $records[0]['hand_opening'] = intVal($records[0]['hand_opening']) + intVal($old_hand);
     $records[0]['agent_opening'] = intVal($records[0]['agent_opening']) + intVal($old_agent);
-  foreach ($records as $key => $value) {
-    $old_bank_value = isset($old_bank[$key]) ? $old_bank[$key] : 0;
-    $records[$key]['bank_opening'] = $value['bank_opening'] + $old_bank_value;
-}
+    foreach ($records as $key => $value) {
+        $old_bank_value = isset($old_bank[$key]) ? $old_bank[$key] : 0;
+        $records[$key]['bank_opening'] = $value['bank_opening'] + $old_bank_value;
+    }
 
-    $records[0]['bank_untrkd'] = intVal($records[0]['bank_untrkd']) + intVal($old_bank_unt);
+    // $records[0]['bank_untrkd'] = intVal($records[0]['bank_untrkd']) + intVal($old_bank_unt);
+    $records[0]['bank_untrkd'] = implode(',', $old_bank_unt);
 }
 echo json_encode($records);
 
@@ -266,12 +273,26 @@ function getOpeningBalance($connect, $op_date, $bank_detail, $user_id)
     if ($qry->rowCount() > 0) {
         $records[0]['bank_untrkd'] = $qry->fetch()['bank_untrkd'];
     } else {
-        $records[0]['bank_untrkd'] = '';
+        $records[0]['bank_untrkd'] = '0,0';
     }
 
     return $records;
 }
 
+function addBankUntrkd($existing, $new) {
+    $existing_array = explode(',', $existing);
+    $new_array = explode(',', $new);
+    $result = [];
+
+    $max = max(count($existing_array), count($new_array));
+    for ($i = 0; $i < $max; $i++) {
+        $existing_val = isset($existing_array[$i]) ? intval($existing_array[$i]) : 0;
+        $new_val = isset($new_array[$i]) ? intval($new_array[$i]) : 0;
+        $result[] = $existing_val + $new_val;
+    }
+
+    return $result;
+}
 
 // Close the database connection
 $connect = null;
