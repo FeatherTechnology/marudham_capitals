@@ -113,7 +113,7 @@ $query = "SELECT
             (coll.penalty_track) AS penalty_track,
             (coll.coll_charge_track) AS coll_charge_track,
             (coll.total_paid_track) AS total_paid_track,
-            req.cus_status,
+            iv.cus_status,
             cls.closed_sts,
             cls.consider_level
 
@@ -124,14 +124,14 @@ $query = "SELECT
         JOIN sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
         JOIN area_line_mapping alm ON FIND_IN_SET(sal.sub_area_id, alm.sub_area_id)
         JOIN acknowlegement_loan_calculation lc ON coll.req_id = lc.req_id
-        JOIN request_creation req ON coll.req_id = req.req_id
+        JOIN in_verification iv ON coll.req_id = iv.req_id
         LEFT JOIN bank_creation b ON coll.bank_id = b.id
         JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
         JOIN user u ON coll.insert_login_id = u.user_id
-        LEFT JOIN agent_creation ac ON req.agent_id = ac.ag_id
-        LEFT JOIN closed_status cls ON req.req_id = cls.req_id
+        LEFT JOIN agent_creation ac ON iv.agent_id = ac.ag_id
+        LEFT JOIN closed_status cls ON iv.req_id = cls.req_id
 
-        WHERE req.cus_status >= 14 
+        WHERE iv.cus_status >= 14 
         AND $where ";
 
 if (isset($_POST['search'])) {

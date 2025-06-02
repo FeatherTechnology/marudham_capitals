@@ -127,7 +127,7 @@ $req_id_list = implode(',', $req_id_list);
     ac.ag_name,
     cls.closed_sts,
     cls.consider_level,
-    req.cus_status,
+    iv.cus_status,
     ack.updated_date,
     vfi.famname,
     vfi.relationship,
@@ -141,25 +141,32 @@ $req_id_list = implode(',', $req_id_list);
     IFNULL(NULLIF(c.coll_id, ''), 0) AS coll_id
 FROM
     acknowlegement_loan_calculation lc
-JOIN acknowlegement_customer_profile cp ON
-    lc.req_id = cp.req_id
-LEFT JOIN verification_family_info vfi ON cp.guarentor_name = vfi.id
-JOIN in_issue ii ON
-    lc.req_id = ii.req_id
-JOIN loan_issue li ON
-    lc.req_id = li.req_id
-JOIN area_list_creation al ON
-    cp.area_confirm_area = al.area_id
-JOIN sub_area_list_creation sal ON
-    cp.area_confirm_subarea = sal.sub_area_id
-JOIN area_line_mapping alm ON
-    FIND_IN_SET( sal.sub_area_id, alm.sub_area_id )
-JOIN request_creation req ON lc.req_id = req.req_id
-JOIN in_acknowledgement ack ON ack.req_id = req.req_id
-LEFT JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
-LEFT JOIN agent_creation ac ON req.agent_id = ac.ag_id
-LEFT JOIN closed_status cls ON req.req_id = cls.req_id
-LEFT JOIN ( SELECT c.req_id,
+JOIN 
+    acknowlegement_customer_profile cp ON lc.req_id = cp.req_id
+LEFT JOIN 
+    verification_family_info vfi ON cp.guarentor_name = vfi.id
+JOIN 
+    in_issue ii ON lc.req_id = ii.req_id
+JOIN 
+    loan_issue li ON lc.req_id = li.req_id
+JOIN 
+    area_list_creation al ON cp.area_confirm_area = al.area_id
+JOIN 
+    sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
+JOIN 
+    area_line_mapping alm ON FIND_IN_SET( sal.sub_area_id, alm.sub_area_id )
+JOIN 
+    in_verification iv ON lc.req_id = iv.req_id
+JOIN 
+    in_acknowledgement ack ON ack.req_id = iv.req_id
+LEFT JOIN 
+    loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
+LEFT JOIN 
+    agent_creation ac ON iv.agent_id = ac.ag_id
+LEFT JOIN 
+    closed_status cls ON iv.req_id = cls.req_id
+LEFT JOIN 
+    ( SELECT c.req_id,
            c.pending_amt AS pending,
            c.payable_amt,
            c.total_paid_track,
@@ -230,7 +237,7 @@ foreach ($result as $row) {
         $start = strtotime($row['due_start_from']);
         $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
 
-        $pending_month = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start));
+        $pending_month = $months;
         
     } else {
         $start = strtotime($row['due_start_from']);

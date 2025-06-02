@@ -5,7 +5,7 @@ include('../../../ajaxconfig.php');
 $user_id = $_POST['user_id'];
 $li_id = $_POST['li_id'];
 
-$qry = $connect->query("SELECT id,cheque_no,cheque_value,transaction_id,transaction_value,issued_to,req_id,insert_login_id,bank_id FROM `loan_issue` where (agent_id = '' or agent_id = null) and ((cheque_value!= '' or transaction_value !='') or (cheque_value!= '' and transaction_value !='')) and id='$li_id' and insert_login_id = '$user_id' ");
+$qry = $connect->query("SELECT id,cheque_no,cheque_value,transaction_id,transaction_value,issued_to,req_id,insert_login_id,bank_id FROM `loan_issue` where (agent_id = '' or agent_id IS null) and ((cheque_value!= '' or transaction_value !='') or (cheque_value!= '' and transaction_value !='')) and id='$li_id' and insert_login_id = '$user_id' ");
 $row = $qry->fetch();
 
 if($row['cheque_value'] != '' and $row['transaction_value'] == ''){

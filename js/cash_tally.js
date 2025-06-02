@@ -439,15 +439,20 @@ function getClosingBalance() {
         dataType: 'json',
         cache: false,
         success: function (response) {
-            var closing = parseInt(response[0]['closing_balance']);
-            $('#closing_balance').text(moneyFormatIndia(closing))
+            // var closing = parseInt(response[0]['closing_balance']);
             $('#hand_closing').text(moneyFormatIndia(response[0]['hand_closing']))
             var i = 0;
+            let bankCash = 0;
             $.each(response, function (index, item) {
                 $('#bank_closing' + i).text(moneyFormatIndia(item['bank_closing']))
+                bankCash +=item['bank_closing'];
                 i++;
             })
-            $('#agent_closing').text(moneyFormatIndia(response[0]['agent_closing']))
+            $('#agent_closing').text(moneyFormatIndia(response[0]['agent_closing']));
+
+            var closing = parseInt(response[0]['hand_closing'] + bankCash + response[0]['agent_closing']);
+            $('#closing_balance').text(moneyFormatIndia(closing));
+
             submitCashTally(i);
         }
     })
@@ -1866,6 +1871,9 @@ function hexCollectBtnClick(hex_id1) {
 
 //To get bank debit exchange details and submit button
 function getBankExchangeInputs() {
+    let user_id = $('#user_id').val();
+    let user_name = $('#user_name').val();
+
     var appendText = `<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
         <div class="form-group">
             <label for="ref_code_bex">Ref ID</label>
@@ -1890,8 +1898,8 @@ function getBankExchangeInputs() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
         <div class="form-group">
             <label for="user_name_bex">User Name</label>
-            <input type="hidden" id="user_id_bex" name="user_id_bex" class="form-control" readonly>
-            <input type="text" id="user_name_bex" name="user_name_bex" class="form-control" readonly>
+            <input type="hidden" id="user_id_bex" name="user_id_bex" class="form-control" value="${user_id}" readonly>
+            <input type="text" id="user_name_bex" name="user_name_bex" class="form-control" value="${user_name}" readonly>
         </div>
     </div>
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
@@ -1942,20 +1950,20 @@ function getBankExchangeInputs() {
             $('#to_bank_bex').empty();
             $('#to_bank_bex').append("<option value=''>Select Bank Name</option>");
             for (var i = 1; i < response.length; i++) {
-                $('#to_bank_bex').append("<option value='" + response[i]['bank_user_id'] + "'>" + response[i]['to_bank_name'] + "</option>");
+                $('#to_bank_bex').append("<option value='" + response[i]['to_bank_id'] + "'>" + response[i]['to_bank_name'] + "</option>");
             }
             //to fetch user name based on to bank id selected
-            $('#to_bank_bex').change(function () {
-                var to_bank_id = $(this).val();
-                if (to_bank_id != '') {
-                    for (var i = 1; i < response.length; i++) {
-                        if (to_bank_id == response[i]['bank_user_id']) {
-                            $('#user_id_bex').val(response[i]['bank_user_id'])
-                            $('#user_name_bex').val(response[i]['bank_user_name'])
-                        }
-                    }
-                }
-            })
+            // $('#to_bank_bex').change(function () {
+            //     var to_bank_id = $(this).val();
+            //     if (to_bank_id != '') {
+            //         for (var i = 1; i < response.length; i++) {
+            //             if (to_bank_id == response[i]['bank_user_id']) {
+            //                 $('#user_id_bex').val(response[i]['bank_user_id'])
+            //                 $('#user_name_bex').val(response[i]['bank_user_name'])
+            //             }
+            //         }
+            //     }
+            // })
         }
     }).then(function () {
         $('#submit_bex').click(function () {

@@ -4,6 +4,8 @@ if (isset($_SESSION['userid'])) {
 }
 
 $getuser = $userObj->getuser($mysqli, $userid);
+$user_id = $getuser['user_id'];
+$fullname = $getuser['fullname'];
 $bank_details = $getuser['bank_details'];
 $branch_id = $getuser['branch_id'];
 $role_type = $getuser['role_type'];
@@ -71,6 +73,8 @@ if ($bank_qry->num_rows > 0) {
 <div class="main-container">
 	<!--form start-->
 	<form id="cash_tally" name="cash_tally" action="" method="post" enctype="multipart/form-data">
+		<input type="hidden" id='user_id' name='user_id' value='<?php if (isset($user_id)) echo $user_id; ?>'>
+		<input type="hidden" id='user_name' name='user_name' value='<?php if (isset($fullname)) echo $fullname; ?>'>
 		<input type="hidden" id='user_branch_id' name='user_branch_id' value='<?php if (isset($branch_id)) echo $branch_id; ?>'>
 		<input type="hidden" id='user_bank_details' name='user_bank_details' value='<?php if (isset($bank_details)) echo $bank_details; ?>'>
 		<input type="hidden" id='all_bank_details' name='all_bank_details' value='<?php if (isset($all_bank_id)) echo $all_bank_id; ?>'>

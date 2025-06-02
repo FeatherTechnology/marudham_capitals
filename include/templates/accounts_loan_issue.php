@@ -969,8 +969,7 @@ if (sizeof($getLoanCalculation) > 0) {
                                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                             <div class="form-group">
                                                 <label for="bank_upload">Upload</label>
-                                                <input type="file" class="form-control" id="bank_upload" name="bank_upload" tabindex="1" readonly>
-                                                <input type="hidden" id="bank_upload_id">
+                                                <input type="file" class="form-control" id="bank_upload" name="bank_upload" tabindex="1" disabled>
 
                                                 <!-- Link to view uploaded image -->
                                                 <a href="#" id="viewUploadedImage" target="_blank" style="display: none;"></a>
@@ -1066,7 +1065,6 @@ if (sizeof($getLoanCalculation) > 0) {
                     <div class="col-md-12 ">
                         <div class="text-right">
                             <button type="submit" name="submit_accountsloanIssue" id="submit_accountsloanIssue" class="btn btn-primary" value="Submit" tabindex="45"><span class="icon-check"></span>&nbsp;Submit</button>
-                            <!-- <button type="reset" class="btn btn-outline-secondary" tabindex="20">Clear</button> -->
                         </div>
                     </div>
                     <!-- Submit Button End -->

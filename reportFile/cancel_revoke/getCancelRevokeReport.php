@@ -45,6 +45,8 @@ if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'
 $where  .= $user_based;
 
 $cus_status = "";
+$join_condition = "";
+$ag_join = "req.agent_id";
 $role_arr = [1 => 'Director', 2 => 'Agent', 3 => 'Staff'];
 // Check if type and sel_screen are selected by the user
 if (isset($_POST['type']) && isset($_POST['sel_screen'])) {
@@ -86,6 +88,11 @@ if ($cus_status != "") {
 } else {
     $where .= " AND req.cus_status BETWEEN 4 AND 9 ";
 
+}
+
+if($cus_status =='5' || $cus_status =='6' || $cus_status =='7' || $cus_status =='9'){
+    $join_condition = "JOIN in_verification iv ON req.req_id = iv.req_id";
+    $ag_join = "iv.agent_id";
 }
 
 $statusLabels = [
@@ -140,6 +147,7 @@ $query = "SELECT
     u.fullname
 FROM 
     request_creation req 
+$join_condition
 JOIN 
     area_list_creation al ON req.area = al.area_id
 JOIN 
@@ -147,10 +155,9 @@ JOIN
 JOIN 
     loan_category_creation lcc ON req.loan_category = lcc.loan_category_creation_id
 LEFT JOIN 
-    agent_creation ag ON req.agent_id = ag.ag_id
-             
-JOIN user u ON req.update_login_id = u.user_id
-    
+    agent_creation ag ON $ag_join = ag.ag_id         
+JOIN 
+    user u ON req.update_login_id = u.user_id
 LEFT JOIN 
     customer_profile cp ON req.req_id = cp.req_id
 WHERE 
@@ -162,9 +169,12 @@ if (isset($_POST['search'])) {
         $query .= " and (req.cus_id LIKE '%" . $_POST['search'] . "%' OR
                 req.cus_name LIKE '%" . $_POST['search'] . "%' OR
                 al.area_name LIKE '%" . $_POST['search'] . "%' OR
+                sal.sub_area_name LIKE '%" . $_POST['search'] . "%' OR
                 u.role LIKE '%" . $_POST['search'] . "%' OR
                 u.fullname LIKE '%" . $_POST['search'] . "%' OR
                 lcc.loan_category_creation_name LIKE '%" . $_POST['search'] . "%' OR
+                req.sub_category LIKE '%" . $_POST['search'] . "%' OR
+                ag.ag_name LIKE '%" . $_POST['search'] . "%' OR
                 req.cus_data LIKE '%" . $_POST['search'] . "%' ) ";
     }
 }
@@ -211,7 +221,7 @@ foreach ($result as $row) {
     $sub_array[] = $role_arr[$row['role']];
     $sub_array[] = $row['fullname'];
     $sub_array[] = $row['ag_name'];
-    $sub_array[] = ($row['responsible'] == 0) ? 'Yes' : 'No';
+    $sub_array[] = ($row['responsible'] == '0') ? 'Yes' : 'No';
     $sub_array[] = $row['cus_data'];
     $sub_array[] = $statusLabels[$row['cus_status']];
     $sub_array[] = $row['prompt_remark'];
