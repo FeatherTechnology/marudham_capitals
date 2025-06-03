@@ -71,6 +71,7 @@ if (isset($_POST['to_date']) && $_POST['to_date'] != '') {
         'lcc.loan_category_creation_name',
         'lc.sub_category',
         'ac.ag_name',
+        'iv.responsible',
         'vfi.famname',
         'vfi.relationship',
         'vfi.relation_Mobile',
@@ -125,6 +126,7 @@ $req_id_list = implode(',', $req_id_list);
     sal.sub_area_name,
     lcc.loan_category_creation_name AS loan_cat_name,
     ac.ag_name,
+    iv.responsible,
     cls.closed_sts,
     cls.consider_level,
     iv.cus_status,
@@ -198,6 +200,7 @@ if (isset($_POST['search'])) {
                         OR sal.sub_area_name LIKE '%" . $_POST['search'] . "%'
                         OR lc.sub_category LIKE '%" . $_POST['search'] . "%'
                         OR ac.ag_name LIKE '%" . $_POST['search'] . "%'
+                        OR iv.responsible LIKE '%" . $_POST['search'] . "%'
                         OR vfi.famname LIKE '%" . $_POST['search'] . "%'
                         OR vfi.relationship LIKE '%" . $_POST['search'] . "%'
                         OR vfi.relation_Mobile LIKE '%" . $_POST['search'] . "%'
@@ -269,6 +272,7 @@ foreach ($result as $row) {
     $sub_array[] = $row['loan_cat_name'];
     $sub_array[] = $row['sub_category'];
     $sub_array[] = $row['ag_name'];
+    $sub_array[] = (!empty($row['ag_name'])) ? (($row['responsible'] == '0') ? 'Yes': 'No') : '';
     $sub_array[] = $row['famname'];
     $sub_array[] = $row['relationship'];
     $sub_array[] = $row['relation_Mobile'];
@@ -365,8 +369,6 @@ function moneyFormatIndia($num)
     $thecash = $thecash == 0 ? "0" : $thecash;
     return $thecash;
 }
-
-
 
 // Close the database connection
 $connect = null;

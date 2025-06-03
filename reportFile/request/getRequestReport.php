@@ -163,7 +163,7 @@ foreach ($result as $row) {
     $sub_array[] = $row['user_type'];
     $sub_array[] = $row['user_name'];
     $sub_array[] = $row['ag_name'];
-    $sub_array[] = ($row['responsible'] == 0) ? 'Yes' : 'No';
+    $sub_array[] = (!empty($row['ag_name'])) ? (($row['responsible'] == '0') ? 'Yes': 'No') : '';
     $sub_array[] = $row['cus_data'];
     $sub_array[] = $statusLabels[$row['cus_status']];
 
