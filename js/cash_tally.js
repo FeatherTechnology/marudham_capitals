@@ -4007,10 +4007,10 @@ function helvalidation() {
     let cash_type = $('#credit_type').val() != '' ? 'crel' : 'dbel';
     if (name == '') { event.preventDefault(); $('#name_helCheck').show(); response = 1; } else { $('#name_helCheck').hide(); }
     if (remark == '') { event.preventDefault(); $('#remark_helCheck').show(); response = 1; } else { $('#remark_helCheck').hide(); }
-    if (amt == '') { event.preventDefault(); $('#amt_helCheck').show(); response = 1; } else { $('#amt_helCheck').hide(); var validateResponse = validateNamedHandCash(name, amt, 'amt_hel', cash_type);
-        setInterval(() => {
-            response = validateResponse;
-        }, 1000);
+    if (amt == '') { event.preventDefault(); $('#amt_helCheck').show(); response = 1; } else { $('#amt_helCheck').hide();  response = validateNamedHandCash(name, amt, 'amt_hel', cash_type);
+        // setInterval(() => {
+        //     response = validateResponse;
+        // }, 1000);
      }
     return response;
 }
@@ -5048,6 +5048,11 @@ function validateNamedHandCash(name, amt, source, cash_type) {
                     event.preventDefault();
                     alert('Enter value between 1 and ' + response['debitable'])
                     $(`#${source}`).val('')
+                    retval = 1;
+                } else {
+                    event.preventDefault();
+                    alert('Kindly close previous transaction.');
+                    $(`#${source}`).val('');
                     retval = 1;
                 }
             }
