@@ -88,22 +88,17 @@ $connect = null;
         ?>
             <tr>
                 <td></td>
-                <!-- <td><?php echo $usertype;?></td> -->
                 <td><?php echo $records[$i]['usertype'];?></td>
-                
-                <!-- <td><?php echo $username;?></td> -->
                 <td><?php echo $records[$i]['username'];?></td>
                 
                 <!-- <td><?php echo $records[$i]['issued_to'];?></td> -->
                 
                 <td><?php echo $records[$i]['cheque_no'];?></td>
                 <td><?php echo $records[$i]['transaction_id'];?></td>
-                
-                <!-- <td><?php echo moneyFormatIndia($netcash);  ?></td> -->
                 <td><?php echo moneyFormatIndia($records[$i]['netcash']);?></td>
                 
                 <td>
-                    <input type='button' id='' name='' class="btn btn-primary bissued_btn" data-value = '<?php echo $records[$i]['user_id']; ?>' data-id="<?php echo $records[$i]['id']; ?>" data-toggle="modal" data-target='.bissued_modal' value='Enter' onclick="bissuedBtnClick(this)" >
+                    <input type='button' id='' name='' class="btn btn-primary bissued_btn" data-value = '<?php echo $records[$i]['user_id']; ?>' data-id="<?php echo $records[$i]['id']; ?>" data-toggle="modal" data-target='.bissued_modal' value='Enter' > <!-- onclick="bissuedBtnClick(this)"  -->
                 </td>
             </tr>
         <?php
