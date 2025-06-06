@@ -664,6 +664,7 @@ function turnonCashKeyup() {
 // Cus img show onload.
 function getImage() {
     let imgName = $('#cus_image').val();
+    
     $('#imgshow').attr('src', "uploads/request/customer/" + imgName + " ");
 
     var guarentorimg = $('#guarentor_image').val();

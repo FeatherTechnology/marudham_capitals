@@ -15,17 +15,18 @@ try {
     // Begin transaction
     $connect->beginTransaction();
 
-    // Get the latest loan ID
-    $selectIC = $connect->query("SELECT MAX(CAST(loan_id AS UNSIGNED)) AS loan_id FROM in_issue WHERE loan_id IS NOT NULL AND loan_id != '' FOR UPDATE");
+    $issueresult = $connect->query("SELECT loan_id FROM in_issue WHERE req_id = '$req_id' AND loan_id != '' ");
 
-    if ($selectIC->rowCount() > 0) {
+    if ($issueresult && $issueresult->rowCount() == 0) {
+
+        // Get the latest loan ID
+        $selectIC = $connect->query("SELECT MAX(CAST(loan_id AS UNSIGNED)) AS loan_id FROM in_issue WHERE loan_id IS NOT NULL AND loan_id != '' FOR UPDATE");
         $row = $selectIC->fetch();
-        $ac2 = $row["loan_id"];
-        // Assuming $appno2 is incremented from the previous loan ID
-        $appno2 = $ac2 + 1;
-        $loan_id = $appno2;
-    } else {
-        $loan_id = "101"; // If no previous loan ID exists, start with 101
+        $loan_id = $row["loan_id"] ? $row["loan_id"] + 1 : 101;
+
+    } elseif ($issueresult && $issueresult->rowCount() > 0) {
+        $loan_row = $issueresult->fetch();
+        $loan_id = $loan_row['loan_id'];
     }
 
     //////////////////////////////////////////////////////////////////////////
