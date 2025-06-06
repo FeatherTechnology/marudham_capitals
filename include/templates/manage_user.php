@@ -91,6 +91,7 @@ $closed_report = '';
 $confirmation_followup_report = '';
 $agent_report = '';
 $no_due_pay_report = '';
+$other_trans_report = '';
 $search_module = '';
 $search_screen = '';
 $bulk_upload_module = '';
@@ -233,6 +234,7 @@ if($idupd>0)
 			$confirmation_followup_report          		     = $getUser['confirmation_followup_report'];
 			$agent_report          		     = $getUser['agent_report'];
 			$no_due_pay_report          		     = $getUser['no_due_pay_report'];
+			$other_trans_report          		     = $getUser['other_trans_report'];
 
 			$search_module = $getUser['search_module'];
 			$search_screen = $getUser['search'];
@@ -1099,6 +1101,12 @@ if($idupd>0)
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($no_due_pay_report==0){ echo'checked'; }} ?> tabindex="72" class="report-checkbox" id="no_due_pay_report" name="no_due_pay_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="no_due_pay_report">No Due Pay </label>
+                            </div>
+                        </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($other_trans_report==0){ echo'checked'; }} ?> tabindex="72" class="report-checkbox" id="other_trans_report" name="other_trans_report" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="other_trans_report">Other Transaction </label>
                             </div>
                         </div>
 					</div>
