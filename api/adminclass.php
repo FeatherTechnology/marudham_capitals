@@ -3960,7 +3960,7 @@ class admin
 			$reqToverify['sub_area_name'] = $subareaQry->fetch_assoc()['sub_area_name'];
 
 			$ageqry = $mysqli->query("SELECT ag_name from agent_creation where ag_id = '" . $row['agent_id'] . "' ");
-			$reqToverify['agent_name'] = $ageqry->fetch_assoc()['ag_name'];
+			$reqToverify['agent_name'] = $ageqry->fetch_assoc()['ag_name'] ?? '';
 		}
 
 
@@ -5604,141 +5604,124 @@ class admin
 	// Add Loan Issue
 	public function addloanIssue($mysqli, $userid)
 	{
-		if (isset($_POST['req_id'])) {
-			$req_id = $_POST['req_id'];
-		}
-		if (isset($_POST['cus_id'])) {
-			$cus_id =  preg_replace('/\s+/', '', $_POST['cus_id']);
-		}
-		if (isset($_POST['int_rate'])) {
-			$int_rate = $_POST['int_rate'];
+
+		// Sanitize input helper
+		function sanitize($mysqli, $value) {
+			return mysqli_real_escape_string($mysqli, strip_tags(trim($value ?? '')));
 		}
 
+		// Sanitize and assign all inputs
+		$req_id             = sanitize($mysqli, $_POST['req_id'] ?? '');
+		$cus_id             = sanitize($mysqli, preg_replace('/\s+/', '', $_POST['cus_id'] ?? ''));
+		$int_rate           = sanitize($mysqli, $_POST['int_rate'] ?? '');
+		$due_period         = sanitize($mysqli, $_POST['due_period'] ?? '');
+		$doc_charge         = sanitize($mysqli, $_POST['doc_charge'] ?? '');
+		$proc_fee           = sanitize($mysqli, $_POST['proc_fee'] ?? '');
+		$principal_amt_cal  = sanitize($mysqli, $_POST['principal_amt_cal'] ?? '');
+		$int_amt_cal        = sanitize($mysqli, $_POST['int_amt_cal'] ?? '');
+		$tot_amt_cal        = sanitize($mysqli, $_POST['tot_amt_cal'] ?? '');
+		$due_amt_cal        = sanitize($mysqli, $_POST['due_amt_cal'] ?? '');
+		$doc_charge_cal     = sanitize($mysqli, $_POST['doc_charge_cal'] ?? '');
+		$proc_fee_cal       = sanitize($mysqli, $_POST['proc_fee_cal'] ?? '');
+		$loan_amt_cal       = sanitize($mysqli, $_POST['loan_amt_cal'] ?? '');
+		$net_cash_cal       = sanitize($mysqli, $_POST['net_cash_cal'] ?? '');
+		$issue_to           = sanitize($mysqli, $_POST['issue_to'] ?? '');
+		$agent_id           = sanitize($mysqli, $_POST['agent_id'] ?? '');
+		$issued_mode        = sanitize($mysqli, $_POST['issued_mode'] ?? '');
+		$payment_type       = sanitize($mysqli, $_POST['payment_type'] ?? '');
+		$cash               = sanitize($mysqli, $_POST['cash'] ?? '');
+		$bank_id            = sanitize($mysqli, $_POST['bank_id'] ?? '');
+		$chequeno           = sanitize($mysqli, $_POST['chequeno'] ?? '');
+		$chequeValue        = sanitize($mysqli, $_POST['chequeValue'] ?? '');
+		$chequeRemark       = sanitize($mysqli, $_POST['chequeRemark'] ?? '');
+		$transaction_id     = sanitize($mysqli, $_POST['transaction_id'] ?? '');
+		$transaction_value  = sanitize($mysqli, $_POST['transaction_value'] ?? '');
+		$transaction_remark = sanitize($mysqli, $_POST['transaction_remark'] ?? '');
+		$balance            = sanitize($mysqli, $_POST['balance'] ?? '');
+		$cash_guarentor_name= sanitize($mysqli, $_POST['cash_guarentor_name'] ?? '');
+		$relationship       = sanitize($mysqli, $_POST['relationship'] ?? '');
+		$due_start_from     = sanitize($mysqli, $_POST['due_start_from'] ?? '');
+		$maturity_month     = sanitize($mysqli, $_POST['maturity_month'] ?? '');
 
-		if (isset($_POST['due_period'])) {
-			$due_period = $_POST['due_period'];
-		}
-		if (isset($_POST['doc_charge'])) {
-			$doc_charge = $_POST['doc_charge'];
-		}
-		if (isset($_POST['proc_fee'])) {
-			$proc_fee = $_POST['proc_fee'];
-		}
-		if (isset($_POST['principal_amt_cal'])) {
-			$principal_amt_cal = $_POST['principal_amt_cal'];
-		}
-		if (isset($_POST['int_amt_cal'])) {
-			$int_amt_cal = $_POST['int_amt_cal'];
-		}
-		$tot_amt_cal = '';
-		if (isset($_POST['tot_amt_cal'])) {
-			$tot_amt_cal = $_POST['tot_amt_cal'];
-		}
-		$due_amt_cal = '';
-		if (isset($_POST['due_amt_cal'])) {
-			$due_amt_cal = $_POST['due_amt_cal'];
-		}
-		if (isset($_POST['doc_charge_cal'])) {
-			$doc_charge_cal = $_POST['doc_charge_cal'];
-		}
-		if (isset($_POST['proc_fee_cal'])) {
-			$proc_fee_cal = $_POST['proc_fee_cal'];
-		}
-		if (isset($_POST['loan_amt_cal'])) {
-			$loan_amt_cal = $_POST['loan_amt_cal'];
-		}
-		if (isset($_POST['net_cash_cal'])) {
-			$net_cash_cal = $_POST['net_cash_cal'];
-		}
-		if (isset($_POST['issue_to'])) {
-			$issue_to =  $_POST['issue_to'];
-		}
-		if (isset($_POST['agent_id'])) {
-			$agent_id = $_POST['agent_id'];
-		}
-		if (isset($_POST['issued_mode'])) {
-			$issued_mode = $_POST['issued_mode'];
-		}
-		if (isset($_POST['payment_type'])) {
-			$payment_type = $_POST['payment_type'];
-		}
-		if (isset($_POST['cash'])) {
-			$cash = $_POST['cash'];
-		}
-		if (isset($_POST['bank_id'])) {
-			$bank_id = $_POST['bank_id'];
-		}
-		if (isset($_POST['chequeno'])) {
-			$chequeno = $_POST['chequeno'];
-		}
-		if (isset($_POST['chequeValue'])) {
-			$chequeValue = $_POST['chequeValue'];
-		}
-		if (isset($_POST['chequeRemark'])) {
-			$chequeRemark = $_POST['chequeRemark'];
-		}
-		if (isset($_POST['transaction_id'])) {
-			$transaction_id = $_POST['transaction_id'];
-		}
-		if (isset($_POST['transaction_value'])) {
-			$transaction_value = $_POST['transaction_value'];
-		}
-		if (isset($_POST['transaction_remark'])) {
-			$transaction_remark = $_POST['transaction_remark'];
-		}
-		if (isset($_POST['balance'])) {
-			$balance = $_POST['balance'];
-		}
-		if (isset($_POST['cash_guarentor_name'])) {
-			$cash_guarentor_name = $_POST['cash_guarentor_name'];
-		}
-		if (isset($_POST['relationship'])) {
-			$relationship = $_POST['relationship'];
-		}
-		if (isset($_POST['due_start_from'])) {
-			$due_start_from = $_POST['due_start_from'];
-		}
-		if (isset($_POST['maturity_month'])) {
-			$maturity_month = $_POST['maturity_month'];
-		}
+		$loan_id = ""; //if bank transaction means loan id generate here itself and amount transfer by accounts user.
 
-		if ($payment_type == 0) {
-			$insertQry = "INSERT INTO `loan_issue`( `req_id`, `cus_id`, `issued_to`, `agent_id`, `issued_mode`, `payment_type`, `cash`,`bank_id`, `cheque_no`, `cheque_value`, `cheque_remark`, `transaction_id`, `transaction_value`, `transaction_remark`, `balance_amount`,`loan_amt`, `net_cash`,`cash_guarentor_name`,`relationship`, `status`, `insert_login_id`,`created_date`)  VALUES('" . strip_tags($req_id) . "','" . strip_tags($cus_id) . "','" . strip_tags($issue_to) . "','" . strip_tags($agent_id) . "','" . strip_tags($issued_mode) . "', '" . strip_tags($payment_type) . "', '" . strip_tags($cash) . "','" . strip_tags($bank_id) . "', '" . strip_tags($chequeno) . "','" . strip_tags($chequeValue) . "','" . strip_tags($chequeRemark) . "','" . strip_tags($transaction_id) . "','" . strip_tags($transaction_value) . "', '" . strip_tags($transaction_remark) . "', '" . strip_tags($balance) . "', '" . strip_tags($loan_amt_cal) . "','" . strip_tags($net_cash_cal) . "','" . strip_tags($cash_guarentor_name) . "','" . strip_tags($relationship) . "','0','" . $userid . "',now() )";
+		try {
+			// Disable autocommit to start a transaction
+			$mysqli->autocommit(FALSE);
 
-			$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
-		}else{
+			if ($payment_type == 0) {
+				$insertQry = "INSERT INTO `loan_issue`( `req_id`, `cus_id`, `issued_to`, `agent_id`, `issued_mode`, `payment_type`, `cash`,`bank_id`, `cheque_no`, `cheque_value`, `cheque_remark`, `transaction_id`, `transaction_value`, `transaction_remark`, `balance_amount`,`loan_amt`, `net_cash`,`cash_guarentor_name`,`relationship`, `status`, `insert_login_id`,`created_date`)  VALUES('$req_id', '$cus_id', '$issue_to', '$agent_id', '$issued_mode',  '$payment_type',  '$cash', '$bank_id',  '$chequeno', '$chequeValue', '$chequeRemark', '$transaction_id', '$transaction_value',  '$transaction_remark',  '$balance',  '$loan_amt_cal', '$net_cash_cal', '$cash_guarentor_name', '$relationship', '0', '$userid', now() )";
+
+				if (!$mysqli->query($insertQry)) {
+                	throw new Exception("Insert loan_issue failed: " . $mysqli->error);
+				}
+			}else{
+			
+				$updateQry = "UPDATE in_verification SET issue_by  = 2, issue_mode = '$issued_mode', payment_type = '$payment_type', bank_id = '$bank_id', update_login_id = $userid, updated_date = current_timestamp() WHERE req_id = $req_id ";
+
+				if (!$mysqli->query($updateQry)) {
+					throw new Exception("Update in_verification failed: " . $mysqli->error);
+				}
+
+				$issueresult = $mysqli->query("SELECT loan_id FROM in_issue WHERE req_id = '$req_id' AND loan_id != '' ");
+
+				if ($issueresult && $issueresult->num_rows == 0) {
+
+					// Get the latest loan ID
+					$selectIC = $mysqli->query("SELECT MAX(CAST(loan_id AS UNSIGNED)) AS loan_id FROM in_issue WHERE loan_id IS NOT NULL AND loan_id != '' FOR UPDATE");
+					$row = $selectIC->fetch_assoc();
+					$loan_id = $row["loan_id"] ? $row["loan_id"] + 1 : 101;
+
+					if (!$mysqli->query("UPDATE in_issue SET loan_id = '$loan_id' WHERE req_id = '$req_id'")) {
+						throw new Exception("Loan ID update failed: " . $mysqli->error);
+					}
+
+				} elseif ($issueresult && $issueresult->num_rows > 0) {
+					$loan_row = $issueresult->fetch_assoc();
+					$loan_id = $loan_row['loan_id'];
+				}
+			}
+
+			$updateCalc = "UPDATE acknowlegement_loan_calculation SET int_rate = '$int_rate', due_period = '$due_period', doc_charge = '$doc_charge', proc_fee = '$proc_fee', loan_amt_cal = '$loan_amt_cal', principal_amt_cal = '$principal_amt_cal', int_amt_cal = '$int_amt_cal', tot_amt_cal = '$tot_amt_cal', due_amt_cal = '$due_amt_cal', doc_charge_cal = '$doc_charge_cal', proc_fee_cal = '$proc_fee_cal', net_cash_cal = '$net_cash_cal', due_start_from = '$due_start_from', maturity_month = '$maturity_month', cus_status = 12, update_login_id = $userid, update_date = current_timestamp() WHERE req_id = $req_id ";
+			
+			if (!$mysqli->query($updateCalc)) {
+            	throw new Exception("Calculation update failed: " . $mysqli->error);
+        	}
+
+			// $qry = $mysqli->query("SELECT customer_name, mobile1 from customer_register where req_ref_id = '$req_id' ");
+			// $row = $qry->fetch_assoc();
+			// $customer_name = $row['customer_name'];
+			// $cus_mobile1 = $row['mobile1'];
+
+			// $message = "";
+			// $templateid	= ''; //FROM DLT PORTAL.
+			// // Account details
+			// $apiKey = '';
+			// // Message details
+			// $sender = '';
+			// // Prepare data for POST request
+			// $data = 'access_token='.$apiKey.'&to='.$cus_mobile1.'&message='.$message.'&service=T&sender='.$sender.'&template_id='.$templateid;
+			// // Send the GET request with cURL
+			// $url = 'https://sms.messagewall.in/api/v2/sms/send?'.$data; 
+			// $response = file_get_contents($url);  
+			// // Process your response here
+			// return $response; 
+
+
+			// Commit the transaction
+			$mysqli->commit();
+
+			// Enable autocommit again
+			$mysqli->autocommit(TRUE);
+			
+		} catch (Exception $e) {
+			// Rollback the transaction in case of error
+			$mysqli->rollback();
+			$mysqli->autocommit(TRUE);
+			echo "Error: " . $e->getMessage();
+		}
 		
-			$updateQry = $mysqli->query("UPDATE in_verification SET  
-						issue_by  = 2, issue_mode = '" . strip_tags($issued_mode) . "', payment_type = '" . strip_tags($payment_type) . "', bank_id = '" . strip_tags($bank_id) . "', update_login_id = $userid, 
-							updated_date = current_timestamp() WHERE req_id = $req_id ");
-		}
-
-		$updateQry = $mysqli->query("UPDATE acknowlegement_loan_calculation SET  
-		int_rate = '" . strip_tags($int_rate) . "', due_period = '" . strip_tags($due_period) . "', doc_charge = '" . strip_tags($doc_charge) . "', proc_fee = '" . strip_tags($proc_fee) . "', 
-		loan_amt_cal = '" . strip_tags($loan_amt_cal) . "', principal_amt_cal = '" . strip_tags($principal_amt_cal) . "', int_amt_cal = '" . strip_tags($int_amt_cal) . "', 
-		tot_amt_cal = '" . strip_tags($tot_amt_cal) . "', due_amt_cal = '" . strip_tags($due_amt_cal) . "', doc_charge_cal = '" . strip_tags($doc_charge_cal) . "', 
-		proc_fee_cal = '" . strip_tags($proc_fee_cal) . "', net_cash_cal = '" . strip_tags($net_cash_cal) . "', due_start_from = '" . strip_tags($due_start_from) . "', 
-		maturity_month = '" . strip_tags($maturity_month) . "', cus_status = 12, update_login_id = $userid, 
-		update_date = current_timestamp() WHERE req_id = $req_id ");
-		// $qry = $mysqli->query("SELECT customer_name, mobile1 from customer_register where req_ref_id = '$req_id' ");
-		// $row = $qry->fetch_assoc();
-		// $customer_name = $row['customer_name'];
-		// $cus_mobile1 = $row['mobile1'];
-
-		// $message = "";
-		// $templateid	= ''; //FROM DLT PORTAL.
-		// // Account details
-		// $apiKey = '';
-		// // Message details
-		// $sender = '';
-		// // Prepare data for POST request
-		// $data = 'access_token='.$apiKey.'&to='.$cus_mobile1.'&message='.$message.'&service=T&sender='.$sender.'&template_id='.$templateid;
-		// // Send the GET request with cURL
-		// $url = 'https://sms.messagewall.in/api/v2/sms/send?'.$data; 
-		// $response = file_get_contents($url);  
-		// // Process your response here
-		// return $response; 
-
+		return $loan_id;
 	}
 
 	function getLoanList($mysqli, $id)
