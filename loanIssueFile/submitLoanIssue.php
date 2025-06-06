@@ -89,25 +89,13 @@ if (isset($_POST['balance']) && $_POST['balance'] == '0') {
         // Begin transaction
         $connect->beginTransaction();
 
-        // Get the latest loan ID
-        $selectIC = $connect->query("SELECT MAX(CAST(loan_id AS UNSIGNED)) AS loan_id FROM in_issue WHERE loan_id IS NOT NULL AND loan_id != '' FOR UPDATE");
-
-        if ($selectIC->rowCount() > 0) {
-            $row = $selectIC->fetch();
-            $ac2 = $row["loan_id"];
-            $appno2 = $ac2 + 1; // Increment the loan ID
-            $loan_id = $appno2;
-        } else {
-            $loan_id = "101"; // Start with 101 if no previous loan ID exists
-        }
-
         // Update various tables for the completed loan issue
         $connect->query("UPDATE request_creation SET cus_status = 14, updated_date = NOW(), update_login_id = $userid WHERE req_id = '$req_id'") or die('Error on Request Table');
         $connect->query("UPDATE customer_register SET cus_status = 14 WHERE req_ref_id = '$req_id'") or die('Error on Customer Table');
         $connect->query("UPDATE in_verification SET cus_status = 14, update_login_id = $userid WHERE req_id = '$req_id'") or die('Error on inVerification Table');
         $connect->query("UPDATE in_approval SET cus_status = 14, update_login_id = $userid WHERE req_id = '$req_id'") or die('Error on in_approval Table');
         $connect->query("UPDATE in_acknowledgement SET cus_status = 14, update_login_id = $userid, updated_date = CURRENT_DATE WHERE req_id = '$req_id'") or die('Error on in_acknowledgement Table');
-        $connect->query("UPDATE in_issue SET loan_id = '$loan_id', cus_status = 14, updated_date = NOW(), update_login_id = $userid WHERE req_id = '$req_id'") or die('Error on in_issue Table');
+        $connect->query("UPDATE in_issue SET cus_status = 14, updated_date = NOW(), update_login_id = $userid WHERE req_id = '$req_id'") or die('Error on in_issue Table');
 
         $qry = $connect->query("SELECT cus_id_loan, loan_amt_cal, net_cash_cal, tot_amt_cal, due_amt_cal, due_start_from from acknowlegement_loan_calculation where req_id = $req_id ");
         $row = $qry->fetch();
@@ -115,6 +103,7 @@ if (isset($_POST['balance']) && $_POST['balance'] == '0') {
         $due_amt_cal = $row['due_amt_cal'];
         $cus_id = $row['cus_id_loan'];
         $dueStartDate = $row['due_start_from'];
+
         // Calculate the payable amount
         if (strtotime($dueStartDate) > strtotime($current_date)) {
             $cus_payable = '0';
@@ -130,12 +119,13 @@ if (isset($_POST['balance']) && $_POST['balance'] == '0') {
     } catch (Exception $e) {
         // Rollback the transaction in case of error
         $connect->rollBack();
-        $loan_id = "";
         $response = "Error: " . $e->getMessage();
         exit;
     }
 }
+
 $response = 'Loan Issue Completed';
+
 // Return the response
 echo json_encode(["response" => $response]);
 
