@@ -37,9 +37,13 @@ if ($op_date == date('Y-m-d')) { // check whether opening date is current date
         $old_hand += intVal($records[0]['hand_opening']);
         $old_agent += intVal($records[0]['agent_opening']);
 
+        //If Multiple bank means need to extra loop for bank because other values are 0 index, so we need to loop it for proper returns;
         foreach ($records as $key => $value) {
-            $old_bank[] = $value['bank_opening'];
+            $old_bank_value = isset($old_bank[$key]) ? $old_bank[$key] : 0;
+            $old_bank[$key] = $value['bank_opening'] + $old_bank_value;
         }
+        
+        //the untrack amount store like 100,0 in cash tally. it based on bank mapped so need to added particular bank and return the set.
         // $old_bank_unt += intVal($records[0]['bank_untrkd']);
          $old_bank_unt = addBankUntrkd(implode(',', $old_bank_unt), $records[0]['bank_untrkd']);
 
@@ -52,6 +56,7 @@ if ($op_date == date('Y-m-d')) { // check whether opening date is current date
     $records[0]['opening_balance'] = $opening_balance;
     $records[0]['hand_opening'] = intVal($records[0]['hand_opening']) + intVal($old_hand);
     $records[0]['agent_opening'] = intVal($records[0]['agent_opening']) + intVal($old_agent);
+
     foreach ($records as $key => $value) {
         $old_bank_value = isset($old_bank[$key]) ? $old_bank[$key] : 0;
         $records[$key]['bank_opening'] = $value['bank_opening'] + $old_bank_value;

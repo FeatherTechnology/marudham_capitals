@@ -5,7 +5,15 @@ if (isset($_GET['upd'])) {
 
 if (isset($_POST['submit_loanIssue']) && $_POST['submit_loanIssue'] != '') {
 
-	$userObj->addloanIssue($mysqli, $userid);
+	$response = $userObj->addloanIssue($mysqli, $userid);
+
+	if($response !=''){
+?>
+	<script>
+		alert(`The Loan ID is: <?php echo $response; ?> `);
+	</script>
+<?php
+	}
 ?>
 	<!-- <script> alert('Loan Issued Details Submitted'); </script> -->
 	<script>
