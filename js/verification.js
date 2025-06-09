@@ -745,6 +745,7 @@ $(document).ready(function () {
 
     if (process == "0") {
       $("#Mortgageprocess").show();
+
     } else {
       $("#Mortgageprocess").hide();
 
@@ -757,6 +758,10 @@ $(document).ready(function () {
       $("#doc_property_location").val("");
       $("#doc_property_value").val("");
     }
+
+    let mort = process == "0" ? true : false;
+    storeDocInfo.mortgageInfo = mort;
+
   });
 
   $("#Propertyholder_type").change(function () {
@@ -829,6 +834,7 @@ $(document).ready(function () {
 
     if (process == "0") {
       $("#endorsementprocess").show();
+
     } else {
       $("#endorsementprocess").hide();
 
@@ -845,6 +851,10 @@ $(document).ready(function () {
       // $('#en_RC').val('');
       // $('#en_Key').val('');
     }
+
+    let endorse = process == "0" ? true : false;
+    storeDocInfo.endorseInfo = endorse;
+
   });
 
   $("#owner_type").change(function () {
@@ -984,11 +994,6 @@ $(document).ready(function () {
     $("#Propertyholder_name").hide();
     $("#Propertyholder_relationship_name").show();
     mortgageHolderName();
-    let mortgageHolder = $("#mortgage_relation_name").val();
-
-    setTimeout(() => {
-      $("#Propertyholder_relationship_name").val(mortgageHolder);
-    }, 500);
   }
 
   let ot = $("#owner_type").val();
@@ -996,11 +1001,6 @@ $(document).ready(function () {
     $("#owner_name").hide();
     $("#ownername_relationship_name").show();
     endorseHolderName();
-    let Endorsename = $("#en_relation_name").val();
-
-    setTimeout(() => {
-      $("#ownername_relationship_name").val(Endorsename);
-    }, 500);
   }
 
   let docHolder = $("#document_holder").val();
@@ -3804,18 +3804,24 @@ function endorseHolderName() {
     dataType: "json",
     success: function (response) {
       var len = response.length;
+      let Endorsename = $("#en_relation_name").val();
+      
       $("#ownername_relationship_name").empty();
-      $("#ownername_relationship_name").append(
-        "<option value=''>" + "Select Holder Name" + "</option>"
-      );
+      $("#ownername_relationship_name").append("<option value=''>Select Holder Name</option>");
+
       for (var i = 0; i < len - 1; i++) {
         // -1 because this ajax's response will contain customer value at the last of the response for verification person
         var fam_name = response[i]["fam_name"];
         var fam_id = response[i]["fam_id"];
-        $("#ownername_relationship_name").append(
-          "<option value='" + fam_id + "'>" + fam_name + "</option>"
-        );
+        let selected ='';
+
+        if(fam_id == Endorsename){
+          selected ='selected';
+        }
+
+        $("#ownername_relationship_name").append(`<option value='${fam_id}' ${selected}>${fam_name}</option>`);
       }
+
       {
         //To Order ag_group Alphabetically
         var firstOption = $("#ownername_relationship_name option:first-child");
@@ -3842,18 +3848,23 @@ function mortgageHolderName() {
     dataType: "json",
     success: function (response) {
       var len = response.length;
+      let mortgageHolder = $("#mortgage_relation_name").val();
+
       $("#Propertyholder_relationship_name").empty();
-      $("#Propertyholder_relationship_name").append(
-        "<option value=''>" + "Select Holder Name" + "</option>"
-      );
+      $("#Propertyholder_relationship_name").append("<option value=''>Select Holder Name</option>");
+      
       for (var i = 0; i < len - 1; i++) {
         // -1 because this ajax's response will contain customer value at the last of the response for verification person
         var fam_name = response[i]["fam_name"];
         var fam_id = response[i]["fam_id"];
-        $("#Propertyholder_relationship_name").append(
-          "<option value='" + fam_id + "'>" + fam_name + "</option>"
-        );
+        let selected ='';
+        if(fam_id == mortgageHolder){
+          selected ='selected';
+        }
+
+        $("#Propertyholder_relationship_name").append(`<option value='${fam_id}' ${selected}>${fam_name}</option>`);
       }
+
       {
         //To Order ag_group Alphabetically
         var firstOption = $(
@@ -4908,7 +4919,10 @@ async function getDocumentFunc() {
   let mort = $("#mortgage_process").val() == "0" ? true : false;
   if (mort) {
     $("#mortgage_info_card").show();
+
   } else {
+    $("#mortgage_process").val('1'); //Because Doc design changed as select dropdown which doc wanna add remainings are in hidden. but mortgage & endorsement are need to select YES/NO so default set as NO.
+
     $("#mortgage_info_card").hide();
   }
   storeDocInfo.mortgageInfo = mort;
@@ -4916,7 +4930,10 @@ async function getDocumentFunc() {
   let endorse = $("#endorsement_process").val() == "0" ? true : false;
   if (endorse) {
     $("#endorsement_info_card").show();
+    
   } else {
+    $("#endorsement_process").val('1'); //Because Doc design changed as select dropdown which doc wanna add remainings are in hidden. but mortgage & endorsement are need to select YES/NO so default set as NO.
+
     $("#endorsement_info_card").hide();
   }
   storeDocInfo.endorseInfo = endorse;

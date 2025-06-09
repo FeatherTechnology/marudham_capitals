@@ -680,11 +680,6 @@ $(document).ready(function () {
         $('#Propertyholder_name').hide();
         $('#Propertyholder_relationship_name').show();
         mortgageHolderName();
-        let mortgageHolder = $('#mortgage_relation_name').val();
-
-        setTimeout(() => {
-            $('#Propertyholder_relationship_name').val(mortgageHolder);
-        }, 500);
     }
 
     let ot = $('#owner_type').val();
@@ -692,11 +687,6 @@ $(document).ready(function () {
         $('#owner_name').hide();
         $('#ownername_relationship_name').show();
         endorseHolderName();
-        let Endorsename = $('#en_relation_name').val();
-
-        setTimeout(() => {
-            $('#ownername_relationship_name').val(Endorsename);
-        }, 500);
     }
 
     let docHolder = $('#document_holder').val();
@@ -1564,13 +1554,24 @@ function endorseHolderName() {
         success: function (response) {
 
             var len = response.length;
+            let Endorsename = $("#en_relation_name").val();
+
             $("#ownername_relationship_name").empty();
-            $("#ownername_relationship_name").append("<option value=''>" + 'Select Holder Name' + "</option>");
+            $("#ownername_relationship_name").append("<option value=''>Select Holder Name</option>");
+
             for (var i = 0; i < len - 1; i++) {
+                // -1 because this ajax's response will contain customer value at the last of the response for verification person
                 var fam_name = response[i]['fam_name'];
                 var fam_id = response[i]['fam_id'];
-                $("#ownername_relationship_name").append("<option value='" + fam_id + "'>" + fam_name + "</option>");
+                let selected ='';
+
+                if(fam_id == Endorsename){
+                selected ='selected';
+                }
+
+                $("#ownername_relationship_name").append(`<option value='${fam_id}' ${selected}>${fam_name}</option>`);
             }
+
             {//To Order ag_group Alphabetically
                 var firstOption = $("#ownername_relationship_name option:first-child");
                 $("#ownername_relationship_name").html($("#ownername_relationship_name option:not(:first-child)").sort(function (a, b) {
@@ -1594,13 +1595,24 @@ function mortgageHolderName() {
         success: function (response) {
 
             var len = response.length;
+            let mortgageHolder = $("#mortgage_relation_name").val();
+
             $("#Propertyholder_relationship_name").empty();
-            $("#Propertyholder_relationship_name").append("<option value=''>" + 'Select Holder Name' + "</option>");
+            $("#Propertyholder_relationship_name").append("<option value=''>Select Holder Name</option>");
+
             for (var i = 0; i < len - 1; i++) {
+                // -1 because this ajax's response will contain customer value at the last of the response for verification person
+
                 var fam_name = response[i]['fam_name'];
                 var fam_id = response[i]['fam_id'];
-                $("#Propertyholder_relationship_name").append("<option value='" + fam_id + "'>" + fam_name + "</option>");
+                let selected ='';
+                if(fam_id == mortgageHolder){
+                selected ='selected';
+                }
+
+                $("#Propertyholder_relationship_name").append(`<option value='${fam_id}' ${selected}>${fam_name}</option>`);
             }
+
             {//To Order ag_group Alphabetically
                 var firstOption = $("#Propertyholder_relationship_name option:first-child");
                 $("#Propertyholder_relationship_name").html($("#Propertyholder_relationship_name option:not(:first-child)").sort(function (a, b) {

@@ -33,7 +33,7 @@ $records = $CBObj->getClosingBalance($closing_date, $bank_detail, $user_id);
 $closing_balance += $records[0]['closing_balance']; 
 
 // if the last data occurance is empty then loop until we get the data. so the closing values 
-if ($op_date != date('Y-m-d')) { 
+// if ($op_date != date('Y-m-d')) { 
     while ($records[0]['hand_closing'] == 0 || $records[0]['agent_closing'] == 0 || count(array_filter(array_column($records, 'bank_closing'))) == 0) { 
         $old_hand += $records[0]['hand_closing']; 
         $old_agent += $records[0]['agent_closing']; 
@@ -49,7 +49,7 @@ if ($op_date != date('Y-m-d')) {
             break; 
         } 
     } 
-} 
+// } 
 
 // now reassign latest closing date to returing variable. 
 $records[0]['closing_balance'] = $records[0]['closing_balance'] + $closing_balance; 
