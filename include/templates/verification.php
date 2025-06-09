@@ -1565,7 +1565,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 										<select type="text" class="form-control" id="mortgage_process" name="mortgage_process" tabindex="11">
 											<option value=""> Select Mortgage Process </option>
 											<option value="0" <?php if (isset($mortgage_process) and $mortgage_process == '0') echo 'selected'; ?>> YES </option>
-											<option value="1" <?php if (isset($mortgage_process) and $mortgage_process == '1') echo 'selected'; ?> selected> NO </option>
+											<option value="1" <?php if (isset($mortgage_process) and $mortgage_process == '1') echo 'selected'; ?>> NO </option>
 										</select>
 										<span class="text-danger" id="mortgageprocessCheck"> Select Mortgage Process </span>
 									</div>
@@ -1659,7 +1659,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 										<select type="text" class="form-control" id="endorsement_process" name="endorsement_process" tabindex="20">
 											<option value=""> Select Endorsement Process </option>
 											<option value="0" <?php if (isset($endorsement_process) and $endorsement_process == '0') echo 'selected'; ?>> YES </option>
-											<option value="1" <?php if (isset($endorsement_process) and $endorsement_process == '1') echo 'selected'; ?> selected> NO </option>
+											<option value="1" <?php if (isset($endorsement_process) and $endorsement_process == '1') echo 'selected'; ?>> NO </option>
 										</select>
 										<span class="text-danger" id="endorsementprocessCheck"> Select Endorsement Process </span>
 									</div>
