@@ -2117,17 +2117,24 @@ if (sizeof($documentationInfo) > 0) {
 							</div>
 						</div>
 
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" style="display: none;" id="cus_name_div">
+							<div class="form-group">
+								<label for="signType_cus_name"> customer Name </label>
+								<input type="text" class="form-control" id="signType_cus_name" name="signType_cus_name" readonly tabindex='3'>
+							</div>
+						</div>
+					
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" style="display: none;" id="guar_name_div">
 							<div class="form-group">
 								<label for="guar_name"> Guarentor Name </label>
-								<input type="text" class="form-control" id="guar_name" name="guar_name" readonly tabindex='3'>
+								<input type="text" class="form-control" id="guar_name" name="guar_name" readonly tabindex='4'>
 							</div>
 						</div>
 
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" style="display: none;" id="relation_doc">
 							<div class="form-group">
 								<label for="signRelationship"> Relationship </label>
-								<select type="text" class="form-control" id="signType_relationship" name="signType_relationship" tabindex='4'>
+								<select type="text" class="form-control" id="signType_relationship" name="signType_relationship" tabindex='5'>
 									<option value=""> Select Relationship </option>
 								</select>
 							</div>
@@ -2136,7 +2143,7 @@ if (sizeof($documentationInfo) > 0) {
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="Count"> Count </label> <span class="required">&nbsp;*</span>
-								<input type="number" class="form-control" id="doc_Count" name="doc_Count" placeholder="Enter Count" tabindex='5'>
+								<input type="number" class="form-control" id="doc_Count" name="doc_Count" placeholder="Enter Count" tabindex='6'>
 								<span class="text-danger" id="docCountCheck" style='display:none'> Enter Count </span>
 							</div>
 						</div>
@@ -2144,14 +2151,14 @@ if (sizeof($documentationInfo) > 0) {
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="upd"> Uploads </label> <span class="required">&nbsp;*</span>
-								<input type="file" onchange="compressImage(this,400)" class="form-control" id="signdoc_upd" name="signdoc_upd[]" multiple onchange="filesCount()" tabindex='6'>
+								<input type="file" onchange="compressImage(this,400)" class="form-control" id="signdoc_upd" name="signdoc_upd[]" multiple onchange="filesCount()" tabindex='7'>
 								<span class="text-danger" id="docupdCheck" style="display: none;"> Upload Document </span>
 							</div>
 						</div>
 
 						<div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12">
 							<input type="hidden" name="signedID" id="signedID">
-							<button type="button" name="signInfoBtn" id="signInfoBtn" class="btn btn-primary" style="margin-top: 19px;"  tabindex='7'>Submit</button>
+							<button type="button" name="signInfoBtn" id="signInfoBtn" class="btn btn-primary" style="margin-top: 19px;"  tabindex='8'>Submit</button>
 						</div>
 
 					</div>
