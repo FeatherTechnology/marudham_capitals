@@ -5658,25 +5658,46 @@ class admin
 			if ($payment_type == 0) {
 				$insertQry = "INSERT INTO `loan_issue`( `req_id`, `cus_id`, `issued_to`, `agent_id`, `issued_mode`, `payment_type`, `cash`,`bank_id`, `cheque_no`, `cheque_value`, `cheque_remark`, `transaction_id`, `transaction_value`, `transaction_remark`, `balance_amount`,`loan_amt`, `net_cash`,`cash_guarentor_name`,`relationship`, `status`, `insert_login_id`,`created_date`)  VALUES('$req_id', '$cus_id', '$issue_to', '$agent_id', '$issued_mode',  '$payment_type',  '$cash', '$bank_id',  '$chequeno', '$chequeValue', '$chequeRemark', '$transaction_id', '$transaction_value',  '$transaction_remark',  '$balance',  '$loan_amt_cal', '$net_cash_cal', '$cash_guarentor_name', '$relationship', '0', '$userid', now() )";
 
-			$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
-		}else{
-		
-			$updateQry = $mysqli->query("UPDATE in_verification SET  
-						issue_by  = 2, issue_mode = '" . strip_tags($issued_mode) . "', payment_type = '" . strip_tags($payment_type) . "', bank_id = '" . strip_tags($bank_id) . "', update_login_id = $userid, 
-							updated_date = current_timestamp() WHERE req_id = $req_id ");
-		}
+				if (!$mysqli->query($insertQry)) {
+                	throw new Exception("Insert loan_issue failed: " . $mysqli->error);
+				}
+			}else{
+			
+				$updateQry = "UPDATE in_verification SET issue_by  = 2, issue_mode = '$issued_mode', payment_type = '$payment_type', bank_id = '$bank_id', update_login_id = $userid, updated_date = current_timestamp() WHERE req_id = $req_id ";
 
-		$updateQry = $mysqli->query("UPDATE acknowlegement_loan_calculation SET  
-		int_rate = '" . strip_tags($int_rate) . "', due_period = '" . strip_tags($due_period) . "', doc_charge = '" . strip_tags($doc_charge) . "', proc_fee = '" . strip_tags($proc_fee) . "', 
-		loan_amt_cal = '" . strip_tags($loan_amt_cal) . "', principal_amt_cal = '" . strip_tags($principal_amt_cal) . "', int_amt_cal = '" . strip_tags($int_amt_cal) . "', 
-		tot_amt_cal = '" . strip_tags($tot_amt_cal) . "', due_amt_cal = '" . strip_tags($due_amt_cal) . "', doc_charge_cal = '" . strip_tags($doc_charge_cal) . "', 
-		proc_fee_cal = '" . strip_tags($proc_fee_cal) . "', net_cash_cal = '" . strip_tags($net_cash_cal) . "', due_start_from = '" . strip_tags($due_start_from) . "', 
-		maturity_month = '" . strip_tags($maturity_month) . "', cus_status = 12, update_login_id = $userid, 
-		update_date = current_timestamp() WHERE req_id = $req_id ");
-		// $qry = $mysqli->query("SELECT customer_name, mobile1 from customer_register where req_ref_id = '$req_id' ");
-		// $row = $qry->fetch_assoc();
-		// $customer_name = $row['customer_name'];
-		// $cus_mobile1 = $row['mobile1'];
+				if (!$mysqli->query($updateQry)) {
+					throw new Exception("Update in_verification failed: " . $mysqli->error);
+				}
+
+				$issueresult = $mysqli->query("SELECT loan_id FROM in_issue WHERE req_id = '$req_id' AND loan_id != '' ");
+
+				if ($issueresult && $issueresult->num_rows == 0) {
+
+					// Get the latest loan ID
+					$selectIC = $mysqli->query("SELECT MAX(CAST(loan_id AS UNSIGNED)) AS loan_id FROM in_issue WHERE loan_id IS NOT NULL AND loan_id != '' FOR UPDATE");
+					$row = $selectIC->fetch_assoc();
+					$loan_id = $row["loan_id"] ? $row["loan_id"] + 1 : 101;
+
+					if (!$mysqli->query("UPDATE in_issue SET loan_id = '$loan_id' WHERE req_id = '$req_id'")) {
+						throw new Exception("Loan ID update failed: " . $mysqli->error);
+					}
+
+				} elseif ($issueresult && $issueresult->num_rows > 0) {
+					$loan_row = $issueresult->fetch_assoc();
+					$loan_id = $loan_row['loan_id'];
+				}
+			}
+
+			$updateCalc = "UPDATE acknowlegement_loan_calculation SET int_rate = '$int_rate', due_period = '$due_period', doc_charge = '$doc_charge', proc_fee = '$proc_fee', loan_amt_cal = '$loan_amt_cal', principal_amt_cal = '$principal_amt_cal', int_amt_cal = '$int_amt_cal', tot_amt_cal = '$tot_amt_cal', due_amt_cal = '$due_amt_cal', doc_charge_cal = '$doc_charge_cal', proc_fee_cal = '$proc_fee_cal', net_cash_cal = '$net_cash_cal', due_start_from = '$due_start_from', maturity_month = '$maturity_month', cus_status = 12, update_login_id = $userid, update_date = current_timestamp() WHERE req_id = $req_id ";
+			
+			if (!$mysqli->query($updateCalc)) {
+            	throw new Exception("Calculation update failed: " . $mysqli->error);
+        	}
+
+			// $qry = $mysqli->query("SELECT customer_name, mobile1 from customer_register where req_ref_id = '$req_id' ");
+			// $row = $qry->fetch_assoc();
+			// $customer_name = $row['customer_name'];
+			// $cus_mobile1 = $row['mobile1'];
 
 			// $message = "";
 			// $templateid	= ''; //FROM DLT PORTAL.
