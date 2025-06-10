@@ -67,7 +67,7 @@ else if ($current_page == 'edit_concern_creation' || $current_page == 'edit_conc
 	$current_module = 'followup';
 } else if (
 	$current_page == 'ledger_report' || $current_page == 'request_report' || $current_page == 'cancel_revoke_report' ||  $current_page == 'cus_profile_report' || $current_page == 'loan_issue_report'
-	|| $current_page == 'collection_report' ||$current_page == 'principal_interest_report' || $current_page == 'balance_report' || $current_page == 'due_list_report' || $current_page == 'in_closed_report' || $current_page == 'closed_report' || $current_page == 'confirmation_followup_report' || $current_page == 'agent_report'|| $current_page == 'no_due_pay_report'
+	|| $current_page == 'collection_report' ||$current_page == 'principal_interest_report' || $current_page == 'balance_report' || $current_page == 'due_list_report' || $current_page == 'in_closed_report' || $current_page == 'closed_report' || $current_page == 'confirmation_followup_report' || $current_page == 'agent_report'|| $current_page == 'no_due_pay_report' || $current_page == 'other_transaction_report'
 ) {
 
 	$current_module = 'report';
@@ -188,6 +188,7 @@ $closed_report = '';
 $confirmation_followup_report = '';
 $agent_report = '';
 $no_due_pay_report = '';
+$other_transaction_report = '';
 $search_module = '';
 $search = '';
 $bulk_upload_module = '';
@@ -280,6 +281,7 @@ if (sizeof($getUser) > 0) {
 		$confirmation_followup_report          		     = $getUser['confirmation_followup_report'];
 		$agent_report          		     = $getUser['agent_report'];
 		$no_due_pay_report          		     = $getUser['no_due_pay_report'];
+		$other_transaction_report          		     = $getUser['other_trans_report'];
 
 		$search_module          		     = $getUser['search_module'];
 		$search          		     = $getUser['search'];
@@ -890,6 +892,11 @@ if (sizeof($getUser) > 0) {
 										<a href="no_due_pay_report"><i class='icon-area-graph'></i>No Due Pay</a>
 									</li>
 								<?php  } ?>
+									<?php if ($other_transaction_report == 0) { ?>
+									<li>
+										<a href="other_transaction_report"><i class='icon-area-graph'></i>Other Transaction</a>
+									</li>
+								<?php  } ?>
 							</ul>
 						</div>
 					</li>
@@ -1055,6 +1062,7 @@ $closed_report = '';
 $confirmation_followup_report = '';
 $agent_report = '';
 $no_due_pay_report = '';
+$other_transaction_report = '';
 $search_module = '';
 $search = '';
 $bulk_upload_module = '';

@@ -475,6 +475,10 @@ if (isset($getuserdetails['download_access'])) {
 			<?php if ($current_page == 'no_due_pay_report') { ?>
 				<?php include "include/templates/no_due_pay_report.php" ?>
 			<?php } else ?>
+			<!-- Other Transaction Report -->
+			<?php if ($current_page == 'other_transaction_report') { ?>
+				<?php include "include/templates/other_transaction_report.php" ?>
+			<?php } else ?>
 
 			<!-- Due List -->
 			<?php if ($current_page == 'due_list_report') { ?>

@@ -1356,6 +1356,9 @@
     if ($current_page == 'no_due_pay_report') { ?>
         <script src="js/no_due_pay_report.js"></script>
     <?php }
+    if ($current_page == 'other_transaction_report') { ?>
+        <script src="js/other_transaction_report.js"></script>
+    <?php }
     if ($current_page == 'due_list_report') { ?>
         <script src="js/due_list_report.js"></script>
     <?php }
@@ -1938,7 +1941,7 @@
 
         let warningTimeout, logoutTimeout;
         let swalOpen = false;
-        const idleTime = 600000; // 10 minutes in milliseconds
+        const idleTime = 12000000; // 10 minutes in milliseconds
         const warningDuration = 10000; // 10 seconds warning before logout
         // Start the warning + logout timers
         function startTimers() {
