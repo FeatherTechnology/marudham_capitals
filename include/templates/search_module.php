@@ -153,7 +153,7 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<div class="container-fluid" id='customerStatusDiv'>
+				<div class="container-fluid" id='customerStatusDiv' style="overflow-x: scroll;">
 
 				</div>
 			</div>

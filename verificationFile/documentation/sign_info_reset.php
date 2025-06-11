@@ -17,7 +17,7 @@ include '../../ajaxconfig.php';
 
         <?php
         $req_id = $_POST['reqId'];
-        $signDocInfo = $connect->query("SELECT * FROM `signed_doc_info` where req_id = '$req_id' order by id desc");
+        $signDocInfo = $connect->query("SELECT * FROM `verification_signed_doc_info` where req_id = '$req_id' order by id desc");
 
         $i = 1;
         while ($signed = $signDocInfo->fetch()) {

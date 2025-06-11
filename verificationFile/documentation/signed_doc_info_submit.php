@@ -18,9 +18,9 @@ if ($sign_type == '1') {
 
 if ($signedID == '') {
 
-    $insert_qry = $connect->query("INSERT INTO `signed_doc_info`(`cus_id`,`doc_name`, `sign_type`, `signType_relationship`, `doc_Count`, `req_id`, `cus_profile_id`) VALUES ('$cus_id','$doc_name','$sign_type','$signType_relationship','$doc_Count','$req_id','$cus_profile_id')");
+    $insert_qry = $connect->query("INSERT INTO `verification_signed_doc_info`(`cus_id`,`doc_name`, `sign_type`, `signType_relationship`, `doc_Count`, `req_id`, `cus_profile_id`) VALUES ('$cus_id','$doc_name','$sign_type','$signType_relationship','$doc_Count','$req_id','$cus_profile_id')");
 } else {
-    $update = $connect->query("UPDATE `signed_doc_info` SET `cus_id`='$cus_id',`doc_name`='$doc_name',`sign_type`='$sign_type',`signType_relationship`='$signType_relationship',`doc_Count`='$doc_Count' WHERE `id`='$signedID' ");
+    $update = $connect->query("UPDATE `verification_signed_doc_info` SET `cus_id`='$cus_id',`doc_name`='$doc_name',`sign_type`='$sign_type',`signType_relationship`='$signType_relationship',`doc_Count`='$doc_Count' WHERE `id`='$signedID' ");
 }
 
 if ($insert_qry) {

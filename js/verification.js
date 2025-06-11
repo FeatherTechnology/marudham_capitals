@@ -515,12 +515,11 @@ $(document).ready(function () {
 
   $("body").on("click", "#signed_doc_edit", function () {
     let id = $(this).attr("value");
-    signTypeRelation();
 
     $.ajax({
       url: "verificationFile/documentation/signed_doc_edit.php",
       type: "POST",
-      data: { id: id },
+      data: { id: id, verification_doc: '1' },
       dataType: "json",
       cache: false,
       success: function (result) {
@@ -547,7 +546,8 @@ $(document).ready(function () {
 
         if (result["sign_type"] == "3" || result["sign_type"] == "2") {
           $("#relation_doc").show();
-          $("#signType_relationship").val(result["signType_relationship"]);
+          signTypeRelation(result["signType_relationship"]);
+          // $("#signType_relationship").val(result["signType_relationship"]);
         } else {
           $("#relation_doc").hide();
         }
@@ -4054,7 +4054,7 @@ function resetsignInfo() {
 }
 
 // Signed Doc
-function signTypeRelation() {
+function signTypeRelation(signedValue) {
   let cus_id = $("#cus_id").val();
   $.ajax({
     url: "verificationFile/verificationFam.php",
@@ -4064,24 +4064,22 @@ function signTypeRelation() {
     cache: false,
     success: function (response) {
       var len = response.length;
+      
       $("#signType_relationship").empty();
-      $("#signType_relationship").append(
-        "<option value=''>" + "Select Relationship" + "</option>"
-      );
+      $("#signType_relationship").append("<option value=''>Select Relationship</option>");
+
       for (var i = 0; i < len - 1; i++) {
         //-1 because last name will be customer name
         var fam_name = response[i]["fam_name"];
         var fam_id = response[i]["fam_id"];
         var relationship = response[i]["relationship"];
-        $("#signType_relationship").append(
-          "<option value='" +
-            fam_id +
-            "'>" +
-            fam_name +
-            " - " +
-            relationship +
-            "</option>"
-        );
+        let selected ='';
+
+        if(signedValue == fam_id){
+          selected ='selected';
+        }
+
+        $("#signType_relationship").append(`<option value='${fam_id}' ${selected}> ${fam_name} - ${relationship} </option>`);
       }
       {
         //To Order ag_group Alphabetically
