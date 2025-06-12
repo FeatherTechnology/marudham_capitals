@@ -1431,12 +1431,12 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 									</div>
 								</div>
 
-								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+								<!-- doc id is generate in acknowledgement documentation, so removing here.<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="doc_id">Document ID</label> <span class="required"> * </span>
 										<input type="text" class="form-control" id="doc_id" name="doc_id" readonly tabindex="8">
 									</div>
-								</div>
+								</div> -->
 							</div>
 						</div>
 					</div>

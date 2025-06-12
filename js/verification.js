@@ -653,12 +653,11 @@ $(document).ready(function () {
 
   $("body").on("click", "#cheque_info_edit", function () {
     let id = $(this).attr("value");
-    chequeHolderName(); // Holder Name From Family Table.
 
     $.ajax({
       url: "verificationFile/documentation/cheque_info_edit.php",
       type: "POST",
-      data: { id: id },
+      data: { id: id, verification_doc: '1' },
       dataType: "json",
       cache: false,
       success: function (result) {
@@ -672,10 +671,8 @@ $(document).ready(function () {
         } else {
           $("#holder_name").hide();
           $("#holder_relationship_name").show();
-
-          $("#holder_relationship_name").val(
-            result["holder_relationship_name"]
-          );
+          chequeHolderName(result["holder_relationship_name"]); // Holder Name From Family Table.
+          // $("#holder_relationship_name").val(result["holder_relationship_name"]);
         }
 
         $("#cheque_relation").val(result["cheque_relation"]);
@@ -724,7 +721,7 @@ $(document).ready(function () {
     $.ajax({
       url: "verificationFile/documentation/gold_info_edit.php",
       type: "POST",
-      data: { id: id },
+      data: { id: id, verification_doc: '1' },
       dataType: "json",
       cache: false,
       success: function (result) {
@@ -750,7 +747,7 @@ $(document).ready(function () {
       $.ajax({
         url: "verificationFile/documentation/gold_info_delete.php",
         type: "POST",
-        data: { chequeid: chequeid },
+        data: { chequeid: chequeid, verification_doc: '1' },
         cache: false,
         success: function (response) {
           var delresult = response.includes("Deleted");
@@ -1128,21 +1125,6 @@ $(function () {
 
   // resetkycInfo(); //KYC info Modal Table Reset.
   resetkycinfoList(); //KYC Info List.
-
-  //Documentation
-  // getstaffCode(); // Atuo Generate Doc ID.
-
-  // resetsignInfo(); // Signed Doc info Reset.
-  // resetsigninfoList(); // Signed Doc List Reset.
-
-  // resetchequeInfo(); // Cheque Info Reset.
-  // chequeinfoList(); // Cheque Info List.
-
-  // resetgoldInfo(); // Gold Info Reset.
-  // goldinfoList(); // Gold Info List.
-
-  // resetdocInfo(); // Document Info Reset.
-  // docinfoList(); // Document Info List.
 
   resetfeedback(); //Reset Feedback Modal Table.
   feedbackList(); // Feedback List.
@@ -3811,21 +3793,21 @@ $("#Communitcation_to_cus").change(function () {
 
 //////////////////////////////////////////////////// Documentation  Start////////////////////////////////////////
 
-//Get DOC id
-function getstaffCode() {
-  let doc_Id = $("#doc_table_id").val();
-  $.ajax({
-    url: "verificationFile/documentation/doc_id_autoGen.php",
-    type: "post",
-    dataType: "json",
-    data: { id: doc_Id },
-    cache: false,
-    success: function (response) {
-      var docId = response;
-      $("#doc_id").val(docId);
-    },
-  });
-}
+// //Get DOC id
+// function getstaffCode() {
+//   let doc_Id = $("#doc_table_id").val();
+//   $.ajax({
+//     url: "verificationFile/documentation/doc_id_autoGen.php",
+//     type: "post",
+//     dataType: "json",
+//     data: { id: doc_Id },
+//     cache: false,
+//     success: function (response) {
+//       var docId = response;
+//       $("#doc_id").val(docId);
+//     },
+//   });
+// }
 
 function endorseHolderName() {
   let cus_id = $("#cus_id").val();
@@ -4256,7 +4238,7 @@ function resetchequeInfo() {
 }
 
 //Cheque Holder Name
-function chequeHolderName() {
+function chequeHolderName(chequeValue) {
   let cus_id = $("#cus_id").val();
   $.ajax({
     url: "verificationFile/verificationFam.php",
@@ -4266,17 +4248,18 @@ function chequeHolderName() {
     success: function (response) {
       var len = response.length;
       $("#holder_relationship_name").empty();
-      $("#holder_relationship_name").append(
-        "<option value=''>" + "Select Holder Name" + "</option>"
-      );
+      $("#holder_relationship_name").append("<option value=''>Select Holder Name</option>");
+
       for (var i = 0; i < len - 1; i++) {
         //-1 because last one name will be customer name
         var fam_name = response[i]["fam_name"];
         var fam_id = response[i]["fam_id"];
-        $("#holder_relationship_name").append(
-          "<option value='" + fam_id + "'>" + fam_name + "</option>"
-        );
+
+        let selected = (fam_id == chequeValue) ? 'selected' : '';
+
+        $("#holder_relationship_name").append(`<option value='${fam_id}' ${selected}>${fam_name}</option>`);
       }
+
       {
         //To Order ag_group Alphabetically
         var firstOption = $("#holder_relationship_name option:first-child");
@@ -4289,6 +4272,7 @@ function chequeHolderName() {
         );
         $("#holder_relationship_name").prepend(firstOption);
       }
+
     },
   });
 }
@@ -4352,6 +4336,7 @@ $(document).on("click", "#goldInfoBtn", function () {
   formdata.append("goldupload", goldupload);
   formdata.append("gold_upload", gold_upload);
   formdata.append("goldID", goldID);
+  formdata.append("verification_doc", '1');
 
   if (
     gold_sts != "" &&
@@ -4440,7 +4425,7 @@ function resetgoldInfo() {
   $.ajax({
     url: "verificationFile/documentation/gold_info_reset.php",
     type: "POST",
-    data: { reqId: req_id, pages: 1 },
+    data: { reqId: req_id, pages: 1, verification_doc: '1' },
     cache: false,
     success: function (html) {
       $("#goldTable").empty();
@@ -4530,6 +4515,7 @@ $("#docInfoBtn").click(function () {
         holder_name: holder_name,
         relation_name: relation_name,
         relation: relation,
+        verification_doc: '1'
       },
       dataType: "json",
       type: "POST",
@@ -4570,7 +4556,7 @@ $("body").on("click", "#doc_info_edit", function () {
   $.ajax({
     url: "verificationFile/documentation/doc_info_edit.php",
     type: "POST",
-    data: { id: id },
+    data: { id: id, verification_doc: '1' },
     dataType: "json",
     cache: false,
     // beforeSend: function () {
@@ -4608,7 +4594,7 @@ $("body").on("click", "#doc_info_delete", function () {
     $.ajax({
       url: "verificationFile/documentation/doc_info_delete.php",
       type: "POST",
-      data: { id: id },
+      data: { id: id, verification_doc: '1' },
       cache: false,
       success: function (response) {
         var delresult = response.includes("Deleted");
@@ -4635,7 +4621,7 @@ function resetdocInfo() {
   $.ajax({
     url: "verificationFile/documentation/doc_info_reset.php",
     type: "POST",
-    data: { req_id: req_id, pages: 1 },
+    data: { req_id: req_id, pages: 1, verification_doc: '1' },
     cache: false,
     success: function (html) {
       $("#docModalDiv").empty();
@@ -4827,11 +4813,6 @@ function doc_submit_validation(submit_btn) {
   var vehicle_process = $("#vehicle_process").val();
   var en_Company = $("#en_Company").val();
   var en_Model = $("#en_Model").val();
-  var document_name = $("#document_name").val();
-  var document_details = $("#document_details").val();
-  var document_type = $("#document_type").val();
-  var document_holder = $("#document_holder").val();
-  var req_id = $("#req_id").val();
 
   var responsible = $("#doc_responsible").val();
   if (responsible == "" && $(".responsible").css("display") != "none") {
@@ -4937,7 +4918,7 @@ function doc_submit_validation(submit_btn) {
 }
 
 async function getDocumentFunc() {
-  getstaffCode(); // Atuo Generate Doc ID.
+  // getstaffCode(); // Atuo Generate Doc ID.
 
   // await resetsignInfo(); // Signed Doc info Reset.
   await resetsigninfoList(); // Signed Doc List Reset.
