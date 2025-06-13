@@ -1,5 +1,4 @@
 <?php
-//Also using in signed doc info
 include '../../ajaxconfig.php';
 
 $type = $_POST['type'];

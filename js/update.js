@@ -503,28 +503,9 @@ $(document).ready(function () {
         // Signed Type
         let type = $(this).val();
 
-        $("#cus_name_div").hide();
         $("#guar_name_div").hide();
         $("#relation_doc").hide();
         
-        if (type == "0") {
-            // if customer , then show Customer name
-            let req_id = $("#req_id").val();
-
-            $.ajax({
-                type: "POST",
-                url: "verificationFile/documentation/check_holder_name.php",
-                data: { type: 0, reqId: req_id },
-                dataType: "json",
-                cache: false,
-                success: function (result) {
-                    $("#cus_name_div").show();
-                    $("#signType_cus_name").val(result["name"]);
-                },
-            });
-
-        }
-
         if (type == "1") {
             // if guarentor , then show guarentor name
             getGuarentorName();
@@ -537,7 +518,7 @@ $(document).ready(function () {
             signTypeRelation();
 
         } else {
-            $("#signType_relationship").val('');
+            $("#signType_relationship").empty();
 
         }
         
@@ -2731,12 +2712,7 @@ function resetSignedDocList(req_id, cus_id) {
             $("#signDocResetDiv").html(html);
 
             $("#sign_type").val('');
-            $("#signType_cus_name").val('');
-            $("#cus_name_div").hide();
-            $("#guar_name").val("");
-            $("#guar_name_div").hide();
             $("#signType_relationship").val('');
-            $("#relation_doc").hide();
             $("#doc_Count").val('');
             $("#signedID").val('');
             $("#signdoc_upd").val('');
@@ -3579,11 +3555,6 @@ function resetsignInfo(req_id, cus_id) {
             $("#signTable").html(html);
 
             $("#sign_type").val('');
-            $("#cus_name_div").hide();
-            $("#signType_cus_name").val('');
-            $("#guar_name_div").hide();
-            $("#guar_name").val("");
-            $("#relation_doc").hide();
             $("#signType_relationship").val('');
             $("#doc_Count").val('');
             $("#signedID").val('');
@@ -3618,28 +3589,8 @@ function signInfoEditEvent() {
 
                 $("#signedID").val(result['id']);
                 $("#sign_type").val(result['sign_type']);
-                   
-                if (result["sign_type"] == "0") {
-                    //if Customer
-                    $("#cus_name_div").show();
-                    $("#signType_cus_name").val(result["signType_cus_name"]);
 
-                } else {
-                    $("#cus_name_div").hide();
-
-                }
-
-                if (result["sign_type"] == "1") {
-                    //if guarentor
-                    $("#guar_name_div").show();
-                    $("#guar_name").val(result["guar_name"]);
-
-                } else {
-                    $("#guar_name_div").hide();
-
-                }
-
-                if (result['sign_type'] == '3' || result["sign_type"] == "2") {
+                if (result['sign_type'] == '3') {
                     $('#relation_doc').show();
                     getFamilyList('signType_relationship',result['signType_relationship']);// to set family data to select box
                     // $("#signType_relationship").val(result['signType_relationship']);
