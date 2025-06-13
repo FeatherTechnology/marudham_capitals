@@ -498,19 +498,19 @@ function submitCashTally(i) {
                 if (confirm('Are You sure to close this Day?')) {
 
                     var op_date = $('#op_date').text();
-                    var opening_bal = $('#opening_balance').text().replace(/,/g, '');
-                    var hand_op = $('#hand_opening').text().replace(/,/g, '');
+                    var opening_bal = $('#opening_balance').text()
+                    var hand_op = $('#hand_opening').text()
                     var bank_op = '';
                     for (var j = 0; j < i; j++) {
-                        bank_op += $('#bank_opening' + j).text().replace(/,/g, '') + ',';
+                        bank_op += $('#bank_opening' + j).text() + ',';
                     }
                     bank_op = bank_op.slice(0, -1);
-                    var agent_op = $('#agent_opening').text().replace(/,/g, '');
-                    var closing_bal = $('#closing_balance').text().replace(/,/g, '');
-                    var hand_cl = $('#hand_closing').text().replace(/,/g, '');
+                    var agent_op = $('#agent_opening').text()
+                    var closing_bal = $('#closing_balance').text()
+                    var hand_cl = $('#hand_closing').text()
                     var bank_cl = '';
                     for (var j = 0; j < i; j++) {
-                        bank_cl += $('#bank_closing' + j).text().replace(/,/g, '') + ',';
+                        bank_cl += $('#bank_closing' + j).text() + ',';
                     }
                     bank_cl = bank_cl.slice(0, -1);
 
@@ -521,7 +521,7 @@ function submitCashTally(i) {
                     })
                     bank_untrkd = bank_untrkd.slice(0, -1);
 
-                    var agent_cl = $('#agent_closing').text().replace(/,/g, '');
+                    var agent_cl = $('#agent_closing').text()
                     var formtosend = { op_date: op_date, opening_bal: opening_bal, hand_op: hand_op, bank_op: bank_op, agent_op: agent_op, closing_bal: closing_bal, hand_cl: hand_cl, bank_cl, bank_untrkd: bank_untrkd, agent_cl: agent_cl };
                     $.ajax({
                         url: 'accountsFile/cashtally/submitCashTally.php',

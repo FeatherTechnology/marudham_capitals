@@ -11,6 +11,15 @@ $gold_Weight             = $_POST['gold_Weight'];
 $gold_Value             = $_POST['gold_Value'];
 $goldID             = $_POST['goldID'];
 
+//in verification doc insert is just information, acknowledgement is final and they add newly so verification & approval have seperate table. changes happen after deployment.
+if(isset($_POST['verification_doc']) && $_POST['verification_doc'] == '1'){
+    $tablename = 'verification_gold_info';
+    
+}else{
+    $tablename = 'gold_info';
+    
+}
+
 
 if (isset($_FILES['gold_upload'])) {
     $gold_upload = $_FILES['gold_upload']['name'];
@@ -31,9 +40,9 @@ if (isset($_FILES['gold_upload'])) {
 
 if ($goldID == '') {
 
-    $insert_qry = $connect->query("INSERT INTO `gold_info`(`cus_id`, `req_id`, `gold_sts`, `gold_type`, `Purity`, `gold_Count`, `gold_Weight`, `gold_Value`, `gold_upload`) VALUES ('$cus_id','$req_id','$gold_sts','$gold_type','$Purity','$gold_Count','$gold_Weight','$gold_Value', '$gold_upload')");
+    $insert_qry = $connect->query("INSERT INTO $tablename (`cus_id`, `req_id`, `gold_sts`, `gold_type`, `Purity`, `gold_Count`, `gold_Weight`, `gold_Value`, `gold_upload`) VALUES ('$cus_id','$req_id','$gold_sts','$gold_type','$Purity','$gold_Count','$gold_Weight','$gold_Value', '$gold_upload')");
 } else {
-    $update = $connect->query("UPDATE `gold_info` SET `cus_id`='$cus_id',`req_id`='$req_id',`gold_sts`='$gold_sts',`gold_type`='$gold_type',`Purity`='$Purity',`gold_Count`='$gold_Count',`gold_Weight`='$gold_Weight',`gold_Value`='$gold_Value', `gold_upload`='$gold_upload' WHERE `id`='$goldID' ");
+    $update = $connect->query("UPDATE $tablename SET `cus_id`='$cus_id',`req_id`='$req_id',`gold_sts`='$gold_sts',`gold_type`='$gold_type',`Purity`='$Purity',`gold_Count`='$gold_Count',`gold_Weight`='$gold_Weight',`gold_Value`='$gold_Value', `gold_upload`='$gold_upload' WHERE `id`='$goldID' ");
 }
 
 if ($insert_qry) {

@@ -69,32 +69,11 @@ $(document).ready(function () {
 
     $('#sign_type').change(function () { // Signed Type 
         let type = $(this).val();
-
-        $("#cus_name_div").hide();
         $('#guar_name_div').hide();
-        $('#relation_doc').hide();
-
-        if (type == "0") {
-            // if customer , then show Customer name
-            let req_id = $("#req_id").val();
-
-            $.ajax({
-                type: "POST",
-                url: "verificationFile/documentation/check_holder_name.php",
-                data: { type: 0, reqId: req_id },
-                dataType: "json",
-                cache: false,
-                success: function (result) {
-                $("#cus_name_div").show();
-                $("#signType_cus_name").val(result["name"]);
-                },
-            });
-        }
 
         if (type == '1') { // if guarentor , then show guarentor name
             getGuarentorName();
         }
-
         if (type == '3' || type == '2') {
             // if type is combined or family member then show family members
             //for combined, it will represents who is signed with customer in the same document.
@@ -102,10 +81,8 @@ $(document).ready(function () {
             signTypeRelation();
 
         } else {
-            $('#signType_relationship').val('');
-            
+            $('#relation_doc').hide();
         }
-
     })
 
     $("body").on("click", "#signed_doc_edit", function () {
@@ -122,16 +99,6 @@ $(document).ready(function () {
 
                 $("#signedID").val(result['id']);
                 $("#sign_type").val(result['sign_type']);
-
-                if (result["sign_type"] == "0") {
-                    //if Customer
-                    $("#cus_name_div").show();
-                    $("#signType_cus_name").val(result["signType_cus_name"]);
-
-                } else {
-                    $("#cus_name_div").hide();
-
-                }
 
                 if (result['sign_type'] == '1') {//if guarentor
                     $('#guar_name_div').show();
@@ -1703,8 +1670,6 @@ function resetsignInfo() {
             $("#signTable").html(html);
 
             $("#sign_type").val('');
-            $("#cus_name_div").hide();
-            $("#signType_cus_name").val('');
             $("#guar_name_div").hide();
             $("#guar_name").val('');
             $("#signType_relationship").val('');
@@ -1773,8 +1738,6 @@ function resetsigninfoList() {
             $("#signDocResetTable").html(html);
 
             $("#sign_type").val('');
-            $("#signType_cus_name").val('');
-            $("#cus_name_div").hide();
             $("#guar_name").val('');
             $("#guar_name_div").hide();
             $("#signType_relationship").val('');

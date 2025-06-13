@@ -22,7 +22,7 @@ if (isset($_POST['req_id'])) {
     <tbody>
 
         <?php
-        $qry = $connect->query("SELECT * FROM `document_info` where req_id = '$req_id' order by id desc");
+        $qry = $connect->query("SELECT * FROM `verification_document_info` where req_id = '$req_id' order by id desc");
 
         $i = 1;
         while ($row = $qry->fetch()) {
