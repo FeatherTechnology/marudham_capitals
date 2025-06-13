@@ -3,7 +3,7 @@ include '../../ajaxconfig.php';
 
 $id = $_POST['signid'];
 
-$delct = $connect->query("DELETE FROM `verification_signed_doc_info` WHERE id = '$id' ");
+$delct = $connect->query("DELETE FROM `signed_doc_info` WHERE id = '$id' ");
 
 if ($delct) {
 	$message = " signed Doc Info Deleted Successfully";

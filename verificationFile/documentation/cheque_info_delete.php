@@ -3,7 +3,7 @@ include '../../ajaxconfig.php';
 
 $id = $_POST['chequeid'];
 
-$delct = $connect->query("DELETE FROM `verification_cheque_info` WHERE id = '$id' ");
+$delct = $connect->query("DELETE FROM `cheque_info` WHERE id = '$id' ");
 
 if ($delct) {
 	$message = " cheque Info Deleted Successfully";

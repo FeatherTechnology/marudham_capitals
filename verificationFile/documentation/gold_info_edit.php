@@ -2,19 +2,10 @@
 require '../../ajaxconfig.php';
 
 $id = $_POST['id'];
-		
-//in verification doc insert is just information, acknowledgement is final and they add newly so verification & approval have seperate table. changes happen after deployment.
-if(isset($_POST['verification_doc']) && $_POST['verification_doc'] == '1'){
-	$tablename = 'verification_gold_info';
-	
-}else{
-	$tablename = 'gold_info';
-	
-}
 
 $gold = array();
 
-$goldInfo = $connect->query("SELECT * FROM $tablename WHERE id = '$id' ");
+$goldInfo = $connect->query("SELECT * FROM gold_info WHERE id = '$id' ");
 $goldDetails = $goldInfo->fetch();
 
 $gold['id'] = $goldDetails['id'];
