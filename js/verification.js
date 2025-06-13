@@ -496,7 +496,7 @@ $(document).ready(function () {
     $.ajax({
       url: "verificationFile/documentation/signed_doc_edit.php",
       type: "POST",
-      data: { id: id, verification_doc: '1' },
+      data: { id: id },
       dataType: "json",
       cache: false,
       success: function (result) {
@@ -624,7 +624,7 @@ $(document).ready(function () {
     $.ajax({
       url: "verificationFile/documentation/cheque_info_edit.php",
       type: "POST",
-      data: { id: id, verification_doc: '1' },
+      data: { id: id },
       dataType: "json",
       cache: false,
       success: function (result) {
@@ -688,7 +688,7 @@ $(document).ready(function () {
     $.ajax({
       url: "verificationFile/documentation/gold_info_edit.php",
       type: "POST",
-      data: { id: id, verification_doc: '1' },
+      data: { id: id },
       dataType: "json",
       cache: false,
       success: function (result) {
@@ -714,7 +714,7 @@ $(document).ready(function () {
       $.ajax({
         url: "verificationFile/documentation/gold_info_delete.php",
         type: "POST",
-        data: { chequeid: chequeid, verification_doc: '1' },
+        data: { chequeid: chequeid },
         cache: false,
         success: function (response) {
           var delresult = response.includes("Deleted");
@@ -4299,7 +4299,6 @@ $(document).on("click", "#goldInfoBtn", function () {
   formdata.append("goldupload", goldupload);
   formdata.append("gold_upload", gold_upload);
   formdata.append("goldID", goldID);
-  formdata.append("verification_doc", '1');
 
   if (
     gold_sts != "" &&
@@ -4388,7 +4387,7 @@ function resetgoldInfo() {
   $.ajax({
     url: "verificationFile/documentation/gold_info_reset.php",
     type: "POST",
-    data: { reqId: req_id, pages: 1, verification_doc: '1' },
+    data: { reqId: req_id, pages: 1 },
     cache: false,
     success: function (html) {
       $("#goldTable").empty();
@@ -4478,7 +4477,6 @@ $("#docInfoBtn").click(function () {
         holder_name: holder_name,
         relation_name: relation_name,
         relation: relation,
-        verification_doc: '1'
       },
       dataType: "json",
       type: "POST",
@@ -4519,7 +4517,7 @@ $("body").on("click", "#doc_info_edit", function () {
   $.ajax({
     url: "verificationFile/documentation/doc_info_edit.php",
     type: "POST",
-    data: { id: id, verification_doc: '1' },
+    data: { id: id },
     dataType: "json",
     cache: false,
     // beforeSend: function () {
@@ -4557,7 +4555,7 @@ $("body").on("click", "#doc_info_delete", function () {
     $.ajax({
       url: "verificationFile/documentation/doc_info_delete.php",
       type: "POST",
-      data: { id: id, verification_doc: '1' },
+      data: { id: id },
       cache: false,
       success: function (response) {
         var delresult = response.includes("Deleted");
@@ -4584,7 +4582,7 @@ function resetdocInfo() {
   $.ajax({
     url: "verificationFile/documentation/doc_info_reset.php",
     type: "POST",
-    data: { req_id: req_id, pages: 1, verification_doc: '1' },
+    data: { req_id: req_id, pages: 1 },
     cache: false,
     success: function (html) {
       $("#docModalDiv").empty();

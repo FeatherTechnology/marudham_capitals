@@ -41,7 +41,7 @@ function moneyFormatIndia($num)
 
         <?php
         $req_id = $_POST['reqId'];
-        $goldInfo = $connect->query("SELECT * FROM `verification_gold_info` where req_id = '$req_id' order by id desc");
+        $goldInfo = $connect->query("SELECT * FROM `gold_info` where req_id = '$req_id' order by id desc");
 
         $i = 1;
         while ($gold = $goldInfo->fetch()) {

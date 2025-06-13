@@ -17,7 +17,7 @@ include '../../ajaxconfig.php';
 
         <?php
         $req_id = $_POST['reqId'];
-        $chequeInfo = $connect->query("SELECT * FROM `verification_cheque_info` where req_id = '$req_id' order by id desc");
+        $chequeInfo = $connect->query("SELECT * FROM `cheque_info` where req_id = '$req_id' order by id desc");
 
         $i = 1;
         while ($cheque = $chequeInfo->fetch()) {

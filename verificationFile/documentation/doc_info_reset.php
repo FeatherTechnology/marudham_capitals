@@ -7,16 +7,6 @@ if (isset($_POST['req_id'])) {
 if (isset($_POST['pages'])) {
     $pages = $_POST['pages'];
 }
-		
-//in verification doc insert is just information, acknowledgement is final and they add newly so verification & approval have seperate table. changes happen after deployment.
-if(isset($_POST['verification_doc']) && $_POST['verification_doc'] == '1'){
-	$tablename = 'verification_document_info';
-	
-}else{
-	$tablename = 'document_info';
-	
-}
-
 ?>
 
 <table class="table custom-table" id="docModalTable">
@@ -35,7 +25,7 @@ if(isset($_POST['verification_doc']) && $_POST['verification_doc'] == '1'){
     <tbody>
 
         <?php
-        $qry = $connect->query("SELECT * FROM $tablename where req_id = '$req_id' order by id desc");
+        $qry = $connect->query("SELECT * FROM document_info where req_id = '$req_id' order by id desc");
 
         while ($row = $qry->fetch()) {
             if ($row["holder_name"] == '') {
