@@ -188,18 +188,33 @@ $result = $statement->fetchAll();
 $data = array();
 $sno = 1;
 foreach ($result as $row) {
-    if (strtotime($row['maturity_date']) < strtotime($full_date)) {
+    if (strtotime($row['maturity_date']) < strtotime($to_date)) {
         $end = strtotime($row['maturity_date']);
+        $start = strtotime($row['due_start_from']);
+        $search_date = strtotime($to_date);
+        $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
+         if (($row['due_method_calc'] == 'Monthly' || $row['due_method_scheme'] == '1')  ) {
+            if(date('m', $search_date) == date('m', $end) &&date('Y', $search_date) == date('Y', $end) ){
+            $months -= 1;
+            }
+        }
+        $pending_month = $months;
+        
+    } else {
+        $end = strtotime($to_date);
         $start = strtotime($row['due_start_from']);
         $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
 
-        $pending_month = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start));
-        
-    } else {
-        $start = strtotime($row['due_start_from']);
-        $end = strtotime($full_date);
-        $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
-        $pending_month = max(0, (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)));
+        if(date('m', $end)==date('m', $start)){
+            $months -- ;
+        }
+         
+        if (($row['due_method_calc'] != 'Monthly' && $row['due_method_scheme'] != '1')  ) {
+            if((int)$start_date->format('d') > (int)$end_date->format('d')){
+            $months += 1;
+            }
+        }
+        $pending_month = $months - 1;
 
     }
     
