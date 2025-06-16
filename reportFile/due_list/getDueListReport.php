@@ -240,12 +240,13 @@ foreach ($result as $row) {
         $start = strtotime($row['due_start_from']);
         $search_date = strtotime($to_date);
         $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
+        $pending = $months;
          if (($row['due_method_calc'] == 'Monthly' || $row['due_method_scheme'] == '1')  ) {
-            if(date('m', $search_date) == date('m', $end) &&date('Y', $search_date) == date('Y', $end) ){
-            $months -= 1;
+            if(date('m', $search_date) == date('m', $end) && date('Y', $search_date) == date('Y', $end) ){
+            $pending -= 1;
             }
         }
-        $pending_month = $months;
+        $pending_month = $pending;
         
     } else {
         $end = strtotime($to_date);
