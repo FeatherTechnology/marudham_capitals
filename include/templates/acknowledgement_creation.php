@@ -2582,7 +2582,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="SignType"> Sign Type </label> <span class="required">&nbsp;*</span>
-								<select type="text" class="form-control" id="sign_type" name="sign_type" disabled tabindex='1'>
+								<select type="text" class="form-control" id="sign_type" name="sign_type" tabindex='2'>
 									<option value=""> Select Sign Type </option>
 									<option value="0"> Customer </option>
 									<option value="1"> Guarantor </option>
@@ -2593,16 +2593,24 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 							</div>
 						</div>
 
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" style="display: none;" id="cus_name_div">
+							<div class="form-group">
+								<label for="signType_cus_name"> Customer Name </label>
+								<input type="text" class="form-control" id="signType_cus_name" name="signType_cus_name" readonly tabindex='3'>
+							</div>
+						</div>
+	
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" style="display: none;" id="guar_name_div">
 							<div class="form-group">
 								<label for="guar_name"> Guarentor Name </label>
-								<input type="text" class="form-control" id="guar_name" name="guar_name" readonly tabindex='1'>
+								<input type="text" class="form-control" id="guar_name" name="guar_name" readonly tabindex='4'>
 							</div>
 						</div>
+
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" style="display: none;" id="relation_doc">
 							<div class="form-group">
 								<label for="signRelationship"> Relationship </label>
-								<select type="text" class="form-control" id="signType_relationship" name="signType_relationship" disabled tabindex='1'>
+								<select type="text" class="form-control" id="signType_relationship" name="signType_relationship" tabindex='5'>
 									<option value=""> Select Relationship </option>
 								</select>
 							</div>
@@ -2611,7 +2619,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="Count"> Count </label> <span class="required">&nbsp;*</span>
-								<input type="number" class="form-control" id="doc_Count" name="doc_Count" placeholder="Enter Count" readonly tabindex='1'>
+								<input type="number" class="form-control" id="doc_Count" name="doc_Count" placeholder="Enter Count" tabindex='6'>
 								<span class="text-danger" id="docCountCheck"> Enter Count </span>
 							</div>
 						</div>
@@ -2619,14 +2627,14 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="upd"> Uploads </label>
-								<input type="file" onchange="compressImage(this,400)" class="form-control" id="signdoc_upd" name="signdoc_upd[]" multiple onchange="filesCount()" tabindex='1'>
+								<input type="file" onchange="compressImage(this,400)" class="form-control" id="signdoc_upd" name="signdoc_upd[]" multiple onchange="filesCount()" tabindex='7'>
 								<span class="text-danger" id="docupdCheck"> Upload Document </span>
 							</div>
 						</div>
 
 						<div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12">
 							<input type="hidden" name="signedID" id="signedID">
-							<button type="submit" name="signInfoBtn" id="signInfoBtn" class="btn btn-primary" style="margin-top: 19px;" tabindex='1'>Submit</button>
+							<button type="submit" name="signInfoBtn" id="signInfoBtn" class="btn btn-primary" style="margin-top: 19px;" tabindex='8'>Submit</button>
 						</div>
 
 					</div>
@@ -2644,15 +2652,16 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 									<th> ACTION </th>
 								</tr>
 							</thead>
-							<tbody>
-
-							</tbody>
+							<tbody></tbody>
 						</table>
 					</div>
+
 				</div>
+
 				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="resetsigninfoList()" tabindex='1'>Close</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="resetsigninfoList()" tabindex='9'>Close</button>
 				</div>
+
 			</div>
 		</div>
 	</form>
