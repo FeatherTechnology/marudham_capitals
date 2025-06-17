@@ -2527,12 +2527,10 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 <!-- Add Signed Doc info Modal  START -->
 <div class="modal fade addSignDoc" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
 	<form method="POST" enctype="multipart/form-data" id="signDocUploads">
-		<input type="hidden" name="doc_req_id" id="doc_req_id" value="<?php if (isset($req_id)) {
-																			echo $req_id;
-																		} ?>">
-		<input type="hidden" name="doc_cus_id" id="doc_cus_id" value="<?php if (isset($cus_id)) {
-																			echo $cus_id;
-																		} ?>">
+		<input type="hidden" name="doc_req_id" id="doc_req_id" value="<?php if (isset($req_id)) { echo $req_id; } ?>">
+		<input type="hidden" name="doc_cus_id" id="doc_cus_id" value="<?php if (isset($cus_id)) { echo $cus_id; } ?>">
+		<input type="hidden" name="doc_cus_profile_id" id="doc_cus_profile_id" value="<?php if (isset($cus_profile_id)) { echo $cus_profile_id; } ?>" >
+
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content" style="background-color: white">
 				<div class="modal-header">
@@ -2626,7 +2624,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
-								<label for="upd"> Uploads </label>
+								<label for="upd"> Uploads </label> <span class="required">&nbsp;*</span>
 								<input type="file" onchange="compressImage(this,400)" class="form-control" id="signdoc_upd" name="signdoc_upd[]" multiple onchange="filesCount()" tabindex='7'>
 								<span class="text-danger" id="docupdCheck"> Upload Document </span>
 							</div>
@@ -2672,9 +2670,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 <!-- Add Cheque info Modal  START -->
 <div class="modal fade addCheque" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
 	<form method="POST" enctype="multipart/form-data" id="chequeUploads">
-		<input type="hidden" name="cheque_req_id" id="cheque_req_id" value="<?php if (isset($req_id)) {
-																				echo $req_id;
-																			} ?>">
+		<input type="hidden" name="cheque_req_id" id="cheque_req_id" value="<?php if (isset($req_id)) {echo $req_id;} ?>">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content" style="background-color: white">
 				<div class="modal-header">
@@ -2689,17 +2685,20 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 						<span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
 					</div>
 
-					<div id="chequeUpdateok" class="successalert"> Cheque Info Updated Succesfully! <span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
+					<div id="chequeUpdateok" class="successalert"> Cheque Info Updated Succesfully! 
+						<span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
 					</div>
 
-					<div id="chequeNotOk" class="unsuccessalert"> Something Went Wrong! <span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
+					<div id="chequeNotOk" class="unsuccessalert"> Something Went Wrong! 
+						<span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
 					</div>
 
 					<div id="chequeDeleteOk" class="unsuccessalert"> Cheque Info Deleted
 						<span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
 					</div>
 
-					<div id="chequeDeleteNotOk" class="unsuccessalert"> Cheque Info not Deleted <span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
+					<div id="chequeDeleteNotOk" class="unsuccessalert"> Cheque Info not Deleted 
+						<span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
 					</div>
 
 					<br />
@@ -2709,7 +2708,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="Holdertype "> Holder type </label> <span class="required">&nbsp;*</span>
-								<select type="text" class="form-control" id="holder_type" name="holder_type" disabled tabindex='1'>
+								<select type="text" class="form-control" id="holder_type" name="holder_type" tabindex='1'>
 									<option value=""> Select Holder type </option>
 									<option value="0"> Customer </option>
 									<option value="1"> Guarantor </option>
@@ -2722,9 +2721,9 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="HolderName "> Holder Name </label>
-								<input type="text" class="form-control" id="holder_name" name="holder_name" readonly tabindex='1'>
+								<input type="text" class="form-control" id="holder_name" name="holder_name" readonly tabindex='2'>
 
-								<select type="text" class="form-control" id="holder_relationship_name" name="holder_relationship_name" style="display: none;" disabled tabindex='1'>
+								<select type="text" class="form-control" id="holder_relationship_name" name="holder_relationship_name" style="display: none;" tabindex='2'>
 									<option value=""> Select Holder Name </option>
 								</select>
 							</div>
@@ -2734,7 +2733,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="chequeRelationship"> Relationship </label>
-								<input type="text" class="form-control" id="cheque_relation" name="cheque_relation" readonly tabindex='1'>
+								<input type="text" class="form-control" id="cheque_relation" name="cheque_relation" readonly tabindex='3'>
 
 							</div>
 						</div>
@@ -2742,7 +2741,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="BankName"> Bank Name </label> <span class="required">&nbsp;*</span>
-								<input type="text" class="form-control" id="chequebank_name" name="chequebank_name" placeholder="Enter Bank Name" onkeydown="return /[a-z ]/i.test(event.key)" readonly tabindex='1'>
+								<input type="text" class="form-control" id="chequebank_name" name="chequebank_name" placeholder="Enter Bank Name" onkeydown="return /[a-z ]/i.test(event.key)" tabindex='4'>
 								<span class="text-danger" id="chequebankCheck"> Enter Bank Name </span>
 							</div>
 						</div>
@@ -2750,7 +2749,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="chequeNo"> Cheque Count </label> <span class="required">&nbsp;*</span>
-								<input type="number" class="form-control" id="cheque_count" name="cheque_count" placeholder="Enter Cheque Count" readonly tabindex='1'>
+								<input type="number" class="form-control" id="cheque_count" name="cheque_count" placeholder="Enter Cheque Count" tabindex='5'>
 								<span class="text-danger" id="chequeCountCheck"> Enter Cheque Count </span>
 							</div>
 						</div>
@@ -2758,7 +2757,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="upd"> Uploads </label>
-								<input type="file" onchange="compressImage(this,400)" class="form-control" id="cheque_upd" name="cheque_upd[]" multiple onchange="chequefilesCount()" tabindex='1'>
+								<input type="file" onchange="compressImage(this,400)" class="form-control" id="cheque_upd" name="cheque_upd[]" multiple onchange="chequefilesCount()" tabindex='6'>
 								<span class="text-danger" id="chequeupdCheck"> Upload Cheque </span>
 							</div>
 						</div>
@@ -2769,7 +2768,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 					<div class="row">
 						<div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12">
 							<input type="hidden" name="chequeID" id="chequeID">
-							<button type="submit" name="chequeInfoBtn" id="chequeInfoBtn" class="btn btn-primary" style="margin-top: 19px;" tabindex='1'>Submit</button>
+							<button type="submit" name="chequeInfoBtn" id="chequeInfoBtn" class="btn btn-primary" style="margin-top: 19px;" tabindex='7'>Submit</button>
 						</div>
 					</div>
 					</br>
@@ -2795,7 +2794,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="chequeinfoList();" tabindex='1'>Close</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="chequeinfoList();" tabindex='8'>Close</button>
 				</div>
 			</div>
 		</div>
