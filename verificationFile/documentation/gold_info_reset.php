@@ -66,10 +66,11 @@ function moneyFormatIndia($num)
 
                 <td>
                     <a id="gold_info_edit" value="<?php echo $gold['id']; ?>"> <span class="icon-border_color"></span></a> &nbsp
-                    <?php if ($pages == 1) {  // Verification screen only delete option. 
+                    <?php 
+                    // if ($pages == 1) {  // Verification screen only delete option. 
                     ?>
                         <a id="gold_info_delete" value="<?php echo $gold['id']; ?>"> <span class='icon-trash-2'></span> </a>
-                    <?php  } ?>
+                    <?php  //} ?>
                 </td>
 
             </tr>

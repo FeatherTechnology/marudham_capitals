@@ -1,9 +1,11 @@
 <?php
 require '../../ajaxconfig.php';
 
-$cus_id                = preg_replace('/\D/', '', $_POST['cus_id']);
-$req_id                = $_POST['cheque_req_id'];
-$holder_type           = $_POST['holder_type'];
+$cus_id                     = preg_replace('/\D/', '', $_POST['cus_id']);
+$req_id                     = $_POST['cheque_req_id'];
+$holder_type                = $_POST['holder_type'];
+$holder_name                = '';
+$holder_relationship_name   = '';
 
 if ($holder_type == '0' || $holder_type == '1') {
     $holder_name = $_POST['holder_name'];
@@ -13,12 +15,12 @@ if ($holder_type == '0' || $holder_type == '1') {
 
 $holderName = ($holder_type == '0' || $holder_type == '1') ? $holder_name : $holder_relationship_name;
 
-$cheque_relation    = $_POST['cheque_relation'];
-$chequebank_name    = $_POST['chequebank_name'];
-$cheque_count       = $_POST['cheque_count'];
-$cheque_upd_no      = explode(',', $_POST['cheque_upd_no']);
-$chequeID           = $_POST['chequeID'];
-$cus_profile_id           = $_POST['cus_profile_id'];
+$cheque_relation           = $_POST['cheque_relation'];
+$chequebank_name           = $_POST['chequebank_name'];
+$cheque_count              = $_POST['cheque_count'];
+$cheque_upd_no             = explode(',', $_POST['cheque_upd_no']);
+$chequeID                  = $_POST['chequeID'];
+$cus_profile_id            = $_POST['cus_profile_id'];
 
 if ($chequeID == '') {
 

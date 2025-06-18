@@ -1,15 +1,17 @@
 <?php
 require '../ajaxconfig.php';
 
-$req_id             = $_POST['req_id'];
-$cus_id             = preg_replace('/\D/', '', $_POST['cus_id']);
-$holder_type        = $_POST['holder_type'];
-$chequebank_name    = $_POST['chequebank_name'];
-$cheque_count       = $_POST['cheque_count'];
-$chequeID           = $_POST['chequeID'];
-$cheque_relation    = $_POST['cheque_relation'];
-$cheque_upd_no      = explode(',',$_POST['cheque_upd_no']);//stored each numbers in an array
-$filesArray         = $_FILES['cheque_upd'];//files passed as array
+$req_id                     = $_POST['req_id'];
+$cus_id                     = preg_replace('/\D/', '', $_POST['cus_id']);
+$holder_type                = $_POST['holder_type'];
+$chequebank_name            = $_POST['chequebank_name'];
+$cheque_count               = $_POST['cheque_count'];
+$chequeID                   = $_POST['chequeID'];
+$cheque_relation            = $_POST['cheque_relation'];
+$cheque_upd_no              = explode(',',$_POST['cheque_upd_no']);//stored each numbers in an array
+$filesArray                 = $_FILES['cheque_upd'];//files passed as array
+$holder_name                = '';
+$holder_relationship_name   = '';
 
 if($holder_type == '0' || $holder_type == '1'){
     $holder_name = $_POST['holder_name'];

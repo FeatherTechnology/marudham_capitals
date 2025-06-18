@@ -472,28 +472,28 @@ $(document).ready(function () {
         } else {
             var chequeid = $(this).attr("value");
 
-        $.ajax({
-            url: "verificationFile/documentation/cheque_info_delete.php",
-            type: "POST",
-            data: { chequeid: chequeid },
-            cache: false,
-            success: function (response) {
-            var delresult = response.includes("Deleted");
-            if (delresult) {
-                $("#chequeDeleteOk").show();
-                setTimeout(function () {
-                    $("#chequeDeleteOk").fadeOut("fast");
-                }, 2000);
-            } else {
-                $("#chequeDeleteNotOk").show();
-                setTimeout(function () {
-                    $("#chequeDeleteNotOk").fadeOut("fast");
-                }, 2000);
-            }
+            $.ajax({
+                url: "verificationFile/documentation/cheque_info_delete.php",
+                type: "POST",
+                data: { chequeid: chequeid },
+                cache: false,
+                success: function (response) {
+                var delresult = response.includes("Deleted");
+                if (delresult) {
+                    $("#chequeDeleteOk").show();
+                    setTimeout(function () {
+                        $("#chequeDeleteOk").fadeOut("fast");
+                    }, 2000);
+                } else {
+                    $("#chequeDeleteNotOk").show();
+                    setTimeout(function () {
+                        $("#chequeDeleteNotOk").fadeOut("fast");
+                    }, 2000);
+                }
 
-            resetchequeInfo();
-            },
-        });
+                resetchequeInfo();
+                },
+            });
         }
     });
 
@@ -886,7 +886,7 @@ $(document).ready(function () {
     //Gold Info START ///
     $("body").on("click", "#gold_info_edit", function () {
         let id = $(this).attr('value');
-        chequeHolderName(); // Holder Name From Family Table.
+        // chequeHolderName(); // Holder Name From Family Table.
 
         $.ajax({
             url: 'verificationFile/documentation/gold_info_edit.php',
@@ -1709,7 +1709,7 @@ function onLoadDocEditFunction() {//On load for Loan Calculation edit
 
 }
 //Get DOC id 
-function getstaffCode() {
+function getDocID() {
     let doc_Id = $('#doc_table_id').val();
     $.ajax({
         url: 'verificationFile/documentation/doc_id_autoGen.php',
@@ -2022,7 +2022,7 @@ function resetchequeInfo() {
 
 
 
-function chequeHolderName() {
+function chequeHolderName(editValue) {
     let cus_id = $('#cus_id').val();
     $.ajax({
         url: 'verificationFile/verificationFam.php',
@@ -2033,11 +2033,13 @@ function chequeHolderName() {
 
             var len = response.length;
             $("#holder_relationship_name").empty();
-            $("#holder_relationship_name").append("<option value=''>" + 'Select Holder Name' + "</option>");
+            $("#holder_relationship_name").append("<option value=''>Select Holder Name</option>");
             for (var i = 0; i < len - 1; i++) {
                 var fam_name = response[i]['fam_name'];
                 var fam_id = response[i]['fam_id'];
-                $("#holder_relationship_name").append("<option value='" + fam_id + "'>" + fam_name + "</option>");
+                let selected = (editValue == fam_id) ? 'selected': '';
+
+                $("#holder_relationship_name").append(`<option value='${fam_id}' ${selected}>${fam_name}</option>`);
             }
             {//To Order ag_group Alphabetically
                 var firstOption = $("#holder_relationship_name option:first-child");
@@ -2253,6 +2255,12 @@ function goldinfoList() {
 // ///////////////////////////  Document Info Modal //////////////////////////////
 
 $('#documentnameCheck').hide(); $('#documentdetailsCheck').hide(); $('#documentTypeCheck').hide(); $('#docholderCheck').hide();
+
+$('#add_document').click(function(){
+    $('#docUploads input').not('#docholder_name, #doc_relation').prop('readonly', false);
+    $('#docUploads select').prop('disabled', false);
+});
+
 //Document info submit button action
 $('#docInfoBtn').click(function () {
     let req_id = $("#req_id").val();
@@ -2650,7 +2658,7 @@ function doc_submit_validation(submit_btn) {
 }
 
 async function getDocumentFunc(){
-    getstaffCode(); // Atuo Generate Doc ID.
+    getDocID(); // Atuo Generate Doc ID.
 
     await resetsigninfoList(); // Signed Doc List Reset.
 
