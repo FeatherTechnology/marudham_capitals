@@ -5,20 +5,14 @@ if(isset($_POST['req_id'])){
     $req_id = $_POST['req_id'];
 }
 
-$qry = $connect->query("SELECT profit_type,due_method_scheme,due_type FROM acknowlegement_loan_calculation where req_id = $req_id ");
+$qry = $connect->query("SELECT lcc.loan_category_creation_name , ack.cus_id_loan, ack.cus_name_loan , ii.loan_id FROM acknowlegement_loan_calculation ack left join loan_category_creation lcc on lcc.loan_category_creation_id  = ack.loan_category  left join in_issue ii on ii.req_id = ack.req_id where ack.req_id = $req_id ");
 $row = $qry->fetch();
-$profit_type = $row['profit_type'];
-$due_method_scheme = $row['due_method_scheme'];
 
-if($profit_type == 1){
-    $response['due_method'] = 'Monthly';
-    $response['loan_type'] = $row['due_type'];
-}else if($profit_type == 2){
-    if($due_method_scheme == 1){$response['due_method'] = 'Monthly'; }else
-    if($due_method_scheme == 2){$response['due_method'] = 'Weekly'; }else
-    if($due_method_scheme == 3){$response['due_method'] = 'Daily';}
-    $response['loan_type'] = 'Scheme';
-}
+$response['cus_id'] = $row['cus_id_loan'];
+$response['cus_name'] = $row['cus_name_loan'];
+$response['loan_category'] = $row['loan_category_creation_name'];
+$response['loan_id'] = $row['loan_id'];
+
 
 echo json_encode($response);
 

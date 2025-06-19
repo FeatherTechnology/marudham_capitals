@@ -265,7 +265,7 @@ function dueChartList(req_id, cus_id) {
     }).then(function () {
 
         $.post('collectionFile/getDueMethodName.php', { req_id }, function (response) {
-            $('#dueChartTitle').text('Due Chart ( ' + response['due_method'] + ' - ' + response['loan_type'] + ' )');
+            $('#dueChartTitle').text('Due Chart ( Cus ID : '+ response['cus_id'] + '  | Cus Name : ' + response['cus_name'] + '  | Loan ID : ' + response['loan_id'] + '  | Loan Category : ' + response['loan_category'] + ' )');
         }, 'json');
     })
 
