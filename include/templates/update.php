@@ -2277,7 +2277,7 @@ if (sizeof($documentationInfo) > 0) {
 
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
-								<label for="upd"> Uploads </label>
+								<label for="upd"> Uploads </label> <span class="required">&nbsp;*</span>
 								<input type="file" class="form-control" id="cheque_upd" name="cheque_upd[]" onchange="chequefilesCount();compressImage(this,400);" multiple tabindex='6'>
 								<span class="text-danger" id="chequeupdCheck" style='display:none'> Upload Cheque </span>
 							</div>

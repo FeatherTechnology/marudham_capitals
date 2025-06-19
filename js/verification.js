@@ -5380,7 +5380,7 @@ function getLoaninfo(sub_cat_id) {
             var advance = $("#ad_amt").val() || 0;
             var loan_amt = parseInt(amt) - parseInt(advance);
 
-            if (amt <= parseInt(response["loan_limit"])) {
+            if (loan_amt <= parseInt(response["loan_limit"])) {
               if (loan_amt != NaN) {
                 $("#loan_amt").val(loan_amt.toFixed(0));
               }

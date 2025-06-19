@@ -13,7 +13,7 @@ $uniqueFileName = '';
 if(!empty($_FILES['upload']['name'])){
     $upload    = $_FILES['upload']['name'];
 
-    $path = "kycUploads/";
+    $path = "../uploads/verification/kycUploads/";
     $fileName = $_FILES['upload']['name'];
     $filePath = $_FILES['upload']['tmp_name'];
 
@@ -44,7 +44,7 @@ if ($kycID == '') {
         // we need to unlink old files
         $qry = $connect->query("SELECT upload FROM `verification_kyc_info` where id='" . strip_tags($kycID) . "' ");
         $old_pic = $qry->fetch()['upload'];
-        unlink("kycUploads/" . $old_pic);
+        unlink("../uploads/verification/kycUploads/" . $old_pic);
     } else {
         $kyc_upload = $_POST['kyc_upload'];
     }
