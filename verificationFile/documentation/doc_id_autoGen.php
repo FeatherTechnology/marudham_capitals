@@ -3,21 +3,21 @@ include('../../ajaxconfig.php');
 
 $id  = $_POST['id'];
 
-if ($id != '') {
-    $select = $connect->query("SELECT doc_id FROM acknowlegement_documentation WHERE id = '$id' ");
+$select = $connect->query("SELECT doc_id FROM acknowlegement_documentation WHERE id = '$id' AND doc_id IS NOT NULL ");
+if ($select && $select->rowCount() > 0) {
     $code = $select->fetch();
     $doc_id = $code['doc_id'];
+
 } else {
     $myStr = "DOC";
 
-    $codeAvailable = $connect->query("SELECT CONCAT('DOC-', MAX(CAST(SUBSTRING_INDEX(doc_id, '-', -1) AS UNSIGNED))) AS doc_id FROM acknowlegement_documentation WHERE doc_id REGEXP '^DOC-[0-9]+' ");
-    if ($codeAvailable->rowCount() > 0) {
+    $codeAvailable = $connect->query("SELECT MAX(CAST(SUBSTRING_INDEX(doc_id, '-', -1) AS UNSIGNED)) AS max_number FROM acknowlegement_documentation WHERE doc_id REGEXP '^DOC-[0-9]+' FOR UPDATE");
+    if ($codeAvailable && $codeAvailable->rowCount() > 0) {
         $row = $codeAvailable->fetch(); 
-            $ac2 = $row["doc_id"];
+        $maxNumber = isset($row["max_number"]) ? (int)$row["max_number"] : 0;
         
-        $appno2 = ltrim(strstr($ac2, '-'), '-');
-        $appno2 = $appno2 + 1;
-        $doc_id = $myStr . "-" . "$appno2";
+        $nextNumber = $maxNumber + 1;
+        $doc_id = $myStr . "-" . $nextNumber;
 
     } else {
         $initialapp = $myStr . "-101";

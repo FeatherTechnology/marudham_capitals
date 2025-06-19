@@ -5139,21 +5139,21 @@ class admin
 			// Disable autocommit to start a transaction
 			$mysqli->autocommit(FALSE);
 
-			if ($doc_table_id != '') {
-				$select = $mysqli->query("SELECT doc_id FROM acknowlegement_documentation WHERE id = '$doc_table_id' ");
+			$select = $mysqli->query("SELECT doc_id FROM acknowlegement_documentation WHERE id = '$doc_table_id' AND doc_id IS NOT NULL ");
+			if ($select && $select->num_rows > 0) {
 				$code = $select->fetch_assoc();
 				$doc_id = $code['doc_id'];
+
 			} else {
 				$myStr = "DOC";
 
-				$codeAvailable = $mysqli->query("SELECT CONCAT('DOC-', MAX(CAST(SUBSTRING_INDEX(doc_id, '-', -1) AS UNSIGNED))) AS doc_id FROM acknowlegement_documentation WHERE doc_id REGEXP '^DOC-[0-9]+' FOR UPDATE");
-				if ($codeAvailable->num_rows() > 0) {
+				$codeAvailable = $mysqli->query("SELECT MAX(CAST(SUBSTRING_INDEX(doc_id, '-', -1) AS UNSIGNED)) AS max_number FROM acknowlegement_documentation WHERE doc_id REGEXP '^DOC-[0-9]+' FOR UPDATE");
+				if ($codeAvailable && $codeAvailable->num_rows > 0) {
 					$row = $codeAvailable->fetch_assoc(); 
-						$ac2 = $row["doc_id"];
+					$maxNumber = isset($row["max_number"]) ? (int)$row["max_number"] : 0;
 					
-					$appno2 = ltrim(strstr($ac2, '-'), '-');
-					$appno2 = $appno2 + 1;
-					$doc_id = $myStr . "-" . "$appno2";
+					$nextNumber = $maxNumber + 1;
+        			$doc_id = $myStr . "-" . $nextNumber;
 
 				} else {
 					$initialapp = $myStr . "-101";

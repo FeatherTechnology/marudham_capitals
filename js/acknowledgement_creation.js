@@ -2645,6 +2645,16 @@ function doc_submit_validation(submit_btn) {
         }
     }
 
+    //signed doc
+    if(!storeDocInfo.signDocInfo){
+        event.preventDefault();
+        $('#signed_infoCheck, #signed_doc_card').show();
+        
+    }else{
+        $('#signed_infoCheck').hide();
+        
+    }
+
     // if (submitted == undefined || submitted == '' || submitted == null) {
     //     if (fingerprint == '') {
     //         event.preventDefault();

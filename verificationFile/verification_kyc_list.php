@@ -108,7 +108,7 @@ include '../ajaxconfig.php';
                 <td><?php echo $relationship; ?></td>
                 <td> <?php echo $proof_type; ?></td>
                 <td> <?php echo $kyc['proof_no']; ?></td>
-                <td> <a href="verificationFile/kycUploads/<?php echo $kyc['upload']; ?>" target="_blank" style="color: #4ba39b;"> <?php echo $kyc['upload']; ?> </a></td>
+                <td> <a href="uploads/verification/kycUploads/<?php echo $kyc['upload']; ?>" target="_blank" style="color: #4ba39b;"> <?php echo $kyc['upload']; ?> </a></td>
             </tr>
 
         <?php  } ?>
