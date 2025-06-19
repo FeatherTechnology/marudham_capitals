@@ -89,21 +89,21 @@ if (isset($_POST['to_date']) && $_POST['to_date'] != '') {
         'ii.loan_id'
     );
 
-$qry = " SELECT req.req_id FROM request_creation req JOIN acknowlegement_customer_profile cp ON req.req_id = cp.req_id
-        JOIN customer_status cs ON req.req_id = cs.req_id
-        JOIN loan_issue li ON req.req_id = li.req_id  AND DATE(li.created_date) <= DATE('$to_date')  AND balance_amount = '0'
-        WHERE req.cus_status BETWEEN 14 AND 18  AND ( cs.sub_status != 'Due Nil' OR (cs.sub_status = 'Due Nil' AND cs.created_date > '$to_date') )
+// $qry = " SELECT req.req_id FROM request_creation req JOIN acknowlegement_customer_profile cp ON req.req_id = cp.req_id
+//         JOIN customer_status cs ON req.req_id = cs.req_id
+//         JOIN loan_issue li ON req.req_id = li.req_id  AND DATE(li.created_date) <= DATE('$to_date')  AND balance_amount = '0'
+//         WHERE req.cus_status BETWEEN 14 AND 18  AND ( cs.sub_status != 'Due Nil' OR (cs.sub_status = 'Due Nil' AND cs.created_date > '$to_date') )
 
-        UNION 
+//         UNION 
 
-        SELECT li.req_id FROM loan_issue li JOIN closing_customer cc ON li.req_id = cc.req_id LEFT JOIN ( SELECT req_id, MAX(coll_date) AS max_coll_date FROM collection WHERE coll_date <= '$to_date' GROUP BY req_id ) AS latest_collection ON li.req_id = latest_collection.req_id LEFT JOIN collection c ON latest_collection.req_id = c.req_id AND latest_collection.max_coll_date = c.coll_date WHERE DATE(cc.closing_date) >= DATE('$to_date') AND DATE(li.created_date) <= DATE('$to_date') AND ( c.req_id IS NULL OR (c.bal_amt - c.due_amt_track) > 0 )";
+//         SELECT li.req_id FROM loan_issue li JOIN closing_customer cc ON li.req_id = cc.req_id LEFT JOIN ( SELECT req_id, MAX(coll_date) AS max_coll_date FROM collection WHERE coll_date <= '$to_date' GROUP BY req_id ) AS latest_collection ON li.req_id = latest_collection.req_id LEFT JOIN collection c ON latest_collection.req_id = c.req_id AND latest_collection.max_coll_date = c.coll_date WHERE DATE(cc.closing_date) >= DATE('$to_date') AND DATE(li.created_date) <= DATE('$to_date') AND ( c.req_id IS NULL OR (c.bal_amt - c.due_amt_track) > 0 )";
    
-$run = $connect->query($qry);
-$req_id_list = [];
-while ($row = $run->fetch()) {
-    $req_id_list[] = $row['req_id'];
-}
-$req_id_list = implode(',', $req_id_list);
+// $run = $connect->query($qry);
+// $req_id_list = [];
+// while ($row = $run->fetch()) {
+//     $req_id_list[] = $row['req_id'];
+// }
+// $req_id_list = implode(',', $req_id_list);
 
 
     $query = "SELECT
@@ -177,13 +177,13 @@ LEFT JOIN
            c.coll_id,
            ( SELECT SUM(due_amt_track) FROM collection  WHERE req_id = c.req_id AND DATE(coll_date) < '$to_date' ) AS total_due_amt
             FROM collection c
-            INNER JOIN (SELECT req_id, MAX(coll_id) AS max_coll_id FROM collection WHERE req_id IN ($req_id_list)
+            INNER JOIN (SELECT req_id, MAX(coll_id) AS max_coll_id FROM collection WHERE req_id IN (9823)
             AND DATE(coll_date) = ( SELECT MAX(DATE(coll_date)) FROM collection c2 WHERE c2.req_id = collection.req_id AND DATE(c2.coll_date) < '$to_date'
             ) GROUP BY req_id
            ) latest
     ON c.req_id = latest.req_id AND c.coll_id = latest.max_coll_id ) c ON lc.req_id = c.req_id 
 WHERE
-    lc.req_id IN ($req_id_list) ";
+    lc.req_id IN (9823) ";
 
 
 
@@ -235,18 +235,34 @@ $result = $statement->fetchAll();
 $data = array();
 $sno = 1;
 foreach ($result as $row) {
-    if (strtotime($row['maturity_date']) < strtotime($to_date)) {
+   if (strtotime($row['maturity_date']) < strtotime($to_date)) {
         $end = strtotime($row['maturity_date']);
+        $start = strtotime($row['due_start_from']);
+        $search_date = strtotime($to_date);
+        $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
+        $pending = $months;
+         if (($row['due_method_calc'] == 'Monthly' || $row['due_method_scheme'] == '1')  ) {
+            if(date('m', $search_date) == date('m', $end) && date('Y', $search_date) == date('Y', $end) ){
+            $pending -= 1;
+            }
+        }
+        $pending_month = $pending;
+        
+    } else {
+        $end = strtotime($to_date);
         $start = strtotime($row['due_start_from']);
         $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
 
-        $pending_month = $months;
-        
-    } else {
-        $start = strtotime($row['due_start_from']);
-        $end = strtotime($to_date);
-        $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
-        $pending_month = max(0, (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)));
+        if(date('m', $end)==date('m', $start)){
+            $months -- ;
+        }
+         
+        if (($row['due_method_calc'] != 'Monthly' && $row['due_method_scheme'] != '1')  ) {
+            if((int)$start_date->format('d') > (int)$end_date->format('d')){
+            $months += 1;
+            }
+        }
+        $pending_month = $months - 1;
 
     }
     
@@ -255,7 +271,8 @@ foreach ($result as $row) {
     $balance_due = (float)$row['due_period'] - $paid_due;
     $payable_amount = ($months * $row['due_amt_cal'] ) - $row['total_due_amt'];
     $pending_amount = ($pending_month * $row['due_amt_cal'] ) - $row['total_due_amt'];
-    $pending_due =  $pending_amount  / $row['due_amt_cal'];
+    $pending_due = max(0, $pending_amount / $row['due_amt_cal']);
+
 
     $sub_array   = array();
     $sub_array[] = $sno;
@@ -282,7 +299,7 @@ foreach ($result as $row) {
     $sub_array[] = moneyFormatIndia($row['tot_amt_cal']);
     $sub_array[] = isset($balance_amount) && $balance_amount >= 0 ? moneyFormatIndia($balance_amount) : $row['tot_amt_cal'];
     $sub_array[] = isset($balance_due) && $balance_due >= 0 ? number_format($balance_due , 1, '.', ''): 0 ;
-    $sub_array[] = isset($pending_amount) ? moneyFormatIndia($pending_amount) : 0;
+    $sub_array[] = isset($pending_amount) && ($pending_amount > 0) ? moneyFormatIndia($pending_amount) : 0;
     $sub_array[] = isset($pending_due) && $pending_due >= 0 ? number_format($pending_due , 1, '.', ''): 0;
     $sub_array[] = isset($row['od_months']) && $row['od_months'] >= 0 ? $row['od_months'] : 0;;
     $sub_array[] = isset($payable_amount) ? moneyFormatIndia($payable_amount) : 0;
