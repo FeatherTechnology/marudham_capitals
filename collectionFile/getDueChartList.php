@@ -646,8 +646,12 @@ include '../ajaxconfig.php';
         $endTime = '23:59:59'; //set end time of clock 
         $currentMonth = $currentMonth.' '.$endTime;
         if ($loanFrom['due_method_calc'] == 'Monthly' || $loanFrom['due_method_scheme'] == '1') {
-            $maturity_month = $maturity_month_obj->modify('+1 month')->format('Y-m-01');
+
+            $maturity_month_last_date = (clone $maturity_month_obj)->modify('last day of this month')->format('Y-m-d');
+            $maturity_month = (clone $maturity_month_obj)->modify('+1 month')->format('Y-m-01');
             $maturity_month = $maturity_month.' '.$startTime;
+            $last_date = $maturity_month_last_date.' '.$startTime;
+
             //Query for Monthly.
             $run = $connect->query("SELECT c.coll_code, c.due_amt, c.pending_amt, c.payable_amt, c.coll_date, c.trans_date, c.due_amt_track, c.princ_amt_track,c.int_amt_track, c.bal_amt, c.coll_charge_track, c.coll_location, c.pre_close_waiver, u.fullname, u.role
             FROM `collection` c
@@ -656,11 +660,15 @@ include '../ajaxconfig.php';
             AND 
             (
                 (c.coll_date BETWEEN '$maturity_month' AND '$currentMonth') OR (c.trans_date BETWEEN '$maturity_month' AND '$currentMonth' AND c.trans_date != '0000-00-00')
-            )");
-        } else
-        if ($loanFrom['due_method_scheme'] == '2') {
-            $maturity_month = $maturity_month_obj->modify('+1 week')->format('Y-m-d');
+            ) AND c.trans_date > '$last_date' AND c.coll_date > '$last_date' ");
+
+        } else if ($loanFrom['due_method_scheme'] == '2') {
+
+            $maturity_month_last_date = (clone $maturity_month_obj)->modify('last day of this week')->format('Y-m-d');
+            $maturity_month = (clone $maturity_month_obj)->modify('+1 week')->format('Y-m-d');
             $maturity_month = $maturity_month.' '.$startTime;
+            $last_date = $maturity_month_last_date.' '.$startTime;
+
             //Query For Weekly.
             $run = $connect->query("SELECT c.coll_code, c.due_amt, c.pending_amt, c.payable_amt, c.coll_date, c.trans_date, c.due_amt_track, c.bal_amt, c.coll_charge_track, c.coll_location, c.pre_close_waiver, u.fullname, u.role
             FROM `collection` c
@@ -670,12 +678,15 @@ include '../ajaxconfig.php';
             AND (
                     (c.coll_date BETWEEN '$maturity_month' AND '$currentMonth')
                     OR (c.trans_date BETWEEN '$maturity_month' AND '$currentMonth' AND c.trans_date != '0000-00-00')
-                );
-            ");
-        } else
-        if ($loanFrom['due_method_scheme'] == '3') {
-            $maturity_month = $maturity_month_obj->modify('+1 day')->format('Y-m-d');
+                ) AND c.trans_date > '$last_date' AND c.coll_date > '$last_date' ");
+
+        } else if ($loanFrom['due_method_scheme'] == '3') {
+
+            $maturity_month_last_date = (clone $maturity_month_obj)->format('Y-m-d');
+            $maturity_month = (clone $maturity_month_obj)->modify('+1 day')->format('Y-m-d');
             $maturity_month = $maturity_month.' '.$startTime;
+            $last_date = $maturity_month_last_date.' '.$startTime;
+
             //Query For Day.
             $run = $connect->query("SELECT c.coll_code, c.due_amt, c.pending_amt, c.payable_amt, c.coll_date, c.trans_date, c.due_amt_track, c.bal_amt, c.coll_charge_track, c.coll_location, c.pre_close_waiver, u.fullname, u.role
             FROM `collection` c
@@ -684,7 +695,8 @@ include '../ajaxconfig.php';
             AND (
                 (c.coll_date BETWEEN '$maturity_month' AND '$currentMonth') OR
                 (c.trans_date BETWEEN '$maturity_month' AND '$currentMonth' AND c.trans_date != '0000-00-00')
-            ) ");
+            ) AND c.trans_date > '$last_date' AND c.coll_date > '$last_date' ");
+
         }
 
         if ($run->rowCount() > 0) {
