@@ -9,7 +9,7 @@ if (isset($_POST['cus_id'])) {
 }
 
 $records = array();
-$result = $connect->query("SELECT req.req_id,req.prompt_remark,req.cus_status,vd.doc_id,
+$result = $connect->query("SELECT req.req_id, req.prompt_remark, req.cus_status, ad.doc_id,
     CASE WHEN req.cus_status >= 14 THEN ii.updated_date ELSE req.dor END AS `updated_date`,
     CASE WHEN req.cus_status >= 14 THEN ii.loan_id ELSE req.req_code END AS `code`,
     CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.loan_category WHEN req.cus_status IN (3,13,14,15,16,17,20,21,22) THEN alc.loan_category ELSE req.loan_category END AS loan_category,
@@ -21,7 +21,7 @@ $result = $connect->query("SELECT req.req_id,req.prompt_remark,req.cus_status,vd
     LEFT JOIN verification_loan_calculation vlc ON req.req_id = vlc.req_id
     LEFT JOIN acknowlegement_loan_calculation alc ON req.req_id = alc.req_id
     LEFT JOIN in_issue ii ON req.req_id = ii.req_id
-    LEFT JOIN verification_documentation vd ON ii.req_id = vd.req_id
+    LEFT JOIN acknowlegement_documentation ad ON ii.req_id = ad.req_id
     where req.cus_id = $cus_id and (req.cus_status <= 22) ORDER BY req.created_date DESC");
 
 if ($result->rowCount() > 0) {
