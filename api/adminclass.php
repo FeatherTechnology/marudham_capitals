@@ -4976,8 +4976,8 @@ class admin
 		// if (isset($_POST['doc_id'])) {
 		// 	$doc_id =  $_POST['doc_id'];
 		// }
-		if (isset($_POST['mortgage_process_post'])) {
-			$mortgage_process = $_POST['mortgage_process_post'];
+		if (isset($_POST['mortgage_process'])) {
+			$mortgage_process = $_POST['mortgage_process'];
 		}
 		if (isset($_POST['Propertyholder_type'])) {
 			$Propertyholder_type = $_POST['Propertyholder_type'];
@@ -5024,6 +5024,7 @@ class admin
 			$mortgage_document = $_POST['mortgage_document'];
 		}
 		$pendingchk = 'NO';
+		$mortgage_document_upd = '';
 		if (!empty($_FILES['mortgage_document_upd']['name'])) {
 			$mortgage_document_upd = $_FILES['mortgage_document_upd']['name'];
 			$upd_temp = $_FILES['mortgage_document_upd']['tmp_name'];
@@ -5048,8 +5049,8 @@ class admin
 				$mortgage_document_upd = '';
 			}
 		}
-		if (isset($_POST['endorsement_process_post'])) {
-			$endorsement_process = $_POST['endorsement_process_post'];
+		if (isset($_POST['endorsement_process'])) {
+			$endorsement_process = $_POST['endorsement_process'];
 		}
 		if (isset($_POST['owner_type'])) {
 			$owner_type = $_POST['owner_type'];
@@ -5089,6 +5090,7 @@ class admin
 			$en_RC = $_POST['en_RC'];
 		}
 		$endorsependingchk = 'NO';
+		$Rc_document_upd = '';
 		if (!empty($_FILES['Rc_document_upd']['name'])) {
 			$Rc_document_upd = $_FILES['Rc_document_upd']['name'];
 			$upd_temp = $_FILES['Rc_document_upd']['tmp_name'];

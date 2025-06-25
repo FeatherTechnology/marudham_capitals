@@ -3658,18 +3658,18 @@ function signInfoEditEvent() {
 }
 
 // to validate the count to be uploaded in signed doc
-function filesCount() {
-    var cnt = $('#doc_Count').val();
-    var signFile = document.querySelector('#signdoc_upd');
+// function filesCount() {
+//     var cnt = $('#doc_Count').val();
+//     var signFile = document.querySelector('#signdoc_upd');
 
-    if (signFile.files.length <= cnt) {
-        return true;
-    } else {
-        alert('Please select Less than or equals to ' + cnt + ' file(s).')
-        $("#signdoc_upd").val('');
-        return false;
-    }
-}
+//     if (signFile.files.length <= cnt) {
+//         return true;
+//     } else {
+//         alert('Please select Less than or equals to ' + cnt + ' file(s).')
+//         $("#signdoc_upd").val('');
+//         return false;
+//     }
+// }
 
 //submit signed document
 function submitSignedDoc(req_id, cus_id) {
@@ -3681,7 +3681,7 @@ function submitSignedDoc(req_id, cus_id) {
     let doc_Count = $("#doc_Count").val();
     let signType_relationship = $("#signType_relationship").val();
 
-    if (sign_type != "" && doc_Count != "" && files.length > 0 && files.length == doc_Count) {
+    if (sign_type != "" && doc_Count != "") {
 
         for (var i = 0; i < files.length; i++) {
             formdata.append('signdoc_upd[]', files[i])
@@ -3731,11 +3731,11 @@ function submitSignedDoc(req_id, cus_id) {
             $("#docCountCheck").hide();
         }
 
-        if(files.length <= 0 || files.length != doc_Count){
-            $('#docupdCheck').show();
-        }else{
-            $('#docupdCheck').hide();
-        }
+        // if(files.length <= 0 || files.length != doc_Count){
+        //     $('#docupdCheck').show();
+        // }else{
+        //     $('#docupdCheck').hide();
+        // }
     }
 
 }
@@ -3817,7 +3817,7 @@ function chequeInfoEditEvent() {
                 $("#chequebank_name").val(result['chequebank_name']);
                 $("#cheque_count").val(result['cheque_count']);
 
-                getChequeColumn(result['cheque_count']); // show input to insert Cheque No.
+                getChequeColumn(result['cheque_count'], result['cheque_no']); // show input to insert Cheque No.
             }
         });
 
@@ -3825,17 +3825,17 @@ function chequeInfoEditEvent() {
 
     $('#cheque_count').off().keyup(function(){
         let chequeCnt = $(this).val();
-        getChequeColumn(chequeCnt); // show input to insert Cheque No.
+        getChequeColumn(chequeCnt,''); // show input to insert Cheque No.
     });
     
 }
 
 //Create Div and cheque no input elements based on count of cheque need to upload
-function getChequeColumn(cnt) {
+function getChequeColumn(cnt, nos) {
 
     $.ajax({
         url: 'verificationFile/documentation/cheque_info_upd_column.php',
-        data: { "count": cnt },
+        data: { "count": cnt, "cheque_nos": JSON.stringify(nos) },
         type: 'post',
         success: function (result) {
             $('#chequeColumnDiv').empty();
@@ -3881,7 +3881,7 @@ function submitCheque(req_id, cus_id) {
         i++;
     })
 
-  if ( holder_type != "" && chequebank_name != "" && cheque_count != "" && req_id != "" && files.length == cheque_count && !chequeArr.includes('')) { // !chequeArr.includes('') will check if any of array values is empty
+  if ( holder_type != "" && chequebank_name != "" && cheque_count != "" && req_id != "" && !chequeArr.includes('')) { // !chequeArr.includes('') will check if any of array values is empty
 
         for (var i = 0; i < files.length; i++) {
             formdata.append('cheque_upd[]', files[i])
@@ -3945,11 +3945,17 @@ function submitCheque(req_id, cus_id) {
             $("#chequeCountCheck").hide();
         }
 
-        if (files.length != cheque_count || chequeArr.includes('')) {
-            $('#chequeupdCheck').show();
+        if (chequeArr.includes('')) {
+            $('#chequeNoCheck').show();
         } else {
-            $('#chequeupdCheck').hide();
+            $('#chequeNoCheck').hide();
         }
+
+        // if (files.length != cheque_count || chequeArr.includes('')) {
+        //     $('#chequeupdCheck').show();
+        // } else {
+        //     $('#chequeupdCheck').hide();
+        // }
     }
 }
 
@@ -4195,7 +4201,7 @@ function submitDocument(req_id, cus_id) {
     let relation_name = $("#docholder_relationship_name").val();
     let relation = $("#doc_relation").val();
 
-    if ( doc_name != "" && doc_details != "" && doc_type != "" && doc_holder != "" && files.length > 0 ) {
+    if ( doc_name != "" && doc_details != "" && doc_type != "" && doc_holder != "") {
             
         for (var i = 0; i < files.length; i++) {
             formdata.append('document_info_upd[]', files[i])
@@ -4273,11 +4279,11 @@ function submitDocument(req_id, cus_id) {
             $("#docholderCheck").hide();
         } 
 
-        if(files.length <= 0){
-            $('#docinfoupdCheck').show();
-        } else {
-            $('#docinfoupdCheck').hide();
-        }
+        // if(files.length <= 0){
+        //     $('#docinfoupdCheck').show();
+        // } else {
+        //     $('#docinfoupdCheck').hide();
+        // }
     }
 
 }

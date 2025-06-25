@@ -4346,7 +4346,7 @@ $(document).on("click", "#goldInfoBtn", function () {
     gold_Weight != "" &&
     gold_Value != "" &&
     req_id != "" &&
-    gold_upload != ""
+    (gold_upload != "" && gold_upload != undefined && gold_upload != null) 
   ) {
     $.ajax({
       url: "verificationFile/documentation/gold_info_submit.php",
@@ -4412,7 +4412,7 @@ $(document).on("click", "#goldInfoBtn", function () {
     } else {
       $("#goldValueCheck").hide();
     }
-    if (gold_upload == "") {
+    if (gold_upload == "" || gold_upload == undefined || gold_upload == null) {
       $("#gold_uploadCheck").show();
     } else {
       $("#gold_uploadCheck").hide();

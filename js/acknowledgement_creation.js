@@ -199,9 +199,9 @@ $(document).ready(function () {
         let sign_type = $("#sign_type").val();
         let doc_Count = $("#doc_Count").val();
         let req_id = $('#doc_req_id').val();
-        let signeddoc_upd = $('#signdoc_upd').val();
+        // let signeddoc_upd = $('#signdoc_upd').val(); //upload mandatory is removed.
 
-        if (doc_name != "" && sign_type != "" && doc_Count != "" && req_id != "" && signeddoc_upd != "") {
+        if (doc_name != "" && sign_type != "" && doc_Count != "" && req_id != "" ) {
             $.ajax({
                 type: 'POST',
                 url: 'verificationFile/documentation/sign_info_doc_upload.php',
@@ -245,11 +245,11 @@ $(document).ready(function () {
                 $('#docCountCheck').hide();
             }
 
-            if (signeddoc_upd == "") {
-                $('#docupdCheck').show();
-            } else {
-                $('#docupdCheck').hide();
-            }
+            // if (signeddoc_upd == "") {
+            //     $('#docupdCheck').show();
+            // } else {
+            //     $('#docupdCheck').hide();
+            // }
 
         }
     });
@@ -351,11 +351,13 @@ $(document).ready(function () {
         for (var i = 0; i < files.length; i++) {
             formdata.append('cheque_upd[]', files[i])
         }
-        var chequeno = $("#cheque_upd_no").val();
+        // var chequeno = $("#cheque_upd_no").val();
         var chequeArr = [];
         var i = 0;
+        let checkChequeNo = true;
         $('.chequeno').each(function () {
             chequeArr[i] = $(this).val();
+            checkChequeNo = ($(this).val() =='' || checkChequeNo == false) ? false : true;
             i++;
         })
 
@@ -373,7 +375,7 @@ $(document).ready(function () {
         formdata.append('chequeID', chequeID)
         formdata.append('cus_profile_id', cus_profile_id)
 
-        if (holder_type != "" && chequebank_name != "" && cheque_count != "" && req_id != "") {
+        if (holder_type != "" && chequebank_name != "" && cheque_count != "" && req_id != "" && checkChequeNo == true) {
             $.ajax({
                 type: 'POST',
                 url: 'verificationFile/documentation/cheque_upload.php',
@@ -418,6 +420,12 @@ $(document).ready(function () {
                 $('#chequeCountCheck').show();
             } else {
                 $('#chequeCountCheck').hide();
+            }
+
+            if (checkChequeNo == false) {
+                $('#chequeNoCheck').show();
+            } else {
+                $('#chequeNoCheck').hide();
             }
 
             // if (checkupd == 0) {
@@ -1945,18 +1953,18 @@ function resetsigninfoList() {
     });
 }
 
-function filesCount() {
-    var cnt = $('#doc_Count').val();
-    var signFile = document.querySelector('#signdoc_upd');
+// function filesCount() {
+//     var cnt = $('#doc_Count').val();
+//     var signFile = document.querySelector('#signdoc_upd');
 
-    if (signFile.files.length <= cnt) {
-        return true;
-    } else {
-        alert('Please select Less than ' + cnt + ' files.')
-        $("#signdoc_upd").val('');
-        return false;
-    }
-}
+//     if (signFile.files.length <= cnt) {
+//         return true;
+//     } else {
+//         alert('Please select Less than ' + cnt + ' files.')
+//         $("#signdoc_upd").val('');
+//         return false;
+//     }
+// }
 
 //Cheque Info List
 function chequeinfoList() {
@@ -2053,18 +2061,18 @@ function chequeHolderName(editValue) {
     });
 }
 
-function chequefilesCount() {
-    var cnt = $('#cheque_count').val();
-    var chequeFile = document.querySelector('#cheque_upd');
+// function chequefilesCount() {
+//     var cnt = $('#cheque_count').val();
+//     var chequeFile = document.querySelector('#cheque_upd');
 
-    if (chequeFile.files.length <= cnt) {
-        return true;
-    } else {
-        alert('Please select Less than ' + cnt + ' files.')
-        $("#cheque_upd").val('');
-        return false;
-    }
-}
+//     if (chequeFile.files.length <= cnt) {
+//         return true;
+//     } else {
+//         alert('Please select Less than ' + cnt + ' files.')
+//         $("#cheque_upd").val('');
+//         return false;
+//     }
+// }
 
 //Cheque No 
 function getChequeColumn(cnt, nos) {
@@ -2570,12 +2578,12 @@ function doc_submit_validation(submit_btn) {
             event.preventDefault();
             $('#mortgagedocCheck').show();
         } else {//if selected then check if document dropdown is YES(0) then check for document uploaded now or already
-            if (mortgage_document == '0' && (mortgage_old_doc_upd == '' && mortgage_document_upd == '')) { //if yes, then check both document upload are not empty
-                event.preventDefault();
-                $('#mortgagedocUpdCheck').show();
-            } else {
-                $('#mortgagedocUpdCheck').hide();
-            }
+            // if (mortgage_document == '0' && (mortgage_old_doc_upd == '' && mortgage_document_upd == '')) { //if yes, then check both document upload are not empty
+            //     event.preventDefault();
+            //     $('#mortgagedocUpdCheck').show();
+            // } else {
+            //     $('#mortgagedocUpdCheck').hide();
+            // }
             $('#mortgagedocCheck').hide();
         }
     }
@@ -2635,12 +2643,12 @@ function doc_submit_validation(submit_btn) {
             event.preventDefault();
             $('#enRCCheck').show();
         } else { //if selected then check if document dropdown is YES(0) then check for document uploaded now or already
-            if (en_RC == '0' && (RC_old_document_upd == '' && RC_document_upd == '')) { //if yes, then check both document upload are not empty
-                event.preventDefault();
-                $('#rcdocUpdCheck').show();
-            } else {
-                $('#rcdocUpdCheck').hide();
-            }
+            // if (en_RC == '0' && (RC_old_document_upd == '' && RC_document_upd == '')) { //if yes, then check both document upload are not empty
+            //     event.preventDefault();
+            //     $('#rcdocUpdCheck').show();
+            // } else {
+            //     $('#rcdocUpdCheck').hide();
+            // }
             $('#enRCCheck').hide();
         }
     }
