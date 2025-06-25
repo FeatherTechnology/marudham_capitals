@@ -1402,7 +1402,7 @@ if (sizeof($documentationInfo) > 0) {
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" id="mort_doc_upd" style="display: none;">
 										<div class="form-group">
 											<label for="mortgage_document_upd"> Mortgage Document Uploads </label> <span class="required">&nbsp;*</span>
-											<input type="file" onchange="compressImage(this,400)" class="form-control" id="mortgage_document_upd" name="mortgage_document_upd" tabindex="22">
+											<input type="file" onchange="compressImage(this,200)" class="form-control" id="mortgage_document_upd" name="mortgage_document_upd" tabindex="22">
 											<input type="hidden" id="mortgage_doc_upd" name="mortgage_doc_upd" value="">
 											<span class="text-danger" id="mortgagedocUpdCheck" style='display:none'> Upload Mortgage Document </span>
 										</div>
@@ -1571,7 +1571,7 @@ if (sizeof($documentationInfo) > 0) {
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" id="end_doc_upd" style="display: none;">
 									<div class="form-group">
 										<label for="RC_document_upd"> RC Uploads </label> <span class="required">&nbsp;*</span>
-										<input type="file" onchange="compressImage(this,400)" class="form-control" id="RC_document_upd" name="Rc_document_upd" tabindex="38">
+										<input type="file" onchange="compressImage(this,200)" class="form-control" id="RC_document_upd" name="Rc_document_upd" tabindex="38">
 										<input type="hidden" id="rc_doc_upd" name="rc_doc_upd" value="">
 										<span class="text-danger" id="rcdocUpdCheck" style='display:none'> Upload RC </span>
 									</div>
@@ -2150,8 +2150,8 @@ if (sizeof($documentationInfo) > 0) {
 
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
-								<label for="upd"> Uploads </label> <span class="required">&nbsp;*</span>
-								<input type="file" onchange="compressImage(this,400)" class="form-control" id="signdoc_upd" name="signdoc_upd[]" multiple onchange="filesCount()" tabindex='7'>
+								<label for="upd"> Uploads </label> 
+								<input type="file" onchange="compressImage(this,200)" class="form-control" id="signdoc_upd" name="signdoc_upd[]" multiple tabindex='7'>
 								<span class="text-danger" id="docupdCheck" style="display: none;"> Upload Document </span>
 							</div>
 						</div>
@@ -2277,9 +2277,9 @@ if (sizeof($documentationInfo) > 0) {
 
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
-								<label for="upd"> Uploads </label> <span class="required">&nbsp;*</span>
-								<input type="file" class="form-control" id="cheque_upd" name="cheque_upd[]" onchange="chequefilesCount();compressImage(this,400);" multiple tabindex='6'>
-								<span class="text-danger" id="chequeupdCheck" style='display:none'> Upload Cheque </span>
+								<label for="upd"> Uploads </label>
+								<input type="file" class="form-control" id="cheque_upd" name="cheque_upd[]" onchange="compressImage(this,200);" multiple tabindex='6'>
+								<!-- <span class="text-danger" id="chequeupdCheck" style='display:none'> Upload Cheque </span> -->
 							</div>
 						</div>
 					</div>
@@ -2511,7 +2511,7 @@ if (sizeof($documentationInfo) > 0) {
 							<div class="form-group">
 								<label for="gold_upload"> Upload </label>
 								<input type="hidden" name="goldupload" id="goldupload">
-								<input type="file" onchange="compressImage(this,400)" class="form-control" id="gold_upload" name="gold_upload" accept=".pdf,.jpg,.png,.jpeg" tabindex='1'>
+								<input type="file" onchange="compressImage(this,200)" class="form-control" id="gold_upload" name="gold_upload" accept=".pdf,.jpg,.png,.jpeg" tabindex='1'>
 								<span class="text-danger" id="gold_uploadCheck" style="display:none"> Please Upload files </span>
 							</div>
 						</div>
@@ -2647,8 +2647,8 @@ if (sizeof($documentationInfo) > 0) {
 
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
-								<label for="DocumentUpd"> Document Uploads </label> <span class="required">&nbsp;*</span>
-								<input type="file" onchange="compressImage(this,400)" class="form-control" id="document_info_upd" name="document_info_upd[]" multiple tabindex="1">
+								<label for="DocumentUpd"> Document Uploads </label>
+								<input type="file" onchange="compressImage(this,200)" class="form-control" id="document_info_upd" name="document_info_upd[]" multiple tabindex="1">
 								<span class="text-danger" id="docinfoupdCheck" style='display:none'> Please Select Document </span>
 							</div>
 						</div>
@@ -2785,7 +2785,7 @@ if (sizeof($documentationInfo) > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label for="upload"> Upload </label> <span class="required">&nbsp;*</span>
-							<input type="file" onchange="compressImage(this,400)" class="form-control" id="upload" name="upload" accept=".pdf,.jpg,.png,.jpeg" tabindex='1'>
+							<input type="file" onchange="compressImage(this,200)" class="form-control" id="upload" name="upload" accept=".pdf,.jpg,.png,.jpeg" tabindex='1'>
 							<span class="text-danger" id="proofUploadCheck" style="display:none"> Please Upload File </span>
 						</div>
 					</div>

@@ -3579,7 +3579,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
-							<label for="gold_upload"> Upload </label>
+							<label for="gold_upload"> Upload </label> <span class="required">&nbsp;*</span>
 							<input type="hidden" name="goldupload" id="goldupload">
 							<input type="file" onchange="compressImage(this,400)" class="form-control" id="gold_upload" name="gold_upload" accept=".pdf,.jpg,.png,.jpeg" tabindex='1'>
 							<span class="text-danger" id="gold_uploadCheck" style="display:none"> Please Upload file </span>
