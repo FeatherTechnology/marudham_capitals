@@ -54,9 +54,9 @@ if (isset($_POST['submit_loan_calculation']) && $_POST['submit_loan_calculation'
 	$userObj->addVerificationLoanCalculation($mysqli, $userid);
 
 ?>
-	<script>
+	<!-- <script>
 		alert('Loan Calculation Details Submitted');
-	</script>
+	</script> -->
 	<!-- <script>location.href='<?php echo $HOSTPATH;  ?>verification';</script> -->
 
 <?php
