@@ -80,7 +80,8 @@ include '../ajaxconfig.php';
                 <td><?php echo rtrim($cheque_no,', '); // to trim the comma at end?></td>
                 <td><?php echo rtrim($doc_upd_name,', ');// to trim the comma at end ?></td>
                 
-                <?php if(!empty($doc_upd_name)){ //show temp contents only if document received already ?>
+                <?php 
+                // if(!empty($doc_upd_name)){ //show temp contents only if document received already ?>
                     <td><?php echo $temp_sts == 0 ? 'YES':'NO'; ?></td>
                     <td>
                         <?php if($temp_sts == 0){//zero means document available,so show button for take out as temprory ?>
@@ -89,10 +90,10 @@ include '../ajaxconfig.php';
                             <button class="btn btn-success temp-take-in" data-req_id='<?php echo $req_id; ?>' data-cus_id='<?php echo $cus_id; ?>' data-tableid = '<?php echo $id;?>' data-doc='cheque' data-toggle='modal' data-target='.temp-take-in-modal'>Take In</button>
                         <?php } ?>
                     </td>
-                <?php }else{ ?>
-                    <td></td>
-                    <td></td>
-                <?php } ?>
+                <?php #}else{ ?>
+                    <!-- <td></td>
+                    <td></td> -->
+                <?php #} ?>
 
             </tr>
 

@@ -3,8 +3,8 @@ session_start();
 
 require '../ajaxconfig.php';
 
-$table_obj = ['sign'=>'signed_doc','cheque'=>'cheque_no_list','gold'=>'gold_info','document'=>'document_info'];
-$table_id_obj = ['sign'=>'signed_doc_id','cheque'=>'cheque_table_id','document'=>'id'];
+$table_obj = ['sign'=>'signed_doc_info','cheque'=>'cheque_no_list','gold'=>'gold_info','document'=>'document_info'];
+$table_id_obj = ['sign'=>'id','cheque'=>'cheque_table_id','document'=>'id'];
 
 if(isset($_SESSION['userid'])){
     $userid = $_SESSION['userid'];
