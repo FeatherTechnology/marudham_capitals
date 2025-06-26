@@ -32,13 +32,14 @@ include '../ajaxconfig.php';
 
             $doc_upd_name = '';
             $id = $signedDoc["id"];
-            
-            $updresult = $connect->query("SELECT upload_doc_name,temp_sts FROM `signed_doc` where signed_doc_id = '$id'"); 
+            $temp_sts = $signedDoc["temp_sts"];
+
+            $updresult = $connect->query("SELECT upload_doc_name FROM `signed_doc` where signed_doc_id = '$id'"); 
             // echo $updresult->queryString;
             $a = 1;
             while($upd = $updresult->fetch()){
                 $docName = $upd['upload_doc_name'];
-                $temp_sts = $upd["temp_sts"];
+                // $temp_sts = $upd["temp_sts"];
                 $doc_upd_name .= "<a href=uploads/verification/signed_doc/";
                 $doc_upd_name .= $docName ;
                 $doc_upd_name .= " target='_blank'>";
@@ -59,7 +60,7 @@ include '../ajaxconfig.php';
                 <td> <?php echo $signedDoc['doc_Count']; ?></td>
                 <td><?php echo $doc_upd_name; ?></td>
                 <?php 
-                if($doc_upd_name != ''){
+                // if($doc_upd_name != ''){
                 ?>
                     <td><?php echo $temp_sts == 0 ? 'YES':'NO'; ?></td>
                     <td>
@@ -69,10 +70,10 @@ include '../ajaxconfig.php';
                             <button class="btn btn-success temp-take-in" data-req_id='<?php echo $req_id; ?>' data-cus_id='<?php echo $cus_id; ?>' data-tableid = '<?php echo $id;?>' data-doc='sign' data-toggle='modal' data-target='.temp-take-in-modal'>Take In</button>
                         <?php } ?>
                     </td>
-                <?php }else{ ?>
-                    <td></td>
-                    <td></td>
-                <?php } ?>
+                <?php #}else{ ?>
+                    <!-- <td></td>
+                    <td></td> -->
+                <?php #} ?>
                 
                 <!-- <td><?php if($signedDoc['noc_given'] == '1'){echo 'NOC Given';}else{echo '';} ?></td> -->
             </tr>

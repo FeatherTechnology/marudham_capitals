@@ -2609,20 +2609,17 @@ function getDocumentHistory() {
             }
         }).then(function () {
             $('.edit-doc').off('click');
-            $('.edit-doc').click(function () {
-
+            $(document).on('click','.edit-doc', function () {
                 $('.dropdown').not($(this).parent()).children().css('border-color', '');// to set other dropdown buttons as normal
                 $(this).parent().prev().css('border-color', 'red');// showing selected loan's dropdown button highlighted
 
                 $('.choosing-document-card').show();
-                // $('.edit-document-card').show();
-                // $('.documentation-card').hide();
 
                 var req_id = $(this).data('reqid'); var cus_id = $(this).data('cusid'); var cus_name = $(this).data('cusname')
                 getDocumentDetails(req_id, cus_id, cus_name);
                 $('#req_id_doc').val(req_id);
-            })
-        })
+            });
+        });
     })
 
 }

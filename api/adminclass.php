@@ -5026,12 +5026,20 @@ class admin
 		$pendingchk = 'NO';
 		$mortgage_document_upd = '';
 		if (!empty($_FILES['mortgage_document_upd']['name'])) {
+			//remove old file
+			if (!empty($_POST['mortgage_doc_upd'])) {
+				$filePath = "uploads/verification/mortgage_doc/" . $_POST['mortgage_doc_upd'];
+				if (file_exists($filePath)) {
+					unlink($filePath);
+				}
+			}
+
 			$mortgage_document_upd = $_FILES['mortgage_document_upd']['name'];
 			$upd_temp = $_FILES['mortgage_document_upd']['tmp_name'];
 			$folder = "uploads/verification/mortgage_doc/" . $mortgage_document_upd;
 
-			$qry = $mysqli->query("SELECT * From acknowlegement_documentation where req_id = $req_id");
-			if ($qry->num_rows == 0) {
+			// $qry = $mysqli->query("SELECT * From acknowlegement_documentation where req_id = $req_id");
+			// if ($qry->num_rows == 0) {
 				//this will protect uploading same file again into server incase of resubmittion
 				$fileExtension = pathinfo($folder, PATHINFO_EXTENSION); //get the file extention
 				$mortgage_document_upd = uniqid() . '.' . $fileExtension;
@@ -5040,7 +5048,7 @@ class admin
 					$mortgage_document_upd = uniqid() . '.' . $fileExtension;
 				}
 				move_uploaded_file($upd_temp, "uploads/verification/mortgage_doc/" . $mortgage_document_upd);
-			}
+			// }
 		} else if (isset($_POST['mortgage_doc_upd']) and $_POST['mortgage_doc_upd'] != '') {
 			$mortgage_document_upd = $_POST['mortgage_doc_upd'];
 		} else {
@@ -5092,12 +5100,20 @@ class admin
 		$endorsependingchk = 'NO';
 		$Rc_document_upd = '';
 		if (!empty($_FILES['Rc_document_upd']['name'])) {
+			//remove old file
+			if (!empty($_POST['rc_doc_upd'])) {
+				$filePath = "uploads/verification/endorsement_doc/" . $_POST['rc_doc_upd'];
+				if (file_exists($filePath)) {
+					unlink($filePath);
+				}
+			}
+
 			$Rc_document_upd = $_FILES['Rc_document_upd']['name'];
 			$upd_temp = $_FILES['Rc_document_upd']['tmp_name'];
 			$folder = "uploads/verification/endorsement_doc/" . $Rc_document_upd;
 
-			$qry = $mysqli->query("SELECT * From acknowlegement_documentation where req_id = $req_id");
-			if ($qry->num_rows == 0) {
+			// $qry = $mysqli->query("SELECT * From acknowlegement_documentation where req_id = $req_id");
+			// if ($qry->num_rows == 0) {
 				//this will protect uploading same file again into server incase of resubmittion
 				$fileExtension = pathinfo($folder, PATHINFO_EXTENSION); //get the file extention
 				$Rc_document_upd = uniqid() . '.' . $fileExtension;
@@ -5106,7 +5122,7 @@ class admin
 					$Rc_document_upd = uniqid() . '.' . $fileExtension;
 				}
 				move_uploaded_file($upd_temp, "uploads/verification/endorsement_doc/" . $Rc_document_upd);
-			}
+			// }
 		} else if (isset($_POST['rc_doc_upd']) and $_POST['rc_doc_upd'] != '') {
 			$Rc_document_upd = $_POST['rc_doc_upd'];
 		} else {
