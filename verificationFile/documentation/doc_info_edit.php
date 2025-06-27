@@ -5,7 +5,7 @@ $id = $_POST['id'];
 
 $response = array();
 
-$qry = $connect->query("SELECT * FROM `document_info` WHERE id='$id' ");
+$qry = $connect->query("SELECT * FROM document_info WHERE id='$id' ");
 $row = $qry->fetch();
 
 $response['doc_id'] = $row['id'];

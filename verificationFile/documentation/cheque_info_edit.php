@@ -5,7 +5,7 @@ $id = $_POST['id'];
 
 $ChequeDoc = array();
 
-$chequeInfo = $connect->query("SELECT * FROM `cheque_info` WHERE id='$id' ");
+$chequeInfo = $connect->query("SELECT * FROM cheque_info WHERE id='$id' ");
 $cheque_details = $chequeInfo->fetch();
 
 $ChequeDoc['id'] = $cheque_details['id'];

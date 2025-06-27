@@ -37,7 +37,6 @@ if (isset($_POST['relation'])) {
     $relation = $_POST['relation'];
 }
 
-
 $doc_upload = '';
 if (isset($_FILES['document_info_upd'])) {
 
@@ -66,16 +65,14 @@ if (isset($_FILES['document_info_upd'])) {
 
 if ($doc_id == '') {
 
-    $insert_qry = $connect->query("INSERT INTO `document_info`(`cus_id`, `req_id`, `doc_name`, `doc_detail`, `doc_type`, `doc_holder`, `holder_name`,`relation_name`, `relation`, `insert_login_id`,`created_date`) 
-    VALUES ('$cus_id','$req_id','$doc_name','$doc_details','$doc_type','$doc_holder','$holder_name','$relation_name','$relation','$userid',now())");
+    $insert_qry = $connect->query("INSERT INTO document_info (`cus_id`, `req_id`, `doc_name`, `doc_detail`, `doc_type`, `doc_holder`, `holder_name`, `relation_name`, `relation`, `insert_login_id`, `created_date`) VALUES ('$cus_id', '$req_id', '$doc_name', '$doc_details', '$doc_type', '$doc_holder', '$holder_name', '$relation_name', '$relation', '$userid', now())");
 
     if ($insert_qry) {
         $result = "Document Info Inserted Successfully.";
     }
 } else {
 
-    $update = $connect->query("UPDATE `document_info` SET `cus_id`='$cus_id',`req_id`='$req_id',`doc_name`='$doc_name',`doc_detail`='$doc_details',`doc_type`='$doc_type',`doc_holder`='$doc_holder',
-    `holder_name`='$holder_name',`relation_name`='$relation_name',`relation`='$relation',`doc_upload`='$doc_upload',`update_login_id`=$userid WHERE `id`='$doc_id' ");
+    $update = $connect->query("UPDATE document_info SET `cus_id` = '$cus_id', `req_id` = '$req_id', `doc_name` = '$doc_name', `doc_detail` = '$doc_details', `doc_type` = '$doc_type', `doc_holder` = '$doc_holder',  `holder_name` = '$holder_name', `relation_name` = '$relation_name', `relation` = '$relation', `doc_upload` = '$doc_upload', `update_login_id` = $userid WHERE `id` = '$doc_id' ");
 
     if ($update) {
         $result = "Document Info Updated Successfully.";

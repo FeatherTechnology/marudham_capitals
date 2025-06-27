@@ -5,7 +5,7 @@ $id = $_POST['id'];
 
 $gold = array();
 
-$goldInfo = $connect->query("SELECT * FROM `gold_info` WHERE id='$id' ");
+$goldInfo = $connect->query("SELECT * FROM gold_info WHERE id = '$id' ");
 $goldDetails = $goldInfo->fetch();
 
 $gold['id'] = $goldDetails['id'];

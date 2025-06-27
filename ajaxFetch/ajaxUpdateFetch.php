@@ -41,9 +41,9 @@ $column = array(
 );
 
 if ($userid == 1) {
-    $query = 'SELECT cus_id,customer_name,mobile1,area FROM customer_register WHERE cus_status >= 13';
+    $query = 'SELECT cus_id,customer_name,mobile1,area FROM customer_register WHERE cus_status > 13';
 } else {
-    $query = "SELECT cus_id,customer_name,mobile1,area FROM customer_register  WHERE cus_status >= 13 && sub_area IN ($sub_area_list)";
+    $query = "SELECT cus_id,customer_name,mobile1,area FROM customer_register  WHERE cus_status > 13 && sub_area IN ($sub_area_list)";
 }
 
 if (isset($_POST['search']) && $_POST['search'] != "") {

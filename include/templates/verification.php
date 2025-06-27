@@ -1431,12 +1431,12 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 									</div>
 								</div>
 
-								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+								<!-- doc id is generate in acknowledgement documentation, so removing here.<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="doc_id">Document ID</label> <span class="required"> * </span>
 										<input type="text" class="form-control" id="doc_id" name="doc_id" readonly tabindex="8">
 									</div>
-								</div>
+								</div> -->
 							</div>
 						</div>
 					</div>
@@ -3211,10 +3211,10 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 							<span class="text-danger" id="signTypeCheck"> Select Sign Type </span>
 						</div>
 					</div>
-
+					
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" style="display: none;" id="cus_name_div">
 						<div class="form-group">
-							<label for="signType_cus_name"> customer Name </label>
+							<label for="signType_cus_name"> Customer Name </label>
 							<input type="text" class="form-control" id="signType_cus_name" name="signType_cus_name" readonly tabindex='3'>
 						</div>
 					</div>
@@ -3579,7 +3579,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
-							<label for="gold_upload"> Upload </label>
+							<label for="gold_upload"> Upload </label> <span class="required">&nbsp;*</span>
 							<input type="hidden" name="goldupload" id="goldupload">
 							<input type="file" onchange="compressImage(this,400)" class="form-control" id="gold_upload" name="gold_upload" accept=".pdf,.jpg,.png,.jpeg" tabindex='1'>
 							<span class="text-danger" id="gold_uploadCheck" style="display:none"> Please Upload file </span>

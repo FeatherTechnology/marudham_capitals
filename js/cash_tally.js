@@ -502,7 +502,7 @@ function submitCashTally(i) {
                     var hand_op = $('#hand_opening').text().replace(/,/g, '');
                     var bank_op = '';
                     for (var j = 0; j < i; j++) {
-                        bank_op += $('#bank_opening' + j).text().replace(/,/g, '') + ',';
+                        bank_op += $('#bank_opening' + j).text().replace(/,/g, ''); + ',';
                     }
                     bank_op = bank_op.slice(0, -1);
                     var agent_op = $('#agent_opening').text().replace(/,/g, '');
@@ -510,7 +510,7 @@ function submitCashTally(i) {
                     var hand_cl = $('#hand_closing').text().replace(/,/g, '');
                     var bank_cl = '';
                     for (var j = 0; j < i; j++) {
-                        bank_cl += $('#bank_closing' + j).text().replace(/,/g, '') + ',';
+                        bank_cl += $('#bank_closing' + j).text().replace(/,/g, ''); + ',';
                     }
                     bank_cl = bank_cl.slice(0, -1);
 
@@ -3028,7 +3028,7 @@ function getCHinvDetails() {
 
     resetNameDetailDropdown('inv');// to get dropdown details of Name filed
 
-    $('#submit_hinv').click(async function () {
+    $('#submit_hinv').click(async function () { //cr bank cash
         if (await hinvvalidation('cr') == 0) {
             var name = $('#name_hinv').val(); var area = $('#area_hinv').val(); var ident = $('#ident_hinv').val(); var remark = $('#remark_hinv').val(); var amt = $('#amt_hinv').val(); var op_date = $('#op_date').text();
 
@@ -3116,7 +3116,7 @@ function getDHinvDetails() {
 
     resetNameDetailDropdown('inv');// to get dropdown details of Name filed
 
-    $('#submit_hinv').click(async function () {
+    $('#submit_hinv').click(async function () {  //dr bank cash
         if (await hinvvalidation('db') == 0) {
             var name = $('#name_hinv').val(); var area = $('#area_hinv').val(); var ident = $('#ident_hinv').val(); var remark = $('#remark_hinv').val(); var amt = $('#amt_hinv').val();
             var op_date = $('#op_date').text();
@@ -3159,8 +3159,6 @@ async function hinvvalidation(type) {
 
     return response;
 }
-
-
 
 //to get input details for bank investment card Credit
 function getCBinvDetails() {
@@ -3232,8 +3230,8 @@ function getCBinvDetails() {
     resetNameDetailDropdown('inv');// to get dropdown details of Name filed
     getBinvestRefcode();//to get the reference code for bank investment
 
-    $('#submit_binv').click(function () {
-        if (binvvalidation() == 0) {
+    $('#submit_binv').click(async function () { //cr bank cash
+        if (await binvvalidation('cr') == 0) {
             var ref_code = $('#ref_code_binv').val(); var name = $('#name_binv').val(); var area = $('#area_binv').val(); var ident = $('#ident_binv').val();
             var trans_id = $('#trans_id_binv').val(); var remark = $('#remark_binv').val(); var amt = $('#amt_binv').val();
             var bank_id = $('input[name=cash_type]:checked').val(); var op_date = $('#op_date').text();
@@ -3337,8 +3335,8 @@ function getDBinvDetails() {
     resetNameDetailDropdown('inv');// to get dropdown details of Name filed
     getBinvestRefcode();// to get ref code
 
-    $('#submit_binv').click(function () {
-        if (binvvalidation() == 0) {
+    $('#submit_binv').click(async function () { //dr bank cash
+        if (await binvvalidation('db') == 0) {
             var ref_code = $('#ref_code_binv').val(); var name = $('#name_binv').val(); var area = $('#area_binv').val(); var ident = $('#ident_binv').val();
             var trans_id = $('#trans_id_binv').val(); var remark = $('#remark_binv').val(); var amt = $('#amt_binv').val();
             var bank_id = $('input[name=cash_type]:checked').val(); var op_date = $('#op_date').text();
@@ -3373,12 +3371,13 @@ function getDBinvDetails() {
 }
 
 //validation for Bank investment //Same validation can be used for Cr/Db due to same inputs
-function binvvalidation() {
+async function binvvalidation(type) {
     var name = $('#name_binv').val(); var trans_id = $('#trans_id_binv').val(); var remark = $('#remark_binv').val(); var amt = $('#amt_binv').val(); var response = 0;
     if (name == '') { event.preventDefault(); $('#name_binvCheck').show(); response = 1; } else { $('#name_binvCheck').hide(); }
     if (trans_id == '') { event.preventDefault(); $('#trans_id_binvCheck').show(); response = 1; } else { $('#trans_id_binvCheck').hide(); }
     if (remark == '') { event.preventDefault(); $('#remark_binvCheck').show(); response = 1; } else { $('#remark_binvCheck').hide(); }
-    if (amt == '') { event.preventDefault(); $('#amt_binvCheck').show(); response = 1; } else { $('#amt_binvCheck').hide(); }
+    if (amt == '') { event.preventDefault(); $('#amt_binvCheck').show(); response = 1; } else { $('#amt_binvCheck').hide(); if (type == 'db' && name != '') { response = await validateNamedBankCash(name, amt, 'amt_binv', 'inv');  } }
+
     return response;
 }
 
@@ -3454,7 +3453,7 @@ function getCHdepDetails() {
 
     resetNameDetailDropdown('dep');// to get dropdown details of Name filed
 
-    $('#submit_hdep').click(async function () {
+    $('#submit_hdep').click(async function () { //cr bank cash
         if (await hdepvalidation('cr') == 0) {
             var name = $('#name_hdep').val(); var area = $('#area_hdep').val(); var ident = $('#ident_hdep').val(); var remark = $('#remark_hdep').val(); var amt = $('#amt_hdep').val();
             var op_date = $('#op_date').text();
@@ -3486,6 +3485,7 @@ function getCHdepDetails() {
         }
     })
 }
+
 //to get input details of deposit card Debit
 function getDHdepDetails() {
     var appendText = `<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
@@ -3541,7 +3541,7 @@ function getDHdepDetails() {
 
     resetNameDetailDropdown('dep');// to get dropdown details of Name filed
 
-    $('#submit_hdep').click(async function () {
+    $('#submit_hdep').click(async function () {  //dr bank cash
         if (await hdepvalidation('db') == 0) {
             var name = $('#name_hdep').val(); var area = $('#area_hdep').val(); var ident = $('#ident_hdep').val(); var remark = $('#remark_hdep').val(); var amt = $('#amt_hdep').val();
             var op_date = $('#op_date').text();
@@ -3655,11 +3655,10 @@ function getCBDepDetails() {
     resetNameDetailDropdown('dep');// to get dropdown details of Name filed
     getBdepositRefcode();//to get the reference code for bank Deposit
 
-    $('#submit_bdeposit').click(function () {
-        if (bdepositvalidation() == 0) {
+    $('#submit_bdeposit').click(async function () { //cr bank cash
+        if (await bdepositvalidation('cr') == 0) { 
             var ref_code = $('#ref_code_bdeposit').val(); var name = $('#name_bdeposit').val(); var area = $('#area_bdeposit').val(); var ident = $('#ident_bdeposit').val();
-            var trans_id = $('#trans_id_bdeposit').val(); var remark = $('#remark_bdeposit').val(); var amt = $('#amt_bdeposit').val();
-            var bank_id = $('input[name=cash_type]:checked').val(); var op_date = $('#op_date').text();
+            var trans_id = $('#trans_id_bdeposit').val(); var remark = $('#remark_bdeposit').val(); var amt = $('#amt_bdeposit').val(); var bank_id = $('input[name=cash_type]:checked').val(); var op_date = $('#op_date').text();
 
             $.ajax({
                 url: 'accountsFile/cashtally/deposit/submitCBdeposit.php',
@@ -3760,11 +3759,10 @@ function getDBDepDetails() {
     resetNameDetailDropdown('dep');// to get dropdown details of Name filed
     getBdepositRefcode();// to get ref code
 
-    $('#submit_bdeposit').click(function () {
-        if (bdepositvalidation() == 0) {
+    $('#submit_bdeposit').click(async function () {  //dr bank cash
+        if (await bdepositvalidation('db') == 0) {
             var ref_code = $('#ref_code_bdeposit').val(); var name = $('#name_bdeposit').val(); var area = $('#area_bdeposit').val(); var ident = $('#ident_bdeposit').val();
-            var trans_id = $('#trans_id_bdeposit').val(); var remark = $('#remark_bdeposit').val(); var amt = $('#amt_bdeposit').val();
-            var bank_id = $('input[name=cash_type]:checked').val(); var op_date = $('#op_date').text();
+            var trans_id = $('#trans_id_bdeposit').val(); var remark = $('#remark_bdeposit').val(); var amt = $('#amt_bdeposit').val(); var bank_id = $('input[name=cash_type]:checked').val(); var op_date = $('#op_date').text();
 
             $.ajax({
                 url: 'accountsFile/cashtally/deposit/submitDBdeposit.php',
@@ -3796,12 +3794,13 @@ function getDBDepDetails() {
 }
 
 //validation for Bank Deposit //Same validation can be used for Cr/Db due to same inputs
-function bdepositvalidation() {
+async function bdepositvalidation(type) {
     var name = $('#name_bdeposit').val(); var trans_id = $('#trans_id_bdeposit').val(); var remark = $('#remark_bdeposit').val(); var amt = $('#amt_bdeposit').val(); var response = 0;
     if (name == '') { event.preventDefault(); $('#name_bdepositCheck').show(); response = 1; } else { $('#name_bdepositCheck').hide(); }
     if (trans_id == '') { event.preventDefault(); $('#trans_id_bdepositCheck').show(); response = 1; } else { $('#trans_id_bdepositCheck').hide(); }
     if (remark == '') { event.preventDefault(); $('#remark_bdepositCheck').show(); response = 1; } else { $('#remark_bdepositCheck').hide(); }
-    if (amt == '') { event.preventDefault(); $('#amt_bdepositCheck').show(); response = 1; } else { $('#amt_bdepositCheck').hide(); }
+    if (amt == '') { event.preventDefault(); $('#amt_bdepositCheck').show(); response = 1; } else { $('#amt_bdepositCheck').hide(); if (type == 'db' && name != '') { response = await validateNamedBankCash(name, amt, 'amt_bdeposit', 'dep'); } }
+
     return response;
 }
 
@@ -3817,6 +3816,7 @@ function getBdepositRefcode() {
         }
     })
 }
+
 // //////////////////////////////////////////////////// Deposit End //////////////////////////////////////////////////////// //
 
 // //////////////////////////////////////////////////// EL Start //////////////////////////////////////////////////////// //
@@ -3876,10 +3876,10 @@ function getCHelDetails() {
 
     resetNameDetailDropdown('el');// to get dropdown details of Name filed
 
-    $('#submit_hel').click(async function () {
+    $('#submit_hel').click(async function () { //credit hand cash
         if (await helvalidation() == 0) {
-            var name = $('#name_hel').val(); var area = $('#area_hel').val(); var ident = $('#ident_hel').val(); var remark = $('#remark_hel').val(); var amt = $('#amt_hel').val();
-            var op_date = $('#op_date').text();
+            var name = $('#name_hel').val(); var area = $('#area_hel').val(); var ident = $('#ident_hel').val(); var remark = $('#remark_hel').val(); var amt = $('#amt_hel').val(); var op_date = $('#op_date').text();
+
             $.ajax({
                 url: 'accountsFile/cashtally/el/submitCHel.php',
                 data: { 'name': name, 'area': area, 'ident': ident, 'remark': remark, 'amt': amt, 'op_date': op_date },
@@ -3908,6 +3908,7 @@ function getCHelDetails() {
         }
     })
 }
+
 //to get input details of EL card Debit
 function getDHelDetails() {
     var appendText = `<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
@@ -3963,7 +3964,7 @@ function getDHelDetails() {
 
     resetNameDetailDropdown('el');// to get dropdown details of Name filed
 
-    $('#submit_hel').click(async function () {
+    $('#submit_hel').click(async function () { //debit hand cash
         if (await helvalidation() == 0) {
             var name = $('#name_hel').val(); var area = $('#area_hel').val(); var ident = $('#ident_hel').val(); var remark = $('#remark_hel').val(); var amt = $('#amt_hel').val();
             var op_date = $('#op_date').text();
@@ -4006,7 +4007,6 @@ async function helvalidation() {
 
     return response;
 }
-
 
 //to get input details for bank Deposit card Credit
 function getCBelDetails() {
@@ -4078,11 +4078,9 @@ function getCBelDetails() {
     resetNameDetailDropdown('el');// to get dropdown details of Name filed
     getBelRefcode();//to get the reference code for bank Deposit
 
-    $('#submit_bel').click(function () {
-        if (belvalidation() == 0) {
-            var ref_code = $('#ref_code_bel').val(); var name = $('#name_bel').val(); var area = $('#area_bel').val(); var ident = $('#ident_bel').val();
-            var trans_id = $('#trans_id_bel').val(); var remark = $('#remark_bel').val(); var amt = $('#amt_bel').val();
-            var bank_id = $('input[name=cash_type]:checked').val(); var op_date = $('#op_date').text();
+    $('#submit_bel').click(async function () { //credit bank cash
+        if (await belvalidation() == 0) {
+            var ref_code = $('#ref_code_bel').val(); var name = $('#name_bel').val(); var area = $('#area_bel').val(); var ident = $('#ident_bel').val(); var trans_id = $('#trans_id_bel').val(); var remark = $('#remark_bel').val(); var amt = $('#amt_bel').val(); var bank_id = $('input[name=cash_type]:checked').val(); var op_date = $('#op_date').text();
 
             $.ajax({
                 url: 'accountsFile/cashtally/el/submitCBel.php',
@@ -4183,11 +4181,9 @@ function getDBelDetails() {
     resetNameDetailDropdown('el');// to get dropdown details of Name filed
     getBelRefcode();// to get ref code
 
-    $('#submit_bel').click(function () {
-        if (belvalidation() == 0) {
-            var ref_code = $('#ref_code_bel').val(); var name = $('#name_bel').val(); var area = $('#area_bel').val(); var ident = $('#ident_bel').val();
-            var trans_id = $('#trans_id_bel').val(); var remark = $('#remark_bel').val(); var amt = $('#amt_bel').val();
-            var bank_id = $('input[name=cash_type]:checked').val(); var op_date = $('#op_date').text();
+    $('#submit_bel').click(async function () { //debit bank cash
+        if (await belvalidation() == 0) {
+            var ref_code = $('#ref_code_bel').val(); var name = $('#name_bel').val(); var area = $('#area_bel').val(); var ident = $('#ident_bel').val(); var trans_id = $('#trans_id_bel').val(); var remark = $('#remark_bel').val(); var amt = $('#amt_bel').val(); var bank_id = $('input[name=cash_type]:checked').val(); var op_date = $('#op_date').text();
 
             $.ajax({
                 url: 'accountsFile/cashtally/el/submitDBel.php',
@@ -4219,12 +4215,13 @@ function getDBelDetails() {
 }
 
 //validation for Bank EL //Same validation can be used for Cr/Db due to same inputs
-function belvalidation() {
-    var name = $('#name_bel').val(); var trans_id = $('#trans_id_bel').val(); var remark = $('#remark_bel').val(); var amt = $('#amt_bel').val(); var response = 0;
+async function belvalidation() {
+    var name = $('#name_bel').val(); var trans_id = $('#trans_id_bel').val(); var remark = $('#remark_bel').val(); var amt = $('#amt_bel').val(); var response = 0; let cash_type = $('#credit_type').val() != '' ? 'crel' : 'dbel';
     if (name == '') { event.preventDefault(); $('#name_belCheck').show(); response = 1; } else { $('#name_belCheck').hide(); }
     if (trans_id == '') { event.preventDefault(); $('#trans_id_belCheck').show(); response = 1; } else { $('#trans_id_belCheck').hide(); }
     if (remark == '') { event.preventDefault(); $('#remark_belCheck').show(); response = 1; } else { $('#remark_belCheck').hide(); }
-    if (amt == '') { event.preventDefault(); $('#amt_belCheck').show(); response = 1; } else { $('#amt_belCheck').hide(); }
+    if (amt == '') { event.preventDefault(); $('#amt_belCheck').show(); response = 1; } else { $('#amt_belCheck').hide(); response = await validateNamedBankCash(name, amt, 'amt_bel', cash_type); }
+
     return response;
 }
 
@@ -4983,6 +4980,7 @@ function validateHandCash(amt) {
         return true;
     }
 }
+
 //this function will check the amount entered were lesser or equal to hand closing balance
 function validateBankCash(amt) {
     var cash_type = $('input[name=cash_type]:checked').val(); // selected bank ID
@@ -5011,13 +5009,52 @@ function validateBankCash(amt) {
     return true;
 }
 
-
-
 //Validate credit and debit based on the names
 function validateNamedHandCash(name, amt, source, cash_type) {
     return new Promise((resolve, reject) => {
         $.ajax({
             url: 'accountsFile/cashtally/validateNamedHandCash.php',
+            data: { name, amt, cash_type },
+            type: 'post',
+            dataType: 'JSON',
+            cache: false,
+            success: function (response) {
+                let retval = 0;
+                if (cash_type != 'crel' && cash_type != 'dbel') {
+                    if (response['info'] != 1) {
+                        event.preventDefault();
+                        alert('Enter Smaller value !');
+                        $(`#${source}`).val('')
+                        retval = 1;
+                    }
+                } else {
+                    if (cash_type == 'crel' && response['creditable'] > 0 && response['creditable'] < amt) {
+                        event.preventDefault();
+                        alert('Enter value between 1 and ' + response['creditable'])
+                        $(`#${source}`).val('')
+                        retval = 1;
+                    } else if (cash_type == 'dbel' && response['debitable'] > 0 && response['debitable'] < amt) {
+                        event.preventDefault();
+                        alert('Enter value between 1 and ' + response['debitable'])
+                        $(`#${source}`).val('')
+                        retval = 1;
+                    }
+                }
+
+                resolve(retval);
+            },
+            error: function () {
+                reject(1); // treat error as invalid
+            }
+        });
+    });
+}
+
+//Validate credit and debit based on the names
+function validateNamedBankCash(name, amt, source, cash_type) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: 'accountsFile/cashtally/validateNamedBankCash.php',
             data: { name, amt, cash_type },
             type: 'post',
             dataType: 'JSON',

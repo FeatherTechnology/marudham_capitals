@@ -67,9 +67,14 @@ $(document).ready(function () {
     //Signed Doc Validation Hide, // Signed Modal Doc Upload.
     $('#docNameCheck').hide(); $('#signTypeCheck').hide(); $('#docCountCheck').hide(); $('#docupdCheck').hide();
 
+    $('#add_sign_doc').click(function(){
+        $('#signDocUploads input').not('#signType_cus_name, #guar_name').prop('readonly', false);
+        $('#signDocUploads select').prop('disabled', false);
+    });
+
     $('#sign_type').change(function () { // Signed Type 
         let type = $(this).val();
-
+  
         $("#cus_name_div").hide();
         $('#guar_name_div').hide();
         $('#relation_doc').hide();
@@ -85,8 +90,8 @@ $(document).ready(function () {
                 dataType: "json",
                 cache: false,
                 success: function (result) {
-                $("#cus_name_div").show();
-                $("#signType_cus_name").val(result["name"]);
+                    $("#cus_name_div").show();
+                    $("#signType_cus_name").val(result["name"]);
                 },
             });
         }
@@ -103,9 +108,8 @@ $(document).ready(function () {
 
         } else {
             $('#signType_relationship').val('');
-            
-        }
 
+        }
     })
 
     $("body").on("click", "#signed_doc_edit", function () {
@@ -156,6 +160,38 @@ $(document).ready(function () {
 
     });
 
+    $("body").on("click", "#signed_doc_delete", function () {
+        var isok = confirm("Do you want delete this Signed Doc Info?");
+        if (isok == false) {
+            return false;
+        } else {
+            var signid = $(this).attr("value");
+
+            $.ajax({
+                url: "verificationFile/documentation/signed_doc_delete.php",
+                type: "POST",
+                data: { signid: signid },
+                cache: false,
+                success: function (response) {
+                var delresult = response.includes("Deleted");
+                if (delresult) {
+                    $("#signDeleteOk").show();
+                    setTimeout(function () {
+                        $("#signDeleteOk").fadeOut("fast");
+                    }, 2000);
+                } else {
+                    $("#signDeleteNotOk").show();
+                    setTimeout(function () {
+                        $("#signDeleteNotOk").fadeOut("fast");
+                    }, 2000);
+                }
+
+                    resetsignInfo();
+                },
+            });
+        }
+    });
+
     $("#signDocUploads").on('submit', function (e) {
         e.preventDefault();
 
@@ -163,9 +199,9 @@ $(document).ready(function () {
         let sign_type = $("#sign_type").val();
         let doc_Count = $("#doc_Count").val();
         let req_id = $('#doc_req_id').val();
-        let signeddoc_upd = $('#signdoc_upd').val();
+        // let signeddoc_upd = $('#signdoc_upd').val(); //upload mandatory is removed.
 
-        if (doc_name != "" && sign_type != "" && doc_Count != "" && req_id != "" && signeddoc_upd != "") {
+        if (doc_name != "" && sign_type != "" && doc_Count != "" && req_id != "" ) {
             $.ajax({
                 type: 'POST',
                 url: 'verificationFile/documentation/sign_info_doc_upload.php',
@@ -191,7 +227,9 @@ $(document).ready(function () {
                     resetsignInfo();
                 }
             });
+            
             $('#docNameCheck').hide(); $('#signTypeCheck').hide(); $('#docCountCheck').hide(); $('#docupdCheck').hide();
+
         } else {
 
 
@@ -207,17 +245,93 @@ $(document).ready(function () {
                 $('#docCountCheck').hide();
             }
 
-            if (signeddoc_upd == "") {
-                $('#docupdCheck').show();
-            } else {
-                $('#docupdCheck').hide();
-            }
+            // if (signeddoc_upd == "") {
+            //     $('#docupdCheck').show();
+            // } else {
+            //     $('#docupdCheck').hide();
+            // }
 
         }
     });
 
     ///Cheque Modal Doc Upload
     $('#chequebankCheck').hide(); $('#holdertypeCheck').hide(); $('#chequeCountCheck').hide(); $('#chequeupdCheck').hide();
+
+    $('#add_Cheque').click(function(){
+        $('#chequeUploads input').not('#holder_name, #cheque_relation').prop('readonly', false);
+        $('#chequeUploads select').prop('disabled', false);
+    });
+
+    $("#holder_type").change(function () {
+        // Cheque info
+        let type = $(this).val();
+        let req_id = $("#req_id").val();
+
+        if (type == "0") {
+            $("#holder_name").show();
+            $("#holder_relationship_name").hide();
+
+            $.ajax({
+                type: "POST",
+                url: "verificationFile/documentation/check_holder_name.php",
+                data: { type: type, reqId: req_id },
+                dataType: "json",
+                cache: false,
+                success: function (result) {
+                $("#holder_name").val(result["name"]);
+                $("#cheque_relation").val("NIL");
+                },
+            });
+            
+        } else if (type == "1") {
+            $("#holder_name").show();
+            $("#holder_relationship_name").hide();
+
+            $.ajax({
+                type: "POST",
+                url: "verificationFile/documentation/check_holder_name.php",
+                data: { type: type, reqId: req_id },
+                dataType: "json",
+                cache: false,
+                success: function (result) {
+                $("#holder_name").val(result["name"]);
+                $("#cheque_relation").val(result["relationship"]);
+                },
+            });
+
+        } else if (type == "2") {
+            $("#holder_name").hide();
+            $("#holder_relationship_name").show();
+            $("#holder_name").val("");
+            $("#cheque_relation").val("");
+
+            chequeHolderName(); // Holder Name From Family Table.
+        } else {
+            $("#holder_name").show();
+            $("#holder_relationship_name").hide();
+            $("#holder_name").val("");
+            $("#cheque_relation").val("");
+        }
+
+    });
+
+    $("#holder_relationship_name").change(function () {
+        let fam_id = $(this).val();
+        $.ajax({
+            url: "verificationFile/documentation/find_cheque_relation.php",
+            type: "POST",
+            data: { fam_id: fam_id },
+            dataType: "json",
+            success: function (response) {
+                $("#cheque_relation").val(response);
+            },
+        });
+    });
+
+    $('#cheque_count').off().keyup(function(){
+        let chequeCnt = $(this).val();
+        getChequeColumn(chequeCnt,''); // show input to insert Cheque No.
+    });
 
     $("#chequeUploads").on('submit', function (e) {
         e.preventDefault();
@@ -227,34 +341,41 @@ $(document).ready(function () {
         let holder_type = $("#holder_type").val();
         var holder_name = $("#holder_name").val();
         var holder_relationship_name = $("#holder_relationship_name").val();
+        let cheque_relation = $("#cheque_relation").val();
         let chequebank_name = $("#chequebank_name").val();
         let cheque_count = $("#cheque_count").val();
+        let cus_profile_id = $("#cus_profile_id").val();
         // let cheque_upd = $("#cheque_upd")[0];
         let formdata = new FormData();
         let files = $("#cheque_upd")[0].files;
         for (var i = 0; i < files.length; i++) {
             formdata.append('cheque_upd[]', files[i])
         }
-        var chequeno = $("#cheque_upd_no").val();
+        // var chequeno = $("#cheque_upd_no").val();
         var chequeArr = [];
         var i = 0;
+        let checkChequeNo = true;
         $('.chequeno').each(function () {
             chequeArr[i] = $(this).val();
+            checkChequeNo = ($(this).val() =='' || checkChequeNo == false) ? false : true;
             i++;
         })
 
         let chequeID = $("#chequeID").val();
 
+        formdata.append('cus_id', cus_id)
+        formdata.append('cheque_req_id', req_id)
         formdata.append('holder_type', holder_type)
         formdata.append('holder_name', holder_name)
         formdata.append('holder_relationship_name', holder_relationship_name)
-
-        formdata.append('chequeID', chequeID)
+        formdata.append('cheque_relation', cheque_relation)
+        formdata.append('chequebank_name', chequebank_name)
+        formdata.append('cheque_count', cheque_count)
         formdata.append('cheque_upd_no', chequeArr)
-        formdata.append('cheque_req_id', req_id)
-        formdata.append('cus_id', cus_id)
+        formdata.append('chequeID', chequeID)
+        formdata.append('cus_profile_id', cus_profile_id)
 
-        if (holder_type != "" && chequebank_name != "" && cheque_count != "" && req_id != "") {
+        if (holder_type != "" && chequebank_name != "" && cheque_count != "" && req_id != "" && checkChequeNo == true) {
             $.ajax({
                 type: 'POST',
                 url: 'verificationFile/documentation/cheque_upload.php',
@@ -301,6 +422,12 @@ $(document).ready(function () {
                 $('#chequeCountCheck').hide();
             }
 
+            if (checkChequeNo == false) {
+                $('#chequeNoCheck').show();
+            } else {
+                $('#chequeNoCheck').hide();
+            }
+
             // if (checkupd == 0) {
             //     $('#chequeupdCheck').show();
             // } else {
@@ -312,7 +439,6 @@ $(document).ready(function () {
 
     $("body").on("click", "#cheque_info_edit", function () {
         let id = $(this).attr('value');
-        chequeHolderName(); // Holder Name From Family Table.
 
         $.ajax({
             url: 'verificationFile/documentation/cheque_info_edit.php',
@@ -334,8 +460,8 @@ $(document).ready(function () {
                 } else {
                     $('#holder_name').hide();
                     $('#holder_relationship_name').show();
-
-                    $("#holder_relationship_name").val(result['holder_relationship_name']);
+                    chequeHolderName(result['holder_relationship_name']); // Holder Name From Family Table.
+                    // $("#holder_relationship_name").val(result['holder_relationship_name']);
                 }
 
                 $("#cheque_relation").val(result['cheque_relation']);
@@ -345,7 +471,38 @@ $(document).ready(function () {
                 getChequeColumn(result['cheque_count'], result['cheque_no']); // show input to insert Cheque No.
             }
         });
+    });
 
+    $("body").on("click", "#cheque_info_delete", function () {
+        var isok = confirm("Do you want delete this Cheque Info?");
+        if (isok == false) {
+            return false;
+        } else {
+            var chequeid = $(this).attr("value");
+
+            $.ajax({
+                url: "verificationFile/documentation/cheque_info_delete.php",
+                type: "POST",
+                data: { chequeid: chequeid },
+                cache: false,
+                success: function (response) {
+                var delresult = response.includes("Deleted");
+                if (delresult) {
+                    $("#chequeDeleteOk").show();
+                    setTimeout(function () {
+                        $("#chequeDeleteOk").fadeOut("fast");
+                    }, 2000);
+                } else {
+                    $("#chequeDeleteNotOk").show();
+                    setTimeout(function () {
+                        $("#chequeDeleteNotOk").fadeOut("fast");
+                    }, 2000);
+                }
+
+                resetchequeInfo();
+                },
+            });
+        }
     });
 
 
@@ -737,7 +894,7 @@ $(document).ready(function () {
     //Gold Info START ///
     $("body").on("click", "#gold_info_edit", function () {
         let id = $(this).attr('value');
-        chequeHolderName(); // Holder Name From Family Table.
+        // chequeHolderName(); // Holder Name From Family Table.
 
         $.ajax({
             url: 'verificationFile/documentation/gold_info_edit.php',
@@ -1560,7 +1717,7 @@ function onLoadDocEditFunction() {//On load for Loan Calculation edit
 
 }
 //Get DOC id 
-function getstaffCode() {
+function getDocID() {
     let doc_Id = $('#doc_table_id').val();
     $.ajax({
         url: 'verificationFile/documentation/doc_id_autoGen.php',
@@ -1796,18 +1953,18 @@ function resetsigninfoList() {
     });
 }
 
-function filesCount() {
-    var cnt = $('#doc_Count').val();
-    var signFile = document.querySelector('#signdoc_upd');
+// function filesCount() {
+//     var cnt = $('#doc_Count').val();
+//     var signFile = document.querySelector('#signdoc_upd');
 
-    if (signFile.files.length <= cnt) {
-        return true;
-    } else {
-        alert('Please select Less than ' + cnt + ' files.')
-        $("#signdoc_upd").val('');
-        return false;
-    }
-}
+//     if (signFile.files.length <= cnt) {
+//         return true;
+//     } else {
+//         alert('Please select Less than ' + cnt + ' files.')
+//         $("#signdoc_upd").val('');
+//         return false;
+//     }
+// }
 
 //Cheque Info List
 function chequeinfoList() {
@@ -1873,7 +2030,7 @@ function resetchequeInfo() {
 
 
 
-function chequeHolderName() {
+function chequeHolderName(editValue) {
     let cus_id = $('#cus_id').val();
     $.ajax({
         url: 'verificationFile/verificationFam.php',
@@ -1884,11 +2041,13 @@ function chequeHolderName() {
 
             var len = response.length;
             $("#holder_relationship_name").empty();
-            $("#holder_relationship_name").append("<option value=''>" + 'Select Holder Name' + "</option>");
+            $("#holder_relationship_name").append("<option value=''>Select Holder Name</option>");
             for (var i = 0; i < len - 1; i++) {
                 var fam_name = response[i]['fam_name'];
                 var fam_id = response[i]['fam_id'];
-                $("#holder_relationship_name").append("<option value='" + fam_id + "'>" + fam_name + "</option>");
+                let selected = (editValue == fam_id) ? 'selected': '';
+
+                $("#holder_relationship_name").append(`<option value='${fam_id}' ${selected}>${fam_name}</option>`);
             }
             {//To Order ag_group Alphabetically
                 var firstOption = $("#holder_relationship_name option:first-child");
@@ -1902,18 +2061,18 @@ function chequeHolderName() {
     });
 }
 
-function chequefilesCount() {
-    var cnt = $('#cheque_count').val();
-    var chequeFile = document.querySelector('#cheque_upd');
+// function chequefilesCount() {
+//     var cnt = $('#cheque_count').val();
+//     var chequeFile = document.querySelector('#cheque_upd');
 
-    if (chequeFile.files.length <= cnt) {
-        return true;
-    } else {
-        alert('Please select Less than ' + cnt + ' files.')
-        $("#cheque_upd").val('');
-        return false;
-    }
-}
+//     if (chequeFile.files.length <= cnt) {
+//         return true;
+//     } else {
+//         alert('Please select Less than ' + cnt + ' files.')
+//         $("#cheque_upd").val('');
+//         return false;
+//     }
+// }
 
 //Cheque No 
 function getChequeColumn(cnt, nos) {
@@ -2104,6 +2263,12 @@ function goldinfoList() {
 // ///////////////////////////  Document Info Modal //////////////////////////////
 
 $('#documentnameCheck').hide(); $('#documentdetailsCheck').hide(); $('#documentTypeCheck').hide(); $('#docholderCheck').hide();
+
+$('#add_document').click(function(){
+    $('#docUploads input').not('#docholder_name, #doc_relation').prop('readonly', false);
+    $('#docUploads select').prop('disabled', false);
+});
+
 //Document info submit button action
 $('#docInfoBtn').click(function () {
     let req_id = $("#req_id").val();
@@ -2413,12 +2578,12 @@ function doc_submit_validation(submit_btn) {
             event.preventDefault();
             $('#mortgagedocCheck').show();
         } else {//if selected then check if document dropdown is YES(0) then check for document uploaded now or already
-            if (mortgage_document == '0' && (mortgage_old_doc_upd == '' && mortgage_document_upd == '')) { //if yes, then check both document upload are not empty
-                event.preventDefault();
-                $('#mortgagedocUpdCheck').show();
-            } else {
-                $('#mortgagedocUpdCheck').hide();
-            }
+            // if (mortgage_document == '0' && (mortgage_old_doc_upd == '' && mortgage_document_upd == '')) { //if yes, then check both document upload are not empty
+            //     event.preventDefault();
+            //     $('#mortgagedocUpdCheck').show();
+            // } else {
+            //     $('#mortgagedocUpdCheck').hide();
+            // }
             $('#mortgagedocCheck').hide();
         }
     }
@@ -2478,14 +2643,24 @@ function doc_submit_validation(submit_btn) {
             event.preventDefault();
             $('#enRCCheck').show();
         } else { //if selected then check if document dropdown is YES(0) then check for document uploaded now or already
-            if (en_RC == '0' && (RC_old_document_upd == '' && RC_document_upd == '')) { //if yes, then check both document upload are not empty
-                event.preventDefault();
-                $('#rcdocUpdCheck').show();
-            } else {
-                $('#rcdocUpdCheck').hide();
-            }
+            // if (en_RC == '0' && (RC_old_document_upd == '' && RC_document_upd == '')) { //if yes, then check both document upload are not empty
+            //     event.preventDefault();
+            //     $('#rcdocUpdCheck').show();
+            // } else {
+            //     $('#rcdocUpdCheck').hide();
+            // }
             $('#enRCCheck').hide();
         }
+    }
+
+    //signed doc
+    if(!storeDocInfo.signDocInfo){
+        event.preventDefault();
+        $('#signed_infoCheck, #signed_doc_card').show();
+        
+    }else{
+        $('#signed_infoCheck').hide();
+        
     }
 
     // if (submitted == undefined || submitted == '' || submitted == null) {
@@ -2501,7 +2676,7 @@ function doc_submit_validation(submit_btn) {
 }
 
 async function getDocumentFunc(){
-    getstaffCode(); // Atuo Generate Doc ID.
+    getDocID(); // Atuo Generate Doc ID.
 
     await resetsigninfoList(); // Signed Doc List Reset.
 

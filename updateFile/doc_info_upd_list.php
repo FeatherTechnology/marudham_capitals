@@ -58,7 +58,7 @@ if(isset($_POST['req_id'])){
                 }
                 echo rtrim($text,', ');// to trim the comma at end ?></td>
 
-                <?php if(!empty($row["doc_upload"])){ //check if file not receveived ?>
+                <?php #if(!empty($row["doc_upload"])){ //check if file not receveived ?>
                     <td><?php echo $temp_sts == 0 ? 'YES':'NO'; ?></td>
                     <td>
                         <?php if($temp_sts == 0){//zero means document available,so show button for take out as temprory ?>
@@ -67,10 +67,10 @@ if(isset($_POST['req_id'])){
                             <button class="btn btn-success temp-take-in" data-req_id='<?php echo $req_id; ?>' data-cus_id='<?php echo $cus_id; ?>' data-tableid = '<?php echo $id;?>' data-doc='document' data-toggle='modal' data-target='.temp-take-in-modal'>Take In</button>
                         <?php } ?>
                     </td>
-                <?php }else{?>
-                    <td></td>
-                    <td></td>
-                <?php } ?>
+                <?php # }else{?>
+                    <!-- <td></td>
+                    <td></td> -->
+                <?php # } ?>
             </tr>
 
         <?php  } ?>

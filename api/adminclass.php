@@ -4309,9 +4309,9 @@ class admin
 		if (isset($_POST['cus_profile_id'])) {
 			$cus_profile_id = $_POST['cus_profile_id'];
 		}
-		if (isset($_POST['doc_id'])) {
-			$doc_id =  $_POST['doc_id'];
-		}
+		// if (isset($_POST['doc_id'])) {
+		// 	$doc_id =  $_POST['doc_id'];
+		// }
 		if (isset($_POST['mortgage_process'])) {
 			$mortgage_process = $_POST['mortgage_process'];
 		}
@@ -4382,28 +4382,29 @@ class admin
 				try {
 					// Disable autocommit to start a transaction
 					$mysqli->autocommit(FALSE);
-					$myStr = "DOC";
-					$selectIC = $mysqli->query("SELECT doc_id FROM verification_documentation WHERE doc_id != '' ORDER BY id DESC LIMIT 1 FOR UPDATE");
-					if ($selectIC->num_rows > 0) {
-						$row = $selectIC->fetch_assoc();
-						$ac2 = $row["doc_id"];
 
-						$appno2 = ltrim(strstr($ac2, '-'), '-');
-						$appno2 = $appno2 + 1;
-						$doc_id = $myStr . "-" . "$appno2";
-					} else {
-						$initialapp = $myStr . "-101";
-						$doc_id = $initialapp;
-					}
+					// $myStr = "DOC";
+					// $selectIC = $mysqli->query("SELECT doc_id FROM verification_documentation WHERE doc_id != '' ORDER BY id DESC LIMIT 1 FOR UPDATE");
+					// if ($selectIC->num_rows > 0) {
+					// 	$row = $selectIC->fetch_assoc();
+					// 	$ac2 = $row["doc_id"];
 
-					$insertQry = "INSERT INTO `verification_documentation`( `req_id`, `cus_id_doc`, `customer_name`, `cus_profile_id`, `doc_id`, `mortgage_process`, `Propertyholder_type`, `Propertyholder_name`, `Propertyholder_relationship_name`, `doc_property_relation`, `doc_property_type`, `doc_property_measurement`, `doc_property_location`, `doc_property_value`, `endorsement_process`, `owner_type`, `owner_name`, `ownername_relationship_name`, `en_relation`, `vehicle_type`, `vehicle_process`, `en_Company`, `en_Model`, `cus_status`, `insert_login_id`,`created_date`) VALUES('" . strip_tags($req_id) . "','" . strip_tags($cus_id_doc) . "','" . strip_tags($Customer_name) . "','" . strip_tags($cus_profile_id) . "','" . strip_tags($doc_id) . "', '" . strip_tags($mortgage_process) . "', '" . strip_tags($Propertyholder_type) . "', '" . strip_tags($Propertyholder_name) . "','" . strip_tags($Propertyholder_relationship_name) . "','" . strip_tags($doc_property_relation) . "','" . strip_tags($doc_property_pype) . "','" . strip_tags($doc_property_measurement) . "', '" . strip_tags($doc_property_location) . "', '" . strip_tags($doc_property_value) . "', '" . strip_tags($endorsement_process) . "','" . strip_tags($owner_type) . "','" . strip_tags($owner_name) . "','" . strip_tags($ownername_relationship_name) . "','" . strip_tags($en_relation) . "','" . strip_tags($vehicle_type) . "','" . strip_tags($vehicle_process) . "','" . strip_tags($en_Company) . "','" . strip_tags($en_Model) . "','11','" . $userid . "',current_timestamp() )";
+					// 	$appno2 = ltrim(strstr($ac2, '-'), '-');
+					// 	$appno2 = $appno2 + 1;
+					// 	$doc_id = $myStr . "-" . "$appno2";
+					// } else {
+					// 	$initialapp = $myStr . "-101";
+					// 	$doc_id = $initialapp;
+					// }
+
+					$insertQry = "INSERT INTO `verification_documentation`( `req_id`, `cus_id_doc`, `customer_name`, `cus_profile_id`, `mortgage_process`, `Propertyholder_type`, `Propertyholder_name`, `Propertyholder_relationship_name`, `doc_property_relation`, `doc_property_type`, `doc_property_measurement`, `doc_property_location`, `doc_property_value`, `endorsement_process`, `owner_type`, `owner_name`, `ownername_relationship_name`, `en_relation`, `vehicle_type`, `vehicle_process`, `en_Company`, `en_Model`, `cus_status`, `insert_login_id`,`created_date`) VALUES('" . strip_tags($req_id) . "','" . strip_tags($cus_id_doc) . "','" . strip_tags($Customer_name) . "','" . strip_tags($cus_profile_id) . "', '" . strip_tags($mortgage_process) . "', '" . strip_tags($Propertyholder_type) . "', '" . strip_tags($Propertyholder_name) . "','" . strip_tags($Propertyholder_relationship_name) . "','" . strip_tags($doc_property_relation) . "','" . strip_tags($doc_property_pype) . "','" . strip_tags($doc_property_measurement) . "', '" . strip_tags($doc_property_location) . "', '" . strip_tags($doc_property_value) . "', '" . strip_tags($endorsement_process) . "','" . strip_tags($owner_type) . "','" . strip_tags($owner_name) . "','" . strip_tags($ownername_relationship_name) . "','" . strip_tags($en_relation) . "','" . strip_tags($vehicle_type) . "','" . strip_tags($vehicle_process) . "','" . strip_tags($en_Company) . "','" . strip_tags($en_Model) . "','11','" . $userid . "',current_timestamp() )";
 
 					$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
 
-					$insertQry = "UPDATE request_creation set cus_status = 11,updated_date=now() where req_id ='" . strip_tags($req_id) . "' ";
+					$insertQry = "UPDATE request_creation set cus_status = 11, updated_date = now() where req_id ='" . strip_tags($req_id) . "' ";
 					$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
 
-					$insertQry = "UPDATE in_verification set cus_status = 11,updated_date=now() where req_id ='" . strip_tags($req_id) . "' ";
+					$insertQry = "UPDATE in_verification set cus_status = 11, updated_date = now() where req_id ='" . strip_tags($req_id) . "' ";
 					$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
 
 					// Commit the transaction
@@ -4419,7 +4420,7 @@ class admin
 				}
 			}
 		} else {
-			$update_doc = " UPDATE `verification_documentation` SET `req_id`='" . strip_tags($req_id) . "',`cus_id_doc`='" . strip_tags($cus_id_doc) . "',`customer_name`='" . strip_tags($Customer_name) . "',`cus_profile_id`='" . strip_tags($cus_profile_id) . "',`doc_id`='" . strip_tags($doc_id) . "',`mortgage_process`='" . strip_tags($mortgage_process) . "',`Propertyholder_type`='" . strip_tags($Propertyholder_type) . "',`Propertyholder_name`='" . strip_tags($Propertyholder_name) . "',`Propertyholder_relationship_name`='" . strip_tags($Propertyholder_relationship_name) . "',`doc_property_relation`='" . strip_tags($doc_property_relation) . "',`doc_property_type`='" . strip_tags($doc_property_pype) . "',`doc_property_measurement`='" . strip_tags($doc_property_measurement) . "',`doc_property_location`='" . strip_tags($doc_property_location) . "',`doc_property_value`='" . strip_tags($doc_property_value) . "',`endorsement_process`='" . strip_tags($endorsement_process) . "',`owner_type`='" . strip_tags($owner_type) . "',`owner_name`='" . strip_tags($owner_name) . "',`ownername_relationship_name`='" . strip_tags($ownername_relationship_name) . "',`en_relation`='" . strip_tags($en_relation) . "',`vehicle_type`='" . strip_tags($vehicle_type) . "',`vehicle_process`='" . strip_tags($vehicle_process) . "',`en_Company`='" . strip_tags($en_Company) . "',`en_Model`='" . strip_tags($en_Model) . "',`status`='0',`update_login_id`='" . $userid . "' WHERE `id` = '" . strip_tags($doc_table_id) . "' ";
+			$update_doc = " UPDATE `verification_documentation` SET `req_id`='" . strip_tags($req_id) . "',`cus_id_doc`='" . strip_tags($cus_id_doc) . "',`customer_name`='" . strip_tags($Customer_name) . "',`cus_profile_id`='" . strip_tags($cus_profile_id) . "',`mortgage_process`='" . strip_tags($mortgage_process) . "',`Propertyholder_type`='" . strip_tags($Propertyholder_type) . "',`Propertyholder_name`='" . strip_tags($Propertyholder_name) . "',`Propertyholder_relationship_name`='" . strip_tags($Propertyholder_relationship_name) . "',`doc_property_relation`='" . strip_tags($doc_property_relation) . "',`doc_property_type`='" . strip_tags($doc_property_pype) . "',`doc_property_measurement`='" . strip_tags($doc_property_measurement) . "',`doc_property_location`='" . strip_tags($doc_property_location) . "',`doc_property_value`='" . strip_tags($doc_property_value) . "',`endorsement_process`='" . strip_tags($endorsement_process) . "',`owner_type`='" . strip_tags($owner_type) . "',`owner_name`='" . strip_tags($owner_name) . "',`ownername_relationship_name`='" . strip_tags($ownername_relationship_name) . "',`en_relation`='" . strip_tags($en_relation) . "',`vehicle_type`='" . strip_tags($vehicle_type) . "',`vehicle_process`='" . strip_tags($vehicle_process) . "',`en_Company`='" . strip_tags($en_Company) . "',`en_Model`='" . strip_tags($en_Model) . "',`status`='0',`update_login_id`='" . $userid . "' WHERE `id` = '" . strip_tags($doc_table_id) . "' ";
 
 			$updDocResult = $mysqli->query($update_doc) or die("Error " . $mysqli->error);
 		}
@@ -4979,11 +4980,11 @@ class admin
 		if (isset($_POST['cus_profile_id'])) {
 			$cus_profile_id = $_POST['cus_profile_id'];
 		}
-		if (isset($_POST['doc_id'])) {
-			$doc_id =  $_POST['doc_id'];
-		}
-		if (isset($_POST['mortgage_process_post'])) {
-			$mortgage_process = $_POST['mortgage_process_post'];
+		// if (isset($_POST['doc_id'])) {
+		// 	$doc_id =  $_POST['doc_id'];
+		// }
+		if (isset($_POST['mortgage_process'])) {
+			$mortgage_process = $_POST['mortgage_process'];
 		}
 		if (isset($_POST['Propertyholder_type'])) {
 			$Propertyholder_type = $_POST['Propertyholder_type'];
@@ -5030,13 +5031,22 @@ class admin
 			$mortgage_document = $_POST['mortgage_document'];
 		}
 		$pendingchk = 'NO';
+		$mortgage_document_upd = '';
 		if (!empty($_FILES['mortgage_document_upd']['name'])) {
+			//remove old file
+			if (!empty($_POST['mortgage_doc_upd'])) {
+				$filePath = "uploads/verification/mortgage_doc/" . $_POST['mortgage_doc_upd'];
+				if (file_exists($filePath)) {
+					unlink($filePath);
+				}
+			}
+
 			$mortgage_document_upd = $_FILES['mortgage_document_upd']['name'];
 			$upd_temp = $_FILES['mortgage_document_upd']['tmp_name'];
 			$folder = "uploads/verification/mortgage_doc/" . $mortgage_document_upd;
 
-			$qry = $mysqli->query("SELECT * From acknowlegement_documentation where req_id = $req_id");
-			if ($qry->num_rows == 0) {
+			// $qry = $mysqli->query("SELECT * From acknowlegement_documentation where req_id = $req_id");
+			// if ($qry->num_rows == 0) {
 				//this will protect uploading same file again into server incase of resubmittion
 				$fileExtension = pathinfo($folder, PATHINFO_EXTENSION); //get the file extention
 				$mortgage_document_upd = uniqid() . '.' . $fileExtension;
@@ -5045,7 +5055,7 @@ class admin
 					$mortgage_document_upd = uniqid() . '.' . $fileExtension;
 				}
 				move_uploaded_file($upd_temp, "uploads/verification/mortgage_doc/" . $mortgage_document_upd);
-			}
+			// }
 		} else if (isset($_POST['mortgage_doc_upd']) and $_POST['mortgage_doc_upd'] != '') {
 			$mortgage_document_upd = $_POST['mortgage_doc_upd'];
 		} else {
@@ -5054,8 +5064,8 @@ class admin
 				$mortgage_document_upd = '';
 			}
 		}
-		if (isset($_POST['endorsement_process_post'])) {
-			$endorsement_process = $_POST['endorsement_process_post'];
+		if (isset($_POST['endorsement_process'])) {
+			$endorsement_process = $_POST['endorsement_process'];
 		}
 		if (isset($_POST['owner_type'])) {
 			$owner_type = $_POST['owner_type'];
@@ -5095,13 +5105,22 @@ class admin
 			$en_RC = $_POST['en_RC'];
 		}
 		$endorsependingchk = 'NO';
+		$Rc_document_upd = '';
 		if (!empty($_FILES['Rc_document_upd']['name'])) {
+			//remove old file
+			if (!empty($_POST['rc_doc_upd'])) {
+				$filePath = "uploads/verification/endorsement_doc/" . $_POST['rc_doc_upd'];
+				if (file_exists($filePath)) {
+					unlink($filePath);
+				}
+			}
+
 			$Rc_document_upd = $_FILES['Rc_document_upd']['name'];
 			$upd_temp = $_FILES['Rc_document_upd']['tmp_name'];
 			$folder = "uploads/verification/endorsement_doc/" . $Rc_document_upd;
 
-			$qry = $mysqli->query("SELECT * From acknowlegement_documentation where req_id = $req_id");
-			if ($qry->num_rows == 0) {
+			// $qry = $mysqli->query("SELECT * From acknowlegement_documentation where req_id = $req_id");
+			// if ($qry->num_rows == 0) {
 				//this will protect uploading same file again into server incase of resubmittion
 				$fileExtension = pathinfo($folder, PATHINFO_EXTENSION); //get the file extention
 				$Rc_document_upd = uniqid() . '.' . $fileExtension;
@@ -5110,7 +5129,7 @@ class admin
 					$Rc_document_upd = uniqid() . '.' . $fileExtension;
 				}
 				move_uploaded_file($upd_temp, "uploads/verification/endorsement_doc/" . $Rc_document_upd);
-			}
+			// }
 		} else if (isset($_POST['rc_doc_upd']) and $_POST['rc_doc_upd'] != '') {
 			$Rc_document_upd = $_POST['rc_doc_upd'];
 		} else {
@@ -5140,37 +5159,76 @@ class admin
 			$doc_table_id = $_POST['doc_table_id'];
 		}
 
+		
+		try {
+			// Disable autocommit to start a transaction
+			$mysqli->autocommit(FALSE);
 
-		if ($doc_table_id == '') {
-			$qry = $mysqli->query("SELECT * From acknowlegement_documentation where req_id = $req_id");
-			if ($qry->num_rows == 0) {
-				//this will filter out duplication entry in customer profile table
-				$insertQry = "INSERT INTO `acknowlegement_documentation`( `req_id`, `cus_id_doc`, `customer_name`, `cus_profile_id`, `doc_id`, `mortgage_process`, `Propertyholder_type`, `Propertyholder_name`, `Propertyholder_relationship_name`, `doc_property_relation`, `doc_property_type`, `doc_property_measurement`, `doc_property_location`, `doc_property_value`, `endorsement_process`, `owner_type`, `owner_name`, `ownername_relationship_name`, `en_relation`, `vehicle_type`, `vehicle_process`, `en_Company`, `en_Model`, `cus_status`, `insert_login_id`) VALUES('" . strip_tags($req_id) . "','" . strip_tags($cus_id_doc) . "','" . strip_tags($Customer_name) . "','" . strip_tags($cus_profile_id) . "','" . strip_tags($doc_id) . "', '" . strip_tags($mortgage_process) . "', '" . strip_tags($Propertyholder_type) . "', '" . strip_tags($Propertyholder_name) . "','" . strip_tags($Propertyholder_relationship_name) . "','" . strip_tags($doc_property_relation) . "','" . strip_tags($doc_property_pype) . "','" . strip_tags($doc_property_measurement) . "', '" . strip_tags($doc_property_location) . "', '" . strip_tags($doc_property_value) . "', '" . strip_tags($endorsement_process) . "','" . strip_tags($owner_type) . "','" . strip_tags($owner_name) . "','" . strip_tags($ownername_relationship_name) . "','" . strip_tags($en_relation) . "','" . strip_tags($vehicle_type) . "','" . strip_tags($vehicle_process) . "','" . strip_tags($en_Company) . "','" . strip_tags($en_Model) . "','11','" . $userid . "' )";
+			$select = $mysqli->query("SELECT doc_id FROM acknowlegement_documentation WHERE id = '$doc_table_id' AND doc_id IS NOT NULL ");
+			if ($select && $select->num_rows > 0) {
+				$code = $select->fetch_assoc();
+				$doc_id = $code['doc_id'];
 
-				$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
-			}
-		} else {
-			$update_doc = " UPDATE `acknowlegement_documentation` SET `req_id`='" . strip_tags($req_id) . "',`cus_id_doc`='" . strip_tags($cus_id_doc) . "',`customer_name`='" . strip_tags($Customer_name) . "',`cus_profile_id`='" . strip_tags($cus_profile_id) . "',`doc_id`='" . strip_tags($doc_id) . "',`mortgage_process`='" . strip_tags($mortgage_process) . "',`Propertyholder_type`='" . strip_tags($Propertyholder_type) . "',`Propertyholder_name`='" . strip_tags($Propertyholder_name) . "',`Propertyholder_relationship_name`='" . strip_tags($Propertyholder_relationship_name) . "',`doc_property_relation`='" . strip_tags($doc_property_relation) . "',`doc_property_type`='" . strip_tags($doc_property_pype) . "',`doc_property_measurement`='" . strip_tags($doc_property_measurement) . "',`doc_property_location`='" . strip_tags($doc_property_location) . "',`doc_property_value`='" . strip_tags($doc_property_value) . "',`mortgage_name`='" . strip_tags($mortgage_name) . "',`mortgage_dsgn`='" . strip_tags($mortgage_dsgn) . "',`mortgage_nuumber`='" . strip_tags($mortgage_nuumber) . "',`reg_office`='" . strip_tags($reg_office) . "',`mortgage_value`='" . strip_tags($mortgage_value) . "',`mortgage_document`='" . strip_tags($mortgage_document) . "',`mortgage_document_upd`='" . strip_tags($mortgage_document_upd) . "',`mortgage_document_pending`='" . strip_tags($pendingchk) . "',`endorsement_process`='" . strip_tags($endorsement_process) . "',`owner_type`='" . strip_tags($owner_type) . "',`owner_name`='" . strip_tags($owner_name) . "',`ownername_relationship_name`='" . strip_tags($ownername_relationship_name) . "',`en_relation`='" . strip_tags($en_relation) . "',`vehicle_type`='" . strip_tags($vehicle_type) . "',`vehicle_process`='" . strip_tags($vehicle_process) . "',`en_Company`='" . strip_tags($en_Company) . "',`en_Model`='" . strip_tags($en_Model) . "',`vehicle_reg_no`='" . strip_tags($vehicle_reg_no) . "',`endorsement_name`='" . strip_tags($endorsement_name) . "',`en_RC`='" . strip_tags($en_RC) . "',`Rc_document_upd`='" . strip_tags($Rc_document_upd) . "',`Rc_document_pending`='" . strip_tags($endorsependingchk) . "',`en_Key`='" . strip_tags($en_Key) . "',`status`='0',`submitted`='1',`update_login_id`='" . $userid . "' WHERE `id` = '" . strip_tags($doc_table_id) . "' ";
+			} else {
+				$myStr = "DOC";
 
-			$updDocResult = $mysqli->query($update_doc) or die("Error " . $mysqli->error);
-		}
+				$codeAvailable = $mysqli->query("SELECT MAX(CAST(SUBSTRING_INDEX(doc_id, '-', -1) AS UNSIGNED)) AS max_number FROM acknowlegement_documentation WHERE doc_id REGEXP '^DOC-[0-9]+' FOR UPDATE");
+				if ($codeAvailable && $codeAvailable->num_rows > 0) {
+					$row = $codeAvailable->fetch_assoc(); 
+					$maxNumber = isset($row["max_number"]) ? (int)$row["max_number"] : 0;
+					
+					$nextNumber = $maxNumber + 1;
+        			$doc_id = $myStr . "-" . $nextNumber;
 
-		//iterate thru fingerprint array
-		for ($i = 0; $i < sizeof($fingerprint); $i++) {
-			// allow only if fingerprint has been entered
-			if ($fingerprint[$i] != '') {
-				//check whether this adhar number already have fingerprint
-				$qry = $mysqli->query("SELECT adhar_num from `fingerprints` where adhar_num='" . strip_tags($adhar_print[$i]) . "' ");
-				if ($qry->num_rows == 0) {
-					//insert finger prints as new values if not already exist
-					$qry = "INSERT INTO `fingerprints`(`adhar_num`, `name`,`hand`,`ansi_template`, `insert_user_id`, `created_date`) VALUES ('" . $adhar_print[$i] . "','" . $name_print[$i] . "','" . $hand[$i] . "','" . $fingerprint[$i] . "',$userid,now() ) ";
-					$result = $mysqli->query($qry) or die("Error " . $mysqli->error);
 				} else {
-					//update fingerprint at that adhar number if already exist
-					$qry = "UPDATE `fingerprints` SET `hand`='" . $hand[$i] . "',`ansi_template`='" . $fingerprint[$i] . "',`update_user_id`='$userid',`updated_date`= now() WHERE `adhar_num`='" . strip_tags($adhar_print[$i]) . "' ";
-					$result = $mysqli->query($qry) or die("Error " . $mysqli->error);
+					$initialapp = $myStr . "-101";
+					$doc_id = $initialapp;
 				}
 			}
+
+
+			if ($doc_table_id == '') {
+				$qry = $mysqli->query("SELECT * From acknowlegement_documentation where req_id = $req_id");
+				if ($qry->num_rows == 0) {
+					//this will filter out duplication entry in customer profile table
+					$insertQry = "INSERT INTO `acknowlegement_documentation`( `req_id`, `cus_id_doc`, `customer_name`, `cus_profile_id`, `doc_id`, `mortgage_process`, `Propertyholder_type`, `Propertyholder_name`, `Propertyholder_relationship_name`, `doc_property_relation`, `doc_property_type`, `doc_property_measurement`, `doc_property_location`, `doc_property_value`, `endorsement_process`, `owner_type`, `owner_name`, `ownername_relationship_name`, `en_relation`, `vehicle_type`, `vehicle_process`, `en_Company`, `en_Model`, `cus_status`, `insert_login_id`) VALUES('" . strip_tags($req_id) . "','" . strip_tags($cus_id_doc) . "','" . strip_tags($Customer_name) . "','" . strip_tags($cus_profile_id) . "','" . strip_tags($doc_id) . "', '" . strip_tags($mortgage_process) . "', '" . strip_tags($Propertyholder_type) . "', '" . strip_tags($Propertyholder_name) . "','" . strip_tags($Propertyholder_relationship_name) . "','" . strip_tags($doc_property_relation) . "','" . strip_tags($doc_property_pype) . "','" . strip_tags($doc_property_measurement) . "', '" . strip_tags($doc_property_location) . "', '" . strip_tags($doc_property_value) . "', '" . strip_tags($endorsement_process) . "','" . strip_tags($owner_type) . "','" . strip_tags($owner_name) . "','" . strip_tags($ownername_relationship_name) . "','" . strip_tags($en_relation) . "','" . strip_tags($vehicle_type) . "','" . strip_tags($vehicle_process) . "','" . strip_tags($en_Company) . "','" . strip_tags($en_Model) . "','11','" . $userid . "' )";
+
+					$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
+				}
+			} else {
+				$update_doc = " UPDATE `acknowlegement_documentation` SET `req_id`='" . strip_tags($req_id) . "',`cus_id_doc`='" . strip_tags($cus_id_doc) . "',`customer_name`='" . strip_tags($Customer_name) . "',`cus_profile_id`='" . strip_tags($cus_profile_id) . "',`doc_id`='" . strip_tags($doc_id) . "',`mortgage_process`='" . strip_tags($mortgage_process) . "',`Propertyholder_type`='" . strip_tags($Propertyholder_type) . "',`Propertyholder_name`='" . strip_tags($Propertyholder_name) . "',`Propertyholder_relationship_name`='" . strip_tags($Propertyholder_relationship_name) . "',`doc_property_relation`='" . strip_tags($doc_property_relation) . "',`doc_property_type`='" . strip_tags($doc_property_pype) . "',`doc_property_measurement`='" . strip_tags($doc_property_measurement) . "',`doc_property_location`='" . strip_tags($doc_property_location) . "',`doc_property_value`='" . strip_tags($doc_property_value) . "',`mortgage_name`='" . strip_tags($mortgage_name) . "',`mortgage_dsgn`='" . strip_tags($mortgage_dsgn) . "',`mortgage_nuumber`='" . strip_tags($mortgage_nuumber) . "',`reg_office`='" . strip_tags($reg_office) . "',`mortgage_value`='" . strip_tags($mortgage_value) . "',`mortgage_document`='" . strip_tags($mortgage_document) . "',`mortgage_document_upd`='" . strip_tags($mortgage_document_upd) . "',`mortgage_document_pending`='" . strip_tags($pendingchk) . "',`endorsement_process`='" . strip_tags($endorsement_process) . "',`owner_type`='" . strip_tags($owner_type) . "',`owner_name`='" . strip_tags($owner_name) . "',`ownername_relationship_name`='" . strip_tags($ownername_relationship_name) . "',`en_relation`='" . strip_tags($en_relation) . "',`vehicle_type`='" . strip_tags($vehicle_type) . "',`vehicle_process`='" . strip_tags($vehicle_process) . "',`en_Company`='" . strip_tags($en_Company) . "',`en_Model`='" . strip_tags($en_Model) . "',`vehicle_reg_no`='" . strip_tags($vehicle_reg_no) . "',`endorsement_name`='" . strip_tags($endorsement_name) . "',`en_RC`='" . strip_tags($en_RC) . "',`Rc_document_upd`='" . strip_tags($Rc_document_upd) . "',`Rc_document_pending`='" . strip_tags($endorsependingchk) . "',`en_Key`='" . strip_tags($en_Key) . "',`status`='0',`submitted`='1',`update_login_id`='" . $userid . "' WHERE `id` = '" . strip_tags($doc_table_id) . "' ";
+
+				$updDocResult = $mysqli->query($update_doc) or die("Error " . $mysqli->error);
+			}
+
+			//iterate thru fingerprint array
+			for ($i = 0; $i < sizeof($fingerprint); $i++) {
+				// allow only if fingerprint has been entered
+				if ($fingerprint[$i] != '') {
+					//check whether this adhar number already have fingerprint
+					$qry = $mysqli->query("SELECT adhar_num from `fingerprints` where adhar_num='" . strip_tags($adhar_print[$i]) . "' ");
+					if ($qry->num_rows == 0) {
+						//insert finger prints as new values if not already exist
+						$qry = "INSERT INTO `fingerprints`(`adhar_num`, `name`,`hand`,`ansi_template`, `insert_user_id`, `created_date`) VALUES ('" . $adhar_print[$i] . "','" . $name_print[$i] . "','" . $hand[$i] . "','" . $fingerprint[$i] . "',$userid,now() ) ";
+						$result = $mysqli->query($qry) or die("Error " . $mysqli->error);
+					} else {
+						//update fingerprint at that adhar number if already exist
+						$qry = "UPDATE `fingerprints` SET `hand`='" . $hand[$i] . "',`ansi_template`='" . $fingerprint[$i] . "',`update_user_id`='$userid',`updated_date`= now() WHERE `adhar_num`='" . strip_tags($adhar_print[$i]) . "' ";
+						$result = $mysqli->query($qry) or die("Error " . $mysqli->error);
+					}
+				}
+			}
+
+			// Commit the transaction
+			$mysqli->commit();
+
+			// Enable autocommit again
+			$mysqli->autocommit(TRUE);
+		} catch (Exception $e) {
+			// Rollback the transaction in case of error
+			$mysqli->rollback();
+			$mysqli->autocommit(TRUE);
+			echo "Error: " . $e->getMessage();
 		}
 	}
 

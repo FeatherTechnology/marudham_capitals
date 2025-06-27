@@ -25,7 +25,7 @@ if (isset($_POST['pages'])) {
     <tbody>
 
         <?php
-        $qry = $connect->query("SELECT * FROM `document_info` where req_id = '$req_id' order by id desc");
+        $qry = $connect->query("SELECT * FROM document_info where req_id = '$req_id' order by id desc");
 
         while ($row = $qry->fetch()) {
             if ($row["holder_name"] == '') {
@@ -56,13 +56,13 @@ if (isset($_POST['pages'])) {
                 <td><?php echo $row["relation"]; ?></td>
 
                 <td>
-                    <?php if ($pages == 1) {  // Verification screen only delete option. 
+                    <?php //if ($pages == 1) {  // Verification screen only delete option. 
                     ?>
                         <a id="doc_info_edit" value="<?php echo $row['id']; ?>"> <span class="icon-border_color"></span></a> &nbsp;
                         <a id="doc_info_delete" value="<?php echo $row['id']; ?>"> <span class='icon-trash-2'></span> </a>
-                    <?php  } elseif ($pages == 2) { ?>
-                        <a id="doc_info_edit" value="<?php echo $row['id']; ?>" style="text-decoration: underline;"> Upload</a> &nbsp;
-                    <?php } ?>
+                    <?php  //} elseif ($pages == 2) { ?>
+                        <!-- <a id="doc_info_edit" value="<?php #echo $row['id']; ?>" style="text-decoration: underline;"> Upload</a> &nbsp; -->
+                    <?php //} ?>
                 </td>
 
             </tr>

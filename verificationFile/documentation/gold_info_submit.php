@@ -11,7 +11,6 @@ $gold_Weight             = $_POST['gold_Weight'];
 $gold_Value             = $_POST['gold_Value'];
 $goldID             = $_POST['goldID'];
 
-
 if (isset($_FILES['gold_upload'])) {
     $gold_upload = $_FILES['gold_upload']['name'];
     $pic_temp = $_FILES['gold_upload']['tmp_name'];
@@ -31,9 +30,9 @@ if (isset($_FILES['gold_upload'])) {
 
 if ($goldID == '') {
 
-    $insert_qry = $connect->query("INSERT INTO `gold_info`(`cus_id`, `req_id`, `gold_sts`, `gold_type`, `Purity`, `gold_Count`, `gold_Weight`, `gold_Value`, `gold_upload`) VALUES ('$cus_id','$req_id','$gold_sts','$gold_type','$Purity','$gold_Count','$gold_Weight','$gold_Value', '$gold_upload')");
+    $insert_qry = $connect->query("INSERT INTO gold_info (`cus_id`, `req_id`, `gold_sts`, `gold_type`, `Purity`, `gold_Count`, `gold_Weight`, `gold_Value`, `gold_upload`) VALUES ('$cus_id','$req_id','$gold_sts','$gold_type','$Purity','$gold_Count','$gold_Weight','$gold_Value', '$gold_upload')");
 } else {
-    $update = $connect->query("UPDATE `gold_info` SET `cus_id`='$cus_id',`req_id`='$req_id',`gold_sts`='$gold_sts',`gold_type`='$gold_type',`Purity`='$Purity',`gold_Count`='$gold_Count',`gold_Weight`='$gold_Weight',`gold_Value`='$gold_Value', `gold_upload`='$gold_upload' WHERE `id`='$goldID' ");
+    $update = $connect->query("UPDATE gold_info SET `cus_id`='$cus_id',`req_id`='$req_id',`gold_sts`='$gold_sts',`gold_type`='$gold_type',`Purity`='$Purity',`gold_Count`='$gold_Count',`gold_Weight`='$gold_Weight',`gold_Value`='$gold_Value', `gold_upload`='$gold_upload' WHERE `id`='$goldID' ");
 }
 
 if ($insert_qry) {

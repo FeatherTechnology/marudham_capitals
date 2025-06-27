@@ -5,7 +5,7 @@ $id = $_POST['id'];
 
 $signedDoc = array();
 
-$signedDocInfo = $connect->query("SELECT * FROM `signed_doc_info` WHERE id='$id' ");
+$signedDocInfo = $connect->query("SELECT * FROM signed_doc_info WHERE id = '$id' ");
 $sign_details = $signedDocInfo->fetch();
 
 $signedDoc['id'] = $sign_details['id'];

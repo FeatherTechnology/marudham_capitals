@@ -9,12 +9,7 @@
 	<div style="background-color:#009688; width:100%; padding:12px; color: #ffff; font-size: 20px; border-radius:5px;">
 		Marudham Capitals - Search
 	</div>
-
 </div><br>
-
-<div class="text-right" style="margin-right: 25px;">
-	<!-- <button class="btn btn-primary" id='close_history_card' style="display: none;" >&times;&nbsp;&nbsp;Cancel</button> -->
-</div>
 
 <!-- Main container start -->
 <div class="main-container">
@@ -153,7 +148,7 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<div class="container-fluid" id='customerStatusDiv'>
+				<div class="container-fluid" id='customerStatusDiv' style="overflow-x: scroll;">
 
 				</div>
 			</div>
