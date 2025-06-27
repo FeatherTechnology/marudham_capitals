@@ -2631,8 +2631,8 @@ function getDocumentDetails(req_id, cus_id, cus_name) {
     resetGoldList(req_id, cus_id);// to reset signed document list non-modal
     resetDocmentList(req_id, cus_id);// to reset signed document list non-modal
     // getFamilyList();//to get family , it may used in mort and endorse processes
-    getMortgageInfo(req_id, cus_id); // to get mortgage details
-    getEndorsementInfo(req_id, cus_id); // to get mortgage details
+    getMortgageInfo(req_id); // to get mortgage details
+    getEndorsementInfo(req_id); // to get mortgage details
     getFingerPrintDetails(req_id, cus_id, cus_name); // to get Fingerprint details like customer, family name and buttons
 
 
@@ -3163,10 +3163,10 @@ function setTempDocumentEvents() {
 }
 
 //Motrgage info
-function getMortgageInfo(req_id, cus_id) {
+function getMortgageInfo(req_id) {
     $.ajax({
         url: 'updateFile/getMortgageInfo.php',
-        data: { "req_id": req_id, "cus_id": cus_id },
+        data: { "req_id": req_id },
         type: 'POST',
         dataType: 'json',
         cache: false,
@@ -3213,7 +3213,9 @@ function getMortgageInfo(req_id, cus_id) {
                     $('#pendingchk').prop('checked', true);
                 }
 
-                $('#mortgage_doc_upd').val(response['mort_doc_upd']);//store file name inside hidden input if already uploaded
+                let mortDocUpd = response['mort_doc_upd'];
+                $('#mortgage_doc_upd').val(mortDocUpd);//store file name inside hidden input if already uploaded
+                $('#mort_doc_img').attr('href', `uploads/verification/mortgage_doc/${mortDocUpd}`).text(mortDocUpd);
 
             } else {
                 $('#mortgage_div').hide();
@@ -3235,10 +3237,10 @@ function getMortgageInfo(req_id, cus_id) {
 }
 
 //Endorsement info
-function getEndorsementInfo(req_id, cus_id) {
+function getEndorsementInfo(req_id) {
     $.ajax({
         url: 'updateFile/getEndorsementInfo.php',
-        data: { "req_id": req_id, "cus_id": cus_id },
+        data: { "req_id": req_id },
         type: 'POST',
         dataType: 'json',
         cache: false,
@@ -3287,7 +3289,9 @@ function getEndorsementInfo(req_id, cus_id) {
                     $('#endorsependingchk').prop('checked', true);
                 }
 
-                $('#rc_doc_upd').val(response['end_rc_doc_upd']);//store file name inside hidden input if already uploaded
+                let rcDocUpd = response['end_rc_doc_upd'];
+                $('#rc_doc_upd').val(rcDocUpd);//store file name inside hidden input if already uploaded
+                $('#rc_doc_img').attr('href', `uploads/verification/endorsement_doc/${rcDocUpd}`).text(rcDocUpd);
 
             } else {
                 $('#end_process_div').hide();
@@ -3354,9 +3358,11 @@ function updateMortEndorse(id, req_id) {
         if (id == 'update_mortgage') {
             var file_data = $('#mortgage_document_upd').prop('files')[0];
             filetosend.append('mortgage_document_upd', file_data)
+            filetosend.append('mortgage_document_old_upd', $('#mortgage_doc_upd').val())
         } else if (id == 'update_endorsement') {
             var file_data = $('#RC_document_upd').prop('files')[0];
             filetosend.append('RC_document_upd', file_data)
+            filetosend.append('RC_document_old_upd', $('#rc_doc_upd').val())
         }
         filetosend.append('id', id);
         filetosend.append('req_id', req_id);
@@ -3368,18 +3374,31 @@ function updateMortEndorse(id, req_id) {
                 processData: false,
                 type: 'post',
                 cache: false,
-                success: function (response) {
-                    if (response.includes('Successfully')) {
+                dataType: 'json',
+                success: function (result) {
+                    if (result.response.includes('Successfully')) {
                         Swal.fire({
-                            title: response,
+                            title: result.response,
                             icon: 'success',
                             showConfirmButton: true,
                             confirmButtonColor: '#009688'
-                        })
+                        });
+               
+                        var docUpdName = result.doc_upd_name;
+                        if (id == 'update_mortgage') {
+                            $('#mortgage_doc_upd').val(docUpdName);//hidden value.
+                            $('#mort_doc_img').attr('href', `uploads/verification/mortgage_doc/${docUpdName}`).text(docUpdName);
+
+                        } else if (id == 'update_endorsement') {
+                            $('#rc_doc_upd').val(docUpdName);
+                            $('#rc_doc_img').attr('href', `uploads/verification/endorsement_doc/${docUpdName}`).text(docUpdName);
+                            
+                        }
+
                         getDocumentHistory();// to reset the current status of the document history
-                    } else if (response.includes('Error')) {
+                    } else if (result.response.includes('Error')) {
                         Swal.fire({
-                            title: response,
+                            title: result.response,
                             icon: 'error',
                             showConfirmButton: true,
                             confirmButtonColor: '#009688'
@@ -3402,7 +3421,7 @@ function MEValidation(id) {
         var doc_property_location = $('#doc_property_location').val(); var doc_property_value = $('#doc_property_value').val();
         var mortgage_name = $('#mortgage_name').val(); var mortgage_dsgn = $('#mortgage_dsgn').val(); var mortgage_nuumber = $('#mortgage_nuumber').val();
         var reg_office = $('#reg_office').val(); var mortgage_value = $('#mortgage_value').val(); var mortgage_document = $('#mortgage_document').val();
-        var mortgage_doc_upd = $('#mortgage_document_upd').val(); var mortgage_old_doc_upd = $('#mortgage_doc_upd').val();
+        // var mortgage_doc_upd = $('#mortgage_document_upd').val(); var mortgage_old_doc_upd = $('#mortgage_doc_upd').val();
 
         if (mortgage_process == '') {
             event.preventDefault();
@@ -3430,9 +3449,9 @@ function MEValidation(id) {
                 validateField(reg_office, '#regofficeCheck');
                 validateField(mortgage_value, '#mortgagevalueCheck');
                 validateField(mortgage_document, '#mortgagedocCheck');
-                if (mortgage_document != '' && mortgage_document == '0' && mortgage_old_doc_upd == '') {// check if document is yes
-                    validateField(mortgage_doc_upd, '#mortgagedocUpdCheck');//if yes then validate file uploaded or not
-                }
+                // if (mortgage_document != '' && mortgage_document == '0' && mortgage_old_doc_upd == '') {// check if document is yes
+                //     validateField(mortgage_doc_upd, '#mortgagedocUpdCheck');//if yes then validate file uploaded or not
+                // }
             }
             $('#mortgageprocessCheck').hide();
         }
@@ -3440,7 +3459,7 @@ function MEValidation(id) {
         var endorsement_process = $('#endorsement_process').val(); var owner_type = $('#owner_type').val(); var ownername_relationship_name = $('#ownername_relationship_name').val();
         var vehicle_type = $('#vehicle_type').val(); var vehicle_process = $('#vehicle_process').val(); var en_Company = $('#en_Company').val(); var en_Model = $('#en_Model').val();
         var endorsement_name = $('#endorsement_name').val(); var en_RC = $('#en_RC').val(); var en_Key = $('#en_Key').val();
-        var vehicle_reg_no = $('#vehicle_reg_no').val(); var RC_document_upd = $('#RC_document_upd').val(); var RC_old_document_upd = $('#rc_doc_upd').val();
+        // var vehicle_reg_no = $('#vehicle_reg_no').val(); var RC_document_upd = $('#RC_document_upd').val(); var RC_old_document_upd = $('#rc_doc_upd').val();
 
         if (endorsement_process == '') {
             event.preventDefault();
@@ -3464,9 +3483,9 @@ function MEValidation(id) {
                 validateField(endorsement_name, '#endorsementnameCheck');
                 validateField(en_Key, '#enKeyCheck');
                 validateField(en_RC, '#enRCCheck');
-                if (en_RC != '' && en_RC == '0' && RC_old_document_upd == '') {// check if rc document is yes
-                    validateField(RC_document_upd, '#rcdocUpdCheck');//if yes then validate file uploaded or not
-                }
+                // if (en_RC != '' && en_RC == '0' && RC_old_document_upd == '') {// check if rc document is yes
+                //     validateField(RC_document_upd, '#rcdocUpdCheck');//if yes then validate file uploaded or not
+                // }
             }
 
             $('#endorsementprocessCheck').hide();
