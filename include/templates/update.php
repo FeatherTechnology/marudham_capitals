@@ -1401,9 +1401,10 @@ if (sizeof($documentationInfo) > 0) {
 
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" id="mort_doc_upd" style="display: none;">
 										<div class="form-group">
-											<label for="mortgage_document_upd"> Mortgage Document Uploads </label> <span class="required">&nbsp;*</span>
+											<label for="mortgage_document_upd"> Mortgage Document Uploads </label> 
 											<input type="file" onchange="compressImage(this,200)" class="form-control" id="mortgage_document_upd" name="mortgage_document_upd" tabindex="22">
 											<input type="hidden" id="mortgage_doc_upd" name="mortgage_doc_upd" value="">
+											<a href="" target="_blank" id="mort_doc_img">  </a>
 											<span class="text-danger" id="mortgagedocUpdCheck" style='display:none'> Upload Mortgage Document </span>
 										</div>
 									</div>
@@ -1570,9 +1571,10 @@ if (sizeof($documentationInfo) > 0) {
 
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" id="end_doc_upd" style="display: none;">
 									<div class="form-group">
-										<label for="RC_document_upd"> RC Uploads </label> <span class="required">&nbsp;*</span>
+										<label for="RC_document_upd"> RC Uploads </label> 
 										<input type="file" onchange="compressImage(this,200)" class="form-control" id="RC_document_upd" name="Rc_document_upd" tabindex="38">
 										<input type="hidden" id="rc_doc_upd" name="rc_doc_upd" value="">
+										<a href="" target="_blank" id="rc_doc_img"> </a>
 										<span class="text-danger" id="rcdocUpdCheck" style='display:none'> Upload RC </span>
 									</div>
 								</div>

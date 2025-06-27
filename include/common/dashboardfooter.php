@@ -1941,7 +1941,7 @@
 
         let warningTimeout, logoutTimeout;
         let swalOpen = false;
-        const idleTime = 12000000; // 10 minutes in milliseconds
+        const idleTime = 600000; // 10 minutes in milliseconds
         const warningDuration = 10000; // 10 seconds warning before logout
         // Start the warning + logout timers
         function startTimers() {

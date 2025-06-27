@@ -1,13 +1,6 @@
 <?php
-session_start();
 include '../ajaxconfig.php';
 
-if(isset($_SESSION['userid'])){
-    $userid = $_SESSION['userid'];
-}
-if(isset($_POST['cus_id'])){
-    $cus_id = $_POST['cus_id'];
-}
 if(isset($_POST['req_id'])){
     $req_id = $_POST['req_id'];
 }

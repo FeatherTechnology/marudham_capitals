@@ -36,7 +36,7 @@ function moneyFormatIndia($num)
             <th> Value </th>
             <th> Upload </th>
             <th> Availability </th>
-            <th> Action </th>
+            <!-- <th> Action </th> -->
         </tr>
     </thead>
     <tbody>
@@ -61,13 +61,13 @@ function moneyFormatIndia($num)
                 <td><?php echo moneyFormatIndia($gold["gold_Value"]); ?></td>
                 <td> <a href="uploads/gold_info/<?php echo $gold['gold_upload']; ?>" target="_blank" style="color: #4ba39b;"> <?php echo $gold['gold_upload']; ?> </a></td>
                 <td><?php echo $temp_sts == 0 ? 'YES':'NO'; ?></td>
-                <td>
-                    <?php if($temp_sts == 0){//zero means document available,so show button for take out as temprory ?>
-                        <button class="btn btn-danger temp-take-out" data-req_id='<?php echo $req_id; ?>' data-cus_id='<?php echo $cus_id; ?>' data-tableid = '<?php echo $id;?>' data-doc='gold' data-toggle='modal' data-target='.temp-take-out-modal'>Take Out</button>
-                    <?php }else if($temp_sts == 1){//one means document not available, taken for temp purpose?>
-                        <button class="btn btn-success temp-take-in" data-req_id='<?php echo $req_id; ?>' data-cus_id='<?php echo $cus_id; ?>' data-tableid = '<?php echo $id;?>' data-doc='gold' data-toggle='modal' data-target='.temp-take-in-modal'>Take In</button>
-                    <?php } ?>
-                </td>
+                <!-- <td> -->
+                    <?php #if($temp_sts == 0){//zero means document available,so show button for take out as temprory ?>
+                        <!-- <button class="btn btn-danger temp-take-out" data-req_id='<?php echo $req_id; ?>' data-cus_id='<?php echo $cus_id; ?>' data-tableid = '<?php echo $id;?>' data-doc='gold' data-toggle='modal' data-target='.temp-take-out-modal'>Take Out</button> -->
+                    <?php #}else if($temp_sts == 1){//one means document not available, taken for temp purpose?>
+                        <!-- <button class="btn btn-success temp-take-in" data-req_id='<?php echo $req_id; ?>' data-cus_id='<?php echo $cus_id; ?>' data-tableid = '<?php echo $id;?>' data-doc='gold' data-toggle='modal' data-target='.temp-take-in-modal'>Take In</button> -->
+                    <?php #} ?>
+                <!-- </td> -->
             </tr>
 
         <?php  } ?>
