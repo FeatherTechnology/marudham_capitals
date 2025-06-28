@@ -280,7 +280,7 @@ if (sizeof($documentationInfo) > 0) {
 										<h5 style='margin-left:18px;margin-bottom:30px;'>Signed Document List</h5>
 										<span class="text-danger sign_checklistCheck" style="margin-left:18px;display: none;">Please Select atleast one</span>
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-											<div class="form-group table-responsive" id='signDocDiv'>
+											<div class="form-group" id='signDocDiv'>
 
 											</div>
 										</div>
@@ -296,7 +296,7 @@ if (sizeof($documentationInfo) > 0) {
 										<h5 style='margin-left:18px;margin-bottom:30px;'>Cheque List</h5>
 										<span class="text-danger cheque_checklistCheck" style="margin-left:18px;display: none;">Please Select atleast one</span>
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-											<div class="form-group table-responsive" id='chequeDiv'>
+											<div class="form-group" id='chequeDiv'>
 
 											</div>
 										</div>
@@ -436,7 +436,7 @@ if (sizeof($documentationInfo) > 0) {
 											</div>
 										</div>
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-											<div class="form-group table-responsive" id='mortgageDiv'>
+											<div class="form-group" id='mortgageDiv'>
 
 											</div>
 										</div>
@@ -571,7 +571,7 @@ if (sizeof($documentationInfo) > 0) {
 											</div>
 										</div>
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-											<div class="form-group table-responsive" id='endorsementDiv'>
+											<div class="form-group" id='endorsementDiv'>
 
 											</div>
 										</div>
@@ -587,7 +587,7 @@ if (sizeof($documentationInfo) > 0) {
 										<h5 style='margin-left:18px;margin-bottom:30px;'>Gold List</h5>
 										<span class="text-danger gold_checklistCheck" style="margin-left:18px;display: none;">Please Select atleast one</span>
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-											<div class="form-group table-responsive" id='goldDiv'>
+											<div class="form-group" id='goldDiv'>
 
 											</div>
 										</div>
@@ -603,7 +603,7 @@ if (sizeof($documentationInfo) > 0) {
 										<h5 style='margin-left:18px;margin-bottom:30px;'>Document List</h5>
 										<span class="text-danger doc_checklistCheck" style="margin-left:18px;display: none;">Please Select atleast one</span>
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-											<div class="form-group table-responsive" id='documentDiv'>
+											<div class="form-group" id='documentDiv'>
 
 											</div>
 										</div>

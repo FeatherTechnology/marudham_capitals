@@ -36,7 +36,7 @@ function getGuarentorName($connect,$req_id){
     <tbody>
         <?php
         $i=1;
-        $qry = $connect->query("SELECT a.doc_name,a.sign_type,a.signType_relationship,b.id,b.upload_doc_name,b.noc_given,b.noc_date,b.noc_person,b.noc_name,b.temp_sts FROM `signed_doc_info` a join signed_doc b on a.id = b.signed_doc_id  where b.req_id = $req_id and b.used_status != '1'  ");//temp status equal to 0 means available
+        $qry = $connect->query("SELECT a.id, a.doc_name, a.sign_type, a.signType_relationship, b.upload_doc_name, a.noc_given, a.noc_date, a.noc_person, a.noc_name, a.temp_sts FROM `signed_doc_info` a LEFT JOIN signed_doc b on a.id = b.signed_doc_id  WHERE a.req_id = $req_id ");//temp status equal to 0 means available // Take Out / Take in feature is removed from update - 27-06-2025.
         while($row = $qry->fetch()){
             $rel_id = $row['signType_relationship'];
             $name ='';
@@ -65,11 +65,12 @@ function getGuarentorName($connect,$req_id){
 
                 
                 <td>
-                    <?php if($row['temp_sts'] == '0'){ ?>
-                        <input type='checkbox' id='sign_check' name='sign_check' class="form-control sign_check" <?php if($row['noc_given'] == '1') {echo 'checked disabled';}?> data-value='<?php echo $row['id'];//id of docuemnts uploaded table?>'  tabindex='8'></td>
-                    <?php }else if($row['temp_sts'] == '1'){?>
-                        <label>Not Available</label>
-                    <?php } ?>
+                    <?php #if($row['temp_sts'] == '0'){ ?>
+                        <input type='checkbox' id='sign_check' name='sign_check' class="form-control sign_check" <?php if($row['noc_given'] == '1') {echo 'checked disabled';}?> data-value='<?php echo $row['id'];//id of docuemnts table?>'>
+                    <?php #}else if($row['temp_sts'] == '1'){?>
+                        <!-- <label>Not Available</label> -->
+                    <?php #} ?>
+                </td>
             </tr>
         <?php
         }
@@ -77,28 +78,6 @@ function getGuarentorName($connect,$req_id){
 
     </tbody>
 </table>
-
-<script type='text/javascript'>
-    $(function() {
-        // $('#signDocTable').DataTable({
-        //     "title":"Signed Document List",
-        //     'processing': true,
-        //     'iDisplayLength': 5,
-        //     "lengthMenu": [
-        //         [10, 25, 50, -1],
-        //         [10, 25, 50, "All"]
-        //     ],
-        //     "createdRow": function(row, data, dataIndex) {
-        //         $(row).find('td:first').html(dataIndex + 1);
-        //     },
-        //     "drawCallback": function(settings) {
-        //         this.api().column(0).nodes().each(function(cell, i) {
-        //             cell.innerHTML = i + 1;
-        //         });
-        //     },
-        // });
-    });
-</script>
 
 <?php
 // Close the database connection

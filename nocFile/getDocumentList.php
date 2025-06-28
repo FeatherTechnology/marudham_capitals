@@ -80,11 +80,11 @@ function getfamName($connect,$rel_id){
                         </td>
 
                         <td>
-                            <?php if($row['temp_sts'] == '0'){ ?>
+                            <?php #if($row['temp_sts'] == '0'){ ?>
                                 <input type='checkbox' id='doc_check' name='doc_check' class="form-control doc_check"  <?php if($row['doc_info_upload_noc'] == '1') echo 'checked disabled';?> data-value='<?php echo $row['doc_id'];//name of uploaded document?>' tabindex='38'></td>
-                            <?php }else if($row['temp_sts'] == '1'){?>
-                                <label>Not Available</label>
-                            <?php } ?>
+                            <?php #}else if($row['temp_sts'] == '1'){?>
+                                <!-- <label>Not Available</label> -->
+                            <?php #} ?>
                     </tr>
                 <?php
                 }
@@ -93,28 +93,6 @@ function getfamName($connect,$rel_id){
     </tbody>
     
 </table>
-
-<script type='text/javascript'>
-    $(function() {
-        // $('#documentTable').DataTable({
-        //     "title":"Document List",
-        //     'processing': true,
-        //     'iDisplayLength': 5,
-        //     "lengthMenu": [
-        //         [10, 25, 50, -1],
-        //         [10, 25, 50, "All"]
-        //     ],
-        //     "createdRow": function(row, data, dataIndex) {
-        //         $(row).find('td:first').html(dataIndex + 1);
-        //     },
-        //     "drawCallback": function(settings) {
-        //         this.api().column(0).nodes().each(function(cell, i) {
-        //             cell.innerHTML = i + 1;
-        //         });
-        //     },
-        // });
-    });
-</script>
 
 <?php 
 // Close the database connection

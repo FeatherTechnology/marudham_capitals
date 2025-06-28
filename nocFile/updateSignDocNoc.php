@@ -59,7 +59,7 @@ function updateNOCgiven($connect, $user_id)
     if (isset($_POST['sign_ids'])) {
         $sign_checklist_arr = $_POST['sign_ids'];
         for ($i = 0; $i < sizeof($sign_checklist_arr); $i++) {
-            $qry = $connect->query("UPDATE `signed_doc` SET `noc_given`='1',update_login_id = $user_id, updated_date = now() WHERE id = '" . $sign_checklist_arr[$i] . "' ");
+            $qry = $connect->query("UPDATE `signed_doc_info` SET `noc_given`='1',update_login_id = $user_id, updated_date = now() WHERE id = '" . $sign_checklist_arr[$i] . "' ");
         }
     }
     if (isset($_POST['cheque_ids'])) {
