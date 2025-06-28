@@ -1,7 +1,6 @@
 <?php
 include '../ajaxconfig.php';
 
-$req_id = $_POST['req_id'];
 $cus_name = $_POST['cus_name'];
 $cus_id = $_POST['cus_id'];
 

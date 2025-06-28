@@ -91,51 +91,6 @@ if (sizeof($getCustomerReg) > 0) {
 		// $request_id 					= $getCustomerReg['request_id'];
 	}
 }
-$getGuarantorDetails = $userObj->getGuarantorDetails($mysqli, $idupd);
-
-if (sizeof($getGuarantorDetails) > 0) {
-	$guarentor_name = $getGuarantorDetails['guarentor_name'];
-	$guarentor_relation = $getGuarantorDetails['guarentor_relation'];
-	$guarentor_photo = $getGuarantorDetails['guarentor_photo'];
-}
-//////////////////////// Customer Profile Info END ///////////////////////////////
-
-/////////  Documentation ////////////
-$documentationInfo = $userObj->getDocumentDetails($mysqli, $idupd);
-
-if (sizeof($documentationInfo) > 0) {
-	for ($i = 0; $i < sizeof($documentationInfo); $i++) {
-		$document_table_id[$i] = $documentationInfo[$i]['doc_Tableid'];
-		$document_sts[$i] = $documentationInfo[$i]['cus_status'];
-		$doc_id[$i] = $documentationInfo[$i]['doc_id'];
-		$mortgage_process[$i] = $documentationInfo[$i]['mortgage_process'];
-		$Propertyholder_type[$i] = $documentationInfo[$i]['Propertyholder_type'];
-		$Propertyholder_name[$i] = $documentationInfo[$i]['Propertyholder_name'];
-		$Propertyholder_relationship_name[$i] = $documentationInfo[$i]['Propertyholder_relationship_name'];
-		$doc_property_relation[$i] = $documentationInfo[$i]['doc_property_relation'];
-		$doc_property_type[$i] = $documentationInfo[$i]['doc_property_type'];
-		$doc_property_measurement[$i] = $documentationInfo[$i]['doc_property_measurement'];
-		$doc_property_location[$i] = $documentationInfo[$i]['doc_property_location'];
-		$doc_property_value[$i] = $documentationInfo[$i]['doc_property_value'];
-		$endorsement_process[$i] = $documentationInfo[$i]['endorsement_process'];
-		$owner_type[$i] = $documentationInfo[$i]['owner_type'];
-		$owner_name[$i] = $documentationInfo[$i]['owner_name'];
-		$ownername_relationship_name[$i] = $documentationInfo[$i]['ownername_relationship_name'];
-		$en_relation[$i] = $documentationInfo[$i]['en_relation'];
-		$vehicle_type[$i] = $documentationInfo[$i]['vehicle_type'];
-		$vehicle_process[$i] = $documentationInfo[$i]['vehicle_process'];
-		$en_Company[$i] = $documentationInfo[$i]['en_Company'];
-		$en_Model[$i] = $documentationInfo[$i]['en_Model'];
-		$document_name[$i] = $documentationInfo[$i]['document_name'];
-		$document_details[$i] = $documentationInfo[$i]['document_details'];
-		$document_type[$i] = $documentationInfo[$i]['document_type'];
-		$document_holder[$i] = $documentationInfo[$i]['document_holder'];
-		$docholder_name[$i] = $documentationInfo[$i]['docholder_name'];
-		$docholder_relationship_name[$i] = $documentationInfo[$i]['docholder_relationship_name'];
-		$doc_relation[$i] = $documentationInfo[$i]['doc_relation'];
-	}
-}
-////////   Documentation End ////////////
 ?>
 
 <style>
@@ -284,9 +239,7 @@ if (sizeof($documentationInfo) > 0) {
 			<input type="hidden" name="sub_area_upd" id="sub_area_upd" value="<?php if (isset($sub_area)) {
 																					echo $sub_area;
 																				} ?>" />
-			<input type="hidden" name="guarentor_name_upd" id="guarentor_name_upd" value="<?php if (isset($guarentor_name)) {
-																								echo $guarentor_name;
-																							} ?>" />
+			<input type="hidden" name="guarentor_name_upd" id="guarentor_name_upd" value="" />
 
 			<input type="hidden" name="area_state_upd" id="area_state_upd" value="<?php if (isset($area_confirm_state)) {
 																						echo $area_confirm_state;
@@ -573,6 +526,15 @@ if (sizeof($documentationInfo) > 0) {
 									<div class="row">
 										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
 											<div class="form-group">
+												<label for="loan_id"> Loan ID </label><span class="required">&nbsp;*</span>
+												<select type="text" class="form-control" id="loan_id" name="loan_id" tabindex="22">
+													<option> Select Lona ID</option>
+												</select>
+												<span class="text-danger" style='display:none' id='loan_idCheck'>Please Choose Loan ID</span>
+											</div>
+										</div>
+										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
+											<div class="form-group">
 												<label for="guarentor_name"> Guarentor Name </label><span class="required">&nbsp;*</span>
 												<select type="text" class="form-control" id="guarentor_name" name="guarentor_name" tabindex="22">
 													<option> Select Guarantor </option>
@@ -584,9 +546,7 @@ if (sizeof($documentationInfo) > 0) {
 										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
 											<div class="form-group">
 												<label for="guarentor_relationship"> Guarentor Relationship </label>
-												<input type="text" class="form-control" id="guarentor_relationship" name="guarentor_relationship" tabindex="23" value='<?php if (isset($guarentor_relation)) {
-																																											echo $guarentor_relation;
-																																										} ?>' readonly>
+												<input type="text" class="form-control" id="guarentor_relationship" name="guarentor_relationship" tabindex="23" value='' readonly>
 											</div>
 										</div>
 									</div>
@@ -596,13 +556,9 @@ if (sizeof($documentationInfo) > 0) {
 									<div class="col-xl-8 col-lg-10 col-md-6 ">
 										<div class="form-group" style="margin-left: 30px;">
 											<label for="pic" style="margin-left: -20px;"> Guarentor Photo </label><span class="required">&nbsp;*</span><br>
-											<input type="hidden" name="guarentor_image" id="guarentor_image" value="<?php if (isset($guarentor_photo)) {
-																														echo $guarentor_photo;
-																													} ?>">
+											<input type="hidden" name="guarentor_image" id="guarentor_image" value="">
 											<img id='imgshows' class="imgshow" src='img/avatar.png' />
-											<input type="file" onchange="compressImage(this,200)" class="form-control" id="guarentorpic" name="guarentorpic" tabindex="24" value="<?php if (isset($guarentor_photo)) {
-																																															echo $guarentor_photo;
-																																														} ?>">
+											<input type="file" onchange="compressImage(this,200)" class="form-control" id="guarentorpic" name="guarentorpic" tabindex="24" value="">
 											<span class="text-danger" style='display:none' id='guarentorpicCheck'>Please Choose Guarentor Image</span>
 										</div>
 									</div>
@@ -1105,6 +1061,21 @@ if (sizeof($documentationInfo) > 0) {
 						</div>
 					</div>
 					<!-- ///////////////////////////////////////////////  Customer Summary  END /////////////////////////////////////////////////////////// -->
+					 
+				<!-- Fingerprint Info start-->
+				<div class="card ">
+					<div class="card-header"> Fingerprint Info </div><span class="text-danger fingerSpan" style="margin-left:25px;display: none;">Please Scan Customer Fingerprint</span>
+					<div class="card-body">
+						<div class="row">
+							<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+								<div class="form-group table-responsive fingerprintTable">
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Fingerprint Info End-->
 
 
 					<div class="col-md-12 ">
@@ -1636,21 +1607,6 @@ if (sizeof($documentationInfo) > 0) {
 					</div>
 				</div>
 				<!-- Document Info End -->
-
-				<!-- Fingerprint Info start-->
-				<div class="card edit-document-card">
-					<div class="card-header"> Fingerprint Info </div><span class="text-danger fingerSpan" style="margin-left:25px;display: none;">Please Scan Customer Fingerprint</span>
-					<div class="card-body">
-						<div class="row">
-							<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-								<div class="form-group table-responsive fingerprintTable">
-
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<!-- Fingerprint Info End-->
 
 			</div>
 		</div> <!-- Row End -->

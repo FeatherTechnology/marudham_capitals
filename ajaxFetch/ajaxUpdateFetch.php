@@ -28,33 +28,44 @@ if ($userid != 1) {
 
 
 $column = array(
-    'cus_reg_id',
-    'cus_id',
-    'customer_name',
-    'mobile1',
-    'cus_reg_id',
-    'cus_reg_id',
-    'cus_reg_id',
-    'cus_reg_id',
-    'cus_reg_id',
-    'cus_reg_id',
+    'rc.req_id',
+    'rc.cus_id',
+    'rc.cus_name',
+    'rc.mobile1',
+    'rc.req_id',
+    'rc.req_id',
+    'rc.req_id',
+    'rc.req_id',
+    'rc.req_id',
+    'rc.req_id',
 );
 
 if ($userid == 1) {
-    $query = 'SELECT cus_id,customer_name,mobile1,area FROM customer_register WHERE cus_status > 13';
+    $query = "SELECT rc.req_id, rc.cus_id, rc.cus_name, rc.mobile1,rc.area ,rc.sub_area, rc.cus_status, rc.cus_data 
+FROM request_creation rc
+INNER JOIN (
+    SELECT cus_id, MAX(req_id) AS last_req_id 
+    FROM request_creation  
+    GROUP BY cus_id
+) latest ON rc.cus_id = latest.cus_id AND rc.req_id = latest.last_req_id
+WHERE (rc.cus_data = 'Existing' AND rc.cus_status >= 1) OR (rc.cus_data = 'New' AND rc.cus_status > 13)";
+
 } else {
-    $query = "SELECT cus_id,customer_name,mobile1,area FROM customer_register  WHERE cus_status > 13 && sub_area IN ($sub_area_list)";
+    $query = "SELECT rc.req_id, rc.cus_id, rc.cus_name, rc.mobile1,rc.area ,rc.sub_area, rc.cus_status, rc.cus_data
+FROM request_creation rc
+INNER JOIN ( SELECT cus_id, MAX(req_id) AS last_req_id FROM request_creation GROUP BY cus_id) latest ON rc.cus_id = latest.cus_id AND rc.req_id = latest.last_req_id
+WHERE rc.sub_area IN ($sub_area_list) AND ( (rc.cus_data = 'Existing' AND rc.cus_status >= 1) OR (rc.cus_data = 'New' AND rc.cus_status > 13))";
 }
 
 if (isset($_POST['search']) && $_POST['search'] != "") {
 
     $query .= "
-        and (cus_id LIKE '%" . $_POST['search'] . "%'
-        OR customer_name LIKE '%" . $_POST['search'] . "%'
-        OR mobile1 LIKE '%" . $_POST['search'] . "%' ) ";
+        and (rc.cus_id LIKE '%" . $_POST['search'] . "%'
+        OR rc.cus_name LIKE '%" . $_POST['search'] . "%'
+        OR rc.mobile1 LIKE '%" . $_POST['search'] . "%' ) ";
 }
 
-$query .= " GROUP BY cus_id ";
+// $query .= " GROUP BY rc.cus_id ";
 
 if (isset($_POST['order'])) {
     $query .= 'ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
@@ -89,7 +100,7 @@ foreach ($result as $row) {
     $sub_array[] = $sno;
     $cus_id = $row['cus_id'];
     $sub_array[] = $cus_id;
-    $sub_array[] = $row['customer_name'];
+    $sub_array[] = $row['cus_name'];
     $sub_array[] = $row['mobile1'];
 
     $areaqry = $connect->query("SELECT CASE 

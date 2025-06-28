@@ -1,5 +1,5 @@
 let storeDocInfo = {};
-
+let loanidResponse = {};
 $(document).ready(function () {
 
     //Show Remark and Address when select other in Relationship.
@@ -678,6 +678,13 @@ $(document).ready(function () {
         },
         });
     });
+    
+ $("#loan_id").change(function () {
+        let gurantor_id = $(this).find(':selected').attr('gurantor_id');
+        let gu_pic = $(this).find(':selected').attr('gu_pic');
+        closeFamModal(gurantor_id,gu_pic)
+       
+    });
 
     /* ********************************************** Document info END ********************************************** */
 
@@ -706,9 +713,7 @@ $(function () {
 }); //OnLoad function.
 
 function callCustomerProfileFunctn(){
-    getImage(); // To show customer image when window onload.
-
-    closeFamModal();
+    getLoanID();
 
     resetPropertyinfoList() //Property Info List.
 
@@ -720,6 +725,11 @@ function callCustomerProfileFunctn(){
 
     getCustomerLoanCounts();//to get closed customer details
 
+    var cus_id = $('#cus_id').val();
+    var cus_name = $('#cus_name').val();
+    if (cus_name != '' && cus_id !='') {
+        getFingerPrintDetails(cus_id, cus_name);
+    }
     var state_upd = $('#state_upd').val();
     if (state_upd != '') {
         var optionsList = getDistrictDropdown(state_upd);
@@ -959,8 +969,8 @@ function resetFamInfo() {
 }
 
 function resetFamDetails() {
-
-    let cus_id = $('#cus_id').val();
+ let cus_id = $('#cus_id').val();
+    let cus_name = $('#cus_name').val();
 
     $.ajax({
         url: 'verificationFile/verification_fam_list.php',
@@ -970,6 +980,7 @@ function resetFamDetails() {
         success: function (html) {
             $("#famList").empty();
             $("#famList").html(html);
+            getFingerPrintDetails(cus_id,cus_name);
         }
     });
 }
@@ -1048,11 +1059,50 @@ $("body").on("click", "#verification_fam_delete", function () {
 
 
 //FamilyModal Close
-function closeFamModal() {
+function getLoanID() {
+
+    $.post('updateFile/get_loan_id.php', { "cus_id": $('#cus_id').val() }, function (data) {
+
+    $("#loan_id").empty().append("<option value=''>" + 'Select Loan ID' + "</option>");
+    let lastGuarantorID="";
+    let guarentor_photos="";
+ if (data.length > 0) {
+    for (var i = 0; i < data.length; i++) {
+        let loanId = data[i]['loan_id'];
+        let guarentorID = data[i]['guarentor_name'];
+        let guarentor_photo = data[i]['guarentor_photo'] ? data[i]['guarentor_photo'] : "";
+        let isLast = i === data.length - 1;
+        let selected = isLast ? "selected" : "";
+        if (isLast) {
+                lastGuarantorID = guarentorID;
+                guarentor_photos = guarentor_photo;
+            }
+        $("#loan_id").append("<option value='" + loanId + "' " + selected + " gurantor_id='" + guarentorID + "' gu_pic='" + guarentor_photo + "'>" + loanId + "</option>");
+        loanidResponse = "true";
+    }
+     if (lastGuarantorID !='') {
+            closeFamModal(lastGuarantorID,guarentor_photos);
+        }
+
+    }
+    else{
+        $("#guarentor_name").empty().append("<option value=''>" + 'Select Guarantor' + "</option>");
+        $("#guarentor_relationship").val('');
+        $("#guarentor_image").val(guarentor_photos);
+        getImage();
+        resetFamDetails();
+        loanidResponse = "false";
+    }
+
+}, 'json');
+
+}
+
+function closeFamModal(lastGuarantorID,guarentor_photos) {
 
     $.post('verificationFile/verificationFam.php', { "cus_id": $('#cus_id').val() }, function (data) {
 
-        let guarentor_name_upd = $('#guarentor_name_upd').val();
+        let guarentor_name_upd = lastGuarantorID ;
 
         $("#guarentor_name").empty().append("<option value=''>" + 'Select Guarantor' + "</option>");
         for (var i = 0; i < data.length - 1; i++) { // -1 because this ajax's response will contain customer value at the last of the response for verification person
@@ -1060,9 +1110,12 @@ function closeFamModal() {
             var selected = '';
             if (guarentor_name_upd != '' && fam_id == guarentor_name_upd) {
                 selected = 'selected';
+                 $("#guarentor_name").trigger('change');
+                 $("#guarentor_image").val(guarentor_photos);
             }
             $("#guarentor_name").append("<option value='" + fam_id + "' " + selected + ">" + fam_name + "</option>");
         }
+
 
     }, 'json')
 
@@ -2321,6 +2374,7 @@ $('#guarentor_name').change(function () { //Select Guarantor Name relationship w
         success: function (result) {
 
             $("#guarentor_relationship").val(result['relation']);
+            getImage();
 
         }
     });
@@ -2341,7 +2395,7 @@ function validation() {
     var cus_res_details = $('#cus_res_details').val(); var cus_res_address = $('#cus_res_address').val(); var cus_res_native = $('#cus_res_native').val();
     var cus_occ_type = $('#cus_occ_type').val(); var cus_occ_detail = $('#cus_occ_detail').val(); var cus_occ_income = $('#cus_occ_income').val(); var cus_occ_address = $('#cus_occ_address').val(); var cus_occ_dow = $('#cus_occ_dow').val(); var cus_occ_abt = $('#cus_occ_abt').val();
     var cus_how_know = $('#cus_how_know').val(); var cus_monthly_income = $('#cus_monthly_income').val(); var cus_other_income = $('#cus_other_income').val(); var cus_support_income = $('#cus_support_income').val(); var cus_Commitment = $('#cus_Commitment').val(); var cus_monDue_capacity = $('#cus_monDue_capacity').val(); var cus_loan_limit = $('#cus_loan_limit').val(); var about_cus = $('#about_cus').val();
-    var guarentor_name = $('#guarentor_name').val(); var guarentor_image = $('#guarentor_image').val(); var guarentorpic = $('#guarentorpic').val();
+    var guarentor_name = $('#guarentor_name').val(); var guarentor_image = $('#guarentor_image').val(); var guarentorpic = $('#guarentorpic').val(); var loan_id = $('#loan_id').val();
 
     if (cus_id == '') {
         event.preventDefault();
@@ -2517,7 +2571,7 @@ function validation() {
     } else {
         $('#aboutcusCheck').hide();
     }
-
+if (loanidResponse === "true"){
     if (guarentor_name == '') {
         event.preventDefault();
         $('#guarentor_nameCheck').show();
@@ -2538,7 +2592,13 @@ function validation() {
             event.preventDefault();
         }
     }
-
+    if (loan_id == '') {
+        event.preventDefault();
+         $('#loan_idCheck').show();  
+    }else{
+        $('#loan_idCheck').hide();  
+    }
+}
 } //Validation END.///
 
 $('#Communitcation_to_cus').change(function () {
@@ -2631,9 +2691,9 @@ function getDocumentDetails(req_id, cus_id, cus_name) {
     resetGoldList(req_id, cus_id);// to reset signed document list non-modal
     resetDocmentList(req_id, cus_id);// to reset signed document list non-modal
     // getFamilyList();//to get family , it may used in mort and endorse processes
-    getMortgageInfo(req_id); // to get mortgage details
-    getEndorsementInfo(req_id); // to get mortgage details
-    getFingerPrintDetails(req_id, cus_id, cus_name); // to get Fingerprint details like customer, family name and buttons
+    getMortgageInfo(req_id, cus_id); // to get mortgage details
+    getEndorsementInfo(req_id, cus_id); // to get mortgage details
+
 
 
     $('#update_mortgage, #update_endorsement').off('click');
@@ -3508,10 +3568,10 @@ function MEValidation(id) {
 }
 
 // to get family details of customer to get fingerprint
-function getFingerPrintDetails(req_id, cus_id, cus_name) {
+function getFingerPrintDetails(cus_id, cus_name) {
     $.ajax({
         url: 'verificationFile/getNamesForFingerprint.php',
-        data: { 'req_id': req_id, 'cus_name': cus_name, 'cus_id': cus_id },
+        data: { 'cus_name': cus_name, 'cus_id': cus_id },
         type: 'post',
         cache: false,
         success: function (html) {
@@ -3525,7 +3585,7 @@ function getFingerPrintDetails(req_id, cus_id, cus_name) {
                     $(this).prev().css('border-color', 'red');
                 } else {
                     $(this).prev().css('border-color', '#009688')
-
+ 
                     showOverlay();//loader start
 
                     $(this).attr('disabled', true);
