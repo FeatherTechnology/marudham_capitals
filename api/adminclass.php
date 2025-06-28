@@ -4770,12 +4770,9 @@ class admin
 				$mysqli->query("INSERT INTO `verif_loan_cal_category`(`req_id`, `loan_cal_id`, `category`) VALUES ('" . strip_tags($req_id) . "','" . strip_tags($loan_cal_id) . "',
 				'" . strip_tags($category_info[$i]) . "' )");
 			}
-			echo "<script> alert('Loan Calculation Details Updated');</script>";
 		} else {
 			$qry = $mysqli->query("SELECT * From verification_loan_calculation where req_id = $req_id");
-			$qry1 = $mysqli->query("SELECT cus_status From request_creation where req_id = $req_id");
-			$row = $qry1->fetch_assoc();
-			if ($qry->num_rows == 0 && $row['cus_status'] == '11') {
+			if ($qry->num_rows == 0) {
 				//this will filter out duplication entry in customer profile table
 
 				$mysqli->query("INSERT INTO verification_loan_calculation (`req_id`, `cus_id_loan`, `cus_name_loan`,`cus_data_loan`, `mobile_loan`, `pic_loan`, `loan_category`, `sub_category`,
@@ -4807,11 +4804,7 @@ class admin
 				if (!$result) {
 					die("Error updating in_verification: " . $mysqli->error);
 				}
-
-				echo "<script> alert('Loan Calculation Details Submitted');</script>";
-			} else {
-				echo "<script> alert('Please Complete the Customer Documentation'); </script>";
-			}
+			} 
 		}
 
 		if (isset($ad_amt) && isset($tot_value) && intVal($ad_amt) > 0 && intVal($tot_value) > 0) {

@@ -1,5 +1,5 @@
 let storeDocInfo = {};
-
+let loanidResponse = {};
 $(document).ready(function () {
 
     //Show Remark and Address when select other in Relationship.
@@ -969,8 +969,8 @@ function resetFamInfo() {
 }
 
 function resetFamDetails() {
-
-    let cus_id = $('#cus_id').val();
+ let cus_id = $('#cus_id').val();
+    let cus_name = $('#cus_name').val();
 
     $.ajax({
         url: 'verificationFile/verification_fam_list.php',
@@ -980,6 +980,7 @@ function resetFamDetails() {
         success: function (html) {
             $("#famList").empty();
             $("#famList").html(html);
+            getFingerPrintDetails(cus_id,cus_name);
         }
     });
 }
@@ -1063,7 +1064,9 @@ function getLoanID() {
     $.post('updateFile/get_loan_id.php', { "cus_id": $('#cus_id').val() }, function (data) {
 
     $("#loan_id").empty().append("<option value=''>" + 'Select Loan ID' + "</option>");
-
+    let lastGuarantorID="";
+    let guarentor_photos="";
+ if (data.length > 0) {
     for (var i = 0; i < data.length; i++) {
         let loanId = data[i]['loan_id'];
         let guarentorID = data[i]['guarentor_name'];
@@ -1075,10 +1078,21 @@ function getLoanID() {
                 guarentor_photos = guarentor_photo;
             }
         $("#loan_id").append("<option value='" + loanId + "' " + selected + " gurantor_id='" + guarentorID + "' gu_pic='" + guarentor_photo + "'>" + loanId + "</option>");
+        loanidResponse = "true";
     }
-     if (lastGuarantorID) {
+     if (lastGuarantorID !='') {
             closeFamModal(lastGuarantorID,guarentor_photos);
         }
+
+    }
+    else{
+        $("#guarentor_name").empty().append("<option value=''>" + 'Select Guarantor' + "</option>");
+        $("#guarentor_relationship").val('');
+        $("#guarentor_image").val(guarentor_photos);
+        getImage();
+        resetFamDetails();
+        loanidResponse = "false";
+    }
 
 }, 'json');
 
@@ -1096,14 +1110,12 @@ function closeFamModal(lastGuarantorID,guarentor_photos) {
             var selected = '';
             if (guarentor_name_upd != '' && fam_id == guarentor_name_upd) {
                 selected = 'selected';
-                optionSelected = true;
+                 $("#guarentor_name").trigger('change');
+                 $("#guarentor_image").val(guarentor_photos);
             }
             $("#guarentor_name").append("<option value='" + fam_id + "' " + selected + ">" + fam_name + "</option>");
         }
-         if (optionSelected) {
-            $("#guarentor_name").trigger('change');
-            $("#guarentor_image").val(guarentor_photos);
-        }
+
 
     }, 'json')
 
@@ -2559,7 +2571,7 @@ function validation() {
     } else {
         $('#aboutcusCheck').hide();
     }
-
+if (loanidResponse === "true"){
     if (guarentor_name == '') {
         event.preventDefault();
         $('#guarentor_nameCheck').show();
@@ -2586,7 +2598,7 @@ function validation() {
     }else{
         $('#loan_idCheck').hide();  
     }
-
+}
 } //Validation END.///
 
 $('#Communitcation_to_cus').change(function () {

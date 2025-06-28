@@ -390,6 +390,8 @@ $(document).ready(function () {
   // Verification Tab Change Radio buttons
   $("#cus_profile,#documentation,#loan_calc").click(function () {
     var verify = $("input[name=verification_type]:checked").val();
+    var profile_sts = $("#cus_profile").data('sts');
+    var doc_sts = $("#documentation").data('sts');
 
     if (verify == "cus_profile") {
       $("#customer_profile").show();
@@ -397,17 +399,29 @@ $(document).ready(function () {
       $("#customer_loan_calc").hide();
     }
     if (verify == "documentation") {
+      if(profile_sts ==10 || doc_sts ==11){
       $("#customer_profile").hide();
       $("#cus_document").show();
       $("#customer_loan_calc").hide();
       // getDocumentHistory();
       getDocumentFunc();
-    }
+      }
+      else{
+         showErrorAlert("Please Complete Customer Profile!");
+         event.preventDefault();
+      }
+      
+    } 
     if (verify == "loan_calc") {
+      if(doc_sts ==11){
       $("#customer_profile").hide();
       $("#cus_document").hide();
       $("#customer_loan_calc").show();
       initialize();
+    }else{
+      showErrorAlert("Please Complete Customer Documentation!");
+      event.preventDefault();
+    }
     }
   });
 
@@ -1101,6 +1115,15 @@ $(document).ready(function () {
   ///Hide AND Show doc Card END
 }); ////////Document Ready End
 
+function showErrorAlert(message) {
+  Swal.fire({
+    timerProgressBar: true,
+    title: message,
+    icon: "error",
+    showConfirmButton: true,
+    confirmButtonColor: "#009688",
+  });
+}
 $(function () {
   $(".icon-chevron-down1").parent().next("div").slideUp(); //To collapse all card on load
 
