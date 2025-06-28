@@ -35,7 +35,7 @@ function moneyFormatIndia($num)
             <th> Weight </th>
             <th> Value </th>
             <th> Upload </th>
-            <th> Availability </th>
+            <!-- <th> Availability </th> -->
             <!-- <th> Action </th> -->
         </tr>
     </thead>
@@ -48,7 +48,7 @@ function moneyFormatIndia($num)
 
         $i = 1;
         while ($gold = $goldInfo->fetch()) {
-            $temp_sts = $gold['temp_sts'];
+            // $temp_sts = $gold['temp_sts'];
             $id = $gold['id'];
         ?>
             <tr>
@@ -60,7 +60,7 @@ function moneyFormatIndia($num)
                 <td><?php echo $gold["gold_Weight"]; ?></td>
                 <td><?php echo moneyFormatIndia($gold["gold_Value"]); ?></td>
                 <td> <a href="uploads/gold_info/<?php echo $gold['gold_upload']; ?>" target="_blank" style="color: #4ba39b;"> <?php echo $gold['gold_upload']; ?> </a></td>
-                <td><?php echo $temp_sts == 0 ? 'YES':'NO'; ?></td>
+                <!-- <td><?php #echo $temp_sts == 0 ? 'YES':'NO'; ?></td> -->
                 <!-- <td> -->
                     <?php #if($temp_sts == 0){//zero means document available,so show button for take out as temprory ?>
                         <!-- <button class="btn btn-danger temp-take-out" data-req_id='<?php echo $req_id; ?>' data-cus_id='<?php echo $cus_id; ?>' data-tableid = '<?php echo $id;?>' data-doc='gold' data-toggle='modal' data-target='.temp-take-out-modal'>Take Out</button> -->
@@ -73,26 +73,3 @@ function moneyFormatIndia($num)
         <?php  } ?>
     </tbody>
 </table>
-
-
-
-<!-- <script type="text/javascript">
-    $(function() {
-        $('#gold_table').DataTable({
-            'processing': true,
-            'iDisplayLength': 5,
-            "lengthMenu": [
-                [10, 25, 50, -1],
-                [10, 25, 50, "All"]
-            ],
-            "createdRow": function(row, data, dataIndex) {
-                $(row).find('td:first').html(dataIndex + 1);
-            },
-            "drawCallback": function(settings) {
-                this.api().column(0).nodes().each(function(cell, i) {
-                    cell.innerHTML = i + 1;
-                });
-            },
-        });
-    });
-</script> -->

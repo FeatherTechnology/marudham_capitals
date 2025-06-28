@@ -21,7 +21,7 @@ if(isset($_POST['req_id'])){
             <th> Holder Name</th>
             <th> Relationship</th>
             <th> Document </th>
-            <th> Availability </th>
+            <!-- <th> Availability </th> -->
             <!-- <th> Action </th> -->
         </tr>
     </thead>
@@ -34,7 +34,7 @@ if(isset($_POST['req_id'])){
         while ($row = $qry->fetch()) {
             $docUpd = explode(',',$row["doc_upload"]);
 
-            $temp_sts = $row['temp_sts'];
+            // $temp_sts = $row['temp_sts'];
             $id = $row['id'];
 
             if($row["holder_name"] == ''){
@@ -59,7 +59,7 @@ if(isset($_POST['req_id'])){
                 echo rtrim($text,', ');// to trim the comma at end ?></td>
 
                 <?php #if(!empty($row["doc_upload"])){ //check if file not receveived ?>
-                    <td><?php echo $temp_sts == 0 ? 'YES':'NO'; ?></td>
+                    <!-- <td><?php #echo $temp_sts == 0 ? 'YES':'NO'; ?></td> -->
                     <!-- <td> -->
                         <?php #if($temp_sts == 0){//zero means document available,so show button for take out as temprory ?>
                             <!-- <button class="btn btn-danger temp-take-out" data-req_id='<?php echo $req_id; ?>' data-cus_id='<?php echo $cus_id; ?>' data-tableid = '<?php echo $id;?>' data-doc='document' data-toggle='modal' data-target='.temp-take-out-modal'>Take Out</button> -->

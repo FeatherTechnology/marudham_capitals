@@ -13,7 +13,7 @@ include '../ajaxconfig.php';
             <th> Cheque Count </th>
             <th> Cheque No </th>
             <th> Document </th>
-            <th> Availability </th>
+            <!-- <th> Availability </th> -->
             <!-- <th> Action </th> -->
             
         </tr>
@@ -45,13 +45,14 @@ include '../ajaxconfig.php';
                 $a++;
             }
             
-            $cheque_no ='';$temp_sts = '';
+            $cheque_no ='';
+            // $temp_sts = '';
             $updnoresult = $connect->query("SELECT cheque_no,noc_given,temp_sts FROM `cheque_no_list` where cheque_table_id = '$id' and used_status = 0 ");
             if($updnoresult){
-                $temp_sts = '0';
+                // $temp_sts = '0';
 
                 while($updno = $updnoresult->fetch()){
-                    $temp_sts = ($temp_sts=='0') ? $updno["temp_sts"] : $temp_sts;
+                    // $temp_sts = ($temp_sts=='0') ? $updno["temp_sts"] : $temp_sts;
                     $no = $updno['cheque_no'];
                     $noc_given[] = $updno['noc_given'];
                     $cheque_no .= $no.', ';
@@ -82,7 +83,7 @@ include '../ajaxconfig.php';
                 
                 <?php 
                 // if(!empty($doc_upd_name)){ //show temp contents only if document received already ?>
-                    <td><?php echo $temp_sts == 0 ? 'YES':'NO'; ?></td>
+                    <!-- <td><?php #echo $temp_sts == 0 ? 'YES':'NO'; ?></td> -->
                     <!-- <td> -->
                         <?php #if($temp_sts == 0){//zero means document available,so show button for take out as temprory ?>
                             <!-- <button class="btn btn-danger temp-take-out" data-req_id='<?php echo $req_id; ?>' data-cus_id='<?php echo $cus_id; ?>' data-tableid = '<?php echo $id;?>' data-doc='cheque' data-toggle='modal' data-target='.temp-take-out-modal'>Take Out</button> -->

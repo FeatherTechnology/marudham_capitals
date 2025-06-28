@@ -11,7 +11,7 @@ include '../ajaxconfig.php';
 		<th> Relationship </th>
 		<th> Count </th>
 		<th> Document </th>
-		<th> Availability </th>
+		<!-- <th> Availability </th> -->
 		<!-- <th> Action </th> -->
 		<!-- <th> NOC Status </th> -->
         </tr>
@@ -38,7 +38,7 @@ include '../ajaxconfig.php';
             $a = 1;
             while($upd = $updresult->fetch()){
                 $docName = $upd['upload_doc_name'];
-                $temp_sts = $upd["temp_sts"];
+                // $temp_sts = $upd["temp_sts"];
                 $doc_upd_name .= "<a href=uploads/verification/signed_doc/";
                 $doc_upd_name .= $docName ;
                 $doc_upd_name .= " target='_blank'>";
@@ -61,7 +61,7 @@ include '../ajaxconfig.php';
                 <?php 
                 // if($doc_upd_name != ''){
                 ?>
-                    <td><?php echo $temp_sts == 0 ? 'YES':'NO'; ?></td>
+                    <!-- <td><?php #echo $temp_sts == 0 ? 'YES':'NO'; ?></td> -->
                     <!-- <td> -->
                         <?php #if($temp_sts == 0){//zero means document available,so show button for take out as temprory ?>
                             <!-- <button class="btn btn-danger temp-take-out" data-req_id='<?php echo $req_id; ?>' data-cus_id='<?php echo $cus_id; ?>' data-tableid = '<?php echo $id;?>' data-doc='sign' data-toggle='modal' data-target='.temp-take-out-modal'>Take Out</button> -->

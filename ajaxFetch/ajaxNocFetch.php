@@ -74,7 +74,7 @@ if ($userid == 1) {
     JOIN branch_creation bc ON al.branch_id = bc.branch_id
     LEFT JOIN (
         SELECT ii.cus_id, COUNT(sd.id) AS sd_count
-        FROM signed_doc sd
+        FROM signed_doc_info sd
         JOIN in_issue ii ON ii.req_id = sd.req_id
         WHERE ii.cus_status = 21 AND sd.noc_given != '1'
         GROUP BY ii.cus_id

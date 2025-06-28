@@ -33,8 +33,8 @@ if ($qry->rowCount() > 0) {
 
     $row = $qry->fetch();
     $bank_loan_count = $row['bank_loan_count'];
-    $cash_loan_count = $row['cash_loan_count'];
-    $li_count = $bank_loan_count + $cash_loan_count;
+    $hand_cash_count = $row['hand_cash_count'];
+    $li_count = $bank_loan_count + $hand_cash_count;
     // $insert_login_id = $row['insert_login_id'];
     // $created_date = date('Y-m-d', strtotime($row['created_date']));
 

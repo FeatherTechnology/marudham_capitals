@@ -85,11 +85,11 @@ function getfamName($connect,$rel_id){
                 </td>
 
                 <td>
-                    <?php if($row['temp_sts'] == '0'){ ?>
-                        <input type='checkbox' id='gold_check' name='gold_check' class="form-control gold_check"  <?php if($row['noc_given'] == '1') echo 'checked disabled';?> data-value='<?php echo $row['id'];//id of docuemnts uploaded table?>' tabindex='38'></td>
-                    <?php }else if($row['temp_sts'] == '1'){?>
-                        <label>Not Available</label>
-                    <?php } ?>
+                    <?php #if($row['temp_sts'] == '0'){ ?>
+                        <input type='checkbox' id='gold_check' name='gold_check' class="form-control gold_check"  <?php if($row['noc_given'] == '1') echo 'checked disabled';?> data-value='<?php echo $row['id'];//id of docuemnts uploaded table?>' ></td>
+                    <?php #}else if($row['temp_sts'] == '1'){?>
+                        <!-- <label>Not Available</label> -->
+                    <?php #} ?>
             </tr>
         <?php
         }
@@ -105,28 +105,6 @@ function getfamName($connect,$rel_id){
         <td> </td>
     </tr>
 </table>
-
-<script type='text/javascript'>
-    $(function() {
-        // $('#goldTable').DataTable({
-        //     "title":"Gold List",
-        //     'processing': true,
-        //     'iDisplayLength': 5,
-        //     "lengthMenu": [
-        //         [10, 25, 50, -1],
-        //         [10, 25, 50, "All"]
-        //     ],
-        //     "createdRow": function(row, data, dataIndex) {
-        //         $(row).find('td:first').html(dataIndex + 1);
-        //     },
-        //     "drawCallback": function(settings) {
-        //         this.api().column(0).nodes().each(function(cell, i) {
-        //             cell.innerHTML = i + 1;
-        //         });
-        //     },
-        // });
-    });
-</script>
 
 <?php
 // Close the database connection

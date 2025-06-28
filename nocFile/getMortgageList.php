@@ -35,7 +35,7 @@ function getfamName($connect,$rel_id){
                     ?>
                 <tr>
                     <td><?php echo $i;$i++;?></td>
-                    <td>Mortgage Process</td>
+                    <td>Mortgage Process</td> <!-- Getting table text using JS so don't give empty space -->
 
                     <td><span id='mort_noc_date' name='mort_noc_date' class="mort_noc_date"><?php if($row['mort_noc_date'] != ''){echo date('d-m-Y',strtotime($row['mort_noc_date']));}?></span></td>
                     <td>
@@ -59,7 +59,7 @@ function getfamName($connect,$rel_id){
                     ?>
                 <tr>
                     <td></td>
-                    <td>Mortgage Document</td>
+                    <td>Mortgage Document</td> <!-- Getting table text using JS so don't give empty space -->
                         
                     <td><span id='mort_noc_date' name='mort_noc_date' class="mort_noc_date"><?php if($row['mort_doc_noc_date'] != ''){echo date('d-m-Y',strtotime($row['mort_doc_noc_date']));}?></span></td>
                     <td>
@@ -83,28 +83,6 @@ function getfamName($connect,$rel_id){
 
     </tbody>
 </table>
-
-<script type='text/javascript'>
-    $(function() {
-        // $('#mortgageTable').DataTable({
-        //     "title":"Signed Document List",
-        //     'processing': true,
-        //     'iDisplayLength': 5,
-        //     "lengthMenu": [
-        //         [10, 25, 50, -1],
-        //         [10, 25, 50, "All"]
-        //     ],
-        //     "createdRow": function(row, data, dataIndex) {
-        //         $(row).find('td:first').html(dataIndex + 1);
-        //     },
-        //     "drawCallback": function(settings) {
-        //         this.api().column(0).nodes().each(function(cell, i) {
-        //             cell.innerHTML = i + 1;
-        //         });
-        //     },
-        // });
-    });
-</script>
 
 <?php
 // Close the database connection
