@@ -12,7 +12,7 @@ include '../ajaxconfig.php';
 		<th> Count </th>
 		<th> Document </th>
 		<th> Availability </th>
-		<th> Action </th>
+		<!-- <th> Action </th> -->
 		<!-- <th> NOC Status </th> -->
         </tr>
     </thead>
@@ -32,14 +32,13 @@ include '../ajaxconfig.php';
 
             $doc_upd_name = '';
             $id = $signedDoc["id"];
-            $temp_sts = $signedDoc["temp_sts"];
 
-            $updresult = $connect->query("SELECT upload_doc_name FROM `signed_doc` where signed_doc_id = '$id'"); 
+            $updresult = $connect->query("SELECT upload_doc_name,temp_sts FROM `signed_doc` where signed_doc_id = '$id'"); 
             // echo $updresult->queryString;
             $a = 1;
             while($upd = $updresult->fetch()){
                 $docName = $upd['upload_doc_name'];
-                // $temp_sts = $upd["temp_sts"];
+                $temp_sts = $upd["temp_sts"];
                 $doc_upd_name .= "<a href=uploads/verification/signed_doc/";
                 $doc_upd_name .= $docName ;
                 $doc_upd_name .= " target='_blank'>";
@@ -63,13 +62,13 @@ include '../ajaxconfig.php';
                 // if($doc_upd_name != ''){
                 ?>
                     <td><?php echo $temp_sts == 0 ? 'YES':'NO'; ?></td>
-                    <td>
-                        <?php if($temp_sts == 0){//zero means document available,so show button for take out as temprory ?>
-                            <button class="btn btn-danger temp-take-out" data-req_id='<?php echo $req_id; ?>' data-cus_id='<?php echo $cus_id; ?>' data-tableid = '<?php echo $id;?>' data-doc='sign' data-toggle='modal' data-target='.temp-take-out-modal'>Take Out</button>
-                        <?php }else if($temp_sts == 1){//one means document not available, taken for temp purpose?>
-                            <button class="btn btn-success temp-take-in" data-req_id='<?php echo $req_id; ?>' data-cus_id='<?php echo $cus_id; ?>' data-tableid = '<?php echo $id;?>' data-doc='sign' data-toggle='modal' data-target='.temp-take-in-modal'>Take In</button>
-                        <?php } ?>
-                    </td>
+                    <!-- <td> -->
+                        <?php #if($temp_sts == 0){//zero means document available,so show button for take out as temprory ?>
+                            <!-- <button class="btn btn-danger temp-take-out" data-req_id='<?php echo $req_id; ?>' data-cus_id='<?php echo $cus_id; ?>' data-tableid = '<?php echo $id;?>' data-doc='sign' data-toggle='modal' data-target='.temp-take-out-modal'>Take Out</button> -->
+                        <?php #}else if($temp_sts == 1){//one means document not available, taken for temp purpose?>
+                            <!-- <button class="btn btn-success temp-take-in" data-req_id='<?php echo $req_id; ?>' data-cus_id='<?php echo $cus_id; ?>' data-tableid = '<?php echo $id;?>' data-doc='sign' data-toggle='modal' data-target='.temp-take-in-modal'>Take In</button> -->
+                        <?php #} ?>
+                    <!-- </td> -->
                 <?php #}else{ ?>
                     <!-- <td></td>
                     <td></td> -->
