@@ -1103,19 +1103,22 @@ function closeFamModal(lastGuarantorID,guarentor_photos) {
     $.post('verificationFile/verificationFam.php', { "cus_id": $('#cus_id').val() }, function (data) {
 
         let guarentor_name_upd = lastGuarantorID ;
-
+        let optionSelected = '';
         $("#guarentor_name").empty().append("<option value=''>" + 'Select Guarantor' + "</option>");
         for (var i = 0; i < data.length - 1; i++) { // -1 because this ajax's response will contain customer value at the last of the response for verification person
             var fam_name = data[i]['fam_name']; var fam_id = data[i]['fam_id'];
             var selected = '';
             if (guarentor_name_upd != '' && fam_id == guarentor_name_upd) {
                 selected = 'selected';
-                 $("#guarentor_name").trigger('change');
-                 $("#guarentor_image").val(guarentor_photos);
+                optionSelected = true;
             }
+           
             $("#guarentor_name").append("<option value='" + fam_id + "' " + selected + ">" + fam_name + "</option>");
         }
-
+        if (optionSelected) {
+            $("#guarentor_name").trigger('change');
+            $("#guarentor_image").val(guarentor_photos);
+        }
 
     }, 'json')
 
