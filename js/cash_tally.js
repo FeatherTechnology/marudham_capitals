@@ -499,7 +499,7 @@ function submitCashTally(i) {
                     var hand_op = $('#hand_opening').text().replace(/,/g, '');
                     var bank_op = '';
                     for (var j = 0; j < i; j++) {
-                        bank_op += $('#bank_opening' + j).text().replace(/,/g, ''); + ',';
+                        bank_op += $('#bank_opening' + j).text().replace(/,/g, '') + ',';
                     }
                     bank_op = bank_op.slice(0, -1);
                     var agent_op = $('#agent_opening').text().replace(/,/g, '');
@@ -507,7 +507,7 @@ function submitCashTally(i) {
                     var hand_cl = $('#hand_closing').text().replace(/,/g, '');
                     var bank_cl = '';
                     for (var j = 0; j < i; j++) {
-                        bank_cl += $('#bank_closing' + j).text().replace(/,/g, ''); + ',';
+                        bank_cl += $('#bank_closing' + j).text().replace(/,/g, '') + ',';
                     }
                     bank_cl = bank_cl.slice(0, -1);
 
