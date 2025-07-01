@@ -138,7 +138,7 @@ $op_date = date('Y-m-d',strtotime($_POST['op_date']. '-1 day'));
         SUM(amt) AS agent_issue
         FROM (
             (SELECT COALESCE(SUM(cash + cheque_value + transaction_value), 0) AS amt FROM loan_issue
-            WHERE date(created_date) = '$op_date' AND FIND_IN_SET(agent_id,''$ag_ids'') ORDER BY created_date DESC LIMIT 1)
+            WHERE date(created_date) = '$op_date' AND FIND_IN_SET(agent_id,'$ag_ids') ORDER BY created_date DESC LIMIT 1)
             
         ) AS Agent_Issue_Debit_Opening
     ");
