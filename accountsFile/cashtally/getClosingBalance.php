@@ -27,37 +27,37 @@ foreach ($records as $key => $value) {
 }
 
 // this will get the last data occurance 
-$closing_date = date('Y-m-d', strtotime($closing_date . '-1 day')); 
-$records = $CBObj->getClosingBalance($closing_date, $bank_detail, $user_id); 
+// $closing_date = date('Y-m-d', strtotime($closing_date . '-1 day')); 
+// $records = $CBObj->getClosingBalance($closing_date, $bank_detail, $user_id); 
 
-$closing_balance += $records[0]['closing_balance']; 
+// $closing_balance += $records[0]['closing_balance']; 
 
 // if the last data occurance is empty then loop until we get the data. so the closing values 
 // if ($op_date != date('Y-m-d')) { 
-    while ($records[0]['hand_closing'] == 0 || $records[0]['agent_closing'] == 0 || count(array_filter(array_column($records, 'bank_closing'))) == 0) { 
-        $old_hand += $records[0]['hand_closing']; 
-        $old_agent += $records[0]['agent_closing']; 
+    // while ($records[0]['hand_closing'] == 0 || $records[0]['agent_closing'] == 0 || count(array_filter(array_column($records, 'bank_closing'))) == 0) { 
+    //     $old_hand += $records[0]['hand_closing']; 
+    //     $old_agent += $records[0]['agent_closing']; 
 
-        foreach ($records as $key => $value) {
-            $old_bank[$key] += $value['bank_closing'];
-        }
+    //     foreach ($records as $key => $value) {
+    //         $old_bank[$key] += $value['bank_closing'];
+    //     }
 
-        $closing_date = date('Y-m-d', strtotime($closing_date . '-1 day')); 
-        $records = $CBObj->getClosingBalance($closing_date, $bank_detail, $user_id); 
+    //     $closing_date = date('Y-m-d', strtotime($closing_date . '-1 day')); 
+    //     $records = $CBObj->getClosingBalance($closing_date, $bank_detail, $user_id); 
 
-        if ($records[0]['hand_closing'] == 0 && $records[0]['agent_closing'] == 0 && count(array_filter(array_column($records, 'bank_closing'))) == 0) { 
-            break; 
-        } 
-    } 
+    //     if ($records[0]['hand_closing'] == 0 && $records[0]['agent_closing'] == 0 && count(array_filter(array_column($records, 'bank_closing'))) == 0) { 
+    //         break; 
+    //     } 
+    // } 
 // } 
 
 // now reassign latest closing date to returing variable. 
-$records[0]['closing_balance'] = $records[0]['closing_balance'] + $closing_balance; 
-$records[0]['hand_closing'] = $records[0]['hand_closing'] + $old_hand; 
-$records[0]['agent_closing'] = $records[0]['agent_closing'] + $old_agent; 
+$records[0]['closing_balance'] = $closing_balance; 
+$records[0]['hand_closing'] =  $old_hand; 
+$records[0]['agent_closing'] =  $old_agent; 
 
 foreach ($records as $key => $value) {
-    $records[$key]['bank_closing'] = $value['bank_closing'] + $old_bank[$key];
+    $records[$key]['bank_closing'] = $old_bank[$key];
 }
 
 echo json_encode($records); 

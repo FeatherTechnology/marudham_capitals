@@ -28,34 +28,35 @@ if ($op_date == date('Y-m-d')) { // check whether opening date is current date
 
     //if while loop gets true, then the function will load the old opening balance.. so store latest opening balance
     $opening_balance = $records[0]['opening_balance'];
-
+ $old_hand = intVal($records[0]['hand_opening']);
+  $old_agent = intVal($records[0]['agent_opening']);
     // inside the while loop
     $old_bank_unt = array_fill(0, count(explode(',', $records[0]['bank_untrkd'])), 0); // init array
 
 
-    while ($records[0]['hand_opening'] != 0 || $records[0]['agent_opening'] != 0  || $records[0]['bank_opening'] != 0) {
-        $old_hand += intVal($records[0]['hand_opening']);
-        $old_agent += intVal($records[0]['agent_opening']);
+    // while ($records[0]['hand_opening'] != 0 || $records[0]['agent_opening'] != 0  || $records[0]['bank_opening'] != 0) {
+    //     $old_hand += intVal($records[0]['hand_opening']);
+    //     $old_agent += intVal($records[0]['agent_opening']);
 
-        //If Multiple bank means need to extra loop for bank because other values are 0 index, so we need to loop it for proper returns;
-        foreach ($records as $key => $value) {
-            $old_bank_value = isset($old_bank[$key]) ? $old_bank[$key] : 0;
-            $old_bank[$key] = $value['bank_opening'] + $old_bank_value;
-        }
+    //     //If Multiple bank means need to extra loop for bank because other values are 0 index, so we need to loop it for proper returns;
+    //     foreach ($records as $key => $value) {
+    //         $old_bank_value = isset($old_bank[$key]) ? $old_bank[$key] : 0;
+    //         $old_bank[$key] = $value['bank_opening'] + $old_bank_value;
+    //     }
         
-        //the untrack amount store like 100,0 in cash tally. it based on bank mapped so need to added particular bank and return the set.
-        // $old_bank_unt += intVal($records[0]['bank_untrkd']);
-         $old_bank_unt = addBankUntrkd(implode(',', $old_bank_unt), $records[0]['bank_untrkd']);
+    //     //the untrack amount store like 100,0 in cash tally. it based on bank mapped so need to added particular bank and return the set.
+    //     // $old_bank_unt += intVal($records[0]['bank_untrkd']);
+    //      $old_bank_unt = addBankUntrkd(implode(',', $old_bank_unt), $records[0]['bank_untrkd']);
 
 
-        $op_date = date('Y-m-d', strtotime($op_date . '-1 day'));
-        $records = getOpeningBalance($connect, $op_date, $bank_detail, $user_id);
-    }
+    //     $op_date = date('Y-m-d', strtotime($op_date . '-1 day'));
+    //     $records = getOpeningBalance($connect, $op_date, $bank_detail, $user_id);
+    // }
 
     //now reassign latest opening date to returing variable.
     $records[0]['opening_balance'] = $opening_balance;
-    $records[0]['hand_opening'] = intVal($records[0]['hand_opening']) + intVal($old_hand);
-    $records[0]['agent_opening'] = intVal($records[0]['agent_opening']) + intVal($old_agent);
+    $records[0]['hand_opening'] =   intVal($old_hand);
+    $records[0]['agent_opening'] =  intVal($old_agent);
 
     foreach ($records as $key => $value) {
         $old_bank_value = isset($old_bank[$key]) ? $old_bank[$key] : 0;
@@ -77,19 +78,19 @@ function getOpeningBalance($connect, $op_date, $bank_detail, $user_id)
     $handCreditQry = $connect->query("SELECT
         SUM(amt) AS hand_credits
         FROM (
-            (SELECT COALESCE(SUM(rec_amt), 0) AS amt FROM ct_hand_collection WHERE date(created_date) = '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(rec_amt), 0) AS amt FROM ct_hand_collection WHERE date(created_date) <= '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
             UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bank_withdraw WHERE date(created_date) = '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bank_withdraw WHERE date(created_date) <= '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
             UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hoti WHERE date(created_date) = '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hoti WHERE date(created_date) <= '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
             UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hinvest WHERE date(created_date) = '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hinvest WHERE date(created_date) <='$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
             UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hexchange WHERE date(created_date) = '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hexchange WHERE date(created_date) <= '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
             UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hel WHERE date(created_date) = '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hel WHERE date(created_date) <= '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
             UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hdeposit WHERE date(created_date) = '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hdeposit WHERE date(created_date) <='$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
         ) AS Hand_Credit_Opening
     ");
 
@@ -97,19 +98,19 @@ function getOpeningBalance($connect, $op_date, $bank_detail, $user_id)
     $handDebitQry = $connect->query("SELECT
         SUM(amt) AS hand_debits
         FROM (
-            (SELECT COALESCE(SUM(amount), 0) AS amt FROM ct_db_bank_deposit WHERE date(created_date) = '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amount), 0) AS amt FROM ct_db_bank_deposit WHERE date(created_date) <= '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
             UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hinvest WHERE date(created_date) = '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hinvest WHERE date(created_date) <='$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
             UNION ALL
-            (SELECT COALESCE(SUM(netcash), 0) AS amt FROM ct_db_hissued WHERE date(created_date) = '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(netcash), 0) AS amt FROM ct_db_hissued WHERE date(created_date) <= '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
             UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hel WHERE date(created_date) = '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hel WHERE date(created_date) <= '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
             UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hexchange WHERE date(created_date) = '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hexchange WHERE date(created_date) <= '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
             UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hexpense WHERE date(created_date) = '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hexpense WHERE date(created_date) <= '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
             UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hdeposit WHERE date(created_date) = '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hdeposit WHERE date(created_date) <= '$op_date' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
         ) AS Hand_Debit_Opening
     ");
 
@@ -126,19 +127,21 @@ function getOpeningBalance($connect, $op_date, $bank_detail, $user_id)
         $bankCreditQry = $connect->query("SELECT
                 SUM(amt) AS bank_credit
                 FROM (
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_cash_deposit WHERE date(created_date) = '$op_date' and to_bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_cash_deposit WHERE date(created_date) <= '$op_date' and to_bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
                     UNION ALL
-                    (SELECT COALESCE(SUM(credited_amt), 0) AS amt FROM ct_bank_collection WHERE date(created_date) = '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+                    (SELECT COALESCE(SUM(credited_amt), 0) AS amt FROM ct_bank_collection WHERE date(created_date) <='$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
                     UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bdeposit WHERE date(created_date) = '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bdeposit WHERE date(created_date) <= '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
                     UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bel WHERE date(created_date) = '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bel WHERE date(created_date) <= '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
                     UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bexchange WHERE date(created_date) = '$op_date' and to_bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bexchange WHERE date(created_date) <= '$op_date' and to_bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
                     UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_binvest WHERE date(created_date) = '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_binvest WHERE date(created_date) <= '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
                     UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_boti WHERE date(created_date) = '$op_date' and to_bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_boti WHERE date(created_date) <= '$op_date' and to_bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+                    UNION ALL
+                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bag WHERE date(created_date) <= '$op_date' AND bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
                 ) AS Bank_Credit_Opening
             ");
 
@@ -147,22 +150,24 @@ function getOpeningBalance($connect, $op_date, $bank_detail, $user_id)
         $bankDebitQry = $connect->query("SELECT
                 SUM(amt) AS bank_debit
                 FROM (
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_cash_withdraw WHERE date(created_date) = '$op_date' and from_bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_cash_withdraw WHERE date(created_date) <= '$op_date' and from_bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
                     UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bdeposit WHERE date(created_date) = '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bdeposit WHERE date(created_date) <= '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
                     UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bel WHERE date(created_date) = '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bel WHERE date(created_date) <= '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
                     UNION ALL
                     -- (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_exf WHERE date(created_date) = '$op_date' and to_bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
                     -- UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bexchange WHERE date(created_date) = '$op_date' and from_acc_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bexchange WHERE date(created_date) <= '$op_date' and from_acc_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
                     UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bexpense WHERE date(created_date) = '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bexpense WHERE date(created_date) <= '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
                     UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_binvest WHERE date(created_date) = '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_binvest WHERE date(created_date) <= '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
                     UNION ALL
-                    (SELECT COALESCE(SUM(netcash), 0) AS amt FROM ct_db_bissued WHERE date(created_date) = '$op_date' and li_bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
-                ) AS Bank_Credit_Opening
+                    (SELECT COALESCE(SUM(netcash), 0) AS amt FROM ct_db_bissued WHERE date(created_date) <= '$op_date' and li_bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+                     UNION ALL 
+                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bag WHERE date(created_date) <= '$op_date' and bank_id = '$val' and insert_login_id = '$user_id'  ORDER BY created_date DESC LIMIT 1)
+                ) AS Bank_debit_Opening
             ");
 
         $bankDebit = $bankDebitQry->fetch()['bank_debit'];
@@ -187,7 +192,7 @@ function getOpeningBalance($connect, $op_date, $bank_detail, $user_id)
         SUM(amt) AS agent_coll
         FROM (
             (SELECT COALESCE(SUM(total_paid_track), 0) AS amt FROM collection
-            WHERE date(created_date) = '$op_date' AND FIND_IN_SET(insert_login_id,'$ag_ids') ORDER BY created_date DESC LIMIT 1)
+            WHERE date(created_date) <= '$op_date' AND FIND_IN_SET(insert_login_id,'$ag_ids') ORDER BY created_date DESC LIMIT 1)
             
         ) AS Agent_Collection_Credit_Opening
     ");
@@ -203,13 +208,21 @@ function getOpeningBalance($connect, $op_date, $bank_detail, $user_id)
     $ag_ids = implode(',', $ag_ids);
 
 
-    $agentIssueQry = $connect->query("SELECT
-        SUM(amt) AS agent_issue
-        FROM (
-            (SELECT COALESCE(SUM(cash + cheque_value + transaction_value), 0) AS amt FROM loan_issue
-            WHERE date(created_date) = '$op_date' AND FIND_IN_SET(agent_id,'$ag_ids') ORDER BY created_date DESC LIMIT 1)
-            
-        ) AS Agent_Issue_Debit_Opening
+    $agentIssueQry = $connect->query("SELECT 
+    COALESCE(SUM(amt), 0) AS agent_issue 
+FROM (
+    SELECT 
+        COALESCE(SUM(
+            COALESCE(cash, 0) + 
+            COALESCE(cheque_value, 0) + 
+            COALESCE(transaction_value, 0)
+        ), 0) AS amt 
+    FROM loan_issue 
+    WHERE 
+        DATE(created_date) <= '$op_date' 
+        AND FIND_IN_SET(agent_id,'$ag_ids')   AND agent_id IS NOT NULL AND insert_login_id = '$user_id'
+      
+) AS Agent_Issue_Debit_Opening
     ");
 
     $agentIssueDebit = $agentIssueQry->fetch()['agent_issue'];
@@ -221,7 +234,7 @@ function getOpeningBalance($connect, $op_date, $bank_detail, $user_id)
     $agentCreditQry = $connect->query("SELECT
         SUM(amt) AS agent_credit
         FROM (
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hag WHERE date(created_date) = '$op_date' AND FIND_IN_SET(ag_id,'$ag_ids') and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hag WHERE date(created_date) <= '$op_date' AND FIND_IN_SET(ag_id,'$ag_ids') and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
             
         ) AS Agent_Credit_Opening
     ");
@@ -231,7 +244,7 @@ function getOpeningBalance($connect, $op_date, $bank_detail, $user_id)
     $agentDebitQry = $connect->query("SELECT
         SUM(amt) AS agent_debit
         FROM (
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hag WHERE date(created_date) = '$op_date' AND FIND_IN_SET(ag_id,'$ag_ids') and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hag WHERE date(created_date) <= '$op_date' AND FIND_IN_SET(ag_id,'$ag_ids') and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
             
         ) AS Agent_Debit_Opening
     ");
@@ -245,7 +258,7 @@ function getOpeningBalance($connect, $op_date, $bank_detail, $user_id)
     $agentCreditQry = $connect->query("SELECT
         SUM(amt) AS agent_credit
         FROM (
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bag WHERE date(created_date) = '$op_date' AND FIND_IN_SET(ag_id,'$ag_ids') and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bag WHERE date(created_date) <= '$op_date' AND FIND_IN_SET(ag_id,'$ag_ids') and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
             
         ) AS Agent_Credit_Opening
     ");
@@ -255,7 +268,7 @@ function getOpeningBalance($connect, $op_date, $bank_detail, $user_id)
     $agentDebitQry = $connect->query("SELECT
         SUM(amt) AS agent_debit
         FROM (
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bag WHERE date(created_date) = '$op_date' AND FIND_IN_SET(ag_id,'$ag_ids') and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bag WHERE date(created_date) <= '$op_date' AND FIND_IN_SET(ag_id,'$ag_ids') and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
             
         ) AS Agent_Debit_Opening
     ");
@@ -269,7 +282,6 @@ function getOpeningBalance($connect, $op_date, $bank_detail, $user_id)
     $records[0]['agent_opening'] = $agent_hand_op + $agent_bank_op + $agent_CL_op;
 
     $records[0]['hand_opening'] = $records[0]['hand_opening'] - $agent_hand_op; //this will subract the hand debited amount for the agent with hand closing cash
-    $bank_opening_all = $bank_opening_all - $agent_bank_op; //this will subract the bank debited amount for the agent with bank closing cash
 
     $records[0]['opening_balance'] = $records[0]['hand_opening'] + $bank_opening_all + $records[0]['agent_opening'];
 
