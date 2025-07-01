@@ -1450,7 +1450,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
 
     SELECT li.agent_id AS ag_id, date(li.created_date) as tdate,'' as coll_amt,  COALESCE(li.cash, 0) + COALESCE(li.cheque_value, 0) + COALESCE(li.transaction_value, 0) AS netcash, '' AS Credit, '' AS Debit 
     FROM loan_issue li JOIN user u ON u.user_id = '$user_id'
-    WHERE MONTH(li.created_date) = MONTH(CURRENT_DATE()) AND YEAR(li.created_date) = YEAR(CURRENT_DATE()) and FIND_IN_SET(li.agent_id,u.agentforstaff)
+    WHERE MONTH(li.created_date) = MONTH(CURRENT_DATE()) AND YEAR(li.created_date) = YEAR(CURRENT_DATE()) and FIND_IN_SET(li.agent_id,u.agentforstaff) AND agent_id IS NOT NULL 
 
     UNION ALL 
 
@@ -1474,7 +1474,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
     
     SELECT ag_id, created_date AS tdate,'' AS coll_amt,'' AS netcash, amt AS Credit, '' AS Debit
     FROM ct_cr_bag 
-    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(bank_id, '$bank_id')
+    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(bank_id, '$bank_id') AND insert_login_id = '$user_id'
     
     ORDER BY tdate
     ");

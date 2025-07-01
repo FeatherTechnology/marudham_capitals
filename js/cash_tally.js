@@ -398,12 +398,11 @@ function getOpeningBalance() {
         dataType: 'json',
         cache: false,
         success: function (response) {
-
             for (var j = 0; j < bank_detail_arr.length; j++) { //reset bank opening balance to 0
                 $('#bank_opening' + j).text('0')
             }
 
-            $('#opening_balance').text(moneyFormatIndia(oldclosingbal))
+            $('#opening_balance').text(moneyFormatIndia(response[0]['opening_balance']))
             $('#hand_opening').text(moneyFormatIndia(response[0]['hand_opening']))
             var i = 0;
             $.each(response, function (index, item) {
@@ -439,7 +438,7 @@ function getClosingBalance() {
         dataType: 'json',
         cache: false,
         success: function (response) {
-            // var closing = parseInt(response[0]['closing_balance']);
+             var closing = parseInt(response[0]['closing_balance']);
             $('#hand_closing').text(moneyFormatIndia(response[0]['hand_closing']))
             var i = 0;
             let bankCash = 0;
@@ -449,8 +448,6 @@ function getClosingBalance() {
                 i++;
             })
             $('#agent_closing').text(moneyFormatIndia(response[0]['agent_closing']));
-
-            var closing = parseInt(response[0]['hand_closing'] + bankCash + response[0]['agent_closing']);
             $('#closing_balance').text(moneyFormatIndia(closing));
 
             submitCashTally(i);
@@ -2390,7 +2387,7 @@ function getBissuedTable() {
             $('#issuedDiv').html(response);
         }
     }).then(function () {
-        $('.bissued_btn').click(function () {
+         $(document).on('click', '.bissued_btn', function (){
             var user_id = $(this).data('value');
             var li_id = $(this).data('id');
             $.ajax({
@@ -4220,7 +4217,7 @@ async function belvalidation() {
     if (name == '') { event.preventDefault(); $('#name_belCheck').show(); response = 1; } else { $('#name_belCheck').hide(); }
     if (trans_id == '') { event.preventDefault(); $('#trans_id_belCheck').show(); response = 1; } else { $('#trans_id_belCheck').hide(); }
     if (remark == '') { event.preventDefault(); $('#remark_belCheck').show(); response = 1; } else { $('#remark_belCheck').hide(); }
-    if (amt == '') { event.preventDefault(); $('#amt_belCheck').show(); response = 1; } else { $('#amt_belCheck').hide(); response = await validateNamedBankCash(name, amt, 'amt_bel', cash_type); }
+    if (amt == '') { event.preventDefault(); $('#amt_belCheck').show(); response = 1; } else { $('#amt_belCheck').hide(); response = await validateNamedHandCash(name, amt, 'amt_bel', cash_type); }
 
     return response;
 }
