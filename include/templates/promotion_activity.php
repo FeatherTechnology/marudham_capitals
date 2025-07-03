@@ -232,6 +232,7 @@ if (sizeof($getUser) > 0) {
 								<th>Mobile</th>
 								<th>Status</th>
 								<th>Sub Status</th>
+								<th>Customer Data</th>
 								<th>Closed Date</th>
 								<th>View</th>
 								<th>Action</th>

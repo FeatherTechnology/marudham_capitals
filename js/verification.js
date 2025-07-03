@@ -1561,6 +1561,7 @@ function closeFamModal() {
       resetFamInfo();
       resetFamDetails();
       verificationPerson(); //To Select verification Person in Verification Info.//////
+      fingerprintTable();
     },
   });
 }
@@ -5094,6 +5095,7 @@ $("#due_start_from").change(function () {
 });
 
 $("#submit_loan_calculation").click(function () {
+  $('#due_start_from').trigger('change'); 
   $("#refresh_cal").trigger("click"); //For calculate once again if user missed to refresh calculation
 
   var submit_btn = $(this);
@@ -7048,5 +7050,68 @@ function loan_calc_validation(submit_btn) {
 
   submit_btn.removeAttr("disabled");
 }
+function fingerprintTable() {//To Get family member's name are required for scanning fingerprint
+    var cus_name = $('#cus_name').val();
+    var cus_id = $('#cus_id').val();
+    $.ajax({
+        url: 'verificationFile/getNamesForFingerprint.php',
+        data: { 'cus_name': cus_name, 'cus_id': cus_id },
+        type: 'post',
+        cache: false,
+        success: function (html) {
+            $('.fingerprintTable').empty()
+            $('.fingerprintTable').html(html)
 
+            $('.scanBtn').click(function () {
+                var hand = $(this).prev().val();
+                if (hand == '') { //prevent if hand is not selected
+                    $(this).prev().css('border-color', 'red');
+                } else {
+                    $(this).prev().css('border-color', '#009688')
+
+                    showOverlay();//loader start
+
+                    $(this).attr('disabled', true);
+
+                    setTimeout(() => {
+                        var quality = 60; //(1 to 100) (recommended minimum 55)
+                        var timeout = 10; // seconds (minimum=10(recommended), maximum=60, unlimited=0)
+                        var res = CaptureFinger(quality, timeout);
+                        console.log("🚀 ~ file: acknowledgement_creation.js:934 ~ setTimeout ~ (res.data.ErrorCode:", res.data.ErrorCode);
+                        if (res.httpStaus) {
+                            if (res.data.ErrorCode == "0") {
+                                $(this).next().val(res.data.AnsiTemplate); // Take ansi template that is the unique id which is passed by sensor
+
+                            }//Error codes and alerts below
+                            else if (res.data.ErrorCode == -1307) {
+                                alert('Connect Your Device');
+                                $(this).removeAttr('disabled');
+                            } else if (res.data.ErrorCode == -1140 || res.data.ErrorCode == 700) {
+                                alert('Timeout');
+                                $(this).removeAttr('disabled');
+                            } else if (res.data.ErrorCode == 720) {
+                                alert('Reconnect Device');
+                                $(this).removeAttr('disabled');
+                            } else if (res.data.ErrorCode == 730) {
+                                alert('Capture Finger Again');
+                                $(this).removeAttr('disabled');
+                            } else {
+                                alert('Error Code:' + res.data.ErrorCode);
+                                $(this).removeAttr('disabled');
+                            }
+                        }
+                        else {
+                            alert(res.err);
+                        }
+                        // Hide the loading animation and remove blur effect from the body
+                        hideOverlay();//loader stop
+
+                    }, 700)
+                }
+            })
+        }
+    })
+
+
+}
 //////////////////////////////////////////////////////////////////// Loan Calculation Functions End ///////////////////////////////////////////////////////////////////////////////
