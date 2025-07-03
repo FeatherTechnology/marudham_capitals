@@ -1381,103 +1381,18 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
     }
     $ag_user_id = implode(',', $ids);
 
-
-    $tableHeaders = "<th width='50'>S.No</th><th>Agent</th><th>Date</th><th>Coll Amount</th><th>Net Cash</th><th>Credit</th><th>Debit</th>"; {
-        $opening_qry = $connect->query("SELECT
-            IFNULL(SUM(Credit), 0) - IFNULL(SUM(Debit), 0) AS opening_balance
-            FROM (
-                SELECT cl.total_paid_track as Credit, '' AS Debit
-                FROM collection cl 
-                WHERE
-                    cl.created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01') and FIND_IN_SET(cl.insert_login_id,'$ag_user_id')
-                
-                UNION ALL
-
-                SELECT '' AS Credit, li.cash + li.cheque_value + li.transaction_value AS Debit  
-                FROM loan_issue li 
-                WHERE
-                    li.created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01') and FIND_IN_SET(li.agent_id,'$ag_user_id')
-                
-                UNION ALL
-    
-                SELECT
-                    '' AS Credit,
-                    amt AS Debit
-                FROM ct_db_hag
-                WHERE
-                    created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                    AND insert_login_id = '$user_id'
-    
-                UNION ALL
-
-                SELECT
-                    amt AS Credit,
-                    '' AS Debit
-                FROM ct_cr_hag
-                WHERE
-                    created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                    AND insert_login_id = '$user_id'
-    
-                UNION ALL
-    
-                SELECT
-                    '' AS Credit,
-                    amt AS Debit
-                FROM ct_db_bag
-                WHERE
-                    created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                    AND insert_login_id = '$user_id'
-    
-                UNION ALL
-    
-                SELECT
-                    amt AS Credit,
-                    '' AS Debit
-                FROM ct_cr_bag
-                WHERE
-                    created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                    AND insert_login_id = '$user_id'
-            ) AS opening
-        ");
-        $opening_bal = $opening_qry->fetch()['opening_balance'];
+    //only for collections we need user ids of agents
+    if ($user_id != '') {
+        $qry = $connect->query("SELECT ag.ag_id FROM agent_creation ag JOIN user us ON FIND_IN_SET(ag.ag_id,us.agentforstaff) where us.user_id = '$user_id'");
+    } else {
+        $qry = $connect->query("SELECT ag_id FROM agent_creation where 1");
+    }
+    $ag_ids = [];
+    while ($rww = $qry->fetch()) {
+        $ag_ids[] = $rww["ag_id"];
     }
 
-    $qry = $connect->query("SELECT u.ag_id AS ag_id, date(cl.created_date) as tdate, cl.total_paid_track as coll_amt,'' AS netcash, '' AS Credit, '' AS Debit
-    FROM collection cl JOIN user u ON cl.insert_login_id = u.user_id
-    WHERE cl.total_paid_track != '' AND MONTH(cl.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cl.created_date) = YEAR(CURRENT_DATE()) and FIND_IN_SET(cl.insert_login_id,'$ag_user_id')
-    
-    UNION ALL
-
-    SELECT li.agent_id AS ag_id, date(li.created_date) as tdate,'' as coll_amt,  COALESCE(li.cash, 0) + COALESCE(li.cheque_value, 0) + COALESCE(li.transaction_value, 0) AS netcash, '' AS Credit, '' AS Debit 
-    FROM loan_issue li JOIN user u ON u.user_id = '$user_id'
-    WHERE MONTH(li.created_date) = MONTH(CURRENT_DATE()) AND YEAR(li.created_date) = YEAR(CURRENT_DATE()) and FIND_IN_SET(li.agent_id,u.agentforstaff) AND agent_id IS NOT NULL 
-
-    UNION ALL 
-
-    SELECT ag_id, created_date AS tdate, '' AS coll_amt,'' AS netcash, '' AS Credit, amt AS Debit
-    FROM ct_db_hag 
-    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND insert_login_id = '$user_id'
-    
-    UNION ALL 
-    
-    SELECT ag_id, created_date AS tdate,'' AS coll_amt,'' AS netcash, '' AS Credit, amt AS Debit
-    FROM ct_db_bag 
-    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(bank_id, '$bank_id')
-    
-    UNION ALL 
-    
-    SELECT ag_id, created_date AS tdate,'' AS coll_amt,'' AS netcash, amt AS Credit, '' AS Debit
-    FROM ct_cr_hag 
-    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND insert_login_id = '$user_id'
-    
-    UNION ALL 
-    
-    SELECT ag_id, created_date AS tdate,'' AS coll_amt,'' AS netcash, amt AS Credit, '' AS Debit
-    FROM ct_cr_bag 
-    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(bank_id, '$bank_id') AND insert_login_id = '$user_id'
-    
-    ORDER BY tdate
-    ");
+    $tableHeaders = "<th width='50'>S.No</th><th>Agent</th><th>Closing Balance</th>"; 
 
     $i = 1;
     $creditSum = 0;
@@ -1486,45 +1401,141 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
     $netSum = 0;
     $difference1 = 0;
     $difference2 = 0;
+    $c_bal = 0;
+    
+    $tabBody = '';
 
-    $tabBody = '<tr>';
+    foreach($ag_ids AS $ag_id){
+        {
+            $opening_qry = $connect->query("SELECT
+                IFNULL(SUM(Credit), 0) - IFNULL(SUM(Debit), 0) AS opening_balance
+                FROM (
+                    SELECT cl.total_paid_track as Credit, '' AS Debit
+                    FROM collection cl JOIN user us 
+                    ON us.user_id = '$user_id' and FIND_IN_SET('$ag_id',us.agentforstaff)
+                    WHERE
+                        cl.created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01') and cl.insert_login_id = '$ag_user_id'
+                    
+                    UNION ALL
 
-    if ($qry->rowCount() > 0) { //check wheather query returning values or not
+                    SELECT '' AS Credit, li.cash + li.cheque_value + li.transaction_value AS Debit  
+                    FROM loan_issue li JOIN user us 
+                    ON us.user_id = '$user_id' and FIND_IN_SET('$ag_id',us.agentforstaff)
+                    WHERE
+                        li.created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01') and li.agent_id = '$ag_id'
+                    
+                    UNION ALL
+        
+                    SELECT
+                        '' AS Credit,
+                        amt AS Debit
+                    FROM ct_db_hag
+                    WHERE
+                        created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
+                        AND insert_login_id = '$user_id' and ag_id = '$ag_id'
+        
+                    UNION ALL
 
-        while ($row = $qry->fetch()) {
-            $tabBody .= "<td>$i</td>";
-
-            $agqry = $connect->query("SELECT ag_name from agent_creation where ag_id = '" . $row['ag_id'] . "' ");
-            $ag_name = $agqry->fetch()['ag_name'];
-
-            $tabBody .= "<td>" . $ag_name . "</td>";
-
-            $tabBody .= "<td>" . date('d-m-Y', strtotime($row['tdate'])) . "</td>";
-            $tabBody .= "<td>" . moneyFormatIndia($row['coll_amt']) . "</td>";
-            $tabBody .= "<td>" . moneyFormatIndia($row['netcash']) . "</td>";
-            $tabBody .= "<td>" . moneyFormatIndia($row['Credit']) . "</td>";
-            $tabBody .= "<td>" . moneyFormatIndia($row['Debit']) . "</td>";
-            $tabBody .= '</tr>';
-
-            //Store credit and debit for total
-            $collSum = $collSum + intVal($row['coll_amt']);
-            $netSum = $netSum + intVal($row['netcash']);
-            $creditSum = $creditSum + intVal($row['Credit']);
-            $debitSum = $debitSum + intVal($row['Debit']);
-            $i++;
+                    SELECT
+                        amt AS Credit,
+                        '' AS Debit
+                    FROM ct_cr_hag
+                    WHERE
+                        created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
+                        AND insert_login_id = '$user_id' and ag_id = '$ag_id'
+        
+                    UNION ALL
+        
+                    SELECT
+                        '' AS Credit,
+                        amt AS Debit
+                    FROM ct_db_bag
+                    WHERE
+                        created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
+                        AND insert_login_id = '$user_id' and ag_id = '$ag_id'
+        
+                    UNION ALL
+        
+                    SELECT
+                        amt AS Credit,
+                        '' AS Debit
+                    FROM ct_cr_bag
+                    WHERE
+                        created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
+                        AND insert_login_id = '$user_id' and ag_id = '$ag_id'
+                ) AS opening
+            ");
+            $op_bal = $opening_qry->fetch()['opening_balance'];
         }
-        $difference1 = $collSum - $netSum;
-        $difference2 = $debitSum - $creditSum;
-        $closing_bal = $difference1 + $difference2 + $opening_bal;
-    } else {
-        //if query not returning any values, set table body and footer empty. by default its not working
-        $tabBody = '';
-        $tabBodyEnd = '';
+
+
+        $qry = $connect->query("SELECT ag_id, SUM(coll_amt) AS coll_amt, SUM(netcash) AS netcash, SUM(Credit) AS Credit, SUM(Debit) AS Debit FROM ( 
+        
+        SELECT $ag_id AS ag_id, date(cl.created_date) as tdate, SUM(cl.total_paid_track) as coll_amt,'' AS netcash, '' AS Credit, '' AS Debit
+        FROM collection cl JOIN user us 
+        ON us.user_id = '$user_id' AND FIND_IN_SET('$ag_id',us.agentforstaff)
+        WHERE cl.total_paid_track != '' AND MONTH(cl.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cl.created_date) = YEAR(CURRENT_DATE()) AND cl.insert_login_id = '$ag_user_id'
+        
+        UNION ALL
+
+        SELECT li.agent_id AS ag_id, date(li.created_date) as tdate,'' as coll_amt, SUM(COALESCE(li.cash, 0) + COALESCE(li.cheque_value, 0) + COALESCE(li.transaction_value, 0)) AS netcash, '' AS Credit, '' AS Debit 
+        FROM loan_issue li JOIN user us 
+        ON us.user_id = '$user_id' AND FIND_IN_SET('$ag_id',us.agentforstaff)
+        WHERE MONTH(li.created_date) = MONTH(CURRENT_DATE()) AND YEAR(li.created_date) = YEAR(CURRENT_DATE()) AND li.agent_id = '$ag_id'
+
+        UNION ALL
+
+        SELECT ag_id, created_date AS tdate, '' AS coll_amt,'' AS netcash, '' AS Credit, SUM(amt) AS Debit
+        FROM ct_db_hag 
+        WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND insert_login_id = '$user_id' AND ag_id = '$ag_id'
+        
+        UNION ALL 
+        
+        SELECT ag_id, created_date AS tdate,'' AS coll_amt,'' AS netcash, '' AS Credit, SUM(amt) AS Debit
+        FROM ct_db_bag 
+        WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(bank_id, '$bank_id') AND ag_id = '$ag_id'
+        
+        UNION ALL 
+        
+        SELECT ag_id, created_date AS tdate,'' AS coll_amt,'' AS netcash, SUM(amt) AS Credit, '' AS Debit
+        FROM ct_cr_hag 
+        WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND insert_login_id = '$user_id' AND ag_id = '$ag_id'
+        
+        UNION ALL 
+        
+        SELECT ag_id, created_date AS tdate,'' AS coll_amt,'' AS netcash, SUM(amt) AS Credit, '' AS Debit
+        FROM ct_cr_bag 
+        WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(bank_id, '$bank_id') AND ag_id = '$ag_id'
+        
+        ORDER BY tdate ) AS combined " );
+
+        if ($qry->rowCount() > 0) { //check wheather query returning values or not
+
+            while ($row = $qry->fetch()) {
+                $tabBody .= '<tr>';
+                $tabBody .= "<td>$i</td>";
+
+                $agqry = $connect->query("SELECT ag_name from agent_creation where ag_id = '" . $row['ag_id'] . "' ");
+                $ag_name = $agqry->fetch()['ag_name'] ?? '';
+
+                $tabBody .= "<td>" . $ag_name . "</td>";
+
+                //Store credit and debit for total
+                $difference1 = intVal($row['coll_amt']) - intVal($row['netcash']);
+                $difference2 = intVal($row['Debit']) - intVal($row['Credit']);
+                $closing_bal = $difference1 + $difference2 + $op_bal;
+                $c_bal      += $closing_bal;
+
+                $tabBody .= "<td>" . moneyFormatIndia($closing_bal) . "</td>";
+                $tabBody .= '</tr>';
+
+                $i++;
+            }
+        } 
     }
 
-    $tabBodyEnd = "<tr><td colspan='3'><b>Total</b></td><td><b>" . moneyFormatIndia($collSum) . "</b></td><td><b>" . moneyFormatIndia($netSum) . "</b></td><td><b>" . moneyFormatIndia($creditSum) . "</b></td><td><b>" . moneyFormatIndia($debitSum) . "</b></td></tr>";
-    $tabBodyEnd .= "<tr><td colspan='3'><b>Difference</b></td><td colspan='2'><b>" . moneyFormatIndia($difference1) . "</b></td><td colspan='2'><b>" . moneyFormatIndia($difference2) . "</b></td></tr>";
-    $tabBodyEnd .= "<tr><td colspan='3'><b>Closing Balance</b></td><td colspan='4'><b>" . moneyFormatIndia($closing_bal) . "</b></td></tr>";
+    $tabBodyEnd = "<tr><td colspan='2'><b>Total</b></td><td><b>" . moneyFormatIndia($c_bal) . "</b></td></tr>";
+
 } else if ($sheet_type == 7 && $ag_view_type == 2 && $ag_name != '') { //7 Means Agent Balance Sheet and 2 means individual and agent id
 
     //get agent user id to get data from collection
@@ -1803,3 +1814,162 @@ if ($sheet_type == 4) { //4 Means Expense Balance Sheet so show/hide view types
 // Close the database connection
 $connect = null;
 ?>
+
+
+
+<!--else if ($sheet_type == 7 && $ag_view_type == 1 && $ag_name == '') { //7 Means Agent Balance Sheet and 1 means overall
+
+
+    //get agent user id to get data from collection
+    $ag_userid_qry = $connect->query("SELECT `user_id` from user where FIND_IN_SET( `ag_id`, (SELECT `agentforstaff` from user where `user_id` = '$user_id')) ");
+    $ids = array();
+    while ($row = $ag_userid_qry->fetch()) {
+        $ids[] = $row['user_id'];
+    }
+    $ag_user_id = implode(',', $ids);
+
+
+    $tableHeaders = "<th width='50'>S.No</th><th>Agent</th><th>Date</th><th>Coll Amount</th><th>Net Cash</th><th>Credit</th><th>Debit</th>"; {
+        $opening_qry = $connect->query("SELECT
+            IFNULL(SUM(Credit), 0) - IFNULL(SUM(Debit), 0) AS opening_balance
+            FROM (
+                SELECT cl.total_paid_track as Credit, '' AS Debit
+                FROM collection cl 
+                WHERE
+                    cl.created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01') and FIND_IN_SET(cl.insert_login_id,'$ag_user_id')
+                
+                UNION ALL
+
+                SELECT '' AS Credit, li.cash + li.cheque_value + li.transaction_value AS Debit  
+                FROM loan_issue li 
+                WHERE
+                    li.created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01') and FIND_IN_SET(li.agent_id,'$ag_user_id')
+                
+                UNION ALL
+    
+                SELECT
+                    '' AS Credit,
+                    amt AS Debit
+                FROM ct_db_hag
+                WHERE
+                    created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
+                    AND insert_login_id = '$user_id'
+    
+                UNION ALL
+
+                SELECT
+                    amt AS Credit,
+                    '' AS Debit
+                FROM ct_cr_hag
+                WHERE
+                    created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
+                    AND insert_login_id = '$user_id'
+    
+                UNION ALL
+    
+                SELECT
+                    '' AS Credit,
+                    amt AS Debit
+                FROM ct_db_bag
+                WHERE
+                    created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
+                    AND insert_login_id = '$user_id'
+    
+                UNION ALL
+    
+                SELECT
+                    amt AS Credit,
+                    '' AS Debit
+                FROM ct_cr_bag
+                WHERE
+                    created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
+                    AND insert_login_id = '$user_id'
+            ) AS opening
+        ");
+        $opening_bal = $opening_qry->fetch()['opening_balance'];
+    }
+
+    $qry = $connect->query("SELECT u.ag_id AS ag_id, date(cl.created_date) as tdate, cl.total_paid_track as coll_amt,'' AS netcash, '' AS Credit, '' AS Debit
+    FROM collection cl JOIN user u ON cl.insert_login_id = u.user_id
+    WHERE cl.total_paid_track != '' AND MONTH(cl.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cl.created_date) = YEAR(CURRENT_DATE()) and FIND_IN_SET(cl.insert_login_id,'$ag_user_id')
+    
+    UNION ALL
+
+    SELECT li.agent_id AS ag_id, date(li.created_date) as tdate,'' as coll_amt,  COALESCE(li.cash, 0) + COALESCE(li.cheque_value, 0) + COALESCE(li.transaction_value, 0) AS netcash, '' AS Credit, '' AS Debit 
+    FROM loan_issue li JOIN user u ON u.user_id = '$user_id'
+    WHERE MONTH(li.created_date) = MONTH(CURRENT_DATE()) AND YEAR(li.created_date) = YEAR(CURRENT_DATE()) and FIND_IN_SET(li.agent_id,u.agentforstaff) AND agent_id IS NOT NULL 
+
+    UNION ALL 
+
+    SELECT ag_id, created_date AS tdate, '' AS coll_amt,'' AS netcash, '' AS Credit, amt AS Debit
+    FROM ct_db_hag 
+    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND insert_login_id = '$user_id'
+    
+    UNION ALL 
+    
+    SELECT ag_id, created_date AS tdate,'' AS coll_amt,'' AS netcash, '' AS Credit, amt AS Debit
+    FROM ct_db_bag 
+    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(bank_id, '$bank_id')
+    
+    UNION ALL 
+    
+    SELECT ag_id, created_date AS tdate,'' AS coll_amt,'' AS netcash, amt AS Credit, '' AS Debit
+    FROM ct_cr_hag 
+    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND insert_login_id = '$user_id'
+    
+    UNION ALL 
+    
+    SELECT ag_id, created_date AS tdate,'' AS coll_amt,'' AS netcash, amt AS Credit, '' AS Debit
+    FROM ct_cr_bag 
+    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(bank_id, '$bank_id') AND insert_login_id = '$user_id'
+    
+    ORDER BY tdate
+    ");
+
+    $i = 1;
+    $creditSum = 0;
+    $debitSum = 0;
+    $collSum = 0;
+    $netSum = 0;
+    $difference1 = 0;
+    $difference2 = 0;
+
+    $tabBody = '<tr>';
+
+    if ($qry->rowCount() > 0) { //check wheather query returning values or not
+
+        while ($row = $qry->fetch()) {
+            $tabBody .= "<td>$i</td>";
+
+            $agqry = $connect->query("SELECT ag_name from agent_creation where ag_id = '" . $row['ag_id'] . "' ");
+            $ag_name = $agqry->fetch()['ag_name'];
+
+            $tabBody .= "<td>" . $ag_name . "</td>";
+
+            $tabBody .= "<td>" . date('d-m-Y', strtotime($row['tdate'])) . "</td>";
+            $tabBody .= "<td>" . moneyFormatIndia($row['coll_amt']) . "</td>";
+            $tabBody .= "<td>" . moneyFormatIndia($row['netcash']) . "</td>";
+            $tabBody .= "<td>" . moneyFormatIndia($row['Credit']) . "</td>";
+            $tabBody .= "<td>" . moneyFormatIndia($row['Debit']) . "</td>";
+            $tabBody .= '</tr>';
+
+            //Store credit and debit for total
+            $collSum = $collSum + intVal($row['coll_amt']);
+            $netSum = $netSum + intVal($row['netcash']);
+            $creditSum = $creditSum + intVal($row['Credit']);
+            $debitSum = $debitSum + intVal($row['Debit']);
+            $i++;
+        }
+        $difference1 = $collSum - $netSum;
+        $difference2 = $debitSum - $creditSum;
+        $closing_bal = $difference1 + $difference2 + $opening_bal;
+    } else {
+        //if query not returning any values, set table body and footer empty. by default its not working
+        $tabBody = '';
+        $tabBodyEnd = '';
+    }
+
+    $tabBodyEnd = "<tr><td colspan='3'><b>Total</b></td><td><b>" . moneyFormatIndia($collSum) . "</b></td><td><b>" . moneyFormatIndia($netSum) . "</b></td><td><b>" . moneyFormatIndia($creditSum) . "</b></td><td><b>" . moneyFormatIndia($debitSum) . "</b></td></tr>";
+    $tabBodyEnd .= "<tr><td colspan='3'><b>Difference</b></td><td colspan='2'><b>" . moneyFormatIndia($difference1) . "</b></td><td colspan='2'><b>" . moneyFormatIndia($difference2) . "</b></td></tr>";
+    $tabBodyEnd .= "<tr><td colspan='3'><b>Closing Balance</b></td><td colspan='4'><b>" . moneyFormatIndia($closing_bal) . "</b></td></tr>";
+}  -->
