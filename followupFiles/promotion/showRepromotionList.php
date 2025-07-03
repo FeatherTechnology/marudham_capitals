@@ -38,7 +38,7 @@ if (isset($_POST['order'])) {
     $order = ' ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
 }
 
-    $qry = "SELECT req.req_id, req.cus_id, cp.customer_name, al.area_name, sl.sub_area_name, bc.branch_name, agm.group_name, alm.line_name, cp.mobile1, req.cus_status AS consider_level, req.updated_date, np.status AS followup_sts, np.follow_date 
+    $qry = "SELECT req.req_id, req.cus_data, req.cus_id, cp.customer_name, al.area_name, sl.sub_area_name, bc.branch_name, agm.group_name, alm.line_name, cp.mobile1, req.cus_status AS consider_level, req.updated_date, np.status AS followup_sts, np.follow_date 
     FROM request_creation req 
     LEFT JOIN customer_register cp ON req.cus_id = cp.cus_id 
     LEFT JOIN (
@@ -103,6 +103,7 @@ while ($row = $sql->fetch()) {
     $sub_array[] = $row['mobile1'];
     $sub_array[] = $status[$row['consider_level']];
     $sub_array[] = $sub_status[$row['consider_level']]; //fetched from request table above mentioned 
+    $sub_array[] = $row['cus_data'];
 
     $sub_array[] = (isset($row['updated_date'])) ? date('d-m-Y', strtotime($row['updated_date'])) : '';
 
