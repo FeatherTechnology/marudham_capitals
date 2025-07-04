@@ -127,13 +127,13 @@ class ClosingBalanceClass
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if ($user_id != '') {
             $qry = $this->db->query("SELECT `user_id` from `user` where ag_id IN (SELECT ag.ag_id FROM agent_creation ag JOIN `user` us ON FIND_IN_SET(ag.ag_id,us.agentforstaff) where us.user_id = '$user_id')  ");
-            $ag_ids = array();
+            $ag_user_ids = array();
             //without while it will not give all the agent ids
             while ($rww = $qry->fetch()) {
-                $ag_ids[] = $rww["user_id"];
+                $ag_user_ids[] = $rww["user_id"];
             }
-            $ag_ids = implode(',', $ag_ids);
-            $ag_where = " AND FIND_IN_SET(insert_login_id,'$ag_ids') ";
+            $ag_user_ids = implode(',', $ag_user_ids);
+            $ag_where = " AND FIND_IN_SET(insert_login_id,'$ag_user_ids') ";
         } else {
             $ag_where = "";
         }
@@ -229,20 +229,83 @@ FROM (
         ) AS Agent_Debit_Closing
     ");
 
+
+    {
+        $opening_qry = $this->db->query("SELECT
+            IFNULL(SUM(Credit), 0) - IFNULL(SUM(Debit), 0) AS opening_balance
+            FROM (
+                SELECT cl.total_paid_track as Credit, '' AS Debit
+                FROM collection cl 
+                WHERE
+                    cl.created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01') and FIND_IN_SET(cl.insert_login_id,'$ag_user_ids')
+                
+                UNION ALL
+
+                SELECT '' AS Credit, li.cash + li.cheque_value + li.transaction_value AS Debit  
+                FROM loan_issue li 
+                WHERE
+                    li.created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01') and FIND_IN_SET(li.agent_id,'$ag_ids')
+                
+                UNION ALL
+    
+                SELECT
+                    '' AS Credit,
+                    amt AS Debit
+                FROM ct_db_hag
+                WHERE
+                    created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
+                    AND insert_login_id = '$user_id'
+    
+                UNION ALL
+
+                SELECT
+                    amt AS Credit,
+                    '' AS Debit
+                FROM ct_cr_hag
+                WHERE
+                    created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
+                    AND insert_login_id = '$user_id'
+    
+                UNION ALL
+    
+                SELECT
+                    '' AS Credit,
+                    amt AS Debit
+                FROM ct_db_bag
+                WHERE
+                    created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
+                    AND insert_login_id = '$user_id'
+    
+                UNION ALL
+    
+                SELECT
+                    amt AS Credit,
+                    '' AS Debit
+                FROM ct_cr_bag
+                WHERE
+                    created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
+                    AND insert_login_id = '$user_id'
+            ) AS opening
+        ");
+        $op_bal = $opening_qry->fetch()['opening_balance'];
+    }
+
+
         $agentDebit = $agentDebitQry->fetch()['agent_debit'];
 
         $agent_bank_op = intVal($agentDebit) - intVal($agentCredit);
         //
-        if ($agent_hand_op == 0 && $agent_bank_op == 0 && $agent_CL_op == 0) {
+        if ($agent_hand_op == 0 && $agent_bank_op == 0 && $agent_CL_op == 0 && $op_bal == 0) {
             $records[0]['agent_closing'] = 0;
         } else {
-            $records[0]['agent_closing'] = $agent_hand_op + $agent_bank_op + $agent_CL_op;
+            $records[0]['agent_closing'] = $agent_hand_op + $agent_bank_op + $agent_CL_op + $op_bal;
         }
 
         $records[0]['hand_closing'] = $records[0]['hand_closing'] - $agent_hand_op; //this will subract the hand debited amount for the agent with hand closing cash
         //this will subract the bank debited amount for the agent with bank closing cash
 
-        $records[0]['closing_balance'] = $records[0]['hand_closing'] + $bank_closing_all + $records[0]['agent_closing'];
+        // $records[0]['closing_balance'] = $records[0]['hand_closing'] + $bank_closing_all + $records[0]['agent_closing'];
+        $records[0]['closing_balance'] = $records[0]['hand_closing'] + $bank_closing_all;
 
         return $records;
     }
