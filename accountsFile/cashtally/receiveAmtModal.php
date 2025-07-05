@@ -155,7 +155,7 @@ $records = array();
     <tbody>
         <?php
 
-            $qry=$connect->query("SELECT `user_name`, `created_date`,`rec_amt` from `ct_hand_collection` where branch_id IN ($branch_id) AND `user_id` = '$user_id1' ");
+            $qry=$connect->query("SELECT `user_name`, `created_date`,`rec_amt` from `ct_hand_collection` where branch_id IN ($branch_id) AND `user_id` = '$user_id1' AND (MONTH(created_date) = MONTH('$op_date') AND YEAR(created_date) = YEAR('$op_date')) ORDER BY id DESC ");
             while($row = $qry->fetch()){
         ?>
             <tr>
