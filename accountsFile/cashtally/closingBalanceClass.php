@@ -13,45 +13,46 @@ class ClosingBalanceClass
         if ($user_id != '') {
             $user_where = "AND insert_login_id = '$user_id' ";
         }
+
         $handCreditQry = $this->db->query("SELECT
-        SUM(amt) AS hand_credits
-        FROM (
-            (SELECT COALESCE(SUM(rec_amt), 0) AS amt FROM ct_hand_collection WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
-            UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bank_withdraw WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
-            UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hoti WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
-            UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hinvest WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
-            UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hexchange WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
-            UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hel WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
-            UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hdeposit WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
-        ) AS Hand_Credit_Closing
-    ");
+            SUM(amt) AS hand_credits
+            FROM (
+                (SELECT COALESCE(SUM(rec_amt), 0) AS amt FROM ct_hand_collection WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+                UNION ALL
+                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bank_withdraw WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+                UNION ALL
+                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hoti WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+                UNION ALL
+                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hinvest WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+                UNION ALL
+                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hexchange WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+                UNION ALL
+                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hel WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+                UNION ALL
+                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hdeposit WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+            ) AS Hand_Credit_Closing
+        ");
 
         $handCredit = $handCreditQry->fetch()['hand_credits'];
 
         $handDebitQry = $this->db->query("SELECT
-        SUM(amt) AS hand_debits
-        FROM (
-            (SELECT COALESCE(SUM(amount), 0) AS amt FROM ct_db_bank_deposit WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
-            UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hinvest WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
-            UNION ALL
-            (SELECT COALESCE(SUM(netcash), 0) AS amt FROM ct_db_hissued WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
-            UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hel WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
-            UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hexchange WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
-            UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hexpense WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
-            UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hdeposit WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
-        ) AS Hand_Debit_Closing
-    ");
+            SUM(amt) AS hand_debits
+            FROM (
+                (SELECT COALESCE(SUM(amount), 0) AS amt FROM ct_db_bank_deposit WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+                UNION ALL
+                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hinvest WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+                UNION ALL
+                (SELECT COALESCE(SUM(netcash), 0) AS amt FROM ct_db_hissued WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+                UNION ALL
+                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hel WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+                UNION ALL
+                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hexchange WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+                UNION ALL
+                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hexpense WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+                UNION ALL
+                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hdeposit WHERE date(created_date) <= '$closing_date' $user_where ORDER BY created_date DESC LIMIT 1)
+            ) AS Hand_Debit_Closing
+        ");
 
         $handDebit = $handDebitQry->fetch()['hand_debits'];
         if ($handCredit == 0 && $handDebit == 0) {
@@ -123,10 +124,9 @@ class ClosingBalanceClass
             $i++;
         }
 
-
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if ($user_id != '') {
-            $qry = $this->db->query("SELECT `user_id` from `user` where ag_id IN (SELECT ag.ag_id FROM agent_creation ag JOIN `user` us ON FIND_IN_SET(ag.ag_id,us.agentforstaff) where us.user_id = '$user_id')  ");
+            $qry = $this->db->query("SELECT `user_id` FROM `user` WHERE ag_id IN (SELECT ag.ag_id FROM agent_creation ag JOIN `user` us ON FIND_IN_SET(ag.ag_id, us.agentforstaff) WHERE us.user_id = '$user_id')  ");
             $ag_user_ids = array();
             //without while it will not give all the agent ids
             while ($rww = $qry->fetch()) {
@@ -139,22 +139,22 @@ class ClosingBalanceClass
         }
 
         $agentCollQry = $this->db->query("SELECT
-        SUM(amt) AS agent_coll
-        FROM (
-            (SELECT COALESCE(SUM(total_paid_track), 0) AS amt FROM collection
-            WHERE date(created_date) <= '$closing_date' $ag_where ORDER BY created_date DESC LIMIT 1)
-            
-        ) AS Agent_Collection_Credit_Closing
-    ");
+            SUM(amt) AS agent_coll
+            FROM (
+                (SELECT COALESCE(SUM(total_paid_track), 0) AS amt FROM collection
+                WHERE date(created_date) <= '$closing_date' $ag_where ORDER BY created_date DESC LIMIT 1)
+                
+            ) AS Agent_Collection_Credit_Closing
+        ");
 
         $agentCollCredit = $agentCollQry->fetch()['agent_coll'];
 
 
         //only for collections we need user ids of agents
         if ($user_id != '') {
-            $qry = $this->db->query("SELECT ag.ag_id FROM agent_creation ag JOIN user us ON FIND_IN_SET(ag.ag_id,us.agentforstaff) where us.user_id = '$user_id'");
+            $qry = $this->db->query("SELECT ag.ag_id FROM agent_creation ag JOIN user us ON FIND_IN_SET(ag.ag_id, us.agentforstaff) WHERE us.user_id = '$user_id'");
         } else {
-            $qry = $this->db->query("SELECT ag_id FROM agent_creation where 1");
+            $qry = $this->db->query("SELECT ag_id FROM agent_creation WHERE 1");
         }
         $ag_ids = [];
         while ($rww = $qry->fetch()) {
@@ -162,138 +162,133 @@ class ClosingBalanceClass
         }
         $ag_ids = implode(',', $ag_ids);
 
-
         $agentIssueQry = $this->db->query("  SELECT 
-    COALESCE(SUM(amt), 0) AS agent_issue 
-FROM (
-    SELECT 
-        COALESCE(SUM(
-            COALESCE(cash, 0) + 
-            COALESCE(cheque_value, 0) + 
-            COALESCE(transaction_value, 0)
-        ), 0) AS amt 
-    FROM loan_issue 
-    WHERE 
-        DATE(created_date) <= '$closing_date' 
-        AND FIND_IN_SET(agent_id,'$ag_ids')   AND agent_id IS NOT NULL  $user_where
-      
-) AS Agent_Issue_Debit_Closing;
-    ");
+            COALESCE(SUM(amt), 0) AS agent_issue 
+            FROM (
+                SELECT 
+                    COALESCE(SUM(
+                        COALESCE(cash, 0) + 
+                        COALESCE(cheque_value, 0) + 
+                        COALESCE(transaction_value, 0)
+                    ), 0) AS amt 
+                FROM loan_issue 
+                WHERE 
+                    DATE(created_date) <= '$closing_date' 
+                    AND FIND_IN_SET(agent_id,'$ag_ids') AND agent_id IS NOT NULL  $user_where
+                
+            ) AS Agent_Issue_Debit_Closing;
+        ");
 
         $agentIssueDebit = $agentIssueQry->fetch()['agent_issue'];
 
         $agent_CL_op = intVal($agentCollCredit) - intVal($agentIssueDebit);
 
-
         $agentCreditQry = $this->db->query("SELECT
-        SUM(amt) AS agent_credit
-        FROM (
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hag WHERE date(created_date) <= '$closing_date' AND FIND_IN_SET(ag_id,'$ag_ids') $user_where ORDER BY created_date DESC LIMIT 1)
-            
-        ) AS Agent_Credit_Closing
-    ");
+            SUM(amt) AS agent_credit
+            FROM (
+                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hag WHERE date(created_date) <= '$closing_date' AND FIND_IN_SET(ag_id, '$ag_ids') $user_where ORDER BY created_date DESC LIMIT 1)
+                
+            ) AS Agent_Credit_Closing
+        ");
   
-
-
         $agentCredit = $agentCreditQry->fetch()['agent_credit'];
 
         $agentDebitQry = $this->db->query("SELECT
-        SUM(amt) AS agent_debit
-        FROM (
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hag WHERE date(created_date) <= '$closing_date' AND FIND_IN_SET(ag_id,'$ag_ids') $user_where ORDER BY created_date DESC LIMIT 1)
-            
-        ) AS Agent_Debit_Closing
-    ");
+            SUM(amt) AS agent_debit
+            FROM (
+                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hag WHERE date(created_date) <= '$closing_date' AND FIND_IN_SET(ag_id,'$ag_ids') $user_where ORDER BY created_date DESC LIMIT 1)
+                
+            ) AS Agent_Debit_Closing
+        ");
 
         $agentDebit = $agentDebitQry->fetch()['agent_debit'];
 
         $agent_hand_op = intVal($agentDebit) - intVal($agentCredit);
 
         //
-
         $agentCreditQry = $this->db->query("SELECT
-        SUM(amt) AS agent_credit
-        FROM (
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bag WHERE date(created_date) <= '$closing_date' AND FIND_IN_SET(ag_id,'$ag_ids') $user_where ORDER BY created_date DESC LIMIT 1)
-            
-        ) AS Agent_Credit_Closing
-    ");
+            SUM(amt) AS agent_credit
+            FROM (
+                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bag WHERE date(created_date) <= '$closing_date' AND FIND_IN_SET(ag_id,'$ag_ids') $user_where ORDER BY created_date DESC LIMIT 1)
+                
+            ) AS Agent_Credit_Closing
+        ");
 
         $agentCredit = $agentCreditQry->fetch()['agent_credit'];
 
         $agentDebitQry = $this->db->query("SELECT
-        SUM(amt) AS agent_debit
-        FROM (
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bag WHERE date(created_date) <= '$closing_date' AND FIND_IN_SET(ag_id,'$ag_ids') $user_where ORDER BY created_date DESC LIMIT 1)
-            
-        ) AS Agent_Debit_Closing
-    ");
-
-
-    {
-        $opening_qry = $this->db->query("SELECT
-            IFNULL(SUM(Credit), 0) - IFNULL(SUM(Debit), 0) AS opening_balance
+            SUM(amt) AS agent_debit
             FROM (
-                SELECT cl.total_paid_track as Credit, '' AS Debit
-                FROM collection cl 
-                WHERE
-                    cl.created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01') and FIND_IN_SET(cl.insert_login_id,'$ag_user_ids')
+                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bag WHERE date(created_date) <= '$closing_date' AND FIND_IN_SET(ag_id, '$ag_ids') $user_where ORDER BY created_date DESC LIMIT 1)
                 
-                UNION ALL
-
-                SELECT '' AS Credit, li.cash + li.cheque_value + li.transaction_value AS Debit  
-                FROM loan_issue li 
-                WHERE
-                    li.created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01') and FIND_IN_SET(li.agent_id,'$ag_ids')
-                
-                UNION ALL
-    
-                SELECT
-                    '' AS Credit,
-                    amt AS Debit
-                FROM ct_db_hag
-                WHERE
-                    created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                    AND insert_login_id = '$user_id'
-    
-                UNION ALL
-
-                SELECT
-                    amt AS Credit,
-                    '' AS Debit
-                FROM ct_cr_hag
-                WHERE
-                    created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                    AND insert_login_id = '$user_id'
-    
-                UNION ALL
-    
-                SELECT
-                    '' AS Credit,
-                    amt AS Debit
-                FROM ct_db_bag
-                WHERE
-                    created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                    AND insert_login_id = '$user_id'
-    
-                UNION ALL
-    
-                SELECT
-                    amt AS Credit,
-                    '' AS Debit
-                FROM ct_cr_bag
-                WHERE
-                    created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                    AND insert_login_id = '$user_id'
-            ) AS opening
+            ) AS Agent_Debit_Closing
         ");
-        $op_bal = $opening_qry->fetch()['opening_balance'];
-    }
-
 
         $agentDebit = $agentDebitQry->fetch()['agent_debit'];
 
         $agent_bank_op = intVal($agentDebit) - intVal($agentCredit);
+        
+
+        {
+            $opening_qry = $this->db->query("SELECT
+                IFNULL(SUM(Credit), 0) - IFNULL(SUM(Debit), 0) AS opening_balance
+                FROM (
+                    SELECT cl.total_paid_track as Credit, '' AS Debit
+                    FROM collection cl 
+                    WHERE
+                        cl.created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01') and FIND_IN_SET(cl.insert_login_id,'$ag_user_ids')
+                    
+                    UNION ALL
+
+                    SELECT '' AS Credit, li.cash + li.cheque_value + li.transaction_value AS Debit  
+                    FROM loan_issue li 
+                    WHERE
+                        li.created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01') and FIND_IN_SET(li.agent_id,'$ag_ids')
+                    
+                    UNION ALL
+        
+                    SELECT
+                        '' AS Credit,
+                        amt AS Debit
+                    FROM ct_db_hag
+                    WHERE
+                        created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
+                        AND insert_login_id = '$user_id'
+        
+                    UNION ALL
+
+                    SELECT
+                        amt AS Credit,
+                        '' AS Debit
+                    FROM ct_cr_hag
+                    WHERE
+                        created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
+                        AND insert_login_id = '$user_id'
+        
+                    UNION ALL
+        
+                    SELECT
+                        '' AS Credit,
+                        amt AS Debit
+                    FROM ct_db_bag
+                    WHERE
+                        created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
+                        AND insert_login_id = '$user_id'
+        
+                    UNION ALL
+        
+                    SELECT
+                        amt AS Credit,
+                        '' AS Debit
+                    FROM ct_cr_bag
+                    WHERE
+                        created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
+                        AND insert_login_id = '$user_id'
+                ) AS opening
+            ");
+            $op_bal = $opening_qry->fetch()['opening_balance'];
+        }
+
         //
         if ($agent_hand_op == 0 && $agent_bank_op == 0 && $agent_CL_op == 0 && $op_bal == 0) {
             $records[0]['agent_closing'] = 0;

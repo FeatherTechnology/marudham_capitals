@@ -338,7 +338,7 @@ $(document).ready(function () {
     })
 
     $('#submit_untracked').click(function () {
-        var op_date = $('#op_date').text(); var bank_id = $('#bank_id_untracked').val(); var amt = $('#untracked_amt').val();
+       var bank_id = $('#bank_id_untracked').val(); var amt = $('#untracked_amt').val();
         if (bank_id != '' && amt != '') {
             $('#closeUntracked').trigger('click');
             $('#bank_id_untracked').val(''); $('#untracked_amt').val('')
