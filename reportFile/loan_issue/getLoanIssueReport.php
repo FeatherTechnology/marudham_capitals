@@ -93,6 +93,8 @@ $query = "SELECT
         ac.ag_name,
         iv.responsible,
         ii.updated_date as loan_date,
+        li.bank_id,
+        li.created_date,
         lc.loan_amt_cal,
         lc.principal_amt_cal,
         lc.int_amt_cal,
@@ -176,6 +178,22 @@ $result = $statement->fetchAll();
 $data = array();
 $sno = 1;
 foreach ($result as $row) {
+    $payment_type = $row['payment_type'];
+
+    $payment_type_str = '';
+    $bank_name = '';
+    if ($payment_type == '0') {
+        $payment_type_str = 'Cash';
+        
+    } elseif ($payment_type == '1') {
+        $payment_type_str = 'Cheque';
+        $bank_name = getBankName($row['bank_id'], $connect);
+        
+    } elseif ($payment_type == '2') {
+        $payment_type_str = 'Account Transfer';
+        $bank_name = getBankName($row['bank_id'], $connect);
+    }
+
     $sub_array   = array();
     $sub_array[] = $sno;
     $sub_array[] = $row['loan_id'];
@@ -193,6 +211,9 @@ foreach ($result as $row) {
     $sub_array[] = $row['ag_name'];
     $sub_array[] = (!empty($row['ag_name'])) ? (($row['responsible'] == '0') ? 'Yes': 'No') : '';
     $sub_array[] = date('d-m-Y', strtotime($row['loan_date']));
+    $sub_array[] = $payment_type_str;
+    $sub_array[] = $bank_name;
+    $sub_array[] = ($payment_type != '0' && $payment_type != '') ? date('d-m-Y', strtotime($row['created_date'])) : '';
     $sub_array[] = moneyFormatIndia($row['loan_amt_cal']);
     $sub_array[] = moneyFormatIndia($row['principal_amt_cal']);
     $sub_array[] = moneyFormatIndia($row['int_amt_cal']);
@@ -205,7 +226,7 @@ foreach ($result as $row) {
     $sub_array[] = date('d-m-Y', strtotime($row['due_start_from']));
     $sub_array[] = date('d-m-Y', strtotime($row['maturity_month']));
 
-    if ($row['rec_relationship'] == 'Customer' || $row['payment_type'] == '1' || $row['payment_type'] == '2') {
+    if ($row['rec_relationship'] == 'Customer' || $payment_type == '1' || $payment_type == '2') {
         //if loan issued to customer then direclty place customer name from cp table
         $sub_array[] = $row['cus_name'];
         $sub_array[] = 'Customer';
@@ -258,4 +279,11 @@ function moneyFormatIndia($num)
         $thecash = $num;
     }
     return $thecash;
+}
+
+function getBankName($bankid, $connect){
+    $stmt = $connect->prepare("SELECT bank_name FROM bank_creation WHERE id = ? ");
+    $stmt->execute([$bankid]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $row ? $row['bank_name'] : '';
 }

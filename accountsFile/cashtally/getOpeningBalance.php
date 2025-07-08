@@ -245,7 +245,7 @@ function getOpeningBalance($connect, $op_date, $bank_detail, $user_id)
                 SELECT '' AS Credit, li.cash + li.cheque_value + li.transaction_value AS Debit  
                 FROM loan_issue li 
                 WHERE
-                    li.created_date < DATE_FORMAT('$op_date', '%Y-%m-01') and FIND_IN_SET(li.agent_id,'$ag_ids')
+                    li.created_date < DATE_FORMAT('$op_date', '%Y-%m-01') and FIND_IN_SET(li.agent_id,'$ag_ids') AND agent_id IS NOT NULL AND insert_login_id = '$user_id'
                 
                 UNION ALL
     
