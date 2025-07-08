@@ -4,8 +4,8 @@
 	<div style="background-color:#009688; width:100%; padding:12px; color: #ffff; font-size: 20px; border-radius:5px;">
 		Marudham Capitals - Loan Issue Report
 	</div>
-
 </div><br>
+
 <!-- Main container start -->
 <div class="main-container">
 	<!--form start-->
@@ -40,6 +40,9 @@
 									<th>Agent</th>
 									<th>Responsible</th>
 									<th>Loan Date</th>
+									<th>Issue Mode</th>
+									<th>Bank Name</th>
+									<th>Transaction Date</th>
 									<th>Loan Amount</th>
 									<th>Principal Amount</th>
 									<th>Interest Amount</th>
@@ -57,7 +60,7 @@
 								<tbody></tbody>
 								<tfoot>
 									<tr>
-										<td colspan="16"></td>
+										<td colspan="19"></td>
 										<td></td>
 										<td></td>
 										<td></td>

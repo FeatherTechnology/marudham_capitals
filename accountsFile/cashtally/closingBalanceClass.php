@@ -174,7 +174,7 @@ class ClosingBalanceClass
                 FROM loan_issue 
                 WHERE 
                     DATE(created_date) <= '$closing_date' 
-                    AND FIND_IN_SET(agent_id,'$ag_ids') AND agent_id IS NOT NULL  $user_where
+                    AND FIND_IN_SET(agent_id,'$ag_ids') AND agent_id IS NOT NULL $user_where
                 
             ) AS Agent_Issue_Debit_Closing;
         ");
@@ -236,14 +236,14 @@ class ClosingBalanceClass
                     SELECT cl.total_paid_track as Credit, '' AS Debit
                     FROM collection cl 
                     WHERE
-                        cl.created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01') and FIND_IN_SET(cl.insert_login_id,'$ag_user_ids')
+                        cl.created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01') $ag_where
                     
                     UNION ALL
 
                     SELECT '' AS Credit, li.cash + li.cheque_value + li.transaction_value AS Debit  
                     FROM loan_issue li 
                     WHERE
-                        li.created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01') and FIND_IN_SET(li.agent_id,'$ag_ids')
+                        li.created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01') and FIND_IN_SET(li.agent_id,'$ag_ids') AND agent_id IS NOT NULL $user_where
                     
                     UNION ALL
         
@@ -253,7 +253,7 @@ class ClosingBalanceClass
                     FROM ct_db_hag
                     WHERE
                         created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                        AND insert_login_id = '$user_id'
+                        $user_where
         
                     UNION ALL
 
@@ -263,7 +263,7 @@ class ClosingBalanceClass
                     FROM ct_cr_hag
                     WHERE
                         created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                        AND insert_login_id = '$user_id'
+                        $user_where
         
                     UNION ALL
         
@@ -273,7 +273,7 @@ class ClosingBalanceClass
                     FROM ct_db_bag
                     WHERE
                         created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                        AND insert_login_id = '$user_id'
+                        $user_where
         
                     UNION ALL
         
@@ -283,7 +283,7 @@ class ClosingBalanceClass
                     FROM ct_cr_bag
                     WHERE
                         created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                        AND insert_login_id = '$user_id'
+                        $user_where
                 ) AS opening
             ");
             $op_bal = $opening_qry->fetch()['opening_balance'];
