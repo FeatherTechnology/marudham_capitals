@@ -2376,9 +2376,10 @@ function getHissuedTable() {
 //get table Details for Bank issued from loan issue tables and submit button
 function getBissuedTable() {
     var bank_id = $('input[name=cash_type]:checked').val();
+    let op_date = $('#op_date').text();
     $.ajax({
         url: 'accountsFile/cashtally/issued/getBissuedTable.php',
-        data: { 'bank_id': bank_id },
+        data: { bank_id, op_date },
         type: 'post',
         cache: false,
         success: function (response) {

@@ -138,7 +138,7 @@ if ($bank_qry->num_rows > 0) {
 										</div>
 									</div>
 
-									<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12" style="max-width: 150px;">
+									<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12" style="max-width: 200px;">
 										<div class="form-group">
 											<label class="lable-style" id='hand_opening'></label><br>
 											<input type='hidden' id='untrkd_ids_op' name='untrkd_ids_op' value='<?php $untrkd0 = '';
@@ -408,7 +408,7 @@ if ($bank_qry->num_rows > 0) {
 										</div>
 									</div>
 
-									<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12" style="max-width: 150px;">
+									<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12" style="max-width: 200px;">
 										<div class="form-group">
 
 											<input type='hidden' id='untrkd_ids' name='untrkd_ids' value='<?php if (isset($bank_name_arr)) {

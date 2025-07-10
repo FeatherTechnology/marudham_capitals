@@ -5,6 +5,7 @@ $user_id = $_SESSION['userid'];
 include('../../../ajaxconfig.php');
 
 $bank_id = $_POST['bank_id'];
+$op_date = date('Y-m-d', strtotime($_POST['op_date']));
 
 $i=0;$records = array();
 $netcash = 0;
@@ -16,6 +17,7 @@ $qry = $connect->query("SELECT id, cheque_no, cheque_value, transaction_id, tran
         (agent_id = '' OR agent_id IS NULL) 
         AND (cheque_value != '' OR transaction_value != '') 
         AND bank_id = '$bank_id'
+        AND DATE(created_date) <= '$op_date'
         AND NOT EXISTS (
             SELECT 1 FROM ct_db_bissued 
             WHERE li_user_id = li.insert_login_id 
