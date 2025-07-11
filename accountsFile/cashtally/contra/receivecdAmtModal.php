@@ -74,7 +74,7 @@ else
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                 <div class='form-group'>
                     <label for='trans_id_cd'>Transaction ID</label>
-                    <input type="number" class="form-control" id= 'trans_id_cd' name='trans_id_cd' placeholder="Enter Transaction ID" >
+                    <input type="text" class="form-control" id= 'trans_id_cd' name='trans_id_cd' placeholder="Enter Transaction ID" >
                     <span class='text-danger' style='display:none' id='trans_id_cdCheck'>Please Enter Transaction ID</span>
                 </div>
             </div>
