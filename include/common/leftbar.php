@@ -67,7 +67,7 @@ else if ($current_page == 'edit_concern_creation' || $current_page == 'edit_conc
 	$current_module = 'followup';
 } else if (
 	$current_page == 'ledger_report' || $current_page == 'request_report' || $current_page == 'cancel_revoke_report' ||  $current_page == 'cus_profile_report' || $current_page == 'loan_issue_report'
-	|| $current_page == 'collection_report' ||$current_page == 'principal_interest_report' || $current_page == 'balance_report' || $current_page == 'due_list_report' || $current_page == 'in_closed_report' || $current_page == 'closed_report' || $current_page == 'confirmation_followup_report' || $current_page == 'agent_report'|| $current_page == 'no_due_pay_report' || $current_page == 'other_transaction_report'
+	|| $current_page == 'collection_report' ||$current_page == 'principal_interest_report' || $current_page == 'balance_report' || $current_page == 'due_list_report' || $current_page == 'in_closed_report' || $current_page == 'closed_report' || $current_page == 'confirmation_followup_report' || $current_page == 'agent_report'|| $current_page == 'no_due_pay_report' || $current_page == 'other_transaction_report' || $current_page == 'day_end_report'
 ) {
 
 	$current_module = 'report';
@@ -189,6 +189,7 @@ $confirmation_followup_report = '';
 $agent_report = '';
 $no_due_pay_report = '';
 $other_transaction_report = '';
+$day_end_report = '';
 $search_module = '';
 $search = '';
 $bulk_upload_module = '';
@@ -282,6 +283,7 @@ if (sizeof($getUser) > 0) {
 		$agent_report          		     = $getUser['agent_report'];
 		$no_due_pay_report          		     = $getUser['no_due_pay_report'];
 		$other_transaction_report          		     = $getUser['other_trans_report'];
+		$day_end_report          		     = $getUser['day_end_report'];
 
 		$search_module          		     = $getUser['search_module'];
 		$search          		     = $getUser['search'];
@@ -723,7 +725,7 @@ if (sizeof($getUser) > 0) {
 						</div>
 					</li>
 				<?php  } ?>
-				<?php if ($concernmodule == 0) { ?>
+				<!-- <?php if ($concernmodule == 0) { ?>
 					<li class="sidebar-dropdown ">
 						<a href="javascript:void(0)">
 							<i class='icon-help-with-circle'></i>
@@ -749,7 +751,7 @@ if (sizeof($getUser) > 0) {
 							</ul>
 						</div>
 					</li>
-				<?php  } ?>
+				<?php  } ?> -->
 				<?php if ($accountsmodule == 0) { ?>
 					<li class="sidebar-dropdown ">
 						<a href="javascript:void(0)">
@@ -795,11 +797,11 @@ if (sizeof($getUser) > 0) {
 										<a href="promotion_activity"><i class='icon-change_history'></i>Promotion Activity</a>
 									</li>
 								<?php  } ?>
-								<?php if ($loan_followup == 0) { ?>
+								<!-- <?php if ($loan_followup == 0) { ?>
 									<li>
 										<a href="loan_followup"><i class='icon-chat_bubble_outline'></i>Loan Follow Up</a>
 									</li>
-								<?php  } ?>
+								<?php  } ?> -->
 								<?php if ($confirmation_followup == 0) { ?>
 									<li>
 										<a href="confirmation_followup"><i class='icon-laptop'></i>Confirmation Follow Up</a>
@@ -897,6 +899,11 @@ if (sizeof($getUser) > 0) {
 										<a href="other_transaction_report"><i class='icon-area-graph'></i>Other Transaction</a>
 									</li>
 								<?php  } ?>
+								<?php if ($day_end_report == 0) { ?>
+									<li>
+										<a href="day_end_report"><i class='icon-area-graph'></i>Day End Report</a>
+									</li>
+								<?php  } ?>
 							</ul>
 						</div>
 					</li>
@@ -918,7 +925,7 @@ if (sizeof($getUser) > 0) {
 						</div>
 					</li>
 				<?php  } ?>
-				<?php if ($bulk_upload_module == 0) { ?>
+				<!-- <?php if ($bulk_upload_module == 0) { ?>
 					<li class="sidebar-dropdown">
 						<a href="javascript:void(0)">
 							<i class='icon-upload-cloud'></i>
@@ -934,7 +941,7 @@ if (sizeof($getUser) > 0) {
 							</ul>
 						</div>
 					</li>
-				<?php  } ?>
+				<?php  } ?> -->
 				<?php if ($loan_track_module == 0) { ?>
 					<li class="sidebar-dropdown">
 						<a href="javascript:void(0)">
@@ -1063,6 +1070,7 @@ $confirmation_followup_report = '';
 $agent_report = '';
 $no_due_pay_report = '';
 $other_transaction_report = '';
+$day_end_report = '';
 $search_module = '';
 $search = '';
 $bulk_upload_module = '';

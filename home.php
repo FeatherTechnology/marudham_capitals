@@ -479,6 +479,10 @@ if (isset($getuserdetails['download_access'])) {
 			<?php if ($current_page == 'other_transaction_report') { ?>
 				<?php include "include/templates/other_transaction_report.php" ?>
 			<?php } else ?>
+			<!-- Day End Report -->
+			<?php if ($current_page == 'day_end_report') { ?>
+				<?php include "include/templates/day_end_report.php" ?>
+			<?php } else ?>
 
 			<!-- Due List -->
 			<?php if ($current_page == 'due_list_report') { ?>
