@@ -95,40 +95,40 @@ function BalanceSheetCalculations(type, from_date, to_date, month) {
     let ajaxCall2 = $.post('financeFile/BS/getCollectionAmount.php', args, function (response) {
         // $('.balance-sheet-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(response['collection']);
         $('.balance-sheet-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(response['due_collection']);
-        $('.balance-sheet-card').find('tbody tr:nth-child(3) td:nth-child(2)').text(response['princ_collection']);
-        $('.balance-sheet-card').find('tbody tr:nth-child(4) td:nth-child(2)').text(response['int_collection']);
-        $('.balance-sheet-card').find('tbody tr:nth-child(5) td:nth-child(2)').text(response['penalty']);
-        $('.balance-sheet-card').find('tbody tr:nth-child(6) td:nth-child(2)').text(response['fine']);
+        // $('.balance-sheet-card').find('tbody tr:nth-child(3) td:nth-child(2)').text(response['princ_collection']);
+        // $('.balance-sheet-card').find('tbody tr:nth-child(4) td:nth-child(2)').text(response['int_collection']);
+        $('.balance-sheet-card').find('tbody tr:nth-child(3) td:nth-child(2)').text(response['penalty']);
+        $('.balance-sheet-card').find('tbody tr:nth-child(4) td:nth-child(2)').text(response['fine']);
     }, 'json')
 
     //to get Other income, bank withdrawal and cash deposit
     let ajaxCall3 = $.post('financeFile/BS/getBSCrContents.php', args, function (response) {
-        $('.balance-sheet-card').find('tbody tr:nth-child(7) td:nth-child(2)').text(response['other_income']);
+        $('.balance-sheet-card').find('tbody tr:nth-child(5) td:nth-child(2)').text(response['other_income']);
     }, 'json')
 
     //to get Investment, Deposit, EL, Exchange and Agent
     let ajaxCall4 = $.post('financeFile/BS/getBSCrDbContents.php', args, function (response) {
-        $('.balance-sheet-card').find('tbody tr:nth-child(8) td:nth-child(2)').text(response['cr_investment']);
-        $('.balance-sheet-card').find('tbody tr:nth-child(8) td:nth-child(3)').text(response['db_investment']);
-        $('.balance-sheet-card').find('tbody tr:nth-child(9) td:nth-child(2)').text(response['cr_deposit']);
-        $('.balance-sheet-card').find('tbody tr:nth-child(9) td:nth-child(3)').text(response['db_deposit']);
-        $('.balance-sheet-card').find('tbody tr:nth-child(10) td:nth-child(2)').text(response['cr_exchange']);
-        $('.balance-sheet-card').find('tbody tr:nth-child(10) td:nth-child(3)').text(response['db_exchange']);
-        $('.balance-sheet-card').find('tbody tr:nth-child(11) td:nth-child(2)').text(response['cr_el']);
-        $('.balance-sheet-card').find('tbody tr:nth-child(11) td:nth-child(3)').text(response['db_el']);
+        $('.balance-sheet-card').find('tbody tr:nth-child(6) td:nth-child(2)').text(response['cr_investment']);
+        $('.balance-sheet-card').find('tbody tr:nth-child(6) td:nth-child(3)').text(response['db_investment']);
+        $('.balance-sheet-card').find('tbody tr:nth-child(7) td:nth-child(2)').text(response['cr_deposit']);
+        $('.balance-sheet-card').find('tbody tr:nth-child(7) td:nth-child(3)').text(response['db_deposit']);
+        $('.balance-sheet-card').find('tbody tr:nth-child(8) td:nth-child(2)').text(response['cr_exchange']);
+        $('.balance-sheet-card').find('tbody tr:nth-child(8) td:nth-child(3)').text(response['db_exchange']);
+        $('.balance-sheet-card').find('tbody tr:nth-child(9) td:nth-child(2)').text(response['cr_el']);
+        $('.balance-sheet-card').find('tbody tr:nth-child(9) td:nth-child(3)').text(response['db_el']);
     }, 'json')
 
     //to get Contra balance, addition of all bank transactions
     let ajaxCall5 = $.post('financeFile/BS/getContraContents.php', args, function (response) {
-        $('.balance-sheet-card').find('tbody tr:nth-child(12) td:nth-child(2)').text(response['credit_contra']);
-        $('.balance-sheet-card').find('tbody tr:nth-child(12) td:nth-child(3)').text(response['debit_contra']);
+        $('.balance-sheet-card').find('tbody tr:nth-child(10) td:nth-child(2)').text(response['credit_contra']);
+        $('.balance-sheet-card').find('tbody tr:nth-child(10) td:nth-child(3)').text(response['debit_contra']);
 
     }, 'json');
 
     //to get Issued, Expense, Bank Deposit and cash withdrawal
     let ajaxCall6 = $.post('financeFile/BS/getBSDbContents.php', args, function (response) {
-        $('.balance-sheet-card').find('tbody tr:nth-child(13) td:nth-child(3)').text(response['issued']);
-        $('.balance-sheet-card').find('tbody tr:nth-child(14) td:nth-child(3)').text(response['expense']);
+        $('.balance-sheet-card').find('tbody tr:nth-child(11) td:nth-child(3)').text(response['issued']);
+        $('.balance-sheet-card').find('tbody tr:nth-child(12) td:nth-child(3)').text(response['expense']);
     }, 'json');
 
     ajaxCalls.push(ajaxCall1, ajaxCall2, ajaxCall3, ajaxCall4, ajaxCall5, ajaxCall6);
@@ -160,7 +160,7 @@ function calculateClosingForBS() {
     console.log("🚀 ~ calculateClosingForBS ~ closing_balance:", closing_balance)
     debit = debit + closing_balance;//included closing balance also for debit total
     let difference = credit - debit;
-    $('.balance-sheet-card').find('tbody tr:nth-child(15) td:nth-child(3)').text(moneyFormatIndia(closing_balance));
+    $('.balance-sheet-card').find('tbody tr:nth-child(13) td:nth-child(3)').text(moneyFormatIndia(closing_balance));
     $('.benefits-check-card').find('tbody tr:nth-child(9) td:nth-child(3)').text(moneyFormatIndia(closing_balance));//benefit check table also will have same closing balance
     $('.balance-sheet-card').find('tfoot tr:first td:nth-child(2)').text(moneyFormatIndia(credit));
     $('.balance-sheet-card').find('tfoot tr:first td:nth-child(3)').text(moneyFormatIndia(debit));
@@ -189,24 +189,24 @@ function BenefitCalculations(type, from_date, to_date, month) {
 
     //to get Document charges with processing fees
     let ajaxCall2 = $.post('financeFile/BS/getDocumentCharges.php', args, function (response) {
-        $('.benefits-card').find('tbody tr:nth-child(3) td:nth-child(2)').text(response['doc_charge']);
-        $('.benefits-card').find('tbody tr:nth-child(4) td:nth-child(2)').text(response['proc_charge']);
+        $('.benefits-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(response['doc_charge']);
+        $('.benefits-card').find('tbody tr:nth-child(3) td:nth-child(2)').text(response['proc_charge']);
     }, 'json')
 
     //to get Penalty and fine 
     let ajaxCall3 = $.post('financeFile/Benefits/getPenaltyFine.php', args, function (response) {
-        $('.benefits-card').find('tbody tr:nth-child(5) td:nth-child(2)').text(response['penalty']);
-        $('.benefits-card').find('tbody tr:nth-child(6) td:nth-child(2)').text(response['fine']);
+        $('.benefits-card').find('tbody tr:nth-child(4) td:nth-child(2)').text(response['penalty']);
+        $('.benefits-card').find('tbody tr:nth-child(5) td:nth-child(2)').text(response['fine']);
     }, 'json');
 
     //to get Other income
     let ajaxCall4 = $.post('financeFile/BS/getBSCrContents.php', args, function (response) {
-        $('.benefits-card').find('tbody tr:nth-child(7) td:nth-child(2)').text(response['other_income']);
+        $('.benefits-card').find('tbody tr:nth-child(6) td:nth-child(2)').text(response['other_income']);
     }, 'json')
 
     //to get Expense
     let ajaxCall5 = $.post('financeFile/BS/getBSDbContents.php', args, function (response) {
-        $('.benefits-card').find('tbody tr:nth-child(8) td:nth-child(3)').text(response['expense']);
+        $('.benefits-card').find('tbody tr:nth-child(7) td:nth-child(3)').text(response['expense']);
     }, 'json');
 
     ajaxCalls.push(ajaxCall1, ajaxCall2, ajaxCall3, ajaxCall4, ajaxCall5);
@@ -258,8 +258,8 @@ function ProfitCalculations(type, from_date, to_date, month) {
         cache: false,
         success: function (response) {
             $('.profit-card').find('tbody tr:first td:nth-child(2)').text(response['split_interest']);
-            $('.profit-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(response['interest_amount']);
-            $('.benefits-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(response['interest_amount']) //it will get the 2nd column value inside tbody // will take you to opening balance credit column
+            // $('.profit-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(response['interest_amount']);
+            // $('.benefits-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(response['interest_amount']) //it will get the 2nd column value inside tbody // will take you to opening balance credit column
         }
     }).then(function () {
         return $.ajax({
@@ -269,8 +269,8 @@ function ProfitCalculations(type, from_date, to_date, month) {
             dataType: 'json',
             cache: false,
             success: function (response) {
-                $('.profit-card').find('tbody tr:nth-child(3) td:nth-child(2)').text(response['doc_charge']);
-                $('.profit-card').find('tbody tr:nth-child(4) td:nth-child(2)').text(response['proc_charge']);
+                $('.profit-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(response['doc_charge']);
+                $('.profit-card').find('tbody tr:nth-child(3) td:nth-child(2)').text(response['proc_charge']);
             }
         });
     }).then(function () {
@@ -281,8 +281,8 @@ function ProfitCalculations(type, from_date, to_date, month) {
             dataType: 'json',
             cache: false,
             success: function (response) {
-                $('.profit-card').find('tbody tr:nth-child(5) td:nth-child(2)').text(response['penalty']);
-                $('.profit-card').find('tbody tr:nth-child(6) td:nth-child(2)').text(response['fine']);
+                $('.profit-card').find('tbody tr:nth-child(4) td:nth-child(2)').text(response['penalty']);
+                $('.profit-card').find('tbody tr:nth-child(5) td:nth-child(2)').text(response['fine']);
             }
         });
     }).then(function () {
@@ -293,7 +293,7 @@ function ProfitCalculations(type, from_date, to_date, month) {
             dataType: 'json',
             cache: false,
             success: function (response) {
-                $('.profit-card').find('tbody tr:nth-child(7) td:nth-child(2)').text(response['other_income']);
+                $('.profit-card').find('tbody tr:nth-child(6) td:nth-child(2)').text(response['other_income']);
             }
         });
     }).then(function () {
@@ -304,7 +304,7 @@ function ProfitCalculations(type, from_date, to_date, month) {
             dataType: 'json',
             cache: false,
             success: function (response) {
-                $('.profit-card').find('tbody tr:nth-child(8) td:nth-child(3)').text(response['expense']);
+                $('.profit-card').find('tbody tr:nth-child(7) td:nth-child(3)').text(response['expense']);
             }
         });
     }).then(function () {

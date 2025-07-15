@@ -99,7 +99,6 @@ function getLoanCategory() {
 		cache: false,
 		data: {},
 		success: function (response) {
-			console.log(response);
 			$('#loan_category').empty();
 			$('#loan_category').append(`<option value=''>Select Loan Category</option>`);
 			for (var i = 0; i < response.length; i++) {
