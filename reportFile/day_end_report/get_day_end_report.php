@@ -23,7 +23,7 @@ if (isset($_POST['search_date']) && $_POST['search_date'] != '') {
     $full_date = $date->format('Y-m_d');
 }
 
-$record = getOpeningBalance($connect, $full_date, $bank_details);
+$record = getOpeningBalance($connect, $full_date, $bank_details, $userid);
 
 // Get hand opening
 $hand_opening_balance = $record['hand_opening'];
@@ -288,7 +288,7 @@ $expense_till_now = $h_till_now_hand_expense + $bank_total_expense;
 
 
 
-function getOpeningBalance($connect, $op_date, $bank_detail)
+function getOpeningBalance($connect, $op_date, $bank_detail, $user_id)
 {
     $record = [];
 
@@ -359,15 +359,8 @@ function getOpeningBalance($connect, $op_date, $bank_detail)
     ");
     $agentDebit = $agentDebitQry->fetch()['agent_debit'];
 
-    
     $agent_hand_op = intval($agentDebit) - intval($agentCredit);
-
-    if ($agent_hand_op > 0) {
-        $agent_hand_op = -$agent_hand_op; // force it negative
-    }
-
-// Always subtract (negative will increase, positive will decrease)
-$record['hand_opening'] -= $agent_hand_op;
+    $record['hand_opening'] -= $agent_hand_op;
 
     // BANK OPENING (Dynamic)
     $bank_details_arr = explode(',', $bank_detail);
