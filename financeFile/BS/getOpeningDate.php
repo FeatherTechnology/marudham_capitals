@@ -34,9 +34,13 @@ if ($type == 'today') {
 
     getDetails($connect, $where, $where2);
 } else if ($type == 'month') {
+    
+    $selectedMonth = $_POST['month'];
+    // Previous month
+    $prevDate = date('Y-m', strtotime("$selectedMonth-01 -1 month"));
 
-    $month = date('m', strtotime($_POST['month']));
-    $year = date('Y', strtotime($_POST['month']));
+    $month = date('m', strtotime($prevDate ));
+    $year = date('Y', strtotime($prevDate));
 
     $where = " (month(ct1.cl_date) = $month && YEAR(ct1.cl_date) = '$year' ) ";
     $where2 = " (month(ct2.cl_date) = $month && YEAR(ct2.cl_date) = '$year' ) ";
@@ -64,7 +68,7 @@ function getDetails($connect, $where, $where2)
 
         while ($row = $qry->fetch()) {
 
-            $records['closing_bal'] += intVal($row['closing_bal']);
+            $records['closing_bal'] += intVal(str_replace(',','',$row['closing_bal']));
         }
     } else {
         $records['closing_bal'] = 0;

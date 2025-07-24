@@ -5423,7 +5423,9 @@ function getLoaninfo(sub_cat_id) {
             var amt = $("#tot_value").val();
             var advance = $("#ad_amt").val();
             var loan_amt = amt - advance;
-            $("#loan_amt").val(loan_amt.toFixed(0));
+            if (loan_amt != NaN) {
+                $("#loan_amt").val(loan_amt.toFixed(0));
+              }
           });
       } else {
         $(".advance_yes").hide();
@@ -5435,7 +5437,9 @@ function getLoaninfo(sub_cat_id) {
             var loan_amt = $(this).val();
 
             if (loan_amt <= parseInt(response["loan_limit"])) {
-              $("#loan_amt").val(loan_amt.toFixed(0));
+              if (loan_amt != NaN) {
+                $("#loan_amt").val(loan_amt.toFixed(0));
+              }
             } else {
               alert("Please Enter Lesser amount!");
               $("#loan_amt").val("");
