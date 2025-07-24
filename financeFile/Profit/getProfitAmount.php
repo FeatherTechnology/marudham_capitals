@@ -31,17 +31,32 @@ function getDetials($connect, $where, $condition)
     //will show only interest amunt under user's branch not others also
     //excluding due type interest , coz interest loans will be sepately calculated. those interest will be collected every month as due amount
     //, COALESCE(ROUND(SUM( CASE WHEN c.due_amt_track > alc.principal_amt_cal / alc.due_period THEN c.due_amt_track - (alc.principal_amt_cal / alc.due_period) ELSE 0 END )), 0) AS total_interest_paid, COALESCE(ROUND(SUM( CASE WHEN c.due_amt_track <= alc.principal_amt_cal / alc.due_period THEN c.due_amt_track ELSE alc.principal_amt_cal / alc.due_period END )), 0) AS total_principal_paid
-    $qry = $connect->query("SELECT COALESCE(SUM(c.due_amt_track), 0) AS due_amt_track, COALESCE(ROUND(SUM( CASE WHEN c.due_amt_track > alc.principal_amt_cal / alc.due_period THEN c.due_amt_track - (alc.principal_amt_cal / alc.due_period) ELSE 0 END )), 0) AS total_interest_paid FROM in_verification iv JOIN acknowlegement_loan_calculation alc ON iv.req_id = alc.req_id JOIN collection c ON iv.req_id = c.req_id WHERE iv.cus_status > 13 AND due_type != 'Interest' and $where $condition");
-    $row = $qry->fetch();
-    $res['interest_paid'] = $row['total_interest_paid'];
-    $res['due_amt_track'] = $row['due_amt_track'];
+    // $qry = $connect->query("SELECT COALESCE(ROUND(SUM( CASE WHEN c.due_amt_track > alc.principal_amt_cal / alc.due_period THEN c.due_amt_track - (alc.principal_amt_cal / alc.due_period) ELSE 0 END )), 0) AS total_interest_paid FROM in_verification iv JOIN acknowlegement_loan_calculation alc ON iv.req_id = alc.req_id JOIN collection c ON iv.req_id = c.req_id WHERE iv.cus_status > 13 AND due_type != 'Interest' and $where $condition");
+    // $row = $qry->fetch();
+    // $res['interest_paid'] = $row['total_interest_paid'];
+    // $res['due_amt_track'] = $row['due_amt_track'];
 
-    $qry = $connect->query("SELECT COALESCE(sum(int_amt_track), 0) as int_amt_track FROM in_verification iv JOIN acknowlegement_loan_calculation alc ON iv.req_id = alc.req_id JOIN collection c ON iv.req_id = c.req_id WHERE iv.cus_status > 13 AND due_type = 'Interest' and $where $condition");
-    $row = $qry->fetch();
-    $res['interest_amount'] = $row['int_amt_track'];
+    // $qry = $connect->query("SELECT COALESCE(sum(int_amt_track), 0) as int_amt_track FROM in_verification iv JOIN acknowlegement_loan_calculation alc ON iv.req_id = alc.req_id JOIN collection c ON iv.req_id = c.req_id WHERE iv.cus_status > 13 AND due_type = 'Interest' and $where $condition");
+    // $row = $qry->fetch();
+    // $res['interest_amount'] = $row['int_amt_track'];
 
-    $response['split_interest'] = moneyFormatIndia($res['interest_paid']);
-    $response['interest_amount'] = moneyFormatIndia($res['interest_amount']);
+    
+    $qry = $connect->query("SELECT lc.int_amt_cal, lc.tot_amt_cal, SUM(coll.due_amt_track) AS due_amt_track
+        FROM collection coll 
+        JOIN in_issue ii ON coll.req_id = ii.req_id 
+        JOIN acknowlegement_loan_calculation lc ON coll.req_id = lc.req_id 
+        JOIN in_verification iv ON coll.req_id = iv.req_id 
+        WHERE iv.cus_status >= 14 
+        AND $where $condition
+        GROUP BY coll.req_id");
+    $interest = 0;
+    while($row = $qry->fetch_assoc()){
+        $interest_calc= $row['int_amt_cal'] / $row['tot_amt_cal'];
+        $interest += round($row['due_amt_track'] * $interest_calc, 1);
+    }
+    
+    $response['split_interest'] = $interest;
+    // $response['interest_amount'] = 0;
 
     echo json_encode($response);
 }

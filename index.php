@@ -1,8 +1,10 @@
 <?php	
 //this screen is only for login page*****
 date_default_timezone_set('Asia/Calcutta');
-@session_start();
-session_unset();
+session_start();
+
+// Clear old session values (if any)
+$_SESSION = [];
 session_destroy();
 session_start();
 
@@ -11,7 +13,6 @@ $userid  = isset($_SESSION['userid']) ? $_SESSION['userid'] : "";
 if($userid!=""){
 	echo "<script>/*alert('Please Dont Change the URL!');*/location.href='dashboard'</script>"; 
 }
-
 
 $id=0;
 include "./api/config-file.php";
@@ -25,27 +26,29 @@ if(isset($_POST['lusername'])) {
 	$username  = $_POST['lusername'];
 	$password  =  $_POST['lpassword'];
 
-	$qry     = "SELECT * FROM user WHERE user_name = '".$username."' AND user_password = '".$password."' and status=0"; 
+	$qry     = "SELECT * FROM user WHERE user_name = '".$username."' AND user_password = '".$password."' and status = 0"; 
 	
 	$res = ($connect->query($qry)) or die("Error in Get All Records"); 
 	if ($res->rowCount() > 0){  
 		$result = $res->fetch();
+
+		// ✅ Secure: regenerate ID on login
+    	session_regenerate_id(true);
+
 		$_SESSION['username']    = $result['user_name']; 
 		$_SESSION['userid']      = $result['user_id']; 
 		$_SESSION['fullname']    = $result['fullname']; 
 		$_SESSION['request_list_access']    = $result['request_list_access']; 
 		?>
 		<script>location.href='<?php echo $HOSTPATH; ?>dashboard';</script>  
-		<?php
-	}	
-	else
-	{ 
+	<?php
+
+	} else { 
 		$msg="Enter Valid Email Id and Password";
 	} 
 	// Close the database connection
 	$connect = null;
 }
-
 ?>
 
 		<?php include("include/common/accounthead.php"); ?>
