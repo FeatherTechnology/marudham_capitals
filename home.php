@@ -483,6 +483,11 @@ if (isset($getuserdetails['download_access'])) {
 			<?php if ($current_page == 'day_end_report') { ?>
 				<?php include "include/templates/day_end_report.php" ?>
 			<?php } else ?>
+			
+			<!-- Pending OD Report -->
+			<?php if ($current_page == 'pending_od_report') { ?>
+				<?php include "include/templates/pending_od_report.php" ?>
+			<?php } else ?>
 
 			<!-- Due List -->
 			<?php if ($current_page == 'due_list_report') { ?>
