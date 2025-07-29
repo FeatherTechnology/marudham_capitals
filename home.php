@@ -470,7 +470,7 @@ if (isset($getuserdetails['download_access'])) {
 			<?php if ($current_page == 'agent_report') { ?>
 				<?php include "include/templates/agent_report.php" ?>
 			<?php } else ?>
-			
+
 			<!-- No Due Pay Report -->
 			<?php if ($current_page == 'no_due_pay_report') { ?>
 				<?php include "include/templates/no_due_pay_report.php" ?>
@@ -482,6 +482,11 @@ if (isset($getuserdetails['download_access'])) {
 			<!-- Day End Report -->
 			<?php if ($current_page == 'day_end_report') { ?>
 				<?php include "include/templates/day_end_report.php" ?>
+			<?php } else ?>
+
+			<!-- due_followup_customer_count_report -->
+			<?php if ($current_page == 'due_followup_customer_count_report') { ?>
+				<?php include "include/templates/due_followup_customer_count_report.php" ?>
 			<?php } else ?>
 
 			<!-- Due List -->

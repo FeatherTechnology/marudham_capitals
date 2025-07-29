@@ -93,6 +93,7 @@ $agent_report = '';
 $no_due_pay_report = '';
 $other_trans_report = '';
 $day_end_report = '';
+$due_followup_customer_count_report = '';
 $search_module = '';
 $search_screen = '';
 $bulk_upload_module = '';
@@ -237,6 +238,7 @@ if($idupd>0)
 			$no_due_pay_report          		     = $getUser['no_due_pay_report'];
 			$other_trans_report          		     = $getUser['other_trans_report'];
 			$day_end_report          		     = $getUser['day_end_report'];
+			$due_followup_customer_count_report  = $getUser['due_followup_customer_count_report'];
 
 			$search_module = $getUser['search_module'];
 			$search_screen = $getUser['search'];
@@ -1115,6 +1117,12 @@ if($idupd>0)
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($day_end_report==0){ echo'checked'; }} ?> tabindex="72" class="report-checkbox" id="day_end_report" name="day_end_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="day_end_report">Day End Report </label>
+                            </div>
+                        </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($due_followup_customer_count_report==0){ echo'checked'; }} ?> tabindex="70" class="report-checkbox" id="due_followup_customer_count_report" name="due_followup_customer_count_report" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="due_followup_customer_count_report">Due Follow Up Customer Count</label>
                             </div>
                         </div>
 					</div>
