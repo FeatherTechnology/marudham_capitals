@@ -1362,6 +1362,9 @@
     if ($current_page == 'day_end_report') { ?>
         <script src="js/day_end_report.js"></script>
     <?php }
+    if ($current_page == 'due_followup_customer_count_report') { ?>
+        <script src="js/due_followup_customer_count_report.js"></script>
+    <?php }
     if ($current_page == 'due_list_report') { ?>
         <script src="js/due_list_report.js"></script>
     <?php }
