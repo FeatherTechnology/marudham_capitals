@@ -2574,34 +2574,39 @@ function validation() {
     } else {
         $('#aboutcusCheck').hide();
     }
-if (loanidResponse === "true"){
-    if (guarentor_name == '') {
-        event.preventDefault();
-        $('#guarentor_nameCheck').show();
-    } else {
-        $('#guarentor_nameCheck').hide();
-    }
-    if (guarentor_image == '') {
-        if (guarentorpic == '') {
-            event.preventDefault();
-            $('#guarentorpicCheck').show();
-        } else {
-            $('#guarentorpicCheck').hide();
-        }
-    }
-
     if (pic == '') {
         if (cus_image == '') {
             event.preventDefault();
+            $('#customerpicCheck').show();
+        }else{
+            $('#customerpicCheck').hide();
+        }
+    }else{
+        $('#customerpicCheck').hide();
+    }
+
+    if (loanidResponse === "true"){
+        if (guarentor_name == '') {
+            event.preventDefault();
+            $('#guarentor_nameCheck').show();
+        } else {
+            $('#guarentor_nameCheck').hide();
+        }
+        if (guarentor_image == '') {
+            if (guarentorpic == '') {
+                event.preventDefault();
+                $('#guarentorpicCheck').show();
+            } else {
+                $('#guarentorpicCheck').hide();
+            }
+        }
+        if (loan_id == '') {
+            event.preventDefault();
+            $('#loan_idCheck').show();  
+        }else{
+            $('#loan_idCheck').hide();  
         }
     }
-    if (loan_id == '') {
-        event.preventDefault();
-         $('#loan_idCheck').show();  
-    }else{
-        $('#loan_idCheck').hide();  
-    }
-}
 } //Validation END.///
 
 $('#Communitcation_to_cus').change(function () {

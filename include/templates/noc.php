@@ -679,8 +679,5 @@ if (sizeof($documentationInfo) > 0) {
 <!-- Form End -->
 
 </div>
-<!-- Finger print font cdn -->
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<!-- Finger print jquery Library -->
-<script src="vendor/mfs100/Library/js/jquery-1.8.2.js" type="text/javascript"></script>
-<script src="vendor/mfs100/Library/js/mfs100.js"></script>
+
+<?php require_once __DIR__ . "/../common/fingerprintlibrary.php"; ?>

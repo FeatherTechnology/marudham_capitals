@@ -53,7 +53,8 @@ function getDetails($connect, $where)
     $row = $qry->fetch();
     $issued = $row['amt'] ?? 0;
 
-    $qry = $connect->query("SELECT COALESCE(SUM(cash + cheque_value + transaction_value), 0) AS amt FROM loan_issue WHERE $where and (agent_id !='' or agent_id != null)  ");
+    $qry = $connect->query("SELECT COALESCE(SUM(COALESCE(cash, 0) + COALESCE(cheque_value, 0) + COALESCE(transaction_value, 0)), 0) AS amt FROM loan_issue WHERE $where and (agent_id !='' or agent_id != null)");
+
     $row = $qry->fetch();
     $ag_issued = $row['amt'] ?? 0;
 

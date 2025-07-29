@@ -55,7 +55,7 @@ $bank_details = $getuser['bank_details'];
 										<td></td>
 										<td></td>
 									</tr>
-									<tr>
+									<!-- <tr>
 										<td>Principal Collection</td>
 										<td></td>
 										<td></td>
@@ -64,7 +64,7 @@ $bank_details = $getuser['bank_details'];
 										<td>Interest Collection</td>
 										<td></td>
 										<td></td>
-									</tr>
+									</tr> -->
 									<tr>
 										<td>Penalty</td>
 										<td></td>
@@ -160,11 +160,11 @@ $bank_details = $getuser['bank_details'];
 										<td></td>
 										<td></td>
 									</tr>
-									<tr>
+									<!-- <tr>
 										<td>Interest Amount</td>
 										<td></td>
 										<td></td>
-									</tr>
+									</tr> -->
 									<tr>
 										<td>Document Charges</td>
 										<td></td>
@@ -228,11 +228,11 @@ $bank_details = $getuser['bank_details'];
 										<td></td>
 										<td></td>
 									</tr>
-									<tr>
+									<!-- <tr>
 										<td>Interest Amount</td>
 										<td></td>
 										<td></td>
-									</tr>
+									</tr> -->
 									<tr>
 										<td>Document Charges</td>
 										<td></td>

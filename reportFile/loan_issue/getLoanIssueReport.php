@@ -126,7 +126,7 @@ $query = "SELECT
         LEFT JOIN loan_issue li ON li.req_id = ii.req_id
         LEFT JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
         LEFT JOIN agent_creation ac ON iv.agent_id = ac.ag_id
-        LEFT JOIN verification_family_info vfi_received_by ON li.relationship !='Customer' AND li.cash_guarentor_name = vfi_received_by.relation_aadhar
+        LEFT JOIN verification_family_info vfi_received_by ON li.relationship !='Customer' AND li.cash_guarentor_name = vfi_received_by.relation_aadhar AND li.cus_id = vfi_received_by.cus_id
 
         WHERE ii.cus_status >= 14 
         $where";

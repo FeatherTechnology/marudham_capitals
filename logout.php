@@ -1,11 +1,27 @@
 <?php
-session_start(); // Start the session to access and destroy it
+session_start(); // Start the session
 
-// Destroy session data
-session_unset(); 
+// Unset all session variables
+$_SESSION = [];
+
+// Destroy the session file on server
 session_destroy();
 
-// Redirect the user to the login or home page
+// Remove the session cookie from the browser
+if (ini_get("session.use_cookies")) {
+    $params = session_get_cookie_params();
+    setcookie(
+        session_name(),
+        '',
+        time() - 42000,
+        $params["path"],
+        $params["domain"],
+        $params["secure"],
+        $params["httponly"]
+    );
+}
+
+// Redirect the user
 header("Location: https://localhost/marudham_capitals/");
 exit();
 ?>

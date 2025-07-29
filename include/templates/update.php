@@ -49,6 +49,8 @@ if (sizeof($getCustomerReg) > 0) {
 		$address				= $getCustomerReg['address'];
 		$mobile1				= $getCustomerReg['mobile1'];
 		$mobile2				= $getCustomerReg['mobile2'];
+		$whatsapp				= $getCustomerReg['whatsapp'];
+		$whatsapp_no			= $getCustomerReg['whatsapp_no'];
 		$father_name			= $getCustomerReg['father_name'];
 		$mother_name			= $getCustomerReg['mother_name'];
 		$marital				= $getCustomerReg['marital'];
@@ -90,6 +92,8 @@ if (sizeof($getCustomerReg) > 0) {
 		$sub_area_name 					= $getCustomerReg['sub_area_name'];
 		// $request_id 					= $getCustomerReg['request_id'];
 	}
+
+	$cp_whatsapp = $whatsapp ?? $whatsapp_no;
 }
 ?>
 
@@ -396,6 +400,15 @@ if (sizeof($getCustomerReg) > 0) {
 												<span class="text-danger" style='display:none' id='mobile2Check'>Please Enter Mobile Number</span>
 											</div>
 										</div>
+										
+										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
+											<div class="form-group">
+												<label for="whatsapp">Whatsapp No </label>
+												<input type="number" class="form-control" id="whatsapp_no" name="whatsapp_no" tabindex='17' placeholder="Enter WhatsApp Number" maxlength="10" onkeypress="if(this.value.length==10) return false;" value="<?php if (isset($cp_whatsapp)) { echo $cp_whatsapp; } ?>">
+												<span class="text-danger" style='display:none' id='whatsapp_noCheck'>Please Enter Whatsapp Number</span>
+											</div>
+										</div>
+
 										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
 											<div class="form-group">
 												<label for="father_name">Father Name</label><span class="required">&nbsp;*</span>
@@ -472,6 +485,7 @@ if (sizeof($getCustomerReg) > 0) {
 											<input type="file" onchange="compressImage(this,200)" class="form-control" id="pic" name="pic" tabindex='20' value='<?php if (isset($pic)) {
 																																											echo $pic;
 																																										} ?>'>
+											<span class="text-danger" style='display:none' id='customerpicCheck'>Please Choose Customer Image</span>
 										</div>
 									</div>
 								</div>
@@ -3042,6 +3056,4 @@ if (sizeof($getCustomerReg) > 0) {
 
 
 
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> <!-- to get icons like fingerprint -->
-<script src="vendor/mfs100/Library/js/jquery-1.8.2.js" type="text/javascript"></script><!-- to work with fingerprint sensor -->
-<script src="vendor/mfs100/Library/js/mfs100.js"></script>
+<?php require_once __DIR__ . "/../common/fingerprintlibrary.php"; ?>
