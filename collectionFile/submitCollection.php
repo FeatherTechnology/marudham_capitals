@@ -309,7 +309,8 @@ try{
 
 } catch(Exception $e){
     $connect -> rollBack();
-    echo "Error while insert: ".$e->getMessage(); 
+    $response['info'] = 'Error';
+    $response['Error'] = "Error while insert: ".$e->getMessage(); 
 }
 
 echo json_encode($response);
