@@ -134,7 +134,7 @@ $bank_details = $getuser['bank_details'];
 										<td></td>
 									</tr>
 									<tr class='break'>
-										<td>Diiference</td>
+										<td>Difference</td>
 										<td colspan="2"></td>
 									</tr>
 								</tfoot>
