@@ -78,7 +78,6 @@ try {
     $connect->rollBack();
     $loan_id = "";
     $response = "Error: " . $e->getMessage();
-    exit;
 }
 
 // $qry = $connect->query("SELECT customer_name, mobile1 from customer_register where req_ref_id = '$req_id' ");
