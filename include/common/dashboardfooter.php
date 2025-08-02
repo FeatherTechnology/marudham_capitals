@@ -1365,7 +1365,7 @@
     if ($current_page == 'due_followup_customer_count_report') { ?>
         <script src="js/due_followup_customer_count_report.js"></script>
     <?php }
-    if ($current_page == 'pending_od_report') { ?>
+        if ($current_page == 'pending_od_report') { ?>
         <script src="js/pending_od_report.js"></script>
     <?php }
     if ($current_page == 'due_list_report') { ?>

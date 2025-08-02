@@ -907,10 +907,14 @@ if (sizeof($getUser) > 0) {
 										<a href="day_end_report"><i class='icon-area-graph'></i>Day End Report</a>
 									</li>
 								<?php  } ?>
-
 								<?php if ($due_followup_customer_count_report == 0) { ?>
 									<li>
 										<a href="due_followup_customer_count_report"><i class='icon-area-graph'></i>Due Followup Customer Count</a>
+									</li>
+								<?php  } ?>
+								<?php if ($day_end_report == 0) { ?>
+									<li>
+										<a href="pending_od_report"><i class='icon-area-graph'></i>Pending-OD Report</a>
 									</li>
 								<?php  } ?>
                 
