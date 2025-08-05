@@ -188,10 +188,10 @@ $result = $statement->fetchAll();
 $data = array();
 $sno = 1;
 foreach ($result as $row) {
-    if (strtotime($row['maturity_date']) < strtotime($to_date)) {
+    if (strtotime($row['maturity_date']) < strtotime($full_date)) {
         $end = strtotime($row['maturity_date']);
         $start = strtotime($row['due_start_from']);
-        $search_date = strtotime($to_date);
+        $search_date = strtotime($full_date);
         $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
         $pending = $months;
          if (($row['due_method_calc'] == 'Monthly' || $row['due_method_scheme'] == '1')  ) {
@@ -202,7 +202,7 @@ foreach ($result as $row) {
         $pending_month = $pending;
         
     } else {
-        $end = strtotime($to_date);
+        $end = strtotime($full_date);
         $start = strtotime($row['due_start_from']);
         $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
 
