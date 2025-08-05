@@ -4,7 +4,8 @@ $(document).ready(function () {
         event.preventDefault();
         // window.history.back();
         let cusSts = $('#cus_sts').val();
-        window.location = 'edit_due_followup&cussts='+cusSts;
+        let cummDate = $('#cummDate').val();
+        window.location = 'edit_due_followup&cussts='+cusSts+'&cummDate='+cummDate;
     })
 
     $('#comm_ftype').change(function () {

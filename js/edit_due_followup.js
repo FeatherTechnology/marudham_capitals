@@ -17,11 +17,13 @@ $(document).ready(function () {
 $(function () {
     getSubStsMapping(); //Call Customer status dropdown.
 
+    let cummDate = $("#cummDate").val();
+    $("#comm_date").val(cummDate);
     let cus_Sts = $("#customer_status").val();
     let cusSts = cus_Sts.split(',');
 
     if (cusSts != '') {
-        OnLoadFunctions(cusSts, '');
+        OnLoadFunctions(cusSts, cummDate );
     }
 });
 function warningSwal(title, text) {
