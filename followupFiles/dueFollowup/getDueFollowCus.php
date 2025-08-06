@@ -60,7 +60,8 @@ if (isset($_POST['cus_sts'])) {
     $sub_status_mapping = implode(',', $_POST['cus_sts']);
 }
 
-// $comm_date_condition = '';
+$commdate = isset($_POST['comm_date']) && !empty($_POST['comm_date']) ? $_POST['comm_date'] : '';
+
 if (isset($_POST['comm_date'])) {
     $comm_date = $_POST['comm_date']; // Get the comm_date from the form
 
@@ -255,7 +256,7 @@ foreach ($result as $row) {
         $finalData['line'] = $row['line_name'],
         $finalData['mobile'] = $row['mobile1'],
         $finalData['status_priority'] = $cus_status,
-        $finalData['action'] = "<a href='due_followup&upd={$row['req_id']}&cusidupd=$cus_id&cussts=$sub_status_mapping' title='Edit details'><button class='btn btn-success' style='background-color:#009688;'>View Loans</button></a>",
+        $finalData['action'] = "<a href='due_followup&upd={$row['req_id']}&cusidupd=$cus_id&cussts=$sub_status_mapping&cummDate=$commdate' title='Edit details'><button class='btn btn-success' style='background-color:#009688;'>View Loans</button></a>",
         $finalData['last_paid_date'] = $last_paid_date,
         $finalData['paid_status'] = $paid_status,
         $finalData['hint'] = $hint,

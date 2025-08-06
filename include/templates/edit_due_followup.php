@@ -44,6 +44,7 @@
 					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
 						<label for="sub_status_mapping">Customer Status</label><span class="required">&nbsp;*</span>
 						<input type="hidden" name="customer_status" id="customer_status" value="<?php echo isset($_GET['cussts']) ? $_GET['cussts'] : ''; ?>">
+						<input type="hidden" name="cummDate" id="cummDate" value="<?php echo isset($_GET['cummDate']) ? $_GET['cummDate'] : '1'; ?>">
 						<select class="form-control" id="sub_status_mapping" name="sub_status_mapping" multiple>
 							<option value="">Select Customer Status</option>
 						</select>
