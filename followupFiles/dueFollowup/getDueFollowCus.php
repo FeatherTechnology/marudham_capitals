@@ -51,8 +51,6 @@ if ($user_id != 1) {
     }
 }
 
-    
-
 $current_date = date('Y-m-d');
 
 $sub_status_mapping = '';
@@ -66,17 +64,17 @@ if (isset($_POST['comm_date'])) {
     $comm_date = $_POST['comm_date']; // Get the comm_date from the form
 
     if($comm_date == '2'){ //Before Date
-        $qry_cndtn = "AND cm.comm_date < '$current_date' AND (cm.comm_date IS NOT NULL OR cm.comm_date != '0000-00-00') ";
+        $qry_cndtn = " AND cm.comm_date < '$current_date' AND (cm.comm_date IS NOT NULL OR cm.comm_date != '0000-00-00') ";
 
     }elseif($comm_date =='3'){ //Today
-        $qry_cndtn = "AND cm.comm_date = '$current_date' ";
+        $qry_cndtn = " AND cm.comm_date = '$current_date' ";
 
     }elseif($comm_date =='4'){ //After Date
-        $qry_cndtn = "AND cm.comm_date > '$current_date' AND (cm.comm_date IS NOT NULL OR cm.comm_date != '0000-00-00') ";
+        $qry_cndtn = " AND cm.comm_date > '$current_date' AND (cm.comm_date IS NOT NULL OR cm.comm_date != '0000-00-00') ";
         
     }
     elseif($comm_date =='5'){ //To Follow Date
-        $qry_cndtn = "AND cm.comm_date IS NULL ";
+        $qry_cndtn = " AND cm.comm_date IS NULL ";
         
     }else{
         $qry_cndtn = "";
@@ -131,12 +129,15 @@ JOIN branch_creation bc ON
     alm.branch_id = bc.branch_id
 JOIN in_verification iv ON
     cp.req_id = iv.req_id
-LEFT JOIN( SELECT cus_id, MAX(comm_date) AS comm_date,  SUBSTRING_INDEX( GROUP_CONCAT( comm_err ORDER BY  comm_date
-            DESC ),  ',', 1 ) AS comm_err, SUBSTRING_INDEX( GROUP_CONCAT(hint ORDER BY comm_date  DESC ),  ',',  1 ) AS hint
-    FROM
-        commitment
-    GROUP BY
-        cus_id) cm ON cp.cus_id = cm.cus_id
+LEFT JOIN (
+    SELECT c1.cus_id, c1.comm_date, c1.comm_err, c1.hint
+    FROM commitment c1
+    INNER JOIN (
+        SELECT cus_id, MAX(created_date) AS max_created
+        FROM commitment
+        GROUP BY cus_id
+    ) c2 ON c1.cus_id = c2.cus_id AND c1.created_date = c2.max_created
+) cm ON cp.cus_id = cm.cus_id
 WHERE
     cs.payable_amnt > 0 AND ii.status = 0 AND ii.cus_status BETWEEN 14 AND 17 AND FIND_IN_SET(cs.sub_status,'$sub_status_mapping') $loan_agnt $search
 GROUP BY
@@ -160,7 +161,6 @@ foreach ($result as $row) {
     $cus_name = $row['cus_name'];
     $area_name = $row['area_name'];
     $sub_area_name = $row['sub_area_name'];
-    // $last_paid_date = $row['last_paid_date'];
     $branch_name = '';
     $comm_date = '';
     $hint = '';
@@ -291,9 +291,7 @@ function getFilteredRecords($connect, $data, $search, $sub_status_mapping, $loan
     // For example:
     // $query = "SELECT COUNT(*) FROM customers WHERE ... LIKE '%$searchValue%'";
     // Execute the query and return the result
-    // $search = $searchValue != '' ? "and (ii.cus_id LIKE '$searchValue%' or cp.cus_name LIKE '%$searchValue%' or alc.area_name LIKE '%$searchValue%' or salc.sub_area_name LIKE '%$searchValue%' or cp.mobile1 LIKE '$searchValue%' or cs.sub_status LIKE '%$searchValue%' )" : '';
     if (count($data) > 0) {
-        // $query = $connect->query("SELECT COUNT(*) as total FROM (SELECT cp.cus_id as cp_cus_id FROM acknowlegement_customer_profile cp JOIN in_issue ii ON cp.cus_id = ii.cus_id where ii.status = 0 and (ii.cus_status >= 14 and ii.cus_status <= 17) $search and cp.area_confirm_subarea IN ($area_list) GROUP BY ii.cus_id) as subquery ");
         $query = $connect->query(" SELECT COUNT(*) as total FROM ( SELECT cp.cus_id
         FROM
             in_issue ii
@@ -311,12 +309,15 @@ function getFilteredRecords($connect, $data, $search, $sub_status_mapping, $loan
             alm.branch_id = bc.branch_id
         JOIN in_verification iv ON
             cp.req_id = iv.req_id
-        LEFT JOIN( SELECT cus_id, MAX(comm_date) AS comm_date,  SUBSTRING_INDEX( GROUP_CONCAT( comm_err ORDER BY  comm_date
-                    DESC ),  ',', 1 ) AS comm_err, SUBSTRING_INDEX( GROUP_CONCAT(hint ORDER BY comm_date  DESC ),  ',',  1 ) AS hint
-            FROM
-                commitment
-            GROUP BY
-                cus_id) cm ON cp.cus_id = cm.cus_id
+        LEFT JOIN (
+            SELECT c1.cus_id, c1.comm_date, c1.comm_err, c1.hint
+            FROM commitment c1
+            INNER JOIN (
+                SELECT cus_id, MAX(created_date) AS max_created
+                FROM commitment
+                GROUP BY cus_id
+            ) c2 ON c1.cus_id = c2.cus_id AND c1.created_date = c2.max_created
+        ) cm ON cp.cus_id = cm.cus_id
         WHERE
             cs.payable_amnt > 0 AND FIND_IN_SET(cs.sub_status,'$sub_status_mapping') AND ii.status = 0 AND ii.cus_status BETWEEN 14 AND 17 $loan_agnt $search
         GROUP BY

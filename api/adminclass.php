@@ -2357,12 +2357,18 @@ class admin
 		team='" . strip_tags($team) . "',designation='" . strip_tags($designation) . "',update_login_id='" . strip_tags($userid) . "',updated_date= current_timestamp(), 
 		status = '0' WHERE staff_id= '" . strip_tags($id) . "' ";
 		$updresult = $mysqli->query($updateQry) or die("Error in in update Query!." . $mysqli->error);
+
+		$updQry = "UPDATE user SET status = '0', update_login_id = '" . strip_tags($userid) . "', updated_date = NOW() WHERE staff_id = '" . $id . "' ";
+		$mysqli->query($updQry) or die("Error in user update query" . $mysqli->error);
 	}
 	//  Delete Company
 	public function deleteStaffCreation($mysqli, $id, $userid)
 	{
-		$deleteQry = "UPDATE staff_creation set status='1', update_login_id='" . strip_tags($userid) . "' WHERE staff_id  = '" . strip_tags($id) . "' ";
-		$runQry = $mysqli->query($deleteQry) or die("Error in delete query" . $mysqli->error);
+		$deleteQry = "UPDATE staff_creation SET status = '1', update_login_id = '" . strip_tags($userid) . "', updated_date = NOW() WHERE staff_id  = '" . strip_tags($id) . "' ";
+		$mysqli->query($deleteQry) or die("Error in staff delete query" . $mysqli->error);
+
+		$deleteQry = "UPDATE user SET status = '1', delete_login_id = '" . strip_tags($userid) . "', updated_date = NOW() WHERE staff_id = '" . $id . "' ";
+		$mysqli->query($deleteQry) or die("Error in user delete query" . $mysqli->error);
 	}
 
 	// Get Scheme list for Agent Creation
