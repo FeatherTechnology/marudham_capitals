@@ -129,15 +129,13 @@ JOIN branch_creation bc ON
     alm.branch_id = bc.branch_id
 JOIN in_verification iv ON
     cp.req_id = iv.req_id
-LEFT JOIN (
-    SELECT c1.cus_id, c1.comm_date, c1.comm_err, c1.hint
-    FROM commitment c1
-    INNER JOIN (
-        SELECT cus_id, MAX(created_date) AS max_created
-        FROM commitment
-        GROUP BY cus_id
-    ) c2 ON c1.cus_id = c2.cus_id AND c1.created_date = c2.max_created
-) cm ON cp.cus_id = cm.cus_id
+LEFT JOIN commitment cm ON 
+    cm.cus_id = cp.cus_id
+    AND cm.created_date = (
+        SELECT MAX(c1.created_date)
+        FROM commitment c1
+        WHERE c1.cus_id = cp.cus_id
+    )
 WHERE
     cs.payable_amnt > 0 AND ii.status = 0 AND ii.cus_status BETWEEN 14 AND 17 AND FIND_IN_SET(cs.sub_status,'$sub_status_mapping') $loan_agnt $search
 GROUP BY
@@ -309,15 +307,13 @@ function getFilteredRecords($connect, $data, $search, $sub_status_mapping, $loan
             alm.branch_id = bc.branch_id
         JOIN in_verification iv ON
             cp.req_id = iv.req_id
-        LEFT JOIN (
-            SELECT c1.cus_id, c1.comm_date, c1.comm_err, c1.hint
-            FROM commitment c1
-            INNER JOIN (
-                SELECT cus_id, MAX(created_date) AS max_created
-                FROM commitment
-                GROUP BY cus_id
-            ) c2 ON c1.cus_id = c2.cus_id AND c1.created_date = c2.max_created
-        ) cm ON cp.cus_id = cm.cus_id
+        LEFT JOIN commitment cm ON 
+            cm.cus_id = cp.cus_id
+            AND cm.created_date = (
+                SELECT MAX(c1.created_date)
+                FROM commitment c1
+                WHERE c1.cus_id = cp.cus_id
+            )
         WHERE
             cs.payable_amnt > 0 AND FIND_IN_SET(cs.sub_status,'$sub_status_mapping') AND ii.status = 0 AND ii.cus_status BETWEEN 14 AND 17 $loan_agnt $search
         GROUP BY
