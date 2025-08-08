@@ -402,7 +402,7 @@ function promotionListOnclick() {
     //on click for customer profile showing in next page
     $('.cust-profile').off('click').click(function () {
         let req_id = $(this).data('reqid');
-        window.location.href = 'due_followup_info&upd=' + req_id + '&pgeView=1';
+        window.open('due_followup_info&upd=' + req_id + '&pgeView=1', '_blank');
     })
 
     $('.loan-history, .doc-history').off('click').click(function () {
