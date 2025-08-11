@@ -2,7 +2,7 @@
 <br><br>
 <div class="page-header">
 	<div style="background-color:#009688; width:100%; padding:12px; color: #ffff; font-size: 20px; border-radius:5px;">
-		Marudham Capitals - No Pay Due Report
+		Marudham Capitals - No Due Pay Report
 	</div>
 </div><br>
 
@@ -19,7 +19,7 @@
 			</div>
 			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 				<div class="card">
-					<div class="card-header">No Pay Due Report</div>
+					<div class="card-header">No Due Pay Report</div>
 					<div class="card-body">
 						<div id="report_table_div" class="table-divs" style="overflow-x: auto;">
 							<table id="no_pay_due_report_table" class="table custom-table">
