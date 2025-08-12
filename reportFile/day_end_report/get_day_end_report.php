@@ -2,28 +2,26 @@
 session_start();
 include '../../ajaxconfig.php';
 
-if (isset($_SESSION["userid"])) {
-    $userid = $_SESSION["userid"];
-}
-
 $bank_details = '';
-if ($userid != 1) {
 
-    $userQry = $connect->query("SELECT  bank_details FROM USER WHERE user_id = $userid ");
-    $rowuser = $userQry->fetch();
-    $bank_detail = $rowuser['bank_details'];
-    $bank_ids = explode(',', $bank_detail);
-    sort($bank_ids);
-    $bank_details = implode(',', $bank_ids);
+$userQry = $connect->query("SELECT id FROM bank_creation WHERE 1");
+
+$bank_ids = [];
+while ($row = $userQry->fetch()) {
+    $bank_ids[] = $row['id']; 
 }
+
+sort($bank_ids);
+$bank_details = implode(',', $bank_ids);
+
 
 if (isset($_POST['search_date']) && $_POST['search_date'] != '') {
     $search_date = $_POST['search_date'];
     $date = new DateTime($search_date);
-    $full_date = $date->format('Y-m_d');
+    $full_date = $date->format('Y-m-d');
 }
 
-$record = getOpeningBalance($connect, $full_date, $bank_details, $userid);
+$record = getOpeningBalance($connect, $full_date, $bank_details);
 
 // Get hand opening
 $hand_opening_balance = $record['hand_opening'];
@@ -189,7 +187,7 @@ $expense_till_now = $h_till_now_hand_expense + $bank_total_expense;
 
         <tr>
             <td><b>Loan Issue</b></td>
-            <td><?php echo moneyFormatIndia($h_issued); ?></td>
+            <td><?php echo moneyFormatIndia( -$h_issued); ?></td>
             <?php
             $total_loan_issue = $h_issued;
             foreach ($bankData as $bank):
@@ -218,7 +216,7 @@ $expense_till_now = $h_till_now_hand_expense + $bank_total_expense;
 
         <tr>
             <td><b>Expenses</b></td>
-            <td><?php echo moneyFormatIndia($h_hand_expense); ?></td>
+            <td><?php echo moneyFormatIndia( -$h_hand_expense); ?></td>
             <?php
             $total_exp = $h_hand_expense;
             foreach ($bankData as $bank):
@@ -236,7 +234,7 @@ $expense_till_now = $h_till_now_hand_expense + $bank_total_expense;
             <td>Closing Balance</td>
             <td>
                 <?php
-                $hand_total = $hand_opening_balance +  $h_collection + $h_deposite + $h_exchange + $h_el +  $h_invest + $hand_other_income - ($h_issued > 0 ? $h_issued : -$h_issued) - ($h_agent > 0 ? $h_agent : -$h_agent) -($h_hand_expense > 0 ? $h_hand_expense : -$h_hand_expense);
+                $hand_total = $hand_opening_balance +  $h_collection + $h_deposite + $h_exchange + $h_el +  $h_invest + $hand_other_income - ($h_issued) - (-$h_agent) -($h_hand_expense);
                 echo moneyFormatIndia($hand_total);
                 ?>
             </td>
@@ -260,13 +258,13 @@ $expense_till_now = $h_till_now_hand_expense + $bank_total_expense;
 
                 // Expense Side (use conditional subtraction like hand_total)
                 $loan_issue = $bank['loan_issue_on_date'] ?? 0;
-                $bank_total -= ($loan_issue > 0 ? $loan_issue : -$loan_issue);
+                $bank_total -= $loan_issue;
 
                 $agent_diff = ($bank['ag_cr_amt'] ?? 0) - ($bank['ag_db_amt'] ?? 0);
-                $bank_total -= ($agent_diff > 0 ? $agent_diff : -$agent_diff);
+                $bank_total -= (-$agent_diff);
 
                 $bexpense = $bank['bexpense_amt'] ?? 0;
-                $bank_total -= ($bexpense > 0 ? $bexpense : -$bexpense);
+                $bank_total -= $bexpense ;
 
                 // Add to grand total
                 $grand_total += $bank_total;
@@ -288,7 +286,7 @@ $expense_till_now = $h_till_now_hand_expense + $bank_total_expense;
 
 
 
-function getOpeningBalance($connect, $op_date, $bank_detail, $user_id)
+function getOpeningBalance($connect, $op_date, $bank_detail)
 {
     $record = [];
 
@@ -297,8 +295,6 @@ function getOpeningBalance($connect, $op_date, $bank_detail, $user_id)
         SUM(amt) AS hand_credits
         FROM (
             (SELECT COALESCE(SUM(rec_amt), 0) AS amt FROM ct_hand_collection WHERE date(created_date) < '$op_date' )
-            UNION ALL
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bank_withdraw WHERE date(created_date) < '$op_date' )
             UNION ALL
             (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hoti WHERE date(created_date) < '$op_date' )
             UNION ALL
@@ -316,8 +312,6 @@ function getOpeningBalance($connect, $op_date, $bank_detail, $user_id)
     $handDebitQry = $connect->query("SELECT
         SUM(amt) AS hand_debits
         FROM (
-            (SELECT COALESCE(SUM(amount), 0) AS amt FROM ct_db_bank_deposit WHERE date(created_date) < '$op_date' )
-            UNION ALL
             (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hinvest WHERE date(created_date) < '$op_date' )
             UNION ALL
             (SELECT COALESCE(SUM(netcash), 0) AS amt FROM ct_db_hissued WHERE date(created_date) < '$op_date' )
@@ -335,18 +329,10 @@ function getOpeningBalance($connect, $op_date, $bank_detail, $user_id)
 
     $record['hand_opening'] = intval($handCredit) - intval($handDebit);
 
-    // AGENT HAND CASH ADJUSTMENT
-    $qry = $connect->query("SELECT ag.ag_id FROM agent_creation ag  WHERE 1");
-    $ag_ids = [];
-    while ($rww = $qry->fetch()) {
-        $ag_ids[] = $rww["ag_id"];
-    }
-    $ag_ids = implode(',', $ag_ids);
-
     $agentCreditQry = $connect->query("SELECT
         SUM(amt) AS agent_credit
         FROM (
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hag WHERE date(created_date) < '$op_date' AND FIND_IN_SET(ag_id, '$ag_ids') )
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_hag WHERE date(created_date) < '$op_date' )
         ) AS Agent_Credit_Opening
     ");
     $agentCredit = $agentCreditQry->fetch()['agent_credit'];
@@ -354,13 +340,13 @@ function getOpeningBalance($connect, $op_date, $bank_detail, $user_id)
     $agentDebitQry = $connect->query("SELECT
         SUM(amt) AS agent_debit
         FROM (
-            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hag WHERE date(created_date) < '$op_date' AND FIND_IN_SET(ag_id, '$ag_ids') )
+            (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_hag WHERE date(created_date) < '$op_date' )
         ) AS Agent_Debit_Opening
     ");
     $agentDebit = $agentDebitQry->fetch()['agent_debit'];
 
-    $agent_hand_op = intval($agentDebit) - intval($agentCredit);
-    $record['hand_opening'] -= $agent_hand_op;
+    $agent_hand_op = intval($agentCredit) - intval($agentDebit);
+    $record['hand_opening'] -= abs($agent_hand_op);
 
     // BANK OPENING (Dynamic)
     $bank_details_arr = explode(',', $bank_detail);
@@ -433,7 +419,6 @@ function getOpeningBalance($connect, $op_date, $bank_detail, $user_id)
 
 function getClosingBalance($connect, $closing_date, $bank_detail)
 {
-   
 
     $handcollection = $connect->query("SELECT
     (SELECT COALESCE(SUM(rec_amt), 0) FROM ct_hand_collection WHERE date(created_date) = '$closing_date') AS ct_hand_collection,

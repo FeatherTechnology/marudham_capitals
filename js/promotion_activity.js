@@ -8,16 +8,16 @@ $(document).ready(function () {
 
         var typevalue = this.value;
         $('.existing_card, .new_card, .new_promo_card, .loan-history-card, .doc-history-card, #close_history_card, .repromotion_card, .filter_card').hide();
-        $('#follow_up_sts, #date_type, #follow_up_fromdate, #follow_up_todate').val('');
+        // $('#follow_up_sts, #date_type, #follow_up_fromdate, #follow_up_todate').val('');
         if (typevalue == 'New') {
             $('.new_card, .new_promo_card').show()
             resetNewPromotionTable();
         } else if (typevalue == 'Existing') {
             $('.existing_card, .filter_card').show();
-            showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list');
+            showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list', '15');
         } else if (typevalue == 'Repromotion') {
             $('.repromotion_card, .filter_card').show()
-            showPromotionList('followupFiles/promotion/showRepromotionList.php', 'repromotion_list');
+            showPromotionList('followupFiles/promotion/showRepromotionList.php', 'repromotion_list', '16');
         }
     })
 
@@ -72,10 +72,10 @@ $(document).ready(function () {
         let btnName = $(".toggle-button.active").first().val();
 
         if(btnName =='Existing'){
-            showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list');
+            showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list', '15');
 
         } else if(btnName =='Repromotion'){
-            showPromotionList('followupFiles/promotion/showRepromotionList.php', 'repromotion_list');
+            showPromotionList('followupFiles/promotion/showRepromotionList.php', 'repromotion_list', '16');
             
         }  
     });
@@ -91,6 +91,13 @@ $(document).ready(function () {
         }
     });
 
+    {
+        // Get today's date
+        var today = new Date().toISOString().split('T')[0];
+
+        // Set the minimum date in the date input to today
+        $('#promo_fdate').attr('min', today);
+    }
 });
 
 $(function () {
@@ -338,7 +345,7 @@ function intNotintOnclick() {
     })
 }
 
-function showPromotionList(url, tableid) {
+function showPromotionList(url, tableid, colNo) {
     let followUpSts = $('#follow_up_sts').val();
     let dateType = $('#date_type').val();
     let followUpFromDate = $('#follow_up_fromdate').val();
@@ -350,6 +357,7 @@ function showPromotionList(url, tableid) {
         "order": [
             [0, "desc"]
         ],
+        "displayStart": getDisplayStart(tableid),
         'processing': true,
         'serverSide': true,
         'serverMethod': 'post',
@@ -384,7 +392,7 @@ function showPromotionList(url, tableid) {
             intNotintOnclick();
             promoChartOnclick();
             promotionListOnclick();
-            promotionChartColor(tableid);
+            promotionChartColor(tableid, colNo);
         }
     });
 }
@@ -394,7 +402,7 @@ function promotionListOnclick() {
     //on click for customer profile showing in next page
     $('.cust-profile').off('click').click(function () {
         let req_id = $(this).data('reqid');
-        window.location.href = 'due_followup_info&upd=' + req_id + '&pgeView=1';
+        window.open('due_followup_info&upd=' + req_id + '&pgeView=1', '_blank');
     })
 
     $('.loan-history, .doc-history').off('click').click(function () {
@@ -410,9 +418,9 @@ function promotionListOnclick() {
     })
 }
 
-function promotionChartColor(tableid) {
+function promotionChartColor(tableid, colNo) {
     $(`#${tableid} tbody tr`).not('th').each(function () {
-        var element = $(this).find('td:eq(15)'); // Get the text content of the 15th td element (Follow date)
+        var element = $(this).find(`td:eq(${colNo})`); // Get the text content of the 15th td element (Follow date)
 
         let tddate = element.text();
         let datecorrection = tddate.split("-").reverse().join("-").replaceAll(/\s/g, ''); // Correct the date format

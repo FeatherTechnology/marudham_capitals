@@ -52,7 +52,7 @@ if (isset($_POST['order'])) {
     LEFT JOIN area_group_mapping agm ON FIND_IN_SET(sl.sub_area_id, agm.sub_area_id) 
     LEFT JOIN area_line_mapping alm ON FIND_IN_SET(sl.sub_area_id, alm.sub_area_id) 
     LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
-    LEFT JOIN ( SELECT cus_id, MAX(follow_date) AS follow_date, status FROM new_promotion GROUP BY cus_id ) np ON req.cus_id = np.cus_id
+    LEFT JOIN new_promotion np ON np.cus_id = req.cus_id AND np.created_date = (SELECT MAX(np1.created_date) FROM new_promotion np1 WHERE np1.cus_id = req.cus_id)
     WHERE req.cus_status BETWEEN 4 AND 9 
     AND CASE WHEN req.cus_status IN (6, 7) THEN cp.area_confirm_subarea ELSE cp.sub_area END IN  ($sub_area_list) AND rc.cus_id IS NULL ";
 

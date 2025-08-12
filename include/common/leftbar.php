@@ -916,14 +916,7 @@ if (sizeof($getUser) > 0) {
 									<li>
 										<a href="pending_od_report"><i class='icon-area-graph'></i>Pending-OD Report</a>
 									</li>
-								<?php  } ?>
-                
-                	<?php if ($day_end_report == 0) { ?>
-									<li>
-										<a href="pending_od_report"><i class='icon-area-graph'></i>Pending-OD Report</a>
-                  </li>
-                <?php  } ?>
-                    
+								<?php  } ?>                    
 							</ul>
 						</div>
 					</li>
