@@ -426,10 +426,12 @@ if (isset($getuserdetails['download_access'])) {
 			<?php if ($current_page == 'request_report') { ?>
 				<?php include "include/templates/request_report.php" ?>
 			<?php } else ?>
+
 			<!-- Cancel and Revoke  Report -->
 			<?php if ($current_page == 'cancel_revoke_report') { ?>
 				<?php include "include/templates/cancel_revoke_report.php" ?>
 			<?php } else ?>
+
 			<!-- Customer Profile Report -->
 			<?php if ($current_page == 'cus_profile_report') { ?>
 				<?php include "include/templates/cus_profile_report.php" ?>
@@ -444,26 +446,35 @@ if (isset($getuserdetails['download_access'])) {
 			<?php if ($current_page == 'collection_report') { ?>
 				<?php include "include/templates/collection_report.php" ?>
 			<?php } else ?>
+
 			<!-- Principal and Interest Report -->
 			<?php if ($current_page == 'principal_interest_report') { ?>
 				<?php include "include/templates/principal_interest_report.php" ?>
-			<?php } else ?>
-			<!-- In Closed Report -->
-			<?php if ($current_page == 'in_closed_report') { ?>
-				<?php include "include/templates/in_closed_report.php" ?>
-			<?php } else ?>
-			<!-- Closed Report -->
-			<?php if ($current_page == 'closed_report') { ?>
-				<?php include "include/templates/closed_report.php" ?>
-			<?php } else ?>
-			<!-- confirmation Report -->
-			<?php if ($current_page == 'confirmation_followup_report') { ?>
-				<?php include "include/templates/confirmation_followup_report.php" ?>
 			<?php } else ?>
 
 			<!-- Balance Report -->
 			<?php if ($current_page == 'balance_report') { ?>
 				<?php include "include/templates/balance_report.php" ?>
+			<?php } else ?>
+			
+			<!-- Due List -->
+			<?php if ($current_page == 'due_list_report') { ?>
+				<?php include "include/templates/due_list_report.php" ?>
+			<?php } else ?>
+
+			<!-- In Closed Report -->
+			<?php if ($current_page == 'in_closed_report') { ?>
+				<?php include "include/templates/in_closed_report.php" ?>
+			<?php } else ?>
+
+			<!-- Closed Report -->
+			<?php if ($current_page == 'closed_report') { ?>
+				<?php include "include/templates/closed_report.php" ?>
+			<?php } else ?>
+
+			<!-- confirmation Report -->
+			<?php if ($current_page == 'confirmation_followup_report') { ?>
+				<?php include "include/templates/confirmation_followup_report.php" ?>
 			<?php } else ?>
 
 			<!-- Agent Report -->
@@ -475,28 +486,30 @@ if (isset($getuserdetails['download_access'])) {
 			<?php if ($current_page == 'no_due_pay_report') { ?>
 				<?php include "include/templates/no_due_pay_report.php" ?>
 			<?php } else ?>
+
 			<!-- Other Transaction Report -->
 			<?php if ($current_page == 'other_transaction_report') { ?>
 				<?php include "include/templates/other_transaction_report.php" ?>
 			<?php } else ?>
-			<!-- Day End Report -->
-			<?php if ($current_page == 'day_end_report') { ?>
-				<?php include "include/templates/day_end_report.php" ?>
-			<?php } else ?>
 			
-			<!-- Pending OD Report -->
-			<?php if ($current_page == 'pending_od_report') { ?>
-				<?php include "include/templates/pending_od_report.php" ?>
-			<?php } else ?>
-
 			<!-- due_followup_customer_count_report -->
 			<?php if ($current_page == 'due_followup_customer_count_report') { ?>
 				<?php include "include/templates/due_followup_customer_count_report.php" ?>
 			<?php } else ?>
 
-			<!-- Due List -->
-			<?php if ($current_page == 'due_list_report') { ?>
-				<?php include "include/templates/due_list_report.php" ?>
+			<!-- Day End Report -->
+			<?php if ($current_page == 'day_end_report') { ?>
+				<?php include "include/templates/day_end_report.php" ?>
+			<?php } else ?>
+
+			<!-- Commitment Report -->
+			<?php if ($current_page == 'commitment_report') { ?>
+				<?php include "include/templates/commitment_report.php" ?>
+			<?php } else ?>
+
+			<!-- Pending OD Report -->
+			<?php if ($current_page == 'pending_od_report') { ?>
+				<?php include "include/templates/pending_od_report.php" ?>
 			<?php } else ?>
 
 			<!-- Search Module -->

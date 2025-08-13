@@ -67,8 +67,7 @@ else if ($current_page == 'edit_concern_creation' || $current_page == 'edit_conc
 	$current_module = 'followup';
 } else if (
 	$current_page == 'ledger_report' || $current_page == 'request_report' || $current_page == 'cancel_revoke_report' ||  $current_page == 'cus_profile_report' || $current_page == 'loan_issue_report'
-	|| $current_page == 'collection_report' ||$current_page == 'principal_interest_report' || $current_page == 'balance_report' || $current_page == 'due_list_report' || $current_page == 'in_closed_report' || $current_page == 'closed_report' || $current_page == 'confirmation_followup_report' || $current_page == 'agent_report'|| $current_page == 'no_due_pay_report' || $current_page == 'other_transaction_report' || $current_page == 'day_end_report' 
-	|| $current_page == 'due_followup_customer_count_report'
+	|| $current_page == 'collection_report' ||$current_page == 'principal_interest_report' || $current_page == 'balance_report' || $current_page == 'due_list_report' || $current_page == 'in_closed_report' || $current_page == 'closed_report' || $current_page == 'confirmation_followup_report' || $current_page == 'agent_report'|| $current_page == 'no_due_pay_report' || $current_page == 'other_transaction_report' || $current_page == 'due_followup_customer_count_report' || $current_page == 'day_end_report' || $current_page == 'commitment_report'
 ) {
 
 	$current_module = 'report';
@@ -192,6 +191,7 @@ $no_due_pay_report = '';
 $other_transaction_report = '';
 $day_end_report = '';
 $due_followup_customer_count_report = '';
+$commitment_report = '';
 $search_module = '';
 $search = '';
 $bulk_upload_module = '';
@@ -285,8 +285,9 @@ if (sizeof($getUser) > 0) {
 		$agent_report          		     = $getUser['agent_report'];
 		$no_due_pay_report          		     = $getUser['no_due_pay_report'];
 		$other_transaction_report          		     = $getUser['other_trans_report'];
-		$day_end_report          		     = $getUser['day_end_report'];
 		$due_followup_customer_count_report  = $getUser['due_followup_customer_count_report'];
+		$day_end_report          		     = $getUser['day_end_report'];
+		$commitment_report  = $getUser['commitment_report'];
 
 		$search_module          		     = $getUser['search_module'];
 		$search          		     = $getUser['search'];
@@ -867,6 +868,11 @@ if (sizeof($getUser) > 0) {
 										<a href="balance_report"><i class='icon-area-graph'></i>Balance</a>
 									</li>
 								<?php  } ?>
+								<?php if ($due_list_report == 0) { ?>
+									<li>
+										<a href="due_list_report"><i class='icon-area-graph'></i>Due List</a>
+									</li>
+								<?php  } ?>
 								<?php if ($in_closed_report == 0) { ?>
 									<li>
 										<a href="in_closed_report"><i class='icon-area-graph'></i>In Closed</a>
@@ -887,11 +893,6 @@ if (sizeof($getUser) > 0) {
 										<a href="agent_report"><i class='icon-area-graph'></i>Agent</a>
 									</li>
 								<?php  } ?>
-								<?php if ($due_list_report == 0) { ?>
-									<li>
-										<a href="due_list_report"><i class='icon-area-graph'></i>Due List</a>
-									</li>
-								<?php  } ?>
 								<?php if ($no_due_pay_report == 0) { ?>
 									<li>
 										<a href="no_due_pay_report"><i class='icon-area-graph'></i>No Due Pay</a>
@@ -902,11 +903,6 @@ if (sizeof($getUser) > 0) {
 										<a href="other_transaction_report"><i class='icon-area-graph'></i>Other Transaction</a>
 									</li>
 								<?php  } ?>
-								<?php if ($day_end_report == 0) { ?>
-									<li>
-										<a href="day_end_report"><i class='icon-area-graph'></i>Day End Report</a>
-									</li>
-								<?php  } ?>
 								<?php if ($due_followup_customer_count_report == 0) { ?>
 									<li>
 										<a href="due_followup_customer_count_report"><i class='icon-area-graph'></i>Due Followup Customer Count</a>
@@ -914,9 +910,19 @@ if (sizeof($getUser) > 0) {
 								<?php  } ?>
 								<?php if ($day_end_report == 0) { ?>
 									<li>
+										<a href="day_end_report"><i class='icon-area-graph'></i>Day End Report</a>
+									</li>
+								<?php  } ?>
+								<?php if ($commitment_report == 0) { ?>
+									<li>
+										<a href="commitment_report"><i class='icon-area-graph'></i>Commitment Report</a>
+									</li>
+								<?php  } ?>    
+								<?php if ($day_end_report == 0) { ?>
+									<li>
 										<a href="pending_od_report"><i class='icon-area-graph'></i>Pending-OD Report</a>
 									</li>
-								<?php  } ?>                    
+								<?php  } ?>                  
 							</ul>
 						</div>
 					</li>
@@ -1083,8 +1089,9 @@ $confirmation_followup_report = '';
 $agent_report = '';
 $no_due_pay_report = '';
 $other_transaction_report = '';
-$day_end_report = '';
 $due_followup_customer_count_report = '';
+$day_end_report = '';
+$commitment_report = '';
 $search_module = '';
 $search = '';
 $bulk_upload_module = '';
