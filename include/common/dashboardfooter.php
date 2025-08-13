@@ -1338,6 +1338,12 @@
     if ($current_page == 'principal_interest_report') { ?>
         <script src="js/principal_interest_report.js"></script>
     <?php }
+    if ($current_page == 'balance_report') { ?>
+        <script src="js/balance_report.js"></script>
+    <?php }
+    if ($current_page == 'due_list_report') { ?>
+        <script src="js/due_list_report.js"></script>
+    <?php }
     if ($current_page == 'in_closed_report') { ?>
         <script src="js/in_closed_report.js"></script>
     <?php }
@@ -1346,9 +1352,6 @@
     <?php }
     if ($current_page == 'confirmation_followup_report') { ?>
         <script src="js/confirmation_followup_report.js"></script>
-    <?php }
-    if ($current_page == 'balance_report') { ?>
-        <script src="js/balance_report.js"></script>
     <?php }
     if ($current_page == 'agent_report') { ?>
         <script src="js/agent_report.js"></script>
@@ -1359,18 +1362,19 @@
     if ($current_page == 'other_transaction_report') { ?>
         <script src="js/other_transaction_report.js"></script>
     <?php }
-    if ($current_page == 'day_end_report') { ?>
-        <script src="js/day_end_report.js"></script>
-    <?php }
     if ($current_page == 'due_followup_customer_count_report') { ?>
         <script src="js/due_followup_customer_count_report.js"></script>
     <?php }
-        if ($current_page == 'pending_od_report') { ?>
+    if ($current_page == 'day_end_report') { ?>
+        <script src="js/day_end_report.js"></script>
+    <?php }
+    if ($current_page == 'commitment_report') { ?>
+        <script src="js/commitment_report.js"></script>
+    <?php }
+    if ($current_page == 'pending_od_report') { ?>
         <script src="js/pending_od_report.js"></script>
     <?php }
-    if ($current_page == 'due_list_report') { ?>
-        <script src="js/due_list_report.js"></script>
-    <?php }
+    
     if ($current_page == 'search_module') { ?>
         <script src="js/search_module.js"></script>
     <?php }
