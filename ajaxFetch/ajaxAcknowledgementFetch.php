@@ -137,8 +137,28 @@ foreach ($result as $row) {
     $sub_array[] = $row['sub_category'];
 
     $sub_array[] = moneyFormatIndia($row['loan_amt']);
-    $sub_array[] = $row['user_type'];
-    $sub_array[] = $row['user_name'];
+
+    $req_id = $row['req_id'];
+
+    $qry = $connect->query("SELECT u.role AS user_type, u.fullname AS user_name
+    FROM verification_loan_calculation v
+    LEFT JOIN user u ON u.user_id = v.insert_login_id
+    WHERE v.req_id = $req_id");
+
+    $row1 = $qry->fetch(PDO::FETCH_ASSOC);
+
+    if (isset($row1['user_type'])) {
+        if ($row1['user_type'] == '1') {
+            $user_type = 'Director';
+        } elseif ($row1['user_type'] == '2') {
+            $user_type = 'Agent';
+        } elseif ($row1['user_type'] == '3') {
+            $user_type = 'Staff';
+        }
+    }
+
+    $sub_array[] = $user_type ?? '';
+    $sub_array[] = $row1['user_name'] ?? '';
 
     $ag_id = $row['agent_id'];
     if ($ag_id != '') {
@@ -150,9 +170,9 @@ foreach ($result as $row) {
         $sub_array[] = '';
     }
 
-     if ($row['responsible'] == '0') {
+    if ($row['responsible'] == '0') {
         $sub_array[] = 'Yes';
-    }else if (!empty($ag_id) && $row['responsible'] != '0') {
+    } else if (!empty($ag_id) && $row['responsible'] != '0') {
         $sub_array[] = 'No';
     } else {
         $sub_array[] = '';

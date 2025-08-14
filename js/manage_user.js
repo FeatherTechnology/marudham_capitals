@@ -343,16 +343,7 @@ $(document).ready(function () {
             $('.bank_details').hide()
         }
     })
-    $('#due_followup').click(function () {
-        var due_followup = document.querySelector('#due_followup');
-        if (due_followup.checked) {
-            getdueFollupLineDropdown();
-            $('.due_followupline_div').show()
-        } else {
-            $('.due_followupline_div').hide()
-        }
-    })
-    
+
     $('#updatemodule').click(function () {
         var update_screen = document.querySelector('#updatemodule');
         if (!update_screen.checked) {
@@ -410,11 +401,7 @@ $(function () {
         getBankDetails();
         getProAccess();
 
-        var due_followup = document.querySelector('#due_followup');
-        if (due_followup.checked) {
-            getdueFollupLineDropdown();
-            $('.due_followupline_div').show()
-        }
+        getdueFollupLineDropdown();
 
         var update_screen = document.querySelector('#update');
         if (update_screen.checked) {
@@ -810,9 +797,6 @@ function getLineDropdown(branch_id) {
 // linedropdown in duefollowup
 function getdueFollupLineDropdown() {
     var dueFollowUp_upd = $('#due_followup_lines_upd').val().split(',');
-    if (dueFollowUp_upd != '') {
-        $('.due_followupline_div').show();
-    }
     
     $.ajax({
         url: 'manageUser/getDueFollowUpLineName.php',
@@ -1155,18 +1139,32 @@ function validation() {
         //     $('.bankdetailsCheck').hide();
         // }
     }
+
+    // validation for due followup
+
     var due_followup = document.querySelector('#due_followup');
-    var dueFollowupLine = dueFollowupLines.getValue();
-    if (!due_followup.checked) {
-        $('#due_follup_line_id').val('')
-    } else{
-         if(dueFollowupLine.length == 0){
-            event.preventDefault();
-            $('.due_followupline_div').show();
-            $('.duefollowupCheck').show();
-        }else{
-            $('.duefollowupCheck').hide();
-        }
+    var dueFollowupLine = dueFollowupLines.getValue(); // Assuming this returns an array
+
+    var hasError = false;
+
+    // Case 1: Checkbox checked but no lines selected
+    if (due_followup.checked && dueFollowupLine.length == 0) {
+        $('.duefollowupCheck').show();
+        hasError = true;
+    } else {
+        $('.duefollowupCheck').hide();
+    }
+
+    // Case 2: Lines selected but checkbox not checked
+    if (!due_followup.checked && dueFollowupLine.length > 0) {
+        $('.dueFollowupCheck').show(); 
+        hasError = true;
+    } else {
+        $('.dueFollowupCheck').hide();
+    }
+
+    if (hasError) {
+        event.preventDefault();
     }
 
     var update = document.querySelector('#update');
@@ -1183,16 +1181,61 @@ function validation() {
         }
     }
 
+
+    // validation for report
+
     var reportmodule = document.querySelector('#reportmodule');
-    if (!reportmodule.checked) {
-        $('#report_access').val('')
-    } else{
-        var reportAccess = $('#report_access').val();
-         if(reportAccess == ''){
-            event.preventDefault();
-            $('#reportAccessCheck').show();
-        }
+    var report_access = $('#report_access').val();
+
+    var hasError = false;
+
+    // Case 1: Checkbox checked but dropdown empty
+    if (reportmodule.checked && report_access == '') {
+        $('#reportAccessCheck').show();
+        hasError = true;
+    } else {
+        $('#reportAccessCheck').hide();
     }
+
+    // Case 2: Dropdown has value but checkbox not checked
+    if (!reportmodule.checked && report_access != '') {
+        $('.reportCheck').show();
+        hasError = true;
+    } else {
+        $('.reportCheck').hide();
+    }
+
+    if (hasError) {
+        event.preventDefault();
+    }
+
+    // validtaion for promotion activity
+
+    var promotion_activity = document.querySelector('#promotion_activity');
+    var promotion_activity_mapping_access = $('#promotion_activity_mapping_access').val();
+
+    var hasError = false;
+
+    // Case 1: Checkbox checked but dropdown empty
+    if (promotion_activity.checked && promotion_activity_mapping_access == '') {
+        $('#proMapCheck').show();
+        hasError = true;
+    } else {
+        $('#proMapCheck').hide();
+    }
+
+    // Case 2: Dropdown has value but checkbox not checked
+    if (!promotion_activity.checked && promotion_activity_mapping_access != '') {
+        $('.promotionActivityCheck').show();
+        hasError = true;
+    } else {
+        $('.promotionActivityCheck').hide();
+    }
+
+    if (hasError) {
+        event.preventDefault();
+    }
+
 
 }
 
