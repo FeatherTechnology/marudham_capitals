@@ -21,6 +21,7 @@ $group_id           = '';
 $download_access = '';
 $report_access = '';
 $promotion_access = '';
+$promotion_activity_mapping_access = '';
 $mastermodule    = '';
 $company_creation      = '';
 $branch_creation = '';
@@ -164,6 +165,7 @@ if($idupd>0)
 			$download_access          		     = $getUser['download_access'];
 			$report_access          		     = $getUser['report_access'];
 			$promotion_access          		     = $getUser['promotion_access'];
+			$promotion_activity_mapping_access = $getUser['promotion_activity_mapping_access'];
 			$mastermodule          		     = $getUser['mastermodule'];
 			$company_creation          		     = $getUser['company_creation'];
 			$branch_creation          		     = $getUser['branch_creation'];
@@ -531,6 +533,7 @@ if($idupd>0)
 												<option value="1" <?php if($report_access == '1') echo 'selected';?> >Individual</option>
 												<option value="2" <?php if($report_access == '2') echo 'selected';?> >Overall</option>
 											</select>
+											<br>
 											<span class="text-danger" style='display:none' id='reportAccessCheck'>Please select Report Access</span>
 										</div>
 									</div>
@@ -545,6 +548,29 @@ if($idupd>0)
 												<option value="3">Repromotion</option>
 											</select>
 											<span class="text-danger" style='display:none' id='proCheck'>Please select Promotion Activity Access</span>
+                                        </div>
+                                    </div>
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 due_followupline_div">
+                                        <div class="form-group">
+                                            <label for="due_follup_lines">Due Followup lines</label>&nbsp;<span class="text-danger">*</span>
+								            <input type='hidden' id='due_follup_line_id' name='due_follup_line_id' value=''>
+                                            <select class='form-control' id='due_follup_lines' name='due_follup_lines' multiple>
+								        	    <option value="">Select Due Followup Lines</option>
+								            </select>
+								            <span class='text-danger duefollowupCheck' style="display:none">Please Select Due Followup Lines</span>
+                                        </div>
+                                    </div>
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label for="pro_aty_map_access_id">Promotion Activity Mapping Access</label>&nbsp;<span class="text-danger">*</span>
+											<select tabindex="10" type="text" class="form-control" id="promotion_activity_mapping_access" name="promotion_activity_mapping_access">
+												<option value="">Select Promotion Mapping Activity</option>
+												<option value="1" <?php if($promotion_activity_mapping_access == '1') echo 'selected';?> >Group</option>
+												<option value="2" <?php if($promotion_activity_mapping_access == '2') echo 'selected';?> >Line</option>
+												<option value="3" <?php if($promotion_activity_mapping_access == '3') echo 'selected';?> >Due Followup</option>
+											</select>
+											<br>
+											<span class="text-danger" style='display:none' id='proMapCheck'>Please select Promotion Activity Mapping Access</span>
                                         </div>
                                     </div>
 								</div>
@@ -982,7 +1008,8 @@ if($idupd>0)
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($promotion_activity==0){ echo'checked'; }} ?> tabindex="57" class="followup-checkbox" id="promotion_activity" name="promotion_activity" disabled>&nbsp;&nbsp;
-                                <label class="custom-control-label" for="promotion_activity">Promotion Activity</label>
+                                <label class="custom-control-label" for="promotion_activity">Promotion Activity</label>&nbsp;&nbsp;
+								<span class='text-danger promotionActivityCheck' style="display:none">Please Select Promotion Activity </span> 
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
@@ -1000,17 +1027,8 @@ if($idupd>0)
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($due_followup==0){ echo'checked'; }} ?> tabindex="60" class="followup-checkbox" id="due_followup" name="due_followup" disabled>&nbsp;&nbsp;
-                                <label class="custom-control-label" for="due_followup">Due Followup</label>
-                            </div>
-                        </div>
-						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 due_followupline_div"  style='display:none; margin-top: 15px;'>
-                            <div class="custom-control custom-checkbox">
-                                <label class="custom-control-label" for="due_follup_lines">Due Followup lines</label>
-								<input type='hidden' id='due_follup_line_id' name='due_follup_line_id' value=''>
-                                <select class='form-control' id='due_follup_lines' name='due_follup_lines' multiple>
-									<option value="">Select Due Followup Lines</option>
-								</select>
-								<span class='text-danger duefollowupCheck' style="display:none">Please Select Due Followup Lines</span>
+                                <label class="custom-control-label" for="due_followup">Due Followup</label>&nbsp;&nbsp;
+								<span class='text-danger dueFollowupCheck' style="display:none">Please Select Due Followup </span> 
                             </div>
                         </div>
 					</div>
@@ -1020,7 +1038,7 @@ if($idupd>0)
 					<div class="custom-control custom-checkbox">
 						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($reportmodule==0){ echo'checked'; }} ?> tabindex="61" class="" id="reportmodule" name="reportmodule" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="reportmodule">
-							<h5>Report</h5>
+							<h5>Report &nbsp;&nbsp;<span class='text-danger reportCheck' style="display:none;font-size:14px;font-weight:500">Please Select Report </span> </h5>
 						</label>
 					</div>
 					<br>
