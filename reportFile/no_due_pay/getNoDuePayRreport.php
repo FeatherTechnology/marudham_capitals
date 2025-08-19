@@ -47,10 +47,7 @@ if (isset($_POST['from_date']) && $_POST['from_date'] != '') {
         AND YEAR(coll.coll_date) = '" . $from_year . "' 
         AND MONTH(coll.coll_date) = '" . $from_month . "'
     ) 
-    AND (
-        (lc.maturity_month >= '$full_date' AND cs.bal_amnt > 0)
-        OR ii.cus_status = 14
-    ) AND lc.due_start_from <= '$full_date'  AND (lc.tot_amt_cal - IFNULL(col_sum.total_due_amt_tract, 0)) > 0";
+    AND lc.due_start_from <= '$full_date'  AND (lc.tot_amt_cal - IFNULL(col_sum.total_due_amt_tract, 0)) > 0";
 }
 
     $where  .= $user_based;
@@ -145,6 +142,14 @@ JOIN USER u ON
 WHERE
     ii.cus_status >= 14
 AND $where
+AND (
+(
+    (YEAR('$full_date') - YEAR(lc.due_start_from)) * 12 +
+    (MONTH('$full_date') - MONTH(lc.due_start_from)) + 1
+  ) * lc.due_amt_cal 
+- IFNULL(col_sum.total_due_amt_tract, 0)
+) > 0
+
 ";
 
 if (isset($_POST['search'])) {
@@ -205,14 +210,10 @@ foreach ($result as $row) {
         $end = strtotime($full_date);
         $start = strtotime($row['due_start_from']);
         $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
-
-        if(date('m', $end)==date('m', $start)){
-            $months -- ;
-        }
-         
+    
         if (($row['due_method_calc'] != 'Monthly' && $row['due_method_scheme'] != '1')  ) {
-            if((int)$start_date->format('d') > (int)$end_date->format('d')){
-            $months += 1;
+            if((date('d', $start) < date('d', $end)) && (date('m', $start) <= date('m', $end)) && (date('Y', $start) <= date('Y', $end)) ){
+                $months += 1;
             }
         }
         $pending_month = $months - 1;
@@ -274,6 +275,32 @@ foreach ($result as $row) {
     else {
         $sub_array[] = 'No Result';
     }
+
+    // month categorization logic
+    $months_diff = 0;
+    if ($row['due_amt_cal'] > 0) {
+        $months_diff = (int) ceil($payable_amount / $row['due_amt_cal']);
+    } 
+    $monthCols = [0, 0, 0, 0, 0, 0]; // one to above_five
+    if ($months_diff >= 6) {
+        $monthCols[5] = 1;
+    } elseif ($months_diff == 5) {
+        $monthCols[4] = 1;
+    } elseif ($months_diff == 4) {
+        $monthCols[3] = 1;
+    } elseif ($months_diff == 3) {
+        $monthCols[2] = 1;
+    } elseif ($months_diff == 2) {
+        $monthCols[1] = 1;
+    } elseif ($months_diff == 1) {
+        $monthCols[0] = 1;
+    }
+
+    foreach ($monthCols as $mc) {
+        $sub_array[] = $mc;
+    }
+
+    $sub_array[] = moneyFormatIndia(!empty($balance_amount) ? $balance_amount : 0);
 
     $data[]      = $sub_array;
     $sno = $sno + 1;

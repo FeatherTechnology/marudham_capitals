@@ -14,8 +14,8 @@
 		<!-- <div class="row gutters" id="collection_card"> -->
 		<div class="row gutters" id="report_card">
 			<div class="toggle-container col-12">
-			<input type="month" id="from_date" name="from_date" class="toggle-button" value="">
-			<input type="button" id="reset_btn" name="reset_btn" class="toggle-button" style="background-color: #009688; color: white" value="Reload">
+				<input type="month" id="from_date" name="from_date" class="toggle-button" value="">
+				<input type="button" id="reset_btn" name="reset_btn" class="toggle-button" style="background-color: #009688; color: white" value="Reload">
 			</div>
 			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 				<div class="card">
@@ -42,10 +42,17 @@
 									<th>Payable</th>
 									<th>Status</th>
 									<th>Sub Status</th>
+									<th>One Month</th>
+									<th>Two Month</th>
+									<th>Three Month</th>
+									<th>Four Month</th>
+									<th>Five Month</th>
+									<th>Above Five Month</th>
+									<th>Balance Amount</th>
 								</thead>
 								<tbody>
 								</tbody>
-								
+
 							</table>
 						</div>
 					</div>

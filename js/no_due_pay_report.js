@@ -25,7 +25,7 @@ function noDuePayReportTable(){
         dom: 'lBfrtip',
         buttons: [{
             extend: 'excel',
-            title: "Collection Report List"
+            title: "No Due Pay Report"
         },
         {
             extend: 'colvis',

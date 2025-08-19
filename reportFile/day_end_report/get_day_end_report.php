@@ -193,10 +193,10 @@ $expense_till_now = $h_till_now_hand_expense + $bank_total_expense;
             foreach ($bankData as $bank):
                 $total_loan_issue += $bank['loan_issue_on_date'];
             ?>
-                <td><?php echo moneyFormatIndia($bank['loan_issue_on_date']); ?></td>
+                <td><?php echo moneyFormatIndia(- $bank['loan_issue_on_date']); ?></td>
             <?php endforeach; ?>
-            <td><?php echo moneyFormatIndia($total_loan_issue); ?></td>
-            <td><?php echo moneyFormatIndia($loan_issue_till_now); ?></td>
+            <td><?php echo moneyFormatIndia(-$total_loan_issue); ?></td>
+            <td><?php echo moneyFormatIndia(-$loan_issue_till_now); ?></td>
         </tr>
 
         <tr>
@@ -222,10 +222,10 @@ $expense_till_now = $h_till_now_hand_expense + $bank_total_expense;
             foreach ($bankData as $bank):
                 $total_exp += $bank['bexpense_amt'];
             ?>
-                <td><?php echo moneyFormatIndia($bank['bexpense_amt']); ?></td>
+                <td><?php echo moneyFormatIndia(- $bank['bexpense_amt']); ?></td>
             <?php endforeach; ?>
-            <td><?php echo moneyFormatIndia($total_exp); ?></td>
-            <td><?php echo moneyFormatIndia($expense_till_now); ?></td>
+            <td><?php echo moneyFormatIndia(-$total_exp); ?></td>
+            <td><?php echo moneyFormatIndia(-$expense_till_now); ?></td>
         </tr>
     </tbody>
 
@@ -346,7 +346,7 @@ function getOpeningBalance($connect, $op_date, $bank_detail)
     $agentDebit = $agentDebitQry->fetch()['agent_debit'];
 
     $agent_hand_op = intval($agentCredit) - intval($agentDebit);
-    $record['hand_opening'] -= abs($agent_hand_op);
+    $record['hand_opening'] -= -$agent_hand_op;
 
     // BANK OPENING (Dynamic)
     $bank_details_arr = explode(',', $bank_detail);
