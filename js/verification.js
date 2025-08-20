@@ -2518,6 +2518,9 @@ $("#proofof").change(function () {
       { req_id, cus_id, proof },
       function (response) {
         $(".name_div").show();
+        if(proof =='1' && !response){
+          response = $('#guarentor_name :selected').text();  
+        }
         $("#proofofname").val(response);
       },
       "json"
@@ -3774,34 +3777,50 @@ function validation(submit_btn, event) {
     $("#aboutcusCheck").hide();
   }
 
-  $.ajax({
-    url: "verificationFile/validateModals.php",
-    data: { cus_id: cus_id, table: "verification_family_info" },
-    type: "post",
-    cache: false,
-    success: function (response) {
-      if (response == "0") {
-        event.preventDefault();
-        $("#family_infoCheck").show();
-      } else if (response == "1") {
-        $("#family_infoCheck").hide();
-      }
-    },
-  });
-  $.ajax({
-    url: "verificationFile/validateModals.php",
-    data: { cus_id: cus_id, table: "verification_kyc_info" },
-    type: "post",
-    cache: false,
-    success: function (response) {
-      if (response == "0") {
-        event.preventDefault();
-        $("#kyc_infoCheck").show();
-      } else if (response == "1") {
-        $("#kyc_infoCheck").hide();
-      }
-    },
-  });
+  let famCnt = $("#famTable").DataTable().rows().count();
+  if(famCnt == 0 ){
+    event.preventDefault();
+    $("#kyc_infoCheck").show();
+  } else {
+    $("#kyc_infoCheck").hide();
+  }
+
+  let kycCnt = $("#kyc_dataTable").DataTable().rows().count();
+  if(kycCnt == 0 ){
+    event.preventDefault();
+    $("#kyc_infoCheck").show();
+  } else {
+    $("#kyc_infoCheck").hide();
+  }
+
+  // $.ajax({
+  //   url: "verificationFile/validateModals.php",
+  //   data: { cus_id: cus_id, table: "verification_family_info" },
+  //   type: "post",
+  //   cache: false,
+  //   success: function (response) {
+  //     if (response == "0") {
+  //       event.preventDefault();
+  //       $("#family_infoCheck").show();
+  //     } else if (response == "1") {
+  //       $("#family_infoCheck").hide();
+  //     }
+  //   },
+  // });
+  // $.ajax({
+  //   url: "verificationFile/validateModals.php",
+  //   data: { cus_id: cus_id, table: "verification_kyc_info" },
+  //   type: "post",
+  //   cache: false,
+  //   success: function (response) {
+  //     if (response == "0") {
+  //       event.preventDefault();
+  //       $("#kyc_infoCheck").show();
+  //     } else if (response == "1") {
+  //       $("#kyc_infoCheck").hide();
+  //     }
+  //   },
+  // });
 
   submit_btn.removeAttr("disabled");
 }

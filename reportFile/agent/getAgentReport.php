@@ -55,7 +55,7 @@ $query = "SELECT * FROM (
         c.agent_id AS ag_id, 
         DATE(c.created_date) as tdate, 
         '' AS coll_amt, 
-        c.cash + c.cheque_value + c.transaction_value AS netcash, 
+        (COALESCE(c.cash, 0) + COALESCE(c.cheque_value, 0) + COALESCE(c.transaction_value, 0)) AS netcash, 
         '' AS Credit, 
         '' AS Debit 
     FROM 
