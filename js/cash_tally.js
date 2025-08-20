@@ -262,7 +262,7 @@ $(document).ready(function () {
         $('#blncSheetDiv').empty();
         $('#IDE_Div').show();
         $('.IDE_nameDiv').hide();
-        $('#IDE_view_type').val(''); 
+        $('#IDE_view_type').val('');
         $('#IDE_name_list').val('');
 
         let IDE_type_arr = { 1: 'inv', 2: 'dep', 3: 'el' };
@@ -338,7 +338,7 @@ $(document).ready(function () {
     })
 
     $('#submit_untracked').click(function () {
-       var bank_id = $('#bank_id_untracked').val(); var amt = $('#untracked_amt').val();
+        var bank_id = $('#bank_id_untracked').val(); var amt = $('#untracked_amt').val();
         if (bank_id != '' && amt != '') {
             $('#closeUntracked').trigger('click');
             $('#bank_id_untracked').val(''); $('#untracked_amt').val('')
@@ -389,7 +389,7 @@ function getOpeningDate() {
 function getOpeningBalance() {
     var op_date = $('#op_date').text();
     var bank_detail = $('#user_bank_details').val();
-    var oldclosingbal = $('#oldclosingbal').val().replace(/,/g,'');
+    var oldclosingbal = $('#oldclosingbal').val().replace(/,/g, '');
     var bank_detail_arr = $('#user_bank_details').val().split(',');
     $.ajax({
         url: 'accountsFile/cashtally/getOpeningBalance.php',
@@ -438,13 +438,13 @@ function getClosingBalance() {
         dataType: 'json',
         cache: false,
         success: function (response) {
-             var closing = parseInt(response[0]['closing_balance']);
+            var closing = parseInt(response[0]['closing_balance']);
             $('#hand_closing').text(moneyFormatIndia(response[0]['hand_closing']))
             var i = 0;
             let bankCash = 0;
             $.each(response, function (index, item) {
                 $('#bank_closing' + i).text(moneyFormatIndia(item['bank_closing']))
-                bankCash +=item['bank_closing'];
+                bankCash += item['bank_closing'];
                 i++;
             })
             $('#agent_closing').text(moneyFormatIndia(response[0]['agent_closing']));
@@ -851,11 +851,12 @@ function getCollectionDetails() {
 function collectBtnClick(button) {
     var user_id = $(button).data('value');
     var branch_id = $(button).data('id');
+    var line_id = $(button).data('line');
     var op_date = $('#op_date').text();
     var user_branch_id = $('#user_branch_id').val();
     $.ajax({
         url: 'accountsFile/cashtally/receiveAmtModal.php',
-        data: { 'user_id': user_id, 'branch_id': branch_id, 'op_date': op_date, 'user_branch_id': user_branch_id },
+        data: { 'user_id': user_id, 'branch_id': branch_id, 'op_date': op_date, 'user_branch_id': user_branch_id, 'line_id': line_id },
         type: 'post',
         cache: false,
         success: function (response) {
@@ -888,11 +889,12 @@ function collectBtnClick(button) {
                                 if (result.isConfirmed) {
                                     var user_id = $('#user_id_rec').val();
                                     var branch_id = $('#branch_id_rec').val();
+                                    var line_id = $('#line_id_rec').val();
                                     var op_date = $('#op_date').text();
                                     var user_branch_id = $('#user_branch_id').val();
                                     $.ajax({
                                         url: 'accountsFile/cashtally/receiveAmtModal.php',
-                                        data: { 'user_id': user_id, 'branch_id': branch_id,'op_date': op_date, 'user_branch_id': user_branch_id },
+                                        data: { 'user_id': user_id, 'branch_id': branch_id, 'op_date': op_date, 'user_branch_id': user_branch_id, 'line_id': line_id },
                                         type: 'post',
                                         cache: false,
                                         success: function (response) {
@@ -1540,7 +1542,7 @@ function getIDEBalanceSheet() {
     })
 }
 
-function getNameBasedDetails(){
+function getNameBasedDetails() {
     // to get name detail creation table 
     let opt_for = $('#opt_for').val();
     $.ajax({
@@ -1558,10 +1560,10 @@ function getNameBasedDetails(){
 
             $('#IDE_name_list').change(function () {
                 var name_id = $(this).val();// get the name table id
-                if(!name_id){
+                if (!name_id) {
                     $('#IDE_name_area').val('');
-                    
-                }else{
+
+                } else {
                     $.each(response, function (index, item) {
                         if (name_id == item['name_id']) {
                             $('#IDE_name_area').val(item['area']);
@@ -1570,7 +1572,7 @@ function getNameBasedDetails(){
                 }
 
             });//IDE Name list change END.
-            
+
         }
     });
 }
@@ -1579,10 +1581,10 @@ function getAgBalancesheet() {
     var view_type = $('#ag_view_type').val();//overall/Agent wise
     var ag_name = $('#ag_namewise').val();//show by agent name wise
     var sheet_type = $('#sheet_type').val();
-
+    var op_date = $('#op_date').text();
     $.ajax({
         url: 'accountsFile/cashtally/contra/getBalanceSheet.php',
-        data: { 'sheet_type': sheet_type, 'ag_view_type': view_type, 'ag_name': ag_name },
+        data: { 'sheet_type': sheet_type, 'ag_view_type': view_type, 'ag_name': ag_name, 'op_date': op_date },
         type: 'post',
         cache: false,
         success: function (response) {
@@ -2388,7 +2390,7 @@ function getBissuedTable() {
             $('#issuedDiv').html(response);
         }
     }).then(function () {
-         $(document).on('click', '.bissued_btn', function (){
+        $(document).on('click', '.bissued_btn', function () {
             var user_id = $(this).data('value');
             var li_id = $(this).data('id');
             $.ajax({
@@ -2602,9 +2604,9 @@ function hexpenseModalBtnClick() {
                 $("#cat_hexp").prepend(firstOption);
             }
         }
-    }).then(function(){
+    }).then(function () {
         //Auto Generate Voucher ID.
-        $.post('accountsFile/cashtally/expense/autoGenerateVoucherId.php',{},function(response){
+        $.post('accountsFile/cashtally/expense/autoGenerateVoucherId.php', {}, function (response) {
             $('#vou_id_hexp').val(response);
         }, 'json');
 
@@ -3152,8 +3154,11 @@ async function hinvvalidation(type) {
     var name = $('#name_hinv').val(); var remark = $('#remark_hinv').val(); var amt = $('#amt_hinv').val(); var response = 0;
     if (name == '') { event.preventDefault(); $('#name_hinvCheck').show(); response = 1; } else { $('#name_hinvCheck').hide(); }
     if (remark == '') { event.preventDefault(); $('#remark_hinvCheck').show(); response = 1; } else { $('#remark_hinvCheck').hide(); }
-    if (amt == '') { event.preventDefault(); $('#amt_hinvCheck').show(); response = 1; } else { $('#amt_hinvCheck').hide(); if (type == 'db' && name != '') { response = await validateNamedHandCash(name, amt, 'amt_hinv', 'inv');  
-    } }
+    if (amt == '') { event.preventDefault(); $('#amt_hinvCheck').show(); response = 1; } else {
+        $('#amt_hinvCheck').hide(); if (type == 'db' && name != '') {
+            response = await validateNamedHandCash(name, amt, 'amt_hinv', 'inv');
+        }
+    }
 
     return response;
 }
@@ -3374,7 +3379,7 @@ async function binvvalidation(type) {
     if (name == '') { event.preventDefault(); $('#name_binvCheck').show(); response = 1; } else { $('#name_binvCheck').hide(); }
     if (trans_id == '') { event.preventDefault(); $('#trans_id_binvCheck').show(); response = 1; } else { $('#trans_id_binvCheck').hide(); }
     if (remark == '') { event.preventDefault(); $('#remark_binvCheck').show(); response = 1; } else { $('#remark_binvCheck').hide(); }
-    if (amt == '') { event.preventDefault(); $('#amt_binvCheck').show(); response = 1; } else { $('#amt_binvCheck').hide(); if (type == 'db' && name != '') { response = await validateNamedBankCash(name, amt, 'amt_binv', 'inv');  } }
+    if (amt == '') { event.preventDefault(); $('#amt_binvCheck').show(); response = 1; } else { $('#amt_binvCheck').hide(); if (type == 'db' && name != '') { response = await validateNamedBankCash(name, amt, 'amt_binv', 'inv'); } }
 
     return response;
 }
@@ -3577,8 +3582,11 @@ async function hdepvalidation(type) {
     var name = $('#name_hdep').val(); var remark = $('#remark_hdep').val(); var amt = $('#amt_hdep').val(); var response = 0;
     if (name == '') { event.preventDefault(); $('#name_hdepCheck').show(); response = 1; } else { $('#name_hdepCheck').hide(); }
     if (remark == '') { event.preventDefault(); $('#remark_hdepCheck').show(); response = 1; } else { $('#remark_hdepCheck').hide(); }
-    if (amt == '') { event.preventDefault(); $('#amt_hdepCheck').show(); response = 1; } else { $('#amt_hdepCheck').hide(); if (type == 'db' && name != '') { response = await validateNamedHandCash(name, amt, 'amt_hdep', 'dep');
-     } }
+    if (amt == '') { event.preventDefault(); $('#amt_hdepCheck').show(); response = 1; } else {
+        $('#amt_hdepCheck').hide(); if (type == 'db' && name != '') {
+            response = await validateNamedHandCash(name, amt, 'amt_hdep', 'dep');
+        }
+    }
 
     return response;
 }
@@ -3654,7 +3662,7 @@ function getCBDepDetails() {
     getBdepositRefcode();//to get the reference code for bank Deposit
 
     $('#submit_bdeposit').click(async function () { //cr bank cash
-        if (await bdepositvalidation('cr') == 0) { 
+        if (await bdepositvalidation('cr') == 0) {
             var ref_code = $('#ref_code_bdeposit').val(); var name = $('#name_bdeposit').val(); var area = $('#area_bdeposit').val(); var ident = $('#ident_bdeposit').val();
             var trans_id = $('#trans_id_bdeposit').val(); var remark = $('#remark_bdeposit').val(); var amt = $('#amt_bdeposit').val(); var bank_id = $('input[name=cash_type]:checked').val(); var op_date = $('#op_date').text();
 
@@ -4001,7 +4009,7 @@ async function helvalidation() {
     let cash_type = $('#credit_type').val() != '' ? 'crel' : 'dbel';
     if (name == '') { event.preventDefault(); $('#name_helCheck').show(); response = 1; } else { $('#name_helCheck').hide(); }
     if (remark == '') { event.preventDefault(); $('#remark_helCheck').show(); response = 1; } else { $('#remark_helCheck').hide(); }
-    if (amt == '') { event.preventDefault(); $('#amt_helCheck').show(); response = 1; } else { $('#amt_helCheck').hide();  response = await validateNamedHandCash(name, amt, 'amt_hel', cash_type); }
+    if (amt == '') { event.preventDefault(); $('#amt_helCheck').show(); response = 1; } else { $('#amt_helCheck').hide(); response = await validateNamedHandCash(name, amt, 'amt_hel', cash_type); }
 
     return response;
 }
@@ -4986,7 +4994,7 @@ function validateBankCash(amt) {
 
     if (cash_type) {
         // Extract bank IDs from hidden input
-        var raw_ids = $('#untrkd_ids').val().split(','); 
+        var raw_ids = $('#untrkd_ids').val().split(',');
         var bank_ids = raw_ids.filter(id => id.trim() !== '').map(id => id.replace('untrkd', ''));
         // Find the index of the selected bank ID
         var index = bank_ids.indexOf(cash_type);
