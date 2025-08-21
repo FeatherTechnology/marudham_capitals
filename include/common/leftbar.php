@@ -801,11 +801,11 @@ if (sizeof($getUser) > 0) {
 										<a href="promotion_activity"><i class='icon-change_history'></i>Promotion Activity</a>
 									</li>
 								<?php  } ?>
-								<!-- <?php if ($loan_followup == 0) { ?>
+								<?php if ($loan_followup == 0) { ?>
 									<li>
 										<a href="loan_followup"><i class='icon-chat_bubble_outline'></i>Loan Follow Up</a>
 									</li>
-								<?php  } ?> -->
+								<?php  } ?>
 								<?php if ($confirmation_followup == 0) { ?>
 									<li>
 										<a href="confirmation_followup"><i class='icon-laptop'></i>Confirmation Follow Up</a>
