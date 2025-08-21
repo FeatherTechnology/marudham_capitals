@@ -23,10 +23,14 @@ while ($row = $ag_userid_qry->fetch()) {
 $ag_user_id = implode(',', $ids);
 
 $column = array(
+    'ac.ag_id',
+    'ac.ag_name',
     'tdate',
-    'ag_name',
+    'coll_amt',
     'created_date',
-    'total_paid_track'
+    'netcash',
+    'Credit',
+    'Debit',
 );
 
 $query = "SELECT * FROM (
@@ -55,7 +59,7 @@ $query = "SELECT * FROM (
         c.agent_id AS ag_id, 
         DATE(c.created_date) as tdate, 
         '' AS coll_amt, 
-        c.cash + c.cheque_value + c.transaction_value AS netcash, 
+        (COALESCE(c.cash, 0) + COALESCE(c.cheque_value, 0) + COALESCE(c.transaction_value, 0)) AS netcash, 
         '' AS Credit, 
         '' AS Debit 
     FROM 

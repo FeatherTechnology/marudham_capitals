@@ -31,6 +31,7 @@
                                     <th>Cust. ID</th>
                                     <th>Created Date</th>
                                     <th>Time</th>
+                                    <th>Area</th>
                                     <th>Follow Type</th>
                                     <th>Follow Up Status</th>
                                     <th>Follow Person Type</th>

@@ -2638,7 +2638,7 @@ function getDocumentHistory() {
         type: 'post',
         cache: false,
         success: function (response) {
-            // if(response.DESCRIPTION != null ){//check json response is not empty
+            if(response.DESCRIPTION != null ){//check json response is not empty
 
 
             for (var i = 0; i < response['pending_customer'].length; i++) {
@@ -2657,7 +2657,7 @@ function getDocumentHistory() {
             var closed_sts = closed_arr.join(',');
             $('#closed_sts').val(closed_sts);
             balAmnt = balAmnt.join(',');
-            // }
+            }
         }
     }).then(function () {
         var pending_sts = $('#pending_sts').val()
