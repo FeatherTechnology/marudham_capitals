@@ -4073,17 +4073,18 @@ class admin
 			$pic_req = $_POST['cus_image'];
 
 			$customer_path = "uploads/request/customer/{$pic_req}";
-			$verification_path = "uploads/verification/customer/{$pic_req}";
+			// $verification_path = "uploads/verification/customer/{$pic_req}";
 
 			// Check and delete the customer image file if it exists
 			if (file_exists($customer_path) && is_file($customer_path)) {
 				unlink($customer_path);
 			}
 
+			//"uploads/verification/customer/" commented Because no need to upload same image in both folder instead get it in request itself to restrict duplicate and reduce project folder size.
 			// Check and delete the verification image file if it exists
-			if (file_exists($verification_path) && is_file($verification_path)) {
-				unlink($verification_path);
-			}
+			// if (file_exists($verification_path) && is_file($verification_path)) {
+			// 	unlink($verification_path);
+			// }
 
 			// Get the original filename and temporary path of the uploaded file
 			$pic = $_FILES['pic']['name'];
@@ -4101,7 +4102,7 @@ class admin
 			}
 			// Move the uploaded file to the request folder with the new unique filename
 			move_uploaded_file($pic_temp, "uploads/request/customer/{$pic_req}");
-			copy("uploads/request/customer/{$pic_req}", "uploads/verification/customer/{$pic_req}");
+			// copy("uploads/request/customer/{$pic_req}", "uploads/verification/customer/{$pic_req}");
 		} else {
 			// If no file was uploaded, use the existing image filename
 			$pic_req = $_POST['cus_image'];
@@ -6932,11 +6933,13 @@ class admin
 			$spouse_name = $_POST['spouse_name'];
 		}
 
+		//"uploads/verification/customer/" commented Because no need to upload same image in both folder instead get it in request itself to restrict duplicate and reduce project folder size.
+
 		if (!empty($_FILES['pic']['name'])) {
 			$oldPic = $_POST['cus_image'];
 			if ($oldPic != '') {
 				unlink("uploads/request/customer/" . $oldPic); //delete old pic
-				unlink("uploads/verification/customer/" . $oldPic); //delete old pic
+				// unlink("uploads/verification/customer/" . $oldPic); //delete old pic
 			}
 
 			// Get the original filename and temporary path of the uploaded file
@@ -6955,7 +6958,7 @@ class admin
 			}
 			// Move the uploaded file to the request folder with the new unique filename
 			move_uploaded_file($pic_temp, "uploads/request/customer/{$cus_pic}");
-			copy("uploads/request/customer/{$cus_pic}", "uploads/verification/customer/{$cus_pic}");
+			// copy("uploads/request/customer/{$cus_pic}", "uploads/verification/customer/{$cus_pic}");
 		} else {
 			$cus_pic = $_POST['cus_image'];
 		}

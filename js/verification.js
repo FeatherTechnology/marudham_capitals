@@ -2518,9 +2518,6 @@ $("#proofof").change(function () {
       { req_id, cus_id, proof },
       function (response) {
         $(".name_div").show();
-        if(proof =='1' && !response){
-          response = $('#guarentor_name :selected').text();  
-        }
         $("#proofofname").val(response);
       },
       "json"

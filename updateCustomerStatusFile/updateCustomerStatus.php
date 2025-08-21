@@ -80,7 +80,7 @@ if (date('Y-m-d', strtotime($row['due_start_from'])) > date('Y-m-d', strtotime($
             $sub_sts = 'Legal';
         } else {
             if ($closed_sts == 'true') {
-                $sub_sts = "Move To Close";
+                $sub_sts = "Closed";
             } else {
                 $sub_sts = 'Current';
             }

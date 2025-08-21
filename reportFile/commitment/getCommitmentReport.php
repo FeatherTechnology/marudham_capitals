@@ -25,11 +25,11 @@ $fstatus = [1 => 'Commitment', 2 => 'Unavailable', 3 => 'RNR', 4 => 'Not Reachab
 $per_type_arr = [1 => 'Customer', 2 => 'Guarantor', 3 => 'Family Member'];
 
 $column = array(
-    'c.created_date',
+    'c.id',
     'c.cus_id',
     'c.created_date',
+    'c.created_date',
     'alc.area_name',
-    'c.id',
     'c.ftype',
     'c.fstatus',
     'c.person_type',
@@ -65,7 +65,7 @@ LEFT JOIN
 JOIN 
     acknowlegement_customer_profile cp ON c.req_id = cp.req_id
 JOIN 
-    area_list_creation alc ON cp.area_confirm_area = alc.area_id    
+    area_list_creation alc ON cp.area_confirm_area = alc.area_id   
 WHERE 1
     $where";
 

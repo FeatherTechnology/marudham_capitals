@@ -23,10 +23,14 @@ while ($row = $ag_userid_qry->fetch()) {
 $ag_user_id = implode(',', $ids);
 
 $column = array(
+    'ac.ag_id',
+    'ac.ag_name',
     'tdate',
-    'ag_name',
+    'coll_amt',
     'created_date',
-    'total_paid_track'
+    'netcash',
+    'Credit',
+    'Debit',
 );
 
 $query = "SELECT * FROM (
