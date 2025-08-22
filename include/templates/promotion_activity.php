@@ -250,13 +250,13 @@ if (sizeof($getUser) > 0) {
 </div>
 
 <!-- Modal for New promotion Customer -->
-<div class="modal fade" id="addnewcus" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="addnewcus" tabindex="-1" role="dialog">
 	<div class="modal-dialog modal-lg " role="document">
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
 				<h5 class="modal-title" id="exampleModalLongTitle">New Promotion</h5>
-				<button type="button" class="close" id="closeNewPromotionModal" data-dismiss="modal" aria-label="Close" onclick="resetNewPromotionTable()">
-					<span aria-hidden="true">&times;</span>
+				<button type="button" class="close" id="closeNewPromotionModal" data-dismiss="modal" onclick="resetNewPromotionTable()">
+					<span>&times;</span>
 				</button>
 			</div>
 			<div class="modal-body">
@@ -303,13 +303,13 @@ if (sizeof($getUser) > 0) {
 </div>
 
 <!-- Modal for promotion add -->
-<div class="modal fade" id="addPromotion" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="addPromotion" tabindex="-1" role="dialog">
 	<div class="modal-dialog modal-lg " role="document">
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
 				<h5 class="modal-title" id="exampleModalLongTitle">Add Promotion</h5>
-				<button type="button" class="close closeModal" id="closeAddPromotionModal" data-dismiss="modal" aria-label="Close" >
-					<span aria-hidden="true">&times;</span>
+				<button type="button" class="close closeModal" id="closeAddPromotionModal" data-dismiss="modal">
+					<span>&times;</span>
 				</button>
 			</div>
 			<div class="modal-body">
@@ -367,13 +367,13 @@ if (sizeof($getUser) > 0) {
 </div>
 
 <!-- Modal for promotion Chart just view table   -->
-<div class="modal fade" id="promoChartModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="promoChartModal" tabindex="-1" role="dialog">
 	<div class="modal-dialog modal-lg " role="document">
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
 				<h5 class="modal-title" id="exampleModalLongTitle">Promotion Chart</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
+				<button type="button" class="close" data-dismiss="modal">
+					<span>&times;</span>
 				</button>
 			</div>
 			<div class="modal-body">
@@ -394,13 +394,13 @@ if (sizeof($getUser) > 0) {
 </div>
 
 <!-- Modal for Personal Info   -->
-<div class="modal fade" id="personalInfoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="personalInfoModal" tabindex="-1" role="dialog">
 	<div class="modal-dialog modal-lg " role="document">
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
 				<h5 class="modal-title" id="exampleModalLongTitle">Personal Info</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
+				<button type="button" class="close" data-dismiss="modal">
+					<span>&times;</span>
 				</button>
 			</div>
 			<div class="modal-body">

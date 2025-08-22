@@ -32,46 +32,44 @@ $column = array(
     'rc.cus_id',
     'rc.cus_name',
     'rc.mobile1',
+    'cr.area_confirm_area',
     'rc.req_id',
-    'rc.req_id',
-    'rc.req_id',
-    'rc.req_id',
+    'cr.area_group',
+    'cr.area_line',
     'rc.req_id',
     'rc.req_id',
 );
 
 if ($userid == 1) {
-    $query = "SELECT rc.req_id, rc.cus_id, rc.cus_name, rc.mobile1,rc.area ,rc.sub_area, rc.cus_status, rc.cus_data 
-FROM request_creation rc
-INNER JOIN (
-    SELECT cus_id, MAX(req_id) AS last_req_id 
-    FROM request_creation  
-    GROUP BY cus_id
-) latest ON rc.cus_id = latest.cus_id AND rc.req_id = latest.last_req_id
-WHERE (rc.cus_data = 'Existing' AND rc.cus_status >= 1) OR (rc.cus_data = 'New' AND rc.cus_status > 13)";
+    $query = "SELECT rc.req_id, rc.cus_id, rc.cus_name, rc.mobile1, cr.area_confirm_area AS area, rc.cus_status, rc.cus_data, cr.area_group, cr.area_line 
+    FROM request_creation rc
+    JOIN customer_register cr ON rc.cus_id = cr.cus_id 
+    INNER JOIN (
+        SELECT cus_id, MAX(req_id) AS last_req_id 
+        FROM request_creation  
+        GROUP BY cus_id
+    ) latest ON rc.cus_id = latest.cus_id AND rc.req_id = latest.last_req_id
+    WHERE (rc.cus_data = 'Existing' AND rc.cus_status >= 1) OR (rc.cus_data = 'New' AND rc.cus_status > 13)";
 
 } else {
-    $query = "SELECT rc.req_id, rc.cus_id, rc.cus_name, rc.mobile1,rc.area ,rc.sub_area, rc.cus_status, rc.cus_data
-FROM request_creation rc
-INNER JOIN ( SELECT cus_id, MAX(req_id) AS last_req_id FROM request_creation GROUP BY cus_id) latest ON rc.cus_id = latest.cus_id AND rc.req_id = latest.last_req_id
-WHERE rc.sub_area IN ($sub_area_list) AND ( (rc.cus_data = 'Existing' AND rc.cus_status >= 1) OR (rc.cus_data = 'New' AND rc.cus_status > 13))";
+    $query = "SELECT rc.req_id, rc.cus_id, rc.cus_name, rc.mobile1, cr.area_confirm_area AS area, rc.cus_status, rc.cus_data, cr.area_group, cr.area_line
+    FROM request_creation rc
+    JOIN customer_register cr ON rc.cus_id = cr.cus_id 
+    INNER JOIN ( SELECT cus_id, MAX(req_id) AS last_req_id FROM request_creation GROUP BY cus_id) latest ON rc.cus_id = latest.cus_id AND rc.req_id = latest.last_req_id
+    WHERE rc.sub_area IN ($sub_area_list) AND ( (rc.cus_data = 'Existing' AND rc.cus_status >= 1) OR (rc.cus_data = 'New' AND rc.cus_status > 13))";
 }
 
 if (isset($_POST['search']) && $_POST['search'] != "") {
 
     $query .= "
-        and (rc.cus_id LIKE '%" . $_POST['search'] . "%'
+        AND (rc.cus_id LIKE '%" . $_POST['search'] . "%'
         OR rc.cus_name LIKE '%" . $_POST['search'] . "%'
-        OR rc.mobile1 LIKE '%" . $_POST['search'] . "%' ) ";
+        OR rc.mobile1 LIKE '%" . $_POST['search'] . "%' )  ";
 }
-
-// $query .= " GROUP BY rc.cus_id ";
 
 if (isset($_POST['order'])) {
     $query .= 'ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
-} else {
-    $query .= ' ';
-}
+} 
 
 $query1 = '';
 
@@ -98,36 +96,19 @@ foreach ($result as $row) {
     $sub_array   = array();
 
     $sub_array[] = $sno;
-    $cus_id = $row['cus_id'];
+    $cus_id     = $row['cus_id'];
     $sub_array[] = $cus_id;
     $sub_array[] = $row['cus_name'];
     $sub_array[] = $row['mobile1'];
 
-    $areaqry = $connect->query("SELECT CASE 
-    WHEN ( SELECT COUNT(*) FROM customer_profile WHERE cus_id = $cus_id ) > 0 
-    THEN ( SELECT area_name FROM area_list_creation WHERE area_id = ( SELECT area_confirm_area FROM customer_profile WHERE cus_id = $cus_id ORDER BY `id` DESC LIMIT 1 ) ) 
-    ELSE ( SELECT area_name FROM area_list_creation WHERE area_id = ( SELECT `area` FROM request_creation WHERE cus_id = $cus_id ORDER BY `req_id` DESC LIMIT 1 ) ) END AS `area_name`
-    ");
-    $sub_array[] = $areaqry->fetch()['area_name'];
+    $areaqry = $connect->query(" SELECT area_name FROM area_list_creation WHERE area_id = '". $row ['area'] ."'");
+    $sub_array[] = $areaqry->fetch()['area_name'] ?? '';
 
-    $branchqry = $connect->query("SELECT bc.branch_name FROM area_group_mapping agm JOIN branch_creation bc ON agm.branch_id = bc.branch_id where  FIND_IN_SET('" . $row['area'] . "' , agm.area_id) ");
-    $sub_array[] = $branchqry->fetch()['branch_name'];
+    $branchqry = $connect->query("SELECT bc.branch_name FROM area_group_mapping agm JOIN branch_creation bc ON agm.branch_id = bc.branch_id WHERE FIND_IN_SET('" . $row['area'] . "' , agm.area_id) ");
+    $sub_array[] = $branchqry->fetch()['branch_name'] ?? '';
 
-    $lineqry = $connect->query("SELECT CASE 
-    WHEN ( SELECT COUNT(*) FROM customer_profile WHERE cus_id = $cus_id ) > 0 
-    THEN ( SELECT line_name FROM area_line_mapping WHERE FIND_IN_SET( ( SELECT area_confirm_subarea FROM customer_profile WHERE cus_id = $cus_id ORDER BY `id` DESC LIMIT 1 ) , sub_area_id) ) 
-    ELSE ( SELECT line_name FROM area_line_mapping WHERE FIND_IN_SET( ( SELECT sub_area FROM request_creation WHERE cus_id = $cus_id ORDER BY `req_id` DESC LIMIT 1 ), sub_area_id ) )
-    END AS `line_name`
-    ");
-    $sub_array[] = $lineqry->fetch()['line_name'];
-
-    $grpqry = $connect->query("SELECT CASE 
-    WHEN ( SELECT COUNT(*) FROM customer_profile WHERE cus_id = $cus_id ) > 0 
-    THEN ( SELECT group_name FROM area_group_mapping WHERE FIND_IN_SET( ( SELECT area_confirm_subarea FROM customer_profile WHERE cus_id = $cus_id ORDER BY `id` DESC LIMIT 1 ) , sub_area_id) ) 
-    ELSE ( SELECT group_name FROM area_group_mapping WHERE FIND_IN_SET( ( SELECT sub_area FROM request_creation WHERE cus_id = $cus_id ORDER BY `req_id` DESC LIMIT 1 ), sub_area_id ) )
-    END AS `group_name`
-    ");
-    $sub_array[] = $grpqry->fetch()['group_name'];
+    $sub_array[] = $row['area_group'];
+    $sub_array[] = $row['area_line'];
 
     if (getDocumentStatus($connect, $cus_id) == false) {
         $sub_array[] = 'Document Pending';
@@ -137,7 +118,7 @@ foreach ($result as $row) {
 
     $id          = $row['cus_id'];
     $cus_id      = $row['cus_id'];
-    $action = "<a href='update&upd=$id' title='Update'>  <span class='icon-border_color' style='font-size: 12px;position: relative;top: 2px;'></span> </a>";
+    $action = "<a href='update&upd=$id' title='Update'> <span class='icon-border_color' style='font-size: 12px;position: relative;top: 2px;'></span> </a>";
 
     $sub_array[] = $action;
     $data[]      = $sub_array;
@@ -161,16 +142,12 @@ $output = array(
 
 echo json_encode($output);
 
-?>
-
-<?php
-
 function getDocumentStatus($connect, $cus_id)
 {
 
     $status = 'completed';
 
-    $sts_qry = $connect->query("SELECT mortgage_process,mortgage_document_pending,endorsement_process,Rc_document_pending FROM acknowlegement_documentation where cus_id_doc = '$cus_id' ");
+    $sts_qry = $connect->query("SELECT mortgage_process, mortgage_document_pending, endorsement_process, Rc_document_pending FROM acknowlegement_documentation where cus_id_doc = '$cus_id' ");
 
     if ($sts_qry->rowCount() > 0) {
         while ($sts_row = $sts_qry->fetch()) { //check any one of document for mortgage or endorsement is pending then response will be pending

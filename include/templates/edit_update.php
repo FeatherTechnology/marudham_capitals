@@ -60,8 +60,8 @@
 								<th>Mobile</th>
 								<th>Area</th>
 								<th>Branch</th>
-								<th>Line</th>
 								<th>Group</th>
+								<th>Line</th>
 								<th>Document Status</th>
 								<th>Action</th>
 							</tr>

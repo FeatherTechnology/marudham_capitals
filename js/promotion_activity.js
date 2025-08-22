@@ -319,30 +319,31 @@ function promoChartOnclick() {//function of on click event for promo chart
 }
 
 function intNotintOnclick() {
-    $('.intrest, .not-intrest').off('click').click(function () {//onclick for add promotion modal
+    // click for add promotion modal
+    $(document).off('click', '.intrest, .not-intrest').on('click', '.intrest, .not-intrest', function () {
+        let value = $(this).children().text(); // span inner html
+        let cus_id = $(this).data('id'); // customer id
 
-        let value = $(this).children().text();//takes span inner html
-        let cus_id = $(this).data('id');//takes customer id of new customer promotion
-
-        $('#promo_status').val(value);//this will set status as intrested/Not intrested
+        $('#promo_status').val(value);
         $('#promo_cus_id').val(cus_id);
 
-        let orgin_table = $(this).closest('table').data('id');//takes table id for reset table when modal close
+        // get table id for reset when modal close
+        let orgin_table = $(this).closest('table').data('id');
         $('#orgin_table').val(orgin_table);
-    })
+    });
 
-    $('.closeModal').off('click').click(function () {
-        //every time use clicked on modal close button this function will call back respective tables to refresh
-        //new promotion will run resetpromotiontable itself coz its added inside html tag
+    // modal close button click
+    $(document).off('click', '.closeModal').on('click', '.closeModal', function () {
         let orgin_table = $('#orgin_table').val();
-        if (orgin_table == 'existing') {
+
+        if (orgin_table === 'existing') {
             $(".toggle-button[value='Existing']").trigger('click');
-        } else if (orgin_table == 'repromotion') {
+        } else if (orgin_table === 'repromotion') {
             $(".toggle-button[value='Repromotion']").trigger('click');
         } else {
             resetNewPromotionTable();
         }
-    })
+    });
 }
 
 function showPromotionList(url, tableid, colNo) {
