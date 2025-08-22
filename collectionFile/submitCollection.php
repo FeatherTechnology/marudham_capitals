@@ -174,18 +174,18 @@ try{
         $qry = $connect->query("UPDATE `cheque_no_list` SET `used_status`='1' WHERE `id`=$cheque_no "); //If cheque has been used change status to 1
     }
 
-    $check = intval($due_amt_track) + intval($pre_close_waiver) - intval($bal_amt);
+    $check = (intval($due_amt_track) + intval($pre_close_waiver)) - intval($bal_amt);
     $collected_amnt = intval($due_amt_track) + intval($pre_close_waiver);
 
     if (($princ_amt_track != '' or $int_amt_track != '') and ($due_amt_track == '' or $due_amt_track == 0 or $due_amt_track == null)) {
         // if this condition is true then it will be the interest based loan. coz thats where we able to give princ/int amt track and not able to give due amt track
         //if yes then $check variable should check with principal amt
-        $check = intVal($princ_amt_track) + intVal($pre_close_waiver) - intval($bal_amt);
+        $check = (intVal($princ_amt_track) + intVal($pre_close_waiver)) - intval($bal_amt);
         $collected_amnt = intval($princ_amt_track) + intval($pre_close_waiver);
     }
 
-    $penalty_check = intval($penalty) - intval($penalty_track) + intval($penalty_waiver);
-    $coll_charge_check = intval($coll_charge) - intval($coll_charge_track) + intval($coll_charge_waiver);
+    $penalty_check = intval($penalty) - (intval($penalty_track) + intval($penalty_waiver));
+    $coll_charge_check = intval($coll_charge) - (intval($coll_charge_track) + intval($coll_charge_waiver));
 
     if ($check == 0 && $penalty_check == 0 && $coll_charge_check == 0) {
         $cus_status = 20;
@@ -259,10 +259,16 @@ try{
              if ($current_date_obj > $end_date_obj) {
                  $substs = 'OD';
              }
-             
+
         } elseif($sub_status == 'Error' || $sub_status == 'Legal'){
             $substs = $sub_status;
 
+        }elseif ($sub_status == 'Current') {
+            if ($check == 0 && ($penalty_check > 0 || $coll_charge_check > 0)) {
+                $substs = 'Due Nil';
+            } else {
+                $substs = 'Current';
+            }
         }else {    
             $substs = 'Current';
         }

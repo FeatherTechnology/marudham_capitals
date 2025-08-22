@@ -235,7 +235,7 @@ function getCollectionStatus($connect, $cus_id, $user_id, $req_id)
                         $retVal = 'Legal';
                     } else {
                         if ($closed_sts[$i - 1] == 'true') {
-                            $retVal = "Move To Close";
+                            $retVal = "Closed";
                         } else {
                             $retVal = 'Current';
                         }
