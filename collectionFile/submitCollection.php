@@ -241,33 +241,33 @@ try {
                 $current_date = date('Y-m-d');
             }
 
-            // Create DateTime objects
-            $end_date_obj = DateTime::createFromFormat($date_format, $maturity_month);
-            $end_date_obj->setTime(0, 0, 0); // midnight
+             // Create DateTime objects
+             $end_date_obj = DateTime::createFromFormat($date_format, $maturity_month);
+             $end_date_obj->setTime(0, 0, 0); // midnight
+ 
+             $current_date_obj = DateTime::createFromFormat($date_format, $current_date);
+             $current_date_obj->setTime(0, 0, 0); // midnight
+ 
+             // If format is Y-m (monthly), set day to 1 for both
+             if ($date_format === 'Y-m') {
+                 $end_date_obj->setDate($end_date_obj->format('Y'), $end_date_obj->format('m'), 1);
+                 $current_date_obj->setDate($current_date_obj->format('Y'), $current_date_obj->format('m'), 1);
+             }
+ 
+             if ($current_date_obj > $end_date_obj) {
+                 $substs = 'OD';
+             }
 
-            $current_date_obj = DateTime::createFromFormat($date_format, $current_date);
-            $current_date_obj->setTime(0, 0, 0); // midnight
-
-            // If format is Y-m (monthly), set day to 1 for both
-            if ($date_format === 'Y-m') {
-                $end_date_obj->setDate($end_date_obj->format('Y'), $end_date_obj->format('m'), 1);
-                $current_date_obj->setDate($current_date_obj->format('Y'), $current_date_obj->format('m'), 1);
-            }
-
-            if ($current_date_obj > $end_date_obj) {
-                $substs = 'OD';
-            }
-        } elseif ($sub_status == 'Error' || $sub_status == 'Legal') {
+        } elseif($sub_status == 'Error' || $sub_status == 'Legal'){
             $substs = $sub_status;
-        } elseif ($sub_status == 'Current') {
+
+        }elseif ($sub_status == 'Current') {
             if ($check == 0 && ($penalty_check > 0 || $coll_charge_check > 0)) {
                 $substs = 'Due Nil';
             } else {
                 $substs = 'Current';
             }
-
-        } else {
-
+        }else {    
             $substs = 'Current';
         }
     }

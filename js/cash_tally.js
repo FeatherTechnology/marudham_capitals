@@ -5006,7 +5006,14 @@ function validateBankCash(amt) {
         var label = $('#bank_closing' + index);
         var bank_closing_label = label.text().replace(/,/g, '');
         var bank_closing = parseInt(bank_closing_label) || 0;
-        if (entered_amt > bank_closing) {
+
+        var untrkdLabel = $('#untrkd' + cash_type);
+        var bank_closing_untrkd_label = untrkdLabel.text().replace(/\D/g, '');
+        var untrkd_label = parseInt(bank_closing_untrkd_label) || 0;
+
+        let bankClosing = bank_closing + untrkd_label; 
+
+        if (entered_amt > bankClosing) {
             alert('Enter Lesser Amount !');
             $(amt).val('');
             return false;
