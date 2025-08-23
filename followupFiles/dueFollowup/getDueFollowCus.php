@@ -74,7 +74,7 @@ if (isset($_POST['comm_date'])) {
         
     }
     elseif($comm_date =='5'){ //To Follow Date
-        $qry_cndtn = " AND cm.comm_date IS NULL ";
+        $qry_cndtn = " AND (cm.comm_date IS NULL OR cm.comm_date = '0000-00-00') ";
         
     }else{
         $qry_cndtn = "";
