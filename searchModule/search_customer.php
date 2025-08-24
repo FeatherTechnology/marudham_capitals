@@ -1,18 +1,22 @@
 <?php
 include '../ajaxconfig.php';
 
-$cus_id = $_POST['cus_id'] ?? '';
 $cus_name = $_POST['cus_name'] ?? '';
 $area = $_POST['area'] ?? '';
 $sub_area = $_POST['sub_area'] ?? '';
 $mobile = $_POST['mobile'] ?? '';
 $loan_id = $_POST['loan_id'] ?? '';
+$cus_id = $_POST['cus_id'] ?? '';
+$fingerprint_person_id = $_POST['fingerprint_person_id'] ?? '';
 
+$cusid = (!empty($cus_id)) ? $cus_id : $fingerprint_person_id;
+
+$sql = '';
 $fam_sql = '';
 
-if ($cus_id != '') {
-    $sql = "SELECT cus_id from customer_register WHERE cus_id LIKE '%$cus_id%' ";
-    $fam_sql = "SELECT id from verification_family_info WHERE relation_aadhar LIKE '%$cus_id%' ";
+if ($cusid != '') {
+    $sql = "SELECT cus_id from customer_register WHERE cus_id LIKE '%$cusid%' ";
+    $fam_sql = "SELECT id from verification_family_info WHERE relation_aadhar LIKE '%$cusid%' ";
 
 } else if ($cus_name != '') {
     $sql = "SELECT cus_id from customer_register WHERE customer_name LIKE '%$cus_name%' ";
