@@ -112,7 +112,7 @@ $coll_modes = ['1' => 'Cash', '2' => 'Cheque', '3' => 'ECS', '4' => 'IMPS/NEFT/R
                 <div><?php echo $coll_code; ?></div>
             </b>
             <div><?php echo date('d-m-Y', strtotime($coll_date)); ?></div>
-            <div><?php echo date('H:s A', strtotime($coll_date)); ?></div>
+            <div><?php echo date('h:i:s A', strtotime($coll_date)); ?></div>
             <div><?php echo $line_name; ?></div>
             <div><?php echo $area_name; ?></div>
             <div><?php echo $cus_id; ?></div>
