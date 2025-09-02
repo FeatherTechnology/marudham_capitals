@@ -88,7 +88,7 @@ END AS line_name,
     FROM user u
     LEFT JOIN user_coll uc ON uc.user_id = u.user_id
     LEFT JOIN user_hand uh ON uh.user_id = u.user_id
-    WHERE u.user_id NOT IN (1,2)
+    WHERE u.user_id NOT IN (1)
       AND (
             (IFNULL(uc.coll_amt_ys, 0) - IFNULL(uh.rec_amt_ys, 0)) > 0 
             OR 
