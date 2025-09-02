@@ -8,11 +8,13 @@ include '../ajaxconfig.php';
     $req_id = $_POST['req_id'];
     $curDateChecker = true;
 
-    $loanStart = $connect->query("SELECT alc.due_start_from,alc.maturity_month,alc.due_method_calc,alc.due_method_scheme FROM acknowlegement_loan_calculation alc WHERE alc.`req_id`= '$req_id' ");
+    $loanStart = $connect->query("SELECT alc.due_start_from,alc.maturity_month,alc.due_method_calc,alc.due_method_scheme , alc.int_rate , alc.calc_method FROM acknowlegement_loan_calculation alc WHERE alc.`req_id`= '$req_id' ");
     $loanFrom = $loanStart->fetch();
     //If Due method is Monthly, Calculate penalty by checking the month has ended or not
     $due_start_from = $loanFrom['due_start_from'];
     $maturity_month = $loanFrom['maturity_month'];
+    $int_rate = $loanFrom['int_rate'];
+    $calc_method = $loanFrom['calc_method'];
     $start_date_obj = DateTime::createFromFormat('Y-m-d', $due_start_from);
     $end_date_obj = DateTime::createFromFormat('Y-m-d', $maturity_month);
     $maturity_month_obj = new DateTime($maturity_month);
@@ -21,7 +23,7 @@ include '../ajaxconfig.php';
     if ($loanFrom['due_method_calc'] == 'Monthly' || $loanFrom['due_method_scheme'] == '1') {
         //If Monthly Add one month interval to loop from start date to end date.
         $interval = new DateInterval('P1M'); // Create a one month interval
-        
+
     } elseif ($loanFrom['due_method_scheme'] == '2') {
         //If Weekly Add one week interval to loop from start date to end date.
         $interval = new DateInterval('P1W'); // Create a one Week interval
@@ -39,13 +41,13 @@ include '../ajaxconfig.php';
         $dueMonth[] = $start_date_obj->format('Y-m-d');
     }
 
-    $issueDate = $connect->query("SELECT alc.due_amt_cal,alc.int_amt_cal,alc.tot_amt_cal,alc.principal_amt_cal,ii.updated_date FROM in_issue ii JOIN acknowlegement_loan_calculation alc ON ii.req_id = alc.req_id  WHERE ii.req_id = '$req_id' and (ii.cus_status >= 14 ) ");
+    $issueDate = $connect->query("SELECT alc.due_amt_cal, alc.int_amt_cal, alc.tot_amt_cal, alc.loan_amt_cal, ii.updated_date FROM in_issue ii JOIN acknowlegement_loan_calculation alc ON ii.req_id = alc.req_id  WHERE ii.req_id = '$req_id' and (ii.cus_status >= 14 ) ");
     $loanIssue = $issueDate->fetch();
     //If Due method is Monthly, Calculate penalty by checking the month has ended or not
     if ($loanIssue['tot_amt_cal'] == '' || $loanIssue['tot_amt_cal'] == null) {
         //(For monthly interest total amount will not be there, so take principals)
-        $loan_amt = intVal($loanIssue['principal_amt_cal']);
-        $loan_type = 'interest';
+        $loan_amt = intVal($loanIssue['loan_amt_cal']);
+        $loan_type = 'Interest';
     } else {
         $loan_amt = intVal($loanIssue['tot_amt_cal']);
         $loan_type = 'emi';
@@ -53,8 +55,8 @@ include '../ajaxconfig.php';
 
     $due_amt_1 = $loanIssue['due_amt_cal'];
 
-    if ($loan_type == 'interest') {
-        $princ_amt_1 = $loanIssue['principal_amt_cal'];
+    if ($loan_type == 'Interest') {
+        $princ_amt_1 = $loanIssue['loan_amt_cal'];
         $due_amt_1 = $loanIssue['int_amt_cal'];
     }
 
@@ -69,7 +71,7 @@ include '../ajaxconfig.php';
             <?php if ($loan_type == 'emi') { ?>
                 <th> Due Amount </th>
             <?php } ?>
-            <?php if ($loan_type == 'interest') { ?>
+            <?php if ($loan_type == 'Interest') { ?>
                 <th> Principal </th>
                 <th> Interest </th>
             <?php } ?>
@@ -79,7 +81,7 @@ include '../ajaxconfig.php';
             <?php if ($loan_type == 'emi') { ?>
                 <th> Collection Amount </th>
             <?php } ?>
-            <?php if ($loan_type == 'interest') { ?>
+            <?php if ($loan_type == 'Interest') { ?>
                 <th> Principal Amount </th>
                 <th> Interest Amount </th>
             <?php } ?>
@@ -106,7 +108,7 @@ include '../ajaxconfig.php';
             <?php if ($loan_type == 'emi') { ?>
                 <td> </td>
             <?php } ?>
-            <?php if ($loan_type == 'interest') { ?>
+            <?php if ($loan_type == 'Interest') { ?>
                 <td> </td>
                 <td> </td>
             <?php } ?>
@@ -118,12 +120,12 @@ include '../ajaxconfig.php';
             <?php if ($loan_type == 'emi') { ?>
                 <td> </td>
             <?php } ?>
-            <?php if ($loan_type == 'interest') { ?>
+            <?php if ($loan_type == 'Interest') { ?>
                 <td> </td>
                 <td> </td>
             <?php } ?>
 
-            <td><?php echo $loan_amt; ?></td>
+            <td><?php $loan_amt; ?></td>
             <td></td>
             <td></td>
             <td></td>
@@ -137,7 +139,7 @@ include '../ajaxconfig.php';
             /*( MONTH(c.coll_date) >= MONTH('$issued') AND YEAR(c.coll_date) = YEAR('$issued') )
             AND 
                 ( MONTH(c.trans_date) >= MONTH('$issued') AND YEAR(c.trans_date) = YEAR('$issued') )
-                    AND */ 
+                    AND */
             $run = $connect->query("SELECT c.coll_code, c.due_amt, c.tot_amt, c.pending_amt, c.payable_amt, c.coll_date, c.trans_date, c.due_amt_track, c.princ_amt_track, c.int_amt_track, c.bal_amt, c.coll_charge_track, c.coll_location, c.pre_close_waiver, u.fullname, u.role
             FROM `collection` c
             LEFT JOIN user u ON c.insert_login_id = u.user_id
@@ -164,7 +166,6 @@ include '../ajaxconfig.php';
                     )
                 )
             )");
-        
         } else
         if ($loanFrom['due_method_scheme'] == '2') {
             //Query For Weekly.
@@ -217,6 +218,7 @@ include '../ajaxconfig.php';
         $totalPaid = 0;
         $totalPreClose = 0;
         $totalpaid = 0;
+        $totalPaidPrinc = 0;
 
         $due_amt_track = 0;
         $waiver = 0;
@@ -228,7 +230,7 @@ include '../ajaxconfig.php';
                 $collectionAmnt = intVal($row['due_amt_track']);
                 $due_amt_track = $due_amt_track + intVal($row['due_amt_track']);
                 $waiver = $waiver + intVal($row['pre_close_waiver']);
-                if ($loan_type == 'interest') {
+                if ($loan_type == 'Interest') {
                     $PcollectionAmnt = intVal($row['princ_amt_track']);
                     $IcollectionAmnt = intVal($row['int_amt_track']);
                     if ($last_bal_amt != 0) {
@@ -248,7 +250,7 @@ include '../ajaxconfig.php';
                     <?php if ($loan_type == 'emi') { ?>
                         <td></td>
                     <?php } ?>
-                    <?php if ($loan_type == 'interest') { ?>
+                    <?php if ($loan_type == 'Interest') { ?>
                         <td></td>
                         <td></td>
                     <?php } ?>
@@ -272,7 +274,7 @@ include '../ajaxconfig.php';
                         </td>
                     <?php } ?>
 
-                    <?php if ($loan_type == 'interest') { ?>
+                    <?php if ($loan_type == 'Interest') { ?>
                         <td>
                             <?php if ($PcollectionAmnt > 0) {
                                 $totalPaidPrinc += $PcollectionAmnt;
@@ -317,13 +319,13 @@ include '../ajaxconfig.php';
                 </tr>
 
                 <?php
-                if ($loan_type == 'interest') {
+                if ($loan_type == 'Interest') {
                     $last_bal_amt = $bal_amt;
                 } else {
                 }
             }
         } else {
-            if ($loan_type == 'interest') {
+            if ($loan_type == 'Interest') {
                 $last_bal_amt = $loan_amt;
             }
         }
@@ -331,9 +333,10 @@ include '../ajaxconfig.php';
         //For showing collection after due start date
         $due_amt_track = 0;
         $waiver = 0;
+        $int = 0;
         $jj = 0;
         $last_int_amt = $due_amt_1;
-        if ($loan_type == 'interest') {
+        if ($loan_type == 'Interest') {
             $last_princ_amt = $last_bal_amt;
         }
         $lastCusdueMonth = '1970-00-00';
@@ -394,8 +397,8 @@ include '../ajaxconfig.php';
                                 <?php if ($loan_type == 'emi') { ?>
                                     <td><?php echo $row['due_amt']; ?></td>
                                 <?php } ?>
-                                <?php if ($loan_type == 'interest') { ?>
-                                    <td><?php echo $last_princ_amt; ?></td>
+                                <?php if ($loan_type == 'Interest') { ?>
+                                    <td><?php $last_princ_amt; ?></td>
                                     <td><?php echo $row['due_amt'];
                                         $last_int_amt = $row['due_amt']; ?></td>
                                 <?php } ?>
@@ -404,7 +407,7 @@ include '../ajaxconfig.php';
                             <?php } else { ?>
                                 <td></td>
                                 <td></td>
-                                <?php if ($loan_type == 'interest') { ?>
+                                <?php if ($loan_type == 'Interest') { ?>
                                     <td></td>
                                 <?php } ?>
                                 <td></td>
@@ -434,8 +437,8 @@ include '../ajaxconfig.php';
                                 <?php if ($loan_type == 'emi') { ?>
                                     <td><?php echo $row['due_amt']; ?></td>
                                 <?php } ?>
-                                <?php if ($loan_type == 'interest') { ?>
-                                    <td><?php echo $last_princ_amt; ?></td>
+                                <?php if ($loan_type == 'Interest') { ?>
+                                    <td><?php $last_princ_amt; ?></td>
                                     <td><?php echo $row['due_amt'];
                                         $last_int_amt = $row['due_amt']; ?></td>
                                 <?php } ?>
@@ -478,7 +481,7 @@ include '../ajaxconfig.php';
                             </td>
                         <?php } ?>
 
-                        <?php if ($loan_type == 'interest') { ?>
+                        <?php if ($loan_type == 'Interest') { ?>
                             <td>
                                 <?php if ($princ_amt_track > 0) {
                                     $totalPaidPrinc += $princ_amt_track;
@@ -495,13 +498,13 @@ include '../ajaxconfig.php';
                                     echo $int_amt_track;
                                 } ?>
                             </td>
-                        <?php } 
+                        <?php }
                         $totalpaid = ($loan_type == 'emi') ? $totalPaid : $totalPaidPrinc;
                         ?>
 
 
                         <td><?php echo $bal_amt;
-                            if ($loan_type == 'interest') {
+                            if ($loan_type == 'Interest') {
                                 $last_princ_amt = $bal_amt;
                             } ?></td>
                         <td><?php if ($row['pre_close_waiver'] > 0) {
@@ -538,7 +541,6 @@ include '../ajaxconfig.php';
                         if ($loanFrom['due_method_calc'] == 'Monthly' || $loanFrom['due_method_scheme'] == '1') {
                             //For Monthly.
                             echo date('m-Y', strtotime($cusDueMonth));
-                        
                         } else {
                             //For Weekly && Day.
                             echo date('d-m-Y', strtotime($cusDueMonth));
@@ -553,30 +555,48 @@ include '../ajaxconfig.php';
                     <?php if ($loan_type == 'emi') { ?>
                         <td><?php echo $due_amt_1; ?></td>
                     <?php } ?>
-                    <?php if ($loan_type == 'interest') { ?>
+                    <?php if ($loan_type == 'Interest') { ?>
                         <td><?php echo $last_princ_amt; ?></td>
-                        <td><?php echo $last_int_amt; ?></td>
+                        <?php $calc_method = $loanFrom['calc_method']; // 'Month' or 'Days'
+
+                        // Interest calculation
+                        if ($calc_method == 'Monthly') {
+                            $int = $last_princ_amt * ($int_rate / 100);
+                        } else if ($calc_method == 'Days') {
+                            $int = ($last_princ_amt * ($int_rate / 100) / 30);
+                        } else {
+                            $int = 0; // default fallback
+                        }
+
+                        // Round up to next multiple of 5
+                        $curInterest = ceil($int / 5) * 5;
+                        if ($curInterest < $int) {
+                            $curInterest += 5;
+                        }
+                        ?>
+
+                        <td><?php echo $curInterest; ?></td>
                     <?php } ?>
 
                     <?php
                     if ($loanFrom['due_method_calc'] == 'Monthly' || $loanFrom['due_method_scheme'] == '1') {
                         if (date('Y-m', strtotime($cusDueMonth)) <=  date('Y-m')) { ?>
                             <td>
-                                <?php 
-                                    $a = $i - 1; 
-                                    echo $pendingval = ($due_amt_1 * $a) - $totalpaid - $totalPreClose ;
-                                    // $LDObj = new GetLoanDetails($connect, $req_id, $cusDueMonth,'Due Chart');
-                                    // echo $LDObj->response['pending']; 
+                                <?php
+                                $a = $i - 1;
+                                echo $pendingval = ($due_amt_1 * $a) - $totalpaid - $totalPreClose;
+                                // $LDObj = new GetLoanDetails($connect, $req_id, $cusDueMonth,'Due Chart');
+                                // echo $LDObj->response['pending']; 
                                 ?>
                             </td>
                             <td>
-                                <?php 
-                                    //if payable is greater than balance then change it as balance amt coz dont collect more than balance
-                                    //this case will occur when collection status becoms OD
-                                    $payableval = ($i < 1 ) ? 0 : $due_amt_1 + $pendingval;
-                                    echo ($payableval > $bal_amt) ? $bal_amt : $payableval;
-                                    // $LDObj = new GetLoanDetails($connect, $req_id, $cusDueMonth,'Due Chart');
-                                    // echo $LDObj->response['payable']; 
+                                <?php
+                                //if payable is greater than balance then change it as balance amt coz dont collect more than balance
+                                //this case will occur when collection status becoms OD
+                                $payableval = ($i < 1) ? 0 : $due_amt_1 + $pendingval;
+                                echo ($payableval > $bal_amt) ? $bal_amt : $payableval;
+                                // $LDObj = new GetLoanDetails($connect, $req_id, $cusDueMonth,'Due Chart');
+                                // echo $LDObj->response['payable']; 
                                 ?>
                             </td>
                         <?php } else if (date('Y-m', strtotime($cusDueMonth)) >  date('Y-m') && $curDateChecker == true) { ?>
@@ -593,14 +613,16 @@ include '../ajaxconfig.php';
                     } else {
                         if (date('Y-m-d', strtotime($cusDueMonth)) <=  date('Y-m-d')) { ?>
                             <td>
-                                <?php 
+                                <?php
                                 // $LDObj = new GetLoanDetails($connect, $req_id, $cusDueMonth,'Due Chart');
-                                // echo $LDObj->response['pending']; ?>
+                                // echo $LDObj->response['pending']; 
+                                ?>
                             </td>
                             <td>
-                                <?php 
+                                <?php
                                 // $LDObj = new GetLoanDetails($connect, $req_id, $cusDueMonth,'Due Chart');
-                                // echo $LDObj->response['payable']; ?>
+                                // echo $LDObj->response['payable']; 
+                                ?>
                             </td>
                         <?php } else if (date('Y-m-d', strtotime($cusDueMonth)) >  date('Y-m-d') && $curDateChecker == true) { ?>
                             <td></td>
@@ -621,7 +643,7 @@ include '../ajaxconfig.php';
                     <?php if ($loan_type == 'emi') { ?>
                         <td> </td>
                     <?php } ?>
-                    <?php if ($loan_type == 'interest') { ?>
+                    <?php if ($loan_type == 'Interest') { ?>
                         <td> </td>
                         <td> </td>
                     <?php } ?>
@@ -644,14 +666,14 @@ include '../ajaxconfig.php';
         //Using between is useful to check last year to current year. 
         $startTime = '00:00:00'; //Set starting time of clock
         $endTime = '23:59:59'; //set end time of clock 
-        $currentMonth = $currentMonth.' '.$endTime;
-        $start_date = $due_start_from.' '.$startTime;
+        $currentMonth = $currentMonth . ' ' . $endTime;
+        $start_date = $due_start_from . ' ' . $startTime;
         if ($loanFrom['due_method_calc'] == 'Monthly' || $loanFrom['due_method_scheme'] == '1') {
 
             $maturity_month_last_date = (clone $maturity_month_obj)->modify('last day of this month')->format('Y-m-d');
             $maturity_month = (clone $maturity_month_obj)->modify('+1 month')->format('Y-m-01');
-            $maturity_month = $maturity_month.' '.$startTime;
-            $last_date = $maturity_month_last_date.' '.$endTime;
+            $maturity_month = $maturity_month . ' ' . $startTime;
+            $last_date = $maturity_month_last_date . ' ' . $endTime;
 
             //Query for Monthly.
             $run = $connect->query("SELECT c.coll_code, c.due_amt, c.pending_amt, c.payable_amt, c.coll_date, c.trans_date, c.due_amt_track, c.princ_amt_track,c.int_amt_track, c.bal_amt, c.coll_charge_track, c.coll_location, c.pre_close_waiver, u.fullname, u.role
@@ -673,13 +695,12 @@ include '../ajaxconfig.php';
                 OR 
                 (c.trans_date BETWEEN '$start_date' AND '$last_date')
             ) ");
-
         } else if ($loanFrom['due_method_scheme'] == '2') {
 
             $maturity_month_last_date = (clone $maturity_month_obj)->modify('last day of this week')->format('Y-m-d');
             $maturity_month = (clone $maturity_month_obj)->modify('+1 week')->format('Y-m-d');
-            $maturity_month = $maturity_month.' '.$startTime;
-            $last_date = $maturity_month_last_date.' '.$endTime;
+            $maturity_month = $maturity_month . ' ' . $startTime;
+            $last_date = $maturity_month_last_date . ' ' . $endTime;
 
             //Query For Weekly.
             $run = $connect->query("SELECT c.coll_code, c.due_amt, c.pending_amt, c.payable_amt, c.coll_date, c.trans_date, c.due_amt_track, c.bal_amt, c.coll_charge_track, c.coll_location, c.pre_close_waiver, u.fullname, u.role
@@ -705,13 +726,12 @@ include '../ajaxconfig.php';
                     OR 
                     (c.trans_date BETWEEN '$start_date' AND '$last_date')
                 ) ");
-
         } else if ($loanFrom['due_method_scheme'] == '3') {
 
             $maturity_month_last_date = (clone $maturity_month_obj)->format('Y-m-d');
             $maturity_month = (clone $maturity_month_obj)->modify('+1 day')->format('Y-m-d');
-            $maturity_month = $maturity_month.' '.$startTime;
-            $last_date = $maturity_month_last_date.' '.$endTime;
+            $maturity_month = $maturity_month . ' ' . $startTime;
+            $last_date = $maturity_month_last_date . ' ' . $endTime;
 
             //Query For Day.
             $run = $connect->query("SELECT c.coll_code, c.due_amt, c.pending_amt, c.payable_amt, c.coll_date, c.trans_date, c.due_amt_track, c.bal_amt, c.coll_charge_track, c.coll_location, c.pre_close_waiver, u.fullname, u.role
@@ -736,7 +756,6 @@ include '../ajaxconfig.php';
                     OR 
                     (c.trans_date BETWEEN '$start_date' AND '$last_date')
                 ) ");
-
         }
 
         if ($run->rowCount() > 0) {
@@ -757,7 +776,7 @@ include '../ajaxconfig.php';
                     <?php if ($loan_type == 'emi') { ?>
                         <td></td>
                     <?php } ?>
-                    <?php if ($loan_type == 'interest') { ?>
+                    <?php if ($loan_type == 'Interest') { ?>
                         <td></td>
                         <td></td>
                     <?php } ?>
@@ -785,7 +804,7 @@ include '../ajaxconfig.php';
                         </td>
                     <?php } ?>
 
-                    <?php if ($loan_type == 'interest') { ?>
+                    <?php if ($loan_type == 'Interest') { ?>
                         <td>
                             <?php if ($PcollectionAmnt > 0) {
                                 echo $PcollectionAmnt;

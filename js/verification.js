@@ -99,10 +99,10 @@ $(document).ready(function () {
         $("#check_name").append("<option value=''> Select Name </option>");
         $("#check_name").append(
           "<option value='" +
-            cus_name +
-            "'> " +
-            cus_name +
-            " - Customer </option>"
+          cus_name +
+          "'> " +
+          cus_name +
+          " - Customer </option>"
         ); //Current Customer Name
         let len = response.length;
         for (let i = 0; i < len; i++) {
@@ -110,12 +110,12 @@ $(document).ready(function () {
           let relationship = response[i]["relationship"];
           $("#check_name").append(
             "<option value='" +
-              name +
-              "'> " +
-              name +
-              " - " +
-              relationship +
-              " </option>"
+            name +
+            "'> " +
+            name +
+            " - " +
+            relationship +
+            " </option>"
           );
         }
       },
@@ -141,10 +141,10 @@ $(document).ready(function () {
         );
         $("#check_mobileno").append(
           "<option value='" +
-            mobile1 +
-            "'> " +
-            mobile1 +
-            " - Customer </option>"
+          mobile1 +
+          "'> " +
+          mobile1 +
+          " - Customer </option>"
         ); //Current Customer Number
         let len = response.length;
         for (let i = 0; i < len; i++) {
@@ -152,12 +152,12 @@ $(document).ready(function () {
           let relationship = response[i]["relationship"];
           $("#check_mobileno").append(
             "<option value='" +
-              no +
-              "'> " +
-              no +
-              " - " +
-              relationship +
-              " </option>"
+            no +
+            "'> " +
+            no +
+            " - " +
+            relationship +
+            " </option>"
           );
         }
       },
@@ -183,10 +183,10 @@ $(document).ready(function () {
         );
         $("#check_aadhar").append(
           "<option value='" +
-            cus_id +
-            "'> " +
-            cus_name +
-            " - Customer </option>"
+          cus_id +
+          "'> " +
+          cus_name +
+          " - Customer </option>"
         ); //Current Customer Adhaar
         let len = response.length;
         for (let i = 0; i < len; i++) {
@@ -195,12 +195,12 @@ $(document).ready(function () {
           let relationship = response[i]["relationship"];
           $("#check_aadhar").append(
             "<option value='" +
-              aadhar +
-              "'> " +
-              fam_name +
-              " - " +
-              relationship +
-              " </option>"
+            aadhar +
+            "'> " +
+            fam_name +
+            " - " +
+            relationship +
+            " </option>"
           );
         }
       },
@@ -399,29 +399,29 @@ $(document).ready(function () {
       $("#customer_loan_calc").hide();
     }
     if (verify == "documentation") {
-      if(profile_sts ==10 || doc_sts ==11){
-      $("#customer_profile").hide();
-      $("#cus_document").show();
-      $("#customer_loan_calc").hide();
-      // getDocumentHistory();
-      getDocumentFunc();
+      if (profile_sts == 10 || doc_sts == 11) {
+        $("#customer_profile").hide();
+        $("#cus_document").show();
+        $("#customer_loan_calc").hide();
+        // getDocumentHistory();
+        getDocumentFunc();
       }
-      else{
-         showErrorAlert("Please Complete Customer Profile!");
-         event.preventDefault();
+      else {
+        showErrorAlert("Please Complete Customer Profile!");
+        event.preventDefault();
       }
-      
-    } 
-    if (verify == "loan_calc") {
-      if(doc_sts ==11){
-      $("#customer_profile").hide();
-      $("#cus_document").hide();
-      $("#customer_loan_calc").show();
-      initialize();
-    }else{
-      showErrorAlert("Please Complete Customer Documentation!");
-      event.preventDefault();
+
     }
+    if (verify == "loan_calc") {
+      if (doc_sts == 11) {
+        $("#customer_profile").hide();
+        $("#cus_document").hide();
+        $("#customer_loan_calc").show();
+        initialize();
+      } else {
+        showErrorAlert("Please Complete Customer Documentation!");
+        event.preventDefault();
+      }
     }
   });
 
@@ -1539,12 +1539,12 @@ function closeFamModal() {
         }
         $("#guarentor_name").append(
           "<option value='" +
-            fam_id +
-            "' " +
-            selected +
-            ">" +
-            fam_name +
-            "</option>"
+          fam_id +
+          "' " +
+          selected +
+          ">" +
+          fam_name +
+          "</option>"
         );
       }
       {
@@ -1599,12 +1599,12 @@ function getOldGuarentorImg() {
               }
               $("#guarentor_name").append(
                 "<option value='" +
-                  fam_id +
-                  "' " +
-                  selected +
-                  ">" +
-                  fam_name +
-                  "</option>"
+                fam_id +
+                "' " +
+                selected +
+                ">" +
+                fam_name +
+                "</option>"
               );
             }
           },
@@ -2574,12 +2574,12 @@ function getfamilyforKyc(famid) {
         }
         $("#fam_mem").append(
           "<option value='" +
-            value.id +
-            "' " +
-            selected +
-            ">" +
-            value.fam_mem +
-            "</option>"
+          value.id +
+          "' " +
+          selected +
+          ">" +
+          value.fam_mem +
+          "</option>"
         );
       });
     },
@@ -3277,12 +3277,12 @@ function getTalukBasedArea(talukselected) {
         }
         $("#area").append(
           "<option value='" +
-            area_id +
-            "' " +
-            selected +
-            ">" +
-            area_name +
-            "</option>"
+          area_id +
+          "' " +
+          selected +
+          ">" +
+          area_name +
+          "</option>"
         );
       }
 
@@ -3325,12 +3325,12 @@ function getAreaBasedSubArea(area) {
         }
         $("#sub_area").append(
           "<option value='" +
-            response[i]["sub_area_id"] +
-            "' " +
-            selected +
-            ">" +
-            response[i]["sub_area_name"] +
-            " </option>"
+          response[i]["sub_area_id"] +
+          "' " +
+          selected +
+          ">" +
+          response[i]["sub_area_name"] +
+          " </option>"
         );
       }
     },
@@ -3468,12 +3468,12 @@ function getStaffBasedAgent(user_id_load) {
         }
         $("#cus_agent_name").append(
           "<option value='" +
-            response[i]["ag_id"] +
-            "' " +
-            selected +
-            ">" +
-            response[i]["ag_name"] +
-            " </option>"
+          response[i]["ag_id"] +
+          "' " +
+          selected +
+          ">" +
+          response[i]["ag_name"] +
+          " </option>"
         );
       }
       {
@@ -3515,12 +3515,12 @@ function getAllAgentDropdown() {
         }
         $("#cus_agent_name").append(
           "<option value='" +
-            response[i]["ag_id"] +
-            "' " +
-            selected +
-            ">" +
-            response[i]["ag_name"] +
-            " </option>"
+          response[i]["ag_id"] +
+          "' " +
+          selected +
+          ">" +
+          response[i]["ag_name"] +
+          " </option>"
         );
       }
       {
@@ -3543,8 +3543,8 @@ $("#cus_agent_name").change(function () {
   getresponsiblecolumn(agentId); //To Hide/show responsible.
 });
 $('#cus_responsible').change(function () {
-    let res_id = $(this).val();
-    $('#responsible_hidden').val(res_id)
+  let res_id = $(this).val();
+  $('#responsible_hidden').val(res_id)
 })
 ////////////////////////// Agent dropdown END ////////////////////////////////////
 
@@ -3845,7 +3845,7 @@ function endorseHolderName() {
     success: function (response) {
       var len = response.length;
       let Endorsename = $("#en_relation_name").val();
-      
+
       $("#ownername_relationship_name").empty();
       $("#ownername_relationship_name").append("<option value=''>Select Holder Name</option>");
 
@@ -3853,10 +3853,10 @@ function endorseHolderName() {
         // -1 because this ajax's response will contain customer value at the last of the response for verification person
         var fam_name = response[i]["fam_name"];
         var fam_id = response[i]["fam_id"];
-        let selected ='';
+        let selected = '';
 
-        if(fam_id == Endorsename){
-          selected ='selected';
+        if (fam_id == Endorsename) {
+          selected = 'selected';
         }
 
         $("#ownername_relationship_name").append(`<option value='${fam_id}' ${selected}>${fam_name}</option>`);
@@ -3892,14 +3892,14 @@ function mortgageHolderName() {
 
       $("#Propertyholder_relationship_name").empty();
       $("#Propertyholder_relationship_name").append("<option value=''>Select Holder Name</option>");
-      
+
       for (var i = 0; i < len - 1; i++) {
         // -1 because this ajax's response will contain customer value at the last of the response for verification person
         var fam_name = response[i]["fam_name"];
         var fam_id = response[i]["fam_id"];
-        let selected ='';
-        if(fam_id == mortgageHolder){
-          selected ='selected';
+        let selected = '';
+        if (fam_id == mortgageHolder) {
+          selected = 'selected';
         }
 
         $("#Propertyholder_relationship_name").append(`<option value='${fam_id}' ${selected}>${fam_name}</option>`);
@@ -4071,7 +4071,7 @@ function signTypeRelation(signedValue) {
     cache: false,
     success: function (response) {
       var len = response.length;
-      
+
       $("#signType_relationship").empty();
       $("#signType_relationship").append("<option value=''>Select Relationship</option>");
 
@@ -4080,10 +4080,10 @@ function signTypeRelation(signedValue) {
         var fam_name = response[i]["fam_name"];
         var fam_id = response[i]["fam_id"];
         var relationship = response[i]["relationship"];
-        let selected ='';
+        let selected = '';
 
-        if(signedValue == fam_id){
-          selected ='selected';
+        if (signedValue == fam_id) {
+          selected = 'selected';
         }
 
         $("#signType_relationship").append(`<option value='${fam_id}' ${selected}> ${fam_name} - ${relationship} </option>`);
@@ -4370,7 +4370,7 @@ $(document).on("click", "#goldInfoBtn", function () {
     gold_Weight != "" &&
     gold_Value != "" &&
     req_id != "" &&
-    (gold_upload != "" && gold_upload != undefined && gold_upload != null) 
+    (gold_upload != "" && gold_upload != undefined && gold_upload != null)
   ) {
     $.ajax({
       url: "verificationFile/documentation/gold_info_submit.php",
@@ -4743,7 +4743,7 @@ function docHistoryTable() {
     dataType: "json",
     type: "post",
     cache: false,
-    success: function (response) {},
+    success: function (response) { },
   });
 }
 
@@ -4969,7 +4969,7 @@ async function getDocumentFunc() {
   let endorse = $("#endorsement_process").val() == "0" ? true : false;
   if (endorse) {
     $("#endorsement_info_card").show();
-    
+
   } else {
     $("#endorsement_process").val('1'); //Because Doc design changed as select dropdown which doc wanna add remainings are in hidden. but mortgage & endorsement are need to select YES/NO so default set as NO.
 
@@ -4995,8 +4995,9 @@ $("#refresh_cal").click(function () {
   $(".int-diff").text("*");
   $(".due-diff").text("*");
 
-  var profit_method = $("#profit_method").val(); // if profit method changes, due type is EMI
-  if (profit_method == "after_intrest") {
+  var profit_method = $("#profit_method").val();
+  var due_type = $("#due_type").val(); // if profit method changes, due type is EMI
+  if (profit_method == "after_intrest" && due_type == "EMI") {
     getLoanAfterInterest();
     changeInttoBen();
   } else if (profit_method == "pre_intrest") {
@@ -5004,7 +5005,6 @@ $("#refresh_cal").click(function () {
     changeInttoBen();
   }
 
-  var due_type = $("#due_type").val(); //If Changes not found in profit method, calculate loan amt for monthly basis
   if (due_type == "Interest") {
     getLoanInterest();
     changeInttoBen();
@@ -5033,10 +5033,12 @@ $("#refresh_cal").click(function () {
     if (due_type.value == "Interest") {
       // Set its value to 'Benefit Amount'
       int_label.previousElementSibling.previousElementSibling.textContent =
-        "Benefit Amount";
+        "Interest Amount";
+      $('.emi_div').hide();
     } else {
       int_label.previousElementSibling.previousElementSibling.textContent =
-        "Interest Amount";
+        "Benefit Amount";
+      $('.emi_div').show();
     }
   }
 });
@@ -5095,7 +5097,14 @@ $("#due_start_from").change(function () {
 });
 
 $("#submit_loan_calculation").click(function () {
-  $('#due_start_from').trigger('change'); 
+
+  var due_type = $("#due_type").val();
+
+  if (due_type == 'Interest') {
+    $("#principal_amt_cal").val('');
+  }
+
+  $('#due_start_from').trigger('change');
   $("#refresh_cal").trigger("click"); //For calculate once again if user missed to refresh calculation
 
   var submit_btn = $(this);
@@ -5158,12 +5167,12 @@ function getUserBasedLoanCategory() {
 
           $("#loan_category").append(
             "<option value='" +
-              response[i]["loan_category_id"] +
-              "' " +
-              selected +
-              " >" +
-              response[i]["loan_category_name"] +
-              " </option>"
+            response[i]["loan_category_id"] +
+            "' " +
+            selected +
+            " >" +
+            response[i]["loan_category_name"] +
+            " </option>"
           );
         }
         resolve();
@@ -5214,12 +5223,12 @@ function getSubCategory(loan_cat) {
         }
         $("#sub_category").append(
           "<option value='" +
-            response[i]["sub_category_name"] +
-            "' " +
-            selected +
-            ">" +
-            response[i]["sub_category_name"] +
-            " </option>"
+          response[i]["sub_category_name"] +
+          "' " +
+          selected +
+          ">" +
+          response[i]["sub_category_name"] +
+          " </option>"
         );
       }
     },
@@ -5246,25 +5255,25 @@ function getCategoryInfo() {
         for (var i = 0; i < response.length; i++) {
           $("#moduleTable tbody tr").append(
             `<td><label for="disabledInput">` +
-              response[i]["loan_category_ref_name"] +
-              `</label><span class="required">&nbsp;*</span><input type="text" class="form-control" id="category_info" name="category_info[]" 
+            response[i]["loan_category_ref_name"] +
+            `</label><span class="required">&nbsp;*</span><input type="text" class="form-control" id="category_info" name="category_info[]" 
                     value='` +
-              category_info +
-              `' tabindex='` +
-              tb +
-              `' required placeholder='Enter ` +
-              response[i]["loan_category_ref_name"] +
-              `'></td>`
+            category_info +
+            `' tabindex='` +
+            tb +
+            `' required placeholder='Enter ` +
+            response[i]["loan_category_ref_name"] +
+            `'></td>`
           );
           // tb++;
         }
         $("#moduleTable tbody tr").append(
           `<td><button type="button" tabindex='` +
-            tb +
-            `' id="add_category_info[]" name="add_category_info" 
+          tb +
+          `' id="add_category_info[]" name="add_category_info" 
                 class="btn btn-primary add_category_info">Add</button> </td><td><span class='icon-trash-2 deleterow' id='deleterow' tabindex='` +
-            tb +
-            `'></span></td>
+          tb +
+          `'></span></td>
                 </tr></tbody></table>`
         );
 
@@ -5335,24 +5344,24 @@ $("#sub_category").change(function () {
         for (var i = 0; i < response.length; i++) {
           $("#moduleTable tbody tr").append(
             `<td><label for="disabledInput">` +
-              response[i]["loan_category_ref_name"] +
-              `</label><span class="required">&nbsp;*</span><input type="text" class="form-control" id="category_info" name="category_info[]" 
+            response[i]["loan_category_ref_name"] +
+            `</label><span class="required">&nbsp;*</span><input type="text" class="form-control" id="category_info" name="category_info[]" 
                     value='' tabindex='` +
-              tb +
-              `' required placeholder='Enter ` +
-              response[i]["loan_category_ref_name"] +
-              `'></td>`
+            tb +
+            `' required placeholder='Enter ` +
+            response[i]["loan_category_ref_name"] +
+            `'></td>`
           );
           $(".category_info").show();
           tb++;
         }
         $("#moduleTable tbody tr").append(
           `<td><button type="button" tabindex='` +
-            tb +
-            `' id="add_category_info[]" name="add_category_info" 
+          tb +
+          `' id="add_category_info[]" name="add_category_info" 
                 class="btn btn-primary add_category_info">Add</button> </td><td><span class='icon-trash-2 deleterow' id='deleterow' tabindex='` +
-            tb +
-            `'></span></td>
+          tb +
+          `'></span></td>
                 </tr></tbody>`
         );
 
@@ -5424,8 +5433,8 @@ function getLoaninfo(sub_cat_id) {
             var advance = $("#ad_amt").val();
             var loan_amt = amt - advance;
             if (loan_amt != NaN) {
-                $("#loan_amt").val(loan_amt.toFixed(0));
-              }
+              $("#loan_amt").val(loan_amt.toFixed(0));
+            }
           });
       } else {
         $(".advance_yes").hide();
@@ -5693,6 +5702,8 @@ function profitCalculationInfo() {
     $("#scheme_name").val(""); // to clear scheme name selection
     $(".scheme-calculation").hide();
     $("#int_rate").val("");
+    $("#doc_charge").val("");
+    $("#proc_fee").val("");
     $("#int_rate").attr("readonly", false);
     $("#due_period").val("");
     $("#due_period").attr("readonly", false);
@@ -5807,71 +5818,71 @@ function profitCalAjax(profit_type, sub_cat, loan_cat) {
             }
             $("#profit_method").append(
               `<option value='` +
-                profit_method[i] +
-                `' ` +
-                selected +
-                `>` +
-                valuee +
-                `</option>`
+              profit_method[i] +
+              `' ` +
+              selected +
+              `>` +
+              valuee +
+              `</option>`
             );
           }
           $("#calc_method").val("");
           //To set min and maximum
           $(".min-max-int").text(
             "* (" +
-              response["intrest_rate_min"] +
-              "% - " +
-              response["intrest_rate_max"] +
-              "%) "
+            response["intrest_rate_min"] +
+            "% - " +
+            response["intrest_rate_max"] +
+            "%) "
           );
           $("#int_rate").attr(
             "onChange",
             `if( parseFloat($(this).val()) > '` +
-              response["intrest_rate_max"] +
-              `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
+            response["intrest_rate_max"] +
+            `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
                                         if( parseFloat($(this).val()) < '` +
-              response["intrest_rate_min"] +
-              `' && parseFloat($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `
+            response["intrest_rate_min"] +
+            `' && parseFloat($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `
           ); //To check value between rage
           $("#int_rate").val(int_rate_upd);
           $(".min-max-due").text(
             "* (" +
-              response["due_period_min"] +
-              " - " +
-              response["due_period_max"] +
-              ") "
+            response["due_period_min"] +
+            " - " +
+            response["due_period_max"] +
+            ") "
           );
           $("#due_period").attr(
             "onChange",
             `if( parseInt($(this).val()) > '` +
-              response["due_period_max"] +
-              `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
+            response["due_period_max"] +
+            `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
                                         if( parseInt($(this).val()) < '` +
-              response["due_period_min"] +
-              `' && parseInt($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `
+            response["due_period_min"] +
+            `' && parseInt($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `
           ); //To check value between rage
           $("#due_period").val(due_period_upd);
           if (response["doc_charge_type"] == "amt") {
             type = "₹";
             $(".min-max-doc").text(
               "* (" +
-                type +
-                response["document_charge_min"] +
-                " - " +
-                type +
-                response["document_charge_max"] +
-                ") "
+              type +
+              response["document_charge_min"] +
+              " - " +
+              type +
+              response["document_charge_max"] +
+              ") "
             ); // Set min-max values with ₹ symbol before the numbers
           } else if (response["doc_charge_type"] == "percentage") {
             type = "%";
             $(".min-max-doc").text(
               "* (" +
-                response["document_charge_min"] +
-                type +
-                " - " +
-                response["document_charge_max"] +
-                type +
-                ") "
+              response["document_charge_min"] +
+              type +
+              " - " +
+              response["document_charge_max"] +
+              type +
+              ") "
             ); // Set min-max values with % symbol after the numbers
           }
 
@@ -5879,13 +5890,13 @@ function profitCalAjax(profit_type, sub_cat, loan_cat) {
           $("#doc_charge").attr(
             "onChange",
             `if( parseInt($(this).val()) > '` +
-              response["document_charge_max"] +
-              `' ){
+            response["document_charge_max"] +
+            `' ){
                             alert("Enter Lesser Value");
                             $(this).val("");
                         } else if( parseInt($(this).val()) < '` +
-              response["document_charge_min"] +
-              `' && parseInt($(this).val()) != '' ){
+            response["document_charge_min"] +
+            `' && parseInt($(this).val()) != '' ){
                             alert("Enter Higher Value");
                             $(this).val("");
                         }`
@@ -5902,23 +5913,23 @@ function profitCalAjax(profit_type, sub_cat, loan_cat) {
             type = "₹";
             $(".min-max-proc").text(
               "* (" +
-                type +
-                response["processing_fee_min"] +
-                " - " +
-                type +
-                response["processing_fee_max"] +
-                ") "
+              type +
+              response["processing_fee_min"] +
+              " - " +
+              type +
+              response["processing_fee_max"] +
+              ") "
             ); // Set min-max values with ₹ symbol before the numbers
           } else if (response["proc_fee_type"] == "percentage") {
             type = "%";
             $(".min-max-proc").text(
               "* (" +
-                response["processing_fee_min"] +
-                type +
-                " - " +
-                response["processing_fee_max"] +
-                type +
-                ") "
+              response["processing_fee_min"] +
+              type +
+              " - " +
+              response["processing_fee_max"] +
+              type +
+              ") "
             ); // Set min-max values with % symbol after the numbers
           }
 
@@ -5926,13 +5937,13 @@ function profitCalAjax(profit_type, sub_cat, loan_cat) {
           $("#proc_fee").attr(
             "onChange",
             `if( parseInt($(this).val()) > '` +
-              response["processing_fee_max"] +
-              `' ){
+            response["processing_fee_max"] +
+            `' ){
                             alert("Enter Lesser Value");
                             $(this).val("");
                         } else if( parseInt($(this).val()) < '` +
-              response["processing_fee_min"] +
-              `' && parseInt($(this).val()) != '' ){
+            response["processing_fee_min"] +
+            `' && parseInt($(this).val()) != '' ){
                             alert("Enter Higher Value");
                             $(this).val("");
                         }`
@@ -5950,90 +5961,61 @@ function profitCalAjax(profit_type, sub_cat, loan_cat) {
           $(".interest-calculation").show();
           $("#due_type").val("Interest");
           $("#profit_method").empty();
+
           $("#calc_method").val(response["calculate_method"]);
+          if (response["calculate_method"] == "monthly") {
+            $("#calc_method").val("Monthly");
+          } else if (response["calculate_method"] == "days") {
+            $("#calc_method").val("Days");
+          }
+
           //To set min and maximum
-          $(".min-max-int").text(
-            "* (" +
-              response["intrest_rate_min"] +
-              "% - " +
-              response["intrest_rate_max"] +
-              "%) "
-          );
-          $("#int_rate").attr(
-            "onChange",
-            `if( parseFloat($(this).val()) > '` +
-              response["intrest_rate_max"] +
-              `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
-                                        if( parseFloat($(this).val()) < '` +
-              response["intrest_rate_min"] +
-              `' && parseFloat($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `
-          ); //To check value between rage
+          $(".min-max-int").text("* (" + response["intrest_rate_min"] + "% - " + response["intrest_rate_max"] + "%) ");
+          $("#int_rate").attr("onChange", `if( parseFloat($(this).val()) > '` + response["intrest_rate_max"] + `' ){ alert("Enter Lesser Value"); 
+            $(this).val(""); }
+            elseif( parseFloat($(this).val()) < '` + response["intrest_rate_min"] + `' && parseFloat($(this).val()) != '' ){ alert("Enter Higher Value"); 
+            $(this).val(""); } `); //To check value between rage
           $("#int_rate").val(int_rate_upd);
 
-          $(".min-max-due").text(
-            "* (" +
-              response["due_period_min"] +
-              " - " +
-              response["due_period_max"] +
-              ") "
-          );
-          $("#due_period").attr(
-            "onChange",
-            `if( parseInt($(this).val()) > '` +
-              response["due_period_max"] +
-              `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
-                                        if( parseInt($(this).val()) < '` +
-              response["due_period_min"] +
-              `' && parseInt($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `
-          ); //To check value between rage
+          $(".min-max-due").text("* (" + response["due_period_min"] + " - " + response["due_period_max"] + ") ");
+
+          $("#due_period").attr("onChange", `if( parseInt($(this).val()) > '` + response["due_period_max"] + `' ){ alert("Enter Lesser Value");
+            $(this).val(""); }
+            elseif( parseInt($(this).val()) < '` + response["due_period_min"] + `' && parseInt($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `); //To check value between rage
+
           $("#due_period").val(due_period_upd);
+
           if (response["doc_charge_type"] == "amt") {
             type = "₹";
           } else if (response["doc_charge_type"] == "percentage") {
             type = "%";
           } //Setting symbols
-          $(".min-max-doc").text(
-            "* (" +
-              response["document_charge_min"] +
-              " " +
-              type +
-              " - " +
-              response["document_charge_max"] +
-              " " +
-              type +
-              ") "
-          ); //setting min max values in span
-          $("#doc_charge").attr(
-            "onChange",
-            `if( parseInt($(this).val()) > '` +
-              response["document_charge_max"] +
-              `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
-                                            if( parseInt($(this).val()) < '` +
-              response["document_charge_min"] +
-              `' && parseInt($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `
-          ); //To check value between rage
+          $(".min-max-doc").text("* (" + response["document_charge_min"] + " " + type + " - " + response["document_charge_max"] + " " + type + ") "); //setting min max values in span
+
+          $("#doc_charge").attr("onChange", `if( parseInt($(this).val()) > '` + response["document_charge_max"] + `' ){ alert("Enter Lesser Value"); 
+            $(this).val(""); }
+            elseif( parseInt($(this).val()) < '` + response["document_charge_min"] + `' && parseInt($(this).val()) != '' ){ alert("Enter Higher Value");
+            $(this).val(""); } `); //To check value between rage
+
           $("#doc_charge").val(doc_charge_upd);
+
           // $('.min-max-doc').text('* (' + response['document_charge_min'] + '% - ' + response['document_charge_max'] + '%) ');
           // $('#doc_charge').attr('onChange', `if( parseFloat($(this).val()) > '` + response['document_charge_max'] + `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
           //                     if( parseFloat($(this).val()) < '`+ response['document_charge_min'] + `' && parseFloat($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `); //To check value between rage
           // $('#doc_charge').val(doc_charge_upd);
 
-          $(".min-max-proc").text(
-            "* (" +
-              response["processing_fee_min"] +
-              "% - " +
-              response["processing_fee_max"] +
-              "%) "
-          );
-          $("#proc_fee").attr(
-            "onChange",
-            `if( parseFloat($(this).val()) > '` +
-              response["processing_fee_max"] +
-              `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
-                                        if( parseFloat($(this).val()) < '` +
-              response["processing_fee_min"] +
-              `' && parseFloat($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `
-          ); //To check value between rage
+          if (response["proc_fee_type"] == "amt") {
+            type = "₹";  // Set ₹ symbol before the numbers
+          } else if (response["proc_fee_type"] == "percentage") {
+            type = "%"; // Set % symbol after the numbers
+          }
+
+           $(".min-max-proc").text("* (" + response["processing_fee_min"] + " " + type + " - " + response["processing_fee_max"] + " " + type + ") "); //setting min max values in span
+
+          $("#proc_fee").attr("onChange", `if( parseFloat($(this).val()) > '` + response["processing_fee_max"] + `' ){ alert("Enter Lesser Value"); $(this).val(""); }
+            elseif( parseFloat($(this).val()) < '` + response["processing_fee_min"] + `' && parseFloat($(this).val()) != '' ){ alert("Enter Higher Value");
+            $(this).val(""); } `); //To check value between rage
+
           $("#proc_fee").val(proc_fee_upd);
         }
       },
@@ -6074,12 +6056,12 @@ function schemeAjax(due_method, sub_cat) {
         }
         $("#scheme_name").append(
           `<option value='` +
-            response[i]["scheme_id"] +
-            `' ` +
-            selected +
-            `>` +
-            response[i]["scheme_name"] +
-            `</option>`
+          response[i]["scheme_id"] +
+          `' ` +
+          selected +
+          `>` +
+          response[i]["scheme_name"] +
+          `</option>`
         );
       }
     },
@@ -6140,12 +6122,12 @@ function schemeCalAjax(scheme_id) {
           }
           $("#scheme_profit_method").append(
             `<option value='` +
-              profit_method[i] +
-              `' ` +
-              selected +
-              `>` +
-              valuee +
-              `</option>`
+            profit_method[i] +
+            `' ` +
+            selected +
+            `>` +
+            valuee +
+            `</option>`
           );
         }
         // $('#int_rate').val(response['intrest_rate']); $('#int_rate').attr('readonly', true); // setting readonly due to fixed interest
@@ -6159,23 +6141,23 @@ function schemeCalAjax(scheme_id) {
         } //Setting symbols
         $(".min-max-int").text(
           "* (" +
-            response["intreset_min"] +
-            " " +
-            type +
-            " - " +
-            response["intreset_max"] +
-            " " +
-            type +
-            ") "
+          response["intreset_min"] +
+          " " +
+          type +
+          " - " +
+          response["intreset_max"] +
+          " " +
+          type +
+          ") "
         ); //setting min max values in span
         $("#int_rate").attr(
           "onChange",
           `if( parseInt($(this).val()) > '` +
-            response["intreset_max"] +
-            `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
+          response["intreset_max"] +
+          `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
                                         if( parseInt($(this).val()) < '` +
-            response["intreset_min"] +
-            `' && parseInt($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `
+          response["intreset_min"] +
+          `' && parseInt($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `
         ); //To check value between rage
         $("#int_rate").val(int_rate_upd);
         if (response["doc_charge_type"] == "amt") {
@@ -6185,23 +6167,23 @@ function schemeCalAjax(scheme_id) {
         } //Setting symbols
         $(".min-max-doc").text(
           "* (" +
-            response["doc_charge_min"] +
-            " " +
-            type +
-            " - " +
-            response["doc_charge_max"] +
-            " " +
-            type +
-            ") "
+          response["doc_charge_min"] +
+          " " +
+          type +
+          " - " +
+          response["doc_charge_max"] +
+          " " +
+          type +
+          ") "
         ); //setting min max values in span
         $("#doc_charge").attr(
           "onChange",
           `if( parseInt($(this).val()) > '` +
-            response["doc_charge_max"] +
-            `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
+          response["doc_charge_max"] +
+          `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
                                         if( parseInt($(this).val()) < '` +
-            response["doc_charge_min"] +
-            `' && parseInt($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `
+          response["doc_charge_min"] +
+          `' && parseInt($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `
         ); //To check value between rage
         $("#doc_charge").val(doc_charge_upd);
 
@@ -6212,23 +6194,23 @@ function schemeCalAjax(scheme_id) {
         } //Setting symbols
         $(".min-max-proc").text(
           "* (" +
-            response["proc_fee_min"] +
-            " " +
-            type +
-            " - " +
-            response["proc_fee_max"] +
-            " " +
-            type +
-            ") "
+          response["proc_fee_min"] +
+          " " +
+          type +
+          " - " +
+          response["proc_fee_max"] +
+          " " +
+          type +
+          ") "
         ); //setting min max values in span
         $("#proc_fee").attr(
           "onChange",
           `if( parseInt($(this).val()) > '` +
-            response["proc_fee_max"] +
-            `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
+          response["proc_fee_max"] +
+          `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
                                     if( parseInt($(this).val()) < '` +
-            response["proc_fee_min"] +
-            `' && parseInt($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `
+          response["proc_fee_min"] +
+          `' && parseInt($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `
         ); //To check value between rage
         $("#proc_fee").val(proc_fee_upd);
       },
@@ -6435,49 +6417,59 @@ function getLoanPreInterest() {
 function getLoanInterest() {
   var loan_amt = $("#loan_amt").val();
   var int_rate = $("#int_rate").val();
-  var due_period = $("#due_period").val();
   var doc_charge = $("#doc_charge").val();
   var proc_fee = $("#proc_fee").val();
+  var calc_method = $("#calc_method").val();
 
-  $("#loan_amt_cal").val(parseInt(loan_amt).toFixed(0)); //get loan amt from loan info card
-  $("#principal_amt_cal").val(parseInt(loan_amt).toFixed(0));
+  $("#loan_amt_cal").val(parseInt(loan_amt).toFixed(0));
 
-  $("#tot_amt_cal").val("");
-  $("#due_amt_cal").val(""); //Due period will be monthly by default so no need of due amt
+  let int_amt;
 
-  var int_amt = (parseInt(loan_amt) * (parseFloat(int_rate) / 100)).toFixed(0); //Calculate interest rate
+  if (calc_method === 'Monthly') {
+    int_amt = (loan_amt * (int_rate / 100)).toFixed(0);
+  } else if (calc_method === 'Days') {
+    int_amt = (loan_amt * (int_rate / 100) / 30).toFixed(0);
+  }
 
   var roundedInterest = Math.ceil(int_amt / 5) * 5;
   if (roundedInterest < int_amt) {
     roundedInterest += 5;
   }
-  $(".int-diff").text(
-    "* (Difference: +" + parseInt(roundedInterest - int_amt) + ")"
-  ); //To show the difference amount
+
+  $(".int-diff").text("* (Difference: +" + parseInt(roundedInterest - int_amt) + ")");
   $("#int_amt_cal").val(parseInt(roundedInterest));
 
-  var doc_charge = parseInt(loan_amt) * (parseFloat(doc_charge) / 100); //Get document charge from loan info and multiply with loan amt to get actual doc charge
-  var roundeddoccharge = Math.ceil(doc_charge / 5) * 5; //to increase document charge to nearest multiple of 5
+  var doc_type = $(".min-max-doc").text();
+  if (doc_type.includes("₹")) {
+    var doc_charge = parseInt(doc_charge);
+  } else if (doc_type.includes("%")) {
+    var doc_charge = parseInt(loan_amt) * (parseFloat(doc_charge) / 100);
+  }
+
+  var roundeddoccharge = Math.ceil(doc_charge / 5) * 5;
   if (roundeddoccharge < doc_charge) {
     roundeddoccharge += 5;
   }
-  $(".doc-diff").text(
-    "* (Difference: +" + parseInt(roundeddoccharge - doc_charge) + ")"
-  ); //To show the difference amount from old to new
+
+  $(".doc-diff").text("* (Difference: +" + parseInt(roundeddoccharge - doc_charge) + ")");
   $("#doc_charge_cal").val(parseInt(roundeddoccharge));
 
-  var proc_fee = parseInt(loan_amt) * (parseFloat(proc_fee) / 100); //Get processing fee from loan info and multiply with loan amt to get actual proc fee
-  // $('.princ-diff').text('* (Difference: +' + parseInt(loan_amt - new_princ) + ')'); //To show the difference amount from old to new
-  var roundeprocfee = Math.ceil(proc_fee / 5) * 5; //to increase Processing fee to nearest multiple of 5
+  var proc_type = $(".min-max-proc").text();
+  if (proc_type.includes("₹")) {
+    var proc_fee = parseInt(proc_fee);
+  } else if (proc_type.includes("%")) {
+    var proc_fee = parseInt(loan_amt) * (parseInt(proc_fee) / 100);
+  }
+
+  var roundeprocfee = Math.ceil(proc_fee / 5) * 5;
   if (roundeprocfee < proc_fee) {
     roundeprocfee += 5;
   }
-  $(".proc-diff").text(
-    "* (Difference: +" + parseInt(roundeprocfee - proc_fee) + ")"
-  ); //To show the difference amount from old to new
+
+  $(".proc-diff").text("* (Difference: +" + parseInt(roundeprocfee - proc_fee) + ")");
   $("#proc_fee_cal").val(parseInt(roundeprocfee));
 
-  var net_cash = parseInt(loan_amt) - parseInt(doc_charge) - parseInt(proc_fee); //Net cash will be calculated by subracting other charges
+  var net_cash = parseInt(loan_amt) - parseInt(doc_charge) - parseInt(proc_fee);
   $("#net_cash_cal").val(parseInt(net_cash).toFixed(0));
 }
 
@@ -7055,66 +7047,66 @@ function loan_calc_validation(submit_btn) {
   submit_btn.removeAttr("disabled");
 }
 function fingerprintTable() {//To Get family member's name are required for scanning fingerprint
-    var cus_name = $('#cus_name').val();
-    var cus_id = $('#cus_id').val();
-    $.ajax({
-        url: 'verificationFile/getNamesForFingerprint.php',
-        data: { 'cus_name': cus_name, 'cus_id': cus_id },
-        type: 'post',
-        cache: false,
-        success: function (html) {
-            $('.fingerprintTable').empty()
-            $('.fingerprintTable').html(html)
+  var cus_name = $('#cus_name').val();
+  var cus_id = $('#cus_id').val();
+  $.ajax({
+    url: 'verificationFile/getNamesForFingerprint.php',
+    data: { 'cus_name': cus_name, 'cus_id': cus_id },
+    type: 'post',
+    cache: false,
+    success: function (html) {
+      $('.fingerprintTable').empty()
+      $('.fingerprintTable').html(html)
 
-            $('.scanBtn').click(function () {
-                var hand = $(this).prev().val();
-                if (hand == '') { //prevent if hand is not selected
-                    $(this).prev().css('border-color', 'red');
-                } else {
-                    $(this).prev().css('border-color', '#009688')
+      $('.scanBtn').click(function () {
+        var hand = $(this).prev().val();
+        if (hand == '') { //prevent if hand is not selected
+          $(this).prev().css('border-color', 'red');
+        } else {
+          $(this).prev().css('border-color', '#009688')
 
-                    showOverlay();//loader start
+          showOverlay();//loader start
 
-                    $(this).attr('disabled', true);
+          $(this).attr('disabled', true);
 
-                    setTimeout(() => {
-                        var quality = 60; //(1 to 100) (recommended minimum 55)
-                        var timeout = 10; // seconds (minimum=10(recommended), maximum=60, unlimited=0)
-                        var res = CaptureFinger(quality, timeout);
-                        console.log("🚀 ~ file: acknowledgement_creation.js:934 ~ setTimeout ~ (res.data.ErrorCode:", res.data.ErrorCode);
-                        if (res.httpStaus) {
-                            if (res.data.ErrorCode == "0") {
-                                $(this).next().val(res.data.AnsiTemplate); // Take ansi template that is the unique id which is passed by sensor
+          setTimeout(() => {
+            var quality = 60; //(1 to 100) (recommended minimum 55)
+            var timeout = 10; // seconds (minimum=10(recommended), maximum=60, unlimited=0)
+            var res = CaptureFinger(quality, timeout);
+            console.log("~ file: acknowledgement_creation.js:934 ~ setTimeout ~ (res.data.ErrorCode:", res.data.ErrorCode);
+            if (res.httpStaus) {
+              if (res.data.ErrorCode == "0") {
+                $(this).next().val(res.data.AnsiTemplate); // Take ansi template that is the unique id which is passed by sensor
 
-                            }//Error codes and alerts below
-                            else if (res.data.ErrorCode == -1307) {
-                                alert('Connect Your Device');
-                                $(this).removeAttr('disabled');
-                            } else if (res.data.ErrorCode == -1140 || res.data.ErrorCode == 700) {
-                                alert('Timeout');
-                                $(this).removeAttr('disabled');
-                            } else if (res.data.ErrorCode == 720) {
-                                alert('Reconnect Device');
-                                $(this).removeAttr('disabled');
-                            } else if (res.data.ErrorCode == 730) {
-                                alert('Capture Finger Again');
-                                $(this).removeAttr('disabled');
-                            } else {
-                                alert('Error Code:' + res.data.ErrorCode);
-                                $(this).removeAttr('disabled');
-                            }
-                        }
-                        else {
-                            alert(res.err);
-                        }
-                        // Hide the loading animation and remove blur effect from the body
-                        hideOverlay();//loader stop
+              }//Error codes and alerts below
+              else if (res.data.ErrorCode == -1307) {
+                alert('Connect Your Device');
+                $(this).removeAttr('disabled');
+              } else if (res.data.ErrorCode == -1140 || res.data.ErrorCode == 700) {
+                alert('Timeout');
+                $(this).removeAttr('disabled');
+              } else if (res.data.ErrorCode == 720) {
+                alert('Reconnect Device');
+                $(this).removeAttr('disabled');
+              } else if (res.data.ErrorCode == 730) {
+                alert('Capture Finger Again');
+                $(this).removeAttr('disabled');
+              } else {
+                alert('Error Code:' + res.data.ErrorCode);
+                $(this).removeAttr('disabled');
+              }
+            }
+            else {
+              alert(res.err);
+            }
+            // Hide the loading animation and remove blur effect from the body
+            hideOverlay();//loader stop
 
-                    }, 700)
-                }
-            })
+          }, 700)
         }
-    })
+      })
+    }
+  })
 
 
 }

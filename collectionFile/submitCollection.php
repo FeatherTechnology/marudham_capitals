@@ -119,6 +119,14 @@ $pre_close_waiver = '';
 if (isset($_POST['pre_close_waiver'])) {
     $pre_close_waiver = $_POST['pre_close_waiver'];
 }
+$interest_waiver = '';
+if (isset($_POST['interest_waiver'])) {
+    $interest_waiver = $_POST['interest_waiver'];
+}
+$principal_waiver = '';
+if (isset($_POST['principal_waiver'])) {
+    $principal_waiver = $_POST['principal_waiver'];
+}
 $penalty_waiver = '';
 if (isset($_POST['penalty_waiver'])) {
     $penalty_waiver = $_POST['penalty_waiver'];
@@ -150,14 +158,14 @@ try{
 
     $insertQry = "INSERT INTO `collection`(  `coll_code`, `req_id`, `cus_id`, `cus_name`, `branch`, `area`, `sub_area`, `line`, `loan_category`, `sub_category`, `coll_status`, 
         `coll_sub_status`, `tot_amt`, `paid_amt`, `bal_amt`, `due_amt`, `pending_amt`, `payable_amt`, `penalty`, `coll_charge`, `coll_mode`, `bank_id`, `cheque_no`, `trans_id`, `trans_date`, 
-        `coll_location`, `coll_date`, `due_amt_track`,`princ_amt_track`,`int_amt_track`, `penalty_track`, `coll_charge_track`, `total_paid_track`, `pre_close_waiver`, `penalty_waiver`, `coll_charge_waiver`, 
+        `coll_location`, `coll_date`, `due_amt_track`,`princ_amt_track`,`int_amt_track`, `penalty_track`, `coll_charge_track`, `total_paid_track`, `pre_close_waiver`,  `interest_waiver`, `principal_waiver`, `penalty_waiver`, `coll_charge_waiver`, 
         `total_waiver`, `insert_login_id`,`created_date`)  VALUES('" . strip_tags($coll_code) . "','" . strip_tags($req_id) . "','" . strip_tags($cus_id) . "','" . strip_tags($cus_name) . "',
         '" . strip_tags($branch_id) . "', '" . strip_tags($area_id) . "', '" . strip_tags($sub_area_id) . "', '" . strip_tags($line_id) . "','" . strip_tags($loan_category_id) . "',
         '" . strip_tags($sub_category_id) . "','" . strip_tags($status) . "','" . strip_tags($sub_status) . "', '" . strip_tags($tot_amt) . "', '" . strip_tags($paid_amt) . "', 
         '" . strip_tags($bal_amt) . "','" . strip_tags($due_amt) . "','" . strip_tags($pending_amt) . "','" . strip_tags($payable_amt) . "','" . strip_tags($penalty) . "','" . strip_tags($coll_charge) . "',
         '" . strip_tags($collection_mode) . "','" . strip_tags($bank_id) . "','" . strip_tags($cheque_no) . "','" . strip_tags($trans_id) . "','" . strip_tags($trans_date) . "','" . strip_tags($collection_loc) . "',
-        '" . strip_tags($collection_date) . "','" . strip_tags($due_amt_track) . "','" . strip_tags($princ_amt_track) . "','" . strip_tags($int_amt_track) . "','" . strip_tags($penalty_track) . "','" . strip_tags($coll_charge_track) . "','" . strip_tags($total_paid_track) . "',
-        '" . strip_tags($pre_close_waiver) . "','" . strip_tags($penalty_waiver) . "','" . strip_tags($coll_charge_waiver) . "','" . strip_tags($total_waiver) . "',$userid,current_timestamp )";
+        '" . strip_tags($collection_date) . "','" . strip_tags($due_amt_track) . "','" . strip_tags($princ_amt_track) . "','" . strip_tags($int_amt_track) . "','" . strip_tags($penalty_track) . "','" . strip_tags($coll_charge_track) . "','" . strip_tags($total_paid_track) . "','" . strip_tags($pre_close_waiver) . "',
+        '" . strip_tags($interest_waiver) . "','" . strip_tags($principal_waiver) . "','" . strip_tags($penalty_waiver) . "','" . strip_tags($coll_charge_waiver) . "','" . strip_tags($total_waiver) . "',$userid,current_timestamp )";
 
     $insresult = $connect->query($insertQry);
 

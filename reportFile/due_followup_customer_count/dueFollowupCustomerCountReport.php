@@ -26,15 +26,15 @@ $dueNilQuery = $connect->query("SELECT DISTINCT cs2.req_id
 while ($row = $dueNilQuery->fetch(PDO::FETCH_ASSOC)) {
     $dueNilReqIds[] = $row['req_id'];
 }
-$dueNilReqIdStr = !empty($dueNilReqIds) ? implode(',', $dueNilReqIds) : 'NULL';
+$dueNilReqIdStr = !empty($dueNilReqIds) ? implode(',', $dueNilReqIds) : 0;
 
-// Step 2: Fetch Pending Current req_ids to exclude
+// Step 2: Fetch Pending and Due Nil req_ids in the same month and year as $to_date to exclude
 $pendingReqIds = [];
 $pendingQuery = $connect->query("SELECT DISTINCT cs3.req_id 
     FROM customer_status cs3
     JOIN collection col ON cs3.req_id = col.req_id
     WHERE 
-        cs3.sub_status = 'Current'
+        cs3.sub_status IN('Current','Due Nil')
         AND col.coll_sub_status = 'Pending'
         AND MONTH(col.coll_date) = MONTH('$to_date')
         AND YEAR(col.coll_date) = YEAR('$to_date')
@@ -42,23 +42,30 @@ $pendingQuery = $connect->query("SELECT DISTINCT cs3.req_id
 while ($row = $pendingQuery->fetch(PDO::FETCH_ASSOC)) {
     $pendingReqIds[] = $row['req_id'];
 }
-$pendingReqIdStr = !empty($pendingReqIds) ? implode(',', $pendingReqIds) : 'NULL';
+$pendingReqIdStr = !empty($pendingReqIds) ? implode(',', $pendingReqIds) : 0;
 
-// Step 3: Fetch DueNil Current req_ids to exclude
-$DueNilReqIds = [];
-$DueNilQuery = $connect->query("SELECT DISTINCT cs4.req_id 
-    FROM customer_status cs4
-    JOIN collection col ON cs4.req_id = col.req_id
-    WHERE 
-        cs4.sub_status = 'Due Nil'
-        AND col.coll_sub_status = 'Pending'
-        AND MONTH(col.coll_date) = MONTH('$to_date')
-        AND YEAR(col.coll_date) = YEAR('$to_date')
+// Step 3: Fetch DueNil , Pending , OD req_ids in the same month and year as $to_date to exclude
+$coll_DueNilReqIds = [];
+$coll_DueNilQuery = $connect->query("SELECT DISTINCT cs5.req_id
+FROM customer_status cs5
+JOIN (
+    SELECT c.req_id, MIN(c.coll_date) AS first_coll_date
+    FROM collection c
+    WHERE MONTH(c.coll_date) = MONTH('$to_date')
+    AND YEAR(c.coll_date) = YEAR('$to_date')
+    GROUP BY c.req_id
+) first_col ON cs5.req_id = first_col.req_id
+JOIN collection col
+    ON col.req_id = first_col.req_id
+    AND col.coll_date = first_col.first_coll_date
+WHERE cs5.sub_status = 'Closed'
+AND col.coll_sub_status IN ('Due Nil','Pending','OD');
 ");
-while ($row = $DueNilQuery->fetch(PDO::FETCH_ASSOC)) {
-    $DueNilReqIds[] = $row['req_id'];
+
+while ($row = $coll_DueNilQuery->fetch(PDO::FETCH_ASSOC)) {
+    $coll_DueNilReqIds[] = $row['req_id'];
 }
-$DueNilReqIdStr = !empty($DueNilReqIds) ? implode(',', $DueNilReqIds) : 'NULL';
+$coll_DueNilReqIdStr = !empty($coll_DueNilReqIds) ? implode(',', $coll_DueNilReqIds) : 0;
 
 // Loan Category Map
 $loan_category_map = [];
@@ -134,17 +141,17 @@ while ($userRow = $userQry->fetch()) {
     $line_ids = array_filter(array_map('intval', explode(',', $userRow['due_followup_lines'])));
 
     $loan_category_data = [];
+    $customer_loanId = [];
 
     foreach ($line_ids as $line_id) {
-        $mapQry = $connect->query("SELECT area_id, loan_category_id, line_name, customer_status FROM area_duefollowup_mapping WHERE map_id = $line_id");
+        $mapQry = $connect->query("SELECT area_id, loan_category_id, customer_status FROM area_duefollowup_mapping WHERE map_id = $line_id");
         if (!$mapRow = $mapQry->fetch()) continue;
 
         $area_ids = implode(',', array_filter(array_map('intval', explode(',', $mapRow['area_id']))));
         $loan_cat_ids = array_filter(array_map('intval', explode(',', $mapRow['loan_category_id'])));
-        $line_mappings = implode(',', array_filter(array_map('intval', explode(',', $mapRow['line_name']))));
         $status_list = "'" . implode("','", array_filter(array_map('trim', explode(',', $mapRow['customer_status'])))) . "'";
 
-        if (!$area_ids || !$loan_cat_ids || !$line_mappings || !$status_list) continue;
+        if (!$area_ids || !$loan_cat_ids  || !$status_list) continue;
 
         foreach ($loan_cat_ids as $cat_id) {
             $cat_name = $loan_category_map[$cat_id] ?? "Unknown($cat_id)";
@@ -179,7 +186,6 @@ while ($userRow = $userQry->fetch()) {
                     LEFT JOIN closing_customer cc ON ii.req_id = cc.req_id
                 WHERE 
                     cp.area_confirm_area IN ($area_ids)
-                    AND alm.map_id IN ($line_mappings)
                     AND alc.loan_category = $cat_id
                     AND (
                         cs.sub_status IN ($status_list)
@@ -191,8 +197,8 @@ while ($userRow = $userQry->fetch()) {
                         )
                         OR ii.req_id IN ($dueNilReqIdStr)
                     )
-                    AND ii.req_id NOT IN ($pendingReqIdStr)
-                    AND ii.req_id NOT IN ($DueNilReqIdStr)
+                    AND ii.req_id NOT IN ($pendingReqIdStr) 
+                    AND ii.req_id NOT IN ($coll_DueNilReqIdStr)
                     AND DATE(ii.updated_date) < '$toDate_month_start'
                 GROUP BY ii.loan_id");
 
@@ -202,6 +208,9 @@ while ($userRow = $userQry->fetch()) {
                 $due_start_from = $row['due_start_from'];
 
                 $loan_category_data[$cat_id]['total_count']++;
+                $customer_loanId = $row['loan_id'];
+                print_r($customer_loanId);
+                echo "<br>";
 
                 if ($responsible === '0') {
                     $loan_category_data[$cat_id]['responsible']++;
