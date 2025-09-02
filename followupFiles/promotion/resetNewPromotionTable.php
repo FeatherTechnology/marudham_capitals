@@ -1,10 +1,39 @@
 <?php
 
 include('../../ajaxconfig.php');
+@session_start();
+if (isset($_SESSION['userid'])) {
+    $user_id = $_SESSION['userid'];
+}
+
+// Step 1: Fetch role_type of the user
+$userRes = $connect->query("SELECT role_type FROM user WHERE user_id = $user_id");
+$userRow = $userRes->fetch();
+$role_type = $userRow['role_type'];
+
+// Step 2: Apply logic for fetching data
+if ($role_type == 7) {
+    // Role 7 (Admin)→ See all records
+    $sql = $connect->query("
+        SELECT ncp.cus_id,ncp.cus_name,ncp.mobile,ncp.insert_login_id,ncp.created_date,a.area_name,sa.sub_area_name,ag.group_name,alm.line_name FROM new_cus_promo ncp JOIN area_list_creation a ON ncp.area = a.area_id
+    JOIN sub_area_list_creation sa ON ncp.sub_area = sa.sub_area_id
+    JOIN area_line_mapping alm ON FIND_IN_SET(a.area_id, alm.area_id)
+    JOIN area_group_mapping ag ON FIND_IN_SET(a.area_id, ag.area_id)
+        WHERE ncp.cus_id NOT IN (SELECT cus_id FROM customer_register)
+    ");
+} else {
+    // Other roles → See only their own records
+    $sql = $connect->query("
+        SELECT ncp.cus_id,ncp.cus_name,ncp.mobile,ncp.insert_login_id,ncp.created_date,a.area_name, sa.sub_area_name,ag.group_name,alm.line_name FROM new_cus_promo ncp JOIN area_list_creation a ON ncp.area = a.area_id
+    JOIN sub_area_list_creation sa ON ncp.sub_area = sa.sub_area_id
+    JOIN area_line_mapping alm ON FIND_IN_SET(a.area_id, alm.area_id)
+    JOIN area_group_mapping ag ON FIND_IN_SET(a.area_id, ag.area_id)
+        WHERE ncp.cus_id NOT IN (SELECT cus_id FROM customer_register)
+          AND ncp.insert_login_id = $user_id
+    ");
+}
 
 // $sql = $connect->query("SELECT a.*,b.area_name,c.sub_area_name  FROM new_promotion a JOIN area_list_creation b ON a.area = b.area_id JOIN sub_area_list_creation c ON a.sub_area = c.sub_area_id WHERE 1 ");
-$sql = $connect->query("SELECT * FROM new_cus_promo WHERE cus_id NOT IN (select cus_id from customer_register) ");
-
 ?>
 
 
@@ -16,6 +45,9 @@ $sql = $connect->query("SELECT * FROM new_cus_promo WHERE cus_id NOT IN (select 
         <th>Mobile No.</th>
         <th>Area</th>
         <th>Sub Area</th>
+        <th>Line</th>
+        <th>Group</th>
+        <th>User Name</th>
         <th>Action</th>
         <th>Promotion Chart</th>
         <th>Follow Date</th>
@@ -27,8 +59,16 @@ $sql = $connect->query("SELECT * FROM new_cus_promo WHERE cus_id NOT IN (select 
                 <td><?php echo $row['cus_id']; ?></td>
                 <td><?php echo $row['cus_name']; ?></td>
                 <td><?php echo $row['mobile']; ?></td>
-                <td><?php echo $row['area']; ?></td>
-                <td><?php echo $row['sub_area']; ?></td>
+                <td><?php echo $row['area_name']; ?></td>
+                <td><?php echo $row['sub_area_name']; ?></td>
+                <td><?php echo $row['line_name']; ?></td>
+                <td><?php echo $row['group_name']; ?></td>
+                   <td>
+                    <?php
+                    $qry = $connect->query("SELECT fullname FROM user WHERE user_id = '" . $row['insert_login_id'] . "'");
+                        $full_name = $qry->fetch()['fullname'];
+                        echo($full_name);
+                    ?></td>
                 <td>
                     <?php  //for intrest or not intrest choice to make
                     // if($row['int_status'] == '' or $row['int_status'] == NULL){
@@ -72,61 +112,52 @@ $sql = $connect->query("SELECT * FROM new_cus_promo WHERE cus_id NOT IN (select 
 
 <script>
     $('#new_promo_table').dataTable({
-        // 'processing': true,
         'iDisplayLength': 10,
         "lengthMenu": [
             [10, 25, 50, -1],
             [10, 25, 50, "All"]
         ],
         dom: 'lBfrtip',
-        buttons: [{
-                extend: 'excel',
-            },
-            {
-                extend: 'colvis',
-                collectionLayout: 'fixed four-column',
-            }
+        buttons: [
+            { extend: 'excel' },
+            { extend: 'colvis', collectionLayout: 'fixed four-column' }
         ],
         'drawCallback': function() {
             searchFunction('new_promo_table');
-        }
-    })
-    $('#new_promo_table tbody tr').not('th').each(function() {
-        let tddate = $(this).find('td:eq(8)').text(); // Get the text content of the 8th td element (Follow date)
-        let datecorrection = tddate.split("-").reverse().join("-").replaceAll(/\s/g, ''); // Correct the date format
-        let values = new Date(datecorrection); // Create a Date object from the corrected date
-        values.setHours(0, 0, 0, 0); // Set the time to midnight for accurate date comparison
 
-        let curDate = new Date(); // Get the current date
-        curDate.setHours(0, 0, 0, 0); // Set the time to midnight for accurate date comparison
+            // apply color coding on every redraw
+            $('#new_promo_table tbody tr').each(function() {
+                let tddate = $(this).find('td:eq(11)').text().trim(); 
+                if (tddate === '') return;
 
-        let colors = {
-            'past': 'FireBrick',
-            'current': 'DarkGreen',
-            'future': 'CornflowerBlue'
-        }; // Define colors for different date types
+                // normalize DD-MM-YYYY to YYYY-MM-DD
+                let datecorrection = tddate.split("-").reverse().join("-").replace(/\s/g, '');
+                let values = new Date(datecorrection);
+                values.setHours(0, 0, 0, 0);
 
-        if (tddate != '' && values != 'Invalid Date') { // Check if the extracted date and the created Date object are valid
+                let curDate = new Date();
+                curDate.setHours(0, 0, 0, 0);
 
-            if (values < curDate) { // Compare the extracted date with the current date
-                $(this).find('td:eq(8)').css({
-                    'background-color': colors.past,
-                    'color': 'white'
-                }); // Apply styling for past dates
-            } else if (values > curDate) {
-                $(this).find('td:eq(8)').css({
-                    'background-color': colors.future,
-                    'color': 'white'
-                }); // Apply styling for future dates
-            } else {
-                $(this).find('td:eq(8)').css({
-                    'background-color': colors.current,
-                    'color': 'white'
-                }); // Apply styling for the current date
-            }
+                let colors = {
+                    'past': 'FireBrick',
+                    'current': 'DarkGreen',
+                    'future': 'CornflowerBlue'
+                };
+
+                if (!isNaN(values)) {
+                    if (values < curDate) {
+                        $(this).find('td:eq(11)').css({'background-color': colors.past, 'color': 'white'});
+                    } else if (values > curDate) {
+                        $(this).find('td:eq(11)').css({'background-color': colors.future, 'color': 'white'});
+                    } else {
+                        $(this).find('td:eq(11)').css({'background-color': colors.current, 'color': 'white'});
+                    }
+                }
+            });
         }
     });
 </script>
+
 <style>
     .dropdown-content {
         color: black;

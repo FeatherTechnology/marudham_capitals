@@ -26,6 +26,19 @@ $(document).ready(function () {
 	// 		$("#intrest_method").hide();
 	// 	}
 	// });
+	$('#due_type').on('change', function () {
+        let dueType = $(this).val();
+
+        if (dueType === 'intrest') {
+            // Set "After Benefit" as selected
+            $('#profit_method').val('after_intrest');
+            $('#profit_method').selectpicker('refresh'); // Refresh bootstrap select
+        } else if (dueType === 'emi') {
+            // Reset selection if EMI is chosen
+            $('#profit_method').val('');
+            $('#profit_method').selectpicker('refresh');
+        }
+    });
 
 	//change sub category based on Loan category
 	$('#loan_category').change(function () {

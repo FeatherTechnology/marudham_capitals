@@ -29,12 +29,16 @@ $(document).ready(function () {
         $('#by_user').hide()
         $('#by_user').val('')
         $('#pending_table').hide().find('tbody').empty();
+        $('#current_table').hide().find('tbody').empty();
         $('#od_table').hide().find('tbody').empty();
         // Reset header text
-        $('.card-header').text('Pending OD Report');
+        $('.card-header').text('Customer Status Report');
         // If DataTables is used, destroy previous instances to avoid duplicates
         if ($.fn.DataTable.isDataTable('#pending_table')) {
             $('#pending_table').DataTable().clear().destroy();
+        }
+        if ($.fn.DataTable.isDataTable('#current_table')) {
+            $('#current_table').DataTable().clear().destroy();
         }
         if ($.fn.DataTable.isDataTable('#od_table')) {
             $('#od_table').DataTable().clear().destroy();
@@ -67,15 +71,19 @@ $(document).ready(function () {
     $('#by_user').change(function () {
         let user_id = $(this).val();
         // Reset header text
-        $('.card-header').text('Pending OD Report');
+        $('.card-header').text('Customer Status Report');
 
         // Hide all tables and wrappers
         $('#pending_table').hide().find('tbody').empty();
+        $('#current_table').hide().find('tbody').empty();
         $('#od_table').hide().find('tbody').empty();
 
         // If DataTables is used, destroy previous instances to avoid duplicates
         if ($.fn.DataTable.isDataTable('#pending_table')) {
             $('#pending_table').DataTable().clear().destroy();
+        }
+        if ($.fn.DataTable.isDataTable('#current_table')) {
+            $('#current_table').DataTable().clear().destroy();
         }
         if ($.fn.DataTable.isDataTable('#od_table')) {
             $('#od_table').DataTable().clear().destroy();
@@ -86,7 +94,7 @@ $(document).ready(function () {
             loanCategory.clearStore(); // clear if no user selected
         }
     });
-    
+
     $('#due_followup').on('change', function () {
         let followup_id = $(this).val();
         getUserLoanCategories(null, followup_id); // user_id not needed for type=4
@@ -124,20 +132,26 @@ $(document).ready(function () {
         } else if (type == "4") {
             $("#nameHeader").text("Due Followup Name");
         }
-
+        $('#current_table').hide();
         $('#pending_table').hide();
         $('#od_table').hide();
         $('.dataTables_wrapper').hide();
         if (sub_status_type == '1') {
+            $('.card-header').text('Current Report');
+            $('#current_table').show();
+            currentReportCount(search_date, type, line, selected_user, group_map, due_followup, loan_category, sub_status_type);
+            $('#current_table_wrapper').show();
+        }
+        else if (sub_status_type == '2') {
             $('.card-header').text('Pending Report');
             $('#pending_table').show();
-            pendingReportCount(search_date, type, line, selected_user,group_map,due_followup,loan_category, sub_status_type);
+            pendingReportCount(search_date, type, line, selected_user, group_map, due_followup, loan_category, sub_status_type);
             $('#pending_table_wrapper').show();
-        } else if (sub_status_type == '2') {
+        } else if (sub_status_type == '3') {
             $('.card-header').text('OD Report');
             $('#od_table').show();
             $('#od_table_wrapper').show();
-            odReportCount(search_date, type, line, selected_user,group_map,due_followup,loan_category, sub_status_type);
+            odReportCount(search_date, type, line, selected_user, group_map, due_followup, loan_category, sub_status_type);
 
         }
 
@@ -146,7 +160,7 @@ $(document).ready(function () {
 
 
 function getUserNames() {
-    $.post('reportFile/pending_od_report/getAllUserList.php', function (response) {
+    $.post('reportFile/customer_status_report/getAllUserList.php', function (response) {
         $('#by_user').empty();
         $('#by_user').append("<option value=''>Select User</option>");
         $.each(response, function (index, val) {
@@ -159,7 +173,7 @@ function getUserLoanCategories(user_id, followup_id = null) {
     let type = $("#type").val();
 
     $.ajax({
-        url: 'reportFile/pending_od_report/ajaxGetUserLoanCategory.php',
+        url: 'reportFile/customer_status_report/ajaxGetUserLoanCategory.php',
         type: 'POST',
         data: {
             user_id: user_id,
@@ -184,7 +198,7 @@ function getUserLoanCategories(user_id, followup_id = null) {
 
 function getline() {
     $.ajax({
-        url: 'reportFile/pending_od_report/ajaxGetLine.php', // new file for line data
+        url: 'reportFile/customer_status_report/ajaxGetLine.php', // new file for line data
         type: 'POST',
         dataType: 'json',
         success: function (response) {
@@ -204,7 +218,7 @@ function getline() {
 }
 function getGroup() {
     $.ajax({
-        url: 'reportFile/pending_od_report/ajaxGetGroup.php',
+        url: 'reportFile/customer_status_report/ajaxGetGroup.php',
         type: 'POST',
         dataType: 'json',
         success: function (response) {
@@ -224,7 +238,7 @@ function getGroup() {
 }
 function getDueFollowup() {
     $.ajax({
-        url: 'reportFile/pending_od_report/ajaxGetdueFollowup.php',
+        url: 'reportFile/customer_status_report/ajaxGetdueFollowup.php',
         type: 'POST',
         dataType: 'json',
         success: function (response) {
@@ -242,9 +256,87 @@ function getDueFollowup() {
         }
     });
 }
-function pendingReportCount(search_date, type, line, selected_user,group_map,due_followup,loan_category, sub_status_type) {
+function currentReportCount(search_date, type, line, selected_user, group_map, due_followup, loan_category, sub_status_type) {
     $.ajax({
-        url: 'reportFile/pending_od_report/PendingCustomerCountReport.php',
+        url: 'reportFile/customer_status_report/CurrentCustomerCountReport.php',
+        method: 'POST',
+        data: {
+            search_date: search_date,
+            type: type,
+            line: line,
+            user_id: selected_user,
+            group_map: group_map,
+            due_followup: due_followup,
+            loan_category: loan_category,
+            sub_status_type: sub_status_type
+        },
+        success: function (res) {
+            const parsed = JSON.parse(res);
+
+            if (!parsed.data || parsed.data.length === 0) {
+                $('#current_table thead').html("<tr><th colspan='10'>No data found for the selected filters</th></tr>");
+                $('#current_table').DataTable().clear().draw();
+                return;
+            }
+
+            const data = parsed.data;
+            const totalRow = data[data.length - 1];
+            if (totalRow.fullname === 'Total') {
+                data.pop();
+            }
+
+            const columns = [
+                { data: 'sno' },
+                { data: 'date' },
+                { data: 'fullname' },
+                { data: 'loan_category' },
+                { data: 'total_count' },
+                { data: 't_current_count' },
+                { data: 'payable_zero' },
+                { data: 'responsible_zero' },
+                { data: 'paid' },
+                { data: 'partially_paid' },
+                { data: 'unpaid' }
+            ];
+
+            $('#current_table').DataTable().destroy();
+            $('#current_table').DataTable({
+                data: data,
+                columns: columns,
+                dom: 'lBfrtip',
+                buttons: [
+                    { extend: 'excel', title: "Current Customer Count Report" },
+                    { extend: 'colvis', collectionLayout: 'fixed four-column' }
+                ],
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                drawCallback: function () {
+                    searchFunction('current_table');
+                    paginationFunction('current_table');
+                }
+            });
+
+            let footerHtml = `<tr>
+                <td></td>
+                <td></td>
+                <td><b>Total</b></td>
+                <td></td>
+                <td><b>${totalRow.total_count}</b></td>
+                <td><b>${totalRow.t_current_count}</b></td>
+                <td><b>${totalRow.payable_zero}</b></td>
+                <td><b>${totalRow.responsible_zero}</b></td>
+                <td><b>${totalRow.paid}</b></td>
+                <td><b>${totalRow.partially_paid}</b></td>
+                <td><b>${totalRow.unpaid}</b></td>
+            </tr>`;
+
+            $('#current_table tfoot').html(footerHtml);
+        }
+    });
+}
+
+function pendingReportCount(search_date, type, line, selected_user, group_map, due_followup, loan_category, sub_status_type) {
+    $.ajax({
+        url: 'reportFile/customer_status_report/PendingCustomerCountReport.php',
         method: 'POST',
         data: {
             search_date: search_date,
@@ -318,9 +410,9 @@ function pendingReportCount(search_date, type, line, selected_user,group_map,due
     });
 }
 
-function odReportCount(search_date, type, line,selected_user,group_map,due_followup, loan_category, sub_status_type) {
+function odReportCount(search_date, type, line, selected_user, group_map, due_followup, loan_category, sub_status_type) {
     $.ajax({
-        url: 'reportFile/pending_od_report/odCustomerCountReport.php',
+        url: 'reportFile/customer_status_report/odCustomerCountReport.php',
         method: 'POST',
         data: {
             search_date: search_date,

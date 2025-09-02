@@ -8,6 +8,7 @@ $follow_up_date = '';
 $sno = 1;
 $Obj = new promotionListClass($connect);
 $sub_area_list = $Obj->sub_area_list;
+$accessType = $Obj->accessType;
 
 $column = array(
     'cp.cus_reg_id',                  
@@ -21,6 +22,7 @@ $column = array(
     'cp.mobile1',
     'cp.cus_reg_id',
     'req.cus_status',
+    'req.cus_data',
     'req.updated_date',
     'cp.cus_reg_id',
     'cp.cus_reg_id',
@@ -37,7 +39,9 @@ $order = '';
 if (isset($_POST['order'])) {
     $order = ' ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
 }
-
+$areaColumn = ($accessType == 3) 
+    ? "cp.area" 
+    : "cp.sub_area";
     $qry = "SELECT req.req_id, req.cus_data, req.cus_id, cp.customer_name, al.area_name, sl.sub_area_name, bc.branch_name, agm.group_name, alm.line_name, cp.mobile1, req.cus_status AS consider_level, req.updated_date, np.status AS followup_sts, np.follow_date 
     FROM request_creation req 
     LEFT JOIN customer_register cp ON req.cus_id = cp.cus_id 
@@ -54,7 +58,7 @@ if (isset($_POST['order'])) {
     LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
     LEFT JOIN new_promotion np ON np.cus_id = req.cus_id AND np.created_date = (SELECT MAX(np1.created_date) FROM new_promotion np1 WHERE np1.cus_id = req.cus_id)
     WHERE req.cus_status BETWEEN 4 AND 9 
-    AND CASE WHEN req.cus_status IN (6, 7) THEN cp.area_confirm_subarea ELSE cp.sub_area END IN  ($sub_area_list) AND rc.cus_id IS NULL ";
+    AND CASE WHEN req.cus_status IN (6, 7) THEN cp.area_confirm_subarea ELSE $areaColumn END IN  ($sub_area_list) AND rc.cus_id IS NULL ";
 
     if($_POST['followUpSts']){
         $follow_up_sts = $_POST['followUpSts'];
@@ -71,7 +75,6 @@ if (isset($_POST['order'])) {
     }     
     
         $qry .= "$search GROUP BY req.cus_id $order ";
-
         // Count query for filtered rows
         $num_qry = $connect->query($qry);
         $number_filter_row = $num_qry->rowCount();

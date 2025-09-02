@@ -8,7 +8,7 @@ $follow_up_date = '';
 $sno = 1;
 $Obj = new promotionListClass($connect);
 $sub_area_list = $Obj->sub_area_list;
-
+$accessType = $Obj->accessType;
 $column = array(
     'cp.id',                  
     'cp.cus_id',              
@@ -37,7 +37,9 @@ $order = '';
 if (isset($_POST['order'])) {
     $order = ' ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
 }
-
+$areaColumn = ($accessType == 3) 
+    ? "cp.area_confirm_area" 
+    : "cp.area_confirm_subarea";
     //only closed customers who dont have any loans in current.
     // Simplified main query to fetch closed customers without loans
     $qry = "SELECT cp.req_id, cp.cus_id, cp.cus_name, al.area_name, sl.sub_area_name, bc.branch_name,agm.group_name, alm.line_name, cp.mobile1, cs.consider_level, cs.created_date, np.status AS followup_sts, np.follow_date 
@@ -54,7 +56,7 @@ if (isset($_POST['order'])) {
         LEFT JOIN area_line_mapping alm ON FIND_IN_SET(sl.sub_area_id, alm.sub_area_id) 
         LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
         LEFT JOIN new_promotion np ON np.cus_id = cs.cus_id AND np.created_date = (SELECT MAX(np1.created_date) FROM new_promotion np1 WHERE np1.cus_id = cs.cus_id)
-        WHERE cp.area_confirm_subarea IN ($sub_area_list) AND NOT EXISTS ( SELECT 1 FROM closed_status cs2 WHERE cs2.cus_id = cp.cus_id AND cs2.closed_sts IN (2,3)) AND NOT EXISTS ( SELECT 1 FROM request_creation r WHERE r.cus_id = cs.cus_id AND (r.cus_status NOT IN (4,5,6,7,8,9)) AND r.cus_status < 20 ) ";
+        WHERE $areaColumn IN ($sub_area_list) AND NOT EXISTS ( SELECT 1 FROM closed_status cs2 WHERE cs2.cus_id = cp.cus_id AND cs2.closed_sts IN (2,3)) AND NOT EXISTS ( SELECT 1 FROM request_creation r WHERE r.cus_id = cs.cus_id AND (r.cus_status NOT IN (4,5,6,7,8,9)) AND r.cus_status < 20 ) ";
 
     if($_POST['followUpSts']){
         $follow_up_sts = $_POST['followUpSts'];
@@ -71,7 +73,7 @@ if (isset($_POST['order'])) {
     }    
 
     $qry .= "$search GROUP BY cp.cus_id $order ";
-
+    
     // Count query for filtering (use the same logic but without limit)
     $num_qry = $connect->query($qry);
     $number_filter_row = $num_qry->rowCount();

@@ -52,35 +52,38 @@ $(document).ready(function () {
         }
     })
 
-    $('#followup_search').click(function(event){
+    $('#followup_search').click(function (event) {
         event.preventDefault();
 
         let dateType = $('#date_type').val();
-            if(dateType){
-                let fromDate = $('#follow_up_fromdate').val();  
-                let toDate = $('#follow_up_todate').val();
-                
-                if(!fromDate || !toDate){
-                    alert("Please fill the From & To date.");
-                    return;
-                }
-            } else{
-                $('#follow_up_fromdate').val('');  
-                $('#follow_up_todate').val('');
+        if (dateType) {
+            let fromDate = $('#follow_up_fromdate').val();
+            let toDate = $('#follow_up_todate').val();
+
+            if (!fromDate || !toDate) {
+                alert("Please fill the From & To date.");
+                return;
             }
+        } else {
+            $('#follow_up_fromdate').val('');
+            $('#follow_up_todate').val('');
+        }
 
         let btnName = $(".toggle-button.active").first().val();
 
-        if(btnName =='Existing'){
+        if (btnName == 'Existing') {
             showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list', '15');
 
-        } else if(btnName =='Repromotion'){
+        } else if (btnName == 'Repromotion') {
             showPromotionList('followupFiles/promotion/showRepromotionList.php', 'repromotion_list', '16');
-            
-        }  
-    });
 
-    $('#follow_up_fromdate').change(function(){
+        }
+    });
+    $("#area").change(function () {
+        var areaselected = $("#area").val();
+        getAreaBasedSubArea(areaselected);
+    });
+    $('#follow_up_fromdate').change(function () {
         const fromDate = $(this).val();
         const toDate = $('#follow_up_todate').val();
         $('#follow_up_todate').attr('min', fromDate);
@@ -104,19 +107,19 @@ $(function () {
     getPromotionAccess()
 })
 
-function getPromotionAccess(){
-    $.post('followupFiles/promotion/promotion_access.php', function(response) {
+function getPromotionAccess() {
+    $.post('followupFiles/promotion/promotion_access.php', function (response) {
         if (Array.isArray(response) && response.length > 0) {
-            let accessString = response[0].pro_aty_access; 
+            let accessString = response[0].pro_aty_access;
             let accessArray = accessString.split(",").map(Number);
             $(".toggle-button").hide();
             accessArray.forEach(value => {
                 if (value === 1) {
                     $("#existing_button").closest(".toggle-button").show();
-                } 
+                }
                 if (value === 2) {
                     $("#new_button").closest(".toggle-button").show();
-                } 
+                }
                 if (value === 3) {
                     $("#repromotion_button").closest(".toggle-button").show();
                 }
@@ -191,9 +194,9 @@ function resetNewPromotionTable() {
     $.post('followupFiles/promotion/resetNewPromotionTable.php', {}, function (html) {
         $('#new_promo_div').empty().html(html);
 
-        intNotintOnclick();
-
     }).then(function () {
+        
+        intNotintOnclick();
         promoChartOnclick();
     })
 }
@@ -209,7 +212,7 @@ function submitNewCustomer() {
             // if this true then it will ask for confirmation to update customer details in new promotion table
             swarlInfoAlert(response, 'Do You want to Update?');
         } else {
-            swarlSuccessAlert(response, function(){
+            swarlSuccessAlert(response, function () {
                 $('#closeNewPromotionModal').trigger('click');
             });
             $('#addnewcus').find('.modal-body input').val('');
@@ -224,7 +227,7 @@ function validateNewCusAdd() {
 
     validateField(cus_name, '#cus_nameCheck');
     validateField(area, '#areaCheck');
-    validateField(sub_area, '#sub_areaCheck');
+    validateField(sub_area, '#subareaCheck');
 
     function validateField(value, fieldId) {
         if (value === '') {
@@ -259,7 +262,7 @@ function submitPromotion() {
         if (response.includes('Error')) {
             swarlErrorAlert(response);
         } else {
-            swarlSuccessAlert(response, function(){
+            swarlSuccessAlert(response, function () {
                 $('#closeAddPromotionModal').trigger('click');
             });
             $('#addPromotion').find('.modal-body input').not('[readonly]').not('#orgin_table').val('');
@@ -267,6 +270,63 @@ function submitPromotion() {
     })
 }
 
+
+function getUserBasedArea() {
+    $.ajax({
+        url: "followupFiles/promotion/getAreaId.php",
+        type: "post",
+        dataType: "json",
+        success: function (data) {
+            let $area = $("#area");
+            $area.empty().append('<option value="">Select Area</option>');
+            let options = '';
+            $.each(data, function (i, item) {
+                options += '<option value="' + item.area_id + '">' + item.area_name + '</option>';
+            });
+            let $options = $(options);
+            $options.sort(function (a, b) {
+                return $(a).text().localeCompare($(b).text());
+            });
+            $area.append($options);
+        },
+        error: function (xhr, status, error) {
+            console.error("AJAX Error:", error);
+        }
+    });
+}
+
+function getAreaBasedSubArea(area) {
+    var sub_area_upd = $("#sub_area_upd").val();
+    $.ajax({
+        url: "requestFile/ajaxGetEnabledSubArea.php",
+        type: "post",
+        data: { area: area },
+        dataType: "json",
+        success: function (response) {
+            $("#sub_area").empty();
+            $("#sub_area").append("<option value='' >Select Sub Area</option>");
+            for (var i = 0; i < response.length; i++) {
+                var selected = "";
+                if (
+                    sub_area_upd != undefined &&
+                    sub_area_upd != "" &&
+                    sub_area_upd == response[i]["sub_area_id"]
+                ) {
+                    selected = "selected";
+                }
+                $("#sub_area").append(
+                    "<option value='" +
+                    response[i]["sub_area_id"] +
+                    "' " +
+                    selected +
+                    ">" +
+                    response[i]["sub_area_name"] +
+                    " </option>"
+                );
+            }
+        },
+    });
+}
 function validatePromoAdd() {
     let response = true;
     let status = $('#promo_status').val(); let label = $('#promo_label').val(); let remark = $('#promo_remark').val();
@@ -299,7 +359,7 @@ function update() {//this function will update customer details of after confirm
         if (response.includes('Error')) {
             swarlErrorAlert(response);
         } else {
-            swarlSuccessAlert(response, function(){
+            swarlSuccessAlert(response, function () {
                 $('#closeNewPromotionModal').trigger('click');
             });
             $('#addnewcus').find('.modal-body input').val('');
@@ -307,16 +367,15 @@ function update() {//this function will update customer details of after confirm
     })
 }
 
-function promoChartOnclick() {//function of on click event for promo chart
-    $('.promo-chart').off('click').click(function () {
+function promoChartOnclick() { // function of on click event for promo chart
+    $(document).off('click', '.promo-chart').on('click', '.promo-chart', function () {
         let cus_id = $(this).data('id');
-        $.post('followupFiles/promotion/resetPromotionChart.php', { 'cus_id': cus_id }, function (html) {
-            $('#promoChartDiv').empty();
-            $('#promoChartDiv').html(html);
-        })
-
-    })
+        $.post('followupFiles/promotion/resetPromotionChart.php', { cus_id: cus_id }, function (html) {
+            $('#promoChartDiv').empty().html(html);
+        });
+    });
 }
+
 
 function intNotintOnclick() {
     // click for add promotion modal
@@ -365,7 +424,7 @@ function showPromotionList(url, tableid, colNo) {
         'ajax': {
             'url': url,
             'data': function (data) {
-                var search = $('input[type=search]').val();
+                var search = $('#' + tableid + '_search').val();
                 data.search = search;
                 data.followUpSts = followUpSts;
                 data.dateType = dateType;
@@ -388,8 +447,10 @@ function showPromotionList(url, tableid, colNo) {
             [10, 25, 50, "All"]
         ],
         'drawCallback': function () {
+             let searchInput = $('#' + tableid + '_filter input');
+            searchInput.attr('id', tableid + '_search').addClass('custo-search');
             searchFunction(tableid);
-            paginationFunction(tableid);
+           paginationFunction(tableid);
             intNotintOnclick();
             promoChartOnclick();
             promotionListOnclick();
@@ -616,7 +677,7 @@ function swarlSuccessAlert(response, callback) {
         confirmButtonText: 'Ok',
         confirmButtonColor: '#009688'
     }).then((result) => {
-        if(result.isConfirmed && typeof callback === 'function'){
+        if (result.isConfirmed && typeof callback === 'function') {
             callback();
         }
     });

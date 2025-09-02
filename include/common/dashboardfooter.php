@@ -1371,8 +1371,8 @@
     if ($current_page == 'commitment_report') { ?>
         <script src="js/commitment_report.js"></script>
     <?php }
-    if ($current_page == 'pending_od_report') { ?>
-        <script src="js/pending_od_report.js"></script>
+    if ($current_page == 'customer_status_report') { ?>
+        <script src="js/customer_status_report.js"></script>
     <?php }
     
     if ($current_page == 'search_module') { ?>
