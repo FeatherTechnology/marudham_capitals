@@ -348,7 +348,6 @@ WHERE cs4.sub_status IN ('Closed','Due Nil')
                 || isset($currentReqIds[$cust['req_id']])  // include Closed/Due Nil with Current collection
             ) {
                 
-             echo $cust['loan_id'] . "<br>";
                 $t_current_count++;
                 $isCurrentCustomer = true;
                 // echo $cust['loan_id'] . "<br>";
