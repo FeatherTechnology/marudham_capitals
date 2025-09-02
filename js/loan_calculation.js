@@ -8,37 +8,23 @@ $(document).ready(function () {
 		$("#loan_category").prepend(firstOption);
 	}
 
-	//Show Reference No  Field
-	// $('#due_type').on('change', function () {
+		$('#due_type').on('change', function () {
+		var due_type = $(this).val();
 
-	// 	var due_type = $('#due_type').val();
-	// 	if (due_type == 'emi') {
-	// 		$("#intrest_method").hide();
-	// 		$("#emi_method").show();
-	// 	} else if (due_type == 'intrest') {
-	// 		$("#emi_method").hide();
-	// 		$("#intrest_method").show();
-	// 	} else if (due_type == 'emi,intrest') {
-	// 		$("#emi_method").show();
-	// 		$("#intrest_method").show();
-	// 	} else if (due_type == null) {
-	// 		$("#emi_method").hide();
-	// 		$("#intrest_method").hide();
-	// 	}
-	// });
-	$('#due_type').on('change', function () {
-        let dueType = $(this).val();
-
-        if (dueType === 'intrest') {
-            // Set "After Benefit" as selected
-            $('#profit_method').val('after_intrest');
-            $('#profit_method').selectpicker('refresh'); // Refresh bootstrap select
-        } else if (dueType === 'emi') {
-            // Reset selection if EMI is chosen
-            $('#profit_method').val('');
-            $('#profit_method').selectpicker('refresh');
-        }
-    });
+		if (due_type == 'emi') {
+			$(".intrest_method").hide();
+			$(".overdue_emi_method").show();
+			$('#overdue').val("");
+		} else if (due_type == 'intrest') {
+			$(".intrest_method").show();
+			$(".overdue_emi_method").hide();
+			$('#overdue').val("");
+		} else {
+			$(".intrest_method").hide();
+			$(".overdue_emi_method").hide();
+			$('#overdue').val("");
+		}
+	});
 
 	//change sub category based on Loan category
 	$('#loan_category').change(function () {
@@ -46,35 +32,94 @@ $(document).ready(function () {
 		getSubCategory(loan_cat);
 	})
 
-	// $('#submitloan_calculation').click(function () {
-	// 	//Validations
-	// 	var due_type = $('#due_type').val();
-	// 	if (due_type == 'emi') {
-	// 		$("#calculate_method").val('');
-	// 	} else if (due_type == 'intrest') {
-	// 		$("#profit_method").val('');
-	// 	}
-	// })
-	$(' #docamt,#docpercentage').click(function () {
-        var doc_charge_type = $('input[name=doc_charge_type]:checked').val();
-        if (doc_charge_type == 'amt') {
-            changeAmtinput('docmin', 'docmax', 'document_charge_min', 'document_charge_max');
-        }
-        if (doc_charge_type == 'percentage') {
-            changePercentinput('docmin', 'docmax', 'document_charge_min', 'document_charge_max');
-        }
-    })
-	 // Amount or percentage change on fields
-	 $('#procamt,#procpercentage').click(function () {
-        var proc_fee_type = $('input[name=proc_fee_type]:checked').val();
-        if (proc_fee_type == 'amt') {
-            changeAmtinput('procmin', 'procmax', 'processing_fee_min', 'processing_fee_max');
-        }
-        if (proc_fee_type == 'percentage') {
-            changePercentinput('procmin', 'procmax', 'processing_fee_min', 'processing_fee_max');
-        }
-    })
+	$('#submitloan_calculation').click(function (e) {
+		var due_type = $('#due_type').val();
+		var isValid = true;
 
+		if (due_type === 'intrest') { // corrected spelling
+			// Validate calculate method
+			if ($("#calculate_method").val() === '') {
+				swalError("Warning", "Please select Calculate Method");
+				$("#calculate_method").focus();
+				isValid = false;
+			}
+
+			// Validate overdue type radio buttons
+			var overdueType = $("input[name='overdue_type']:checked").val();
+			if (!overdueType) {
+				swalError("Warning", "Please select Overdue Penalty type (₹ or %)");
+				isValid = false;
+			}
+
+		} else if (due_type === 'emi') {
+			// Validate overdue % field
+			if ($("#overdue").val() === '') {
+				swalError("Warning", "Please enter Overdue Penalty %");
+				$("#overdue").focus();
+				isValid = false;
+			}
+
+			// Clear Interest-specific fields only if form is valid
+			if (isValid) {
+				$("#calculate_method").val('');
+				$("input[name='overdue_type']").prop('checked', false);
+			}
+		}
+
+		// Prevent form submit if not valid
+		if (!isValid) {
+			e.preventDefault();
+			return false;
+		}
+	});
+
+
+	$(' #docamt,#docpercentage').click(function () {
+		var doc_charge_type = $('input[name=doc_charge_type]:checked').val();
+		if (doc_charge_type == 'amt') {
+			changeAmtinput('docmin', 'docmax', 'document_charge_min', 'document_charge_max');
+		}
+		if (doc_charge_type == 'percentage') {
+			changePercentinput('docmin', 'docmax', 'document_charge_min', 'document_charge_max');
+		}
+	})
+
+	// Amount or percentage change on fields
+	$('#procamt,#procpercentage').click(function () {
+		var proc_fee_type = $('input[name=proc_fee_type]:checked').val();
+		if (proc_fee_type == 'amt') {
+			changeAmtinput('procmin', 'procmax', 'processing_fee_min', 'processing_fee_max');
+		}
+		if (proc_fee_type == 'percentage') {
+			changePercentinput('procmin', 'procmax', 'processing_fee_min', 'processing_fee_max');
+		}
+	})
+
+	// function applyDueTypeUI(due_type) {
+	// 	if (due_type === 'intrest') {
+	// 		$("#profit_method option[value='after_intrest']").prop("selected", true);
+	// 		// manually update button text
+	// 		let selectedTexts = $("#profit_method option:selected").map(function () {
+	// 			return $(this).text();
+	// 		}).get().join(', ');
+	// 		$("#profit_method").next(".dropdown-toggle").find(".filter-option-inner-inner").text(selectedTexts);
+	// 		// disable actual <select>
+	// 		$('#profit_method').prop('disabled', true);
+
+	// 		// disable Bootstrap-Select button UI
+	// 		$('#profit_method').next('.bootstrap-select').find('button').prop('disabled', true);
+	// 	} else {
+	// 		// enable again
+	// 		$('#profit_method').prop('disabled', false);
+	// 		$('#profit_method').next('.bootstrap-select').find('button').prop('disabled', false);
+	// 		// reset value if needed
+	// 		$('#profit_method').val([]);
+	// 	}
+	// }
+
+	// $('#due_type').on('change', function () {
+	// 	applyDueTypeUI($(this).val());
+	// });
 });
 
 //on page load for Edit
@@ -87,11 +132,13 @@ $(function () {
 		var loan_category_upd = $('#loan_category_upd').val()
 		getSubCategory(loan_category_upd);
 	}
+
 	if (doc_charge_type == 'amt') {
 		changeAmtinput('docmin', 'docmax', 'document_charge_min', 'document_charge_max');
 	} else if (doc_charge_type == 'percentage') {
 		changePercentinput('docmin', 'docmax', 'document_charge_min', 'document_charge_max');
 	}
+
 	//for processing fee
 	if (proc_fee_type == 'amt') {
 		changeAmtinput('procmin', 'procmax', 'processing_fee_min', 'processing_fee_max');
@@ -100,6 +147,26 @@ $(function () {
 	}
 })
 
+function toggleOverdueField() {
+	var dueType = $('#due_type').val();
+
+	if (dueType === 'emi') {
+		$('.interest_only').hide();    // hide radio buttons
+		$('#emi_symbol').show();       // show % symbol in label
+	} else if (dueType === 'intrest') {
+		$('.interest_only').show();    // show radio buttons
+		$('#emi_symbol').hide();       // hide % symbol
+	} else {
+		$('.intrest_only').hide();
+		$('#emi_symbol').hide();
+	}
+}
+
+toggleOverdueField(); // run on page load
+
+$('#due_type').change(function () {
+	toggleOverdueField();
+});
 
 
 //Fetch Loan Category Based on loan category
@@ -170,15 +237,24 @@ function getSubCategory(loan_cat) {
 
 //Change Document charge & Processing fee input field not readonly
 function changeAmtinput(docmin, docmax, document_charge_min, document_charge_max) {
-    $('#' + docmin).text('Min ₹');
-    $('#' + docmax).text('Max ₹');
-    $('#' + document_charge_min).attr('readonly', false);
-    $('#' + document_charge_max).attr('readonly', false);
+	$('#' + docmin).text('Min ₹');
+	$('#' + docmax).text('Max ₹');
+	$('#' + document_charge_min).attr('readonly', false);
+	$('#' + document_charge_max).attr('readonly', false);
 }
 //Change Document charge & Processing fee input field not readonly
 function changePercentinput(docmin, docmax, document_charge_min, document_charge_max) {
-    $('#' + docmin).text('Min %');
-    $('#' + docmax).text('Max %');
-    $('#' + document_charge_min).attr('readonly', false);
-    $('#' + document_charge_max).attr('readonly', false);
+	$('#' + docmin).text('Min %');
+	$('#' + docmax).text('Max %');
+	$('#' + document_charge_min).attr('readonly', false);
+	$('#' + document_charge_max).attr('readonly', false);
+}
+
+function swalError(title, text) {
+	Swal.fire({
+		icon: 'warning',
+		title: title,
+		text: text,
+		confirmButtonColor: '#009688',
+	});
 }

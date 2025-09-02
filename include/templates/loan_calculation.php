@@ -6,8 +6,8 @@ if (isset($_SESSION["userid"])) {
 $loanCategoryList = $userObj->getloanCategoryList($mysqli);
 
 $id = 0;
-// $emicheck = 0;
-// $calcheck = 0;
+$emicheck = 0;
+$calcheck = 0;
 if (isset($_POST['submitloan_calculation']) && $_POST['submitloan_calculation'] != '') {
     if (isset($_POST['id']) && $_POST['id'] > 0 && is_numeric($_POST['id'])) {
         $id = $_POST['id'];
@@ -60,21 +60,22 @@ if ($idupd > 0) {
             $intrest_rate_max       = $getLoanCalculation['intrest_rate_max'];
             $due_period_min         = $getLoanCalculation['due_period_min'];
             $due_period_max         = $getLoanCalculation['due_period_max'];
-            $doc_charge_type         = $getLoanCalculation['doc_charge_type'];
+            $doc_charge_type        = $getLoanCalculation['doc_charge_type'];
             $document_charge_min    = $getLoanCalculation['document_charge_min'];
             $document_charge_max    = $getLoanCalculation['document_charge_max'];
-            $proc_fee_type    = $getLoanCalculation['proc_fee_type'];
+            $proc_fee_type          = $getLoanCalculation['proc_fee_type'];
             $processing_fee_min     = $getLoanCalculation['processing_fee_min'];
             $processing_fee_max     = $getLoanCalculation['processing_fee_max'];
+            $overdue_type           = $getLoanCalculation['overdue_type'];
+            $overdue                = $getLoanCalculation['overdue'];
             $due_date               = $getLoanCalculation['due_date'];
             $grace_period           = $getLoanCalculation['grace_period'];
             $penalty                = $getLoanCalculation['penalty'];
-            $overdue                = $getLoanCalculation['overdue'];
             $collection_info        = $getLoanCalculation['collection_info'];
         }
     }
-    // $emicheck = strpos($due_type, 'emi') !== false;
-    // $calcheck = strpos($due_type, 'intrest') !== false;
+    $emicheck = strpos($due_type, 'emi') !== false;
+    $calcheck = strpos($due_type, 'intrest') !== false;
 
 
     $profit_method = explode(',', $profit_method);
@@ -135,23 +136,27 @@ if ($idupd > 0) {
                             </div>
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-                            <div class="form-group">
+                           <div class="form-group">
                                 <label for="disabledInput">Due Type</label><span class="required">&nbsp;*</span>
-                                <input type="hidden" class="form-control" id="due_type" name="due_type" value="emi">
-                                <input tabindex="4" type="text" class="form-control" id="duetype" name="duetype" value="EMI" title="Select Due Type" readonly>
+                                <!-- <input type="hidden" class="form-control" id="due_type" name="due_type" value="emi"> -->
+                                <!-- <input tabindex="4" type="text" class="form-control" id="duetype" name="duetype" value="EMI" title="Select Due Type" readonly> -->
                                 <select tabindex="4" type="text" class="form-control" id="due_type" name="due_type" title="Select Due Type" required>
                                     <option value=''>Select Due Type</option>
-                                    <option <?php if (isset($due_type)) {if ($due_type == "emi") echo 'selected';} 
+                                    <option <?php if (isset($due_type)) {
+                                                if ($due_type == "emi") echo 'selected';
+                                            }
                                             ?> value="emi">EMI</option>
-                                    <option <?php if (isset($due_type)) {if ($due_type == "intrest") echo 'selected';} 
+                                    <option <?php if (isset($due_type)) {
+                                                if ($due_type == "intrest") echo 'selected';
+                                            }
                                             ?> value="intrest">Interest</option>
                                 </select>
                             </div>
                         </div>
-                        <div id="emi_method" class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="form-group">
                                 <label for="disabledInput">Profit Method</label>
-                                <select tabindex="5" type="text" class="form-control selectpicker" id="profit_method" name="profit_method[]" data-live-search="true" multiple data-actions-box="true" title="Select Profit Method">
+                                <select tabindex="5" type="text" class="form-control selectpicker required" id="profit_method" name="profit_method[]" data-live-search="true" multiple data-actions-box="true" title="Select Profit Method" required>
                                     <option <?php if (isset($profit_method)) {
                                                 if ($profit_method[0] == "pre_intrest") echo 'selected';
                                             } ?> value="pre_intrest">Pre Benefit</option>
@@ -166,14 +171,22 @@ if ($idupd > 0) {
                                 </select>
                             </div>
                         </div>
-                        <!-- <div id="intrest_method" <?php #if (!$calcheck) { 
-                                                        ?>style="display: none" <?php #} 
-                                                                                ?> class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 intrest_method" style="display: <?php echo ($calcheck ? 'block' : 'none'); ?>;">
                             <div class="form-group">
                                 <label for="inputReadOnly">Calculate Method</label>
-                                <input tabindex="6" type="text" class="form-control" id="calculate_method" name="calculate_method" value="Monthly" readonly>
+                                <select tabindex="4" type="text" class="form-control" id="calculate_method" name="calculate_method" title="Select Calculate Method">
+                                    <option value=''>Select Calculate Method</option>
+                                    <option <?php if (isset($calculate_method)) {
+                                                if ($calculate_method == "monthly") echo 'selected';
+                                            }
+                                            ?> value="monthly">Monthly</option>
+                                    <option <?php if (isset($calculate_method)) {
+                                                if ($calculate_method == "days") echo 'selected';
+                                            }
+                                            ?> value="days">Days</option>
+                                </select>
                             </div>
-                        </div> -->
+                        </div>
                     </div>
                     <div class="card-header">Condition Info</div>
                     <div class="card-body row">
@@ -233,7 +246,7 @@ if ($idupd > 0) {
                         </div>
                         <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-12">
                             <div class="form-group">
-                                <label style="font-size:1.35em;padding-right:2%">Processing Fee: <span class="text-danger">*</span></label>
+                                <label style="font-size:1.35em;padding-right:6%">Processing Fee: <span class="text-danger">*</span></label>
                                 <input type="radio" name="proc_fee_type" id="procamt" value="amt" tabindex="15" <?php if (isset($proc_fee_type) and $proc_fee_type == 'amt') echo 'checked'; ?>></input><label for='procamt'>&nbsp;&nbsp;<b>₹</b></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 <input type="radio" name="proc_fee_type" id="procpercentage" value="percentage" tabindex="16" <?php if (isset($proc_fee_type) and $proc_fee_type == 'percentage') echo 'checked'; ?>></input><label for='procpercentage'>&nbsp;&nbsp;%</label>
                             </div>
@@ -251,16 +264,34 @@ if ($idupd > 0) {
 
                             </div>
                         </div>
-
-                        <br><br><br><br><br><br>
-                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 overdue_penalty">
                             <div class="form-group">
-                                <label for="disabledInput">Overdue Penalty %</label><span class='text-danger' style="font-size:11px">&nbsp;*</span>
-                                <input type="number" step="0.01 " tabindex="15" id="overdue" name="overdue" class="form-control" placeholder="Enter Overdue" value="<?php if (isset($overdue)) echo $overdue; ?>" required>
+                                <label style="font-size:1.35em;padding-right:4.5%" for="overdue">
+                                    Overdue Penalty: <span class='text-danger'>*</span>
+                                    <span id="emi_symbol" style="display:none;">&nbsp;%</span>
+                                </label>
+
+                                <!-- Interest: Rupees / Percentage radio buttons -->
+                                <div class="form-check form-check-inline interest_only" style="margin-top:5px;">
+                                    <input class="form-check-input" type="radio" name="overdue_type" id="overdueamt" value="amt"
+                                        <?php if (isset($overdue_type) and $overdue_type == 'amt') echo 'checked'; ?>>
+                                    <label class="form-check-label" for="overdueamt">&nbsp;<b>₹</b></label>&nbsp;
+                                </div>
+                                <div class="form-check form-check-inline interest_only">
+                                    <input class="form-check-input" type="radio" name="overdue_type" id="overduepercentage" value="percentage"
+                                        <?php if (isset($overdue_type) and $overdue_type == 'percentage') echo 'checked'; ?>>
+                                    <label class="form-check-label" for="overduepercentage"><b>%</b></label>
+                                </div>
+
+                                <!-- EMI/Interest: single input field -->
+                                <input type="number" step="0.01" tabindex="15" id="overdue" name="overdue"
+                                    class="form-control emi_only mt-2" placeholder="Enter Overdue"
+                                    value="<?php if (isset($overdue)) echo $overdue; ?>">
                             </div>
                         </div>
+
                         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-                            <div class="form-group"><br>
+                            <div class="form-group" style="margin-top:25px;"><br>
                                 <label for="disabledInput">Advance</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 <input checked readonly type="radio" tabindex="16" name="collection_info" id="yes" value="Yes" <?php if (isset($collection_info))
                                                                                                                                     echo ($collection_info == 'yes') ? 'checked' : '' ?>> &nbsp;&nbsp; <label for="yes">Yes </label> &nbsp;&nbsp;&nbsp;&nbsp;

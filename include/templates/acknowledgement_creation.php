@@ -241,9 +241,9 @@ if (sizeof($documentationInfo) > 0) {
 // 	$userObj->addAcknowledgementLoanCalculation($mysqli, $userid);
 
 ?>
-	<script>
-		// alert('Loan Calculation Details Submitted');
-	</script>
+<script>
+	// alert('Loan Calculation Details Submitted');
+</script>
 
 <?php
 // }
@@ -262,6 +262,9 @@ if (sizeof($getCusInfoForLoanCal) > 0) {
 		$verification_location = $getCusInfoForLoanCal['verification_location'];
 	}
 }
+
+$emicheck = 0;
+
 //Get Loan Calculation info for edit
 $getLoanCalculation = $userObj->getAckLoanCalculationForVerification($mysqli, $req_id);
 if (sizeof($getLoanCalculation) > 0) {
@@ -313,6 +316,8 @@ if (sizeof($getLoanCalculation) > 0) {
 	if ($loan_cal_id > 0) {
 		$getLoanCalCategory = $userObj->getAckVerificationLoanCalCategory($mysqli, $loan_cal_id);
 	}
+
+	$emicheck = strpos($due_type_lc, 'EMI') !== false;
 }
 
 ///////// Loan Calculation End ///////////////
@@ -440,7 +445,9 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 	<!-- Customer Profile form start-->
 	<div id="customer_profile" style="display: none;">
 		<form id="cus_Profiles" name="cus_Profiles" action="" method="post" enctype="multipart/form-data">
-			<input type="hidden" name="agent_id" id="agent_id" value="<?php if (isset($agent_id)) { echo $agent_id; } ?>" />
+			<input type="hidden" name="agent_id" id="agent_id" value="<?php if (isset($agent_id)) {
+																			echo $agent_id;
+																		} ?>" />
 			<input type="hidden" name="req_id" id="req_id" value="<?php if (isset($req_id)) {
 																		echo $req_id;
 																	} ?>" />
@@ -499,10 +506,14 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 									</div>
 								</div>
 
-								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" style="display: none" >
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" style="display: none">
 									<div class="form-group">
 										<label for="responsible">Responsible&nbsp;<span class="required">&nbsp;*</span></label>
-										<input tabindex="3" type="text" class="form-control" id="responsible" name="responsible" value="<?php if (isset($responsible) and $responsible == '0') { echo 'Yes'; } else { echo 'No'; } ?>" readonly>
+										<input tabindex="3" type="text" class="form-control" id="responsible" name="responsible" value="<?php if (isset($responsible) and $responsible == '0') {
+																																			echo 'Yes';
+																																		} else {
+																																			echo 'No';
+																																		} ?>" readonly>
 									</div>
 								</div>
 
@@ -1328,10 +1339,14 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 										<input type="text" class="form-control" id="Customer_name" name="Customer_name" value='<?php if (isset($doc_cus_name)) echo $doc_cus_name; ?>' readonly tabindex="2">
 									</div>
 								</div>
-								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" style="display: none" >
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" style="display: none">
 									<div class="form-group">
 										<label for="responsible">Responsible&nbsp;<span class="required">&nbsp;*</span></label>
-										<input tabindex="3" type="text" class="form-control" id="responsible" name="responsible" value="<?php if (isset($responsible) and $responsible == '0') { echo 'Yes'; } else { echo 'No'; } ?>" readonly>
+										<input tabindex="3" type="text" class="form-control" id="responsible" name="responsible" value="<?php if (isset($responsible) and $responsible == '0') {
+																																			echo 'Yes';
+																																		} else {
+																																			echo 'No';
+																																		} ?>" readonly>
 									</div>
 								</div>
 
@@ -1403,7 +1418,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 
 					<!-- Signed Doc Info START -->
 					<div class="card doc_card" id="signed_doc_card" style="display: none;">
-						<div class="card-header"> Signed Doc Info  <span class="required">*</span>
+						<div class="card-header"> Signed Doc Info <span class="required">*</span>
 							<button type="button" class="btn btn-primary" id="add_sign_doc" name="add_sign_doc" data-toggle="modal" data-target=".addSignDoc" style="padding: 5px 35px;  float: right;" tabindex="9" onclick="resetsignInfo()"><span class="icon-add"></span></button>
 						</div>
 						<span class="text-danger" style='display:none' id='signed_infoCheck'>Please Fill Signed Doc Info </span>
@@ -1602,10 +1617,10 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" id="docUpd" style="display: none;">
 										<div class="form-group">
-											<label for="MortgageDocumentUpd"> Mortgage Document Uploads </label> 
+											<label for="MortgageDocumentUpd"> Mortgage Document Uploads </label>
 											<input type="file" onchange="compressImage(this,200)" class="form-control" id="mortgage_document_upd" name="mortgage_document_upd" tabindex="25">
 											<input type="hidden" id="mortgage_doc_upd" name="mortgage_doc_upd" value="<?php if (isset($mortgage_document_upd)) echo $mortgage_document_upd; ?>">
-											<a href="<?php echo "uploads/verification/mortgage_doc/" . $mortgage_document_upd; ?>" target="_blank" >  <?php if (isset($mortgage_document_upd)) echo $mortgage_document_upd; ?> </a>
+											<a href="<?php echo "uploads/verification/mortgage_doc/" . $mortgage_document_upd; ?>" target="_blank"> <?php if (isset($mortgage_document_upd)) echo $mortgage_document_upd; ?> </a>
 											<span class="text-danger" id="mortgagedocUpdCheck"> Upload Mortgage Document </span>
 										</div>
 									</div>
@@ -1763,10 +1778,10 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" id="RCdocUpd" style="display: none;">
 									<div class="form-group">
-										<label for="RCDocumentUpd"> RC Uploads </label> 
+										<label for="RCDocumentUpd"> RC Uploads </label>
 										<input type="file" onchange="compressImage(this,200)" class="form-control" id="RC_document_upd" name="Rc_document_upd" tabindex="39">
 										<input type="hidden" id="rc_doc_upd" name="rc_doc_upd" value="<?php if (isset($Rc_document_upd)) echo $Rc_document_upd; ?>">
-										<a href="<?php echo "uploads/verification/endorsement_doc/" . $Rc_document_upd; ?>" target="_blank" > <?php if (isset($Rc_document_upd)) echo $Rc_document_upd; ?>  </a>
+										<a href="<?php echo "uploads/verification/endorsement_doc/" . $Rc_document_upd; ?>" target="_blank"> <?php if (isset($Rc_document_upd)) echo $Rc_document_upd; ?> </a>
 										<span class="text-danger" id="rcdocUpdCheck"> Upload RC </span>
 									</div>
 								</div>
@@ -1958,10 +1973,14 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 									</div>
 								</div>
 
-								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" style="display: none" >
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" style="display: none">
 									<div class="form-group">
 										<label for="responsible">Responsible&nbsp;<span class="required">&nbsp;*</span></label>
-										<input tabindex="3" type="text" class="form-control" id="responsible" name="responsible" value="<?php if (isset($responsible) and $responsible == '0') { echo 'Yes'; } else { echo 'No'; } ?>" readonly>
+										<input tabindex="3" type="text" class="form-control" id="responsible" name="responsible" value="<?php if (isset($responsible) and $responsible == '0') {
+																																			echo 'Yes';
+																																		} else {
+																																			echo 'No';
+																																		} ?>" readonly>
 									</div>
 								</div>
 
@@ -2196,8 +2215,8 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 									<div class="form-group">
 										<label for="verify_remark">Remarks</label>
 										<input type="hidden" class="form-control" id="verify_remark_ack" name="verify_remark_ack" value="<?php if (isset($verify_remark)) {
-																																								echo $verify_remark;
-																																							} ?>">
+																																				echo $verify_remark;
+																																			} ?>">
 										<input type="text" class="form-control" id="verify_remark" name="verify_remark" value='<?php if (isset($verify_remark)) echo $verify_remark; ?>' tabindex='17' placeholder="Enter Remarks" pattern="[a-zA-Z\s]+">
 									</div>
 								</div>
@@ -2291,7 +2310,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 												<span class="text-danger" style='display:none' id='profit_typeCheck'>Please Select Profit Type</span>
 											</div>
 										</div>
-										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 calculation" style="display:none">
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emi-calculation" style="display:none">
 											<div class="form-group">
 												<label for="disabledInput">Due Method</label>&nbsp;<span class="text-danger">*</span>
 												<input tabindex="22" type="text" class="form-control" id="due_method_calc" name="due_method_calc" readonly value='Monthly'>
@@ -2306,7 +2325,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emi-calculation" style="display:none">
 											<div class="form-group">
 												<label for="disabledInput">Profit Method</label>&nbsp;<span class="text-danger">*</span>
-												<input type="hidden" class="form-control" id="profit_method_ack" name="profit_method_ack" value='<?php if (isset($profit_method_lc)) echo $profit_method_lc;?>'>
+												<input type="hidden" class="form-control" id="profit_method_ack" name="profit_method_ack" value='<?php if (isset($profit_method_lc)) echo $profit_method_lc; ?>'>
 												<select tabindex="24" type="text" class="form-control" id="profit_method" name="profit_method">
 													<option value="">Select Profit Method</option>
 												</select>
@@ -2416,7 +2435,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 												<input type="text" class="form-control" readonly id="loan_amt_cal" name="loan_amt_cal" value='<?php if (isset($loan_amt_cal)) echo $loan_amt_cal; ?>' tabindex='33'>
 											</div>
 										</div>
-										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emi_div" style="display: <?php echo ($emicheck ? 'block' : 'none'); ?>;">
 											<div class="form-group">
 												<label for="disabledInput">Principal Amount</label>&nbsp;<span class="text-danger">*</span>
 												<input type="text" class="form-control" readonly id="principal_amt_cal" name="principal_amt_cal" value='<?php if (isset($principal_amt_cal)) echo $principal_amt_cal; ?>' tabindex='34'>
@@ -2428,13 +2447,13 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 												<input type="text" class="form-control" readonly id="int_amt_cal" name="int_amt_cal" value='<?php if (isset($int_amt_cal)) echo $int_amt_cal; ?>' tabindex='35'>
 											</div>
 										</div>
-										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emi_div" style="display: <?php echo ($emicheck ? 'block' : 'none'); ?>;">
 											<div class="form-group">
 												<label for="disabledInput">Total Amount</label>&nbsp;<span class="text-danger">*</span>
 												<input type="text" class="form-control" readonly id="tot_amt_cal" name="tot_amt_cal" value='<?php if (isset($tot_amt_cal)) echo $tot_amt_cal; ?>' tabindex='36'>
 											</div>
 										</div>
-										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emi_div" style="display: <?php echo ($emicheck ? 'block' : 'none'); ?>;">
 											<div class="form-group">
 												<label for="disabledInput">Due Amount</label>&nbsp;<span class="text-danger due-diff">*</span>
 												<input type="text" class="form-control" readonly id="due_amt_cal" name="due_amt_cal" value='<?php if (isset($due_amt_cal)) echo $due_amt_cal; ?>' tabindex='37'>
@@ -2528,9 +2547,15 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 <!-- Add Signed Doc info Modal  START -->
 <div class="modal fade addSignDoc" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
 	<form method="POST" enctype="multipart/form-data" id="signDocUploads">
-		<input type="hidden" name="doc_req_id" id="doc_req_id" value="<?php if (isset($req_id)) { echo $req_id; } ?>">
-		<input type="hidden" name="doc_cus_id" id="doc_cus_id" value="<?php if (isset($cus_id)) { echo $cus_id; } ?>">
-		<input type="hidden" name="doc_cus_profile_id" id="doc_cus_profile_id" value="<?php if (isset($cus_profile_id)) { echo $cus_profile_id; } ?>" >
+		<input type="hidden" name="doc_req_id" id="doc_req_id" value="<?php if (isset($req_id)) {
+																			echo $req_id;
+																		} ?>">
+		<input type="hidden" name="doc_cus_id" id="doc_cus_id" value="<?php if (isset($cus_id)) {
+																			echo $cus_id;
+																		} ?>">
+		<input type="hidden" name="doc_cus_profile_id" id="doc_cus_profile_id" value="<?php if (isset($cus_profile_id)) {
+																							echo $cus_profile_id;
+																						} ?>">
 
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content" style="background-color: white">
@@ -2598,7 +2623,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 								<input type="text" class="form-control" id="signType_cus_name" name="signType_cus_name" readonly tabindex='3'>
 							</div>
 						</div>
-	
+
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" style="display: none;" id="guar_name_div">
 							<div class="form-group">
 								<label for="guar_name"> Guarentor Name </label>
@@ -2671,7 +2696,9 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 <!-- Add Cheque info Modal  START -->
 <div class="modal fade addCheque" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
 	<form method="POST" enctype="multipart/form-data" id="chequeUploads">
-		<input type="hidden" name="cheque_req_id" id="cheque_req_id" value="<?php if (isset($req_id)) {echo $req_id;} ?>">
+		<input type="hidden" name="cheque_req_id" id="cheque_req_id" value="<?php if (isset($req_id)) {
+																				echo $req_id;
+																			} ?>">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content" style="background-color: white">
 				<div class="modal-header">
@@ -2686,11 +2713,11 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 						<span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
 					</div>
 
-					<div id="chequeUpdateok" class="successalert"> Cheque Info Updated Succesfully! 
+					<div id="chequeUpdateok" class="successalert"> Cheque Info Updated Succesfully!
 						<span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
 					</div>
 
-					<div id="chequeNotOk" class="unsuccessalert"> Something Went Wrong! 
+					<div id="chequeNotOk" class="unsuccessalert"> Something Went Wrong!
 						<span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
 					</div>
 
@@ -2698,7 +2725,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 						<span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
 					</div>
 
-					<div id="chequeDeleteNotOk" class="unsuccessalert"> Cheque Info not Deleted 
+					<div id="chequeDeleteNotOk" class="unsuccessalert"> Cheque Info not Deleted
 						<span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
 					</div>
 
@@ -2987,7 +3014,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="Documenttype"> Document Type </label> <span class="required">&nbsp;*</span>
-								<select type="text" class="form-control" id="document_type" name="document_type" tabindex="3" >
+								<select type="text" class="form-control" id="document_type" name="document_type" tabindex="3">
 									<option value=''> Select Document Type </option>
 									<option value='0'> Original </option>
 									<option value='1'> Xerox </option>
@@ -2999,7 +3026,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="DocumentHolder"> Document Holder </label> <span class="required">&nbsp;*</span>
-								<select type="text" class="form-control" id="document_holder" name="document_holder" tabindex="4" >
+								<select type="text" class="form-control" id="document_holder" name="document_holder" tabindex="4">
 									<option value=""> Select Holder type </option>
 									<option value="0"> Customer </option>
 									<option value="1"> Guarantor </option>
@@ -3014,7 +3041,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 								<label for="docholdername"> Holder Name </label>
 								<input type="text" class="form-control" id="docholder_name" name="docholder_name" value="" readonly tabindex="5">
 
-								<select type="text" class="form-control" id="docholder_relationship_name" name="docholder_relationship_name" style="display: none;" tabindex="5" >
+								<select type="text" class="form-control" id="docholder_relationship_name" name="docholder_relationship_name" style="display: none;" tabindex="5">
 									<option value=""> Select Relationship </option>
 								</select>
 							</div>

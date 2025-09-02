@@ -99,7 +99,9 @@ if ($idupd > 0) {
 </div>
 <br>
 <div class="text-right" style="margin-right: 25px;">
-	<a href="edit_collection<?php if(isset($_GET['duestatus'])){echo '&duestatus='.$_GET['duestatus']; }?>">
+	<a href="edit_collection<?php if (isset($_GET['duestatus'])) {
+								echo '&duestatus=' . $_GET['duestatus'];
+							} ?>">
 		<button type="button" class="btn btn-primary back-button"><span class="icon-arrow-left"></span>&nbsp; Back</button>
 	</a>
 	<button class="btn btn-primary" id='close_collection_card'>&times;&nbsp;&nbsp;Cancel</button>
@@ -112,7 +114,9 @@ if ($idupd > 0) {
 <div class="main-container">
 	<!--form start-->
 	<form id="collectionForm" name="collectionForm" action="" method="post" enctype="multipart/form-data">
-		<input type="hidden" name="agent_id" id="agent_id" value="<?php if (isset($agent_id)) { echo $agent_id; } ?>" />
+		<input type="hidden" name="agent_id" id="agent_id" value="<?php if (isset($agent_id)) {
+																		echo $agent_id;
+																	} ?>" />
 		<input type="hidden" name="idupd" id="idupd" value="<?php if (isset($idupd)) {
 																echo $idupd;
 															} ?>" />
@@ -393,10 +397,14 @@ if ($idupd > 0) {
 					<div class="card-body">
 						<div class="row">
 
-							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible"  style="display: none" >
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" style="display: none">
 								<div class="form-group">
 									<label for="responsible">Responsible&nbsp;<span class="required">&nbsp;*</span></label>
-									<input tabindex="8" type="text" class="form-control" id="responsible" name="responsible" value="<?php if (isset($responsible) and $responsible == '0') { echo 'Yes'; } else { echo 'No'; } ?>" readonly>
+									<input tabindex="8" type="text" class="form-control" id="responsible" name="responsible" value="<?php if (isset($responsible) and $responsible == '0') {
+																																		echo 'Yes';
+																																	} else {
+																																		echo 'No';
+																																	} ?>" readonly>
 								</div>
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
@@ -412,11 +420,11 @@ if ($idupd > 0) {
 								</div>
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-									<div class="form-group">
-										<label for="user">Agent Name</label><span class="required">&nbsp;*</span>
-										<input type="text" class="form-control" id="agent_name" name="agent_name" readonly value='<?php if (isset($agent_name)) echo $agent_name; ?>' tabindex='2'>
-									</div>
+								<div class="form-group">
+									<label for="user">Agent Name</label><span class="required">&nbsp;*</span>
+									<input type="text" class="form-control" id="agent_name" name="agent_name" readonly value='<?php if (isset($agent_name)) echo $agent_name; ?>' tabindex='2'>
 								</div>
+							</div>
 
 
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 remarks" <?php if (isset($role)) {
@@ -534,14 +542,7 @@ if ($idupd > 0) {
 											<span class="text-danger totalpaidCheck" style="display: none;">Please Enter any one of these<span>
 										</div>
 									</div>
-									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 intLoanDiv" style="display: none;">
-										<div class="form-group">
-											<label for="disabledInput">Principal Amount</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" class="form-control" id="princ_amt_track" name="princ_amt_track" value='' placeholder='Enter Principal Amount' tabindex='23'>
-											<span class="text-danger totalpaidCheck" style="display: none;">Please Enter any one of these<span>
-										</div>
-									</div>
-									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 intLoanDiv" style="display: none;">
+									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 intLoanDiv">
 										<div class="form-group">
 											<label for="disabledInput">Interest Amount</label>&nbsp;<span class="text-danger">*</span>
 											<input type="text" class="form-control" id="int_amt_track" name="int_amt_track" value='' placeholder='Enter Interest Amount' tabindex='24'>
@@ -562,6 +563,13 @@ if ($idupd > 0) {
 											<span class="text-danger totalpaidCheck" style="display: none;">Please Enter any one of these<span>
 										</div>
 									</div>
+									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 intLoanDiv">
+										<div class="form-group">
+											<label for="disabledInput">Principal Amount</label>&nbsp;<span class="text-danger">*</span>
+											<input type="text" class="form-control" id="princ_amt_track" name="princ_amt_track" value='' placeholder='Enter Principal Amount' tabindex='23'>
+											<span class="text-danger totalpaidCheck" style="display: none;">Please Enter any one of these<span>
+										</div>
+									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Total Paid</label>
@@ -574,10 +582,16 @@ if ($idupd > 0) {
 
 									<!-- Only if user has collection access can have the waiver details -->
 									<?php if (isset($collection_access) && $collection_access == '0') { ?>
-										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emiLoanDiv">
 											<div class="form-group">
 												<label for="disabledInput">Pre Closure</label>
 												<input type="text" class="form-control" id="pre_close_waiver" name="pre_close_waiver" value='' placeholder='Enter Pre Closure Amount' tabindex='28'>
+											</div>
+										</div>
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 intLoanDiv">
+											<div class="form-group">
+												<label for="disabledInput">Interest Waiver</label>
+												<input type="text" class="form-control" id="interest_waiver" name="interest_waiver" value='' placeholder='Enter Interest Waiver Amount' tabindex='28'>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
@@ -590,6 +604,12 @@ if ($idupd > 0) {
 											<div class="form-group">
 												<label for="disabledInput">Fine Waiver</label>
 												<input type="text" class="form-control" id="coll_charge_waiver" name="coll_charge_waiver" value='' placeholder='Enter Fine Waiver' tabindex='30'>
+											</div>
+										</div>
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 intLoanDiv">
+											<div class="form-group">
+												<label for="disabledInput">Principle Waiver</label>
+												<input type="text" class="form-control" id="principal_waiver" name="principal_waiver" value='' placeholder='Enter Principle Waiver Amount' tabindex='28'>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">

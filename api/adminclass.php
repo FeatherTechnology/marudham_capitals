@@ -601,6 +601,12 @@ class admin
 		if (isset($_POST['processing_fee_max'])) {
 			$processing_fee_max = $_POST['processing_fee_max'];
 		}
+		if (isset($_POST['overdue_type'])) {
+			$overdue_type = $_POST['overdue_type'];
+		}
+		if (isset($_POST['overdue'])) {
+			$overdue = $_POST['overdue'];
+		}
 		// if(isset($_POST['loan_limit'])){
 		// 	$loan_limit = $_POST['loan_limit'];
 		// }
@@ -616,9 +622,6 @@ class admin
 		if (isset($_POST['penalty'])) {
 			$penalty = $_POST['penalty'];
 		}
-		if (isset($_POST['overdue'])) {
-			$overdue = $_POST['overdue'];
-		}
 		if (isset($_POST['collection_info'])) {
 			$collection_info = $_POST['collection_info'];
 		}
@@ -626,12 +629,15 @@ class admin
 			$userid = $_POST['userid'];
 		}
 		$loanInsert = "INSERT INTO loan_calculation(loan_category, sub_category, due_method, due_type, profit_method, calculate_method, intrest_rate_min,
-		intrest_rate_max, due_period_min, due_period_max,doc_charge_type, document_charge_min, document_charge_max, proc_fee_type,processing_fee_min, processing_fee_max,
-		due_date, grace_period, penalty, overdue, collection_info, insert_login_id)
-		VALUES('" . strip_tags($loan_category) . "','" . strip_tags($sub_category) . "', '" . strip_tags($due_method) . "','" . strip_tags($due_type) . "', '" . strip_tags($profit_method) . "',
-		'" . strip_tags($calculate_method) . "', '" . strip_tags($intrest_rate_min) . "', '" . strip_tags($intrest_rate_max) . "',  '" . strip_tags($due_period_min) . "','" . strip_tags($due_period_max) . "', '" . strip_tags($doc_charge_type) . "','" . strip_tags($document_charge_min) . "',
-		'" . strip_tags($document_charge_max) . "','" . strip_tags($proc_fee_type) . "', '" . strip_tags($processing_fee_min) . "', '" . strip_tags($processing_fee_max) . "',
-		'" . strip_tags($due_date) . "','" . strip_tags($grace_period) . "', '" . strip_tags($penalty) . "', '" . strip_tags($overdue) . "', '" . strip_tags($collection_info) . "', '" . strip_tags($userid) . "' )";
+		intrest_rate_max, due_period_min, due_period_max,doc_charge_type, document_charge_min, document_charge_max, proc_fee_type, processing_fee_min, processing_fee_max, overdue_type , overdue, due_date, grace_period, penalty, collection_info, insert_login_id)
+		VALUES('" . strip_tags($loan_category) . "', '" . strip_tags($sub_category) . "', '" . strip_tags($due_method) . "', 
+		'" . strip_tags($due_type) . "', '" . strip_tags($profit_method) . "', '" . strip_tags($calculate_method) . "', 
+		'" . strip_tags($intrest_rate_min) . "', '" . strip_tags($intrest_rate_max) . "',  '" . strip_tags($due_period_min) . "',
+		'" . strip_tags($due_period_max) . "', '" . strip_tags($doc_charge_type) . "','" . strip_tags($document_charge_min) . "',
+		'" . strip_tags($document_charge_max) . "','" . strip_tags($proc_fee_type) . "', '" . strip_tags($processing_fee_min) . "',
+		'" . strip_tags($processing_fee_max) . "', '" . strip_tags($overdue_type) . "', '" . strip_tags($overdue) . "',
+		'" . strip_tags($due_date) . "','" . strip_tags($grace_period) . "','" . strip_tags($penalty) . "',  '" . strip_tags($collection_info) . "', 
+		'" . strip_tags($userid) . "' )";
 		$insresult = $mysqli->query($loanInsert) or die("Error " . $mysqli->error);
 	}
 	// Get Loan Calculation
@@ -659,11 +665,12 @@ class admin
 			$detailrecords['proc_fee_type'] = $row->proc_fee_type;
 			$detailrecords['processing_fee_min'] = $row->processing_fee_min;
 			$detailrecords['processing_fee_max'] = $row->processing_fee_max;
+			$detailrecords['overdue_type']       = $row->overdue_type;
+			$detailrecords['overdue']            = $row->overdue;
 			// $detailrecords['loan_limit']           = $row->loan_limit;
 			$detailrecords['due_date']           = $row->due_date;
 			$detailrecords['grace_period']       = $row->grace_period;
 			$detailrecords['penalty']            = $row->penalty;
-			$detailrecords['overdue']            = $row->overdue;
 			$detailrecords['collection_info']    = $row->collection_info;
 		}
 		return $detailrecords;
@@ -723,6 +730,12 @@ class admin
 		if (isset($_POST['processing_fee_max'])) {
 			$processing_fee_max = $_POST['processing_fee_max'];
 		}
+		if (isset($_POST['overdue_type'])) {
+			$overdue_type = $_POST['overdue_type'];
+		}
+		if (isset($_POST['overdue'])) {
+			$overdue = $_POST['overdue'];
+		}
 		// if(isset($_POST['loan_limit'])){
 		// 	$loan_limit = $_POST['loan_limit'];
 		// }
@@ -738,9 +751,6 @@ class admin
 		if (isset($_POST['penalty'])) {
 			$penalty = $_POST['penalty'];
 		}
-		if (isset($_POST['overdue'])) {
-			$overdue = $_POST['overdue'];
-		}
 		if (isset($_POST['collection_info'])) {
 			$collection_info = $_POST['collection_info'];
 		}
@@ -749,11 +759,12 @@ class admin
 		}
 		$loanUpdaet = "UPDATE loan_calculation SET loan_category = '" . strip_tags($loan_category) . "', sub_category = '" . strip_tags($sub_category) . "', due_method='" . strip_tags($due_method) . "',
 	due_type = '" . strip_tags($due_type) . "', profit_method = '" . strip_tags($profit_method) . "', calculate_method = '" . strip_tags($calculate_method) . "',
-	intrest_rate_min = '" . strip_tags($intrest_rate_min) . "', intrest_rate_max = '" . strip_tags($intrest_rate_max) . "',  due_period_min = '" . strip_tags($due_period_min) . "',
-	due_period_max = '" . strip_tags($due_period_max) . "',doc_charge_type = '" . strip_tags($doc_charge_type) . "', document_charge_min = '" . strip_tags($document_charge_min) . "',
-	document_charge_max = '" . strip_tags($document_charge_max) . "',proc_fee_type = '" . strip_tags($proc_fee_type) . "', processing_fee_min = '" . strip_tags($processing_fee_min) . "',
-	processing_fee_max = '" . strip_tags($processing_fee_max) . "', due_date = '" . strip_tags($due_date) . "',
-	grace_period = '" . strip_tags($grace_period) . "', penalty = '" . strip_tags($penalty) . "', overdue = '" . strip_tags($overdue) . "', collection_info = '" . strip_tags($collection_info) . "',
+	intrest_rate_min = '" . strip_tags($intrest_rate_min) . "', intrest_rate_max = '" . strip_tags($intrest_rate_max) . "',  
+	due_period_min = '" . strip_tags($due_period_min) . "', due_period_max = '" . strip_tags($due_period_max) . "', doc_charge_type = '" . strip_tags($doc_charge_type) . "', document_charge_min = '" . strip_tags($document_charge_min) . "', document_charge_max = '" . strip_tags($document_charge_max) . "',
+	proc_fee_type = '" . strip_tags($proc_fee_type) . "', processing_fee_min = '" . strip_tags($processing_fee_min) . "', 
+	processing_fee_max = '" . strip_tags($processing_fee_max) . "', overdue_type = '" . strip_tags($overdue_type) . "',  overdue = '" . strip_tags($overdue) . "',
+	due_date = '" . strip_tags($due_date) . "', grace_period = '" . strip_tags($grace_period) . "', penalty = '" . strip_tags($penalty) . "', 
+	collection_info = '" . strip_tags($collection_info) . "',
 	update_login_id='" . strip_tags($userid) . "', status = '0' WHERE loan_cal_id= '" . strip_tags($id) . "' ";
 		$updresult = $mysqli->query($loanUpdaet) or die("Error in in update Query!." . $mysqli->error);
 	}

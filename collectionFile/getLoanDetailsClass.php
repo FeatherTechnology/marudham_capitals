@@ -11,7 +11,7 @@ class GetLoanDetails
         $this->use = $use;
 
         // Caution **** Dont Touch any code below..
-        //get Total amt from ack loan calculation (For monthly interest total amount will not be there, so take principals)*
+        //get Total amt from ack loan calculation (For monthly Interest total amount will not be there, so take principals)*
         //get Paid amt from collection table if nothing paid show 0*
         //balance amount is Total amt - paid amt*
         //get Due amt from ack loan calculation*
@@ -29,19 +29,20 @@ class GetLoanDetails
             $loan_arr = $row;
 
             if ($loan_arr['tot_amt_cal'] == '' || $loan_arr['tot_amt_cal'] == null) {
-                //(For monthly interest total amount will not be there, so take principals)
-                $response['total_amt'] = $loan_arr['principal_amt_cal'];
-                $response['loan_type'] = 'interest';
-                $loan_arr['loan_type'] = 'interest';
+                //(For monthly Interest total amount will not be there, so take principals)
+                $response['total_amt'] = $loan_arr['loan_amt_cal'];
+                $response['loan_type'] = 'Interest';
+                $loan_arr['loan_type'] = 'Interest';
             } else {
                 $response['total_amt'] = $loan_arr['tot_amt_cal'];
                 $response['loan_type'] = 'emi';
                 $loan_arr['loan_type'] = 'emi';
             }
 
+            $response['calculate_method'] = $loan_arr['calc_method'];
 
             if ($loan_arr['due_amt_cal'] == '' || $loan_arr['due_amt_cal'] == null) {
-                //(For monthly interest Due amount will not be there, so take interest)
+                //(For monthly Interest Due amount will not be there, so take Interest)
                 $response['due_amt'] = $loan_arr['int_amt_cal'];
             } else {
                 $response['due_amt'] = $loan_arr['due_amt_cal']; //Due amount will remain same
@@ -80,9 +81,9 @@ class GetLoanDetails
             //total amount subracted by total paid amount and subracted with pre closure amount will be balance to be paid
             $response['balance'] = $response['total_amt'] - $response['total_paid'] - $pre_closure;
 
-            if ($loan_arr['loan_type'] == 'interest') {
+            if ($loan_arr['loan_type'] == 'Interest') {
                 $response['due_amt_for1'] = $response['due_amt'];
-                $response['due_amt'] = $this->calculateNewInterestAmt($loan_arr['int_rate'], $response['balance']);
+                $response['due_amt'] = $this->calculateNewInterestAmt($loan_arr['int_rate'], $response['balance'], $response['calculate_method']);
             }
 
             $response = $this->calculateOthers($loan_arr, $response, $connect);
@@ -94,9 +95,9 @@ class GetLoanDetails
             //If in collection table, there is no payment means balance amount still remains total amount
             $response['balance'] = $response['total_amt'];
 
-            if ($loan_arr['loan_type'] == 'interest') {
+            if ($loan_arr['loan_type'] == 'Interest') {
                 $response['due_amt_for1'] = $response['due_amt'];
-                $response['due_amt'] = $this->calculateNewInterestAmt($loan_arr['int_rate'], $response['balance']);
+                $response['due_amt'] = $this->calculateNewInterestAmt($loan_arr['int_rate'], $response['balance'], $response['calculate_method']);
             }
 
             $response = $this->calculateOthers($loan_arr, $response, $connect);
@@ -137,7 +138,7 @@ class GetLoanDetails
 
         if ($loan_arr['due_method_calc'] == 'Monthly' || $loan_arr['due_method_scheme'] == '1') {
 
-            if ($loan_arr['loan_type'] != 'interest') {
+            if ($loan_arr['loan_type'] != 'Interest') {
                 //Convert Date to Year and month, because with date, it will use exact date to loop months, instead of taking end of month
                 $due_start_from = date('Y-m', strtotime($due_start_from));
                 $maturity_month = date('Y-m', strtotime($maturity_month));
@@ -574,7 +575,7 @@ class GetLoanDetails
 
             $res['penalty'] = $this->getPenaltyCharges($connect);
         } else {
-            //in this calculate till date interest when month are not crossed for due starting month
+            //in this calculate till date Interest when month are not crossed for due starting month
             $res['till_date_int'] = $this->getTillDateInterest($loan_arr, $response, $connect, 'forstartmonth');
             $res['pending'] = 0;
             $res['payable'] =  0;
@@ -586,10 +587,14 @@ class GetLoanDetails
         $res['till_date_int'] = $this->ceilAmount($res['till_date_int']);
         return $res;
     }
-    function calculateNewInterestAmt($int_rate, $balance)
+    function calculateNewInterestAmt($int_rate, $balance, $calculate_method)
     {
-        //to calculate current interest amount based on current balance value//bcoz interest will be calculated based on current balance amt only for interest loan
-        $int = $balance * ($int_rate / 100);
+        if ($calculate_method == 'Monthly') {
+            $int = $balance * ($int_rate / 100);
+        } else if ($calculate_method == 'Days') {
+            $int = ($balance * ($int_rate / 100) / 30);
+        }
+
         $curInterest = ceil($int / 5) * 5; //to increase Interest to nearest multiple of 5
         if ($curInterest < $int) {
             $curInterest += 5;
@@ -598,195 +603,360 @@ class GetLoanDetails
 
         return $response;
     }
+    // function dueAmtCalculation($connect, $start_date, $end_date, $due_amt, $loan_arr, $status)
+    // {
+    //     // var_dump($start_date);
+    //     $start = $start_date->format('Y-m-d');
+    //     $start = new DateTime($start);
+    //     $end = $end_date->format('Y-m-d');
+    //     $end = new DateTime($end);
+
+    //     $int_rate = $loan_arr['int_rate'];
+    //     $scheme_name = $loan_arr['scheme_name'];
+    //     $loan_category = $loan_arr['loan_category'];
+    //     $sub_category = $loan_arr['sub_category'];
+
+    //     $result = 0;
+    //     $qry = $connect->query("SELECT princ_amt_track FROM `collection` WHERE req_id = '" . $this->req_id . "' and princ_amt_track != '' ORDER BY coll_date ASC ");
+    //     if ($qry->rowCount() > 0) {
+
+    //         while ($start->format('m') <= $end->format('m')) {
+
+
+    //             $penalty = 0;
+    //             $start_for_penalty = $start->format('Y-m');
+
+    //             $qry = $connect->query("SELECT princ_amt_track as princ,bal_amt, coll_date FROM `collection` WHERE req_id = '" . $this->req_id . "' and princ_amt_track != '' and month(coll_date) = month('" . $start->format('Y-m-d') . "') and year(coll_date) = year('" . $start->format('Y-m-d') . "') ORDER BY coll_date ASC ");
+    //             if ($qry->rowCount() > 0) {
+
+    //                 while ($row = $qry->fetch()) {
+    //                     $princ = $row['princ'];
+    //                     $bal_amt = $row['bal_amt'];
+    //                     $coll_date = new DateTime($row['coll_date']);
+
+    //                     $due_amt = $this->calculateNewInterestAmt($int_rate, $bal_amt);
+    //                     $bal_amt = $bal_amt - $princ;
+    //                     $dueperday = $due_amt / intval($start->format('t'));
+    //                     $cur_result = (($start->diff($coll_date))->days) * $dueperday;
+    //                     $result += $cur_result;
+
+    //                     unset($start); //unset to remove as obj // so can reinitialize
+    //                     $start = new DateTime($coll_date->format('Y-m-d'));
+    //                     unset($coll_date); //unset to remove as obj // so can reinitialize
+    //                 }
+    //             } else {
+    //                 $qry = $connect->query("SELECT princ_amt_track as princ,bal_amt, coll_date FROM `collection` WHERE req_id = '" . $this->req_id . "' and princ_amt_track != '' and month(coll_date) < month('" . $start->format('Y-m-d') . "') and year(coll_date) <= year('" . $start->format('Y-m-d') . "') ORDER BY coll_date ASC LIMIT 1");
+    //                 if ($qry->rowCount() > 0) {
+    //                     $row = $qry->fetch();
+    //                     $princ = $row['princ'];
+    //                     $bal_amt = $row['bal_amt'];
+    //                     $bal_amt = $bal_amt - $princ;
+    //                 } else {
+    //                     $qry = $connect->query("SELECT principal_amt_cal from acknowlegement_loan_calculation where req_id = '" . $this->req_id . "' ");
+    //                     $row = $qry->fetch();
+    //                     $bal_amt = $row['principal_amt_cal'];
+    //                 }
+    //             }
+
+    //             $due_amt = $this->calculateNewInterestAmt($int_rate, $bal_amt);
+    //             $dueperday = $due_amt / intval($start->format('t'));
+
+    //             if ($start->format('m') != $end->format('m')) {
+    //                 $new_end = new DateTime($start->format("Y-m-t"));
+    //                 $cur_result = (($start->diff($new_end))->days + 1) * $dueperday;
+    //                 $result += $cur_result;
+    //                 $start->modify("+1 month");
+    //                 $start->modify("first day of this month");
+    //             } else {
+
+    //                 if ($status == 'payable' or $status == 'pending') {
+    //                     $cur_result = (($start->diff($end))->days + 1) * $dueperday;
+    //                     $result += $cur_result;
+    //                 } else {
+    //                     $cur_result = (($start->diff($end))->days) * $dueperday;
+    //                     $result += $cur_result;
+    //                 }
+    //                 $start->modify("+1 month");
+    //                 $start->modify("first day of this month");
+    //             }
+
+    //             if ($status == 'pending') { //raising penalty if loops for looping month
+
+    //                 if ($scheme_name == '' || $scheme_name == null) {
+    //                     $ovqry = $connect->query("SELECT overdue FROM `loan_calculation` WHERE loan_category = '$loan_category' and sub_category = '$sub_category' ");
+    //                 } else {
+    //                     $ovqry =  $connect->query("SELECT overdue FROM `loan_scheme` WHERE loan_category = '" . $loan_arr['loan_category'] . "' AND FIND_IN_SET('" . $loan_arr['sub_category'] . "', sub_category)");
+    //                 }
+    //                 $row = $ovqry->fetch();
+    //                 $penalty_per = $row['overdue']; //get penalty percentage to insert
+
+    //                 $paid_interest = $this->getPaidInterest($connect);
+    //                 if ($paid_interest > 0) {
+    //                     //raise penalty if the customer paid something
+    //                     $cur_result =  $cur_result - $paid_interest;
+    //                     if ($cur_result < 0) { //if the cur result is negative then the Interest of the month has been paid already
+    //                         $cur_result = 0;
+    //                     }
+    //                 }
+
+    //                 $checkPenalty = $connect->query("SELECT * from penalty_charges where penalty_date = '$start_for_penalty' and req_id = '" . $this->req_id . "' ");
+    //                 if ($checkPenalty->rowCount() == 0) {
+    //                     $penalty = round((($cur_result * $penalty_per) / 100) + $penalty);
+    //                     if ($cur_result != 0) {
+    //                         $qry = $connect->query("INSERT into penalty_charges (`req_id`,`penalty_date`, `penalty`, `created_date`) values ('" . $this->req_id . "','" . date('Y-m', strtotime($start_for_penalty)) . "','$penalty',now())");
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     } else {
+    //         while ($start->format('m') <= $end->format('m')) {
+
+    //             $penalty = 0;
+    //             $start_for_penalty = $start->format('Y-m');
+
+    //             $dueperday = $due_amt / intval($start->format('t'));
+
+    //             if ($status != 'pending') {
+    //                 if ($start->format('m') != $end->format('m')) {
+    //                     $new_end_date = clone $start;
+    //                     $new_end_date->modify('last day of this month');
+    //                     $cur_result = (($start->diff($new_end_date))->days + 1) * $dueperday;
+    //                     $result += $cur_result;
+    //                 } elseif ($end->format('Y-m-d') != date('Y-m-d')) {
+    //                     $cur_result = (($start->diff($end))->days + 1) * $dueperday;
+    //                     $result += $cur_result;
+    //                 } else {
+    //                     $cur_result = (($start->diff($end))->days) * $dueperday;
+    //                     $result += $cur_result;
+    //                 }
+    //             } else {
+    //                 $new_end = clone $start;
+    //                 $new_end = $new_end->modify("last day of this month");
+    //                 $cur_result = (($start->diff($new_end))->days + 1) * $dueperday;
+    //                 $result += $cur_result;
+    //             }
+
+    //             $start->modify('+1 month');
+    //             $start->modify('first day of this month');
+
+    //             if ($status == 'pending') { //raising penalty if loops for looping month
+
+    //                 if ($scheme_name == '' || $scheme_name == null) {
+    //                     $ovqry = $connect->query("SELECT overdue FROM `loan_calculation` WHERE loan_category = '$loan_category' and sub_category = '$sub_category' ");
+    //                 } else {
+    //                     $ovqry =  $connect->query("SELECT overdue FROM `loan_scheme` WHERE loan_category = '" . $loan_arr['loan_category'] . "' AND FIND_IN_SET('" . $loan_arr['sub_category'] . "', sub_category)");
+    //                 }
+    //                 $row = $ovqry->fetch();
+    //                 $penalty_per = $row['overdue']; //get penalty percentage to insert
+
+    //                 $paid_interest = $this->getPaidInterest($connect);
+    //                 if ($paid_interest > 0) {
+    //                     //raise penalty if the customer paid something
+    //                     $cur_result =  $cur_result - $paid_interest;
+    //                     if ($cur_result < 0) { //if the cur result is negative then the Interest of the month has been paid already
+    //                         $cur_result = 0;
+    //                     }
+    //                 }
+
+    //                 $checkPenalty = $connect->query("SELECT * from penalty_charges where penalty_date = '$start_for_penalty' and req_id = '" . $this->req_id . "' ");
+    //                 if ($checkPenalty->rowCount() == 0) {
+    //                     $penalty = round((($cur_result * $penalty_per) / 100) + $penalty);
+    //                     if ($cur_result != 0) {
+    //                         $qry = $connect->query("INSERT into penalty_charges (`req_id`,`penalty_date`, `penalty`, `created_date`) values ('" . $this->req_id . "','" . date('Y-m', strtotime($start_for_penalty)) . "','$penalty',now())");
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     return $result;
+    // }
+
     function dueAmtCalculation($connect, $start_date, $end_date, $due_amt, $loan_arr, $status)
     {
-        // var_dump($start_date);
-        $start = $start_date->format('Y-m-d');
-        $start = new DateTime($start);
-        $end = $end_date->format('Y-m-d');
-        $end = new DateTime($end);
+        $start = new DateTime($start_date->format('Y-m-d'));
+        $end = new DateTime($end_date->format('Y-m-d'));
 
+        $calculate_method = $loan_arr['calc_method'];
         $int_rate = $loan_arr['int_rate'];
-        $scheme_name = $loan_arr['scheme_name'];
         $loan_category = $loan_arr['loan_category'];
         $sub_category = $loan_arr['sub_category'];
-
         $result = 0;
-        $qry = $connect->query("SELECT princ_amt_track FROM `collection` WHERE req_id = '" . $this->req_id . "' and princ_amt_track != '' ORDER BY coll_date ASC ");
-        if ($qry->rowCount() > 0) {
+        $monthly_interest_data = [];
 
-            while ($start->format('m') <= $end->format('m')) {
+        $loanRow = $connect->query("SELECT loan_amt FROM acknowlegement_loan_calculation WHERE req_id = '" . $this->req_id . "'")->fetch(PDO::FETCH_ASSOC);
+        $default_balance = $loanRow['loan_amt'];
 
+        $collections = $connect->query("SELECT princ_amt_track, coll_date FROM collection 
+        WHERE req_id = '" . $this->req_id . "' AND princ_amt_track != '' ORDER BY coll_date ASC")->fetchAll();
 
-                $penalty = 0;
-                $start_for_penalty = $start->format('Y-m');
+        if (!empty($collections)) {
 
-                $qry = $connect->query("SELECT princ_amt_track as princ,bal_amt, coll_date FROM `collection` WHERE req_id = '" . $this->req_id . "' and princ_amt_track != '' and month(coll_date) = month('" . $start->format('Y-m-d') . "') and year(coll_date) = year('" . $start->format('Y-m-d') . "') ORDER BY coll_date ASC ");
-                if ($qry->rowCount() > 0) {
+            // <---------------------------------------------------------------- IF COLLECTIONS EXIST ------------------------------------------------------------>
 
-                    while ($row = $qry->fetch()) {
-                        $princ = $row['princ'];
-                        $bal_amt = $row['bal_amt'];
-                        $coll_date = new DateTime($row['coll_date']);
+            $collection_index = 0;
+            $current_balance = $default_balance;
 
-                        $due_amt = $this->calculateNewInterestAmt($int_rate, $bal_amt);
-                        $bal_amt = $bal_amt - $princ;
-                        $dueperday = $due_amt / intval($start->format('t'));
-                        $cur_result = (($start->diff($coll_date))->days) * $dueperday;
-                        $result += $cur_result;
+            while ($start <= $end) {
+                $today_str = $start->format('Y-m-d');
+                $month_key = $start->format('Y-m-01');
+                $paid_principal_today = 0;
 
-                        unset($start); //unset to remove as obj // so can reinitialize
-                        $start = new DateTime($coll_date->format('Y-m-d'));
-                        unset($coll_date); //unset to remove as obj // so can reinitialize
+                while ($collection_index < count($collections)) {
+                    $collection = $collections[$collection_index];
+                    $coll_date = (new DateTime($collection['coll_date']))->format('Y-m-d');
+                    if ($coll_date == $today_str) {
+                        $paid_principal_today += (float)$collection['princ_amt_track'];
+                        $collection_index++;
+                    } else {
+                        break;
                     }
+                }
+
+                $current_balance -= $paid_principal_today;
+
+                $interest_today = $this->calculateNewInterestAmt($int_rate, $current_balance, $calculate_method);
+
+                if ($calculate_method === 'Days') {
+                    $result += $interest_today;
+                    $monthly_interest_data[$month_key] = ($monthly_interest_data[$month_key] ?? 0) + $interest_today;
                 } else {
-                    $qry = $connect->query("SELECT princ_amt_track as princ,bal_amt, coll_date FROM `collection` WHERE req_id = '" . $this->req_id . "' and princ_amt_track != '' and month(coll_date) < month('" . $start->format('Y-m-d') . "') and year(coll_date) <= year('" . $start->format('Y-m-d') . "') ORDER BY coll_date ASC LIMIT 1");
-                    if ($qry->rowCount() > 0) {
-                        $row = $qry->fetch();
-                        $princ = $row['princ'];
-                        $bal_amt = $row['bal_amt'];
-                        $bal_amt = $bal_amt - $princ;
-                    } else {
-                        $qry = $connect->query("SELECT principal_amt_cal from acknowlegement_loan_calculation where req_id = '" . $this->req_id . "' ");
-                        $row = $qry->fetch();
-                        $bal_amt = $row['principal_amt_cal'];
-                    }
+                    $days_in_month = (int)$start->format('t');
+                    $daily_interest = $interest_today / $days_in_month;
+                    $result += $daily_interest;
+                    $monthly_interest_data[$month_key] = ($monthly_interest_data[$month_key] ?? 0) + $daily_interest;
                 }
 
-                $due_amt = $this->calculateNewInterestAmt($int_rate, $bal_amt);
-                $dueperday = $due_amt / intval($start->format('t'));
-
-                if ($start->format('m') != $end->format('m')) {
-                    $new_end = new DateTime($start->format("Y-m-t"));
-                    $cur_result = (($start->diff($new_end))->days + 1) * $dueperday;
-                    $result += $cur_result;
-                    $start->modify("+1 month");
-                    $start->modify("first day of this month");
-                } else {
-
-                    if ($status == 'payable' or $status == 'pending') {
-                        $cur_result = (($start->diff($end))->days + 1) * $dueperday;
-                        $result += $cur_result;
-                    } else {
-                        $cur_result = (($start->diff($end))->days) * $dueperday;
-                        $result += $cur_result;
-                    }
-                    $start->modify("+1 month");
-                    $start->modify("first day of this month");
-                }
-
-                if ($status == 'pending') { //raising penalty if loops for looping month
-
-                    if ($scheme_name == '' || $scheme_name == null) {
-                        $ovqry = $connect->query("SELECT overdue FROM `loan_calculation` WHERE loan_category = '$loan_category' and sub_category = '$sub_category' ");
-                    } else {
-                        $ovqry =  $connect->query("SELECT overdue FROM `loan_scheme` WHERE loan_category = '" . $loan_arr['loan_category'] . "' AND FIND_IN_SET('" . $loan_arr['sub_category'] . "', sub_category)");
-                    }
-                    $row = $ovqry->fetch();
-                    $penalty_per = $row['overdue']; //get penalty percentage to insert
-
-                    $paid_interest = $this->getPaidInterest($connect);
-                    if ($paid_interest > 0) {
-                        //raise penalty if the customer paid something
-                        $cur_result =  $cur_result - $paid_interest;
-                        if ($cur_result < 0) { //if the cur result is negative then the interest of the month has been paid already
-                            $cur_result = 0;
-                        }
-                    }
-
-                    $checkPenalty = $connect->query("SELECT * from penalty_charges where penalty_date = '$start_for_penalty' and req_id = '" . $this->req_id . "' ");
-                    if ($checkPenalty->rowCount() == 0) {
-                        $penalty = round((($cur_result * $penalty_per) / 100) + $penalty);
-                        if ($cur_result != 0) {
-                            $qry = $connect->query("INSERT into penalty_charges (`req_id`,`penalty_date`, `penalty`, `created_date`) values ('" . $this->req_id . "','" . date('Y-m', strtotime($start_for_penalty)) . "','$penalty',now())");
-                        }
-                    }
-                }
+                $start->modify('+1 day');
             }
         } else {
-            while ($start->format('m') <= $end->format('m')) {
+            $monthly_interest_data = [];
 
-                $penalty = 0;
-                $start_for_penalty = $start->format('Y-m');
+            if ($calculate_method == 'Monthly') {
+                while ($start->format('Y-m') <= $end->format('Y-m')) {
+                    $month_key = $start->format('Y-m-d');
+                    $dueperday = $due_amt / intval($start->format('t'));
 
-                $dueperday = $due_amt / intval($start->format('t'));
-
-                if ($status != 'pending') {
-                    if ($start->format('m') != $end->format('m')) {
-                        $new_end_date = clone $start;
-                        $new_end_date->modify('last day of this month');
-                        $cur_result = (($start->diff($new_end_date))->days + 1) * $dueperday;
-                        $result += $cur_result;
-                    } elseif ($end->format('Y-m-d') != date('Y-m-d')) {
-                        $cur_result = (($start->diff($end))->days + 1) * $dueperday;
-                        $result += $cur_result;
+                    if ($status != 'pending') {
+                        if ($start->format('m') != $end->format('m')) {
+                            $new_end_date = clone $start;
+                            $new_end_date->modify('last day of this month');
+                            $cur_result = (($start->diff($new_end_date))->days + 1) * $dueperday;
+                        } else {
+                            $cur_result = (($start->diff($end))->days + 1) * $dueperday;
+                        }
                     } else {
-                        $cur_result = (($start->diff($end))->days) * $dueperday;
-                        $result += $cur_result;
+                        $new_end = clone $start;
+                        $new_end->modify("last day of this month");
+                        $cur_result = (($start->diff($new_end))->days + 1) * $dueperday;
                     }
-                } else {
-                    $new_end = clone $start;
-                    $new_end = $new_end->modify("last day of this month");
-                    $cur_result = (($start->diff($new_end))->days + 1) * $dueperday;
+
                     $result += $cur_result;
+                    $monthly_interest_data[$month_key] = ($monthly_interest_data[$month_key] ?? 0) + $cur_result;
+                    $start->modify('+1 month');
+                    $start->modify('first day of this month');
                 }
+            } else if ($calculate_method == 'Days') {
+                while ($start->format('Y-m-d') <= $end->format('Y-m-d')) {
+                    $month_key = $start->format('Y-m-d');
+                    $dueperday = $due_amt;
+                    $result += $dueperday;
+                    $monthly_interest_data[$month_key] = ($monthly_interest_data[$month_key] ?? 0) + $dueperday;
 
-                $start->modify('+1 month');
-                $start->modify('first day of this month');
+                    $start->modify('+1 day');
+                }
+            }
+        }
 
-                if ($status == 'pending') { //raising penalty if loops for looping month
+        // <------------------------------------------------------------------- Penalty Logic ----------------------------------------------------------------->
 
-                    if ($scheme_name == '' || $scheme_name == null) {
-                        $ovqry = $connect->query("SELECT overdue FROM `loan_calculation` WHERE loan_category = '$loan_category' and sub_category = '$sub_category' ");
-                    } else {
-                        $ovqry =  $connect->query("SELECT overdue FROM `loan_scheme` WHERE loan_category = '" . $loan_arr['loan_category'] . "' AND FIND_IN_SET('" . $loan_arr['sub_category'] . "', sub_category)");
-                    }
-                    $row = $ovqry->fetch();
-                    $penalty_per = $row['overdue']; //get penalty percentage to insert
+        if ($status === 'pending') {
+            $penaltyRow = $penaltyRow = $connect->query("SELECT overdue_type, overdue FROM loan_calculation WHERE loan_category = '$loan_category' 
+            AND sub_category = '$sub_category'")->fetch(PDO::FETCH_ASSOC);
 
-                    $paid_interest = $this->getPaidInterest($connect);
-                    if ($paid_interest > 0) {
-                        //raise penalty if the customer paid something
-                        $cur_result =  $cur_result - $paid_interest;
-                        if ($cur_result < 0) { //if the cur result is negative then the interest of the month has been paid already
-                            $cur_result = 0;
-                        }
-                    }
+            $penalty_val = $penaltyRow['overdue'] ?? 0;
+            $penalty_type = strtolower(trim($penaltyRow['overdue_type'] ?? 'percentage'));
 
-                    $checkPenalty = $connect->query("SELECT * from penalty_charges where penalty_date = '$start_for_penalty' and req_id = '" . $this->req_id . "' ");
+            foreach ($monthly_interest_data as $penalty_date => $cur_result) {
+                $paid_interest = $this->getPaidInterest($connect);
+                $unpaid_interest = max(0, $cur_result - $paid_interest);
+
+                if ($unpaid_interest > 0 && $penalty_val > 0) {
+                    $penalty = ($penalty_type === 'amt') ? round($penalty_val) : round(($unpaid_interest * $penalty_val) / 100);
+
+                    $checkPenalty = $connect->query("SELECT 1 FROM penalty_charges WHERE penalty_date = '$penalty_date' AND req_id = '" . $this->req_id . "'");
                     if ($checkPenalty->rowCount() == 0) {
-                        $penalty = round((($cur_result * $penalty_per) / 100) + $penalty);
-                        if ($cur_result != 0) {
-                            $qry = $connect->query("INSERT into penalty_charges (`req_id`,`penalty_date`, `penalty`, `created_date`) values ('" . $this->req_id . "','" . date('Y-m', strtotime($start_for_penalty)) . "','$penalty',now())");
-                        }
+                        $insertQry = $connect->prepare("INSERT INTO penalty_charges (req_id, penalty_date, penalty, created_date) VALUES (?, ?, ?, NOW())");
+                        $insertQry->execute([$penalty_date, $penalty]);
                     }
                 }
             }
         }
         return $result;
     }
+
+    // function payableCalculation($connect, $loan_arr, $response)
+    // {
+    //     $issued_date = new DateTime(date('Y-m-d', strtotime($loan_arr['loan_date'])));
+    //     $cur_date = new DateTime(date('Y-m-d', strtotime($this->ddate)));
+    //     $last_month = clone $cur_date;
+    //     $last_month->modify('-1 month');
+
+    //     $result = 0;
+    //     $st_date = clone $issued_date;
+    //     while ($st_date->format('m') <= $last_month->format('m')) {
+    //         $end_date = clone $st_date;
+    //         $end_date->modify('last day of this month');
+    //         $start = clone $st_date; //because the function calling below will change the root of starting date
+
+    //         $result += $this->dueAmtCalculation($connect, $start, $end_date, $response['due_amt'], $loan_arr, 'payable');
+
+    //         $st_date->modify('+1 month');
+    //         $st_date->modify('first day of this month');
+    //     }
+
+    //     return $result;
+    // }
+
     function payableCalculation($connect, $loan_arr, $response)
     {
         $issued_date = new DateTime(date('Y-m-d', strtotime($loan_arr['loan_date'])));
-        $cur_date = new DateTime(date('Y-m-d', strtotime($this->ddate)));
-        $last_month = clone $cur_date;
-        $last_month->modify('-1 month');
-
+        $cur_date = new DateTime(date('Y-m-d'));
         $result = 0;
-        $st_date = clone $issued_date;
-        while ($st_date->format('m') <= $last_month->format('m')) {
-            $end_date = clone $st_date;
-            $end_date->modify('last day of this month');
-            $start = clone $st_date; //because the function calling below will change the root of starting date
 
-            $result += $this->dueAmtCalculation($connect, $start, $end_date, $response['due_amt'], $loan_arr, 'payable');
+        if ($response['calculate_method'] == "Monthly") {
+            $last_month = clone $cur_date;
+            $last_month->modify('-1 month'); // Last month same date
+            $st_date = clone $issued_date;
 
-            $st_date->modify('+1 month');
-            $st_date->modify('first day of this month');
+            while ($st_date->format('Y-m') <= $last_month->format('Y-m')) {
+                $end_date = clone $st_date;
+                $end_date->modify('last day of this month');
+                $start = clone $st_date; // Due to mutation in function
+
+                $result += $this->dueAmtCalculation($connect, $start, $end_date, $response['due_amt'], $loan_arr, 'payable');
+
+                $st_date->modify('+1 month');
+                $st_date->modify('first day of this month');
+            }
+        } elseif ($response['calculate_method'] == "Days") {
+            $last_date = clone $cur_date;
+            $last_date->modify('-1 month'); // Last month same date
+            $st_date = clone $issued_date;
+
+            while ($st_date->format('Y-m') <= $last_date->format('Y-m')) {
+                $end_date = clone $st_date;
+                $end_date->modify('last day of this month');
+                $start = clone $st_date;
+
+                $result += $this->dueAmtCalculation($connect, $start, $end_date, $response['due_amt'], $loan_arr, 'payable');
+                $st_date->modify('+1 month');
+                $st_date->modify('first day of this month');
+            }
         }
 
         return $result;
     }
+
     function pendingCalculation($connect, $loan_arr, $response)
     {
         $pending = $this->getTillDateInterest($loan_arr, $response, $connect, 'pendingmonth');
@@ -797,8 +967,8 @@ class GetLoanDetails
 
         if ($data == 'forstartmonth') {
 
-            //to calculate till date interest if loan is interst based
-            if ($loan_arr['loan_type'] == 'interest') {
+            //to calculate till date Interest if loan is interst based
+            if ($loan_arr['loan_type'] == 'Interest') {
 
                 //get the loan isued month's date count
                 $issued_date = new DateTime(date('Y-m-d', strtotime($loan_arr['loan_date'])));

@@ -249,6 +249,9 @@ if (sizeof($getCusInfoForLoanCal) > 0) {
 		$mobile_lc = $getCusInfoForLoanCal['mobile'];
 	}
 }
+
+$emicheck = 0;
+
 //Get Loan Calculation info for edit
 $getLoanCalculation = $userObj->getLoanCalculationForVerification($mysqli, $req_id);
 if (sizeof($getLoanCalculation) > 0) {
@@ -300,6 +303,8 @@ if (sizeof($getLoanCalculation) > 0) {
 	if ($loan_cal_id > 0) {
 		$getLoanCalCategory = $userObj->getVerificationLoanCalCategory($mysqli, $loan_cal_id);
 	}
+
+	$emicheck = strpos($due_type_lc, 'EMI') !== false;
 }
 
 
@@ -353,14 +358,14 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 	<div class="col-md-12">
 		<div class="form-group" style="text-align:center">
 			<!-- <label for=''style="font-size:16px" >Verification:</label><br><br> -->
-			<input type="radio" name="verification_type" id="cus_profile" value="cus_profile" data-sts="<?php echo $customer_profile_sts ?? ''; ?>" ></input><label for='cus_profile'>&nbsp;&nbsp; Customer Profile <?php if (isset($customer_profile_sts)) {
-																																									if ($customer_profile_sts == 10) { ?> <span class="icon-done"></span> <?php }
+			<input type="radio" name="verification_type" id="cus_profile" value="cus_profile" data-sts="<?php echo $customer_profile_sts ?? ''; ?>"></input><label for='cus_profile'>&nbsp;&nbsp; Customer Profile <?php if (isset($customer_profile_sts)) {
+																																																						if ($customer_profile_sts == 10) { ?> <span class="icon-done"></span> <?php }
 																																																									} ?> </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<input type="radio" name="verification_type" id="documentation" value="documentation" data-sts="<?php echo $document_sts ?? ''; ?>"></input><label for='documentation'>&nbsp;&nbsp; Documentation <?php if (isset($document_sts)) {
-																																									if ($document_sts == 11) { ?> <span class="icon-done"></span> <?php }
+																																																					if ($document_sts == 11) { ?> <span class="icon-done"></span> <?php }
 																																																							} ?> </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<input type="radio" name="verification_type" id="loan_calc" value="loan_calc" data-sts="<?php echo $cus_status_lc ?? ''; ?>"></input><label for='loan_calc'>&nbsp;&nbsp; Loan Calculation <?php if (isset($cus_status_lc)) {
-																																							if ($cus_status_lc == 12) { ?> <span class="icon-done"></span> <?php }
+																																																			if ($cus_status_lc == 12) { ?> <span class="icon-done"></span> <?php }
 																																																					} ?> </label>
 		</div>
 	</div>
@@ -368,7 +373,9 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 	<!-- Customer Profile form start-->
 	<div id="customer_profile" style="display: none;">
 		<form id="cus_Profiles" name="cus_Profiles" action="" method="post" enctype="multipart/form-data">
-			<input type="hidden" name="agent_id" id="agent_id" value="<?php if (isset($agent_id)) {echo $agent_id;} ?>" />
+			<input type="hidden" name="agent_id" id="agent_id" value="<?php if (isset($agent_id)) {
+																			echo $agent_id;
+																		} ?>" />
 			<input type="hidden" name="req_id" id="req_id" value="<?php if (isset($req_id)) {
 																		echo $req_id;
 																	} ?>" />
@@ -402,7 +409,9 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 			<input type="hidden" name="cus_Tableid" id="cus_Tableid" value="<?php if (isset($cus_Tableid)) {
 																				echo $cus_Tableid;
 																			} ?>" />
-			<input type="hidden" name="approvalaccess" id="approvalaccess" value="<?php if (isset($approvalaccess)) {echo $approvalaccess;} ?>" />
+			<input type="hidden" name="approvalaccess" id="approvalaccess" value="<?php if (isset($approvalaccess)) {
+																						echo $approvalaccess;
+																					} ?>" />
 			<input type="hidden" name="role_upd" id="role_upd" value="<?php if (isset($role)) echo $role; ?>" />
 			<input type="hidden" name="userid_upd" id="userid_upd" value="<?php if (isset($userid)) echo $userid; ?>" />
 			<input type="hidden" name="pge" id="pge" value="<?php if (isset($pge)) echo $pge; ?>" />
@@ -1106,7 +1115,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 													<th> Account Holder Name </th>
 													<th> Account Number </th>
 													<th> IFSC Code </th>
-													<th>  Upload </th>
+													<th> Upload </th>
 													<th> ACTION </th>
 												</tr>
 											</thead>
@@ -2311,7 +2320,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 												<span class="text-danger" style='display:none' id='profit_typeCheck'>Please Select Profit Type</span>
 											</div>
 										</div>
-										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 calculation" style="display:none">
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emi-calculation" style="display:none">
 											<div class="form-group">
 												<label for="due_method_calc">Due Method</label>&nbsp;<span class="text-danger">*</span>
 												<input tabindex="23" type="text" class="form-control" id="due_method_calc" name="due_method_calc" readonly value='Monthly'>
@@ -2431,7 +2440,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 												<input type="text" class="form-control" readonly id="loan_amt_cal" name="loan_amt_cal" value='<?php if (isset($loan_amt_cal)) echo $loan_amt_cal; ?>' tabindex='35'>
 											</div>
 										</div>
-										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emi_div" style="display: <?php echo ($emicheck ? 'block' : 'none'); ?>;">
 											<div class="form-group">
 												<label for="principal_amt_cal">Principal Amount</label>&nbsp;<span class="text-danger princ-diff">*</span>
 												<input type="text" class="form-control" readonly id="principal_amt_cal" name="principal_amt_cal" value='<?php if (isset($principal_amt_cal)) echo $principal_amt_cal; ?>' tabindex='36'>
@@ -2443,13 +2452,13 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 												<input type="text" class="form-control" readonly id="int_amt_cal" name="int_amt_cal" value='<?php if (isset($int_amt_cal)) echo $int_amt_cal; ?>' tabindex='37'>
 											</div>
 										</div>
-										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emi_div" style="display: <?php echo ($emicheck ? 'block' : 'none'); ?>;">
 											<div class="form-group">
 												<label for="tot_amt_cal">Total Amount</label>&nbsp;<span class="text-danger">*</span>
 												<input type="text" class="form-control" readonly id="tot_amt_cal" name="tot_amt_cal" value='<?php if (isset($tot_amt_cal)) echo $tot_amt_cal; ?>' tabindex='38'>
 											</div>
 										</div>
-										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emi_div" style="display: <?php echo ($emicheck ? 'block' : 'none'); ?>;">
 											<div class="form-group">
 												<label for="due_amt_cal">Due Amount</label>&nbsp;<span class="text-danger due-diff">*</span>
 												<input type="text" class="form-control" readonly id="due_amt_cal" name="due_amt_cal" value='<?php if (isset($due_amt_cal)) echo $due_amt_cal; ?>' tabindex='39'>
@@ -3225,14 +3234,14 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 							<span class="text-danger" id="signTypeCheck"> Select Sign Type </span>
 						</div>
 					</div>
-					
+
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" style="display: none;" id="cus_name_div">
 						<div class="form-group">
 							<label for="signType_cus_name"> Customer Name </label>
 							<input type="text" class="form-control" id="signType_cus_name" name="signType_cus_name" readonly tabindex='3'>
 						</div>
 					</div>
-					
+
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" style="display: none;" id="guar_name_div">
 						<div class="form-group">
 							<label for="guar_name"> Guarentor Name </label>
