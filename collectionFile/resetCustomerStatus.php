@@ -1232,7 +1232,7 @@ function checkStatusOfCustomer($response, $loan_arr, $cus_id, $connect)
                     $response['follow_cus_sts'] = 'Legal';
                 } else {
                     if ($response['closed_customer'][$i] == true) {
-                        $response['follow_cus_sts'] = "Move To Close";
+                        $response['follow_cus_sts'] = "Closed";
                     } else {
                         $response['follow_cus_sts'] = 'Current';
                     }

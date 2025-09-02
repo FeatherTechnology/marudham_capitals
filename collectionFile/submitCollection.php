@@ -82,15 +82,15 @@ if (isset($_POST['trans_id'])) {
     $trans_id = $_POST['trans_id'];
 }
 if (isset($_POST['trans_date'])) {
-    $trans_date = ($_POST['trans_date'] !='') ? $_POST['trans_date'] : '0000-00-00';
+    $trans_date = ($_POST['trans_date'] != '') ? $_POST['trans_date'] : '0000-00-00';
 }
 if (isset($_POST['collection_loc'])) {
     $collection_loc = $_POST['collection_loc'];
 }
 if (isset($_POST['collection_date'])) {
     $current_time = date('H:i:s');
-    $collctn_date = date('Y-m-d', strtotime($_POST['collection_date'])); 
-    $collection_date = $collctn_date.' '.$current_time; 
+    $collctn_date = date('Y-m-d', strtotime($_POST['collection_date']));
+    $collection_date = $collctn_date . ' ' . $current_time;
 }
 // if (isset($_POST['collection_id'])) {
 //     $collection_id = $_POST['collection_id'];
@@ -140,20 +140,21 @@ if (isset($_POST['total_waiver'])) {
     $total_waiver = $_POST['total_waiver'];
 }
 
-try{
+try {
     // Begin transaction
     $connect->beginTransaction();
 
     $myStr = 'COL';
     $selectIC = $connect->query("SELECT coll_code FROM collection WHERE coll_code != '' ORDER BY coll_id DESC LIMIT 1 FOR UPDATE");
-    if($selectIC -> rowCount() > 0) {
+    if ($selectIC->rowCount() > 0) {
         $row = $selectIC->fetch();
         $ac2 = $row["coll_code"];
-        
-        $appno2 = ltrim(strstr($ac2, '-'), '-'); $appno2 = $appno2+1;
-        $coll_code = $myStr."-". "$appno2";
+
+        $appno2 = ltrim(strstr($ac2, '-'), '-');
+        $appno2 = $appno2 + 1;
+        $coll_code = $myStr . "-" . "$appno2";
     } else {
-        $coll_code = $myStr."-101";
+        $coll_code = $myStr . "-101";
     }
 
     $insertQry = "INSERT INTO `collection`(  `coll_code`, `req_id`, `cus_id`, `cus_name`, `branch`, `area`, `sub_area`, `line`, `loan_category`, `sub_category`, `coll_status`, 
@@ -182,18 +183,18 @@ try{
         $qry = $connect->query("UPDATE `cheque_no_list` SET `used_status`='1' WHERE `id`=$cheque_no "); //If cheque has been used change status to 1
     }
 
-    $check = intval($due_amt_track) + intval($pre_close_waiver) - intval($bal_amt);
+    $check = (intval($due_amt_track) + intval($pre_close_waiver)) - intval($bal_amt);
     $collected_amnt = intval($due_amt_track) + intval($pre_close_waiver);
 
     if (($princ_amt_track != '' or $int_amt_track != '') and ($due_amt_track == '' or $due_amt_track == 0 or $due_amt_track == null)) {
         // if this condition is true then it will be the interest based loan. coz thats where we able to give princ/int amt track and not able to give due amt track
         //if yes then $check variable should check with principal amt
-        $check = intVal($princ_amt_track) + intVal($pre_close_waiver) - intval($bal_amt);
+        $check = (intVal($princ_amt_track) + intVal($pre_close_waiver)) - intval($bal_amt);
         $collected_amnt = intval($princ_amt_track) + intval($pre_close_waiver);
     }
 
-    $penalty_check = intval($penalty_track) + intval($penalty_waiver) - intval($penalty);
-    $coll_charge_check = intval($coll_charge_track) + intval($coll_charge_waiver) - intval($coll_charge);
+    $penalty_check = intval($penalty) - (intval($penalty_track) + intval($penalty_waiver));
+    $coll_charge_check = intval($coll_charge) - (intval($coll_charge_track) + intval($coll_charge_waiver));
 
     if ($check == 0 && $penalty_check == 0 && $coll_charge_check == 0) {
         $cus_status = 20;
@@ -217,74 +218,87 @@ try{
 
     if ($check == 0 && $penalty_check == 0 && $coll_charge_check == 0) {
         $substs = 'Closed';
-
     } else {
-
         if ($sub_status == 'OD') {
             if ($check == 0 && $penalty_check == 0 && $coll_charge_check == 0) {
                 $substs = 'Closed';
             } else {
                 $substs = ($check == 0 && ($penalty_check > 0 || $coll_charge_check > 0)) ? 'Due Nil' : 'OD';
             }
-            
         } elseif ($sub_status == 'Pending') {
-            $substs = ($pending_amnts == 0) ? 'Current' : 'Pending';
+            if ($pending_amnts == 0) {
+                if ($check == 0 && ($penalty_check > 0 || $coll_charge_check > 0)) {
+                    $substs = 'Due Nil';
+                } else {
+                    $substs = 'Current';
+                }
+            } else {
+                $substs = 'Pending';
+            }
 
             $result = $connect->query("SELECT maturity_month, due_method_calc, due_method_scheme FROM `acknowlegement_loan_calculation` WHERE req_id = $req_id ");
             $row = $result->fetch();
 
-            if($row['due_method_calc'] == 'Monthly' || $row['due_method_scheme'] == '1'){
+            if ($row['due_method_calc'] == 'Monthly' || $row['due_method_scheme'] == '1') {
                 $maturity_month = date('Y-m', strtotime($row['maturity_month']));
                 $date_format = 'Y-m';
                 $current_date = date('Y-m');
-            }else{
+            } else {
                 $maturity_month = $row['maturity_month'];
                 $date_format = 'Y-m-d';
                 $current_date = date('Y-m-d');
-
             }
 
-            $end_date_obj = DateTime::createFromFormat($date_format, $maturity_month);
-            $current_date_obj = DateTime::createFromFormat($date_format, $current_date);
-
-            if ($current_date_obj > $end_date_obj) {
-                $substs = 'OD';
-            }
+             // Create DateTime objects
+             $end_date_obj = DateTime::createFromFormat($date_format, $maturity_month);
+             $end_date_obj->setTime(0, 0, 0); // midnight
+ 
+             $current_date_obj = DateTime::createFromFormat($date_format, $current_date);
+             $current_date_obj->setTime(0, 0, 0); // midnight
+ 
+             // If format is Y-m (monthly), set day to 1 for both
+             if ($date_format === 'Y-m') {
+                 $end_date_obj->setDate($end_date_obj->format('Y'), $end_date_obj->format('m'), 1);
+                 $current_date_obj->setDate($current_date_obj->format('Y'), $current_date_obj->format('m'), 1);
+             }
+ 
+             if ($current_date_obj > $end_date_obj) {
+                 $substs = 'OD';
+             }
 
         } elseif($sub_status == 'Error' || $sub_status == 'Legal'){
             $substs = $sub_status;
 
+        }elseif ($sub_status == 'Current') {
+            if ($check == 0 && ($penalty_check > 0 || $coll_charge_check > 0)) {
+                $substs = 'Due Nil';
+            } else {
+                $substs = 'Current';
+            }
         }else {    
             $substs = 'Current';
         }
-
     }
 
     $cur_day = date('j'); // Day of the month without leading zeros
 
     if ($cur_day >= 1 && $cur_day <= 10) {
         $lpd = '1';
-
     } elseif ($cur_day >= 11 && $cur_day <= 15) {
         $lpd = '2';
-
     } elseif ($cur_day >= 16 && $cur_day <= 20) {
         $lpd = '3';
-
     } elseif ($cur_day >= 21 && $cur_day <= 25) {
         $lpd = '4';
-
     } elseif ($cur_day >= 26 && $cur_day <= 31) {
         $lpd = '5';
-
     } else {
         $lpd = '0';
-
     }
     //Current_month_paid = YES/1, if either partial amount or full amount of payable paid in collection. 
-    
+
     $query = $connect->query("UPDATE `customer_status` SET `cus_id`='$cus_id',`sub_status`='$substs',`payable_amnt` = '$payable_amnts', `bal_amnt`='$bal_amnts', `last_paid_date`= '$lpd', `current_month_paid`='1', `insert_login_id`='$userid',`created_date`='$cur_date' WHERE `req_id`='$req_id' ");
-    
+
 
     // $qry = $connect->query("SELECT customer_name, mobile1 from customer_register where req_ref_id = '$req_id' ");
     // $row = $qry->fetch_assoc();
@@ -314,11 +328,10 @@ try{
     } else {
         $response['info'] = 'Error';
     }
-
-} catch(Exception $e){
-    $connect -> rollBack();
+} catch (Exception $e) {
+    $connect->rollBack();
     $response['info'] = 'Error';
-    $response['Error'] = "Error while insert: ".$e->getMessage(); 
+    $response['Error'] = "Error while insert: " . $e->getMessage();
 }
 
 echo json_encode($response);

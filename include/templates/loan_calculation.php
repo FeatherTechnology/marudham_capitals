@@ -136,7 +136,7 @@ if ($idupd > 0) {
                             </div>
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-                            <div class="form-group">
+                           <div class="form-group">
                                 <label for="disabledInput">Due Type</label><span class="required">&nbsp;*</span>
                                 <!-- <input type="hidden" class="form-control" id="due_type" name="due_type" value="emi"> -->
                                 <!-- <input tabindex="4" type="text" class="form-control" id="duetype" name="duetype" value="EMI" title="Select Due Type" readonly> -->

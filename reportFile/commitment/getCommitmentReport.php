@@ -25,10 +25,11 @@ $fstatus = [1 => 'Commitment', 2 => 'Unavailable', 3 => 'RNR', 4 => 'Not Reachab
 $per_type_arr = [1 => 'Customer', 2 => 'Guarantor', 3 => 'Family Member'];
 
 $column = array(
-    'c.created_date',
+    'c.id',
     'c.cus_id',
     'c.created_date',
-    'c.id',
+    'c.created_date',
+    'alc.area_name',
     'c.ftype',
     'c.fstatus',
     'c.person_type',
@@ -45,6 +46,7 @@ $column = array(
 $query = "SELECT 
     c.cus_id,
     c.created_date,
+    alc.area_name,
     c.ftype,
     c.fstatus,
     c.person_type,
@@ -60,6 +62,10 @@ FROM
     commitment c
 LEFT JOIN 
     user u ON u.user_id = c.insert_login_id
+JOIN 
+    acknowlegement_customer_profile cp ON c.req_id = cp.req_id
+JOIN 
+    area_list_creation alc ON cp.area_confirm_area = alc.area_id   
 WHERE 1
     $where";
 
@@ -67,6 +73,7 @@ if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {
         $query .= " and (c.created_date LIKE '%" . $_POST['search'] . "%' OR
             c.cus_id LIKE '%" . $_POST['search'] . "%' OR
+            alc.area_name LIKE '%" . $_POST['search'] . "%' OR
             c.ftype LIKE '%" . $_POST['search'] . "%' OR
             c.fstatus LIKE '%" . $_POST['search'] . "%' OR
             c.person_type LIKE '%" . $_POST['search'] . "%' OR
@@ -76,7 +83,7 @@ if (isset($_POST['search'])) {
             c.comm_date LIKE '%" . $_POST['search'] . "%' OR
             u.role LIKE '%" . $_POST['search'] . "%' OR
             u.fullname LIKE '%" . $_POST['search'] . "%' OR
-            c.hint LIKE '%" . $_POST['search'] . "%' OR";
+            c.hint LIKE '%" . $_POST['search'] . "%' )";
     }
 }
 
@@ -109,6 +116,7 @@ foreach ($result as $row) {
     $sub_array[] = $row['cus_id'];
     $sub_array[] = date('d-m-Y', strtotime($row['created_date']));
     $sub_array[] = date('h:i:s A', strtotime($row['created_date']));
+    $sub_array[] = $row['area_name'];
     $sub_array[] = isset($ftype[$row['ftype']]) ? $ftype[$row['ftype']] : '';
     $sub_array[] = isset($fstatus[$row['fstatus']]) ? $fstatus[$row['fstatus']] : '';
     $sub_array[] = isset($per_type_arr[$row['person_type']]) ? $per_type_arr[$row['person_type']] : '';

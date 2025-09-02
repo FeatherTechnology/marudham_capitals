@@ -8,7 +8,7 @@ $(document).ready(function () {
 		$("#loan_category").prepend(firstOption);
 	}
 
-	$('#due_type').on('change', function () {
+		$('#due_type').on('change', function () {
 		var due_type = $(this).val();
 
 		if (due_type == 'emi') {

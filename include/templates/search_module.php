@@ -59,10 +59,16 @@
 											<input type="text" class="form-control" id="mobile" name="mobile" placeholder="Enter Mobile Number" maxlength="10">
 										</div>
 									</div>
-									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" style="text-align:center">
+									<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12">
 										<div class="form-group">
-											<label for="" style="visibility:hidden"></label>
-											<!-- <input type="button" class="form-control btn btn-primary" id="search" name="search" value="Search" data-toggle="modal" data-target="#customerDetailModal"> -->
+											<button type="button" class='form-control btn btn-success scanBtn' style='background-color:#009688; margin-top: 17px; height: 35px;' onclick="event.preventDefault()" title='Put Your Thumb'><i class="material-icons" id="icon-flipped">&#xe90d;</i>&nbsp;Scan</button>
+											<input type="hidden" class="form-control" id="search_fingerprint" name="search_fingerprint"> <!-- finger print value from Device when scanning.-->
+											<input type="hidden" class="form-control" id="fingerprint_person_id" name="fingerprint_person_id">
+										</div>
+									</div>
+									<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12" style="text-align:center">
+										<div class="form-group">
+											<label style="visibility:hidden"></label>
 											<input type="submit" class="form-control btn btn-primary" id="search" name="search" value="Search" onclick="event.preventDefault();">
 										</div>
 									</div>
@@ -425,3 +431,5 @@
 		}
 	}
 </style>
+
+<?php require_once __DIR__ . "/../common/fingerprintlibrary.php"; ?>

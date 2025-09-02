@@ -42,7 +42,7 @@ $to_date = "";
 if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'] != '' && $_POST['to_date'] != '') {
     $from_date = date('Y-m-d', strtotime($_POST['from_date']));
     $to_date = date('Y-m-d', strtotime($_POST['to_date']));
-    $where  = "AND cc.closing_date BETWEEN '$from_date' AND '$to_date'  AND NOT EXISTS (SELECT * FROM closed_status cs WHERE cs.req_id = ii.req_id AND cs.created_date BETWEEN '$from_date' AND '$to_date')";
+    $where  = "AND cc.closing_date BETWEEN '$from_date' AND '$to_date'  AND NOT EXISTS (SELECT * FROM closed_status cs WHERE cs.req_id = ii.req_id AND DATE(cs.created_date) BETWEEN '$from_date' AND '$to_date')";
 }
 
 $where .= $user_based;

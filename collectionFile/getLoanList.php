@@ -157,7 +157,7 @@ function moneyFormatIndia($num)
                                 echo $subStatus = 'Legal';
                             } else {
                                 if ($closed_sts[$i - 1] == 'true') {
-                                    echo $subStatus = "Move To Close";
+                                    echo $subStatus = "Closed";
                                 } else {
                                     echo $subStatus = 'Current';
                                 }
