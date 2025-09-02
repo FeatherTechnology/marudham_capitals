@@ -96,7 +96,7 @@ $other_trans_report = '';
 $day_end_report = '';
 $due_followup_customer_count_report = '';
 $commitment_report = '';
-$pending_od_report = '';
+$customer_status_report = '';
 $search_module = '';
 $search_screen = '';
 $bulk_upload_module = '';
@@ -244,7 +244,7 @@ if($idupd>0)
 			$day_end_report          		     = $getUser['day_end_report'];
 			$due_followup_customer_count_report  = $getUser['due_followup_customer_count_report'];
 			$commitment_report  = $getUser['commitment_report'];
-			$pending_od_report  = $getUser['pending_od_report'];
+			$customer_status_report  = $getUser['customer_status_report'];
 
 			$search_module = $getUser['search_module'];
 			$search_screen = $getUser['search'];
@@ -1155,8 +1155,8 @@ if($idupd>0)
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($pending_od_report==0){ echo'checked'; }} ?> tabindex="70" class="report-checkbox" id="pending_od_report" name="pending_od_report" disabled>&nbsp;&nbsp;
-                                <label class="custom-control-label" for="pending_od_report">Pending OD Report</label>
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($customer_status_report==0){ echo'checked'; }} ?> tabindex="70" class="report-checkbox" id="customer_status_report" name="customer_status_report" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="customer_status_report">Customer Status Report</label>
                             </div>
                         </div>
 					</div>

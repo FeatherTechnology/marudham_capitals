@@ -139,13 +139,13 @@ if ($idupd > 0) {
                                 <label for="disabledInput">Due Type</label><span class="required">&nbsp;*</span>
                                 <input type="hidden" class="form-control" id="due_type" name="due_type" value="emi">
                                 <input tabindex="4" type="text" class="form-control" id="duetype" name="duetype" value="EMI" title="Select Due Type" readonly>
-                                <!-- <select tabindex="4" type="text" class="form-control" id="due_type" name="due_type" title="Select Due Type" required>
+                                <select tabindex="4" type="text" class="form-control" id="due_type" name="due_type" title="Select Due Type" required>
                                     <option value=''>Select Due Type</option>
-                                    <option <?php #if (isset($due_type)) {if ($due_type == "emi") echo 'selected';} 
+                                    <option <?php if (isset($due_type)) {if ($due_type == "emi") echo 'selected';} 
                                             ?> value="emi">EMI</option>
-                                    <option <?php #if (isset($due_type)) {if ($due_type == "intrest") echo 'selected';} 
+                                    <option <?php if (isset($due_type)) {if ($due_type == "intrest") echo 'selected';} 
                                             ?> value="intrest">Interest</option>
-                                </select> -->
+                                </select>
                             </div>
                         </div>
                         <div id="emi_method" class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
