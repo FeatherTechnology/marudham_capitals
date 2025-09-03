@@ -1374,6 +1374,22 @@
     if ($current_page == 'pending_od_report') { ?>
         <script src="js/pending_od_report.js"></script>
     <?php }
+
+    if ($current_page == 'intrest_ledger_report') { ?>
+        <script src="js/intrest_ledger_report.js"></script>
+    <?php }
+    if ($current_page == 'intrest_loan_issue_report') { ?>
+        <script src="js/intrest_loan_issue_report.js"></script>
+    <?php }
+    if ($current_page == 'intrest_collection_report') { ?>
+        <script src="js/intrest_collection_report.js"></script>
+    <?php }
+    if ($current_page == 'intrest_balance_report') { ?>
+        <script src="js/intrest_balance_report.js"></script>
+    <?php }
+    if ($current_page == 'intrest_closed_report') { ?>
+        <script src="js/intrest_closed_report.js"></script>
+    <?php }
     
     if ($current_page == 'search_module') { ?>
         <script src="js/search_module.js"></script>

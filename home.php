@@ -511,6 +511,31 @@ if (isset($getuserdetails['download_access'])) {
 			<?php if ($current_page == 'pending_od_report') { ?>
 				<?php include "include/templates/pending_od_report.php" ?>
 			<?php } else ?>
+			
+			<!-- Pending OD Report -->
+			<?php if ($current_page == 'intrest_ledger_report') { ?>
+				<?php include "include/templates/intrest_ledger_report.php" ?>
+			<?php } else ?>
+			
+			<!-- Pending OD Report -->
+			<?php if ($current_page == 'intrest_loan_issue_report') { ?>
+				<?php include "include/templates/intrest_loan_issue_report.php" ?>
+			<?php } else ?>
+			
+			<!-- Pending OD Report -->
+			<?php if ($current_page == 'intrest_collection_report') { ?>
+				<?php include "include/templates/intrest_collection_report.php" ?>
+			<?php } else ?>
+			
+			<!-- Pending OD Report -->
+			<?php if ($current_page == 'intrest_balance_report') { ?>
+				<?php include "include/templates/intrest_balance_report.php" ?>
+			<?php } else ?>
+			
+			<!-- Pending OD Report -->
+			<?php if ($current_page == 'intrest_closed_report') { ?>
+				<?php include "include/templates/intrest_closed_report.php" ?>
+			<?php } else ?>
 
 			<!-- Search Module -->
 			<?php if ($current_page == 'search_module') { ?>

@@ -71,6 +71,9 @@ else if ($current_page == 'edit_concern_creation' || $current_page == 'edit_conc
 ) {
 
 	$current_module = 'report';
+}else if($current_page == 'intrest_ledger_report' || $current_page == 'intrest_loan_issue_report' ||$current_page == 'intrest_balance_report' ||$current_page == 'intrest_collection_report' ||$current_page == 'intrest_closed_report' ){
+	$current_module = 'interest_report';
+
 } else if ($current_page == 'search_module') {
 
 	$current_module = 'search_module';
@@ -174,6 +177,12 @@ $loan_followup = '';
 $confirmation_followup = '';
 $due_followup = '';
 $reportmodule = '';
+$reportmodule_intrest = '';
+$intrest_ledger_report = '';
+$intrest_loan_issue_report = '';
+$intrest_collection_report = '';
+$intrest_balance_report = '';
+$intrest_closed_report = '';
 $ledger_report = '';
 $request_report = '';
 $cancel_revoke_report = '';
@@ -290,6 +299,12 @@ if (sizeof($getUser) > 0) {
 		$day_end_report          		     = $getUser['day_end_report'];
 		$commitment_report  = $getUser['commitment_report'];
 		$pending_od_report  = $getUser['pending_od_report'];
+		$reportmodule_intrest          		     = $getUser['reportmodule_intrest'];
+		$intrest_ledger_report          		     = $getUser['intrest_ledger_report'];
+		$intrest_loan_issue_report          		     = $getUser['intrest_loan_issue_report'];
+		$intrest_collection_report          		     = $getUser['intrest_collection_report'];
+		$intrest_balance_report          		     = $getUser['intrest_balance_report'];
+		$intrest_closed_report          		     = $getUser['intrest_closed_report'];
 		$search_module          		     = $getUser['search_module'];
 		$search          		     = $getUser['search'];
 		$bulk_upload_module          		     = $getUser['bulk_upload_module'];
@@ -825,7 +840,7 @@ if (sizeof($getUser) > 0) {
 					<li class="sidebar-dropdown ">
 						<a href="javascript:void(0)">
 							<i class='icon-area-graph'></i>
-							<span class="menu-text">Reports</span>
+							<span class="menu-text">Reports - EMI</span>
 						</a>
 						<div class="sidebar-submenu" <?php if ($current_module == 'report') echo 'style="display:block" '; ?>>
 							<ul>
@@ -924,6 +939,43 @@ if (sizeof($getUser) > 0) {
 										<a href="pending_od_report"><i class='icon-area-graph'></i>Pending-OD Report</a>
 									</li>
 								<?php  } ?>                  
+							</ul>
+						</div>
+					</li>
+				<?php  } ?>
+				<?php if ($reportmodule_intrest == 0) { ?>
+					<li class="sidebar-dropdown ">
+						<a href="javascript:void(0)">
+							<i class='icon-area-graph'></i>
+							<span class="menu-text">Reports - Interest</span>
+						</a>
+						<div class="sidebar-submenu" <?php if ($current_module == 'interest_report') echo 'style="display:block" '; ?>>
+							<ul>
+								<?php if ($intrest_ledger_report == 0) { ?>
+									<li>
+										<a href="intrest_ledger_report"><i class='icon-area-graph'></i>Ledger View</a>
+									</li>
+								<?php  } ?>
+								<?php if ($intrest_loan_issue_report == 0) { ?>
+									<li>
+										<a href="intrest_loan_issue_report"><i class='icon-area-graph'></i>Loan Issue</a>
+									</li>
+								<?php  } ?>
+								<?php if ($intrest_collection_report == 0) { ?>
+									<li>
+										<a href="intrest_collection_report"><i class='icon-area-graph'></i>Collection</a>
+									</li>
+								<?php  } ?>
+								<?php if ($intrest_balance_report == 0) { ?>
+									<li>
+										<a href="intrest_balance_report"><i class='icon-area-graph'></i>Balance</a>
+									</li>
+								<?php  } ?>
+								<?php if ($intrest_closed_report == 0) { ?>
+									<li>
+										<a href="intrest_closed_report"><i class='icon-area-graph'></i>Closed</a>
+									</li>
+								<?php  } ?>                
 							</ul>
 						</div>
 					</li>
@@ -1075,6 +1127,12 @@ $loan_followup = '';
 $confirmation_followup = '';
 $due_followup = '';
 $reportmodule = '';
+$reportmodule_intrest = '';
+$intrest_ledger_report = '';
+$intrest_loan_issue_report = '';
+$intrest_collection_report = '';
+$intrest_balance_report = '';
+$intrest_closed_report = '';
 $ledger_report = '';
 $request_report = '';
 $cancel_revoke_report = '';
