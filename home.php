@@ -508,8 +508,8 @@ if (isset($getuserdetails['download_access'])) {
 			<?php } else ?>
 
 			<!-- Pending OD Report -->
-			<?php if ($current_page == 'pending_od_report') { ?>
-				<?php include "include/templates/pending_od_report.php" ?>
+			<?php if ($current_page == 'customer_status_report') { ?>
+				<?php include "include/templates/customer_status_report.php" ?>
 			<?php } else ?>
 			
 			<!-- Pending OD Report -->

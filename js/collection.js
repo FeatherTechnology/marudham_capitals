@@ -537,10 +537,10 @@ function OnLoadFunctions(req_id, cus_id) {
               $("#penalty").val(response["penalty"]);
               $("#coll_charge").val(response["coll_charge"]);
 
-              if (response["loan_type"] == "interest") {
+              if (response["loan_type"] == "Interest") {
                 $(".till-date-int").show();
                 $("#till_date_int").val(response["till_date_int"].toFixed(0));
-                $("#tot_amt").prev().prev().text("Principal Amount");
+                $("#tot_amt").prev().prev().text("Loan Amount");
                 $("#due_amt").prev().prev().text("Interest Amount");
 
                 $(".emiLoanDiv").hide();

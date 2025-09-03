@@ -68,7 +68,7 @@ $(document).ready(function () {
         var type = $(this).val();
         var netcash = $('#net_cash').val();
         let issue_mode = $('#issued_mode').val();
-        if(issue_mode == 0){
+        if (issue_mode == 0) {
             if (type == '0') {
                 $('.balance').show();
                 $('.cash_issue').show();
@@ -86,7 +86,7 @@ $(document).ready(function () {
                 } else {
                     $('#cash').off('keyup');
                 }
-    
+
             } else if (type == '1') {
                 $('.balance').hide();
                 $('.cash_issue').hide();
@@ -99,7 +99,7 @@ $(document).ready(function () {
                 $('#cashAck').hide(); // Cash Acknowledgement.
                 $('#bankInfo').show(); // Cash Acknowledgement.
                 resetbankinfoList()
-    
+
             } else if (type == '2') {
                 $('.balance').hide();
                 $('.cash_issue').hide();
@@ -110,7 +110,7 @@ $(document).ready(function () {
                 $('#transaction_value').attr('readonly', true);
                 $('#balance').val('');
                 $('#cashAck').hide(); // Cash Acknowledgement.
-                $('#bankInfo').show(); 
+                $('#bankInfo').show();
                 resetbankinfoList();
             } else {
                 $('.balance').hide();
@@ -123,7 +123,7 @@ $(document).ready(function () {
                 $('#bankInfo').hide()
             }
         }
-        else{
+        else {
             $('.balance').hide();
             if (type == '0') {
                 $('.cash_issue').show();
@@ -141,7 +141,7 @@ $(document).ready(function () {
                 } else {
                     $('#cash').off('keyup');
                 }
-    
+
             } else if (type == '1') {
                 $('.cash_issue').hide();
                 $('#bankDiv').show();//show bank id
@@ -153,7 +153,7 @@ $(document).ready(function () {
                 $('#cashAck').hide(); // Cash Acknowledgement.
                 $('#bankInfo').show()
                 resetbankinfoList()
-    
+
             } else if (type == '2') {
                 $('.cash_issue').hide();
                 $('#bankDiv').show();//show bank id
@@ -165,7 +165,7 @@ $(document).ready(function () {
                 $('#cashAck').hide(); // Cash Acknowledgement.
                 $('#bankInfo').show()
                 resetbankinfoList()
-    
+
             } else {
                 $('.cash_issue').hide();
                 $('#bankDiv').hide();//hide bank id
@@ -197,38 +197,38 @@ $(document).ready(function () {
             $('#cashAck').hide();
         }
     });
- // Handle checkbox click event
-$(document).on('change', '.verification_bank_update', function () {
-    let id = $(this).val(); // Get the ID of the current row
-    let cusid = $('#cus_id').val(); 
-    let issue_status = 0;
+    // Handle checkbox click event
+    $(document).on('change', '.verification_bank_update', function () {
+        let id = $(this).val(); // Get the ID of the current row
+        let cusid = $('#cus_id').val();
+        let issue_status = 0;
 
-    // If the current checkbox is checked
-    if ($(this).is(':checked')) {
-        issue_status = 2; // Checked, set status to 2
-        // Disable all other checkboxes except the current one
-        $('#bank_data_table').find('input[type="checkbox"]').not(this).prop('disabled', true);
-    } else {
-        issue_status = 1; // Unchecked, set status to 1
-        // Enable all checkboxes again
-        $('#bank_data_table').find('input[type="checkbox"]').prop('disabled', false);
-    }
-
-    // AJAX request to update the issue_status
-    $.ajax({
-        url: 'loanIssueFile/updateBankStatus.php',
-        type: 'POST',
-        data: { "cusid": cusid, "id": id, "issue_status": issue_status },
-        dataType: 'json',
-        cache: false,
-        success: function (response) {
-            // Handle the response if needed
+        // If the current checkbox is checked
+        if ($(this).is(':checked')) {
+            issue_status = 2; // Checked, set status to 2
+            // Disable all other checkboxes except the current one
+            $('#bank_data_table').find('input[type="checkbox"]').not(this).prop('disabled', true);
+        } else {
+            issue_status = 1; // Unchecked, set status to 1
+            // Enable all checkboxes again
+            $('#bank_data_table').find('input[type="checkbox"]').prop('disabled', false);
         }
+
+        // AJAX request to update the issue_status
+        $.ajax({
+            url: 'loanIssueFile/updateBankStatus.php',
+            type: 'POST',
+            data: { "cusid": cusid, "id": id, "issue_status": issue_status },
+            dataType: 'json',
+            cache: false,
+            success: function (response) {
+                // Handle the response if needed
+            }
+        });
     });
-});
 
 
-    
+
     $('#cash_guarentor_name').change(function () { //Select Guarantor Name relationship will show in input.
 
         let famAdhaarNo = document.querySelector("#cash_guarentor_name").value;
@@ -370,16 +370,21 @@ $(document).on('change', '.verification_bank_update', function () {
     $('#refresh_cal').click(function () {
 
         var profit_method = $('#profit_method').val(); // if profit method changes, due type is EMI
-        if (profit_method == 'after_intrest') {
-            getLoanAfterInterest(); changeInttoBen()
+        var due_type = $('#due_type').val();
+
+        if (profit_method == "after_intrest" && due_type == "EMI") {
+            getLoanAfterInterest();
+            changeInttoBen();
         } else if (profit_method == 'pre_intrest') {
-            getLoanPreInterest(); changeInttoBen()
+            getLoanPreInterest();
+            changeInttoBen();
         }
 
-        var due_type = $('#due_type').val(); //If Changes not found in profit method, calculate loan amt for monthly basis
         if (due_type == 'Interest') {
-            getLoanInterest(); changeInttoBen()
+            getLoanInterest();
+            changeInttoBen();
         }
+
         var scheme_profit_method = $('#scheme_profit_method').val(); // if profit method changes, due type is EMI
         if (scheme_profit_method == 'after_intrest') {
             getSchemeAfterIntreset(); changeInttoBen();
@@ -397,13 +402,15 @@ $(document).on('change', '.verification_bank_update', function () {
         // }
 
         function changeInttoBen() {
-            let due_type = document.getElementById('due_type');
-            let int_label = document.querySelector('#int_amt_cal');
-            if (due_type.value == 'Interest') {
+            let due_type = document.getElementById("due_type");
+            let int_label = document.querySelector("#int_amt_cal");
+            if (due_type.value == "Interest") {
                 // Set its value to 'Benefit Amount'
-                int_label.previousElementSibling.previousElementSibling.textContent = 'Benefit Amount';
+                int_label.previousElementSibling.previousElementSibling.textContent = "Interest Amount";
+                $('.emi_div').hide();
             } else {
-                int_label.previousElementSibling.previousElementSibling.textContent = 'Interest Amount';
+                int_label.previousElementSibling.previousElementSibling.textContent = "Benefit Amount";
+                $('.emi_div').show();
             }
         }
     });
@@ -470,7 +477,7 @@ $(document).on('change', '.verification_bank_update', function () {
         let bank_upload_id = $("#bank_upload_id").val();
         let bankID = $("#bankID").val();
 
-        if ( bank_name != "" && branch_name != "" && account_holder_name != "" && account_number != "" && Ifsc_code != "" && req_id != "" ) {
+        if (bank_name != "" && branch_name != "" && account_holder_name != "" && account_number != "" && Ifsc_code != "" && req_id != "") {
 
             // Using FormData to send file and other data
             let formData = new FormData();
@@ -589,28 +596,28 @@ $(document).on('change', '.verification_bank_update', function () {
             var bankid = $(this).attr("value");
 
             $.ajax({
-            url: "verificationFile/verification_bank_delete.php",
-            type: "POST",
-            data: { bankid: bankid },
-            cache: false,
-            success: function (response) {
-                var delresult = response.includes("Deleted");
+                url: "verificationFile/verification_bank_delete.php",
+                type: "POST",
+                data: { bankid: bankid },
+                cache: false,
+                success: function (response) {
+                    var delresult = response.includes("Deleted");
 
-                if (delresult) {
-                    $("#bankDeleteOk").show();
-                    setTimeout(function () {
-                        $("#bankDeleteOk").fadeOut("fast");
-                    }, 2000);
+                    if (delresult) {
+                        $("#bankDeleteOk").show();
+                        setTimeout(function () {
+                            $("#bankDeleteOk").fadeOut("fast");
+                        }, 2000);
 
-                } else {
-                    $("#bankDeleteNotOk").show();
-                    setTimeout(function () {
-                        $("#bankDeleteNotOk").fadeOut("fast");
-                    }, 2000);
-                }
+                    } else {
+                        $("#bankDeleteNotOk").show();
+                        setTimeout(function () {
+                            $("#bankDeleteNotOk").fadeOut("fast");
+                        }, 2000);
+                    }
 
-                resetbankInfo();
-            },
+                    resetbankInfo();
+                },
             });
         }
     });
@@ -664,7 +671,7 @@ function turnonCashKeyup() {
 // Cus img show onload.
 function getImage() {
     let imgName = $('#cus_image').val();
-    
+
     $('#imgshow').attr('src', "uploads/request/customer/" + imgName + " ");
 
     var guarentorimg = $('#guarentor_image').val();
@@ -843,7 +850,10 @@ function profitCalculationInfo() {
         $('#day_scheme').val(''); // to clear day scheme selection 
         $('#scheme_name').val(''); // to clear scheme name selection 
 
-        $('#int_rate').val(''); $('#int_rate').attr('readonly', false);
+        $('#int_rate').val('');
+        $("#doc_charge").val("");
+        $("#proc_fee").val("");
+        $('#int_rate').attr('readonly', false);
         $('#due_period').val(''); $('#due_period').attr('readonly', false);
         $('.min-max-int').text('*');
         $('.min-max-due').text('*');
@@ -983,37 +993,62 @@ function profitCalAjax(profit_type, sub_cat, loan_cat) {
                     //                     if( parseFloat($(this).val()) < '`+ response['processing_fee_min'] + `' && parseInt($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `); //To check value between rage
                     // $('#proc_fee').val(proc_fee_upd);
 
-                } else if (response['due_type'] == 'intrest') {
+                } else if (response["due_type"] == "intrest") {
+                    $(".emi-calculation").hide();
+                    $(".interest-calculation").show();
+                    $("#due_type").val("Interest");
+                    $("#profit_method").empty();
 
-                    $('.emi-calculation').hide();
-                    $('.interest-calculation').show();
-                    $('#due_type').val('Interest');
-                    $('#profit_method').empty();
-                    $('#calc_method').val(response['calculate_method']);
-                    //To set min and maximum 
-                    $('.min-max-int').text('* (' + response['intrest_rate_min'] + '% - ' + response['intrest_rate_max'] + '%) ');
-                    $('#int_rate').attr('onChange', `if( parseFloat($(this).val()) > '` + response['intrest_rate_max'] + `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
-                                        if( parseFloat($(this).val()) < '`+ response['intrest_rate_min'] + `' && parseFloat($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `); //To check value between rage
-                    $('#int_rate').val(int_rate_upd);
+                    $("#calc_method").val(response["calculate_method"]);
+                    if (response["calculate_method"] == "monthly") {
+                        $("#calc_method").val("Monthly");
+                    } else if (response["calculate_method"] == "days") {
+                        $("#calc_method").val("Days");
+                    }
 
-                    $('.min-max-due').text('* (' + response['due_period_min'] + ' - ' + response['due_period_max'] + ') ');
-                    $('#due_period').attr('onChange', `if( parseInt($(this).val()) > '` + response['due_period_max'] + `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
-                                        if( parseInt($(this).val()) < '`+ response['due_period_min'] + `' && parseInt($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `); //To check value between rage
-                    $('#due_period').val(due_period_upd);
-                    if (response['doc_charge_type'] == 'amt') { type = '₹' } else if (response['doc_charge_type'] == 'percentage') { type = '%'; } //Setting symbols
-                    $('.min-max-doc').text('* (' + response['document_charge_min'] + ' ' + type + ' - ' + response['document_charge_max'] + ' ' + type + ') '); //setting min max values in span
-                    $('#doc_charge').attr('onChange', `if( parseInt($(this).val()) > '` + response['document_charge_max'] + `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
-                                            if( parseInt($(this).val()) < '`+ response['document_charge_min'] + `' && parseInt($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `); //To check value between rage
-                    $('#doc_charge').val(doc_charge_upd);
+                    //To set min and maximum
+                    $(".min-max-int").text("* (" + response["intrest_rate_min"] + "% - " + response["intrest_rate_max"] + "%) ");
+                    $("#int_rate").attr("onChange", `if( parseFloat($(this).val()) > '` + response["intrest_rate_max"] + `' ){ alert("Enter Lesser Value"); $(this).val(""); }elseif( parseFloat($(this).val()) < '` + response["intrest_rate_min"] + `' && parseFloat($(this).val()) != '' ){ alert("Enter Higher Value"); 
+                    $(this).val(""); } `); //To check value between rage
+                    $("#int_rate").val(int_rate_upd);
+
+                    $(".min-max-due").text("* (" + response["due_period_min"] + " - " + response["due_period_max"] + ") ");
+
+                    $("#due_period").attr("onChange", `if( parseInt($(this).val()) > '` + response["due_period_max"] + `' ){ alert("Enter Lesser Value");$(this).val(""); }
+                    elseif( parseInt($(this).val()) < '` + response["due_period_min"] + `' && parseInt($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `); //To check value between rage
+
+                    $("#due_period").val(due_period_upd);
+
+                    if (response["doc_charge_type"] == "amt") {
+                        type = "₹";
+                    } else if (response["doc_charge_type"] == "percentage") {
+                        type = "%";
+                    } //Setting symbols
+                    $(".min-max-doc").text("* (" + response["document_charge_min"] + " " + type + " - " + response["document_charge_max"] + " " + type + ") "); //setting min max values in span
+
+                    $("#doc_charge").attr("onChange", `if( parseInt($(this).val()) > '` + response["document_charge_max"] + `' ){ alert("Enter Lesser Value"); $(this).val(""); }elseif( parseInt($(this).val()) < '` + response["document_charge_min"] + `' && parseInt($(this).val()) != '' ){ alert("Enter Higher Value");
+                    $(this).val(""); } `); //To check value between rage
+
+                    $("#doc_charge").val(doc_charge_upd);
+
                     // $('.min-max-doc').text('* (' + response['document_charge_min'] + '% - ' + response['document_charge_max'] + '%) ');
                     // $('#doc_charge').attr('onChange', `if( parseFloat($(this).val()) > '` + response['document_charge_max'] + `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
                     //                     if( parseFloat($(this).val()) < '`+ response['document_charge_min'] + `' && parseFloat($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `); //To check value between rage
                     // $('#doc_charge').val(doc_charge_upd);
 
-                    $('.min-max-proc').text('* (' + response['processing_fee_min'] + '% - ' + response['processing_fee_max'] + '%) ');
-                    $('#proc_fee').attr('onChange', `if( parseFloat($(this).val()) > '` + response['processing_fee_max'] + `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
-                                        if( parseFloat($(this).val()) < '`+ response['processing_fee_min'] + `' && parseFloat($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `); //To check value between rage
-                    $('#proc_fee').val(proc_fee_upd);
+                    if (response["proc_fee_type"] == "amt") {
+                        type = "₹";  // Set ₹ symbol before the numbers
+                    } else if (response["proc_fee_type"] == "percentage") {
+                        type = "%"; // Set % symbol after the numbers
+                    }
+
+                    $(".min-max-proc").text("* (" + response["processing_fee_min"] + " " + type + " - " + response["processing_fee_max"] + " " + type + ") "); //setting min max values in span
+
+                    $("#proc_fee").attr("onChange", `if( parseFloat($(this).val()) > '` + response["processing_fee_max"] + `' ){ alert("Enter Lesser Value"); $(this).val(""); }
+                    elseif( parseFloat($(this).val()) < '` + response["processing_fee_min"] + `' && parseFloat($(this).val()) != '' ){ alert("Enter Higher Value");
+                    $(this).val(""); } `); //To check value between rage
+
+                    $("#proc_fee").val(proc_fee_upd);
                 }
             }
         })
@@ -1276,36 +1311,64 @@ function getLoanPreInterest() {
 
 //To Get Loan Calculation for Interest due type
 function getLoanInterest() {
-    var loan_amt = $('#loan_amt').val();
-    var int_rate = $('#int_rate').val();
-    var due_period = $('#due_period').val();
-    var doc_charge = $('#doc_charge').val();
-    var proc_fee = $('#proc_fee').val();
+    var loan_amt = $("#loan_amt").val();
+    var int_rate = $("#int_rate").val();
+    var doc_charge = $("#doc_charge").val();
+    var proc_fee = $("#proc_fee").val();
+    var calc_method = $("#calc_method").val();
 
-    $('#loan_amt_cal').val(parseInt(loan_amt).toFixed(0)); //get loan amt from loan info card
-    $('#principal_amt_cal').val(parseInt(loan_amt).toFixed(0));
+    $("#loan_amt_cal").val(parseInt(loan_amt).toFixed(0));
 
-    $('#tot_amt_cal').val('');
-    $('#due_amt_cal').val('');//Due period will be monthly by default so no need of due amt
+    let int_amt;
 
-    var int_amt = (parseInt(loan_amt) * (parseFloat(int_rate) / 100)).toFixed(0); //Calculate interest rate 
+    if (calc_method === 'Monthly') {
+        int_amt = (loan_amt * (int_rate / 100)).toFixed(0);
+    } else if (calc_method === 'Days') {
+        int_amt = (loan_amt * (int_rate / 100) / 30).toFixed(0);
+    }
 
     var roundedInterest = Math.ceil(int_amt / 5) * 5;
     if (roundedInterest < int_amt) {
         roundedInterest += 5;
     }
-    $('.int-diff').text('* (Difference: +' + parseInt(roundedInterest - int_amt) + ')'); //To show the difference amount
-    $('#int_amt_cal').val(parseInt(roundedInterest));
 
-    var doc_charge = parseInt(loan_amt) * (parseFloat(doc_charge) / 100); //Get document charge from loan info and multiply with loan amt to get actual doc charge
-    $('#doc_charge_cal').val(parseInt(doc_charge).toFixed(0));
+    $(".int-diff").text("* (Difference: +" + parseInt(roundedInterest - int_amt) + ")");
+    $("#int_amt_cal").val(parseInt(roundedInterest));
 
-    var proc_fee = parseInt(loan_amt) * (parseFloat(proc_fee) / 100);//Get processing fee from loan info and multiply with loan amt to get actual proc fee
-    $('#proc_fee_cal').val(parseInt(proc_fee).toFixed(0));
+    var doc_type = $(".min-max-doc").text();
+    if (doc_type.includes("₹")) {
+        var doc_charge = parseInt(doc_charge);
+    } else if (doc_type.includes("%")) {
+        var doc_charge = parseInt(loan_amt) * (parseFloat(doc_charge) / 100);
+    }
 
-    var net_cash = parseInt(loan_amt) - parseInt(doc_charge) - parseInt(proc_fee); //Net cash will be calculated by subracting other charges
-    $('#net_cash_cal').val(parseInt(net_cash).toFixed(0));
+    var roundeddoccharge = Math.ceil(doc_charge / 5) * 5;
+    if (roundeddoccharge < doc_charge) {
+        roundeddoccharge += 5;
+    }
+
+    $(".doc-diff").text("* (Difference: +" + parseInt(roundeddoccharge - doc_charge) + ")");
+    $("#doc_charge_cal").val(parseInt(roundeddoccharge));
+
+    var proc_type = $(".min-max-proc").text();
+    if (proc_type.includes("₹")) {
+        var proc_fee = parseInt(proc_fee);
+    } else if (proc_type.includes("%")) {
+        var proc_fee = parseInt(loan_amt) * (parseInt(proc_fee) / 100);
+    }
+
+    var roundeprocfee = Math.ceil(proc_fee / 5) * 5;
+    if (roundeprocfee < proc_fee) {
+        roundeprocfee += 5;
+    }
+
+    $(".proc-diff").text("* (Difference: +" + parseInt(roundeprocfee - proc_fee) + ")");
+    $("#proc_fee_cal").val(parseInt(roundeprocfee));
+
+    var net_cash = parseInt(loan_amt) - parseInt(doc_charge) - parseInt(proc_fee);
+    $("#net_cash_cal").val(parseInt(net_cash).toFixed(0));
 }
+
 function getSchemeAfterIntreset() {
     var loan_amt = $('#loan_amt').val();
     var int_rate = $('#int_rate').val();
@@ -1519,7 +1582,7 @@ function checkIssuedAmount(type) {
         var chequeValue = parseInt($('#chequeValue').val());
         var transactionValue = parseInt($('#transaction_value').val());
         totalValue = (isNaN(cashValue) ? 0 : cashValue) + (isNaN(chequeValue) ? 0 : chequeValue) + (isNaN(transactionValue) ? 0 : transactionValue);
-        netCash = parseInt($('#net_cash').val());
+        netCash = parseInt($('#net_cash').val().replace(/,/g, ''));
         var bal = parseInt(netCash) - parseInt(totalValue);
         if (bal >= 0) {
             $('#balance').val(bal);
@@ -1654,14 +1717,14 @@ function loanIssueSumitValidation() {
         }
     }
 
-    if(paymenType == '1' || paymenType == '2'){
+    if (paymenType == '1' || paymenType == '2') {
         if (bank_id == '') {
             event.preventDefault();
             $('#bank_idCheck').show();
         } else {
             $('#bank_idCheck').hide();
         }
-    
+
         if (!isAnyCheckboxChecked()) {
             event.preventDefault(); // Prevent form submission if no checkbox is checked
             alert('Please select Bank Info.'); // Show error message
@@ -1697,23 +1760,23 @@ function isAnyCheckboxChecked() {
 }
 
 function resetbankInfo() {
-  let cus_id = $("#cus_id").val();
-  $.ajax({
-    url: "verificationFile/verification_bank_reset.php",
-    type: "POST",
-    data: { cus_id: cus_id },
-    cache: false,
-    success: function (html) {
-      $("#bankTable").empty();
-      $("#bankTable").html(html);
+    let cus_id = $("#cus_id").val();
+    $.ajax({
+        url: "verificationFile/verification_bank_reset.php",
+        type: "POST",
+        data: { cus_id: cus_id },
+        cache: false,
+        success: function (html) {
+            $("#bankTable").empty();
+            $("#bankTable").html(html);
 
-      $("#bank_name").val("");
-      $("#branch_name").val("");
-      $("#account_holder_name").val("");
-      $("#account_number").val("");
-      $("#Ifsc_code").val("");
-      $("#bank_upload").val("");
-      $("#bankID").val("");
-    },
-  });
+            $("#bank_name").val("");
+            $("#branch_name").val("");
+            $("#account_holder_name").val("");
+            $("#account_number").val("");
+            $("#Ifsc_code").val("");
+            $("#bank_upload").val("");
+            $("#bankID").val("");
+        },
+    });
 }
