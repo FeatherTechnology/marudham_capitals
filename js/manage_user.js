@@ -313,6 +313,11 @@ $(document).ready(function () {
         var reportmodule = document.querySelector('#reportmodule');
         checkbox(checkboxesToEnable, reportmodule);
     });
+    $("#reportmodule_intrest").on("change", function () {
+        const checkboxesToEnable = document.querySelectorAll("input.intrest-report-checkbox");
+        var reportmodule = document.querySelector('#reportmodule_intrest');
+        checkbox(checkboxesToEnable, reportmodule);
+    });
     $("#searchmodule").on("change", function () {
         const checkboxesToEnable = document.querySelectorAll("input.search-checkbox");
         var searchmodule = document.querySelector('#searchmodule');
@@ -432,6 +437,7 @@ $(function () {
         var accountsmodule = document.getElementById('accountsmodule');
         var followupmodule = document.getElementById('followupmodule');
         var reportmodule = document.getElementById('reportmodule');
+        var reportmodule_intrest = document.getElementById('reportmodule_intrest');
         var searchmodule = document.getElementById('searchmodule');
         var bulk_upload_module = document.getElementById('bulk_upload_module');
         var loan_track_module = document.getElementById('loan_track_module');
@@ -452,6 +458,7 @@ $(function () {
         if (accountsmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.accounts-checkbox"); var accountsmodule = document.querySelector('#accountsmodule'); checkbox(checkboxesToEnable, accountsmodule); }
         if (followupmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.followup-checkbox"); var followupmodule = document.querySelector('#followupmodule'); checkbox(checkboxesToEnable, followupmodule); }
         if (reportmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.report-checkbox"); var reportmodule = document.querySelector('#reportmodule'); checkbox(checkboxesToEnable, reportmodule); }
+        if (reportmodule_intrest.checked) { const checkboxesToEnable = document.querySelectorAll("input.intrest-report-checkbox"); var reportmodule_intrest = document.querySelector('#reportmodule_intrest'); checkbox(checkboxesToEnable, reportmodule_intrest); }
         if (searchmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.search-checkbox"); var searchmodule = document.querySelector('#searchmodule'); checkbox(checkboxesToEnable, searchmodule); }
         if (bulk_upload_module.checked) { const checkboxesToEnable = document.querySelectorAll("input.bulk_upload-checkbox"); var bulk_upload_module = document.querySelector('#bulk_upload_module'); checkbox(checkboxesToEnable, bulk_upload_module); }
         if (loan_track_module.checked) { const checkboxesToEnable = document.querySelectorAll("input.loan_track-checkbox"); var loan_track_module = document.querySelector('#loan_track_module'); checkbox(checkboxesToEnable, loan_track_module); }
