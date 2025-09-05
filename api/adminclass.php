@@ -108,8 +108,8 @@ class admin
 			$detailrecords['day_end_report'] = strip_tags($row->day_end_report);
 			$detailrecords['due_followup_customer_count_report'] = strip_tags($row->due_followup_customer_count_report);
 			$detailrecords['commitment_report'] = strip_tags($row->commitment_report);
-
-			// $detailrecords['pending_od_report'] = strip_tags($row->pending_od_report);
+			$detailrecords['customer_status_report'] = strip_tags($row->customer_status_report);
+      
 			$detailrecords['reportmodule_intrest'] = strip_tags($row->reportmodule_intrest);
 			$detailrecords['intrest_ledger_report'] = strip_tags($row->intrest_ledger_report);
 			$detailrecords['intrest_loan_issue_report'] = strip_tags($row->intrest_loan_issue_report);
