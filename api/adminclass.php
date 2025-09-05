@@ -109,7 +109,7 @@ class admin
 			$detailrecords['due_followup_customer_count_report'] = strip_tags($row->due_followup_customer_count_report);
 			$detailrecords['commitment_report'] = strip_tags($row->commitment_report);
 
-			$detailrecords['pending_od_report'] = strip_tags($row->pending_od_report);
+			// $detailrecords['pending_od_report'] = strip_tags($row->pending_od_report);
 			$detailrecords['reportmodule_intrest'] = strip_tags($row->reportmodule_intrest);
 			$detailrecords['intrest_ledger_report'] = strip_tags($row->intrest_ledger_report);
 			$detailrecords['intrest_loan_issue_report'] = strip_tags($row->intrest_loan_issue_report);
@@ -573,9 +573,19 @@ class admin
 			$due_type = $_POST['due_type'];
 			// $due_type = implode(",",$due_types);
 		}
-		if (isset($_POST['profit_method'])) {
-			$profit_methods = $_POST['profit_method'];
-			$profit_method = implode(",", $profit_methods);
+		if (isset($_POST['due_type']) && $_POST['due_type'] == 'emi') {
+			// EMI → take from select (array)
+			if (isset($_POST['profit_method'])) {
+				$profit_methods = $_POST['profit_method'];  // array
+				$profit_method = implode(",", $profit_methods); // store as CSV
+			}
+		} elseif (isset($_POST['due_type']) && $_POST['due_type'] == 'intrest') {
+			// Interest → take from readonly input
+			if (isset($_POST['int_profit_method'])) {
+				// since your readonly input value is "After Benefit", 
+				// but DB expects "after_intrest"
+				$profit_method = "after_intrest";
+			}
 		}
 		if (isset($_POST['calculate_method'])) {
 			$calculate_method = $_POST['calculate_method'];
@@ -701,9 +711,19 @@ class admin
 			$due_type = $_POST['due_type'];
 			// $due_type = implode(",",$due_types);
 		}
-		if (isset($_POST['profit_method'])) {
-			$profit_methods = $_POST['profit_method'];
-			$profit_method = implode(",", $profit_methods);
+		if (isset($_POST['due_type']) && $_POST['due_type'] == 'emi') {
+			// EMI → take from select (array)
+			if (isset($_POST['profit_method'])) {
+				$profit_methods = $_POST['profit_method'];  // array
+				$profit_method = implode(",", $profit_methods); // store as CSV
+			}
+		} elseif (isset($_POST['due_type']) && $_POST['due_type'] == 'intrest') {
+			// Interest → take from readonly input
+			if (isset($_POST['int_profit_method'])) {
+				// since your readonly input value is "After Benefit", 
+				// but DB expects "after_intrest"
+				$profit_method = "after_intrest";
+			}
 		}
 		if (isset($_POST['calculate_method'])) {
 			$calculate_method = $_POST['calculate_method'];

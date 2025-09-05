@@ -299,7 +299,7 @@ if (sizeof($getUser) > 0) {
 		$day_end_report          		     = $getUser['day_end_report'];
 		$commitment_report  = $getUser['commitment_report'];
 
-		$pending_od_report  = $getUser['pending_od_report'];
+		// $pending_od_report  = $getUser['pending_od_report'];
 		$reportmodule_intrest          		     = $getUser['reportmodule_intrest'];
 		$intrest_ledger_report          		     = $getUser['intrest_ledger_report'];
 		$intrest_loan_issue_report          		     = $getUser['intrest_loan_issue_report'];

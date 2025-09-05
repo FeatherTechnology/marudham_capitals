@@ -73,7 +73,7 @@ $qry = $connect->query("
         JOIN sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
         JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
     WHERE 
-        (ii.cus_status >= 14 && ii.cus_status < 20) 
+        (ii.cus_status >= 14 && ii.cus_status < 20) AND lc.due_type = 'EMI'
         AND (lc.due_method_scheme = 1 or lc.due_method_scheme = null or lc.due_method_scheme = '' )
         and (month(lc.due_start_from) = month('$monthly_date') and year(lc.due_start_from) = year('$monthly_date') ) $user_based");
 
