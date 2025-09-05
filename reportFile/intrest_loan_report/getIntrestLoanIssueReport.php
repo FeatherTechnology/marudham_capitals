@@ -13,10 +13,10 @@ if ($userid != 1) {
 
     $userQry = $connect->query("SELECT line_id, report_access FROM USER WHERE user_id = $userid ");
     $rowuser = $userQry->fetch();
-        $line_id = $rowuser['line_id'];
-        $report_access = $rowuser['report_access'];
+    $line_id = $rowuser['line_id'];
+    $report_access = $rowuser['report_access'];
 
-    if($report_access =='1'){
+    if ($report_access == '1') {
         $line_id = explode(',', $line_id);
         $sub_area_list = array();
         foreach ($line_id as $line) {
@@ -63,13 +63,10 @@ $column = array(
     'iv.responsible',
     'ii.updated_date',
     'lc.loan_amt_cal',
-    'lc.principal_amt_cal',
     'lc.int_amt_cal',
     'lc.doc_charge_cal',
     'lc.proc_fee_cal',
-    'lc.tot_amt_cal',
     'lc.net_cash_cal',
-    'lc.due_amt_cal',
     'lc.due_period',
     'lc.due_start_from',
     'lc.maturity_month',
@@ -96,13 +93,10 @@ $query = "SELECT
         li.bank_id,
         li.created_date,
         lc.loan_amt_cal,
-        lc.principal_amt_cal,
         lc.int_amt_cal,
         lc.doc_charge_cal,
         lc.proc_fee_cal,
-        lc.tot_amt_cal,
         lc.net_cash_cal,
-        lc.due_amt_cal,
         lc.due_period,
         lc.due_start_from,
         lc.maturity_month,
@@ -128,7 +122,7 @@ $query = "SELECT
         LEFT JOIN agent_creation ac ON iv.agent_id = ac.ag_id
         LEFT JOIN verification_family_info vfi_received_by ON li.relationship !='Customer' AND li.cash_guarentor_name = vfi_received_by.relation_aadhar AND li.cus_id = vfi_received_by.cus_id
 
-        WHERE ii.cus_status >= 14 AND lc.due_type = 'EMI'
+        WHERE ii.cus_status >= 14  AND lc.due_type = 'Interest'
         $where";
 
 if (isset($_POST['search'])) {
@@ -141,11 +135,9 @@ if (isset($_POST['search'])) {
             OR fam.famname LIKE '%" . $_POST['search'] . "%' 
             OR fam.relationship LIKE '%" . $_POST['search'] . "%' 
             OR al.area_name LIKE '%" . $_POST['search'] . "%' 
-            OR sal.sub_area_name LIKE '%" . $_POST['search'] . "%' 
             OR alm.line_name LIKE '%" . $_POST['search'] . "%' 
             OR bc.branch_name LIKE '%" . $_POST['search'] . "%' 
-            OR lcc.loan_category_creation_name LIKE '%" . $_POST['search'] . "%' 
-            OR lc.sub_category LIKE '%" . $_POST['search'] . "%' 
+            OR lcc.loan_category_creation_name LIKE '%" . $_POST['search'] . "%'  
             OR ac.ag_name LIKE '%" . $_POST['search'] . "%' 
             OR iv.responsible LIKE '%" . $_POST['search'] . "%' 
             OR ii.updated_date LIKE '%" . $_POST['search'] . "%') ";
@@ -184,11 +176,9 @@ foreach ($result as $row) {
     $bank_name = '';
     if ($payment_type == '0') {
         $payment_type_str = 'Cash';
-        
     } elseif ($payment_type == '1') {
         $payment_type_str = 'Cheque';
         $bank_name = getBankName($row['bank_id'], $connect);
-        
     } elseif ($payment_type == '2') {
         $payment_type_str = 'Account Transfer';
         $bank_name = getBankName($row['bank_id'], $connect);
@@ -209,19 +199,16 @@ foreach ($result as $row) {
     $sub_array[] = $row['loan_cat_name'];
     $sub_array[] = $row['sub_category'];
     $sub_array[] = $row['ag_name'];
-    $sub_array[] = (!empty($row['ag_name'])) ? (($row['responsible'] == '0') ? 'Yes': 'No') : '';
+    $sub_array[] = (!empty($row['ag_name'])) ? (($row['responsible'] == '0') ? 'Yes' : 'No') : '';
     $sub_array[] = date('d-m-Y', strtotime($row['loan_date']));
     $sub_array[] = $payment_type_str;
     $sub_array[] = $bank_name;
     $sub_array[] = ($payment_type != '0' && $payment_type != '') ? date('d-m-Y', strtotime($row['created_date'])) : '';
     $sub_array[] = moneyFormatIndia($row['loan_amt_cal']);
-    $sub_array[] = moneyFormatIndia($row['principal_amt_cal']);
     $sub_array[] = moneyFormatIndia($row['int_amt_cal']);
     $sub_array[] = moneyFormatIndia($row['doc_charge_cal']);
     $sub_array[] = moneyFormatIndia($row['proc_fee_cal']);
-    $sub_array[] = moneyFormatIndia($row['tot_amt_cal']);
     $sub_array[] = moneyFormatIndia($row['net_cash_cal']);
-    $sub_array[] = moneyFormatIndia($row['due_amt_cal']);
     $sub_array[] = $row['due_period'];
     $sub_array[] = date('d-m-Y', strtotime($row['due_start_from']));
     $sub_array[] = date('d-m-Y', strtotime($row['maturity_month']));
@@ -281,7 +268,8 @@ function moneyFormatIndia($num)
     return $thecash;
 }
 
-function getBankName($bankid, $connect){
+function getBankName($bankid, $connect)
+{
     $stmt = $connect->prepare("SELECT bank_name FROM bank_creation WHERE id = ? ");
     $stmt->execute([$bankid]);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);

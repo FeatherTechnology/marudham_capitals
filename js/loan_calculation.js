@@ -8,20 +8,20 @@ $(document).ready(function () {
 		$("#loan_category").prepend(firstOption);
 	}
 
-		$('#due_type').on('change', function () {
+	$('#due_type').on('change', function () {
 		var due_type = $(this).val();
 
 		if (due_type == 'emi') {
 			$(".intrest_method").hide();
-			$(".overdue_emi_method").show();
+			$(".emi_method").show();
 			$('#overdue').val("");
 		} else if (due_type == 'intrest') {
 			$(".intrest_method").show();
-			$(".overdue_emi_method").hide();
+			$(".emi_method").hide();
 			$('#overdue').val("");
 		} else {
 			$(".intrest_method").hide();
-			$(".overdue_emi_method").hide();
+			$(".emi_method").hide();
 			$('#overdue').val("");
 		}
 	});
@@ -38,6 +38,8 @@ $(document).ready(function () {
 
 		if (due_type === 'intrest') { // corrected spelling
 			// Validate calculate method
+			$('#profit_method').prop('required', false);
+
 			if ($("#calculate_method").val() === '') {
 				swalError("Warning", "Please select Calculate Method");
 				$("#calculate_method").focus();
@@ -53,6 +55,8 @@ $(document).ready(function () {
 
 		} else if (due_type === 'emi') {
 			// Validate overdue % field
+			$('#profit_method').prop('required', true);
+
 			if ($("#overdue").val() === '') {
 				swalError("Warning", "Please enter Overdue Penalty %");
 				$("#overdue").focus();
@@ -72,7 +76,6 @@ $(document).ready(function () {
 			return false;
 		}
 	});
-
 
 	$(' #docamt,#docpercentage').click(function () {
 		var doc_charge_type = $('input[name=doc_charge_type]:checked').val();
@@ -94,32 +97,6 @@ $(document).ready(function () {
 			changePercentinput('procmin', 'procmax', 'processing_fee_min', 'processing_fee_max');
 		}
 	})
-
-	// function applyDueTypeUI(due_type) {
-	// 	if (due_type === 'intrest') {
-	// 		$("#profit_method option[value='after_intrest']").prop("selected", true);
-	// 		// manually update button text
-	// 		let selectedTexts = $("#profit_method option:selected").map(function () {
-	// 			return $(this).text();
-	// 		}).get().join(', ');
-	// 		$("#profit_method").next(".dropdown-toggle").find(".filter-option-inner-inner").text(selectedTexts);
-	// 		// disable actual <select>
-	// 		$('#profit_method').prop('disabled', true);
-
-	// 		// disable Bootstrap-Select button UI
-	// 		$('#profit_method').next('.bootstrap-select').find('button').prop('disabled', true);
-	// 	} else {
-	// 		// enable again
-	// 		$('#profit_method').prop('disabled', false);
-	// 		$('#profit_method').next('.bootstrap-select').find('button').prop('disabled', false);
-	// 		// reset value if needed
-	// 		$('#profit_method').val([]);
-	// 	}
-	// }
-
-	// $('#due_type').on('change', function () {
-	// 	applyDueTypeUI($(this).val());
-	// });
 });
 
 //on page load for Edit

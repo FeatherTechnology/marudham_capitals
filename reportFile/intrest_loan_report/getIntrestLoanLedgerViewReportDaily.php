@@ -13,8 +13,8 @@ if ($userid != 1) {
 
     $userQry = $connect->query("SELECT line_id, report_access FROM USER WHERE user_id = $userid ");
     $rowuser = $userQry->fetch();
-        $line_id = $rowuser['line_id'];
-        $report_access = $rowuser['report_access'];
+    $line_id = $rowuser['line_id'];
+    $report_access = $rowuser['report_access'];
 
     if ($report_access == '1') { //Report access individual.
         $line_id = explode(',', $line_id);
@@ -30,12 +30,12 @@ if ($userid != 1) {
         }
         $sub_area_list = array();
         $sub_area_list = implode(',', $sub_area_ids);
-        
+
         $user_based = " AND (select area_confirm_subarea from customer_profile where req_id = cp.req_id) IN ($sub_area_list) AND cp.insert_login_id = '$userid' ";
     }
 }
 
-$due_amt_sum = 0;
+$int_amt_sum = 0;
 $opening_balance_sum = 0;
 $total_paid_sum = 0;
 $closing_balance_sum = 0;
@@ -43,8 +43,7 @@ $closing_balance_sum = 0;
 //below query will get all the data of the customer who has taken daily scheme loans
 //in that query, we will also have the opening balance for this current month based on last paid date
 //collection table takes lasst paid row and subract balance amt with paid amt to get the exact paid amt
-$qry = $connect->query("
-    SELECT 
+$qry = $connect->query("SELECT 
         cp.req_id,
         cp.cus_name,
         cp.area_confirm_area as area_id,
@@ -53,12 +52,13 @@ $qry = $connect->query("
         lc.maturity_month as maturity_date,
         lc.loan_category as loan_cat_id,
         lc.sub_category,
-        lc.due_amt_cal as due_amt,
+        lc.int_amt_cal as int_amt,
+        lc.loan_amt_cal,
         al.area_name,
         sal.sub_area_name,
         lcc.loan_category_creation_name,
-        (SELECT sum(due_amt_track) as due_amt_track FROM collection where req_id = cp.req_id) as total_paid,
-        (SELECT bal_amt - due_amt_track as bal_amt FROM collection where req_id = cp.req_id and (month(date(coll_date)) <= '" . date('m') . "' 
+        (SELECT sum(int_amt_track) as int_amt_track FROM collection where req_id = cp.req_id) as total_paid,
+        (SELECT bal_amt - int_amt_track as bal_amt FROM collection where req_id = cp.req_id and (month(date(coll_date)) <= '" . date('m') . "' 
         and year(date(coll_date)) <= '" . date('Y') . "' ) ORDER BY MONTH(coll_date) = '" . date('m') . "' DESC,coll_id DESC LIMIT 1 ) as opening_balance
     FROM 
         acknowlegement_customer_profile cp 
@@ -69,7 +69,7 @@ $qry = $connect->query("
         JOIN sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
         JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
     WHERE 
-        (ii.cus_status >= 14 && ii.cus_status < 20) AND lc.due_type = 'EMI' AND lc.due_method_scheme = 3 $user_based");
+        (ii.cus_status >= 14 && ii.cus_status < 20) AND lc.due_type = 'Interest' $user_based");
 
 
 $rows = array();
@@ -89,7 +89,7 @@ while ($row = $qry->fetch()) {
         <th>Maturity Date</th>
         <th>Loan Category</th>
         <th>Sub Category</th>
-        <th>Due Amount</th>
+        <th>Interest Amount</th>
         <th>Opening Balance</th>
 
         <?php
@@ -127,29 +127,47 @@ while ($row = $qry->fetch()) {
                     <td><?php echo date('d-m-Y', strtotime($row['maturity_date'])); ?></td>
                     <td><?php echo $row['loan_category_creation_name']; ?></td>
                     <td><?php echo $row['sub_category']; ?></td>
-                    <td><?php echo moneyFormatIndia($row['due_amt']); ?></td>
-                    <td><?php echo moneyFormatIndia($row['opening_balance']); ?></td>
+                    <td><?php echo moneyFormatIndia($row['int_amt']); ?></td>
+                    <td>
+                        <?php
+                        if ($row['opening_balance'] != '') {
+                            echo moneyFormatIndia($row['opening_balance']);
+                        } else {
+                            $row['opening_balance'] = $row['loan_amt_cal'];
+                            echo moneyFormatIndia($row['opening_balance']);
+                        }
+                        ?>
+                    </td>
                     <?php
                     $currMonth = new DateTime();
                     $start = new DateTime($currMonth->format('Y-m-01'));
                     $end = new DateTime($currMonth->format('Y-m-t'));
                     $total_paid = 0;
-                    for ($date = $start; $date <= $end; $date->modify('+1 day')) {
+                    for ($date = clone $start; $date <= $end; $date->modify('+1 day')) {
 
-                        $coll_qry = $connect->query('SELECT due_amt_track FROM collection where req_id = ' . $row['req_id'] . ' and date(coll_date) = "' . date('Y-m-d', strtotime($date->format('Y-m-d'))) . '" ORDER BY coll_id DESC ');
-                        $due_amt_track = $coll_qry->fetch()['due_amt_track'] ?? 0;
-                        $total_paid = $total_paid + $due_amt_track;
+                        $dayStart = $date->format('Y-m-d') . " 00:00:00";
+                        $dayEnd   = $date->format('Y-m-d') . " 23:59:59";
+
+                        // Get the total paid interest amount for this day
+                        $coll_qry = $connect->query("SELECT SUM(int_amt_track) AS int_amt_track FROM collection WHERE req_id = '" . (int)$row['req_id'] . "'
+                        AND coll_date BETWEEN '$dayStart' AND '$dayEnd'");
+
+                        $coll_row = $coll_qry->fetch();
+                        $int_amt_track = $coll_row['int_amt_track'] ?? 0;
+
+                        $total_paid += $int_amt_track;
                     ?>
-                        <td><?php echo moneyFormatIndia($due_amt_track); ?></td>
+                        <td><?php echo moneyFormatIndia($int_amt_track); ?></td>
                     <?php
                     }
+
                     ?>
                     <td><?php echo moneyFormatIndia($total_paid); ?></td>
                     <td><?php echo moneyFormatIndia($row['opening_balance'] - $total_paid); ?></td>
                 </tr>
 
         <?php
-                $due_amt_sum += $row['due_amt'];
+                $int_amt_sum += $row['int_amt'];
                 $opening_balance_sum += $row['opening_balance'];
                 $total_paid_sum += $total_paid;
                 $closing_balance_sum += $row['opening_balance'] - $total_paid;
@@ -159,7 +177,7 @@ while ($row = $qry->fetch()) {
     </tbody>
     <tfoot>
         <?php
-        $tfoot = "<tr><td colspan='8'><b>Total</b></td><td><b>" . moneyFormatIndia($due_amt_sum) . "</b></td><td><b>" . moneyFormatIndia($opening_balance_sum) . "</b></td><td colspan=" . $total_dates . "></td><td><b>" . moneyFormatIndia($total_paid_sum) . "</b></td><td><b>" . moneyFormatIndia($closing_balance_sum) . "</b></td></tr>";
+        $tfoot = "<tr><td colspan='8'><b>Total</b></td><td><b>" . moneyFormatIndia($int_amt_sum) . "</b></td><td><b>" . moneyFormatIndia($opening_balance_sum) . "</b></td><td colspan=" . $total_dates . "></td><td><b>" . moneyFormatIndia($total_paid_sum) . "</b></td><td><b>" . moneyFormatIndia($closing_balance_sum) . "</b></td></tr>";
         echo $tfoot;
         ?>
     </tfoot>

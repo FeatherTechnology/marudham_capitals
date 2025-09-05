@@ -76,7 +76,8 @@ $column = array(
     'coll.coll_mode',
     'b.bank_name',
     'coll.trans_date',
-    '(coll.due_amt_track)',
+    '(coll.princ_amt_track)',
+    '(coll.int_amt_track)',
     'SUM(coll.penalty_track)',
     'SUM(coll.coll_charge_track)',
     '(coll.total_paid_track)',
@@ -107,7 +108,6 @@ $query = "SELECT
             coll.coll_date,
             coll.trans_date,
             b.bank_name,
-            (coll.due_amt_track) AS due_amt_track,
             (coll.princ_amt_track) AS princ_amt_track,
             (coll.int_amt_track) AS int_amt_track,
             (coll.penalty_track) AS penalty_track,
@@ -131,7 +131,7 @@ $query = "SELECT
         LEFT JOIN agent_creation ac ON iv.agent_id = ac.ag_id
         LEFT JOIN closed_status cls ON iv.req_id = cls.req_id
 
-        WHERE iv.cus_status >= 14 AND lc.due_type = 'EMI'
+        WHERE iv.cus_status >= 14 AND lc.due_type = 'Interest'
         AND $where ";
 
 if (isset($_POST['search'])) {
@@ -208,7 +208,8 @@ foreach ($result as $row) {
         $sub_array[] = '';
         $sub_array[] = '';
     }
-     $sub_array[] = moneyFormatIndia(intVal($row['due_amt_track']));
+    $sub_array[] = moneyFormatIndia(intVal($row['princ_amt_track']));
+    $sub_array[] = moneyFormatIndia(intVal($row['int_amt_track']));
     $sub_array[] = moneyFormatIndia(intval($row['penalty_track']));
     $sub_array[] = moneyFormatIndia(intval($row['coll_charge_track']));
     $sub_array[] = moneyFormatIndia(intval($row['total_paid_track']));

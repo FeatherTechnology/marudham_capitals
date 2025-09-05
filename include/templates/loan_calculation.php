@@ -136,7 +136,7 @@ if ($idupd > 0) {
                             </div>
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-                           <div class="form-group">
+                            <div class="form-group">
                                 <label for="disabledInput">Due Type</label><span class="required">&nbsp;*</span>
                                 <!-- <input type="hidden" class="form-control" id="due_type" name="due_type" value="emi"> -->
                                 <!-- <input tabindex="4" type="text" class="form-control" id="duetype" name="duetype" value="EMI" title="Select Due Type" readonly> -->
@@ -153,7 +153,7 @@ if ($idupd > 0) {
                                 </select>
                             </div>
                         </div>
-                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 emi_method" style="display: <?php echo ($emicheck ? 'block' : 'none'); ?>;">
                             <div class="form-group">
                                 <label for="disabledInput">Profit Method</label>
                                 <select tabindex="5" type="text" class="form-control selectpicker required" id="profit_method" name="profit_method[]" data-live-search="true" multiple data-actions-box="true" title="Select Profit Method" required>
@@ -169,6 +169,12 @@ if ($idupd > 0) {
                                             }
                                             ?> value="after_intrest">After Benefit</option>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 intrest_method" style="display: <?php echo ($calcheck ? 'block' : 'none'); ?>;">
+                            <div class="form-group">
+                                <label for="disabledInput">Profit Method</label>
+                                <input type="text" readonly id="int_profit_method" name="int_profit_method" class="form-control" value="After Benefit" tabindex='3'>
                             </div>
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 intrest_method" style="display: <?php echo ($calcheck ? 'block' : 'none'); ?>;">

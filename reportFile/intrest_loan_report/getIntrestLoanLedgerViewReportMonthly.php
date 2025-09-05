@@ -2,6 +2,8 @@
 session_start();
 include '../../ajaxconfig.php';
 
+$monthly_date = date('Y-m-01', strtotime($_POST['monthly_date']));
+
 if (isset($_SESSION["userid"])) {
     $userid = $_SESSION["userid"];
     $report_access = '2'; //Report Access Overall
@@ -15,12 +17,12 @@ if ($userid != 1) {
     $rowuser = $userQry->fetch();
         $line_id = $rowuser['line_id'];
         $report_access = $rowuser['report_access'];
-
+    
     if ($report_access == '1') { //Report access individual.
         $line_id = explode(',', $line_id);
         $sub_area_list = array();
         foreach ($line_id as $line) {
-            $lineQry = $connect->query("SELECT sub_area_id FROM area_line_mapping where map_id = $line ");
+            $lineQry = $connect->query("SELECT * FROM area_line_mapping where map_id = $line ");
             $row_sub = $lineQry->fetch();
             $sub_area_list[] = $row_sub['sub_area_id'];
         }
@@ -30,21 +32,19 @@ if ($userid != 1) {
         }
         $sub_area_list = array();
         $sub_area_list = implode(',', $sub_area_ids);
-        
+
         $user_based = " AND (select area_confirm_subarea from customer_profile where req_id = cp.req_id) IN ($sub_area_list) AND cp.insert_login_id = '$userid' ";
     }
 }
 
-$due_amt_sum = 0;
+$int_amt_sum = 0;
 $opening_balance_sum = 0;
 $total_paid_sum = 0;
 $closing_balance_sum = 0;
-
 //below query will get all the data of the customer who has taken daily scheme loans
 //in that query, we will also have the opening balance for this current month based on last paid date
 //collection table takes lasst paid row and subract balance amt with paid amt to get the exact paid amt
-$qry = $connect->query("
-    SELECT 
+$qry = $connect->query("SELECT 
         cp.req_id,
         cp.cus_name,
         cp.area_confirm_area as area_id,
@@ -53,13 +53,14 @@ $qry = $connect->query("
         lc.maturity_month as maturity_date,
         lc.loan_category as loan_cat_id,
         lc.sub_category,
-        lc.due_amt_cal as due_amt,
+        lc.int_amt_cal as int_amt,
+        lc.loan_amt_cal,
         al.area_name,
         sal.sub_area_name,
         lcc.loan_category_creation_name,
-        (SELECT sum(due_amt_track) as due_amt_track FROM collection where req_id = cp.req_id) as total_paid,
-        (SELECT bal_amt - due_amt_track as bal_amt FROM collection where req_id = cp.req_id and (month(date(coll_date)) <= '" . date('m') . "' 
-        and year(date(coll_date)) <= '" . date('Y') . "' ) ORDER BY MONTH(coll_date) = '" . date('m') . "' DESC,coll_id DESC LIMIT 1 ) as opening_balance
+        (SELECT sum(int_amt_track) as int_amt_track FROM collection where req_id = cp.req_id) as total_paid,
+        (SELECT bal_amt - int_amt_track as bal_amt FROM collection where req_id = cp.req_id and (month(date(coll_date)) <= month('$monthly_date') 
+        and year(date(coll_date)) <= year('$monthly_date') ) ORDER BY MONTH(coll_date) = month('$monthly_date') DESC,coll_id DESC LIMIT 1 ) as opening_balance
     FROM 
         acknowlegement_customer_profile cp 
         JOIN acknowlegement_loan_calculation lc ON cp.req_id = lc.req_id 
@@ -69,7 +70,8 @@ $qry = $connect->query("
         JOIN sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
         JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
     WHERE 
-        (ii.cus_status >= 14 && ii.cus_status < 20) AND lc.due_type = 'EMI' AND lc.due_method_scheme = 3 $user_based");
+        (ii.cus_status >= 14 && ii.cus_status < 20) AND lc.due_type = 'Interest'
+        and (month(lc.due_start_from) = month('$monthly_date') and year(lc.due_start_from) = year('$monthly_date') ) $user_based");
 
 
 $rows = array();
@@ -77,9 +79,41 @@ while ($row = $qry->fetch()) {
     $rows[] = $row;
 }
 ?>
+<?php
+// Function to loop through months
+function generateMonths($start, $end)
+{
+    $months = [];
+    $currentDate = clone $start;
+
+    while ($currentDate <= $end) {
+        $months[] = $currentDate->format('Y-m-d');
+        $currentDate->modify('+1 month');
+    }
+
+    return $months;
+}
+
+// Input date
+$inputDate = date('Y-m-01', strtotime($_POST['monthly_date']));
+
+// Create DateTime object from input date
+$startDate = new DateTime($inputDate);
+// $startDate->modify('first day of this month');
+
+// Calculate end date (10th month)
+$endDate = clone $startDate;
+$endDate->modify('+9 months');
+
+// Generate months between start and end dates
+$months = generateMonths($startDate, $endDate);
+
+// Output months
+// print_r($months);die;
+?>
 
 
-<table class="table custom-table" id="daily_table">
+<table class="table custom-table" id="monthly_table">
     <thead>
         <th>S.No</th>
         <th>Customer Name</th>
@@ -89,25 +123,17 @@ while ($row = $qry->fetch()) {
         <th>Maturity Date</th>
         <th>Loan Category</th>
         <th>Sub Category</th>
-        <th>Due Amount</th>
+        <th>Interest Amount</th>
         <th>Opening Balance</th>
-
         <?php
-        $currMonth = new DateTime();
-        $start = new DateTime($currMonth->format('Y-m-01'));
-        $end = new DateTime($currMonth->format('Y-m-t'));
-        $total_dates = 0;
-        for ($date = $start; $date <= $end; $date->modify('+1 day')) {
-            $total_dates++;
+        $total_months = 0;
+        for ($i = 0; $i < count($months); $i++) {
+            $total_months++;
         ?>
-
-            <th>
-                <?php echo $date->format('d'); ?>
-            </th>
+            <th><?php echo date('M', strtotime($months[$i])); ?></th>
         <?php
         }
         ?>
-
         <th>Total Paid</th>
         <th>Closing Balance</th>
     </thead>
@@ -117,6 +143,7 @@ while ($row = $qry->fetch()) {
 
         if ($qry->rowCount() > 0) {
             foreach ($rows as $row) {
+                $total_paid = 0;
         ?>
                 <tr>
                     <td><?php echo $i++; ?></td>
@@ -127,20 +154,31 @@ while ($row = $qry->fetch()) {
                     <td><?php echo date('d-m-Y', strtotime($row['maturity_date'])); ?></td>
                     <td><?php echo $row['loan_category_creation_name']; ?></td>
                     <td><?php echo $row['sub_category']; ?></td>
-                    <td><?php echo moneyFormatIndia($row['due_amt']); ?></td>
-                    <td><?php echo moneyFormatIndia($row['opening_balance']); ?></td>
+                    <td><?php echo moneyFormatIndia($row['int_amt']); ?></td>
+                    <td>
+                        <?php
+                        if ($row['opening_balance'] != '') {
+                            echo moneyFormatIndia($row['opening_balance']);
+                        } 
+                        else {
+                            $row['opening_balance'] = $row['loan_amt_cal'];
+                            echo moneyFormatIndia($row['opening_balance']);
+                        }
+                        ?>
+                    </td>
                     <?php
-                    $currMonth = new DateTime();
-                    $start = new DateTime($currMonth->format('Y-m-01'));
-                    $end = new DateTime($currMonth->format('Y-m-t'));
-                    $total_paid = 0;
-                    for ($date = $start; $date <= $end; $date->modify('+1 day')) {
-
-                        $coll_qry = $connect->query('SELECT due_amt_track FROM collection where req_id = ' . $row['req_id'] . ' and date(coll_date) = "' . date('Y-m-d', strtotime($date->format('Y-m-d'))) . '" ORDER BY coll_id DESC ');
-                        $due_amt_track = $coll_qry->fetch()['due_amt_track'] ?? 0;
-                        $total_paid = $total_paid + $due_amt_track;
+                    for ($j = 0; $j < count($months); $j++) {
                     ?>
-                        <td><?php echo moneyFormatIndia($due_amt_track); ?></td>
+                        <td>
+                            <?php
+                            //this query will get the all paid amt from collection table between the week dated given
+                            $coll_qry = $connect->query("SELECT sum(int_amt_track) as int_amt_track FROM collection where req_id = '" . $row['req_id'] . "' and 
+                                            month(coll_date) = month('" . $months[$j] . "') and year(coll_date) = year('" . $months[$j] . "') ");
+                            $coll_row = $coll_qry->fetch();
+                            echo moneyFormatIndia($coll_row['int_amt_track'] ?? 0);
+                            $total_paid += $coll_row['int_amt_track'];
+                            ?>
+                        </td>
                     <?php
                     }
                     ?>
@@ -149,7 +187,7 @@ while ($row = $qry->fetch()) {
                 </tr>
 
         <?php
-                $due_amt_sum += $row['due_amt'];
+                $int_amt_sum +=  $row['int_amt'];
                 $opening_balance_sum += $row['opening_balance'];
                 $total_paid_sum += $total_paid;
                 $closing_balance_sum += $row['opening_balance'] - $total_paid;
@@ -159,7 +197,7 @@ while ($row = $qry->fetch()) {
     </tbody>
     <tfoot>
         <?php
-        $tfoot = "<tr><td colspan='8'><b>Total</b></td><td><b>" . moneyFormatIndia($due_amt_sum) . "</b></td><td><b>" . moneyFormatIndia($opening_balance_sum) . "</b></td><td colspan=" . $total_dates . "></td><td><b>" . moneyFormatIndia($total_paid_sum) . "</b></td><td><b>" . moneyFormatIndia($closing_balance_sum) . "</b></td></tr>";
+        $tfoot = "<tr><td colspan='8'><b>Total</b></td><td><b>" . moneyFormatIndia($int_amt_sum) . "</b></td><td><b>" . moneyFormatIndia($opening_balance_sum) . "</b></td><td colspan=".$total_months."></td><td><b>" . moneyFormatIndia($total_paid_sum) . "</b></td><td><b>" . moneyFormatIndia($closing_balance_sum) . "</b></td></tr>";
         echo $tfoot;
         ?>
     </tfoot>
@@ -167,8 +205,8 @@ while ($row = $qry->fetch()) {
 
 <script type='text/javascript'>
     $(function() {
-        $('#daily_table').DataTable({
-            "title": "Daily Ledger",
+        $('#monthly_table').DataTable({
+            "title": "Monthly Ledger",
             'processing': true,
             'iDisplayLength': 10,
             "lengthMenu": [
@@ -185,8 +223,8 @@ while ($row = $qry->fetch()) {
                 }
             ],
             'drawCallback': function() {
-                searchFunction('daily_table');
-                paginationFunction('daily_table');
+                searchFunction('monthly_table');
+                paginationFunction('monthly_table');
             }
         });
     });
