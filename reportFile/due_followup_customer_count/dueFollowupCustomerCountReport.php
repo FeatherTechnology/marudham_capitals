@@ -141,7 +141,6 @@ while ($userRow = $userQry->fetch()) {
     $line_ids = array_filter(array_map('intval', explode(',', $userRow['due_followup_lines'])));
 
     $loan_category_data = [];
-    $customer_loanId = [];
 
     foreach ($line_ids as $line_id) {
         $mapQry = $connect->query("SELECT area_id, loan_category_id, customer_status FROM area_duefollowup_mapping WHERE map_id = $line_id");
@@ -208,9 +207,6 @@ while ($userRow = $userQry->fetch()) {
                 $due_start_from = $row['due_start_from'];
 
                 $loan_category_data[$cat_id]['total_count']++;
-                $customer_loanId = $row['loan_id'];
-                print_r($customer_loanId);
-                echo "<br>";
 
                 if ($responsible === '0') {
                     $loan_category_data[$cat_id]['responsible']++;

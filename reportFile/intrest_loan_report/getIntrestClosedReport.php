@@ -138,7 +138,7 @@ LEFT JOIN (
     WHERE row_num = 1
 ) AS coll_most_frequent ON ii.req_id = coll_most_frequent.req_id
 WHERE 
-    ii.cus_status >= 20 AND lc.due_type = 'EMI'
+    ii.cus_status >= 20 AND lc.due_type = 'Interest'
     $where ";
 
 if (isset($_POST['search'])) {
