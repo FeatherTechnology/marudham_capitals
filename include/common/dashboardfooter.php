@@ -1698,13 +1698,13 @@
         $(document).ajaxStart(function() {
             showOverlay();
             // Stop session timers while AJAX is in progress
-            // clearTimeout(warningTimeout);
-            // clearTimeout(logoutTimeout);
+            clearTimeout(warningTimeout);
+            clearTimeout(logoutTimeout);
         });
 
         $(document).ajaxStop(function() {
             hideOverlay();
-            // resetTimers(); // Reset again after AJAX completes
+            resetTimers(); // Reset again after AJAX completes
         });
 
         function compressImage(input, targetSizeKB) {
@@ -1968,74 +1968,74 @@
 
 ///////////////////////////////////////////////////////////////////// Session Logout Time Start /////////////////////////////////////////////////////////////////////////////
 
-        // let warningTimeout, logoutTimeout;
-        // let swalOpen = false;
-        // const idleTime = 600000; // 10 minutes in milliseconds
-        // const warningDuration = 10000; // 10 seconds warning before logout
-        // // Start the warning + logout timers
-        // function startTimers() {
-        //     clearTimeout(warningTimeout);
-        //     clearTimeout(logoutTimeout);
-        //     warningTimeout = setTimeout(showWarning, idleTime - warningDuration);
-        // }
-        // // Reset the timers (called on activity)
-        // function resetTimers() {
-        //     if (swalOpen) {
-        //         hideWarning();
-        //     }
-        //     clearTimeout(warningTimeout);
-        //     clearTimeout(logoutTimeout);
-        //     startTimers();
-        //     // Broadcast activity to other tabs
-        //     localStorage.setItem("activity-sync", Date.now());
-        // }
-        // // Show SweetAlert warning
-        // function swalsError(title, text) {
-        //     Swal.fire({
-        //         icon: 'warning',
-        //         title: title,
-        //         text: text,
-        //         timer: warningDuration,
-        //         timerProgressBar: true,
-        //         allowOutsideClick: false,
-        //         allowEscapeKey: false,
-        //         showConfirmButton: false
-        //     });
-        // }
-        // // Show warning before logout
-        // function showWarning() {
-        //     swalOpen = true;
-        //     swalsError('Warning', 'Session will expire in 10 seconds due to inactivity');
-        //     logoutTimeout = setTimeout(() => {
-        //         if (swalOpen) {
-        //             window.location.href = 'logout.php';
-        //         }
-        //     }, warningDuration);
-        // }
-        // // Close SweetAlert and reset state
-        // function hideWarning() {
-        //     swalOpen = false;
-        //     Swal.close();
-        // }
-        // // Detect user activity
-        // window.onload = startTimers;
-        // // Mouse, scroll, click events
-        // ['mousemove', 'click', 'scroll'].forEach(evt => {
-        //     window.addEventListener(evt, resetTimers);
-        // });
-        // // Key activity handler
-        // function handleKeyEvent(e) {
-        //     resetTimers();
-        // }
-        // ['keydown', 'keypress', 'keyup'].forEach(evt => {
-        //     window.addEventListener(evt, handleKeyEvent);
-        // });
-        // // Sync activity across tabs using localStorage
-        // window.addEventListener("storage", function(event) {
-        //     if (event.key === "activity-sync") {
-        //         resetTimers();
-        //     }
-        // });
+        let warningTimeout, logoutTimeout;
+        let swalOpen = false;
+        const idleTime = 600000; // 10 minutes in milliseconds
+        const warningDuration = 10000; // 10 seconds warning before logout
+        // Start the warning + logout timers
+        function startTimers() {
+            clearTimeout(warningTimeout);
+            clearTimeout(logoutTimeout);
+            warningTimeout = setTimeout(showWarning, idleTime - warningDuration);
+        }
+        // Reset the timers (called on activity)
+        function resetTimers() {
+            if (swalOpen) {
+                hideWarning();
+            }
+            clearTimeout(warningTimeout);
+            clearTimeout(logoutTimeout);
+            startTimers();
+            // Broadcast activity to other tabs
+            localStorage.setItem("activity-sync", Date.now());
+        }
+        // Show SweetAlert warning
+        function swalsError(title, text) {
+            Swal.fire({
+                icon: 'warning',
+                title: title,
+                text: text,
+                timer: warningDuration,
+                timerProgressBar: true,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false
+            });
+        }
+        // Show warning before logout
+        function showWarning() {
+            swalOpen = true;
+            swalsError('Warning', 'Session will expire in 10 seconds due to inactivity');
+            logoutTimeout = setTimeout(() => {
+                if (swalOpen) {
+                    window.location.href = 'logout.php';
+                }
+            }, warningDuration);
+        }
+        // Close SweetAlert and reset state
+        function hideWarning() {
+            swalOpen = false;
+            Swal.close();
+        }
+        // Detect user activity
+        window.onload = startTimers;
+        // Mouse, scroll, click events
+        ['mousemove', 'click', 'scroll'].forEach(evt => {
+            window.addEventListener(evt, resetTimers);
+        });
+        // Key activity handler
+        function handleKeyEvent(e) {
+            resetTimers();
+        }
+        ['keydown', 'keypress', 'keyup'].forEach(evt => {
+            window.addEventListener(evt, handleKeyEvent);
+        });
+        // Sync activity across tabs using localStorage
+        window.addEventListener("storage", function(event) {
+            if (event.key === "activity-sync") {
+                resetTimers();
+            }
+        });
 
     //////////////////////////////////////////////////////////// Session Logut Time End ////////////////////////////////////////////////////////////////////////////////////
     </script>
