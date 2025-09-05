@@ -1,45 +1,34 @@
 <?php
-
-
 include('../../ajaxconfig.php');
 
 $type = $_POST['type'];
 $user_id = ($_POST['user_id'] != '') ? $_POST['user_id'] : '';
 
-
 if ($type == 'today') {
 
     $where = " DATE(created_date) = CURRENT_DATE  ";
-    if ($user_id != '') {
-        $where .= " && insert_login_id = '" . $user_id . "' ";
-    } //for user based
-    getDetails($connect, $where);
+
 } else if ($type == 'day') {
 
     $from_date = $_POST['from_date'];
     $to_date = $_POST['to_date'];
 
     $where = " (DATE(created_date) >= DATE('" . $from_date . "') && DATE(created_date) <= DATE('" . $to_date . "')) ";
-    if ($user_id != '') {
-        $where .= " && insert_login_id = '" . $user_id . "' ";
-    } //for user based
 
-    getDetails($connect, $where);
 } else if ($type == 'month') {
 
     $month = date('m', strtotime($_POST['month']));
     $year = date('Y', strtotime($_POST['month']));
 
     $where = " MONTH(created_date) = '" . $month . "' && YEAR(created_date) = '" . $year . "'  ";
-    if ($user_id != '') {
-        $where .= " && insert_login_id = '" . $user_id . "' ";
-    } //for user based
 
-    getDetails($connect, $where);
 }
 
+if ($user_id != '') {
+    $where .= " && insert_login_id = '" . $user_id . "' ";
+} //for user based
 
-
+getDetails($connect, $where);
 
 function getDetails($connect, $where)
 {
@@ -72,12 +61,8 @@ function getDetails($connect, $where)
 
     $response['expense'] = intval($expense);
 
-
-
-
     $response['issued'] = moneyFormatIndia($response['issued']);
     $response['expense'] = moneyFormatIndia($response['expense']);
-
 
     echo json_encode($response);
 }

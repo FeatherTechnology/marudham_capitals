@@ -56,7 +56,7 @@ function getDetials($connect, $where, $condition)
         $interest += round($row['due_amt_track'] * $interest_calc, 1);
     }
 
-    $response['split_interest'] = moneyFormatIndia($interest);
+    $response['split_interest'] = moneyFormatIndia(round($interest));
 
     echo json_encode($response);
 }
