@@ -1,8 +1,12 @@
 <?php
 include('../../ajaxconfig.php');
+include '../../accountsFile/cashtally/closingBalanceClass.php';
+
+$CBObj = new ClosingBalanceClass($connect); 
 
 $type = $_POST['type'];
 $user_id = ($_POST['user_id'] != '') ? $_POST['user_id'] : '';
+$bank_detail = $_POST['bankDetail'] ?? '';
 
 $records = array();
 
@@ -10,14 +14,16 @@ if ($type == 'today') {
 
     $where = " date(ct1.cl_date) <= CURRENT_DATE() ";
     $where2 = " date(ct2.cl_date) <= CURRENT_DATE() ";
+    $closing_date = date('Y-m-d');
 
 } else if ($type == 'day') {
 
     $from_date = $_POST['from_date'];
-    $to_date = $_POST['to_date'];
+    // $to_date = $_POST['to_date'];
 
     $where = " date(ct1.cl_date) < DATE('$from_date') ";
     $where2 = " date(ct2.cl_date) <= DATE('$from_date') ";
+    $closing_date = $_POST['to_date'];
 
 } else if ($type == 'month') {
     
@@ -30,6 +36,7 @@ if ($type == 'today') {
 
     $where = " (month(ct1.cl_date) = $month && YEAR(ct1.cl_date) = '$year' ) ";
     $where2 = " (month(ct2.cl_date) = $month && YEAR(ct2.cl_date) = '$year' ) ";
+    $closing_date = date('Y-m-t', strtotime("$selectedMonth"));
 
 }
 
@@ -37,7 +44,9 @@ if ($user_id != '') {
     $where .= " and ct1.insert_login_id = $user_id ";
 } //for user based
 
-getDetails($connect, $where, $where2);
+$records = getDetails($connect, $where, $where2);
+
+$getClosingBalForBS = $CBObj->getClosingBalance($closing_date, $bank_detail, $user_id); 
 
 function getDetails($connect, $where, $where2)
 {
@@ -64,8 +73,10 @@ function getDetails($connect, $where, $where2)
 
     $records['closing_bal'] = moneyFormatIndia($records['closing_bal']);
 
-    echo json_encode($records);
+    return $records;
 }
+
+echo json_encode(array($getClosingBalForBS, $records));
 
 function moneyFormatIndia($num)
 {
