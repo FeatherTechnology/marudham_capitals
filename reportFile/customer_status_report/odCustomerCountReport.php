@@ -119,9 +119,7 @@ $odQuery = $connect->query("
     JOIN collection col ON cs3.req_id = col.req_id 
     WHERE cs3.sub_status = 'OD' 
     AND col.coll_sub_status IN ('Current','Due Nil','Pending','OD') 
-    AND (
-        (MONTH(col.coll_date) = MONTH('$search_date') AND YEAR(col.coll_date) = YEAR('$search_date'))
-    )
+     AND DATE_FORMAT(col.coll_date, '%Y-%m-01') >= DATE_FORMAT('$search_date', '%Y-%m-01');
 ");
 
 while ($row = $odQuery->fetch(PDO::FETCH_ASSOC)) {
@@ -138,9 +136,7 @@ $DueNilQuery = $connect->query("SELECT DISTINCT cs4.req_id
     WHERE 
         cs4.sub_status = 'Due Nil'
         AND col.coll_sub_status IN ('Current','Due Nil','Pending','OD')
-          AND (
-        (MONTH(col.coll_date) = MONTH('$search_date') AND YEAR(col.coll_date) = YEAR('$search_date'))
-    )
+            AND DATE_FORMAT(col.coll_date, '%Y-%m-01') >= DATE_FORMAT('$search_date', '%Y-%m-01');
 ");
 while ($row = $DueNilQuery->fetch(PDO::FETCH_ASSOC)) {
     $DueNilReqIds[] = $row['req_id'];
@@ -153,13 +149,20 @@ foreach ($loan_category as $cat_id) {
         // add the due-followup's own loan category constraint here (now $cat_id is defined)
         $where .= " AND adm.loan_category_id = $cat_id";
     }
-
     $custQry = $connect->query("
         SELECT 
             ii.req_id,
             ii.loan_id,
             cs.sub_status,
             cs.bal_amnt,
+            alc.due_amt_cal,
+            alc.due_period,
+            alc.tot_amt_cal,
+            alc.sub_category,
+            alc.due_start_from,
+            alc.due_method_scheme,
+            alc.due_method_calc,
+            alc.maturity_month as maturity_date,
          $nameField as map_name
         FROM in_issue ii
         JOIN acknowlegement_customer_profile cp ON ii.req_id = cp.req_id
@@ -172,72 +175,27 @@ foreach ($loan_category as $cat_id) {
            $where 
           AND (
                 cs.bal_amnt > 0
-                OR (
-                    cs.sub_status = 'Closed'
-                    AND cc.closing_date IS NOT NULL
-                    AND MONTH(cc.closing_date) = MONTH('$search_date')
-                    AND YEAR(cc.closing_date) = YEAR('$search_date')
-                )  OR (ii.req_id IN ($odReqIdStr))
+                OR  (
+                cs.sub_status = 'Closed'
+                AND cc.closing_date IS NOT NULL
+                AND (
+                    YEAR(cc.closing_date) > YEAR('$search_date')
+                    OR (
+                        YEAR(cc.closing_date) = YEAR('$search_date')
+                        AND MONTH(cc.closing_date) >= MONTH('$search_date')
+                    )
+                )
+             )  OR (ii.req_id IN ($odReqIdStr))
         OR (ii.req_id IN ($DueNilReqIdStr)) 
           )
-          AND DATE(ii.updated_date) < '$toDate_month_start'
+          AND DATE(ii.updated_date) < '$toDate_month_start' 
     ");
     $customers = $custQry->fetchAll(PDO::FETCH_ASSOC);
     if (empty($customers)) continue;
     // Step 2: Get collection info for those req_ids
     $req_ids = array_column($customers, 'req_id');
 
-    $collectionMap = [];
-    if (!empty($req_ids)) {
-        $id_list = implode(',', $req_ids);
-        $colQry = $connect->query("
-SELECT c.req_id, c.coll_sub_status, c.coll_date
-FROM collection c
-JOIN (
-    SELECT req_id, 
-           COALESCE(
-               MIN(CASE 
-                       WHEN DATE(coll_date) >= '$toDate_month_start' 
-                        AND DATE(coll_date) <= '$search_date' 
-                       THEN DATE(coll_date) 
-                   END),
-               MAX(CASE 
-                       WHEN DATE(coll_date) < '$toDate_month_start' 
-                       THEN DATE(coll_date) 
-                   END)
-           ) AS target_date
-    FROM collection
-    WHERE DATE(coll_date) <= '$search_date'
-      AND req_id IN ($id_list)
-    GROUP BY req_id
-) first_rec
-  ON c.req_id = first_rec.req_id
- AND DATE(c.coll_date) = first_rec.target_date
-ORDER BY c.req_id, c.coll_date;
-");
-        while ($col = $colQry->fetch(PDO::FETCH_ASSOC)) {
-            // Keep only the latest entry for each req_id
-            if (!isset($collectionMap[$col['req_id']])) {
-                $collectionMap[$col['req_id']] = $col;
-            }
-        }
-    }
-
-    // Step 3: Counters
-    $odReqIds = [];
-    $odNilQuery = $connect->query("
-    SELECT DISTINCT cs2.req_id 
-    FROM customer_status cs2
-    JOIN collection col ON cs2.req_id = col.req_id
-    WHERE cs2.sub_status IN ('Closed','Due Nil')
-      AND col.coll_sub_status = 'OD'
-      AND MONTH(col.coll_date) = MONTH('$search_date')
-      AND YEAR(col.coll_date) = YEAR('$search_date')
-");
-    while ($row = $odNilQuery->fetch(PDO::FETCH_ASSOC)) {
-        $odReqIds[$row['req_id']] = true; // use hash for O(1) lookup
-    }
-     $coll_DueNilReqIds = [];
+    $coll_DueNilReqIds = [];
     $coll_DueNilQuery = $connect->query("SELECT DISTINCT cs5.req_id
 FROM customer_status cs5
 JOIN (
@@ -258,25 +216,30 @@ AND col.coll_sub_status IN ('Due Nil');
         $coll_DueNilReqIds[] = $row['req_id'];
     }
     $coll_DueNilReqIdStr = !empty($coll_DueNilReqIds) ? implode(',', $coll_DueNilReqIds) : 'NULL';
+    $filtered_ids = array_diff($req_ids, $coll_DueNilReqIds);
+
+    $id_list = !empty($filtered_ids) ? implode(',', $filtered_ids) : '';
+    $collectionData = [];
+    if (!empty($id_list)) {
+        $colQry = $connect->query("
+            SELECT req_id, coll_date, payable_amt, penalty,coll_charge,due_amt_track, total_paid_track
+            FROM collection
+            WHERE req_id IN ($id_list)
+              AND DATE(coll_date) <= '$search_date'
+            ORDER BY req_id, coll_date ASC
+        ");
+        while ($col = $colQry->fetch(PDO::FETCH_ASSOC)) {
+            $collectionData[$col['req_id']][] = $col;
+        }
+    }
+
     // Step 4: Decide grouping
-    if ($type == 1) {
-        // Group by line name
-        $groups = [];
-        foreach ($customers as $cust) {
+    $groups = [];
+    foreach ($customers as $cust) {
+        if ($type == 1 || $type == 3 || $type == 4) {
             $groups[$cust['map_name']][] = $cust;
-        }
-    } else if ($type == 2) {
-        // Group everything together (user-wise)
-        $groups = [$userName => $customers];
-    } else if ($type == 3) {
-        $groups = [];
-        foreach ($customers as $cust) {
-            $groups[$cust['map_name']][] = $cust;
-        }
-    } else if ($type == 4) {
-        $groups = [];
-        foreach ($customers as $cust) {
-            $groups[$cust['map_name']][] = $cust; // now directly grouped by duefollowup_name
+        } else { // type 2
+            $groups[$userName][] = $cust;
         }
     }
 
@@ -284,68 +247,95 @@ AND col.coll_sub_status IN ('Due Nil');
     foreach ($groups as $groupName => $custList) {
         $total_count = $t_od_count = $today_od_clear = $t_od_clear = $partially_paid = $unpaid = 0;
         foreach ($custList as $cust) {
+            if (!in_array($cust['req_id'], $filtered_ids)) {
+                continue;
+            }
             $total_count++;
-            $coll = $collectionMap[$cust['req_id']] ?? null;
-            $isODCustomer = false; // flag
-            // Increment t_OD_count anytime cust sub_status is OD (outside switch)
-            if ($cust['sub_status'] == 'OD' || isset($odReqIds[$cust['req_id']])) {
-                $t_od_count++;
-                $isODCustomer = true; // flag
-                // echo $cust['loan_id'] . "<br>";
-            }
 
-       if (in_array($cust['req_id'], $coll_DueNilReqIds)) {
-                $total_count--;
-            }
+            $collList = $collectionData[$cust['req_id']] ?? [];
+            $start_month = strtotime(date('Y-m-01', strtotime($search_date))); // 1st of the month as timestamp
+            $collectedTillMonthStart = 0;
 
-            if ($isODCustomer) {
-                if (
-                    $coll &&
-                    $coll['coll_sub_status'] == 'OD' &&
-                    in_array($cust['sub_status'], ['Closed', 'Due Nil'])
-                ) {
-                    $collDate = date('Y-m-d', strtotime($coll['coll_date']));
-
-                    // Case 1: Today pending clear
-                    if ($collDate == $search_date) {
-                        $today_od_clear++;
-                    }
-
-                    // Case 2: This month pending clear (includes today)
-                    if ($collDate >= $toDate_month_start && $collDate <= $search_date) {
-                        $t_od_clear++;
-                        //  echo $cust['loan_id'] . "<br>";
-                    }
-                } elseif (
-                    $coll &&
-                    $cust['sub_status'] == 'OD' &&
-                    date('Y-m-d', strtotime($coll['coll_date'])) >= $toDate_month_start &&
-                    date('Y-m-d', strtotime($coll['coll_date'])) <= $search_date
-                ) {
-
-                    // Case 3: Partially paid
-                    $partially_paid++;
-                    //  echo $cust['loan_id'] . "<br>";
+            foreach ($collList as $coll) {
+                $collDate = strtotime($coll['coll_date']);
+                if ($collDate < $start_month) {  // strictly before 1st Aug
+                    $collectedTillMonthStart += (int)$coll['due_amt_track']; // cast to int
                 }
-                if (
-                    !$coll ||
-                    date('Y-m-d', strtotime($coll['coll_date'])) < $toDate_month_start ||
-                    date('Y-m-d', strtotime($coll['coll_date'])) > $search_date
-                ) {
+            }
+            $od_amount_atMonthStart = ($cust['tot_amt_cal']) - $collectedTillMonthStart;
+
+            $isOdMonthStart =
+                intval($od_amount_atMonthStart) > 0 &&
+                $cust['sub_status'] != 'Error' &&
+                $cust['sub_status'] != 'Legal' &&
+                (
+                    (
+                        ($cust['due_method_scheme'] === '1' || $cust['due_method_calc'] === 'Monthly')
+                        && date('Y-m', strtotime($cust['maturity_date'])) < date('Y-m', strtotime($toDate_month_start))
+                    )
+                    ||
+                    (
+                        ($cust['due_method_scheme'] != '1' && $cust['due_method_calc'] != 'Monthly')
+                        && strtotime($cust['maturity_date']) < strtotime($toDate_month_start)
+                    )
+                );
+
+
+            $isODCustomer = false; // flag
+            if ($isOdMonthStart) {
+                $t_od_count++;  // fixed for the whole month
+                $isODCustomer = true; // flag
+            }
+           
+            if ($isODCustomer) {
+                $customer_cleared = false;
+                $customer_partial = false;
+                $hadCollectionThisMonth = false;
+
+                $searchMonth = date('m', strtotime($search_date));
+                $searchYear  = date('Y', strtotime($search_date));
+
+                foreach ($collList as $coll) {
+                    $coll_date = strtotime($coll['coll_date']);
+                    if (date('m', $coll_date) == $searchMonth && date('Y', $coll_date) == $searchYear) {
+                        $hadCollectionThisMonth = true;
+
+                        $payable_amnts   = (int)$coll['payable_amt'];
+                        $due_amt_track = (int)$coll['due_amt_track'];
+
+                        // Today pending clear
+                        if ($due_amt_track >= $payable_amnts && date('Y-m-d', $coll_date) == $search_date) {
+                            $today_od_clear++;
+                            $customer_cleared = true;
+                        }
+
+                        // Pending cleared within the month
+                        if ($due_amt_track >= $payable_amnts) {
+                            $customer_cleared = true;
+                        }
+                        // Partial
+                        elseif ($payable_amnts > 0 && $due_amt_track < $payable_amnts) {
+                            $customer_partial = true;
+                        }
+                    }
+                }
+
+                // Decide final classification once per customer
+                if ($customer_cleared) {
+                    $t_od_clear++;
+                } elseif ($customer_partial) {
+                    $partially_paid++;
+                } elseif (!$hadCollectionThisMonth) {
+                    // No collection in this month at all
+                    $unpaid++;
+                } else {
+                    // Had collection but still unpaid
                     $unpaid++;
                 }
             }
         }
 
-        if ($type == 1) {
-            $display_name = $groupName; // Line name
-        } elseif ($type == 2) {
-            $display_name = $userName;  // User fullname
-        } elseif ($type == 3) {
-            $display_name = $groupName; // Group name
-        } elseif ($type == 4) {
-            $display_name = $groupName; // Due Followup name
-        }
+        $display_name = ($type == 2) ? $userName : $groupName;
 
         $data[] = [
             'sno' => $sno++,
