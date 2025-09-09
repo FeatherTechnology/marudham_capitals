@@ -319,13 +319,13 @@ function autocallFunctions() {//For On load
     }
     getRequestCode();//Autocall for request code
 
-    {//To Order Alphabetically
-        var firstOption = $("#loan_category option:first-child");
-        $("#loan_category").html($("#loan_category option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#loan_category").prepend(firstOption);
-    }
+    // {//To Order Alphabetically
+    //     var firstOption = $("#loan_category option:first-child");
+    //     $("#loan_category").html($("#loan_category option:not(:first-child)").sort(function (a, b) {
+    //         return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
+    //     }));
+    //     $("#loan_category").prepend(firstOption);
+    // }
 }
 
 //To get Reponsible Dropdown
@@ -478,13 +478,13 @@ function getDistrictDropdown(StateSelected) {
     $("#district").html(htmlString);
     $("#district1").val(district_upd);
 
-    {//To Order Alphabetically
-        var firstOption = $("#district option:first-child");
-        $("#district").html($("#district option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#district").prepend(firstOption);
-    }
+    // {//To Order Alphabetically
+    //     var firstOption = $("#district option:first-child");
+    //     $("#district").html($("#district option:not(:first-child)").sort(function (a, b) {
+    //         return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
+    //     }));
+    //     $("#district").prepend(firstOption);
+    // }
 }
 
 //get Taluk Dropdown
@@ -665,13 +665,13 @@ function getTalukDropdown(DistSelected) {
     $("#taluk").html(htmlString);
     $("#taluk1").val(taluk_upd);
 
-    {//To Order Alphabetically
-        var firstOption = $("#taluk option:first-child");
-        $("#taluk").html($("#taluk option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#taluk").prepend(firstOption);
-    }
+    // {//To Order Alphabetically
+    //     var firstOption = $("#taluk option:first-child");
+    //     $("#taluk").html($("#taluk option:not(:first-child)").sort(function (a, b) {
+    //         return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
+    //     }));
+    //     $("#taluk").prepend(firstOption);
+    // }
 }
 
 //Get Taluk Based Area
@@ -700,13 +700,13 @@ function getTalukBasedArea(talukselected) {
             $("#area_name").val('');
             $("#area_id").val('');
 
-            {//To Order Alphabetically
-                var firstOption = $("#area option:first-child");
-                $("#area").html($("#area option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#area").prepend(firstOption);
-            }
+            // {//To Order Alphabetically
+            //     var firstOption = $("#area option:first-child");
+            //     $("#area").html($("#area option:not(:first-child)").sort(function (a, b) {
+            //         return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
+            //     }));
+            //     $("#area").prepend(firstOption);
+            // }
         }
     });
 }
@@ -754,13 +754,13 @@ function getSubCategory(loan_cat) {
                 }
                 $('#sub_category').append("<option value='" + response[i]['sub_category_name'] + "' " + selected + ">" + response[i]['sub_category_name'] + " </option>");
             }
-            {//To Order Alphabetically
-                var firstOption = $("#sub_category option:first-child");
-                $("#sub_category").html($("#sub_category option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#sub_category").prepend(firstOption);
-            }
+            // {//To Order Alphabetically
+            //     var firstOption = $("#sub_category option:first-child");
+            //     $("#sub_category").html($("#sub_category option:not(:first-child)").sort(function (a, b) {
+            //         return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
+            //     }));
+            //     $("#sub_category").prepend(firstOption);
+            // }
         }
     })
 }
@@ -861,13 +861,13 @@ function getStaffBasedAgent(user_id_load) {
                 }
                 $('#agent').append("<option value='" + response[i]['ag_id'] + "' " + selected + ">" + response[i]['ag_name'] + " </option>");
             }
-            {//To Order Alphabetically
-                var firstOption = $("#agent option:first-child");
-                $("#agent").html($("#agent option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#agent").prepend(firstOption);
-            }
+            // {//To Order Alphabetically
+            //     var firstOption = $("#agent option:first-child");
+            //     $("#agent").html($("#agent option:not(:first-child)").sort(function (a, b) {
+            //         return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
+            //     }));
+            //     $("#agent").prepend(firstOption);
+            // }
         }
     })
 }
@@ -890,13 +890,13 @@ function getAllAgentDropdown() {
                 }
                 $('#agent').append("<option value='" + response[i]['ag_id'] + "' " + selected + ">" + response[i]['ag_name'] + " </option>");
             }
-            {//To Order Alphabetically
-                var firstOption = $("#agent option:first-child");
-                $("#agent").html($("#agent option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#agent").prepend(firstOption);
-            }
+            // {//To Order Alphabetically
+            //     var firstOption = $("#agent option:first-child");
+            //     $("#agent").html($("#agent option:not(:first-child)").sort(function (a, b) {
+            //         return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
+            //     }));
+            //     $("#agent").prepend(firstOption);
+            // }
         }
     })
 }
@@ -919,13 +919,13 @@ function getAgentBasedLoanCategory(ag_id) {
                 }
                 $('#loan_category').append("<option value='" + response[i]['loan_category_id'] + "' " + selected + " >" + response[i]['loan_category_name'] + " </option>");
             }
-            {//To Order Alphabetically
-                var firstOption = $("#loan_category option:first-child");
-                $("#loan_category").html($("#loan_category option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#loan_category").prepend(firstOption);
-            }
+            // {//To Order Alphabetically
+            //     var firstOption = $("#loan_category option:first-child");
+            //     $("#loan_category").html($("#loan_category option:not(:first-child)").sort(function (a, b) {
+            //         return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
+            //     }));
+            //     $("#loan_category").prepend(firstOption);
+            // }
 
             getresponsiblecolumn(ag_id); //To Hide/show responsible.
         }
