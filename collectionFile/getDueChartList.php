@@ -41,12 +41,12 @@ include '../ajaxconfig.php';
         $dueMonth[] = $start_date_obj->format('Y-m-d');
     }
 
-    $issueDate = $connect->query("SELECT alc.due_amt_cal, alc.int_amt_cal, alc.tot_amt_cal, alc.loan_amt_cal, ii.updated_date FROM in_issue ii JOIN acknowlegement_loan_calculation alc ON ii.req_id = alc.req_id  WHERE ii.req_id = '$req_id' and (ii.cus_status >= 14 ) ");
+    $issueDate = $connect->query("SELECT alc.due_amt_cal, alc.int_amt_cal, alc.tot_amt_cal, alc.principal_amt_cal, ii.updated_date FROM in_issue ii JOIN acknowlegement_loan_calculation alc ON ii.req_id = alc.req_id  WHERE ii.req_id = '$req_id' and (ii.cus_status >= 14 ) ");
     $loanIssue = $issueDate->fetch();
     //If Due method is Monthly, Calculate penalty by checking the month has ended or not
     if ($loanIssue['tot_amt_cal'] == '' || $loanIssue['tot_amt_cal'] == null) {
         //(For monthly interest total amount will not be there, so take principals)
-        $loan_amt = intVal($loanIssue['loan_amt_cal']);
+        $loan_amt = intVal($loanIssue['principal_amt_cal']);
         $loan_type = 'Interest';
     } else {
         $loan_amt = intVal($loanIssue['tot_amt_cal']);
@@ -56,7 +56,7 @@ include '../ajaxconfig.php';
     $due_amt_1 = $loanIssue['due_amt_cal'];
 
     if ($loan_type == 'Interest') {
-        $princ_amt_1 = $loanIssue['loan_amt_cal'];
+        $princ_amt_1 = $loanIssue['principal_amt_cal'];
         $due_amt_1 = $loanIssue['int_amt_cal'];
     }
 
@@ -125,7 +125,7 @@ include '../ajaxconfig.php';
                 <td> </td>
             <?php } ?>
 
-            <td><?php $loan_amt; ?></td>
+            <td><?php echo $loan_amt; ?></td>
             <td></td>
             <td></td>
             <td></td>
@@ -398,7 +398,7 @@ include '../ajaxconfig.php';
                                     <td><?php echo $row['due_amt']; ?></td>
                                 <?php } ?>
                                 <?php if ($loan_type == 'Interest') { ?>
-                                    <td><?php $last_princ_amt; ?></td>
+                                    <td><?php echo $last_princ_amt; ?></td>
                                     <td><?php echo $row['due_amt'];
                                         $last_int_amt = $row['due_amt']; ?></td>
                                 <?php } ?>
@@ -438,7 +438,7 @@ include '../ajaxconfig.php';
                                     <td><?php echo $row['due_amt']; ?></td>
                                 <?php } ?>
                                 <?php if ($loan_type == 'Interest') { ?>
-                                    <td><?php $last_princ_amt; ?></td>
+                                    <td><?php echo $last_princ_amt; ?></td>
                                     <td><?php echo $row['due_amt'];
                                         $last_int_amt = $row['due_amt']; ?></td>
                                 <?php } ?>

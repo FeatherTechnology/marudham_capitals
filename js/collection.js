@@ -540,7 +540,7 @@ function OnLoadFunctions(req_id, cus_id) {
               if (response["loan_type"] == "Interest") {
                 $(".till-date-int").show();
                 $("#till_date_int").val(response["till_date_int"].toFixed(0));
-                $("#tot_amt").prev().prev().text("Loan Amount");
+                $("#tot_amt").prev().prev().text("Principal Amount");
                 $("#due_amt").prev().prev().text("Interest Amount");
 
                 $(".emiLoanDiv").hide();

@@ -542,7 +542,14 @@ if ($idupd > 0) {
 											<span class="text-danger totalpaidCheck" style="display: none;">Please Enter any one of these<span>
 										</div>
 									</div>
-									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 intLoanDiv">
+									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 intLoanDiv" style="display: none;">
+										<div class="form-group">
+											<label for="disabledInput">Principal Amount</label>&nbsp;<span class="text-danger">*</span>
+											<input type="text" class="form-control" id="princ_amt_track" name="princ_amt_track" value='' placeholder='Enter Principal Amount' tabindex='23'>
+											<span class="text-danger totalpaidCheck" style="display: none;">Please Enter any one of these<span>
+										</div>
+									</div>
+									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 intLoanDiv" style="display: none;">
 										<div class="form-group">
 											<label for="disabledInput">Interest Amount</label>&nbsp;<span class="text-danger">*</span>
 											<input type="text" class="form-control" id="int_amt_track" name="int_amt_track" value='' placeholder='Enter Interest Amount' tabindex='24'>
@@ -560,13 +567,6 @@ if ($idupd > 0) {
 										<div class="form-group">
 											<label for="disabledInput">Fine</label>&nbsp;<span class="text-danger">*</span>
 											<input type="text" class="form-control" id="coll_charge_track" name="coll_charge_track" value='' placeholder='Enter Fine' tabindex='26'>
-											<span class="text-danger totalpaidCheck" style="display: none;">Please Enter any one of these<span>
-										</div>
-									</div>
-									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 intLoanDiv">
-										<div class="form-group">
-											<label for="disabledInput">Principal Amount</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" class="form-control" id="princ_amt_track" name="princ_amt_track" value='' placeholder='Enter Principal Amount' tabindex='23'>
 											<span class="text-danger totalpaidCheck" style="display: none;">Please Enter any one of these<span>
 										</div>
 									</div>
@@ -588,7 +588,13 @@ if ($idupd > 0) {
 												<input type="text" class="form-control" id="pre_close_waiver" name="pre_close_waiver" value='' placeholder='Enter Pre Closure Amount' tabindex='28'>
 											</div>
 										</div>
-										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 intLoanDiv">
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 intLoanDiv" style="display: none;">
+											<div class="form-group">
+												<label for="disabledInput">Principle Waiver</label>
+												<input type="text" class="form-control" id="principal_waiver" name="principal_waiver" value='' placeholder='Enter Principle Waiver Amount' tabindex='28'>
+											</div>
+										</div>
+										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 intLoanDiv" style="display: none;">
 											<div class="form-group">
 												<label for="disabledInput">Interest Waiver</label>
 												<input type="text" class="form-control" id="interest_waiver" name="interest_waiver" value='' placeholder='Enter Interest Waiver Amount' tabindex='28'>
@@ -604,12 +610,6 @@ if ($idupd > 0) {
 											<div class="form-group">
 												<label for="disabledInput">Fine Waiver</label>
 												<input type="text" class="form-control" id="coll_charge_waiver" name="coll_charge_waiver" value='' placeholder='Enter Fine Waiver' tabindex='30'>
-											</div>
-										</div>
-										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 intLoanDiv">
-											<div class="form-group">
-												<label for="disabledInput">Principle Waiver</label>
-												<input type="text" class="form-control" id="principal_waiver" name="principal_waiver" value='' placeholder='Enter Principle Waiver Amount' tabindex='28'>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">

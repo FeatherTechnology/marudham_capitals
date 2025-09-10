@@ -5049,11 +5049,11 @@ $("#refresh_cal").click(function () {
     if (due_type.value == "Interest") {
       // Set its value to 'Benefit Amount'
       int_label.previousElementSibling.previousElementSibling.textContent =
-        "Interest Amount";
+        "Benefit Amount";
       $('.emi_div').hide();
     } else {
       int_label.previousElementSibling.previousElementSibling.textContent =
-        "Benefit Amount";
+        "Interest Amount";
       $('.emi_div').show();
     }
   }
@@ -5113,13 +5113,6 @@ $("#due_start_from").change(function () {
 });
 
 $("#submit_loan_calculation").click(function () {
-
-  var due_type = $("#due_type").val();
-
-  if (due_type == 'Interest') {
-    $("#principal_amt_cal").val('');
-  }
-
   $('#due_start_from').trigger('change');
   $("#refresh_cal").trigger("click"); //For calculate once again if user missed to refresh calculation
 
