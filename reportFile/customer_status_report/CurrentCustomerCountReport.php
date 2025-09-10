@@ -125,9 +125,7 @@ $odQuery = $connect->query("
     JOIN collection col ON cs3.req_id = col.req_id 
     WHERE cs3.sub_status = 'OD' 
     AND col.coll_sub_status IN ('Current','Due Nil','Pending','OD') 
-    AND (
-        (MONTH(col.coll_date) = MONTH('$search_date') AND YEAR(col.coll_date) = YEAR('$search_date'))
-    )
+    AND DATE_FORMAT(col.coll_date, '%Y-%m-01') >= DATE_FORMAT('$search_date', '%Y-%m-01');
 ");
 
 while ($row = $odQuery->fetch(PDO::FETCH_ASSOC)) {
@@ -144,10 +142,9 @@ $DueNilQuery = $connect->query("SELECT DISTINCT cs4.req_id
     WHERE 
         cs4.sub_status = 'Due Nil'
         AND col.coll_sub_status IN ('Current','Due Nil','Pending','OD')
-          AND (
-        (MONTH(col.coll_date) = MONTH('$search_date') AND YEAR(col.coll_date) = YEAR('$search_date'))
-    )
+             AND DATE_FORMAT(col.coll_date, '%Y-%m-01') >= DATE_FORMAT('$search_date', '%Y-%m-01');
 ");
+
 while ($row = $DueNilQuery->fetch(PDO::FETCH_ASSOC)) {
     $DueNilReqIds[] = $row['req_id'];
 }
@@ -168,7 +165,14 @@ foreach ($loan_category as $cat_id) {
             cs.sub_status,
             cs.bal_amnt,
              iv.responsible,
-             alc.due_start_from,
+             alc.due_amt_cal,
+            alc.due_period,
+            alc.tot_amt_cal,
+            alc.sub_category,
+            alc.due_start_from,
+            alc.due_method_scheme,
+            alc.due_method_calc,
+            alc.maturity_month as maturity_date,
             $nameField as map_name
         FROM in_issue ii
          LEFT JOIN in_verification iv ON ii.req_id = iv.req_id
@@ -185,54 +189,61 @@ foreach ($loan_category as $cat_id) {
              OR (
                 cs.sub_status = 'Closed'
                 AND cc.closing_date IS NOT NULL
-                AND MONTH(cc.closing_date) = MONTH('$search_date')
-                AND YEAR(cc.closing_date) = YEAR('$search_date')
+                AND (
+                    YEAR(cc.closing_date) > YEAR('$search_date')
+                    OR (
+                        YEAR(cc.closing_date) = YEAR('$search_date')
+                        AND MONTH(cc.closing_date) >= MONTH('$search_date')
+                    )
+                )
              )
              OR (ii.req_id IN ($odReqIdStr))
              OR (ii.req_id IN ($DueNilReqIdStr))
           )
-          AND DATE(ii.updated_date) < '$toDate_month_start'
+          AND DATE(ii.updated_date) < '$toDate_month_start' 
     ");
     $customers = $custQry->fetchAll(PDO::FETCH_ASSOC);
     if (empty($customers)) continue;
 
     $req_ids = array_column($customers, 'req_id');
 
-    // Step 2: Fetch collection info
-    $collectionMap = [];
-    if (!empty($req_ids)) {
-        $id_list = implode(',', $req_ids);
-        $colQry = $connect->query("
-SELECT c.req_id, c.coll_sub_status, c.coll_date
-FROM collection c
+    $coll_DueNilReqIds = [];
+    $coll_DueNilQuery = $connect->query("SELECT DISTINCT cs5.req_id
+FROM customer_status cs5
 JOIN (
-    SELECT req_id, 
-           COALESCE(
-               MIN(CASE 
-                       WHEN DATE(coll_date) >= '$toDate_month_start' 
-                        AND DATE(coll_date) <= '$search_date' 
-                       THEN DATE(coll_date) 
-                   END),
-               MAX(CASE 
-                       WHEN DATE(coll_date) < '$toDate_month_start' 
-                       THEN DATE(coll_date) 
-                   END)
-           ) AS target_date
-    FROM collection
-    WHERE DATE(coll_date) <= '$search_date'
-      AND req_id IN ($id_list)
-    GROUP BY req_id
-) first_rec
-  ON c.req_id = first_rec.req_id
- AND DATE(c.coll_date) = first_rec.target_date
-ORDER BY c.req_id, c.coll_date;
+    SELECT c.req_id, MIN(c.coll_date) AS first_coll_date
+    FROM collection c
+    WHERE MONTH(c.coll_date) = MONTH('$search_date')
+    AND YEAR(c.coll_date) = YEAR('$search_date')
+    GROUP BY c.req_id
+) first_col ON cs5.req_id = first_col.req_id
+JOIN collection col
+    ON col.req_id = first_col.req_id
+    AND col.coll_date = first_col.first_coll_date
+WHERE cs5.sub_status = 'Closed'
+AND col.coll_sub_status IN ('Due Nil');
 ");
+
+    while ($row = $coll_DueNilQuery->fetch(PDO::FETCH_ASSOC)) {
+        $coll_DueNilReqIds[] = $row['req_id'];
+    }
+    $coll_DueNilReqIdStr = !empty($coll_DueNilReqIds) ? implode(',', $coll_DueNilReqIds) : 'NULL';
+    $filtered_ids = array_diff($req_ids, $coll_DueNilReqIds);
+    $id_list = !empty($filtered_ids) ? implode(',', $filtered_ids) : '';
+
+    $collectionData = [];
+    if (!empty($id_list)) {
+        $colQry = $connect->query("
+            SELECT req_id, coll_date, payable_amt,due_amt_track, total_paid_track
+            FROM collection
+            WHERE req_id IN ($id_list)
+              AND DATE(coll_date) <= '$search_date'
+            ORDER BY req_id, coll_date ASC
+        ");
         while ($col = $colQry->fetch(PDO::FETCH_ASSOC)) {
-            // Keep only the latest entry for each req_id
-            if (!isset($collectionMap[$col['req_id']])) {
-                $collectionMap[$col['req_id']] = $col;
-            }
+            $collectionData[$col['req_id']][] = $col;
         }
+
         $paidSummary = [];
         $paidQry = $connect->query("SELECT 
     c.req_id, 
@@ -269,64 +280,17 @@ GROUP BY c.req_id;
         }
     }
 
-    // Step 3: Pre-fetch "pending NIL" req_ids
-    $currentReqIds = [];
-    $currentQuery = $connect->query("
-         SELECT DISTINCT cs4.req_id
-FROM customer_status cs4
-JOIN (
-    SELECT c.req_id, MIN(c.coll_date) AS first_coll_date
-    FROM collection c
-    WHERE MONTH(c.coll_date) = MONTH('$search_date')
-      AND YEAR(c.coll_date) = YEAR('$search_date')
-    GROUP BY c.req_id
-) first_col ON cs4.req_id = first_col.req_id
-JOIN collection col
-      ON col.req_id = first_col.req_id
-     AND col.coll_date = first_col.first_coll_date
-WHERE cs4.sub_status IN ('Closed','Due Nil')
-  AND col.coll_sub_status IN ('Current');
-    ");
-
-    while ($row = $currentQuery->fetch(PDO::FETCH_ASSOC)) {
-        $currentReqIds[$row['req_id']] = true;
-    }
-
-    $pendingReqIds = [];
-    $pendingQuery = $connect->query("
-    SELECT DISTINCT cs2.req_id 
-    FROM customer_status cs2
-    JOIN collection col ON cs2.req_id = col.req_id
-    WHERE cs2.sub_status = 'Current'
-      AND col.coll_sub_status = 'Pending'
-      AND MONTH(col.coll_date) = MONTH('$search_date')
-      AND YEAR(col.coll_date) = YEAR('$search_date')
-");
-    while ($row = $pendingQuery->fetch(PDO::FETCH_ASSOC)) {   // ✅ fixed here
-        $pendingReqIds[$row['req_id']] = true;
-    }
 
     // Step 4: Decide grouping
-    if ($type == 1) {
-        // Group by line name
-        $groups = [];
-        foreach ($customers as $cust) {
+    $groups = [];
+    foreach ($customers as $cust) {
+        if ($type == 1 || $type == 3 || $type == 4) {
             $groups[$cust['map_name']][] = $cust;
-        }
-    } else if ($type == 2) {
-        // Group everything together (user-wise)
-        $groups = [$userName => $customers];
-    } else if ($type == 3) {
-        $groups = [];
-        foreach ($customers as $cust) {
-            $groups[$cust['map_name']][] = $cust;
-        }
-    } else if ($type == 4) {
-        $groups = [];
-        foreach ($customers as $cust) {
-            $groups[$cust['map_name']][] = $cust; // now directly grouped by duefollowup_name
+        } else { // type 2
+            $groups[$userName][] = $cust;
         }
     }
+
 
     // Step 5: Process each group
     foreach ($groups as $groupName => $custList) {
@@ -334,50 +298,56 @@ WHERE cs4.sub_status IN ('Closed','Due Nil')
 
 
         foreach ($custList as $cust) {
+
+            if (!in_array($cust['req_id'], $filtered_ids)) {
+                continue;
+            }
             $total_count++;
-        $due_start = $cust['due_start_from'];
+            $due_start = $cust['due_start_from'];
             // Count responsible = 0
             if ($cust['responsible'] == '0') {
                 $responsible_zero++;
             }
-            $coll = $collectionMap[$cust['req_id']] ?? null;
-            $isCurrentCustomer = false;
+            $collList = $collectionData[$cust['req_id']] ?? [];
+            $end   = strtotime(min($cust['maturity_date'], $search_date));
+            $start = strtotime($cust['due_start_from']);
 
-            if (
-                ($cust['sub_status'] == 'Current' && !isset($pendingReqIds[$cust['req_id']]))  // include true Current but not Pending
-                || isset($currentReqIds[$cust['req_id']])  // include Closed/Due Nil with Current collection
-            ) {
-                
-                $t_current_count++;
-                $isCurrentCustomer = true;
-                // echo $cust['loan_id'] . "<br>";
-            }
+            $months = (date('Y', $end) - date('Y', $start)) * 12 +
+                (date('m', $end) - date('m', $start)) + 1;
 
-            // Due Nil adjust
-            if (
-                $coll &&
-                in_array($coll['coll_sub_status'], ['Pending', 'Current', 'OD', 'Due Nil']) &&
-                $cust['sub_status'] === 'Due Nil'
-            ) {
-                $searchYearMonth = date('Y-m', strtotime($search_date));
-                $req_id = $coll['req_id'];
-                $checkQry = $connect->query("
-                    SELECT 1 FROM collection 
-                    WHERE req_id = '$req_id'
-                      AND DATE_FORMAT(coll_date, '%Y-%m') = '$searchYearMonth'
-                    LIMIT 1
-                ");
-                if ($checkQry->rowCount() == 0) {
-                    $total_count--;
+            $pending_month = max(0, $months - 1);
+            $start_month = strtotime(date('Y-m-01', strtotime($search_date))); // 1st of the month as timestamp
+            $collectedTillMonthStart = 0;
+
+            foreach ($collList as $coll) {
+                $collDate = strtotime($coll['coll_date']);
+                if ($collDate < $start_month) {  // strictly before 1st Aug
+                    $collectedTillMonthStart += (int)$coll['due_amt_track']; // cast to int
                 }
             }
-            if (
-                $coll &&
-                in_array($coll['coll_sub_status'], ['Due Nil']) &&
-                $cust['sub_status'] === 'Closed'
-            ) {
-                $total_count--;
+
+            $payable_amount = ($months * $cust['due_amt_cal']) - $collectedTillMonthStart;
+
+            $pending_amount_atMonthStart = ($pending_month * $cust['due_amt_cal']) - $collectedTillMonthStart;
+            $iscurrentMonthStart = $payable_amount  <= $cust['due_amt_cal'] && $pending_amount_atMonthStart <= 0 &&
+                (
+                    (
+                        ($cust['due_method_scheme'] === '1' || $cust['due_method_calc'] === 'Monthly')
+                        && date('Y-m', strtotime($cust['maturity_date'])) >= date('Y-m', strtotime($toDate_month_start))
+                    )
+                    ||
+                    (
+                        ($cust['due_method_scheme'] != '1' || $cust['due_method_calc'] != 'Monthly')
+                        && strtotime($cust['maturity_date']) > strtotime($toDate_month_start)
+                    )
+                );
+            $isCurrentCustomer = false;
+            if ($iscurrentMonthStart) {
+                $t_current_count++;  // fixed for the whole month
+                // echo $cust['loan_id'] . "<br>";
+                $isCurrentCustomer = true; // flag
             }
+
             if ($isCurrentCustomer) {
                 if (isset($paidSummary[$cust['req_id']])) {
                     $ps = $paidSummary[$cust['req_id']];
@@ -397,23 +367,19 @@ WHERE cs4.sub_status IN ('Closed','Due Nil')
                     switch (true) {
                         case (strtotime($due_start) > strtotime($search_date)):
                             $payable_zero++;
-                            // echo $cust['loan_id'] . "<br>";
                             break;
 
                         case ($paidAmt >= $expected && strtotime($last_paid) < strtotime($toDate_month_start)):
                             $payable_zero++;
-                            //  echo $cust['loan_id'] . "<br>";
                             break;
 
                         case ($till_last_paid >= $expected):
                             $payable_zero++;
-                            // echo $cust['loan_id'] . "<br>";
                             break;
 
                         case ($paid_months > $expected_months && $paidAmt >= ($expected + $monthly_due)
                             && date('Y-m', strtotime($last_paid)) == date('Y-m', strtotime($search_date))):
                             $payable_zero++;
-                            // echo $cust['loan_id'] . "<br>";
                             break;
 
                         case (date('Y-m', strtotime($due_start)) == date('Y-m', strtotime($toDate_month_start))
@@ -444,7 +410,6 @@ WHERE cs4.sub_status IN ('Closed','Due Nil')
                     date('Y-m', strtotime($due_start)) != date('Y-m', strtotime($search_date))
                 ) {
                     $payable_zero++;
-                    // echo $cust['loan_id'] . "<br>";
                 } else {
                     $unpaid++;
                 }
