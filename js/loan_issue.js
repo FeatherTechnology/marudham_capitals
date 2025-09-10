@@ -406,10 +406,10 @@ $(document).ready(function () {
             let int_label = document.querySelector("#int_amt_cal");
             if (due_type.value == "Interest") {
                 // Set its value to 'Benefit Amount'
-                int_label.previousElementSibling.previousElementSibling.textContent = "Interest Amount";
+                int_label.previousElementSibling.previousElementSibling.textContent = "Benefit Amount";
                 $('.emi_div').hide();
             } else {
-                int_label.previousElementSibling.previousElementSibling.textContent = "Benefit Amount";
+                int_label.previousElementSibling.previousElementSibling.textContent = "Interest Amount";
                 $('.emi_div').show();
             }
         }

@@ -29,8 +29,10 @@ function getDetials($connect, $where, $condition)
     // >13 means entries moved to collection from issue
     //will show only interest amunt under user's branch not others also
     //excluding due type interest , coz interest loans will be sepately calculated. those interest will be collected every month as due amount
-    $qry = $connect->query("SELECT COALESCE(SUM(alc.int_amt_cal), 0) AS int_amt_cal FROM in_issue ii
+    $qry = $connect->query("SELECT COALESCE(SUM(alc.int_amt_cal), 0) AS int_amt_cal 
+    FROM in_issue ii
     JOIN acknowlegement_loan_calculation alc ON ii.req_id = alc.req_id  
+    JOIN in_verification iv ON ii.req_id = iv.req_id  
     where due_type != 'Interest' AND $where $condition ");
     $row = $qry->fetch();
     $benefit_amount = $row['int_amt_cal']; //interest amount

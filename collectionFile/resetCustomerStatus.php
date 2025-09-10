@@ -1,6 +1,6 @@
 <?php
 
-include 'D:/xampp/htdocs/marudham_capitals/ajaxconfig.php';
+include 'c:/xampp/htdocs/marudham_capitals/ajaxconfig.php';
 
 if (isset($_POST['cus_id'])) {
     $cus_id = preg_replace('/\D/', '', $_POST['cus_id']);
@@ -52,7 +52,7 @@ foreach ($req_arr as $req_id) {
 
         if ($loan_arr['tot_amt_cal'] == '' || $loan_arr['tot_amt_cal'] == null) {
             //(For monthly Interest total amount will not be there, so take principals)
-            $response['total_amt'] = intVal($loan_arr['loan_amt_cal']);
+            $response['total_amt'] = intVal($loan_arr['principal_amt_cal']);
             $response['loan_type'] = 'Interest';
             $loan_arr['loan_type'] = 'Interest';
         } else {
@@ -923,9 +923,6 @@ function dueAmtCalculation($connect, $start_date, $end_date, $due_amt, $loan_arr
 
     $collections = $connect->query("SELECT princ_amt_track, coll_date FROM collection 
         WHERE req_id = '$req_id' AND princ_amt_track != '' ORDER BY coll_date ASC")->fetchAll();
-
-    // echo "SELECT princ_amt_track, coll_date FROM collection 
-    // WHERE req_id = '$req_id' AND princ_amt_track != '' ORDER BY coll_date ASC";
 
     if (!empty($collections)) {
 

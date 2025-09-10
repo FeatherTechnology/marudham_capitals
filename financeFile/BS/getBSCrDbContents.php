@@ -9,10 +9,6 @@ $user_id = ($_POST['user_id'] != '') ? $_POST['user_id'] : '';
 if ($type == 'today') {
 
     $where = 'DATE(created_date) = CURRENT_DATE ';
-    if ($user_id != '') {
-        $where .= " && insert_login_id = '" . $user_id . "' ";
-    } //for user based
-    getDetails($connect, $where); //passing where clause as arg
 
 } else if ($type == 'day') {
 
@@ -20,11 +16,6 @@ if ($type == 'today') {
     $to_date = $_POST['to_date'];
 
     $where = '(DATE(created_date) >= DATE("' . $from_date . '") && DATE(created_date) <= DATE("' . $to_date . '"))  ';
-    if ($user_id != '') {
-        $where .= " && insert_login_id = '" . $user_id . "' ";
-    } //for user based
-    getDetails($connect, $where); //passing where clause as arg
-
 
 } else if ($type == 'month') {
 
@@ -32,14 +23,13 @@ if ($type == 'today') {
     $year = date('Y', strtotime($_POST['month']));
 
     $where = 'MONTH(created_date) = "' . $month . '" && YEAR(created_date) = "' . $year . '"  ';
-    if ($user_id != '') {
-        $where .= " && insert_login_id = '" . $user_id . "' ";
-    } //for user based
-    getDetails($connect, $where); //passing where clause as arg
+
 }
 
-
-
+if ($user_id != '') {
+    $where .= " && insert_login_id = '" . $user_id . "' ";
+} //for user based
+getDetails($connect, $where); //passing where clause as arg
 
 function getDetails($connect, $where)
 {
@@ -164,7 +154,6 @@ function getDetails($connect, $where)
     $agent = $row['amt'] ?? 0;
 
     $response['db_agent'] = intval($agent);
-
 
 
     $response['cr_investment'] = moneyFormatIndia($response['cr_investment']);

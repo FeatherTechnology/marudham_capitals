@@ -30,7 +30,7 @@ class GetLoanDetails
 
             if ($loan_arr['tot_amt_cal'] == '' || $loan_arr['tot_amt_cal'] == null) {
                 //(For monthly Interest total amount will not be there, so take principals)
-                $response['total_amt'] = $loan_arr['loan_amt_cal'];
+                $response['total_amt'] = $loan_arr['principal_amt_cal'];
                 $response['loan_type'] = 'Interest';
                 $loan_arr['loan_type'] = 'Interest';
             } else {

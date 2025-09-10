@@ -1,7 +1,4 @@
 $(document).ready(function () {
-
-
-
     const toggleButtons = $(".toggle-button");
     toggleButtons.removeClass('active'); //initially make all buttons unchecked
     toggleButtons.on("click", function () {
@@ -53,8 +50,6 @@ $(document).ready(function () {
 
 })//Document Ready End
 
-
-
 $(function () {
 
     getUserNames();
@@ -79,24 +74,23 @@ function BalanceSheetCalculations(type, from_date, to_date, month) {
     clearAllContents();
 
     var user_id = $('#by_user').val();
-    if (type == 'today') { var args = { 'type': 'today', 'user_id': user_id }; } else
-        if (type == 'day') { var args = { 'type': 'day', 'from_date': from_date, 'to_date': to_date, 'user_id': user_id }; } else
-            if (type == 'month') { var args = { 'type': 'month', 'month': month, 'user_id': user_id }; }
+    var bankDetail = $('#bank_detail').val();
+    if (type == 'today') { var args = { 'type': 'today', 'user_id': user_id, 'bankDetail': bankDetail }; } else
+        if (type == 'day') { var args = { 'type': 'day', 'from_date': from_date, 'to_date': to_date, 'user_id': user_id, 'bankDetail': bankDetail }; } else
+            if (type == 'month') { var args = { 'type': 'month', 'month': month, 'user_id': user_id, 'bankDetail': bankDetail }; }
 
     // Create an array to store all the Ajax calls
     let ajaxCalls = [];
 
     //to get opening balance
     let ajaxCall1 = $.post('financeFile/BS/getOpeningDate.php', args, function (response) {
-        $('.balance-sheet-card').find('tbody tr:first td:nth-child(2)').text(response['closing_bal']) //it will get the 2nd column value inside tbody // will take you to opening balance credit column
+        $('.balance-sheet-card').find('tbody tr:first td:nth-child(2)').text(response[1]['closing_bal']) 
+        $('.benefits-check-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(response[1]['closing_bal']) //it will get the 2nd column value inside tbody // will take you to opening balance credit column
     }, 'json')
 
     //to get collection amount
     let ajaxCall2 = $.post('financeFile/BS/getCollectionAmount.php', args, function (response) {
-        // $('.balance-sheet-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(response['collection']);
         $('.balance-sheet-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(response['due_collection']);
-        // $('.balance-sheet-card').find('tbody tr:nth-child(3) td:nth-child(2)').text(response['princ_collection']);
-        // $('.balance-sheet-card').find('tbody tr:nth-child(4) td:nth-child(2)').text(response['int_collection']);
         $('.balance-sheet-card').find('tbody tr:nth-child(3) td:nth-child(2)').text(response['penalty']);
         $('.balance-sheet-card').find('tbody tr:nth-child(4) td:nth-child(2)').text(response['fine']);
     }, 'json')
@@ -104,6 +98,8 @@ function BalanceSheetCalculations(type, from_date, to_date, month) {
     //to get Other income, bank withdrawal and cash deposit
     let ajaxCall3 = $.post('financeFile/BS/getBSCrContents.php', args, function (response) {
         $('.balance-sheet-card').find('tbody tr:nth-child(5) td:nth-child(2)').text(response['other_income']);
+        $('.benefits-card').find('tbody tr:nth-child(6) td:nth-child(2)').text(response['other_income']);
+        $('.profit-card').find('tbody tr:nth-child(6) td:nth-child(2)').text(response['other_income']);
     }, 'json')
 
     //to get Investment, Deposit, EL, Exchange and Agent
@@ -116,6 +112,16 @@ function BalanceSheetCalculations(type, from_date, to_date, month) {
         $('.balance-sheet-card').find('tbody tr:nth-child(8) td:nth-child(3)').text(response['db_exchange']);
         $('.balance-sheet-card').find('tbody tr:nth-child(9) td:nth-child(2)').text(response['cr_el']);
         $('.balance-sheet-card').find('tbody tr:nth-child(9) td:nth-child(3)').text(response['db_el']);
+
+        $('.benefits-check-card').find('tbody tr:nth-child(3) td:nth-child(2)').text(response['cr_investment']);
+        $('.benefits-check-card').find('tbody tr:nth-child(3) td:nth-child(3)').text(response['db_investment']);
+        $('.benefits-check-card').find('tbody tr:nth-child(4) td:nth-child(2)').text(response['cr_deposit']);
+        $('.benefits-check-card').find('tbody tr:nth-child(4) td:nth-child(3)').text(response['db_deposit']);
+        $('.benefits-check-card').find('tbody tr:nth-child(5) td:nth-child(2)').text(response['cr_el']);
+        $('.benefits-check-card').find('tbody tr:nth-child(5) td:nth-child(3)').text(response['db_el']);
+        $('.benefits-check-card').find('tbody tr:nth-child(6) td:nth-child(2)').text(response['cr_exchange']);
+        $('.benefits-check-card').find('tbody tr:nth-child(6) td:nth-child(3)').text(response['db_exchange']);
+
     }, 'json')
 
     //to get Contra balance, addition of all bank transactions
@@ -123,27 +129,36 @@ function BalanceSheetCalculations(type, from_date, to_date, month) {
         $('.balance-sheet-card').find('tbody tr:nth-child(10) td:nth-child(2)').text(response['credit_contra']);
         $('.balance-sheet-card').find('tbody tr:nth-child(10) td:nth-child(3)').text(response['debit_contra']);
 
+        $('.benefits-check-card').find('tbody tr:nth-child(7) td:nth-child(2)').text(response['credit_contra']);
+        $('.benefits-check-card').find('tbody tr:nth-child(7) td:nth-child(3)').text(response['debit_contra']);
+
     }, 'json');
 
     //to get Issued, Expense, Bank Deposit and cash withdrawal
     let ajaxCall6 = $.post('financeFile/BS/getBSDbContents.php', args, function (response) {
         $('.balance-sheet-card').find('tbody tr:nth-child(11) td:nth-child(3)').text(response['issued']);
         $('.balance-sheet-card').find('tbody tr:nth-child(12) td:nth-child(3)').text(response['expense']);
+
+        $('.benefits-card').find('tbody tr:nth-child(7) td:nth-child(3)').text(response['expense']);
+
+        $('.profit-card').find('tbody tr:nth-child(7) td:nth-child(3)').text(response['expense']);
+        
     }, 'json');
 
     ajaxCalls.push(ajaxCall1, ajaxCall2, ajaxCall3, ajaxCall4, ajaxCall5, ajaxCall6);
 
     // Now use $.when() to wait for all Ajax calls to complete
-    $.when.apply($, ajaxCalls).done(function () {
+    $.when.apply($, ajaxCalls).done(function (res1, res2, res3, res4, res5, res6) {
+        let openingBalanceData = res1[0]; // this is the JSON response
+        let clBal = openingBalanceData[0][0]?.closing_balance || 0;
         // This function will be executed when all Ajax calls are completed successfully
         // Put your code here for the function you want to run after all Ajax calls are completed.
-        calculateClosingForBS();
+        calculateClosingForBS(clBal);
         calculateClosingForBenefit();
-        // calculateClosingForBenefitCheck();
     });
 }
 // function to calculate closing details for balance sheet calculations
-function calculateClosingForBS() {
+function calculateClosingForBS(clBal) {
     let credit = 0; let debit = 0;
 
     $('.balance-sheet-card').find('tbody tr').not('tr:last').each(function () { //included opening balance also for credit total//only removed closing balance while summarizing debit amount for closing bal calculation
@@ -158,16 +173,15 @@ function calculateClosingForBS() {
 
     let closing_balance = credit - debit;
     console.log("🚀 ~ calculateClosingForBS ~ closing_balance:", closing_balance)
-    debit = debit + closing_balance;//included closing balance also for debit total
+    debit = debit + clBal;//included closing balance also for debit total
     let difference = credit - debit;
-    $('.balance-sheet-card').find('tbody tr:nth-child(13) td:nth-child(3)').text(moneyFormatIndia(closing_balance));
-    $('.benefits-check-card').find('tbody tr:nth-child(9) td:nth-child(3)').text(moneyFormatIndia(closing_balance));//benefit check table also will have same closing balance
+
+    $('.balance-sheet-card').find('tbody tr:nth-child(13) td:nth-child(3)').text(moneyFormatIndia(clBal));
+    $('.benefits-check-card').find('tbody tr:nth-child(9) td:nth-child(3)').text(moneyFormatIndia(clBal));//benefit check table also will have same closing balance
     $('.balance-sheet-card').find('tfoot tr:first td:nth-child(2)').text(moneyFormatIndia(credit));
     $('.balance-sheet-card').find('tfoot tr:first td:nth-child(3)').text(moneyFormatIndia(debit));
     $('.balance-sheet-card').find('tfoot tr:last td:nth-child(2)').text(moneyFormatIndia(difference));
 }
-
-
 
 //it will calculate for all type of searches handling by type, after ajax calls are completed then it will trigger to calculate closing details
 function BenefitCalculations(type, from_date, to_date, month) {
@@ -191,35 +205,32 @@ function BenefitCalculations(type, from_date, to_date, month) {
     let ajaxCall2 = $.post('financeFile/BS/getDocumentCharges.php', args, function (response) {
         $('.benefits-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(response['doc_charge']);
         $('.benefits-card').find('tbody tr:nth-child(3) td:nth-child(2)').text(response['proc_charge']);
+
+        $('.profit-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(response['doc_charge']);
+        $('.profit-card').find('tbody tr:nth-child(3) td:nth-child(2)').text(response['proc_charge']);
+
     }, 'json')
 
     //to get Penalty and fine 
     let ajaxCall3 = $.post('financeFile/Benefits/getPenaltyFine.php', args, function (response) {
         $('.benefits-card').find('tbody tr:nth-child(4) td:nth-child(2)').text(response['penalty']);
         $('.benefits-card').find('tbody tr:nth-child(5) td:nth-child(2)').text(response['fine']);
+
+        $('.profit-card').find('tbody tr:nth-child(4) td:nth-child(2)').text(response['penalty']);
+        $('.profit-card').find('tbody tr:nth-child(5) td:nth-child(2)').text(response['fine']);
+
     }, 'json');
 
-    //to get Other income
-    let ajaxCall4 = $.post('financeFile/BS/getBSCrContents.php', args, function (response) {
-        $('.benefits-card').find('tbody tr:nth-child(6) td:nth-child(2)').text(response['other_income']);
-    }, 'json')
-
-    //to get Expense
-    let ajaxCall5 = $.post('financeFile/BS/getBSDbContents.php', args, function (response) {
-        $('.benefits-card').find('tbody tr:nth-child(7) td:nth-child(3)').text(response['expense']);
-    }, 'json');
-
-    ajaxCalls.push(ajaxCall1, ajaxCall2, ajaxCall3, ajaxCall4, ajaxCall5);
+    ajaxCalls.push(ajaxCall1, ajaxCall2, ajaxCall3);
 
     // Now use $.when() to wait for all Ajax calls to complete
     $.when.apply($, ajaxCalls).done(function () {
         // This function will be executed when all Ajax calls are completed successfully
         // Put your code here for the function you want to run after all Ajax calls are completed.
-        // calculateClosingForBS();
         calculateClosingForBenefit();
-        // calculateClosingForBenefitCheck();
     });
 }
+
 // function to calculate closing details for Benefits calculations
 function calculateClosingForBenefit() {
     var credit = 0; var debit = 0;
@@ -237,8 +248,6 @@ function calculateClosingForBenefit() {
     $('.benefits-card').find('tfoot tr:first td:nth-child(3)').text(moneyFormatIndia(debit));
     $('.benefits-card').find('tfoot tr:last td:nth-child(2)').text(moneyFormatIndia(difference));
 }
-
-
 
 //it will calculate for all type of searches handling by type, after ajax calls are completed then it will trigger to calculate closing details
 function ProfitCalculations(type, from_date, to_date, month) {
@@ -258,62 +267,14 @@ function ProfitCalculations(type, from_date, to_date, month) {
         cache: false,
         success: function (response) {
             $('.profit-card').find('tbody tr:first td:nth-child(2)').text(response['split_interest']);
-            // $('.profit-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(response['interest_amount']);
-            // $('.benefits-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(response['interest_amount']) //it will get the 2nd column value inside tbody // will take you to opening balance credit column
         }
     }).then(function () {
-        return $.ajax({
-            url: 'financeFile/BS/getDocumentCharges.php',
-            data: args,
-            type: 'post',
-            dataType: 'json',
-            cache: false,
-            success: function (response) {
-                $('.profit-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(response['doc_charge']);
-                $('.profit-card').find('tbody tr:nth-child(3) td:nth-child(2)').text(response['proc_charge']);
-            }
-        });
-    }).then(function () {
-        return $.ajax({
-            url: 'financeFile/Benefits/getPenaltyFine.php',
-            data: args,
-            type: 'post',
-            dataType: 'json',
-            cache: false,
-            success: function (response) {
-                $('.profit-card').find('tbody tr:nth-child(4) td:nth-child(2)').text(response['penalty']);
-                $('.profit-card').find('tbody tr:nth-child(5) td:nth-child(2)').text(response['fine']);
-            }
-        });
-    }).then(function () {
-        return $.ajax({
-            url: 'financeFile/BS/getBSCrContents.php',
-            data: args,
-            type: 'post',
-            dataType: 'json',
-            cache: false,
-            success: function (response) {
-                $('.profit-card').find('tbody tr:nth-child(6) td:nth-child(2)').text(response['other_income']);
-            }
-        });
-    }).then(function () {
-        return $.ajax({
-            url: 'financeFile/BS/getBSDbContents.php',
-            data: args,
-            type: 'post',
-            dataType: 'json',
-            cache: false,
-            success: function (response) {
-                $('.profit-card').find('tbody tr:nth-child(7) td:nth-child(3)').text(response['expense']);
-            }
-        });
-    }).then(function () {
-        // calculateClosingForBS();
         calculateClosingForBenefit();
         calculateClosingForProfit();
         calculateClosingForBenefitCheck();
     });
 }
+
 // function to calculate closing details for Profit calculations
 function calculateClosingForProfit() {
     var credit = 0; var debit = 0;
@@ -331,8 +292,6 @@ function calculateClosingForProfit() {
     $('.profit-card').find('tfoot tr:first td:nth-child(3)').text(moneyFormatIndia(debit));
     $('.profit-card').find('tfoot tr:last td:nth-child(2)').text(moneyFormatIndia(difference));
 }
-
-
 
 //it will calculate for all type of searches handling by type, after ajax calls are completed then it will trigger to calculate closing details
 function BenefitCheckCalculations(type, from_date, to_date, month) {
@@ -352,45 +311,20 @@ function BenefitCheckCalculations(type, from_date, to_date, month) {
         $('.benefits-check-card').find('tbody tr:first td:nth-child(2)').text(response['opening_outstanding']) //it will get the 2nd column value inside tbody // will take you to opening outstanding credit column
     }, 'json');
 
-    //to get opening balance
-    let ajaxCall2 = $.post('financeFile/BS/getOpeningDate.php', args, function (response) {
-        $('.benefits-check-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(response['closing_bal']) //it will get the 2nd column value inside tbody // will take you to opening balance credit column
-    }, 'json')
-
-    //to get Investment, Deposit, EL, Exchange and Agent
-    let ajaxCall3 = $.post('financeFile/BS/getBSCrDbContents.php', args, function (response) {
-        $('.benefits-check-card').find('tbody tr:nth-child(3) td:nth-child(2)').text(response['cr_investment']);
-        $('.benefits-check-card').find('tbody tr:nth-child(3) td:nth-child(3)').text(response['db_investment']);
-        $('.benefits-check-card').find('tbody tr:nth-child(4) td:nth-child(2)').text(response['cr_deposit']);
-        $('.benefits-check-card').find('tbody tr:nth-child(4) td:nth-child(3)').text(response['db_deposit']);
-        $('.benefits-check-card').find('tbody tr:nth-child(5) td:nth-child(2)').text(response['cr_el']);
-        $('.benefits-check-card').find('tbody tr:nth-child(5) td:nth-child(3)').text(response['db_el']);
-        $('.benefits-check-card').find('tbody tr:nth-child(6) td:nth-child(2)').text(response['cr_exchange']);
-        $('.benefits-check-card').find('tbody tr:nth-child(6) td:nth-child(3)').text(response['db_exchange']);
-    }, 'json')
-
-    //to get Contra balance, addition of all bank transactions
-    let ajaxCall4 = $.post('financeFile/BS/getContraContents.php', args, function (response) {
-        $('.benefits-check-card').find('tbody tr:nth-child(7) td:nth-child(2)').text(response['credit_contra']);
-        $('.benefits-check-card').find('tbody tr:nth-child(7) td:nth-child(3)').text(response['debit_contra']);
-
-    }, 'json');
-
     let ajaxCall5 = $.post('financeFile/BenefitsCheck/getClosingOutstanding.php', args, function (response) {
         $('.benefits-check-card').find('tbody tr:nth-child(8) td:nth-child(3)').text(response['closing_outstanding']) //it will get the 2nd column value inside tbody // will take you to opening outstanding credit column
     }, 'json');
 
-    ajaxCalls.push(ajaxCall1, ajaxCall2, ajaxCall3, ajaxCall4, ajaxCall5);
+    ajaxCalls.push(ajaxCall1, ajaxCall5);
 
     // Now use $.when() to wait for all Ajax calls to complete
     $.when.apply($, ajaxCalls).done(function () {
         // This function will be executed when all Ajax calls are completed successfully
         // Put your code here for the function you want to run after all Ajax calls are completed.
-        // calculateClosingForBS();
         calculateClosingForBenefit();
-        // calculateClosingForBenefitCheck();
     });
 }
+
 // function to calculate closing details for Benefits calculations
 function calculateClosingForBenefitCheck() {
     let credit = 0; let debit = 0;
@@ -413,8 +347,6 @@ function calculateClosingForBenefitCheck() {
     $('.benefits-check-card').find('tfoot tr:last td:nth-child(2)').text(moneyFormatIndia(difference));
 
 }
-
-
 
 // to clear all contents
 function clearAllContents() {

@@ -1,5 +1,4 @@
 <?php
-
 include('../../ajaxconfig.php');
 
 $type = $_POST['type'];
@@ -7,20 +6,22 @@ $user_id = ($_POST['user_id'] != '') ? $where = " and insert_login_id = '" . $_P
 
 if ($type == 'today') {
     $where = " DATE(coll_date) = CURRENT_DATE $where";
-    $response = getCollectionRecord($connect, $where);
+    
 } else if ($type == 'day') {
 
     $from_date = $_POST['from_date'];
     $to_date = $_POST['to_date'];
     $where = " (DATE(coll_date) >= '$from_date' && DATE(coll_date) <= '$to_date' ) $where ";
-    $response = getCollectionRecord($connect, $where);
+   
 } else if ($type == 'month') {
 
     $month = date('m', strtotime($_POST['month']));
     $year = date('Y', strtotime($_POST['month']));
     $where = " (MONTH(coll_date) = '$month' and YEAR(coll_date) = $year) $where";
-    $response = getCollectionRecord($connect, $where);
+    
 }
+
+$response = getCollectionRecord($connect, $where);
 
 $response = array_map(function ($num) {
     return number_format(intVal($num), 0, '', ',');
