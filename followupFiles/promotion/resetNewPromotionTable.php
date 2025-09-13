@@ -12,8 +12,8 @@ $userRow = $userRes->fetch();
 $role_type = $userRow['role_type'];
 
 // Step 2: Apply logic for fetching data
-if ($role_type == 7) {
-    // Role 7 (Admin)→ See all records
+if ($role_type == 7 || $role_type == 3) {
+    // Role 7 (Admin) and 3(Manager)→ See all records
     $sql = $connect->query("
         SELECT ncp.cus_id,ncp.cus_name,ncp.mobile,ncp.insert_login_id,ncp.created_date,a.area_name,sa.sub_area_name,ag.group_name,alm.line_name FROM new_cus_promo ncp JOIN area_list_creation a ON ncp.area = a.area_id
     JOIN sub_area_list_creation sa ON ncp.sub_area = sa.sub_area_id
