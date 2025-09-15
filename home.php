@@ -507,32 +507,37 @@ if (isset($getuserdetails['download_access'])) {
 				<?php include "include/templates/commitment_report.php" ?>
 			<?php } else ?>
 
-			<!-- Pending OD Report -->
+			<!-- promotion activity Report -->
+			<?php if ($current_page == 'promotion_activity_report') { ?>
+				<?php include "include/templates/promotion_activity_report.php" ?>
+			<?php } else ?>
+
+			<!--customer_status Report -->
 			<?php if ($current_page == 'customer_status_report') { ?>
 				<?php include "include/templates/customer_status_report.php" ?>
 			<?php } else ?>
 			
-			<!-- Pending OD Report -->
+			<!-- Intrest Ledger Report -->
 			<?php if ($current_page == 'intrest_ledger_report') { ?>
 				<?php include "include/templates/intrest_ledger_report.php" ?>
 			<?php } else ?>
 			
-			<!-- Pending OD Report -->
+			<!-- Intrest Loan Issue Report -->
 			<?php if ($current_page == 'intrest_loan_issue_report') { ?>
 				<?php include "include/templates/intrest_loan_issue_report.php" ?>
 			<?php } else ?>
 			
-			<!-- Pending OD Report -->
+			<!-- Intrest Collection Report -->
 			<?php if ($current_page == 'intrest_collection_report') { ?>
 				<?php include "include/templates/intrest_collection_report.php" ?>
 			<?php } else ?>
 			
-			<!-- Pending OD Report -->
+			<!-- Intrest Balance Report -->
 			<?php if ($current_page == 'intrest_balance_report') { ?>
 				<?php include "include/templates/intrest_balance_report.php" ?>
 			<?php } else ?>
 			
-			<!-- Pending OD Report -->
+			<!-- Intrest Closed Report -->
 			<?php if ($current_page == 'intrest_closed_report') { ?>
 				<?php include "include/templates/intrest_closed_report.php" ?>
 			<?php } else ?>
