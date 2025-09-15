@@ -1647,12 +1647,12 @@
         function searchFunction(table_name) {
             let DACC = <?php echo DACC; ?>;
 
-            $('#search').attr({
+            $(`#search, #${table_name}_search`).attr({
                 'title': 'Click Outside to search',
                 'autocomplete': 'off'
             })
             // new search on keyup event for search by display content
-            $('#search').off().on('blur', function(e) {
+            $(`#search, #${table_name}_search`).off().on('blur', function(e) {
                 // if (e.which == 10 && e.ctrlKey == true) { //control and enter key pressed then key value will be 10
                 let table = $(`#${table_name}`).DataTable();
                 table.search(this.value).draw();

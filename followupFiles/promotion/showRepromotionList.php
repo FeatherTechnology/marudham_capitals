@@ -69,7 +69,7 @@ $areaColumn = ($accessType == 3)
 
     if($_POST['dateType']){
         $date_type = $_POST['dateType'];//1=Closed date, 2=Followup date.
-        $qry_date = ($date_type == '1') ? "AND req.updated_date BETWEEN '".$_POST['followUpFromDate']."' AND '".$_POST['followUpToDate']."' " : "AND np.follow_date BETWEEN '".$_POST['followUpFromDate']."' AND '".$_POST['followUpToDate']."' ";
+        $qry_date = ($date_type == '1') ? "AND DATE(req.updated_date) BETWEEN '".$_POST['followUpFromDate']."' AND '".$_POST['followUpToDate']."' " : "AND DATE(np.follow_date) BETWEEN '".$_POST['followUpFromDate']."' AND '".$_POST['followUpToDate']."' ";
 
         $qry .= $qry_date;
     }     
