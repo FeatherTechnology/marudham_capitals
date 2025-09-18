@@ -1,6 +1,6 @@
 <?php
 include('../../ajaxconfig.php');
-include '../../accountsFile/cashtally/closingBalanceClass.php';
+include './getBSClosingBalanceClass.php';
 
 $CBObj = new ClosingBalanceClass($connect); 
 
@@ -19,7 +19,6 @@ if ($type == 'today') {
 } else if ($type == 'day') {
 
     $from_date = $_POST['from_date'];
-    // $to_date = $_POST['to_date'];
 
     $where = " date(ct1.cl_date) < DATE('$from_date') ";
     $where2 = " date(ct2.cl_date) <= DATE('$from_date') ";
