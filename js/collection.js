@@ -63,7 +63,7 @@ $(document).ready(function () {
     $("#total_paid_track").val(total_paid_track);
   });
 
-  $("#pre_close_waiver , #penalty_waiver , #coll_charge_waiver").blur(
+  $("#pre_close_waiver , #penalty_waiver , #coll_charge_waiver , #principal_waiver , #interest_waiver").blur(
     function () {
       var pre_close_waiver =
         $("#pre_close_waiver").val() != "" ? $("#pre_close_waiver").val() : 0;
@@ -74,10 +74,15 @@ $(document).ready(function () {
           ? $("#coll_charge_waiver").val()
           : 0;
 
+      var principal_waiver = $("#principal_waiver").val() != "" ? $("#principal_waiver").val() : 0;
+      var interest_waiver = $("#interest_waiver").val() != "" ? $("#interest_waiver").val() : 0;
+
       var total_waiver =
         parseInt(pre_close_waiver) +
         parseInt(penalty_waiver) +
-        parseInt(coll_charge_waiver);
+        parseInt(coll_charge_waiver) +
+        parseInt(principal_waiver) +
+        parseInt(interest_waiver);
       $("#total_waiver").val(total_waiver);
     }
   );
@@ -630,30 +635,38 @@ function OnLoadFunctions(req_id, cus_id) {
               });
 
               //To set Limitation that should not cross its limit with considering track values and previous readonly values
-              $("#pre_close_waiver").on("blur", function () {
-                if (response["loan_type"] == "emi") {
-                  var due_track = $("#due_amt_track").val();
-                  if (
-                    parseFloat($(this).val()) >
-                    response["balance"] - due_track
-                  ) {
-                    alert("Enter a Lesser Value");
-                    $(this).val("");
-                    $("#total_waiver").val("");
-                  }
-                } else if (response["loan_type"] == "interest") {
-                  var princ_track = $("#princ_amt_track").val();
-                  if (
-                    parseFloat($(this).val()) >
-                    response["balance"] - princ_track
-                  ) {
-                    alert("Enter a Lesser Value");
-                    $(this).val("");
-                    $("#total_waiver").val("");
-                  }
-                }
-              });
+              $('#pre_close_waiver').on('blur', function () {
+                    if (response['loan_type'] == "emi") {
+                        var due_track = $('#due_amt_track').val();
+                        if (parseFloat($(this).val()) > response['balance'] - due_track) {
+                            alert("Enter a Lesser Value");
+                            $(this).val("");
+                            $('#total_waiver').val("");
+                        }
+                    }
+                });
 
+              $('#principal_waiver').on('blur', function () {
+                    if (response['loan_type'] == 'interest') {
+                        var princ_track = $('#princ_amt_track').val();
+                        if (parseFloat($(this).val()) > response['balance'] - princ_track) {
+                            alert("Enter a Lesser Value");
+                            $(this).val("");
+                            $('#total_waiver').val("");
+                        }
+                    }
+                });
+
+                $('#interest_waiver').on('blur', function () {
+                    if (response['loan_type'] == 'interest') {
+                        if (parseFloat($(this).val()) > response['till_date_int']) {
+                            alert("Enter a Lesser Value");
+                            $(this).val("");
+                            $('#total_waiver').val("");
+                        }
+                    }
+                });
+                
               $("#penalty_waiver").on("blur", function () {
                 var penalty_track = $("#penalty_track").val();
                 if (

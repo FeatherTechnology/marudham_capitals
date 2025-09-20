@@ -6,7 +6,7 @@ if (isset($_POST["coll_id"])) {
     $coll_id = $_POST["coll_id"];
 }
 
-$qry = $connect->query("SELECT req_id, cus_id, cus_name, coll_code, coll_mode, trans_date, coll_date, due_amt_track, penalty_track, coll_charge_track, insert_login_id FROM `collection` WHERE coll_code='" . strip_tags($coll_id) . "'");
+$qry = $connect->query("SELECT req_id, cus_id, cus_name, coll_code, coll_mode, trans_date, coll_date, due_amt_track, penalty_track, coll_charge_track, princ_amt_track , int_amt_track,insert_login_id FROM `collection` WHERE coll_code='" . strip_tags($coll_id) . "'");
 $row = $qry->fetch();
 
 extract($row); // Extracts the array values into variables
@@ -20,13 +20,16 @@ $sql = $connect->query("SELECT alc.due_type, lcc.loan_category_creation_name, ii
 $rowSql = $sql->fetch();
 $loan_category = $rowSql['loan_category_creation_name'];
 $loan_id = $rowSql['loan_id'];
-
+$due_type = $rowSql['due_type'];
 
 $due_amt_track = intVal($due_amt_track != '' ? $due_amt_track : 0);
 $penalty_track = intVal($penalty_track != '' ? $penalty_track : 0);
+$princ_amt_track = intVal($princ_amt_track != '' ? $princ_amt_track : 0);
+$int_amt_track = intVal($int_amt_track != '' ? $int_amt_track : 0);
 $coll_charge_track = intVal($coll_charge_track != '' ? $coll_charge_track : 0);
 $net_received = $due_amt_track + $penalty_track + $coll_charge_track;
 // $due_balance = ($due_amt - $due_amt_track) < 0 ? 0 : $due_amt - $due_amt_track;
+$interest_balance = ($due_amt - $int_amt_track) < 0 ? 0 : $due_amt - $int_amt_track;
 $loan_balance = getBalance($connect, $req_id, $coll_date);
 
 $qry = $connect->query("SELECT fullname from `user` where `user_id` = $insert_login_id ");
@@ -93,13 +96,27 @@ $coll_modes = ['1' => 'Cash', '2' => 'Cheque', '3' => 'ECS', '4' => 'IMPS/NEFT/R
             </b>
             <div>Loan Category :</div>
             <div>Loan ID :</div>
-            <div>Due Receipt :</div>
+            <div>
+                <?php if ($due_type == 'EMI') { ?>
+                    Due Receipt :
+                <?php } else { ?>
+                    Principal Receipt :
+                <?php } ?>
+            </div>
+            <?php if ($due_type != 'EMI') { ?>
+                <div>Interest Receipt :</div>
+            <?php } ?>
             <div>Penalty :</div>
             <div>Fine :</div><br>
             <b>
                 <div>Net Received :</div>
             </b><br>
             <!-- <div>Due Balance :</div> -->
+            <div>
+                <?php if ($due_type !== 'EMI') { ?>
+                    Interest Balance :
+                <?php } ?>
+            </div>
             <div>Loan Balance :</div>
             <div>Collection Mode :</div>
             <?php if($coll_mode != 1){?>
@@ -120,14 +137,29 @@ $coll_modes = ['1' => 'Cash', '2' => 'Cheque', '3' => 'ECS', '4' => 'IMPS/NEFT/R
                 <div><?php echo $cus_name; ?></div>
             </b>
             <div><?php echo $loan_category; ?></div>
-            <div><?php echo $loan_id; ?></div>
-            <div><?php echo moneyFormatIndia($due_amt_track); ?></div>
+            <div><?php echo $loan_id; ?></div> <div>
+                <?php if ($due_type == 'EMI') {
+                    echo moneyFormatIndia($due_amt_track);
+                } else {
+                    echo moneyFormatIndia($princ_amt_track);
+                } ?>
+            </div>
+            <?php if ($due_type != 'EMI') { ?>
+                <div>
+                    <?php echo moneyFormatIndia($int_amt_track); ?>
+                </div>
+            <?php } ?>
             <div><?php echo moneyFormatIndia($penalty_track); ?></div>
             <div><?php echo moneyFormatIndia($coll_charge_track); ?></div><br>
             <b>
                 <div><?php echo moneyFormatIndia($net_received); ?></div>
             </b><br>
             <!-- <div><?php #echo moneyFormatIndia($due_balance); ?></div> -->
+            <div>
+                <?php if ($due_type !== 'EMI') {
+                    echo moneyFormatIndia($interest_balance);
+                } ?>
+            </div>
             <div><?php echo moneyFormatIndia($loan_balance); ?></div>
             <div><?php echo $coll_modes[$coll_mode]; ?></div>
             <?php if($coll_mode != 1){?>
@@ -207,18 +239,19 @@ function getBalance($connect, $req_id, $coll_date)
         $total_paid_princ = 0;
         $total_paid_int = 0;
         $pre_closure = 0;
+        $principal_waiver = 0;
         foreach ($coll_arr as $tot) {
             $total_paid += intVal($tot['due_amt_track']); //only calculate due amount not total paid value, because it will have penalty and coll charge also
             $total_paid_princ += intVal($tot['princ_amt_track']);
             $total_paid_int += intVal($tot['int_amt_track']);
             $pre_closure += intVal($tot['pre_close_waiver']); //get pre closure value to subract to get balance amount
+            $principal_waiver += intVal($tot['principal_waiver']);
         }
         //total paid amount will be all records again request id should be summed
         $response['total_paid'] = ($loan_arr['loan_type'] == 'emi') ? $total_paid : $total_paid_princ;
+        $response['total_waiver'] = ($loan_arr['loan_type'] == 'emi') ? $pre_closure : $principal_waiver;
         $response['total_paid_int'] = $total_paid_int;
-
-
-        $response['balance'] = $response['total_amt'] - $response['total_paid'] - $pre_closure;
+        $response['balance'] = $response['total_amt'] - $response['total_paid'] - $response['total_waiver'];;
     } else {
         $response['balance'] = $response['total_amt'];
     }
