@@ -189,7 +189,7 @@ try {
     if (($princ_amt_track != '' or $int_amt_track != '') and ($due_amt_track == '' or $due_amt_track == 0 or $due_amt_track == null)) {
         // if this condition is true then it will be the interest based loan. coz thats where we able to give princ/int amt track and not able to give due amt track
         //if yes then $check variable should check with principal amt
-        $check = (intVal($princ_amt_track) + intVal($pre_close_waiver)) - intval($bal_amt);
+        $check = (intVal($princ_amt_track) + intVal($principal_waiver)) - intval($bal_amt);
         $collected_amnt = intval($princ_amt_track) + intval($pre_close_waiver);
     }
 
