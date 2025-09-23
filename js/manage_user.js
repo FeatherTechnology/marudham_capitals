@@ -54,27 +54,14 @@ const updateScreen = new Choices('#update_screen', {
 // Document is ready
 $(document).ready(function () {
 
-    {//To Order role Alphabetically
-        var firstOption = $("#role option:first-child");
-        $("#role").html($("#role option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#role").prepend(firstOption);
-    }
-    {//To Order ag_name Alphabetically
-        var firstOption = $("#ag_name option:first-child");
-        $("#ag_name").html($("#ag_name option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#ag_name").prepend(firstOption);
-    }
-    {//To Order role_type Alphabetically
-        var firstOption = $("#role_type option:first-child");
-        $("#role_type").html($("#role_type option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#role_type").prepend(firstOption);
-    }
+    // Sort role dropdown
+    sortDropdownAlphabetically("#role");
+
+    // Sort ag_name dropdown
+    sortDropdownAlphabetically("#ag_name");
+
+    // Sort role_type dropdown
+    sortDropdownAlphabetically("#role_type");
 
     $('#role').change(function () {
 
@@ -477,7 +464,7 @@ function getStaffTypeDropdown() {
         dataType: 'json',
         success: function (response) {
 
-            var len = response.length;
+            var len = response.length;  
             $("#role_type").empty();
             $("#role_type").append("<option value=''>Select Role Type</option>");
             for (var i = 0; i < len; i++) {
@@ -489,13 +476,8 @@ function getStaffTypeDropdown() {
                 }
                 $("#role_type").append("<option value='" + staff_type_id + "' " + selected + ">" + staff_type_name + "</option>");
             }
-            {//To Order role_type Alphabetically
-                var firstOption = $("#role_type option:first-child");
-                $("#role_type").html($("#role_type option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#role_type").prepend(firstOption);
-            }
+            // Sort staff_name dropdown
+            sortDropdownAlphabetically("#role_type");
         }
     });
 }
@@ -521,13 +503,8 @@ function getDirectorName(dir_type) {
                 }
                 $("#dir_name").append("<option value='" + dir_id + "' " + selected + ">" + dir_name + "</option>");
             }
-            {//To Order dir_name Alphabetically
-                var firstOption = $("#dir_name option:first-child");
-                $("#dir_name").html($("#dir_name option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#dir_name").prepend(firstOption);
-            }
+            // Sort staff_name dropdown
+            sortDropdownAlphabetically("#dir_name");
         }
     });
 }
@@ -554,13 +531,8 @@ function getStaffName(role_type) {
                 }
                 $("#staff_name").append("<option value='" + staff_id + "' " + selected + ">" + staff_name + "</option>");
             }
-            {//To Order staff_name Alphabetically
-                var firstOption = $("#staff_name option:first-child");
-                $("#staff_name").html($("#staff_name option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#staff_name").prepend(firstOption);
-            }
+            // Sort staff_name dropdown
+            sortDropdownAlphabetically("#staff_name");
         }
     });
 }

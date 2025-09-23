@@ -8,13 +8,8 @@ const docMultiselect = new Choices('#doc_creation1', {
 // Document is ready
 $(document).ready(function () {
 
-    {//To Order loan_category Alphabetically
-        var firstOption = $("#loan_category option:first-child");
-        $("#loan_category").html($("#loan_category option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#loan_category").prepend(firstOption);
-    }
+    // Sort loan_category dropdown
+    sortDropdownAlphabetically("#loan_category");
 
     //change sub category based on Loan category
     $('#loan_category').change(function () {
@@ -90,13 +85,8 @@ function getSubCategory(loan_cat) {
                     $('#sub_category').append("<option value= '" + response[i]['sub_category_name'] + "' " + selected + " " + response[i]['disabled'] + " > " + response[i]['sub_category_name'] + " </option>")
                 }
             }
-            {//To Order sub_category Alphabetically
-                var firstOption = $("#sub_category option:first-child");
-                $("#sub_category").html($("#sub_category option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#sub_category").prepend(firstOption);
-            }
+            // Sort sub_category dropdown
+            sortDropdownAlphabetically("#sub_category");
         }
     })
 }

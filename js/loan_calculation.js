@@ -1,12 +1,7 @@
 $(document).ready(function () {
 
-	{//To Order Alphabetically
-		var firstOption = $("#loan_category option:first-child");
-		$("#loan_category").html($("#loan_category option:not(:first-child)").sort(function (a, b) {
-			return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-		}));
-		$("#loan_category").prepend(firstOption);
-	}
+	// Sort loan_category dropdown
+    sortDropdownAlphabetically("#loan_category");
 
 	$('#due_type').on('change', function () {
 		var due_type = $(this).val();
@@ -168,13 +163,8 @@ function getLoanCategory() {
 					$('#loan_category').append("<option value= '" + response[i]['loan_category_name_id'] + "' " + selected + " " + response[i]['disabled'] + " > " + response[i]['loan_category_name'] + " </option>")
 				}
 			}
-			{//To Order Alphabetically
-				var firstOption = $("#loan_category option:first-child");
-				$("#loan_category").html($("#loan_category option:not(:first-child)").sort(function (a, b) {
-					return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-				}));
-				$("#loan_category").prepend(firstOption);
-			}
+			// Sort loan_category dropdown
+            sortDropdownAlphabetically("#loan_category");
 		}
 	})
 }
@@ -201,13 +191,8 @@ function getSubCategory(loan_cat) {
 					$('#sub_category').append("<option value= '" + response[i]['sub_category_name'] + "' " + selected + " " + response[i]['disabled'] + " > " + response[i]['sub_category_name'] + " </option>")
 				}
 			}
-			{//To Order Alphabetically
-				var firstOption = $("#sub_category option:first-child");
-				$("#sub_category").html($("#sub_category option:not(:first-child)").sort(function (a, b) {
-					return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-				}));
-				$("#sub_category").prepend(firstOption);
-			}
+			// Sort sub_category dropdown
+            sortDropdownAlphabetically("#sub_category");
 		}
 	})
 }

@@ -182,13 +182,8 @@ function getDistrictDropdown(StateSelected) {
     }
     $("#district").html(htmlString);
 
-    {//To Order Alphabetically
-        var firstOption = $("#district option:first-child");
-        $("#district").html($("#district option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#district").prepend(firstOption);
-    }
+    // Sort district dropdown
+    sortDropdownAlphabetically("#district");
 }
 
 //get Taluk Dropdown
@@ -368,13 +363,8 @@ function getTalukDropdown(DistSelected) {
     }
     $("#taluk").html(htmlString);
 
-    {//To Order Alphabetically
-        var firstOption = $("#taluk option:first-child");
-        $("#taluk").html($("#taluk option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#taluk").prepend(firstOption);
-    }
+    // Sort Taluk dropdown
+    sortDropdownAlphabetically("#taluk");
 }
 
 //Get Taluk Based Area
@@ -403,13 +393,8 @@ function getTalukBasedArea(talukselected) {
             $("#area_name").val('');
             $("#area_id").val('');
 
-            {//To Order Alphabetically
-                var firstOption = $("#area option:first-child");
-                $("#area").html($("#area option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#area").prepend(firstOption);
-            }
+            // Sort area dropdown
+            sortDropdownAlphabetically("#area");
         }
     });
 }
