@@ -99,13 +99,8 @@ function DropDownCourse() {
                 $("#com_sub").append("<option value='" + concern_sub_id + "' " + selected + " >" + concern_subject + "</option>");
 
             }
-            {//To Order Alphabetically
-                var firstOption = $("#com_sub option:first-child");
-                $("#com_sub").html($("#com_sub option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#com_sub").prepend(firstOption);
-            }
+            // Sort com_sub dropdown
+            sortDropdownAlphabetically("#com_sub");
 
         }
     });

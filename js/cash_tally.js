@@ -738,17 +738,11 @@ function appendBankDebitDropdown() {
 }
 
 function sortDropdowns() {
-    var firstOption = $("#credit_type option:first-child");
-    $("#credit_type").html($("#credit_type option:not(:first-child)").sort(function (a, b) {
-        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-    }));
-    $("#credit_type").prepend(firstOption);
+    // Sort credit_type dropdown
+    sortDropdownAlphabetically("#credit_type");
 
-    var firstOption = $("#debit_type option:first-child");
-    $("#debit_type").html($("#debit_type option:not(:first-child)").sort(function (a, b) {
-        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-    }));
-    $("#debit_type").prepend(firstOption);
+    // Sort debit_type dropdown
+    sortDropdownAlphabetically("#debit_type");
 }
 
 function triggerExpViewActions() {
@@ -2596,13 +2590,8 @@ function hexpenseModalBtnClick() {
             $('#username_hexp').val(response[0]['user_name'])
             $('#usertype_hexp').val(response[0]['user_type'])
 
-            {
-                var firstOption = $("#cat_hexp option:first-child");
-                $("#cat_hexp").html($("#cat_hexp option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#cat_hexp").prepend(firstOption);
-            }
+            // Sort cat_hexp dropdown
+            sortDropdownAlphabetically("#cat_hexp");
         }
     }).then(function () {
         //Auto Generate Voucher ID.
@@ -2872,13 +2861,8 @@ function bexpenseModalBtnClick() {
             $('#username_bexp').val(response[0]['user_name'])
             $('#usertype_bexp').val(response[0]['user_type'])
 
-            {
-                var firstOption = $("#cat_bexp option:first-child");
-                $("#cat_bexp").html($("#cat_bexp option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#cat_bexp").prepend(firstOption);
-            }
+            // Sort cat_bexp dropdown
+            sortDropdownAlphabetically("#cat_bexp");
         }
     }).then(function () {
         $('#submit_bexp').click(function () {

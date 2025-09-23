@@ -98,13 +98,8 @@ function getDistrictDropdown(StateSelected) {
     $("#district").html(htmlString);
     $("#district1").val(district_upd);
 
-    {//To Order loan_category Alphabetically
-        var firstOption = $("#district option:first-child");
-        $("#district").html($("#district option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#district").prepend(firstOption);
-    }
+    // Sort district dropdown
+    sortDropdownAlphabetically("#district");
 }
 
 //get Taluk Dropdown
@@ -285,13 +280,8 @@ function getTalukDropdown(DistSelected) {
     $("#taluk").html(htmlString);
     $("#taluk1").val(taluk_upd);
 
-    {//To Order taluk Alphabetically
-        var firstOption = $("#taluk option:first-child");
-        $("#taluk").html($("#taluk option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#taluk").prepend(firstOption);
-    }
+    // Sort taluk dropdown
+    sortDropdownAlphabetically("#taluk");
 }
 
 //Get Staff Code 
@@ -331,13 +321,8 @@ function getStaffTypeDropdown() {
                 }
                 $("#staff_type").append("<option value='" + staff_type_id + "' " + selected + ">" + staff_type_name + "</option>");
             }
-            {//To Order staff_type Alphabetically
-                var firstOption = $("#staff_type option:first-child");
-                $("#staff_type").html($("#staff_type option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#staff_type").prepend(firstOption);
-            }
+            // Sort staff_type dropdown
+            sortDropdownAlphabetically("#staff_type");
         }
     });
 }
@@ -511,13 +496,8 @@ function getStaffTypeDropdown() {
                     var staff_type_name = response[i]['staff_type_name'];
                     $("#staff_type").append("<option value='" + staff_type_id + "'>" + staff_type_name + "</option>");
                 }
-                {//To Order staff_type Alphabetically
-                    var firstOption = $("#staff_type option:first-child");
-                    $("#staff_type").html($("#staff_type option:not(:first-child)").sort(function (a, b) {
-                        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                    }));
-                    $("#staff_type").prepend(firstOption);
-                }
+                // Sort staff_type dropdown
+                sortDropdownAlphabetically("#staff_type");
             }
         });
     }

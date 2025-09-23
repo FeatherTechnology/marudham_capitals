@@ -1144,13 +1144,8 @@ function propertyHolder() {
                 var fam_name = response[i];
                 $("#property_holder").append("<option value='" + fam_name + "'>" + fam_name + "</option>");
             }
-            // {//To Order ag_group Alphabetically
-            //     var firstOption = $("#property_holder option:first-child");
-            //     $("#property_holder").html($("#property_holder option:not(:first-child)").sort(function (a, b) {
-            //         return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-            //     }));
-            //     $("#property_holder").prepend(firstOption);
-            // }
+            // Sort property_holder dropdown
+            sortDropdownAlphabetically("#property_holder");
         }
     });
 }
@@ -1913,13 +1908,8 @@ function districtNameList(optionsList) { // To List the District
     $("#district").html(htmlString);
     $("#district1").val(district_upd);
 
-    // {//To Order Alphabetically
-    //     var firstOption = $("#district option:first-child");
-    //     $("#district").html($("#district option:not(:first-child)").sort(function (a, b) {
-    //         return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-    //     }));
-    //     $("#district").prepend(firstOption);
-    // }
+    // Sort district dropdown
+    sortDropdownAlphabetically("#district");
 }
 
 function conformDistrictNameList(optionsList) { // To List the Confirm Area District
@@ -1933,13 +1923,8 @@ function conformDistrictNameList(optionsList) { // To List the Confirm Area Dist
     $("#area_district").html(htmlString);
     $("#area_district1").val(district_upd);
 
-    // {//To Order Alphabetically
-    //     var firstOption = $("#area_district option:first-child");
-    //     $("#area_district").html($("#area_district option:not(:first-child)").sort(function (a, b) {
-    //         return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-    //     }));
-    //     $("#area_district").prepend(firstOption);
-    // }
+    // Sort area_district dropdown
+    sortDropdownAlphabetically("#area_district");
 }
 
 //get Taluk Dropdown
@@ -2125,13 +2110,8 @@ function talukNameList(optionsList) { //To show Taluk list.
     $("#taluk").html(htmlString);
     $("#taluk1").val(taluk_upd);
 
-    // {//To Order Alphabetically
-    //     var firstOption = $("#taluk option:first-child");
-    //     $("#taluk").html($("#taluk option:not(:first-child)").sort(function (a, b) {
-    //         return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-    //     }));
-    //     $("#taluk").prepend(firstOption);
-    // }
+    // Sort taluk dropdown
+    sortDropdownAlphabetically("#taluk");
 }
 
 function conformtalukNameList(optionsList) { //To show Taluk list.
@@ -2145,13 +2125,8 @@ function conformtalukNameList(optionsList) { //To show Taluk list.
     $("#area_taluk").html(htmlString);
     $("#area_taluk1").val(taluk_upd);
 
-    // {//To Order Alphabetically
-    //     var firstOption = $("#area_taluk option:first-child");
-    //     $("#area_taluk").html($("#area_taluk option:not(:first-child)").sort(function (a, b) {
-    //         return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-    //     }));
-    //     $("#area_taluk").prepend(firstOption);
-    // }
+    // Sort area_taluk dropdown
+    sortDropdownAlphabetically("#area_taluk");
 }
 
 //Get Taluk Based Area
@@ -2177,13 +2152,8 @@ function getTalukBasedArea(talukselected, area_upd, area) {
                 $(area).append("<option value='" + area_id + "' " + selected + ">" + area_name + "</option>");
             }
 
-            // {//To Order Alphabetically
-            //     var firstOption = $(area + " option:first-child");
-            //     $(area).html($(area + " option:not(:first-child)").sort(function (a, b) {
-            //         return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-            //     }));
-            //     $(area).prepend(firstOption);
-            // }
+            // Sort area dropdown
+            sortDropdownAlphabetically("#area");
         }
     });
 }
@@ -4494,19 +4464,8 @@ function signTypeRelation() {
             "</option>"
         );
       }
-    //   {
-    //     //To Order ag_group Alphabetically
-    //     var firstOption = $("#signType_relationship option:first-child");
-    //     $("#signType_relationship").html(
-    //       $("#signType_relationship option:not(:first-child)").sort(function (
-    //         a,
-    //         b
-    //       ) {
-    //         return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-    //       })
-    //     );
-    //     $("#signType_relationship").prepend(firstOption);
-    //   }
+    // Sort signType_relationship dropdown
+    sortDropdownAlphabetically("#signType_relationship");
     },
   });
 }
@@ -4533,18 +4492,8 @@ function chequeHolderName() {
           "<option value='" + fam_id + "'>" + fam_name + "</option>"
         );
       }
-    //   {
-    //     //To Order ag_group Alphabetically
-    //     var firstOption = $("#holder_relationship_name option:first-child");
-    //     $("#holder_relationship_name").html(
-    //       $("#holder_relationship_name option:not(:first-child)").sort(
-    //         function (a, b) {
-    //           return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-    //         }
-    //       )
-    //     );
-    //     $("#holder_relationship_name").prepend(firstOption);
-    //   }
+    // Sort holder_relationship_name dropdown
+    sortDropdownAlphabetically("#holder_relationship_name");
     },
   });
 }
@@ -4571,18 +4520,8 @@ function docHolderName(callback) {
           "<option value='" + fam_id + "'>" + fam_name + "</option>"
         );
       }
-    //   {
-    //     //To Order ag_group Alphabetically
-    //     var firstOption = $("#docholder_relationship_name option:first-child");
-    //     $("#docholder_relationship_name").html(
-    //       $("#docholder_relationship_name option:not(:first-child)").sort(
-    //         function (a, b) {
-    //           return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-    //         }
-    //       )
-    //     );
-    //     $("#docholder_relationship_name").prepend(firstOption);
-    //   }
+    // Sort docholder_relationship_name dropdown
+    sortDropdownAlphabetically("#docholder_relationship_name");
 
       if (typeof callback === "function") {
         callback();
