@@ -98,8 +98,19 @@ function BalanceSheetCalculations(type, from_date, to_date, month) {
 
         //to get opening balance
         let ajaxCall1 = $.post('financeFile/BS/getOpeningDate.php', args, function (response) {
-            $('.balance-sheet-card').find('tbody tr:first td:nth-child(2)').text(response[1]['closing_bal']) 
-            $('.benefits-check-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(response[1]['closing_bal']) //it will get the 2nd column value inside tbody // will take you to opening balance credit column
+            let opBal = response[1][0]['opening_bal'];
+            let opAgBal = response[1][0]['opening_agent'];
+            $('.balance-sheet-card').find('tbody tr:first td:nth-child(2)').text(opBal) 
+            $('.balance-sheet-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(opAgBal) 
+            $('.benefits-check-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(opBal) //it will get the 2nd column value inside tbody // will take you to opening balance credit column
+            $('.benefits-check-card').find('tbody tr:nth-child(3) td:nth-child(2)').text(opAgBal) 
+            let clBal = response[0][0]?.closing_balance || 0;
+            let agBal = response[0][0]?.agent_closing || 0;
+            $('.balance-sheet-card').find('tbody tr:nth-child(14) td:nth-child(3)').text(moneyFormatIndia(agBal));
+            $('.balance-sheet-card').find('tbody tr:nth-child(15) td:nth-child(3)').text(moneyFormatIndia(clBal));
+            $('.benefits-check-card').find('tbody tr:nth-child(10) td:nth-child(3)').text(moneyFormatIndia(agBal));//benefit check table also will have same Agent balance
+            $('.benefits-check-card').find('tbody tr:nth-child(11) td:nth-child(3)').text(moneyFormatIndia(clBal));//benefit check table also will have same closing balance
+
         }, 'json')
 
         //to get collection amount
@@ -163,11 +174,9 @@ function BalanceSheetCalculations(type, from_date, to_date, month) {
 
         // Now use $.when() to wait for all Ajax calls to complete
         $.when.apply($, ajaxCalls).done(function (res1, res2, res3, res4, res5, res6) {
-            let openingBalanceData = res1[0]; // this is the JSON response
-            let clBal = openingBalanceData[0][0]?.closing_balance || 0;
             // This function will be executed when all Ajax calls are completed successfully
             // Put your code here for the function you want to run after all Ajax calls are completed.
-            calculateClosingForBS(clBal);
+            calculateClosingForBS();
 
             resolve(); // ✅ Finish the promise
         }).fail(function (err) {
@@ -177,10 +186,10 @@ function BalanceSheetCalculations(type, from_date, to_date, month) {
 }
 
 // function to calculate closing details for balance sheet calculations
-function calculateClosingForBS(clBal) {
+function calculateClosingForBS() {
     let credit = 0; let debit = 0;
 
-    $('.balance-sheet-card').find('tbody tr').not('tr:last').each(function () { //included opening balance also for credit total//only removed closing balance while summarizing debit amount for closing bal calculation
+    $('.balance-sheet-card').find('tbody tr').each(function () { //included opening balance also for credit total//only removed closing balance while summarizing debit amount for closing bal calculation
         let credit_val = $(this).find('td:nth-child(2)').text() ? $(this).find('td:nth-child(2)').text() : '0';
         credit = credit + parseInt(credit_val.replaceAll(',', ''));
         
@@ -192,11 +201,9 @@ function calculateClosingForBS(clBal) {
 
     // let closing_balance = credit - debit;
     // console.log("🚀 ~ calculate ClosingForBS ~ closing_balance:", closing_balance)
-    debit = debit + clBal;//included closing balance also for debit total
+    // debit = debit + clBal;//included closing balance also for debit total
     let difference = credit - debit;
 
-    $('.balance-sheet-card').find('tbody tr:nth-child(15) td:nth-child(3)').text(moneyFormatIndia(clBal));
-    $('.benefits-check-card').find('tbody tr:nth-child(11) td:nth-child(3)').text(moneyFormatIndia(clBal));//benefit check table also will have same closing balance
     $('.balance-sheet-card').find('tfoot tr:first td:nth-child(2)').text(moneyFormatIndia(credit));
     $('.balance-sheet-card').find('tfoot tr:first td:nth-child(3)').text(moneyFormatIndia(debit));
     $('.balance-sheet-card').find('tfoot tr:last td:nth-child(2)').text(moneyFormatIndia(difference));
