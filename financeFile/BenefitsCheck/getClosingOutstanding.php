@@ -28,17 +28,16 @@ if ($user_id != '') { //to get user's sub area id based on user's branch assigne
 $type = $_POST['type'];
 
 if ($type == 'today') {
-    $where = " DATE(iv.updated_date) <= CURRENT_DATE and iv.cus_status IN (14,15,16,17) ";
+    $to_date = date('Y-m-d');
+
+    $li_where  = " AND date(li.created_date) <= date('$to_date') AND balance_amount = '0' ";
 
 } else if ($type == 'day') {
+    $to_date = date('Y-m-d', strtotime($_POST['to_date']));
 
-    $from_date = $_POST['from_date'];
-    $to_date = $_POST['to_date'];
-
-    $where = " (DATE(iv.updated_date) <= '$to_date' ) and iv.cus_status IN (14,15,16,17) ";
+    $li_where  = " AND date(li.created_date) <= date('$to_date') AND balance_amount = '0' "; 
 
 } else if ($type == 'month') {
-
     $month = date('m', strtotime($_POST['month']));
     if ($month == 01) {
         $month = 12;
@@ -49,50 +48,59 @@ if ($type == 'today') {
         $year = date('Y', strtotime($_POST['month']));
     }
 
-    $where = " (MONTH(iv.updated_date) <= '$month' && YEAR(iv.updated_date) <= '$year') and iv.cus_status IN (14,15,16,17) ";
+    $to_date = date('Y-m-t', strtotime($_POST['month'].'-01'));
+
+    $li_where  = "AND date(li.created_date) <= date('$to_date') AND balance_amount = '0' ";
 }
 
 $condition = ($user_id != '') ? " and FIND_IN_SET(iv.sub_area ,'" . $sub_area_list . "') " : ''; //this condition will check user based request ids in in_verification table
+getDetials($connect, $condition, $li_where, $to_date);
 
-getDetials($connect, $condition, $where);
 
-function getDetials($connect, $condition, $where)
+function getDetials($connect, $condition, $li_where, $to_date)
 {
 
     // >13 means entries moved to collection from issue
-    //removeing customer status and greater than symbol fo collection table//replace will only work for day type
     //reason to use where condition in collection is , we only need collection on particular date for calculating outstanding amt
     //will check based on user's branch if user selected
-    //will show only interest amunt under user's branch not others also
     //If both tot_amt_cal & principal_amt_cal have value means it is EMI loan. if tot_amt_cal is empty it is Interest loan.
-    $qry = $connect->query("SELECT 
-                        SUM(
-                            CASE 
-                                WHEN COALESCE(alc.tot_amt_cal, 0) != 0 THEN COALESCE(alc.tot_amt_cal, 0)
-                                ELSE COALESCE(alc.principal_amt_cal, 0)
-                            END
-                        ) AS calculated_amount
-                        FROM in_verification iv
-                        JOIN acknowlegement_loan_calculation alc ON iv.req_id = alc.req_id
-                        WHERE $where $condition ");
-    //fetching overall collection amount to be get from customers
-    $row = $qry->fetch();
-    $total_outstanding = $row['calculated_amount']; //Total outstanding amount
 
-    $qry = $connect->query("SELECT 
-                        COALESCE((sum(due_amt_track) + sum(princ_amt_track)), 0 ) as coll_amt_track 
-                        FROM in_verification iv
-                        JOIN collection c ON iv.req_id = c.req_id
-                        WHERE $where $condition ");
-    //getting collected amount till mentioned date
-    $row = $qry->fetch();
-    $collected_outstanding = $row['coll_amt_track']; //collected outstanding amount
+    $qry = "SELECT req.req_id FROM request_creation req
+    JOIN in_verification iv ON req.req_id = iv.req_id
+    JOIN loan_issue li ON req.req_id = li.req_id $li_where
+    WHERE req.cus_status BETWEEN 14 AND 18 $condition
 
-    $response['closing_outstanding'] = intval($total_outstanding) - intval($collected_outstanding);
-    $response['closing_outstanding'] = moneyFormatIndia($response['closing_outstanding']);
+    UNION
+
+    SELECT cc.req_id FROM closing_customer cc JOIN loan_issue li ON cc.req_id = li.req_id WHERE date(cc.closing_date) > date('$to_date') AND date(li.created_date) <= date('$to_date')  ";
+
+    $run = $connect->query($qry);
+    $req_id_list = [];
+    while ($row = $run->fetch()) {
+        $req_id_list[] = $row['req_id'];
+    }
+    $req_id_list = implode(',', $req_id_list);
+
+    $qry = $connect->query("SELECT alc.due_type, alc.tot_amt_cal, c.due_amt_track, alc.principal_amt_cal, c.princ_amt_track
+                        FROM acknowlegement_loan_calculation alc 
+                        LEFT JOIN ( SELECT c.req_id, SUM(c.due_amt_track) AS due_amt_track, SUM(c.princ_amt_track) AS princ_amt_track FROM collection c WHERE (date(coll_date) <= '$to_date') GROUP BY c.req_id ) c ON c.req_id = alc.req_id 
+                        JOIN in_issue ii ON alc.req_id = ii.req_id 
+                        WHERE alc.req_id IN ($req_id_list) ");
+
+    $balance_amount = 0;
+    while($row = $qry->fetch()){
+            $balance_amount += ($row['due_type'] != 'Interest') ?
+        intVal($row['tot_amt_cal']) - intVal($row['due_amt_track']) :
+        intVal($row['principal_amt_cal']) - intVal($row['princ_amt_track']);
+
+    };
+
+    $response['closing_outstanding'] = moneyFormatIndia($balance_amount);
 
     echo json_encode($response);
 }
+
+//Format number in Indian Format
 function moneyFormatIndia($num)
 {
     $isNegative = false;

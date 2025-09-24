@@ -3,10 +3,10 @@
 include '../ajaxconfig.php';
 
 if (isset($_POST["coll_id"])) {
-    $coll_id = $_POST["coll_id"];
+    $coll_code_id = $_POST["coll_id"];
 }
 
-$qry = $connect->query("SELECT req_id, cus_id, cus_name, coll_code, coll_mode, trans_date, coll_date, due_amt_track, penalty_track, coll_charge_track, princ_amt_track , int_amt_track,insert_login_id FROM `collection` WHERE coll_code='" . strip_tags($coll_id) . "'");
+$qry = $connect->query("SELECT coll_id, req_id, cus_id, cus_name, coll_code, coll_mode, trans_date, coll_date, due_amt_track, penalty_track, coll_charge_track, princ_amt_track , int_amt_track, due_amt, insert_login_id FROM `collection` WHERE coll_code = '" . strip_tags($coll_code_id) . "' ");
 $row = $qry->fetch();
 
 extract($row); // Extracts the array values into variables
@@ -30,7 +30,7 @@ $coll_charge_track = intVal($coll_charge_track != '' ? $coll_charge_track : 0);
 $net_received = $due_amt_track + $penalty_track + $coll_charge_track;
 // $due_balance = ($due_amt - $due_amt_track) < 0 ? 0 : $due_amt - $due_amt_track;
 $interest_balance = ($due_amt - $int_amt_track) < 0 ? 0 : $due_amt - $int_amt_track;
-$loan_balance = getBalance($connect, $req_id, $coll_date);
+$loan_balance = getBalance($connect, $req_id, $coll_id);
 
 $qry = $connect->query("SELECT fullname from `user` where `user_id` = $insert_login_id ");
 $user_name = $qry->fetch()['fullname'];
@@ -211,12 +211,11 @@ function moneyFormatIndia($num)
     return $thecash;
 }
 
-function getBalance($connect, $req_id, $coll_date)
+function getBalance($connect, $req_id, $collID)
 {
-    $result = $connect->query("SELECT * FROM `acknowlegement_loan_calculation` WHERE req_id = $req_id ");
+    $result = $connect->query("SELECT tot_amt_cal, principal_amt_cal FROM `acknowlegement_loan_calculation` WHERE req_id = $req_id ");
     if ($result->rowCount() > 0) {
-        $row = $result->fetch();
-        $loan_arr = $row;
+        $loan_arr = $result->fetch();
 
         if ($loan_arr['tot_amt_cal'] == '' || $loan_arr['tot_amt_cal'] == null) {
             //(For monthly interest total amount will not be there, so take principals)
@@ -229,8 +228,9 @@ function getBalance($connect, $req_id, $coll_date)
             $loan_arr['loan_type'] = 'emi';
         }
     }
+
     $coll_arr = array();
-    $result = $connect->query("SELECT * FROM `collection` WHERE req_id ='" . $req_id . "' and date(coll_date) <= date('" . $coll_date . "') ");
+    $result = $connect->query("SELECT due_amt_track, princ_amt_track, int_amt_track, pre_close_waiver, principal_waiver FROM `collection` WHERE req_id ='" . $req_id . "'  AND coll_id <= $collID ");
     if ($result->rowCount() > 0) {
         while ($row = $result->fetch()) {
             $coll_arr[] = $row;
@@ -251,7 +251,7 @@ function getBalance($connect, $req_id, $coll_date)
         $response['total_paid'] = ($loan_arr['loan_type'] == 'emi') ? $total_paid : $total_paid_princ;
         $response['total_waiver'] = ($loan_arr['loan_type'] == 'emi') ? $pre_closure : $principal_waiver;
         $response['total_paid_int'] = $total_paid_int;
-        $response['balance'] = $response['total_amt'] - $response['total_paid'] - $response['total_waiver'];;
+        $response['balance'] = $response['total_amt'] - $response['total_paid'] - $response['total_waiver'];
     } else {
         $response['balance'] = $response['total_amt'];
     }

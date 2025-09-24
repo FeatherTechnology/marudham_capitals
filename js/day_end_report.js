@@ -1,37 +1,36 @@
 $(document).ready(function () {
-    //Collection Report Table
     $('#reset_btn').click(function () {
-        if($('#search_date').val()==""){
-        alert('Please Select The Search Date');
+        if($('#search_date').val() == ""){
+            alert('Please Select The Search Date');
         }else{
-        dayEndReportTable();
+            dayEndReportTable();
         }
-    })
+    });
 
     // Print Day End Report
     $('#print_day_end_report').click(function () {
-    var rowCount = $('#day_end_div table tbody tr').length;
+        var rowCount = $('#day_end_div table tbody tr').length;
 
-    if (rowCount === 0) {
-        alert('No data available to print.');
-        return; 
-    }
+        if (rowCount === 0) {
+            alert('No data available to print.');
+            return; 
+        }
 
-    var printContents = document.getElementById('day_end_div').innerHTML;
-    var printWindow = window.open('', '', 'height=600,width=800');
-    printWindow.document.write('<html><head><title>Day End Report</title>');
-    printWindow.document.write('<style>table{border-collapse: collapse; width:100%;} table, th, td {border: 1px solid black; padding: 8px;}</style>');
-    printWindow.document.write('</head><body>');
-    printWindow.document.write(printContents);
-    printWindow.document.write('</body></html>');
-    printWindow.document.close();
+        var printContents = document.getElementById('day_end_div').innerHTML;
+        var printWindow = window.open('', '', 'height=600,width=800');
+        printWindow.document.write('<html><head><title>Day End Report</title>');
+        printWindow.document.write('<style>table{border-collapse: collapse; width:100%;} table, th, td {border: 1px solid black; padding: 8px;}</style>');
+        printWindow.document.write('</head><body>');
+        printWindow.document.write(printContents);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
 
-    printWindow.onload = function () {
-        printWindow.focus();
-        printWindow.print();
-        printWindow.close();
-    };
-});
+        printWindow.onload = function () {
+            printWindow.focus();
+            printWindow.print();
+            printWindow.close();
+        };
+    });
 
 });
 

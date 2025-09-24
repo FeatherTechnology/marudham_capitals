@@ -45,8 +45,13 @@ $bank_details = $getuser['bank_details'];
 									<td>Debit</td>
 								</thead>
 								<tbody>
-									<tr class='break'>
+									<tr>
 										<td>Total Opening Balance</td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr class='break'>
+										<td>Agent Opening Balance</td>
 										<td></td>
 										<td></td>
 									</tr>
@@ -117,6 +122,11 @@ $bank_details = $getuser['bank_details'];
 									</tr>
 									<tr class='break'>
 										<td>Expense</td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td>Agent Closing Balance</td>
 										<td></td>
 										<td></td>
 									</tr>
@@ -298,8 +308,13 @@ $bank_details = $getuser['bank_details'];
 										<td></td>
 										<td></td>
 									</tr>
-									<tr class='break'>
+									<tr>
 										<td>Opening Balance</td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr class='break'>
+										<td>Agent Opening Balance</td>
 										<td></td>
 										<td></td>
 									</tr>
@@ -314,12 +329,12 @@ $bank_details = $getuser['bank_details'];
 										<td></td>
 									</tr>
 									<tr>
-										<td>EL</td>
+										<td>Exchange</td>
 										<td></td>
 										<td></td>
 									</tr>
 									<tr>
-										<td>Exchange</td>
+										<td>EL</td>
 										<td></td>
 										<td></td>
 									</tr>
@@ -330,6 +345,11 @@ $bank_details = $getuser['bank_details'];
 									</tr>
 									<tr>
 										<td>Closing Outstanding</td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td>Agent Closing Balance</td>
 										<td></td>
 										<td></td>
 									</tr>
