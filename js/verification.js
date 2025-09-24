@@ -1547,16 +1547,8 @@ function closeFamModal() {
           "</option>"
         );
       }
-      // {
-      //   //To Order ag_group Alphabetically
-      //   var firstOption = $("#guarentor_name option:first-child");
-      //   $("#guarentor_name").html(
-      //     $("#guarentor_name option:not(:first-child)").sort(function (a, b) {
-      //       return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-      //     })
-      //   );
-      //   $("#guarentor_name").prepend(firstOption);
-      // }
+      // Sort guarentor_name dropdown
+      sortDropdownAlphabetically("#guarentor_name");
 
       resetFamInfo();
       resetFamDetails();
@@ -1882,16 +1874,8 @@ function propertyHolder() {
           "<option value='" + fam_name + "'>" + fam_name + "</option>"
         );
       }
-      // {
-      //   //To Order ag_group Alphabetically
-      //   var firstOption = $("#property_holder option:first-child");
-      //   $("#property_holder").html(
-      //     $("#property_holder option:not(:first-child)").sort(function (a, b) {
-      //       return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-      //     })
-      //   );
-      //   $("#property_holder").prepend(firstOption);
-      // }
+      // Sort property_holder dropdown
+      sortDropdownAlphabetically("#property_holder");
     },
   });
 }
@@ -2698,16 +2682,8 @@ function getDistrictDropdown(StateSelected) {
   $("#district").html(htmlString);
   $("#district1").val(district_upd);
 
-  // {
-  //   //To Order Alphabetically
-  //   var firstOption = $("#district option:first-child");
-  //   $("#district").html(
-  //     $("#district option:not(:first-child)").sort(function (a, b) {
-  //       return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-  //     })
-  //   );
-  //   $("#district").prepend(firstOption);
-  // }
+    // Sort district dropdown
+    sortDropdownAlphabetically("#district");
 }
 
 //get Taluk Dropdown
@@ -3244,16 +3220,8 @@ function getTalukDropdown(DistSelected) {
   $("#taluk").html(htmlString);
   $("#taluk1").val(taluk_upd);
 
-  // {
-  //   //To Order Alphabetically
-  //   var firstOption = $("#taluk option:first-child");
-  //   $("#taluk").html(
-  //     $("#taluk option:not(:first-child)").sort(function (a, b) {
-  //       return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-  //     })
-  //   );
-  //   $("#taluk").prepend(firstOption);
-  // }
+    // Sort taluk dropdown
+    sortDropdownAlphabetically("#taluk");
 }
 
 //Get Taluk Based Area
@@ -3289,16 +3257,8 @@ function getTalukBasedArea(talukselected) {
       $("#area_name").val("");
       $("#area_id").val("");
 
-      // {
-      //   //To Order Alphabetically
-      //   var firstOption = $("#area option:first-child");
-      //   $("#area").html(
-      //     $("#area option:not(:first-child)").sort(function (a, b) {
-      //       return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-      //     })
-      //   );
-      //   $("#area").prepend(firstOption);
-      // }
+      // Sort area dropdown
+      sortDropdownAlphabetically("#area");
     },
   });
 }
@@ -3476,16 +3436,8 @@ function getStaffBasedAgent(user_id_load) {
           " </option>"
         );
       }
-      // {
-      //   //To Order Alphabetically
-      //   var firstOption = $("#cus_agent_name option:first-child");
-      //   $("#cus_agent_name").html(
-      //     $("#cus_agent_name option:not(:first-child)").sort(function (a, b) {
-      //       return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-      //     })
-      //   );
-      //   $("#cus_agent_name").prepend(firstOption);
-      // }
+      // Sort cus_agent_name dropdown
+      sortDropdownAlphabetically("#cus_agent_name");
     },
   });
 }
@@ -3523,16 +3475,8 @@ function getAllAgentDropdown() {
           " </option>"
         );
       }
-      // {
-      //   //To Order Alphabetically
-      //   var firstOption = $("#cus_agent_name option:first-child");
-      //   $("#cus_agent_name").html(
-      //     $("#cus_agent_name option:not(:first-child)").sort(function (a, b) {
-      //       return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-      //     })
-      //   );
-      //   $("#cus_agent_name").prepend(firstOption);
-      // }
+      // Sort cus_agent_name dropdown
+      sortDropdownAlphabetically("#cus_agent_name");
     },
   });
 }
@@ -3878,18 +3822,8 @@ function endorseHolderName() {
         $("#ownername_relationship_name").append(`<option value='${fam_id}' ${selected}>${fam_name}</option>`);
       }
 
-      // {
-      //   //To Order ag_group Alphabetically
-      //   var firstOption = $("#ownername_relationship_name option:first-child");
-      //   $("#ownername_relationship_name").html(
-      //     $("#ownername_relationship_name option:not(:first-child)").sort(
-      //       function (a, b) {
-      //         return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-      //       }
-      //     )
-      //   );
-      //   $("#ownername_relationship_name").prepend(firstOption);
-      // }
+      // Sort ownername_relationship_name dropdown
+      sortDropdownAlphabetically("#ownername_relationship_name");
     },
   });
 }
@@ -3921,20 +3855,8 @@ function mortgageHolderName() {
         $("#Propertyholder_relationship_name").append(`<option value='${fam_id}' ${selected}>${fam_name}</option>`);
       }
 
-      // {
-      //   //To Order ag_group Alphabetically
-      //   var firstOption = $(
-      //     "#Propertyholder_relationship_name option:first-child"
-      //   );
-      //   $("#Propertyholder_relationship_name").html(
-      //     $("#Propertyholder_relationship_name option:not(:first-child)").sort(
-      //       function (a, b) {
-      //         return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-      //       }
-      //     )
-      //   );
-      //   $("#Propertyholder_relationship_name").prepend(firstOption);
-      // }
+      // Sort Propertyholder_relationship_name dropdown
+      sortDropdownAlphabetically("#Propertyholder_relationship_name");
     },
   });
 }
@@ -3961,18 +3883,8 @@ function docHolderName(callback) {
           "<option value='" + fam_id + "'>" + fam_name + "</option>"
         );
       }
-      // {
-      //   //To Order ag_group Alphabetically
-      //   var firstOption = $("#docholder_relationship_name option:first-child");
-      //   $("#docholder_relationship_name").html(
-      //     $("#docholder_relationship_name option:not(:first-child)").sort(
-      //       function (a, b) {
-      //         return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-      //       }
-      //     )
-      //   );
-      //   $("#docholder_relationship_name").prepend(firstOption);
-      // }
+      // Sort docholder_relationship_name dropdown
+      sortDropdownAlphabetically("#docholder_relationship_name");
 
       if (typeof callback === "function") {
         callback();
@@ -4104,19 +4016,8 @@ function signTypeRelation(signedValue) {
 
         $("#signType_relationship").append(`<option value='${fam_id}' ${selected}> ${fam_name} - ${relationship} </option>`);
       }
-      // {
-      //   //To Order ag_group Alphabetically
-      //   var firstOption = $("#signType_relationship option:first-child");
-      //   $("#signType_relationship").html(
-      //     $("#signType_relationship option:not(:first-child)").sort(function (
-      //       a,
-      //       b
-      //     ) {
-      //       return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-      //     })
-      //   );
-      //   $("#signType_relationship").prepend(firstOption);
-      // }
+      // Sort signType_relationship dropdown
+      sortDropdownAlphabetically("#signType_relationship");
     },
   });
 }
@@ -4301,18 +4202,8 @@ function chequeHolderName(chequeValue) {
         $("#holder_relationship_name").append(`<option value='${fam_id}' ${selected}>${fam_name}</option>`);
       }
 
-      // {
-      //   //To Order ag_group Alphabetically
-      //   var firstOption = $("#holder_relationship_name option:first-child");
-      //   $("#holder_relationship_name").html(
-      //     $("#holder_relationship_name option:not(:first-child)").sort(
-      //       function (a, b) {
-      //         return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-      //       }
-      //     )
-      //   );
-      //   $("#holder_relationship_name").prepend(firstOption);
-      // }
+      // Sort holder_relationship_name dropdown
+      sortDropdownAlphabetically("#holder_relationship_name");
 
     },
   });

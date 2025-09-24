@@ -58,11 +58,11 @@ function dueFollowUpCustomerCountReportTable() {
                 { data: 'sno' },
                 { data: 'fullname' },
                 { data: 'loan_category' },
-                { data: 'total_count' },
+                { data: 't_current_count' },
                 { data: 'payable_zero' },
-                { data: 'responsible' },
+                { data: 'responsible_zero' },
                 { data: 'paid' },
-                { data: 'partial_paid' },
+                { data: 'partially_paid' },
                 { data: 'unpaid' }
             ];
 
@@ -88,11 +88,11 @@ function dueFollowUpCustomerCountReportTable() {
         <td></td>
         <td><b>Total</b></td>
         <td></td>
-        <td><b>${totalRow.total_count}</b></td>
+        <td><b>${totalRow.t_current_count}</b></td>
         <td><b>${totalRow.payable_zero}</b></td>
-        <td><b>${totalRow.responsible}</b></td>
+        <td><b>${totalRow.responsible_zero}</b></td>
         <td><b>${totalRow.paid}</b></td>
-        <td><b>${totalRow.partial_paid}</b></td>
+        <td><b>${totalRow.partially_paid}</b></td>
         <td><b>${totalRow.unpaid}</b></td>
     </tr>`;
 

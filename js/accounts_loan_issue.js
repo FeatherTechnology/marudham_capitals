@@ -293,13 +293,8 @@ function guarentorName() {
                 }
                 $("#guarentor_name").append("<option value='" + fam_id + "' " + selected + ">" + fam_name + "</option>");
             }
-            // {//To Order ag_group Alphabetically
-            //     var firstOption = $("#guarentor_name option:first-child");
-            //     $("#guarentor_name").html($("#guarentor_name option:not(:first-child)").sort(function (a, b) {
-            //         return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-            //     }));
-            //     $("#guarentor_name").prepend(firstOption);
-            // }
+            // Sort guarentor_name dropdown
+            sortDropdownAlphabetically("#guarentor_name");
         }
     });
 }

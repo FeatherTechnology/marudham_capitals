@@ -257,7 +257,7 @@ AND col.coll_sub_status IN ('Due Nil');
 FROM collection c
 JOIN acknowlegement_loan_calculation a 
       ON c.req_id = a.req_id
-WHERE c.coll_date <= '$search_date'
+WHERE DATE(c.coll_date) <= '$search_date'
   AND c.req_id IN ($id_list)
 GROUP BY c.req_id;
 ");

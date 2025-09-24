@@ -2041,4 +2041,17 @@
         });
 
     //////////////////////////////////////////////////////////// Session Logut Time End ////////////////////////////////////////////////////////////////////////////////////
-    </script>
+
+    // Reusable function to sort a dropdown alphabetically
+    function sortDropdownAlphabetically(selectSelector) {
+        var $select = $(selectSelector);
+        var $firstOption = $select.find('option:first-child');
+        $select.find('option:not(:first-child)')
+            .sort(function(a, b) {
+            return a.text.localeCompare(b.text);
+        })
+        .appendTo($select); // moves elements, preserves selected
+        $select.prepend($firstOption); // keep first option at top
+    }
+
+</script>

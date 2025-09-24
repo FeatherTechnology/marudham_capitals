@@ -18,14 +18,8 @@ const schemeMultiselect = new Choices('#scheme1', {
 // Document is ready
 $(document).ready(function () {
 
-
-    {//To Order ag_group Alphabetically
-        var firstOption = $("#ag_group option:first-child");
-        $("#ag_group").html($("#ag_group option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#ag_group").prepend(firstOption);
-    }
+    // Sort ag_group dropdown
+    sortDropdownAlphabetically("#ag_group");
 
     $("#state").change(function () {
         var StateSelected = $(this).val();
@@ -183,13 +177,8 @@ function getDistrictDropdown(StateSelected) {
     $("#district").html(htmlString);
     $("#district1").val(district_upd);
 
-    {//To Order district Alphabetically
-        var firstOption = $("#district option:first-child");
-        $("#district").html($("#district option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#district").prepend(firstOption);
-    }
+    // Sort district dropdown
+    sortDropdownAlphabetically("#district");
 
 }
 
@@ -371,13 +360,8 @@ function getTalukDropdown(DistSelected) {
     $("#taluk").html(htmlString);
     $("#taluk1").val(taluk_upd);
 
-    {//To Order taluk Alphabetically
-        var firstOption = $("#taluk option:first-child");
-        $("#taluk").html($("#taluk option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#taluk").prepend(firstOption);
-    }
+    // Sort taluk dropdown
+    sortDropdownAlphabetically("#taluk");
 
 }
 
@@ -674,13 +658,8 @@ function getSchemeValues(sub_cat) {
                     var agent_group_name = response[i]['agent_group_name'];
                     $("#ag_group").append("<option value='" + agent_group_id + "'>" + agent_group_name + "</option>");
                 }
-                {//To Order ag_group Alphabetically
-                    var firstOption = $("#ag_group option:first-child");
-                    $("#ag_group").html($("#ag_group option:not(:first-child)").sort(function (a, b) {
-                        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                    }));
-                    $("#ag_group").prepend(firstOption);
-                }
+                // Sort ag_group dropdown
+                sortDropdownAlphabetically("#ag_group");
             }
         });
     }
@@ -748,13 +727,8 @@ function getBranchDropdown(company_id) {
                 }
                 $('#branch_id').append("<option value ='" + response[i]['branch_id'] + "' " + selected + " > " + response[i]['branch_name'] + " </option>");
             }
-            {//To Order Branch Alphabetically
-                var firstOption = $("#branch_id option:first-child");
-                $("#branch_id").html($("#branch_id option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#branch_id").prepend(firstOption);
-            }
+            // Sort branch_id dropdown
+            sortDropdownAlphabetically("#branch_id");
         }
     })
 }
@@ -811,13 +785,8 @@ function getAgentGroupDropdown() {
                 }
                 $("#ag_group").append("<option value='" + agent_group_id + "' " + selected + " >" + agent_group_name + "</option>");
             }
-            {//To Order ag_group Alphabetically
-                var firstOption = $("#ag_group option:first-child");
-                $("#ag_group").html($("#ag_group option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#ag_group").prepend(firstOption);
-            }
+            // Sort ag_group dropdown
+            sortDropdownAlphabetically("#ag_group");
         }
     });
 }

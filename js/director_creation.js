@@ -94,13 +94,8 @@ function getDistrictDropdown(StateSelected) {
     $("#district").html(htmlString);
     $("#district1").val(district_upd);
 
-    {//To Order district Alphabetically
-        var firstOption = $("#district option:first-child");
-        $("#district").html($("#district option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#district").prepend(firstOption);
-    }
+    // Sort district dropdown
+    sortDropdownAlphabetically("#district");
 }
 
 //get Taluk Dropdown
@@ -281,13 +276,8 @@ function getTalukDropdown(DistSelected) {
     $("#taluk").html(htmlString);
     $("#taluk1").val(taluk_upd);
 
-    {//To Order taluk Alphabetically
-        var firstOption = $("#taluk option:first-child");
-        $("#taluk").html($("#taluk option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#taluk").prepend(firstOption);
-    }
+    // Sort taluk dropdown
+    sortDropdownAlphabetically("#taluk");
 }
 
 //Get Director Code based on Director Type
@@ -326,13 +316,8 @@ function getBranchDropdown(company_id) {
                 }
                 $('#branch_id').append("<option value ='" + response[i]['branch_id'] + "' " + selected + " > " + response[i]['branch_name'] + " </option>");
             }
-            {//To Order Branch Alphabetically
-                var firstOption = $("#branch_id option:first-child");
-                $("#branch_id").html($("#branch_id option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#branch_id").prepend(firstOption);
-            }
+            // Sort branch_id dropdown
+            sortDropdownAlphabetically("#branch_id");
         }
     })
 }

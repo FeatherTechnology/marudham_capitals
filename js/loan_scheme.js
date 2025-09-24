@@ -13,27 +13,14 @@ $(document).ready(function () {
         if (scheme_type == 'daily') { $('.monthly_scheme').hide(); $('.weekly_scheme').hide(); $('.daily_scheme').show(); }
     })
 
-    {//To Order Alphabetically
-        var firstOption = $("#loan_category option:first-child");
-        $("#loan_category").html($("#loan_category option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#loan_category").prepend(firstOption);
-    }
-    {//To Order Alphabetically
-        var firstOption = $("#loan_category1 option:first-child");
-        $("#loan_category1").html($("#loan_category1 option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#loan_category1").prepend(firstOption);
-    }
-    {//To Order Alphabetically
-        var firstOption = $("#loan_category2 option:first-child");
-        $("#loan_category2").html($("#loan_category2 option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#loan_category2").prepend(firstOption);
-    }
+    // Sort sub_category dropdown
+    sortDropdownAlphabetically("#loan_category");
+
+    // Sort sub_category dropdown
+    sortDropdownAlphabetically("#loan_category1");
+
+    // Sort sub_category dropdown
+    sortDropdownAlphabetically("#loan_category2");
 
     // ***************************************************************************************************************************************************************************
     //Monthly Scheme
@@ -489,13 +476,8 @@ function getSubCategory1(loan_cat) {
                     $('#sub_category1').append("<option value= '" + response[i]['sub_category_name'] + "' " + selected + " > " + response[i]['sub_category_name'] + " </option>")
                 }
             }
-            {//To Order Alphabetically
-                var firstOption = $("#sub_category1 option:first-child");
-                $("#sub_category1").html($("#sub_category1 option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#sub_category1").prepend(firstOption);
-            }
+            // Sort sub_category dropdown
+            sortDropdownAlphabetically("#sub_category1");
         }
     })
 }
@@ -520,13 +502,8 @@ function getSubCategory2(loan_cat) {
                     $('#sub_category2').append("<option value= '" + response[i]['sub_category_name'] + "' " + selected + " > " + response[i]['sub_category_name'] + " </option>")
                 }
             }
-            {//To Order Alphabetically
-                var firstOption = $("#sub_category2 option:first-child");
-                $("#sub_category2").html($("#sub_category2 option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#sub_category2").prepend(firstOption);
-            }
+            // Sort sub_category dropdown
+            sortDropdownAlphabetically("#sub_category2");
         }
     })
 }

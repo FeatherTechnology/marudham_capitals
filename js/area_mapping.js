@@ -66,27 +66,14 @@ $(document).ready(function () {
         if (mapping_type == 'group') { $('.line_mapping').hide(); $('.group_mapping').show(); }
     })
 
-    {//To Order Alphabetically
-        var firstOption = $("#area option:first-child");
-        $("#area").html($("#area option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#area").prepend(firstOption);
-    }
-    {//To Order Alphabetically
-        var firstOption = $("#area1 option:first-child");
-        $("#area1").html($("#area1 option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#area1").prepend(firstOption);
-    }
-    {//To Order Alphabetically
-        var firstOption = $("#area2 option:first-child");
-        $("#area2").html($("#area2 option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#area2").prepend(firstOption);
-    }
+    // Sort area dropdown
+    sortDropdownAlphabetically("#area");
+
+    // Sort area1 dropdown
+    sortDropdownAlphabetically("#area1");
+
+    // Sort area2 dropdown
+    sortDropdownAlphabetically("#area2");
 
     // ************************************************************** Line Mapping *************************************************************************************** 
 
@@ -709,13 +696,8 @@ function getBranchDropdown() {
                 }
                 $('#branch').append("<option value ='" + response[i]['branch_id'] + "' " + selected + " > " + response[i]['branch_name'] + " </option>");
             }
-            {//To Order Alphabetically
-                var firstOption = $("#branch option:first-child");
-                $("#branch").html($("#branch option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#branch").prepend(firstOption);
-            }
+            // Sort branch dropdown
+            sortDropdownAlphabetically("#branch");
         }
     })
 }
@@ -741,13 +723,8 @@ function getBranchDropdown1() {
                 }
                 $('#branch1').append("<option value = '" + response[i]['branch_id'] + "' " + selected + " > " + response[i]['branch_name'] + " </option>");
             }
-            {//To Order Alphabetically
-                var firstOption = $("#branch1 option:first-child");
-                $("#branch1").html($("#branch1 option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#branch1").prepend(firstOption);
-            }
+            // Sort branch1 dropdown
+            sortDropdownAlphabetically("#branch1");
         }
     })
 }
@@ -774,13 +751,8 @@ function getBranchDropdown2() {
                     }
                     $('#branch2').append("<option value = '" + response[i]['branch_id'] + "' " + selected + " > " + response[i]['branch_name'] + " </option>");
                 }
-                {//To Order Alphabetically
-                    var firstOption = $("#branch2 option:first-child");
-                    $("#branch2").html($("#branch2 option:not(:first-child)").sort(function (a, b) {
-                        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                    }));
-                    $("#branch2").prepend(firstOption);
-                }
+                // Sort branch2 dropdown
+                sortDropdownAlphabetically("#branch2");
 
                 resolve(); // Notify completion
             },
@@ -874,13 +846,8 @@ function getLoanCatDropdown() {
                     }
                     $('#loan_cat1').append("<option value = '" + response[i]['loan_cat_id'] + "' " + selected + " > " + response[i]['loan_cat_name'] + " </option>");
                 }
-                {//To Order Alphabetically
-                    var firstOption = $("#loan_cat1 option:first-child");
-                    $("#loan_cat1").html($("#loan_cat1 option:not(:first-child)").sort(function (a, b) {
-                        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                    }));
-                    $("#loan_cat1").prepend(firstOption);
-                }
+                // Sort loan_cat1 dropdown
+                sortDropdownAlphabetically("#loan_cat1");
 
                 resolve();
             },

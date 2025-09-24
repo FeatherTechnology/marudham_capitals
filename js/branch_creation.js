@@ -93,13 +93,8 @@ function getDistrictDropdown(StateSelected) {
     }
     $("#district").html(htmlString);
 
-    {//To Order Alphabetically
-        var firstOption = $("#district option:first-child");
-        $("#district").html($("#district option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#district").prepend(firstOption);
-    }
+    // Sort District dropdown
+    sortDropdownAlphabetically("#district");
 }
 
 //get Taluk Dropdown
@@ -279,11 +274,6 @@ function getTalukDropdown(DistSelected) {
     }
     $("#taluk").html(htmlString);
 
-    {//To Order Alphabetically
-        var firstOption = $("#taluk option:first-child");
-        $("#taluk").html($("#taluk option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#taluk").prepend(firstOption);
-    }
+    // Sort Taluk dropdown
+    sortDropdownAlphabetically("#taluk");
 }

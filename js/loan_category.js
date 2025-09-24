@@ -4,13 +4,8 @@ $(document).ready(function () {
     // remove delete option for last child
     $('#delete_row:last').filter(':last').removeClass("deleterow");
 
-    {//To Order Alphabetically
-        var firstOption = $("#loan_category_name option:first-child");
-        $("#loan_category_name").html($("#loan_category_name option:not(:first-child)").sort(function (a, b) {
-            return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-        }));
-        $("#loan_category_name").prepend(firstOption);
-    }
+    // Sort loan_category_name dropdown
+    sortDropdownAlphabetically("#loan_category_name");
 
     // Modal Box for Category Name
     {
@@ -258,14 +253,8 @@ function DropDownCourse() {
                 $("#loan_category_name").append("<option value='" + loan_category_creation_id + "'>" + loan_category_creation_name + "</option>");
 
             }
-            {//To Order Alphabetically
-                var firstOption = $("#loan_category_name option:first-child");
-                $("#loan_category_name").html($("#loan_category_name option:not(:first-child)").sort(function (a, b) {
-                    return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-                }));
-                $("#loan_category_name").prepend(firstOption);
-            }
-
+            // Sort loan_category_name dropdown
+            sortDropdownAlphabetically("#loan_category_name");
         }
     });
 }
