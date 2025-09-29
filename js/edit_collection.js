@@ -2,7 +2,7 @@ $(document).ready(function () {
  
     $('#due_nill_btn').click(function (event) {
         event.preventDefault();
-        let Customer_Status=$(this).val();
+        let Customer_Status=$(this).data('filter');
         getcustomerStatustable(Customer_Status);
         $('#all_btn').show();
         $('#due_nill_btn').hide();
