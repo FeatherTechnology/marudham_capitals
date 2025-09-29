@@ -353,7 +353,7 @@ function validateCommitment() {
     let response = true;
     let ftype = $('#comm_ftype').val(); let fstatus = $('#comm_fstatus').val(); let person_type = $('#comm_person_type').val();
     let person_name = $('#comm_person_name').val(); let person_name1 = $('#comm_person_name1').val(); let remark = $('#comm_remark').val();
-    let comm_date = $('#comm_date').val(); let hint = $('#comm_hint').val(); let err = $('#comm_err').val();
+    let comm_date = $('#comm_date').val(); let hint = $('#comm_hint').val(); 
 
     validateField(ftype, '#comm_ftypeCheck');
     validateField(fstatus, '#comm_fstatusCheck');
@@ -369,7 +369,6 @@ function validateCommitment() {
     }
     validateField(remark, '#comm_remarkCheck');
     validateField(hint, '#comm_hintCheck');
-    validateField(err, '#comm_errCheck');
 
     function validateField(value, fieldId) {
         if (value === '') {

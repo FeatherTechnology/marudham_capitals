@@ -44,7 +44,7 @@ if ($role_type == 7 || $role_type == 3) {
         JOIN area_group_mapping ag ON FIND_IN_SET(a.area_id, ag.area_id)
         LEFT JOIN area_duefollowup_mapping adfm ON FIND_IN_SET(a.area_id, adfm.area_id)
         WHERE ncp.cus_id NOT IN (SELECT cus_id FROM customer_register)
-        AND $condition
+        AND $condition GROUP BY ncp.cus_id
     ");
 }
 
