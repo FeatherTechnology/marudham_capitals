@@ -196,7 +196,7 @@ if (isset($_GET['type'])) {
 		<input type="hidden" value="<?php if (isset($sub_area_id)) echo $sub_area_id; ?>" id="sub_area_upd" name="sub_area_upd">
 		<input type="hidden" value="<?php if (isset($sub_area_id1)) echo $sub_area_id1; ?>" id="sub_area_upd1" name="sub_area_upd1">
 		<input type="hidden" value="<?php if (isset($cus_sts)) echo $cus_sts; ?>" id="cus_sts" name="cus_sts">
-		<input type="hidden" value="<?php if (isset($due_line_name)) echo $due_line_name; ?>" id="due_line_name" name="due_line_name">
+		<!-- <input type="hidden" value="<?php #if (isset($due_line_name)) echo $due_line_name; ?>" id="due_line_name" name="due_line_name"> -->
 		<input type="hidden" value="<?php if(isset($loan_category_id)) echo $loan_category_id; ?>" id="loan_cat_upd" name="loan_cat_upd">
 
 		<!-- Row start -->
@@ -373,7 +373,7 @@ if (isset($_GET['type'])) {
 											<span class="text-danger" style='display:none' id='branchName2Check'>Please select Branch name</span>
 										</div>
 									</div>
-									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 loancat_div">
+									<!-- <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 loancat_div">
                                         <div class="form-group">
                                             <label for="disabledInput">Loan Category</label>&nbsp;<span class="text-danger">*</span>
 											<input type='hidden' class='form-control' id='loan_cat' name='loan_cat' >
@@ -382,8 +382,8 @@ if (isset($_GET['type'])) {
 											</select>
 											<span class="text-danger" style='display:none' id='loan_catCheck'>Please select Loan Category</span>
                                         </div>
-                                    </div>
-									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                                    </div> -->
+									<!-- <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
 											<label for="due_line">Line</label>&nbsp;<span class="text-danger">*</span>
 											<input type="hidden" id="dueline" name="dueline" value="">
@@ -392,7 +392,7 @@ if (isset($_GET['type'])) {
 											</select>
 											<span class="text-danger" style='display:none' id='dueLineCheck'>Please select Line</span>
 										</div>
-									</div>
+									</div> -->
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<label for="sub_status_mapping">Customer Status</label><span class="required">&nbsp;*</span>
 										<input type="hidden" name="customer_status" id="customer_status" value="">
