@@ -1,3 +1,13 @@
+<style>
+	/* Remove hover and active highlight completely */
+	.dropdown-menu .dropdown-item:hover,
+	.dropdown-menu .dropdown-item:focus,
+	.dropdown-menu .dropdown-item:active {
+		background-color: transparent !important;
+		color: inherit !important;
+	}
+</style>
+
 <!-- Page header start -->
 <br><br>
 <div class="page-header">
@@ -10,23 +20,29 @@
 <!-- Main container start -->
 <div class="main-container">
 	<!-- Row start -->
-	<div class="card" style="height:110px;" id="dull_nill_div">
-		<div class="row">
-		<div class="col-12 sub_status" style="display: flex; align-items: center; justify-content: center; margin-top:13px">
-			<h4>Customer Status</h4>
-		</div>
-		<div class="col-12 sub_status" style="display: flex; align-items: center; justify-content: center; margin-top: 13px;">
-			<button type="button" class="btn btn-primary" id="due_nill_btn" value="Due Nil">Due Nill</button>
-			<button type="button" class="btn btn-primary" id="all_btn" value="All" style="display: none;">All</button>
-			</div>
-		</div>
-		<br><br>
-	</div>
 	<div class="row gutters">
 		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 			<div class="table-container">
 
 				<div class="table-responsive">
+					<div class="d-flex justify-content-between align-items-center mb-2">
+						<h5 class="card-title mb-0">Collection List</h5>
+						<div class="dropdown">
+							<button class="border-0 bg-transparent" type="button" id="filterDropdown" data-bs-toggle="dropdown"
+								aria-expanded="false">
+								<i class="fa fa-filter" style="color:#009688; font-size:30px; margin-right: 10px;"></i>
+							</button>
+							<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="filterDropdown">
+								<li>
+									<a class="dropdown-item filter-option" id="due_nill_btn" value="Due Nil" data-filter="Due Nil">Due Nil</a>
+								</li>
+								<li>
+									<a class="dropdown-item filter-option" id="all_btn" value="All" style="display: none;" data-filter="All">All</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<br> <br>
 					<?php
 					$mscid = 0;
 					$id = 0;

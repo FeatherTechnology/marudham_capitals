@@ -83,6 +83,7 @@ while ($row = $run->fetch()) {
 $req_id_list = implode(',', $req_id_list);
 
 $query = "SELECT 
+            lc.req_id AS req_id,    
             alm.line_name AS line,
             ii.loan_id,
             ad.doc_id,
@@ -112,6 +113,7 @@ $query = "SELECT
             iv.cus_status,
             lc.due_start_from,
             lc.calc_method,
+            lc.int_rate,
             lc.maturity_month AS maturity_date
         FROM 
             acknowlegement_loan_calculation lc
@@ -226,26 +228,35 @@ foreach ($result as $row) {
     }
 
     $paid_due = $row['int_amt_track'] / $row['int_amt_cal'];
-    $balance_due = (float)$row['due_period'] - $paid_due;
     $payable_amount = ($months * $row['int_amt_cal']) - $row['int_amt_track'];
     $pending_amount = ($pending_month * $row['int_amt_cal']) - $row['int_amt_track'];
     $balance_amount =  intVal($row['loan_amt_cal']) - intVal($row['princ_amt_track']);
-    $due_period = intVal($row['due_period']);
-
-    if ($due_period > 0) {
-        $princ_amt = intVal($row['loan_amt_cal']) / $due_period;
-        $int_amt = intVal($row['int_amt_cal']) / $due_period;
-    } else {
-        $princ_amt = 0;  // Or any default value
-        $int_amt = 0;    // Or any default value
-    }
-
-    $balance_principal = $princ_amt * $balance_due;
-    $balance_intrest = $int_amt * $balance_due;
-
     $penalty = intval($row['penalty']) - (intval($row['penalty_track']) + intval($row['penalty_waiver']));
-
     $fine = intval($row['fine']) - (intval($row['fine_track']) + intval($row['fine_waiver']));
+
+    $req_id = $row['req_id'];
+
+    // Prepare loan_arr and response for calculation
+    $loan_arr = [
+        'loan_date' => $row['loan_date'],
+        'calculate_method' => $row['calc_method'],
+        'int_rate' => $row['int_rate']
+    ];
+
+    $response = [
+        'calculate_method' => $row['calc_method'],
+        'due_amt' => floatval($row['int_amt_cal'])
+    ];
+
+    // Pass the report date to override today in payableCalculation
+    $payable_interest = payableCalculation($connect, $loan_arr, $response, $req_id, $to_date);
+
+    // Interest already paid
+    $interest_paid = getPaidInterest($connect, $req_id, $to_date);
+
+    // Pending interest
+    $pending_interest = ceilAmount($payable_interest) - $interest_paid;
+    if ($pending_interest < 0) $pending_interest = 0;
 
     $sub_array[] = $sno;
     $sub_array[] = $row['line'];
@@ -262,10 +273,9 @@ foreach ($result as $row) {
     $sub_array[] = $row['ag_name'];
     $sub_array[] = moneyFormatIndia($row['loan_amt_cal']);
     $sub_array[] = $row['due_period'];
-    $sub_array[] = round($balance_principal, 1);;
-    $sub_array[] = round($balance_intrest, 1);;
     $sub_array[] = moneyFormatIndia($balance_amount);
-    $sub_array[] = floor($balance_due * 100) / 100;
+    $sub_array[] = moneyFormatIndia($balance_amount);
+    $sub_array[] = moneyFormatIndia($pending_interest);
     $sub_array[] = moneyFormatIndia($penalty);
     $sub_array[] = moneyFormatIndia($fine);
     $sub_array[] = 'Present';
@@ -334,4 +344,175 @@ function moneyFormatIndia($num)
         $thecash = $num;
     }
     return $thecash;
+}
+
+function payableCalculation($connect, $loan_arr, $response, $req_id , $to_date = null)
+{
+    $issued_date = new DateTime(date('Y-m-d', strtotime($loan_arr['loan_date'])));
+    $cur_date = new DateTime($to_date ?? date('Y-m-d'));
+
+    $result = 0;
+    if ($response['calculate_method'] == "Monthly") {
+        $last_month = clone $cur_date;
+        $last_month->modify('-1 month'); // Last month same date
+        $st_date = clone $issued_date;
+
+        while ($st_date->format('Y-m') <= $last_month->format('Y-m')) {
+            $end_date = clone $st_date;
+            $end_date->modify('last day of this month');
+            $start = clone $st_date; // Due to mutation in function
+
+            $result += dueAmtCalculation($connect, $start, $end_date, $response['due_amt'], $loan_arr, 'payable', $req_id);
+
+            $st_date->modify('+1 month');
+            $st_date->modify('first day of this month');
+        }
+    } elseif ($response['calculate_method'] == "Days") {
+        $last_date = clone $cur_date;
+        $last_date->modify('-1 month'); // Last month same date
+        $st_date = clone $issued_date;
+
+        while ($st_date->format('Y-m') <= $last_date->format('Y-m')) {
+            $end_date = clone $st_date;
+            $end_date->modify('last day of this month');
+            $start = clone $st_date;
+
+            $result += dueAmtCalculation($connect, $start, $end_date, $response['due_amt'], $loan_arr, 'payable', $req_id);
+            $st_date->modify('+1 month');
+            $st_date->modify('first day of this month');
+        }
+    }
+    return $result;
+}
+
+function dueAmtCalculation($connect, $start_date, $end_date, $due_amt, $loan_arr, $status, $req_id)
+{
+    $start = new DateTime($start_date->format('Y-m-d'));
+    $end = new DateTime($end_date->format('Y-m-d'));
+
+    $calculate_method = $loan_arr['calculate_method'];
+    $int_rate = $loan_arr['int_rate'];
+    $result = 0;
+    $monthly_Interest_data = [];
+
+    $loanRow = $connect->query("SELECT loan_amt FROM acknowlegement_loan_calculation WHERE req_id = '$req_id'")->fetch(PDO::FETCH_ASSOC);
+    $default_balance = $loanRow['loan_amt'];
+
+    $collections = $connect->query("SELECT princ_amt_track, principal_waiver, coll_date FROM collection 
+        WHERE req_id = '$req_id' AND (princ_amt_track != '' OR principal_waiver != '') ORDER BY coll_date ASC")->fetchAll();
+
+    if (!empty($collections)) {
+
+        // <---------------------------------------------------------------- IF COLLECTIONS EXIST ------------------------------------------------------------>
+
+        $collection_index = 0;
+        $current_balance = $default_balance;
+
+        while ($start <= $end) {
+            $today_str = $start->format('Y-m-d');
+            $month_key = $start->format('Y-m-01');
+            $paid_principal_today = 0;
+            $paid_principal_waiver = 0;
+
+            while ($collection_index < count($collections)) {
+                $collection = $collections[$collection_index];
+                $coll_date = (new DateTime($collection['coll_date']))->format('Y-m-d');
+                if ($coll_date == $today_str) {
+                    $paid_principal_today += (float)$collection['princ_amt_track'];
+                    $paid_principal_waiver += (float)$collection['principal_waiver'];
+                    $collection_index++;
+                } else {
+                    break;
+                }
+            }
+
+            $current_balance = max(0, $current_balance - ($paid_principal_today + $paid_principal_waiver));
+
+            $Interest_today = calculateNewInterestAmt($int_rate, $current_balance, $calculate_method);
+
+            if ($calculate_method === 'Days') {
+                $result += $Interest_today;
+                $monthly_Interest_data[$month_key] = ($monthly_Interest_data[$month_key] ?? 0) + $Interest_today;
+            } else {
+                $days_in_month = (int)$start->format('t');
+                $daily_Interest = $Interest_today / $days_in_month;
+                $result += $daily_Interest;
+                $monthly_Interest_data[$month_key] = ($monthly_Interest_data[$month_key] ?? 0) + $daily_Interest;
+            }
+
+            $start->modify('+1 day');
+        }
+    } else {
+        $monthly_Interest_data = [];
+
+        if ($calculate_method == 'Monthly') {
+            while ($start->format('Y-m') <= $end->format('Y-m')) {
+                $month_key = $start->format('Y-m-d');
+                $dueperday = $due_amt / intval($start->format('t'));
+
+                if ($status != 'pending') {
+                    if ($start->format('m') != $end->format('m')) {
+                        $new_end_date = clone $start;
+                        $new_end_date->modify('last day of this month');
+                        $cur_result = (($start->diff($new_end_date))->days + 1) * $dueperday;
+                    } else {
+                        $cur_result = (($start->diff($end))->days + 1) * $dueperday;
+                    }
+                } else {
+                    $new_end = clone $start;
+                    $new_end->modify("last day of this month");
+                    $cur_result = (($start->diff($new_end))->days + 1) * $dueperday;
+                }
+
+                $result += $cur_result;
+                $monthly_Interest_data[$month_key] = ($monthly_Interest_data[$month_key] ?? 0) + $cur_result;
+                $start->modify('+1 month');
+                $start->modify('first day of this month');
+            }
+        } else if ($calculate_method == 'Days') {
+            while ($start->format('Y-m-d') <= $end->format('Y-m-d')) {
+                $month_key = $start->format('Y-m-d');
+                $dueperday = $due_amt;
+                $result += $dueperday;
+                $monthly_Interest_data[$month_key] = ($monthly_Interest_data[$month_key] ?? 0) + $dueperday;
+
+                $start->modify('+1 day');
+            }
+        }
+    }
+
+    return $result;
+}
+
+function calculateNewInterestAmt($int_rate, $balance, $calculate_method)
+{
+    if ($calculate_method == 'Monthly') {
+        $int = $balance * ($int_rate / 100);
+    } else if ($calculate_method == 'Days') {
+        $int = ($balance * ($int_rate / 100) / 30);
+    }
+
+    $curInterest = ceil($int / 5) * 5; //to increase Interest to nearest multiple of 5
+    if ($curInterest < $int) {
+        $curInterest += 5;
+    }
+    $response = $curInterest;
+
+    return $response;
+}
+
+function getPaidInterest($connect, $req_id , $to_date)
+{
+    $qry = $connect->query("SELECT COALESCE(SUM(int_amt_track), 0) + COALESCE(SUM(interest_waiver), 0) AS int_paid FROM `collection` WHERE req_id = '$req_id' and (int_amt_track != '' and int_amt_track IS NOT NULL OR interest_waiver != '' and interest_waiver IS NOT NULL) AND DATE(coll_date) <= DATE('$to_date') ");
+    $int_paid = $qry->fetch()['int_paid'];
+    return intVal($int_paid);
+}
+
+function ceilAmount($amt)
+{
+    $cur_amt = ceil($amt / 5) * 5; //ceil will set the number to nearest upper integer//i.e ceil(121/5)*5 = 125
+    if ($cur_amt < $amt) {
+        $cur_amt += 5;
+    }
+    return $cur_amt;
 }

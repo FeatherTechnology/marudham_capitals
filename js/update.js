@@ -2362,11 +2362,13 @@ $('#submit_update_cus_profile').click(function () {
 function validation() {
     var cus_id = $('#cus_id').val(); var cus_name = $('#cus_name').val(); var dob = $('#dob').val(); var gender = $('#gender').val(); var state = $('#state').val();
     var cus_image = $('#cus_image').val(); var pic = $('#pic').val();
-    var district = $('#district1').val(); var taluk = $('#taluk1').val(); var area = $('#area').val(); var sub_area = $('#sub_area').val(); var cus_address = $('#cus_address').val();
+    var district = $('#district').val(); var taluk = $('#taluk').val(); var area = $('#area').val(); var sub_area = $('#sub_area').val(); var cus_address = $('#cus_address').val();
     var mobile1 = $('#mobile1').val(); var mobile2 = $('#mobile2').val(); var father_name = $('#father_name').val(); var mother_name = $('#mother_name').val(); var marital = $('#marital').val();
     var occupation_type = $('#occupation_type').val(); var occupation = $('#occupation').val(); var area_cnfrm = $('#area_cnfrm').val(); var cus_res_type = $('#cus_res_type').val();
     var cus_res_details = $('#cus_res_details').val(); var cus_res_address = $('#cus_res_address').val(); var cus_res_native = $('#cus_res_native').val();
     var cus_occ_type = $('#cus_occ_type').val(); var cus_occ_detail = $('#cus_occ_detail').val(); var cus_occ_income = $('#cus_occ_income').val(); var cus_occ_address = $('#cus_occ_address').val(); var cus_occ_dow = $('#cus_occ_dow').val(); var cus_occ_abt = $('#cus_occ_abt').val();
+    var area_state = $('#area_state').val(); var area_district = $('#area_district').val(); var area_taluk = $('#area_taluk').val(); 
+    var area_confirm = $('#area_confirm').val(); var area_sub_area = $('#area_sub_area').val();
     var cus_how_know = $('#cus_how_know').val(); var cus_monthly_income = $('#cus_monthly_income').val(); var cus_other_income = $('#cus_other_income').val(); var cus_support_income = $('#cus_support_income').val(); var cus_Commitment = $('#cus_Commitment').val(); var cus_monDue_capacity = $('#cus_monDue_capacity').val(); var cus_loan_limit = $('#cus_loan_limit').val(); var about_cus = $('#about_cus').val();
     var guarentor_name = $('#guarentor_name').val(); var guarentor_image = $('#guarentor_image').val(); var guarentorpic = $('#guarentorpic').val(); var loan_id = $('#loan_id').val();
 
@@ -2400,13 +2402,13 @@ function validation() {
     } else {
         $('#stateCheck').hide();
     }
-    if (district == '') {
+    if (district == 'Select District') {
         event.preventDefault();
         $('#districtCheck').show();
     } else {
         $('#districtCheck').hide();
     }
-    if (taluk == '') {
+    if (taluk == 'Select Taluk') {
         event.preventDefault();
         $('#talukCheck').show();
     } else {
@@ -2495,6 +2497,36 @@ function validation() {
     } else {
         event.preventDefault();
         $('#areacnfrmCheck').show();
+    }
+    if (area_state == 'SelectState') {
+        event.preventDefault();
+        $('#areastateCheck').show();
+    } else {
+        $('#areastateCheck').hide();
+    }
+    if (area_district == 'Select District') {
+        event.preventDefault();
+        $('#areadistrictCheck').show();
+    } else {
+        $('#areadistrictCheck').hide();
+    }
+    if (area_taluk == 'Select Taluk') {
+        event.preventDefault();
+        $('#areatalukCheck').show();
+    } else {
+        $('#areatalukCheck').hide();
+    }
+    if (area_confirm == '') {
+        event.preventDefault();
+        $('#areaconfirmCheck').show();
+    } else {
+        $('#areaconfirmCheck').hide();
+    }
+    if (area_sub_area == '') {
+        event.preventDefault();
+        $('#areasubareaCheck').show();
+    } else {
+        $('#areasubareaCheck').hide();
     }
     if (cus_how_know == '') {
         event.preventDefault();

@@ -102,13 +102,10 @@
 									<th>Sub Category</th>
 									<th>Agent</th>
 									<th>Loan Amount</th>
-									<th>Interest Amount</th>
 									<th>No of Due</th>
-									<th>Total Amount</th>
 									<th>Balance Amount</th>
 									<th>Principal Amount</th>
 									<th>Interest Amount</th>
-									<th>No of Balance Due</th>
 									<th>Penalty</th>
 									<th>Fine</th>
 									<th>Status</th>
@@ -118,9 +115,6 @@
 								<tfoot>
 									<tr>
 										<td colspan="13"></td>
-										<td></td>
-										<td></td>
-										<td></td>
 										<td></td>
 										<td></td>
 										<td></td>
