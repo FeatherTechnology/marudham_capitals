@@ -52,7 +52,7 @@ $column = array(
     'a.req_id'
 );
 if ($userid == 1) {
-    $query = "SELECT a.dor,a.cus_id,a.cus_name,a.user_type,a.user_name,a.agent_id,a.responsible,a.cus_data,a.req_id,a.cus_status,a.req_id,b.sub_category,b.loan_amt,ac.area_name, sa.sub_area_name, ag.group_name, bc.branch_name, alm.line_name,lcc.loan_category_creation_name 
+    $query = "SELECT a.dor,a.cus_id,a.cus_name,a.user_type,a.user_name,a.agent_id,a.responsible,a.cus_data,a.req_id,a.cus_status,a.req_id,b.sub_category,b.loan_amt,ac.area_name, sa.sub_area_name, ag.group_name, bc.branch_name, alm.line_name,lcc.loan_category_creation_name ,a.issue_by
     FROM in_verification a 
     JOIN acknowlegement_loan_calculation b on a.req_id=b.req_id 
     JOIN acknowlegement_loan_calculation b on a.req_id=b.req_id 
@@ -62,9 +62,9 @@ if ($userid == 1) {
     JOIN branch_creation bc ON ag.branch_id = bc.branch_id
     JOIN area_line_mapping alm ON FIND_IN_SET(sa.sub_area_id, alm.sub_area_id)
     JOIN loan_category_creation lcc ON lcc.loan_category_creation_id = b.loan_category
-    WHERE a.status = 0 and (a.cus_status = 13) and (a.issue_by = 1) "; // Move To Issue
+    WHERE a.status = 0 and (a.cus_status = 13) and a.issue_by IN (1, 2) "; // Move To Issue
 } else {
-    $query = "SELECT a.dor,a.cus_id,a.cus_name,a.user_type,a.user_name,a.agent_id,a.responsible,a.cus_data,a.req_id,a.cus_status,a.req_id,b.sub_category,b.loan_amt,ac.area_name, sa.sub_area_name, ag.group_name, bc.branch_name, alm.line_name,lcc.loan_category_creation_name 
+    $query = "SELECT a.dor,a.cus_id,a.cus_name,a.user_type,a.user_name,a.agent_id,a.responsible,a.cus_data,a.req_id,a.cus_status,a.req_id,b.sub_category,b.loan_amt,ac.area_name, sa.sub_area_name, ag.group_name, bc.branch_name, alm.line_name,lcc.loan_category_creation_name , a.issue_by
     FROM in_verification a 
     JOIN acknowlegement_loan_calculation b on a.req_id=b.req_id 
     JOIN area_list_creation ac ON a.area = ac.area_id
@@ -73,7 +73,7 @@ if ($userid == 1) {
     JOIN branch_creation bc ON ag.branch_id = bc.branch_id
     JOIN area_line_mapping alm ON FIND_IN_SET(sa.sub_area_id, alm.sub_area_id)
     JOIN loan_category_creation lcc ON lcc.loan_category_creation_id = b.loan_category
-    WHERE a.status = 0 and (a.cus_status = 13) and (a.issue_by = 1) and a.sub_area IN ($sub_area_list) ";  //show only Approved Verification in Acknowledgement. // 13 Move to Issue. // 14 Move To Collection.
+    WHERE a.status = 0 and (a.cus_status = 13) and a.issue_by IN (1, 2) and a.sub_area IN ($sub_area_list) ";  //show only Approved Verification in Acknowledgement. // 13 Move to Issue. // 14 Move To Collection.
 }
 
 if (isset($_POST['search']) && $_POST['search'] != "") {
@@ -176,28 +176,32 @@ foreach ($result as $row) {
 
     $sub_array[] = $row['cus_data'];
     $id = $row['req_id'];
+    $issue_by    = $row['issue_by'];
 
     $cus_status = $row['cus_status'];
     $loan_issued = $connect->query("SELECT balance_amount FROM `loan_issue` WHERE req_id='$id' order by id desc LIMIT 1 ");
     $loan_issued_db =  $loan_issued->fetch();
 
-    if (empty($ag_id)) { // only check balance amount if request is not on agent
-
-        if ($cus_status == '13') {
-
-            if (isset($loan_issued_db['balance_amount']) && $loan_issued_db['balance_amount'] == '0') {
-                $sub_array[] = "<button class='btn btn-outline-secondary complete_issue' value='$id'><span class = 'icon-arrow_forward'></span></button>";
-            } else {
-                $sub_array[] = 'In Issue';
+    if ($issue_by == 2) {
+        // Always show In Accounts if issue_by = 2
+        $sub_array[] = 'In Accounts';
+    } else {
+        if (empty($ag_id)) { // only check balance amount if request is not on agent
+            if ($cus_status == '13') {
+                if (isset($loan_issued_db['balance_amount']) && $loan_issued_db['balance_amount'] == '0') {
+                    $sub_array[] = "<button class='btn btn-outline-secondary complete_issue' value='$id'><span class='icon-arrow_forward'></span></button>";
+                } else {
+                    $sub_array[] = 'In Issue';
+                }
+            } else if ($cus_status == '14') {
+                $sub_array[] = 'Issued';
             }
-        } else if ($cus_status == '14') {
-            $sub_array[] = 'Issued';
-        }
-    } else { //else directly show move button to collection, then it will be taken care by cash tally screen
-        if ($cus_status == '14') {
-            $sub_array[] = 'Issued';
-        } else {
-            $sub_array[] = "<button class='btn btn-outline-secondary complete_issue' value='$id'><span class = 'icon-arrow_forward'></span></button>";
+        } else { // else directly show move button to collection
+            if ($cus_status == '14') {
+                $sub_array[] = 'Issued';
+            } else {
+                $sub_array[] = "<button class='btn btn-outline-secondary complete_issue' value='$id'><span class='icon-arrow_forward'></span></button>";
+            }
         }
     }
 
@@ -205,22 +209,28 @@ foreach ($result as $row) {
     $user_type = $row['user_type'];
     $cus_id = $row['cus_id'];
 
-    $action = "<div class='dropdown'>
-    <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
-    <div class='dropdown-content'>";
+    $action = '';
 
-    if ($cus_status == '13' and empty($ag_id)) { // check whether agent id is empty, if yes then show edit button, so that only 'issued to customer' entries only can edit
-        $action .= "<a href='loan_issue&upd=$id' class='customer_profile' value='$id' > Edit Loan Issue </a>";
-    } else if ($cus_status == '14') {
-        $action .= "<a href=''class='iss-remove' data-value='$id' > Remove </a>";
+    if ($issue_by == 1 || $issue_by == 2) { // Show dropdown for both cases
+        $action = "<div class='dropdown'>
+        <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
+        <div class='dropdown-content'>";
+
+        if ($issue_by == 1) { // Only add options if issue_by = 1
+            if ($cus_status == '13' and empty($ag_id)) {
+                $action .= "<a href='loan_issue&upd=$id' class='customer_profile' value='$id' > Edit Loan Issue </a>";
+            } else if ($cus_status == '14') {
+                $action .= "<a href=''class='iss-remove' data-value='$id' > Remove </a>";
+            }
+
+            if ($login_user_type == 0 or $userid == 1) {
+                $action .= "<a href='' data-value ='" . $cus_id . "' data-value1 = '$id' class='customer-status' data-toggle='modal' data-target='.customerstatus'>Customer Status</a>";
+            }
+        }
+
+        $action .= "</div></div>";
     }
 
-    if ($login_user_type == 0 or $userid == 1) {
-        $action .= "<a href='' data-value ='" . $cus_id . "' data-value1 = '$id' class='customer-status' data-toggle='modal' data-target='.customerstatus'>Customer Status</a>";
-    }
-
-
-    $action .= "</div></div>";
 
     $sub_array[] = $action;
     $data[]      = $sub_array;
