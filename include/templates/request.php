@@ -9,6 +9,8 @@
 </style>
 
 <?php
+require_once 'moneyFormatIndia.php';
+
 @session_start();
 if (isset($_SESSION["userid"])) {
 	$userid = $_SESSION["userid"];
@@ -607,7 +609,7 @@ if ($idupd > 0) {
 						<div class="form-group">
 							<label for="tot_value">Total value</label><span class="required">&nbsp;*</span>
 							<input type="number" class="form-control" id="tot_value" name="tot_value" value='<?php if (isset($tot_value)) {
-																													echo $tot_value;
+																													echo moneyFormatIndia($tot_value);
 																												} ?>' tabindex='33' placeholder="Enter Total Value">
 						</div>
 						<span class="text-danger" style='display:none' id='totvalueCheck'>Please Enter Total Value</span>
@@ -616,7 +618,7 @@ if ($idupd > 0) {
 						<div class="form-group">
 							<label for="ad_amt">Advance Amount</label><span class="required">&nbsp;*</span>
 							<input type="number" class="form-control" id="ad_amt" name="ad_amt" value='<?php if (isset($ad_amt)) {
-																											echo $ad_amt;
+																											echo moneyFormatIndia($ad_amt);
 																										} ?>' tabindex='34' placeholder="Enter Advance Amount">
 							<span class="text-danger" style='display:none' id='adamtCheck'>Please Enter Advance Amount</span>
 						</div>
@@ -634,7 +636,7 @@ if ($idupd > 0) {
 						<div class="form-group">
 							<label for="loan_amt">Loan Amount</label><span class="required">&nbsp;*</span>
 							<input type="text" class="form-control" id="loan_amt" name="loan_amt" readonly value='<?php if (isset($loan_amt)) {
-																														echo $loan_amt;
+																														echo moneyFormatIndia($loan_amt);
 																													} ?>' tabindex='36'>
 							<span class="text-danger" style='display:none' id='loanamtCheck'>Please Enter Loan Amount</span>
 						</div>
@@ -673,8 +675,8 @@ if ($idupd > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 due_amt" style="display:none">
 						<div class="form-group">
 							<label for="due_amt">Due Amount</label><span class="required">&nbsp;*</span>
-							<input type="number" class="form-control" id="due_amt" name="due_amt" value='<?php if (isset($due_amt)) {
-																												echo $due_amt;
+							<input type="text" class="form-control" id="due_amt" name="due_amt" value='<?php if (isset($due_amt)) {
+																												echo moneyFormatIndia($due_amt);
 																											} ?>' tabindex='38'>
 							<span class="text-danger" style='display:none' id='dueamtCheck'>Please Enter Due Amount</span>
 						</div>

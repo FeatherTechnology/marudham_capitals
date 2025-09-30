@@ -20,6 +20,7 @@ $(document).ready(function () {
     })
 
     $('#submitbranch_creation').click(function () {
+        //  event.preventDefault();
         let mobile = $('#mobile_number').val()
         let wapp = $('#whatsapp_number').val()
         if (mobile != '' && mobile.length < 10) {
@@ -34,6 +35,11 @@ $(document).ready(function () {
                 event.preventDefault();
                 return false;
             }
+        let confirmAction = confirm("Are you sure you want to submit this branch?");
+        if (!confirmAction) {
+            event.preventDefault(); // Stop form submission if canceled
+            return false;
+        }
     })
 });
 

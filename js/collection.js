@@ -531,16 +531,16 @@ function OnLoadFunctions(req_id, cus_id) {
             cache: false,
             success: function (response) {
               //Display all value to readonly fields
-              $("#tot_amt").val(response["total_amt"]);
-              $("#paid_amt").val(response["total_paid"]);
-              $("#bal_amt").val(response["balance"]);
-              $("#due_amt").val(response["due_amt"]);
-              $("#pending_amt").val(response["pending"]);
-              $("#pend_amt").val(response["pending"]);
-              $("#payable_amt").val(response["payable"]);
-              $("#payableAmount").val(response["payable"]);
-              $("#penalty").val(response["penalty"]);
-              $("#coll_charge").val(response["coll_charge"]);
+              $("#tot_amt").val(moneyFormatIndia(response["total_amt"]));
+              $("#paid_amt").val(moneyFormatIndia(response["total_paid"]));
+              $("#bal_amt").val(moneyFormatIndia(response["balance"]));
+              $("#due_amt").val(moneyFormatIndia(response["due_amt"]));
+              $("#pending_amt").val(moneyFormatIndia(response["pending"]));
+              $("#pend_amt").val(moneyFormatIndia(response["pending"]));
+              $("#payable_amt").val(moneyFormatIndia(response["payable"]));
+              $("#payableAmount").val(moneyFormatIndia(response["payable"]));
+              $("#penalty").val(moneyFormatIndia(response["penalty"]));
+              $("#coll_charge").val(moneyFormatIndia(response["coll_charge"]));
 
               if (response["loan_type"] == "Interest") {
                 $(".till-date-int").show();

@@ -29,6 +29,10 @@ $(document).ready(function () {
         $('#under_branch').val(sortedStr);
 
         validations();
+         let confirmAction = confirm("Are you sure you want to submit Bank Creation?");
+        if (!confirmAction) {
+            event.preventDefault(); // Stop form submission if canceled
+        }
     })
 
 })//Document ready END

@@ -46,28 +46,28 @@ if (isset($_POST['sub_status'])) {
     $sub_status = $_POST['sub_status'];
 }
 if (isset($_POST['tot_amt'])) {
-    $tot_amt = $_POST['tot_amt'];
+    $tot_amt = str_replace([',', ' '], '', $_POST['tot_amt']);
 }
 if (isset($_POST['paid_amt'])) {
-    $paid_amt = $_POST['paid_amt'];
+    $paid_amt = str_replace([',', ' '], '', $_POST['paid_amt']);
 }
 if (isset($_POST['bal_amt'])) {
-    $bal_amt = $_POST['bal_amt'];
+    $bal_amt = str_replace([',', ' '], '', $_POST['bal_amt']);
 }
 if (isset($_POST['due_amt'])) {
-    $due_amt = $_POST['due_amt'];
+    $due_amt = str_replace([',', ' '], '', $_POST['due_amt']);
 }
 if (isset($_POST['pending_amt'])) {
-    $pending_amt = $_POST['pending_amt'];
+    $pending_amt = str_replace([',', ' '], '', $_POST['pending_amt']);
 }
 if (isset($_POST['payable_amt'])) {
-    $payable_amt = $_POST['payable_amt'];
+    $payable_amt = str_replace([',', ' '], '', $_POST['payable_amt']);
 }
 if (isset($_POST['penalty'])) {
-    $penalty = $_POST['penalty'];
+    $penalty = str_replace([',', ' '], '', $_POST['penalty']);
 }
 if (isset($_POST['coll_charge'])) {
-    $coll_charge = $_POST['coll_charge'];
+    $coll_charge = str_replace([',', ' '], '', $_POST['coll_charge']);
 }
 if (isset($_POST['collection_mode'])) {
     $collection_mode = $_POST['collection_mode'];

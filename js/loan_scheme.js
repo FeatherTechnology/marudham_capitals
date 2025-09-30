@@ -114,7 +114,12 @@ $(document).ready(function () {
         var grace_period = $('#grace_period').val();
         var overdue = $('#overdue').val();
         if (loan_category != '' && sub_category != '' && sub_category != null && scheme_name != '' && intreset_type != '' && intreset_min != '' && intreset_max != '' && total_due != '' && doc_charge_type != '' && doc_charge_min != '' && doc_charge_max != '' && proc_fee_type != '' && proc_fee_min != '' && proc_fee_max != '' && due_date != '' && grace_period != '' && overdue != '' && profit_method != '' && profit_method != null) {
-            return true;
+            let confirmAction = confirm("Are you sure you want to submit Loan Schem Monthly?");
+        if (confirmAction) {
+            $(this).closest("form").submit(); // manually submit form
+        } else {
+            return false; // cancel submit
+        }
         } else {
             Swal.fire({
                 timerProgressBar: true,
@@ -189,7 +194,12 @@ $(document).ready(function () {
         var due_day = $('#due_day').val();
         var overdue = $('#overdue1').val();
         if (loan_category != '' && sub_category != '' && scheme_name != '' && intreset_type != '' && intreset_min != '' && intreset_max != '' && due_period != '' && doc_charge_type != '' && doc_charge_min != '' && doc_charge_max != '' && proc_fee_type != '' && proc_fee_min != '' && proc_fee_max != '' && due_day != '' && overdue != '' && profit_method != '' && profit_method != null) {
-            return true;
+            let confirmAction = confirm("Are you sure you want to submit Loan Schem weekly?");
+        if (confirmAction) {
+            $(this).closest("form").submit(); // manually submit form
+        } else {
+            return false; // cancel submit
+        }
         } else {
             Swal.fire({
                 timerProgressBar: true,
@@ -262,8 +272,14 @@ $(document).ready(function () {
         var proc_fee_min = $('#proc_fee_min2').val();
         var proc_fee_max = $('#proc_fee_max2').val();
         var overdue = $('#overdue2').val();
+        console.log("intrest type",intreset_type);
         if (loan_category != '' && sub_category != '' && scheme_name != '' && intreset_type != '' && intreset_min != '' && intreset_max != '' && due_period != '' && doc_charge_type != '' && doc_charge_min != '' && doc_charge_max != '' && proc_fee_type != '' && proc_fee_min != '' && proc_fee_max != '' && overdue != '' && profit_method != '' && profit_method != null) {
-            return true;
+            let confirmAction = confirm("Are you sure you want to submit Loan Schem Daily?");
+        if (confirmAction) {
+            $(this).closest("form").submit(); // manually submit form
+        } else {
+            return false; // cancel submit
+        }
         } else {
             Swal.fire({
                 timerProgressBar: true,

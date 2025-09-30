@@ -144,64 +144,85 @@ $(document).ready(function () {
             return; // Exit if validation fails
         }
 
-        let req_id = $('#req_id').val();
-        let cus_id = $('#cus_id').val();
-        let issue_to = $('#issue_to').val();
-        let net_cash = $('#net_cash').val();
-        let balance = $('#balance').val();
-        let loan_amt_cal = $('#loan_amt_cal').val();
-        let issued_mode = $('#issued_mode').val();
-        let payment_type = $('#payment_type').val();
-        let chequeno = $('#chequeno').val();
-        let chequeValue = $('#chequeValue').val();
-        let chequeRemark = $('#chequeRemark').val();
-        let transaction_id = $('#transaction_id').val();
-        let transaction_value = $('#transaction_value').val();
-        let transactionRemark = $('#transaction_remark').val();
-        let bank_id = $('#bank_id').val();
-        // Pass all data via AJAX
-        $.ajax({
-            url: 'loanIssueFile/submitLoanIssue.php',
-            type: 'POST',
-            data: {
-                "req_id": req_id,
-                "cus_id": cus_id,
-                "issue_to": issue_to,
-                "net_cash": net_cash,
-                "balance": balance,
-                "loan_amt_cal": loan_amt_cal,
-                "issued_mode": issued_mode,
-                "payment_type": payment_type,
-                "chequeno": chequeno,
-                "chequeValue": chequeValue,
-                "chequeRemark": chequeRemark,
-                "transaction_id": transaction_id,
-                "transaction_value": transaction_value,
-                "transaction_remark": transactionRemark,
-                "bank_id": bank_id
-            },
-            dataType: 'json',
-            cache: false,
-            success: function (result) {
-                if (result.response.includes('Completed')) {
+    // Confirmation before AJAX
+    Swal.fire({
+        title: 'Are you sure you want to issue this loan?',
+        text: 'Once submitted, changes cannot be reverted!',
+        icon: 'question',
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonColor: '#009688',
+        cancelButtonColor: '#cc4444',
+        cancelButtonText: 'No',
+        confirmButtonText: 'Yes'
+    }).then(function(result) {
+        if (result.isConfirmed) {
+            // Collect form values
+            let req_id = $('#req_id').val();
+            let cus_id = $('#cus_id').val();
+            let issue_to = $('#issue_to').val();
+            let net_cash = $('#net_cash').val();
+            let balance = $('#balance').val();
+            let loan_amt_cal = $('#loan_amt_cal').val().replace(/[\s,]+/g, '');
+            let issued_mode = $('#issued_mode').val();
+            let payment_type = $('#payment_type').val();
+            let chequeno = $('#chequeno').val();
+            let chequeValue = $('#chequeValue').val();
+            let chequeRemark = $('#chequeRemark').val();
+            let transaction_id = $('#transaction_id').val();
+            let transaction_value = $('#transaction_value').val();
+            let transactionRemark = $('#transaction_remark').val();
+            let bank_id = $('#bank_id').val();
+
+            // AJAX call
+            $.ajax({
+                url: 'loanIssueFile/submitLoanIssue.php',
+                type: 'POST',
+                data: {
+                    "req_id": req_id,
+                    "cus_id": cus_id,
+                    "issue_to": issue_to,
+                    "net_cash": net_cash,
+                    "balance": balance,
+                    "loan_amt_cal": loan_amt_cal,
+                    "issued_mode": issued_mode,
+                    "payment_type": payment_type,
+                    "chequeno": chequeno,
+                    "chequeValue": chequeValue,
+                    "chequeRemark": chequeRemark,
+                    "transaction_id": transaction_id,
+                    "transaction_value": transaction_value,
+                    "transaction_remark": transactionRemark,
+                    "bank_id": bank_id
+                },
+                dataType: 'json',
+                cache: false,
+                success: function (result) {
+                    if (result.response.includes('Completed')) {
+                        Swal.fire({
+                            timer: 1500,
+                            timerProgressBar: true,
+                            title: result.response,
+                            icon: 'success',
+                            showConfirmButton: false,
+                            confirmButtonColor: '#009688'
+                        }).then(() => {
+                            window.location.href = 'edit_accounts_loan_issue';
+                        });
+                    }
+                },
+                error: function (error) {
                     Swal.fire({
-                        timer: 1500, // Auto-dismiss after 1.5 seconds
-                        timerProgressBar: true,
-                        title: result.response,
-                        icon: 'success',
-                        showConfirmButton: false, // No confirmation button
-                        confirmButtonColor: '#009688'
-                    }).then(() => {
-                        // Directly redirect to the desired page after the alert is closed
-                        window.location.href = 'edit_accounts_loan_issue';
+                        title: 'Error!',
+                        text: 'Something went wrong while submitting loan issue.',
+                        icon: 'error',
+                        confirmButtonColor: '#cc4444'
                     });
                 }
-            },
-            error: function (error) {
-                // Handle error
-            }
-        });
+            });
+        }
     });
+});
 
 });
 
@@ -706,11 +727,12 @@ function schemeCalAjax(scheme_id) {
 
 //To Get Loan Calculation for After Interest
 function getLoanAfterInterest() {
-    var loan_amt = $('#loan_amt').val();
-    var int_rate = $('#int_rate').val();
-    var due_period = $('#due_period').val();
-    var doc_charge = $('#doc_charge').val();
-    var proc_fee = $('#proc_fee').val();
+    var loan_amt   = $('#loan_amt').val().replace(/[\s,]+/g, '');
+    var int_rate   = $('#int_rate').val().replace(/[\s,]+/g, '');
+    var due_period = $('#due_period').val().replace(/[\s,]+/g, '');
+    var doc_charge = $('#doc_charge').val().replace(/[\s,]+/g, '');
+    var proc_fee   = $('#proc_fee').val().replace(/[\s,]+/g, '');
+
 
     $('#loan_amt_cal').val(parseInt(loan_amt).toFixed(0)); //get loan amt from loan info card
     $('#principal_amt_cal').val(parseInt(loan_amt).toFixed(0)); // principal amt as same as loan amt for after interest
@@ -789,11 +811,12 @@ function getLoanAfterInterest() {
 
 //To Get Loan Calculation for Pre Interest
 function getLoanPreInterest() {
-    var loan_amt = $('#loan_amt').val();
-    var int_rate = $('#int_rate').val();
-    var due_period = $('#due_period').val();
-    var doc_charge = $('#doc_charge').val();
-    var proc_fee = $('#proc_fee').val();
+    var loan_amt   = $('#loan_amt').val().replace(/[\s,]+/g, '');
+    var int_rate   = $('#int_rate').val().replace(/[\s,]+/g, '');
+    var due_period = $('#due_period').val().replace(/[\s,]+/g, '');
+    var doc_charge = $('#doc_charge').val().replace(/[\s,]+/g, '');
+    var proc_fee   = $('#proc_fee').val().replace(/[\s,]+/g, '');
+
     $('#loan_amt_cal').val(parseInt(loan_amt).toFixed(0)); //get loan amt from loan info card
 
 
@@ -869,10 +892,11 @@ function getLoanPreInterest() {
 
 //To Get Loan Calculation for Interest due type
 function getLoanInterest() {
-    var loan_amt = $("#loan_amt").val();
-    var int_rate = $("#int_rate").val();
-    var doc_charge = $("#doc_charge").val();
-    var proc_fee = $("#proc_fee").val();
+    var loan_amt   = $("#loan_amt").val().replace(/[\s,]+/g, '');
+    var int_rate   = $("#int_rate").val().replace(/[\s,]+/g, '');
+    var doc_charge = $("#doc_charge").val().replace(/[\s,]+/g, '');
+    var proc_fee   = $("#proc_fee").val().replace(/[\s,]+/g, '');
+
     var calc_method = $("#calc_method").val();
 
     $("#loan_amt_cal").val(parseInt(loan_amt).toFixed(0));
@@ -927,11 +951,12 @@ function getLoanInterest() {
     $("#net_cash_cal").val(parseInt(net_cash).toFixed(0));
 }
 function getSchemeAfterIntreset() {
-    var loan_amt = $('#loan_amt').val();
-    var int_rate = $('#int_rate').val();
-    var due_period = $('#due_period').val();
-    var doc_charge = $('#doc_charge').val();
-    var proc_fee = $('#proc_fee').val();
+    var loan_amt   = $('#loan_amt').val().replace(/[\s,]+/g, '');
+    var int_rate   = $('#int_rate').val().replace(/[\s,]+/g, '');
+    var due_period = $('#due_period').val().replace(/[\s,]+/g, '');
+    var doc_charge = $('#doc_charge').val().replace(/[\s,]+/g, '');
+    var proc_fee   = $('#proc_fee').val().replace(/[\s,]+/g, '');
+
     $('#loan_amt_cal').val(parseInt(loan_amt).toFixed(0)); //get loan amt from loan info card
     $('#principal_amt_cal').val(parseInt(loan_amt).toFixed(0)); // principal amt as same as loan amt for after interest
     var intreset_type = $('.min-max-int').text(); //Scheme may have document charge in rupees or percentage . so getting symbol from span
@@ -1011,11 +1036,12 @@ function getSchemeAfterIntreset() {
     checkBalance()
 }
 function getSchemePreIntreset() {
-    var loan_amt = $('#loan_amt').val();
-    var int_rate = $('#int_rate').val();
-    var due_period = $('#due_period').val();
-    var doc_charge = $('#doc_charge').val();
-    var proc_fee = $('#proc_fee').val();
+    var loan_amt   = $('#loan_amt').val().replace(/[\s,]+/g, '');
+    var int_rate   = $('#int_rate').val().replace(/[\s,]+/g, '');
+    var due_period = $('#due_period').val().replace(/[\s,]+/g, '');
+    var doc_charge = $('#doc_charge').val().replace(/[\s,]+/g, '');
+    var proc_fee   = $('#proc_fee').val().replace(/[\s,]+/g, '');
+
 
     $('#loan_amt_cal').val(parseInt(loan_amt).toFixed(0)); //get loan amt from loan info card
 

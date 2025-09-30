@@ -369,3 +369,75 @@ if ($idupd > 0) {
 		</div>
 	</div>
 </div>
+
+<!-- Modal for Loan Follow Chart just view table   -->
+<div class="modal fade" id="swap_area_model_box" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-lg " role="document">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLongTitle">swap area</h5>
+				<button type="button" class="close" data-dismiss="modal" tabindex="7" aria-label="Close" onclick="closeSwapmodel()">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+					
+					<div class="card-body" style="height: 400px;">
+						<div class="row ">
+							<!--Fields -->
+							<div class="col-md-12 ">
+								<div class="row">
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+										<div class="form-group">
+											<label for="disabledInput">State</label>&nbsp;<span class="text-danger">*</span>
+											<input type="hidden" name="swap_area_id" id="swap_area_id">
+
+											<select type="text" class="form-control" id="swap_states" name="swap_states" tabindex="1">
+												<option value="SelectState">Select State</option>
+												<option value="TamilNadu">Tamil Nadu</option>
+												<option value="Puducherry">Puducherry</option>
+											</select>
+										</div>
+									</div>
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+										<div class="form-group">
+											<label for="disabledInput">District</label>&nbsp;<span class="text-danger">*</span>
+											<select type="text" class="form-control" id="swap_district" name="swap_district" tabindex="2">
+												<option value="Select District">Select District</option>
+											</select>
+										</div>
+									</div>
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+										<div class="form-group">
+											<label for="disabledInput">Taluk</label>&nbsp;<span class="text-danger">*</span>
+											<select type="text" class="form-control" id="swap_taluk" name="swap_taluk" tabindex="3">
+												<option value="Select Taluk">Select Taluk</option>
+											</select>
+										</div>
+									</div>
+									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-10 col-12">
+										<div class="form-group">
+											<label for="disabledInput">Pincode</label>&nbsp;<span class="text-danger"></span>
+											<input type="number" tabindex="4" onKeyPress="if(this.value.length==6) return false;" class="form-control" id="pincodes" name="pincodes" value="" placeholder="Enter Pincode">
+										</div>
+									</div>
+									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-10 col-12 d-flex align-items-center" style="margin-top: 20px;">
+										<div class="form-group">
+											<button type="submit" name="swap_area_creation" id="swap_area_creation" class="btn btn-primary" value="Submit" tabindex="5"><span class="icon-check"></span>&nbsp;Submit</button>
+										</div>
+									</div>
+								</div>
+								<br>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-secondary" data-dismiss="modal" tabindex="6"  onclick="closeSwapmodel()">Close</button>
+			</div>
+		</div>
+	</div>
+</div>

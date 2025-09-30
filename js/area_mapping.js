@@ -146,6 +146,11 @@ $(document).ready(function () {
         arr.sort(function (a, b) { return a - b });
         var sortedStr = arr.join(",");
         $('#sub_area').val(sortedStr);
+
+           let confirmAction = confirm("Are you sure you want to submit Line area mapping?");
+        if (!confirmAction) {
+            event.preventDefault(); // Stop form submission if canceled
+        }
     })
 
     // ************************************************************** Group Mapping *************************************************************************************** 
@@ -219,6 +224,10 @@ $(document).ready(function () {
         arr.sort(function (a, b) { return a - b });
         var sortedStr = arr.join(",");
         $('#sub_area1').val(sortedStr);
+        let confirmAction = confirm("Are you sure you want to submit Group Area Mapping?");
+        if (!confirmAction) {
+            event.preventDefault(); // Stop form submission if canceled
+        }
     })
 
 
@@ -336,6 +345,10 @@ $(document).ready(function () {
 
         // Sub Status multi-select
         getSubStatusValues();
+        let confirmAction = confirm("Are you sure you want to submit Due Followup?");
+        if (!confirmAction) {
+            event.preventDefault(); // Stop form submission if canceled
+        }
         
 
     });

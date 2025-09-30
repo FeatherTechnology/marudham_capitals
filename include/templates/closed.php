@@ -1,4 +1,5 @@
 <?php
+require_once 'moneyFormatIndia.php';
 
 if (isset($_SESSION['userid'])) {
 	$userid = $_SESSION['userid'];
@@ -299,7 +300,7 @@ if ($idupd > 0) {
 								<div class="form-group">
 									<label for="cus_monthly_income"> Monthly Income </label>
 									<input type="text" class="form-control" name="cus_monthly_income" id="cus_monthly_income" value="<?php if (isset($monthly_income)) {
-																																			echo $monthly_income;
+																																			echo moneyFormatIndia($monthly_income);
 																																		} ?>" readonly>
 								</div>
 							</div>
@@ -308,7 +309,7 @@ if ($idupd > 0) {
 								<div class="form-group">
 									<label for="cus_other_income"> Other Income </label>
 									<input type="text" class="form-control" name="cus_other_income" id="cus_other_income" value="<?php if (isset($other_income)) {
-																																		echo $other_income;
+																																		echo moneyFormatIndia($other_income);
 																																	} ?>" readonly>
 								</div>
 							</div>
@@ -317,7 +318,7 @@ if ($idupd > 0) {
 								<div class="form-group">
 									<label for="cus_support_income"> Support Income </label>
 									<input type="text" class="form-control" name="cus_support_income" id="cus_support_income" value="<?php if (isset($support_income)) {
-																																			echo $support_income;
+																																			echo moneyFormatIndia($support_income);
 																																		} ?>" readonly>
 								</div>
 							</div>
@@ -326,7 +327,7 @@ if ($idupd > 0) {
 								<div class="form-group">
 									<label for="cus_Commitment"> Commitment </label>
 									<input type="text" class="form-control" name="cus_Commitment" id="cus_Commitment" value="<?php if (isset($commitment)) {
-																																	echo $commitment;
+																																	echo moneyFormatIndia($commitment);
 																																} ?>" readonly>
 								</div>
 							</div>
@@ -335,7 +336,7 @@ if ($idupd > 0) {
 								<div class="form-group">
 									<label for="cus_monDue_capacity"> Monthly Due Capacity </label>
 									<input type="text" class="form-control" name="cus_monDue_capacity" id="cus_monDue_capacity" value="<?php if (isset($monthly_due_capacity)) {
-																																			echo $monthly_due_capacity;
+																																			echo moneyFormatIndia($monthly_due_capacity);
 																																		} ?>" readonly>
 								</div>
 							</div>
@@ -344,7 +345,7 @@ if ($idupd > 0) {
 								<div class="form-group">
 									<label for="cus_loan_limit"> Customer Limit </label>
 									<input type="text" class="form-control" name="cus_loan_limit" id="cus_loan_limit" value="<?php if (isset($loan_limit)) {
-																																	echo $loan_limit;
+																																	echo moneyFormatIndia($loan_limit);
 																																} ?>" readonly>
 								</div>
 							</div>
