@@ -1,5 +1,5 @@
 <link rel="stylesheet" type="text/css" href="css/ledger_report.css">
-<br>
+<br><br>
 <div class="page-header">
 	<div style="background-color:#2f958bd9; width:100%; padding:12px; color: #ffff; font-size: 20px; border-radius:5px;">
 		Marudham Capitals - Day End Report

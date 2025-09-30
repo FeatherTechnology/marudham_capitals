@@ -128,7 +128,7 @@ $query = "SELECT
         LEFT JOIN agent_creation ac ON iv.agent_id = ac.ag_id
         LEFT JOIN verification_family_info vfi_received_by ON li.relationship !='Customer' AND li.cash_guarentor_name = vfi_received_by.relation_aadhar AND li.cus_id = vfi_received_by.cus_id
 
-        WHERE ii.cus_status >= 14 AND lc.due_type = 'EMI'
+        WHERE ii.cus_status >= 14 AND ( (lc.due_type = 'EMI') OR (lc.due_type = '' AND lc.due_method_scheme !='') )  
         $where";
 
 if (isset($_POST['search'])) {
