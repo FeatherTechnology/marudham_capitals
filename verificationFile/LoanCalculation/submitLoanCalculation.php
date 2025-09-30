@@ -35,14 +35,14 @@ if (isset($_POST['category_info'])) {
 }
 $tot_value = '';
 if (isset($_POST['tot_value'])) {
-    $tot_value = $_POST['tot_value'];
+    $tot_value = str_replace([',', ' '], '', $_POST['tot_value']);
 }
 $ad_amt = '';
 if (isset($_POST['ad_amt'])) {
-    $ad_amt = $_POST['ad_amt'];
+    $ad_amt = str_replace([',', ' '], '', $_POST['ad_amt']);
 }
 if (isset($_POST['loan_amt'])) {
-    $loan_amt = $_POST['loan_amt'];
+    $loan_amt = str_replace([',', ' '], '', $_POST['loan_amt']);
 }
 if (isset($_POST['profit_type_ack'])) {
     $profit_type = $_POST['profit_type_ack'];
@@ -116,30 +116,30 @@ if (isset($_POST['proc_fee'])) {
     $proc_fee = $_POST['proc_fee'];
 }
 if (isset($_POST['loan_amt_cal'])) {
-    $loan_amt_cal = $_POST['loan_amt_cal'];
+    $loan_amt_cal = str_replace([',', ' '], '', $_POST['loan_amt_cal']);
 }
 if (isset($_POST['principal_amt_cal'])) {
-    $principal_amt_cal = $_POST['principal_amt_cal'];
+    $principal_amt_cal = str_replace([',', ' '], '', $_POST['principal_amt_cal']);
 }
 if (isset($_POST['int_amt_cal'])) {
-    $int_amt_cal = $_POST['int_amt_cal'];
+    $int_amt_cal = str_replace([',', ' '], '', $_POST['int_amt_cal']);
 }
 $tot_amt_cal = '';
 if (isset($_POST['tot_amt_cal'])) {
-    $tot_amt_cal = $_POST['tot_amt_cal'];
+    $tot_amt_cal = str_replace([',', ' '], '', $_POST['tot_amt_cal']);
 }
 $due_amt_cal = '';
 if (isset($_POST['due_amt_cal'])) {
-    $due_amt_cal = $_POST['due_amt_cal'];
+    $due_amt_cal = str_replace([',', ' '], '', $_POST['due_amt_cal']);
 }
 if (isset($_POST['doc_charge_cal'])) {
-    $doc_charge_cal = $_POST['doc_charge_cal'];
+    $doc_charge_cal = str_replace([',', ' '], '', $_POST['doc_charge_cal']);
 }
 if (isset($_POST['proc_fee_cal'])) {
-    $proc_fee_cal = $_POST['proc_fee_cal'];
+    $proc_fee_cal = str_replace([',', ' '], '', $_POST['proc_fee_cal']);
 }
 if (isset($_POST['net_cash_cal'])) {
-    $net_cash_cal = $_POST['net_cash_cal'];
+    $net_cash_cal = str_replace([',', ' '], '', $_POST['net_cash_cal']);
 }
 if (isset($_POST['due_start_from'])) {
     $due_start_from = $_POST['due_start_from'];

@@ -114,6 +114,10 @@ $(document).ready(function () {
             });
             event.preventDefault();
         }
+        let confirmAction = confirm("Are you sure you want to submit Agent Creation?");
+        if (!confirmAction) {
+            event.preventDefault(); // Stop form submission if canceled
+        }
     })
 
 });

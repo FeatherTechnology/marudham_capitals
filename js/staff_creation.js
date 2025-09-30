@@ -46,6 +46,11 @@ $(document).ready(function () {
             event.preventDefault();
             return false;
         }
+        let confirmAction = confirm("Are you sure you want to submit Staff Creation?");
+        if (!confirmAction) {
+            event.preventDefault(); // Stop form submission if canceled
+            return false;
+        }
 
     })
 

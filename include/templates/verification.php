@@ -1,4 +1,5 @@
 <?php
+require_once 'moneyFormatIndia.php';
 
 //for loan limit access, checking if user has approval screen access
 $approvalaccess = $userObj->getuser($mysqli, $userid)['approval'];
@@ -1223,8 +1224,8 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="cus_monthly_income"> Monthly Income </label> <span class="required">*</span>
-										<input type="number" class="form-control" name="cus_monthly_income" id="cus_monthly_income" placeholder="Enter Monthly Income" value="<?php if (isset($monthly_income)) {
-																																													echo $monthly_income;
+										<input type="text" class="form-control" name="cus_monthly_income" id="cus_monthly_income" placeholder="Enter Monthly Income" value="<?php if (isset($monthly_income)) {
+																																													echo moneyFormatIndia($monthly_income);
 																																												} ?>" tabindex="55">
 										<span class="text-danger" style='display:none' id='monthlyIncomeCheck'>Please Enter Monthly Income </span>
 									</div>
@@ -1233,8 +1234,8 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="cus_other_income"> Other Income </label> <span class="required">*</span>
-										<input type="number" class="form-control" name="cus_other_income" id="cus_other_income" placeholder="Enter Other Income" value="<?php if (isset($other_income)) {
-																																											echo $other_income;
+										<input type="text" class="form-control" name="cus_other_income" id="cus_other_income" placeholder="Enter Other Income" value="<?php if (isset($other_income)) {
+																																											echo moneyFormatIndia($other_income);
 																																										} ?>" tabindex="56">
 										<span class="text-danger" style='display:none' id='otherIncomeCheck'>Please Enter Other Income </span>
 									</div>
@@ -1243,8 +1244,8 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="cus_support_income"> Support Income </label> <span class="required">*</span>
-										<input type="number" class="form-control" name="cus_support_income" id="cus_support_income" placeholder="Enter Support Income" value="<?php if (isset($support_income)) {
-																																													echo $support_income;
+										<input type="text" class="form-control" name="cus_support_income" id="cus_support_income" placeholder="Enter Support Income" value="<?php if (isset($support_income)) {
+																																													echo moneyFormatIndia($support_income);
 																																												} ?>" tabindex="57">
 										<span class="text-danger" style='display:none' id='supportIncomeCheck'>Please Enter Support Income </span>
 									</div>
@@ -1253,8 +1254,8 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="cus_Commitment"> Commitment </label> <span class="required">*</span>
-										<input type="number" class="form-control" name="cus_Commitment" id="cus_Commitment" placeholder="Enter Commitment" value="<?php if (isset($commitment)) {
-																																										echo $commitment;
+										<input type="text" class="form-control" name="cus_Commitment" id="cus_Commitment" placeholder="Enter Commitment" value="<?php if (isset($commitment)) {
+																																										echo moneyFormatIndia($commitment);
 																																									} ?>" tabindex="58">
 										<span class="text-danger" style='display:none' id='commitmentCheck'>Please Enter Commitment </span>
 									</div>
@@ -1263,8 +1264,8 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="cus_monDue_capacity"> Monthly Due Capacity </label> <span class="required">*</span>
-										<input type="number" class="form-control" name="cus_monDue_capacity" id="cus_monDue_capacity" placeholder="Enter Monthly Due Capacity" value="<?php if (isset($monthly_due_capacity)) {
-																																															echo $monthly_due_capacity;
+										<input type="text" class="form-control" name="cus_monDue_capacity" id="cus_monDue_capacity" placeholder="Enter Monthly Due Capacity" value="<?php if (isset($monthly_due_capacity)) {
+																																															echo moneyFormatIndia($monthly_due_capacity);
 																																														} ?>" tabindex="59">
 										<span class="text-danger" style='display:none' id='monthlyDueCapacityCheck'> Please Enter Monthly Due Capacity </span>
 									</div>
@@ -1273,8 +1274,8 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="cus_loan_limit"> Customer Limit </label>
-										<input type="number" class="form-control" name="cus_loan_limit" id="cus_loan_limit" placeholder="Enter Customer Limit" value="<?php if (isset($loan_limit)) {
-																																											echo $loan_limit;
+										<input type="text" class="form-control" name="cus_loan_limit" id="cus_loan_limit" placeholder="Enter Customer Limit" value="<?php if (isset($loan_limit)) {
+																																											echo moneyFormatIndia($loan_limit);
 																																										} ?>" tabindex="60">
 										<span class="text-danger" style='display:none' id='loanLimitCheck'>Please Enter Customer Limit </span>
 									</div>
@@ -2020,7 +2021,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="rla">Request Loan Amount</label><span class="required">&nbsp;*</span>
-										<input type="text" class="form-control" id="rla" name="rla" readonly value='<?php if (isset($loan_amt)) echo $loan_amt;  ?>' tabindex="9">
+										<input type="text" class="form-control" id="rla" name="rla" readonly value='<?php if (isset($loan_amt)) echo moneyFormatIndia($loan_amt);  ?>' tabindex="9">
 									</div>
 								</div>
 							</div>
@@ -2279,9 +2280,9 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 											<div class="form-group">
 												<label for="tot_value">Total Value</label>&nbsp;<span class="text-danger">*</span>
 												<input tabindex="19" type="text" class="form-control" id="tot_value" name="tot_value" value='<?php if (isset($tot_value_lc)) {
-																																					echo $tot_value_lc;
+																																					echo moneyFormatIndia($tot_value_lc);
 																																				} elseif (isset($tot_value)) {
-																																					echo $tot_value;
+																																					echo moneyFormatIndia($tot_value);
 																																				} ?>'>
 												<span class="text-danger" style='display:none' id='total_valueCheck'>Please Enter Total Value</span>
 											</div>
@@ -2290,9 +2291,9 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 											<div class="form-group">
 												<label for="ad_amt">Advance Amount</label>&nbsp;<span class="text-danger">*</span>
 												<input tabindex="20" type="text" class="form-control" id="ad_amt" name="ad_amt" value='<?php if (isset($ad_amt_lc)) {
-																																			echo $ad_amt_lc;
+																																			echo moneyFormatIndia($ad_amt_lc);
 																																		} elseif (isset($ad_amt)) {
-																																			echo $ad_amt;
+																																			echo moneyFormatIndia($ad_amt);
 																																		} ?>'>
 												<span class="text-danger" style='display:none' id='ad_amtCheck'>Please Enter Advance Amount</span>
 											</div>
@@ -2301,9 +2302,9 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 											<div class="form-group">
 												<label for="loan_amt">Loan Amount</label>&nbsp;<span class="text-danger">*</span>
 												<input tabindex="21" type="text" class="form-control" id="loan_amt" name="loan_amt" value='<?php if (isset($loan_amt_lc)) {
-																																				echo $loan_amt_lc;
+																																				echo moneyFormatIndia($loan_amt_lc);
 																																			} elseif (isset($loan_amt)) {
-																																				echo $loan_amt;
+																																				echo moneyFormatIndia($loan_amt);
 																																			} ?>'>
 												<span class="text-danger" style='display:none' id='loan_amtCheck'>Please Enter Loan Amount</span>
 											</div>
@@ -2437,49 +2438,49 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
 												<label for="loan_amt_cal">Loan Amount</label>&nbsp;<span class="text-danger">*</span>
-												<input type="text" class="form-control" readonly id="loan_amt_cal" name="loan_amt_cal" value='<?php if (isset($loan_amt_cal)) echo $loan_amt_cal; ?>' tabindex='35'>
+												<input type="text" class="form-control" readonly id="loan_amt_cal" name="loan_amt_cal" value='<?php if (isset($loan_amt_cal)) echo moneyFormatIndia($loan_amt_cal); ?>' tabindex='35'>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emi_div" style="display: <?php echo ($emicheck ? 'block' : 'none'); ?>;">
 											<div class="form-group">
 												<label for="principal_amt_cal">Principal Amount</label>&nbsp;<span class="text-danger princ-diff">*</span>
-												<input type="text" class="form-control" readonly id="principal_amt_cal" name="principal_amt_cal" value='<?php if (isset($principal_amt_cal)) echo $principal_amt_cal; ?>' tabindex='36'>
+												<input type="text" class="form-control" readonly id="principal_amt_cal" name="principal_amt_cal" value='<?php if (isset($principal_amt_cal)) echo moneyFormatIndia($principal_amt_cal); ?>' tabindex='36'>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
 												<label for="int_amt_cal">Interest Amount</label>&nbsp;<span class="text-danger int-diff">*</span>
-												<input type="text" class="form-control" readonly id="int_amt_cal" name="int_amt_cal" value='<?php if (isset($int_amt_cal)) echo $int_amt_cal; ?>' tabindex='37'>
+												<input type="text" class="form-control" readonly id="int_amt_cal" name="int_amt_cal" value='<?php if (isset($int_amt_cal)) echo moneyFormatIndia($int_amt_cal); ?>' tabindex='37'>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emi_div" style="display: <?php echo ($emicheck ? 'block' : 'none'); ?>;">
 											<div class="form-group">
 												<label for="tot_amt_cal">Total Amount</label>&nbsp;<span class="text-danger">*</span>
-												<input type="text" class="form-control" readonly id="tot_amt_cal" name="tot_amt_cal" value='<?php if (isset($tot_amt_cal)) echo $tot_amt_cal; ?>' tabindex='38'>
+												<input type="text" class="form-control" readonly id="tot_amt_cal" name="tot_amt_cal" value='<?php if (isset($tot_amt_cal)) echo moneyFormatIndia($tot_amt_cal); ?>' tabindex='38'>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emi_div" style="display: <?php echo ($emicheck ? 'block' : 'none'); ?>;">
 											<div class="form-group">
 												<label for="due_amt_cal">Due Amount</label>&nbsp;<span class="text-danger due-diff">*</span>
-												<input type="text" class="form-control" readonly id="due_amt_cal" name="due_amt_cal" value='<?php if (isset($due_amt_cal)) echo $due_amt_cal; ?>' tabindex='39'>
+												<input type="text" class="form-control" readonly id="due_amt_cal" name="due_amt_cal" value='<?php if (isset($due_amt_cal)) echo moneyFormatIndia($due_amt_cal); ?>' tabindex='39'>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
 												<label for="doc_charge_cal">Document Charges</label>&nbsp;<span class="text-danger doc-diff">*</span>
-												<input type="text" class="form-control" readonly id="doc_charge_cal" name="doc_charge_cal" value='<?php if (isset($doc_charge_cal)) echo $doc_charge_cal; ?>' tabindex='40'>
+												<input type="text" class="form-control" readonly id="doc_charge_cal" name="doc_charge_cal" value='<?php if (isset($doc_charge_cal)) echo moneyFormatIndia($doc_charge_cal); ?>' tabindex='40'>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
 												<label for="proc_fee_cal">Processing Fee</label>&nbsp;<span class="text-danger proc-diff">*</span>
-												<input type="text" class="form-control" readonly id="proc_fee_cal" name="proc_fee_cal" value='<?php if (isset($proc_fee_cal)) echo $proc_fee_cal; ?>' tabindex='41'>
+												<input type="text" class="form-control" readonly id="proc_fee_cal" name="proc_fee_cal" value='<?php if (isset($proc_fee_cal)) echo moneyFormatIndia($proc_fee_cal); ?>' tabindex='41'>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
 												<label for="net_cash_cal">Net Cash</label>&nbsp;<span class="text-danger">*</span>
-												<input type="text" class="form-control" readonly id="net_cash_cal" name="net_cash_cal" value='<?php if (isset($net_cash_cal)) echo $net_cash_cal; ?>' tabindex='42'>
+												<input type="text" class="form-control" readonly id="net_cash_cal" name="net_cash_cal" value='<?php if (isset($net_cash_cal)) echo moneyFormatIndia($net_cash_cal); ?>' tabindex='42'>
 											</div>
 										</div>
 										<div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12">

@@ -1,4 +1,5 @@
 <?php
+require_once 'moneyFormatIndia.php';
 @session_start();
 if (isset($_SESSION["userid"])) {
 	$userid = $_SESSION["userid"];
@@ -128,7 +129,7 @@ if ($idupd > 0) {
 									<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Loan Limit</label><span class="required">&nbsp;*</span>
-											<input type="text" tabindex="4" id="loan_limit" name="loan_limit" class="form-control" placeholder="Enter Loan Limit" value="<?php if (isset($loan_limit)) echo $loan_limit; ?>">
+											<input type="text" tabindex="4" id="loan_limit" name="loan_limit" class="form-control" placeholder="Enter Loan Limit" value="<?php if (isset($loan_limit)) echo moneyFormatIndia($loan_limit); ?>">
 											<span id="loan_limitCheck" class="text-danger" style="display: none;">Enter Loan limit</span>
 										</div>
 									</div>

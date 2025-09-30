@@ -204,6 +204,11 @@ $(document).ready(function () {
     $('#submitLoanCategory').click(function () {
 
         validation(); validateLoanCategoryTable();
+          let confirmAction = confirm("Are you sure you want to submit Loan Category?");
+        if (!confirmAction) {
+            event.preventDefault(); // Stop form submission if canceled
+            return false;
+        }
     });
 
 });

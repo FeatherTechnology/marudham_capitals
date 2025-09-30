@@ -32,6 +32,11 @@ $(document).ready(function () {
             });
             return false;
         }
+        let confirmAction = confirm("Are you sure you want to submit Company Creation?");
+        if (!confirmAction) {
+            event.preventDefault(); // Stop form submission if canceled
+            return false;
+        }
     })
 
 });

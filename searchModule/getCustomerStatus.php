@@ -2,6 +2,7 @@
 session_start();
 $user_id = $_SESSION["userid"];
 include('../ajaxconfig.php');
+include('moneyFormatIndia.php');
 
 
 if (isset($_POST['cus_id'])) {
@@ -159,7 +160,7 @@ if ($result->rowCount() > 0) {
                 <td><?php echo $records[$i]['doc_id']; ?></td>
                 <td><?php echo $records[$i]['loan_category']; ?></td>
                 <td><?php echo $records[$i]['sub_category']; ?></td>
-                <td><?php echo $records[$i]['loan_amt']; ?></td>
+                <td><?php echo moneyFormatIndia($records[$i]['loan_amt']); ?></td>
                 <td><?php echo $records[$i]['status']; ?></td>
                 <td><?php echo $records[$i]['sub_status']; ?></td>
                 <td><?php echo $records[$i]['doc_status']; ?></td>

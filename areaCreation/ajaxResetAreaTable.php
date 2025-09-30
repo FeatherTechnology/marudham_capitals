@@ -33,7 +33,9 @@ if (isset($_POST['taluk'])) {
                         <a id="delete_area" value="<?php if (isset($ct["area_id"])) {
                                                         echo $ct["area_id"];
                                                     } ?>"><span class='icon-trash-2'></span>
-                        </a>
+                        </a> &nbsp
+                        <a id="swap_areas" data-toggle="modal"  data-target="#swap_area_model_box" value="<?php if (isset($ct['area_id'])) { echo $ct['area_id']; } ?>"> <span class="icon-sync"></span> </a>
+
                     </td>
                 </tr>
         <?php $i = $i + 1;

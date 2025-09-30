@@ -2,6 +2,11 @@ $(document).ready(function () {
     /// noc_req_id = get particular line item request id becuase multiple request show in list against single customer.. the Customer is same but request is not so have to take particular req id to show details.
     $('#submit_closed').click(function () {
         validations();
+        let confirmAction = confirm("Are you sure you want to submit Closed ?");
+        if (!confirmAction) {
+            event.preventDefault(); // Stop form submission if canceled
+        }
+
     })
 
     ///Customer Feedback 
@@ -313,12 +318,12 @@ function getCustomerSummary() {
         cache: false,
         success: function (response) {
             $('#cus_how_know').val(response['how_to_know'])
-            $('#cus_monthly_income').val(response['monthly_income'])
-            $('#cus_other_income').val(response['other_income'])
-            $('#cus_support_income').val(response['support_income'])
-            $('#cus_Commitment').val(response['commitment'])
-            $('#cus_monDue_capacity').val(response['monthly_due_capacity'])
-            $('#cus_loan_limit').val(response['loan_limit'])
+            $('#cus_monthly_income').val(moneyFormatIndia(response['monthly_income']))
+            $('#cus_other_income').val(moneyFormatIndia(response['other_income']))
+            $('#cus_support_income').val(moneyFormatIndia(response['support_income']))
+            $('#cus_Commitment').val(moneyFormatIndia(response['commitment']))
+            $('#cus_monDue_capacity').val(moneyFormatIndia(response['monthly_due_capacity']))
+            $('#cus_loan_limit').val(moneyFormatIndia(response['loan_limit']))
             $('#about_cus').val(response['about_customer'])
         }
     }).then(function () {

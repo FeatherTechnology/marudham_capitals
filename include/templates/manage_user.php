@@ -562,6 +562,7 @@ if($idupd>0)
 												<option value="1">Existing</option>
 												<option value="2">New</option>
 												<option value="3">Repromotion</option>
+												<!-- <option value="4">Events</option> -->
 											</select>
 											<span class="text-danger" style='display:none' id='proCheck'>Please select Promotion Activity Access</span>
                                         </div>

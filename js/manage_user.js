@@ -357,6 +357,10 @@ $(document).ready(function () {
         multiselectValue();// for taking selected values from multiselect to hidden input field. so that it can be passed as comma imploded string
 
         validation();
+        let confirmAction = confirm("Are you sure you want to submit Manage user ?");
+        if (!confirmAction) {
+            event.preventDefault(); // Stop form submission if canceled
+        }
     })
 });
 
@@ -886,7 +890,8 @@ function getProAccess() {
     const valueToLabelMap = {
         '1': 'Existing',
         '2': 'New ',
-        '3': 'Repromotion' 
+        '3': 'Repromotion', 
+        '4': 'Events' 
     };
     promotionAccess.clearStore();
 

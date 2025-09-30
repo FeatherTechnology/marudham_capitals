@@ -10,13 +10,21 @@ $(document).ready(function () {
 
     $("#state").change(function () {
         var StateSelected = $(this).val();
-        getDistrictDropdown(StateSelected);
+        getDistrictDropdown(StateSelected," ");
+    });
+    $("#swap_states").change(function () {
+        var StateSelected = $(this).val();
+        getDistrictDropdown(StateSelected,'swap');
     });
 
+    $('#swap_district').change(function () {
+        var DistSelected = $(this).val();
+        getTalukDropdown(DistSelected,'swap');
+    });
     $('#district').change(function () {
         var DistSelected = $(this).val();
         $('#district1').val(DistSelected);
-        getTalukDropdown(DistSelected);
+        getTalukDropdown(DistSelected," ");
     });
 
     $('#taluk').change(function () {
@@ -80,7 +88,6 @@ $(document).ready(function () {
                 $('#submitAreaUploadbtn').attr("disabled", true);
             },
             success: function (data) {
-                console.log(data)
                 if (data == 0) {
                     $("#notinsertsuccess").hide();
                     $("#insertsuccess").show();
@@ -124,7 +131,35 @@ $(document).ready(function () {
             sub_area += sub_area_list[i].value;
         }
         $('#sub_area').val(sub_area);
+         // Confirmation before submit
+    let confirmAction = confirm("Are you sure you want to submit Area Creation?");
+    if (confirmAction) {
+        $(this).closest("form").submit(); // manually submit
+    } else {
+        return false; // cancel submit
+    }
 
+    })
+    $('#swap_area_creation').click(function () {
+        var area_id   = $("#swap_area_id").val();
+        var states    = $("#swap_states").val();
+        var districts = $("#swap_district").val();
+        var taluks    = $("#swap_taluk").val();
+        var pincodes  = $("#pincodes").val();
+
+        if(area_id !='' && states !='SelectState' && districts !='Select District' && taluks!='Select Taluk' ){
+            swaparea(area_id,states,districts,taluks,pincodes);
+        }
+        else{
+             Swal.fire({
+                timerProgressBar: true,
+                timer: 2000,
+                title: 'Please Fill out Mandatory fields!',
+                icon: 'error',
+                showConfirmButton: true,
+                confirmButtonColor: '#009688'
+            });
+        }
     })
 
 
@@ -139,8 +174,8 @@ $(function () {
         var taluk_upd = $('#taluk_upd').val(); if (taluk_upd != '') { $('#taluk1').val(taluk_upd); $('#add_area').attr({ "data-toggle": "modal", "data-target": ".add_area" }) }
         var area_upd = $('#area_upd').val();
 
-        getDistrictDropdown(state_upd);
-        getTalukDropdown(district_upd);
+        getDistrictDropdown(state_upd," ");
+        getTalukDropdown(district_upd," ");
 
         getTalukBasedArea(taluk_upd);
         resetAreaTable(taluk_upd);
@@ -151,7 +186,7 @@ $(function () {
 })
 
 //get district dropdown
-function getDistrictDropdown(StateSelected) {
+function getDistrictDropdown(StateSelected,value) {
 
     var optionsList;
     var htmlString = "<option value='Select District'>Select District</option>";
@@ -180,15 +215,18 @@ function getDistrictDropdown(StateSelected) {
         if (district_upd != '' && district_upd == optionsList[i]) { selected = "selected"; }
         htmlString = htmlString + "<option value='" + optionsList[i] + "' " + selected + " >" + optionsList[i] + "</option>";
     }
+    if(value =='swap'){
+        $("#swap_district").html(htmlString);
+     sortDropdownAlphabetically("#swap_district");
+    }else{
     $("#district").html(htmlString);
-
-    // Sort district dropdown
     sortDropdownAlphabetically("#district");
+
+    }
 }
 
 //get Taluk Dropdown
-function getTalukDropdown(DistSelected) {
-
+function getTalukDropdown(DistSelected,value) {
     var optionsList;
     var htmlString = "<option value='Select Taluk'>Select Taluk</option>";
     {
@@ -361,10 +399,15 @@ function getTalukDropdown(DistSelected) {
         if (taluk_upd != '' && taluk_upd == optionsList[i]) { selected = "selected"; }
         htmlString = htmlString + "<option value='" + optionsList[i] + "' " + selected + " >" + optionsList[i] + "</option>";
     }
-    $("#taluk").html(htmlString);
+    
+    if(value =='swap'){
+        $("#swap_taluk").html(htmlString);
+        sortDropdownAlphabetically("#swap_taluk");
+    }else{
+        $("#taluk").html(htmlString);
+        sortDropdownAlphabetically("#taluk");
+    }
 
-    // Sort Taluk dropdown
-    sortDropdownAlphabetically("#taluk");
 }
 
 //Get Taluk Based Area
@@ -532,6 +575,31 @@ function getAreaBasedSubArea(area) {
         });
     });
 
+    $("body").on("click", "#swap_areas", function (event) {
+        event.preventDefault(); // prevent default <a> behavior
+
+        var area_id = $(this).attr('value');
+
+        $.ajax({
+            url: 'areaCreation/swapArea.php',
+            type: 'POST',
+            dataType: 'json',
+            data: { "area_id": area_id },
+            cache: false,
+            success: function (response) {
+                // Populate modal fields
+                $("#swap_states").val(response.state);
+                $("#swap_area_id").val(response.area_name_id);
+                $("#pincodes").val(response.pincode);
+
+                // Populate dependent dropdowns
+                getDistrictDropdown(response.state,'swap');
+                getTalukDropdown(response.district,'swap');
+
+            }
+        });
+    });
+
     $("body").on("click", "#delete_area", function () {
         var isok = confirm("Do you want delete this Area?");
         if (isok == false) {
@@ -593,8 +661,7 @@ function getAreaBasedSubArea(area) {
     });
 
     function closeModal() {
-        var talukselected = $('#taluk1').val();
-        getTalukBasedArea(talukselected);
+        location.reload(); 
     }
 }
 
@@ -750,4 +817,40 @@ function getAreaBasedSubArea(area) {
         var area = $('#area').val();
         getAreaBasedSubArea(area)
     }
+    
 }
+function closeSwapmodel() {
+     var taluks = $('#taluk1').val();
+        resetAreaTable(taluks);
+
+}
+
+function swaparea(area_id,states,districts,taluks,pincodes) {
+        $.ajax({
+            url: 'areaCreation/updateSwapArea.php',
+            type: 'POST',
+            data: {  taluks,area_id,states, districts,pincodes },
+            cache: false,
+            success: function (response) {
+                if (response.includes('Area Updated')) {
+                    Swal.fire({
+                        title: 'Area Updated',
+                        icon: 'success',
+                        showConfirmButton: true,
+                        confirmButtonColor: '#009688'
+                    });
+                   closeSwapmodel();
+                    $('#swap_area_model_box .btn-secondary').click();
+                   
+                } else if (response.includes('Area Not Updated')) {
+                    Swal.fire({
+                        title: 'Area Not Updated',
+                        icon: 'error',
+                        showConfirmButton: true,
+                        confirmButtonColor: '#009688'
+                    });
+                }
+
+            }
+        });
+}    

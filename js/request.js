@@ -218,6 +218,10 @@ $(document).ready(function () {
         var submit_btn = $(this);
         submit_btn.attr('disabled', true);
         validation(submit_btn, event);
+        let confirmAction = confirm("Are you sure you want to submit Request ?");
+        if (!confirmAction) {
+            event.preventDefault(); // Stop form submission if canceled
+        }
     })
 
 });// Document ready end
@@ -271,10 +275,10 @@ $(function () {//For Update
             var ad_amt_upd = $('#ad_amt_upd').val();
             var ad_perc_upd = $('#ad_perc_upd').val();
             var loan_amt_upd = $('#loan_amt_upd').val();
-            $('#tot_value').val(tot_value_upd);
-            $('#ad_amt').val(ad_amt_upd);
+            $('#tot_value').val(moneyFormatIndia(tot_value_upd));
+            $('#ad_amt').val(moneyFormatIndia(ad_amt_upd));
             $('#ad_perc').val(ad_perc_upd);
-            $('#loan_amt').val(loan_amt_upd);
+            $('#loan_amt').val(moneyFormatIndia(loan_amt_upd));
         });
 
         getCategoryInfo(sub_category_upd);
