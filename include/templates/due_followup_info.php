@@ -150,6 +150,7 @@ $documentationInfo = $userObj->getAcknowlegementDocument($mysqli, $req_id);
 if (sizeof($documentationInfo) > 0) {
 	$document_table_id = $documentationInfo['doc_Tableid'];
 	$document_sts = $documentationInfo['cus_status'];
+	$doc_id = $documentationInfo['doc_id'];
 	$mortgage_process = $documentationInfo['mortgage_process'];
 	$Propertyholder_type = $documentationInfo['Propertyholder_type'];
 	$Propertyholder_name = $documentationInfo['Propertyholder_name'];
@@ -1316,7 +1317,7 @@ if (sizeof($getLoanCalculation) > 0) {
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="DocID">Document ID</label> <span class="required"> * </span>
-										<input type="text" class="form-control" id="doc_id" name="doc_id" readonly tabindex="5">
+										<input type="text" class="form-control" id="doc_id" name="doc_id" value="<?php if(isset($doc_id)) echo $doc_id; ?> " readonly tabindex="5">
 									</div>
 								</div>
 							</div>

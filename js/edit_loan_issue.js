@@ -76,7 +76,7 @@ function callOnClickEvents() {
                             Swal.fire({
                                 timerProgressBar: true,
                                 title: result.response,
-                                html: `<p style="font-size: 20px;">The Loan ID is: <b>${result.loanid}</b></p>`,
+                                html: `<p style="font-size: 20px;">The Loan ID is: <b>${result.loanid}</b> </br> The Doc ID is: <b>${result.docid}</b> </p>`,
                                 icon: 'success',
                                 showConfirmButton: true,
                                 confirmButtonColor: '#009688'

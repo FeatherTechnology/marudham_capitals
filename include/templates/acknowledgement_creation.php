@@ -1383,12 +1383,12 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 									</div>
 								</div>
 
-								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+								<!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="DocID">Document ID</label> <span class="required"> * </span>
 										<input type="text" class="form-control" id="doc_id" name="doc_id" readonly tabindex="8">
 									</div>
-								</div>
+								</div> -->
 							</div>
 						</div>
 					</div>
@@ -1401,7 +1401,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 							<div class="row">
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
-										<label for="doc_id">Documents</label>
+										<label for="choose_document">Documents</label>
 										<select class="form-control" name="choose_document" id="choose_document">
 											<option value="0">Select Document</option>
 											<option value="1">Signed Doc</option>
