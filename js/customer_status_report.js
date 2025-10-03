@@ -95,10 +95,10 @@ $(document).ready(function () {
         }
     });
 
-    $('#due_followup').on('change', function () {
-        let followup_id = $(this).val();
-        getUserLoanCategories(null, followup_id); // user_id not needed for type=4
-    });
+    // $('#due_followup').on('change', function () {
+    //     let followup_id = $(this).val();
+    //     getUserLoanCategories(null, followup_id); // user_id not needed for type=4
+    // });
 
     $('#reset_btn').click(function () {
         let search_date = $('#search_date').val();
@@ -296,7 +296,8 @@ function currentReportCount(search_date, type, line, selected_user, group_map, d
                 { data: 'responsible_zero' },
                 { data: 'paid' },
                 { data: 'partially_paid' },
-                { data: 'unpaid' }
+                { data: 'unpaid' },
+                { data: 'from_pending' }
             ];
 
             $('#current_table').DataTable().destroy();
@@ -327,6 +328,7 @@ function currentReportCount(search_date, type, line, selected_user, group_map, d
                 <td><b>${totalRow.paid}</b></td>
                 <td><b>${totalRow.partially_paid}</b></td>
                 <td><b>${totalRow.unpaid}</b></td>
+                <td><b>${totalRow.from_pending}</b></td>
             </tr>`;
 
             $('#current_table tfoot').html(footerHtml);

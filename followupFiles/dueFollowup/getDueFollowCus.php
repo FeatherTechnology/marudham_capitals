@@ -11,7 +11,6 @@ if ($user_id != 1) {
 
     $user_id = (int)$user_id;
     $userQry = $connect->query("SELECT due_followup_lines, ag_id FROM USER WHERE user_id = $user_id ");
-    
     if ($rowuser = $userQry->fetch()) {
         $due_followup_lines = explode(',', $rowuser['due_followup_lines']);
         $ag_id = trim($rowuser['ag_id']);
@@ -19,19 +18,18 @@ if ($user_id != 1) {
 
         foreach ($due_followup_lines as $line) {
             $line = (int)trim($line);
-            $lineQry = $connect->query("SELECT area_id, loan_category_id, line_name FROM area_duefollowup_mapping WHERE map_id = $line");
+            $lineQry = $connect->query("SELECT area_id FROM area_duefollowup_mapping WHERE map_id = $line");
 
             if ($row_sub = $lineQry->fetch()) {
                 $area_ids = array_filter(array_map('intval', explode(',', $row_sub['area_id'])));
-                $loan_cat_ids = array_filter(array_map('intval', explode(',', $row_sub['loan_category_id'])));
-                $line_ids = array_filter(array_map('intval', explode(',', $row_sub['line_name'])));
-
-                if (!empty($area_ids) && !empty($loan_cat_ids) && !empty($line_ids)) {
+                // $loan_cat_ids = array_filter(array_map('intval', explode(',', $row_sub['loan_category_id'])));
+                // $line_ids = array_filter(array_map('intval', explode(',', $row_sub['line_name'])));
+                if (!empty($area_ids)) {
                     $area_list = implode(',', $area_ids);
-                    $loan_cat_list = implode(',', $loan_cat_ids);
-                    $line_list = implode(',', $line_ids);
-
-                    $cnd = "(cp.area_confirm_area IN ($area_list) AND alm.map_id IN ($line_list) AND iv.loan_category IN ($loan_cat_list))";
+                    // $loan_cat_list = implode(',', $loan_cat_ids);
+                    // $line_list = implode(',', $line_ids);
+                     $cnd = "(cp.area_confirm_area IN ($area_list))";
+                    // $cnd = "(cp.area_confirm_area IN ($area_list) AND alm.map_id IN ($line_list) AND iv.loan_category IN ($loan_cat_list))";
                     $conditions[] = $cnd;
                 }
             }
@@ -59,26 +57,25 @@ if (isset($_POST['cus_sts'])) {
 }
 
 $commdate = isset($_POST['comm_date']) && !empty($_POST['comm_date']) ? $_POST['comm_date'] : '';
+$commitmentCondition = "";
+if (!empty($commdate) && $commdate != 1) {
+    $commitmentCondition = " AND (c1.comm_date IS NOT NULL AND c1.comm_date != '0000-00-00')";
+}
+
 
 if (isset($_POST['comm_date'])) {
     $comm_date = $_POST['comm_date']; // Get the comm_date from the form
 
-    if($comm_date == '2'){ //Before Date
+    if ($comm_date == '2') { //Before Date
         $qry_cndtn = " AND cm.comm_date < '$current_date' AND (cm.comm_date IS NOT NULL OR cm.comm_date != '0000-00-00') ";
-
-    }elseif($comm_date =='3'){ //Today
+    } elseif ($comm_date == '3') { //Today
         $qry_cndtn = " AND cm.comm_date = '$current_date' ";
-
-    }elseif($comm_date =='4'){ //After Date
+    } elseif ($comm_date == '4') { //After Date
         $qry_cndtn = " AND cm.comm_date > '$current_date' AND (cm.comm_date IS NOT NULL OR cm.comm_date != '0000-00-00') ";
-        
-    }
-    elseif($comm_date =='5'){ //To Follow Date
+    } elseif ($comm_date == '5') { //To Follow Date
         $qry_cndtn = " AND (cm.comm_date IS NULL OR cm.comm_date = '0000-00-00') ";
-        
-    }else{
+    } else {
         $qry_cndtn = "";
-        
     }
 
     $loan_agnt .= $qry_cndtn;
@@ -130,11 +127,11 @@ JOIN branch_creation bc ON
 JOIN in_verification iv ON
     cp.req_id = iv.req_id
 LEFT JOIN commitment cm ON 
-    cm.cus_id = cp.cus_id
+cm.cus_id = cp.cus_id
     AND cm.created_date = (
         SELECT MAX(c1.created_date)
         FROM commitment c1
-        WHERE c1.cus_id = cp.cus_id
+        WHERE c1.cus_id = cp.cus_id $commitmentCondition
     )
 WHERE
     cs.payable_amnt > 0 AND ii.status = 0 AND ii.cus_status BETWEEN 14 AND 17 AND FIND_IN_SET(cs.sub_status,'$sub_status_mapping') $loan_agnt $search
@@ -143,13 +140,11 @@ GROUP BY
     cs.cus_id
 $order "; // 14 and 17 means collection entries, 17 removed from issue list
 //this will only take selected req_ids which is payable > 0
-
 $start = $_POST['start'] ?? 0;
 $length = $_POST['length'] ?? -1;
 if ($length != -1) {
     $query .= " LIMIT $start, $length";
 }
-
 $statement = $connect->prepare($query);
 $statement->execute();
 $result = $statement->fetchAll();
@@ -163,12 +158,10 @@ foreach ($result as $row) {
     $comm_date = '';
     $hint = '';
     $comm_err = '';
-
-    switch($row['last_paid_date']){
+    switch ($row['last_paid_date']) {
         case 1:
             $last_paid_date = '1-10';
             break;
-            
         case 2:
             $last_paid_date = '11-15';
             break;
@@ -268,7 +261,7 @@ foreach ($result as $row) {
 echo json_encode([
     "draw" => intval($_POST['draw']),
     "recordsTotal" => getTotalRecords($connect),
-    "recordsFiltered" => getFilteredRecords($connect, $data, $search, $sub_status_mapping, $loan_agnt),
+    "recordsFiltered" => getFilteredRecords($connect, $data, $search, $sub_status_mapping, $loan_agnt, $commitmentCondition),
     "data" => $data
 ]);
 
@@ -283,7 +276,7 @@ function getTotalRecords($connect)
     return $totals;
 }
 
-function getFilteredRecords($connect, $data, $search, $sub_status_mapping, $loan_agnt)
+function getFilteredRecords($connect, $data, $search, $sub_status_mapping, $loan_agnt, $commitmentCondition)
 {
     // Your database query to get the total number of filtered records
     // For example:
@@ -312,7 +305,7 @@ function getFilteredRecords($connect, $data, $search, $sub_status_mapping, $loan
             AND cm.created_date = (
                 SELECT MAX(c1.created_date)
                 FROM commitment c1
-                WHERE c1.cus_id = cp.cus_id
+                WHERE c1.cus_id = cp.cus_id $commitmentCondition
             )
         WHERE
             cs.payable_amnt > 0 AND FIND_IN_SET(cs.sub_status,'$sub_status_mapping') AND ii.status = 0 AND ii.cus_status BETWEEN 14 AND 17 $loan_agnt $search

@@ -145,10 +145,12 @@ $DueNilReqIdStr = !empty($DueNilReqIds) ? implode(',', $DueNilReqIds) : 'NULL';
 foreach ($loan_category as $cat_id) {
     // Step 1: Fetch customers
     $where = "AND alc.loan_category = $cat_id";
+    $grp_condition = "";
     if ($type == 4) {
-        // add the due-followup's own loan category constraint here (now $cat_id is defined)
-        $where .= " AND adm.loan_category_id = $cat_id";
+        // $where .= " AND adm.loan_category_id = $cat_id";
+        $grp_condition = "GROUP BY ii.req_id";
     }
+
     $custQry = $connect->query("
         SELECT 
             ii.req_id,
@@ -188,7 +190,7 @@ foreach ($loan_category as $cat_id) {
              )  OR (ii.req_id IN ($odReqIdStr))
         OR (ii.req_id IN ($DueNilReqIdStr)) 
           )
-          AND DATE(ii.updated_date) < '$toDate_month_start' 
+          AND DATE(ii.updated_date) < '$toDate_month_start'$grp_condition; 
     ");
     $customers = $custQry->fetchAll(PDO::FETCH_ASSOC);
     if (empty($customers)) continue;
@@ -286,7 +288,7 @@ AND col.coll_sub_status IN ('Due Nil');
                 $t_od_count++;  // fixed for the whole month
                 $isODCustomer = true; // flag
             }
-           
+
             if ($isODCustomer) {
                 $customer_cleared = false;
                 $customer_partial = false;

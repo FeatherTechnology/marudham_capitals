@@ -153,9 +153,11 @@ $DueNilReqIdStr = !empty($DueNilReqIds) ? implode(',', $DueNilReqIds) : 'NULL';
 foreach ($loan_category as $cat_id) {
     // Step 1: Fetch customers
     $where = "AND alc.loan_category = $cat_id";
+    $grp_condition = "";
     if ($type == 4) {
         // add the due-followup's own loan category constraint here (now $cat_id is defined)
-        $where .= " AND adm.loan_category_id = $cat_id";
+        // $where .= " AND adm.loan_category_id = $cat_id";
+        $grp_condition = "GROUP BY ii.req_id";
     }
 
     $custQry = $connect->query("
@@ -200,7 +202,7 @@ foreach ($loan_category as $cat_id) {
              OR (ii.req_id IN ($odReqIdStr))
              OR (ii.req_id IN ($DueNilReqIdStr))
           )
-          AND DATE(ii.updated_date) < '$toDate_month_start' 
+          AND DATE(ii.updated_date) < '$toDate_month_start' $grp_condition;
     ");
     $customers = $custQry->fetchAll(PDO::FETCH_ASSOC);
     if (empty($customers)) continue;
@@ -234,7 +236,7 @@ AND col.coll_sub_status IN ('Due Nil');
     $collectionData = [];
     if (!empty($id_list)) {
         $colQry = $connect->query("
-            SELECT req_id, coll_date, payable_amt,due_amt_track, total_paid_track
+            SELECT req_id, coll_date, payable_amt,due_amt_track, total_paid_track,pending_amt,coll_sub_status
             FROM collection
             WHERE req_id IN ($id_list)
               AND DATE(coll_date) <= '$search_date'
@@ -294,7 +296,7 @@ GROUP BY c.req_id;
 
     // Step 5: Process each group
     foreach ($groups as $groupName => $custList) {
-        $total_count = $t_current_count = $responsible_zero = $paid = $partially_paid = $unpaid = $payable_zero = 0;
+        $total_count = $t_current_count = $responsible_zero = $paid = $partially_paid = $unpaid = $payable_zero = $from_pending = 0;
 
 
         foreach ($custList as $cust) {
@@ -319,10 +321,24 @@ GROUP BY c.req_id;
             $start_month = strtotime(date('Y-m-01', strtotime($search_date))); // 1st of the month as timestamp
             $collectedTillMonthStart = 0;
 
+            $searchMonth = date('Y-m', strtotime($search_date));
+            $lastMonthStatus = null; // default null
+            $lastCollDate = null;    // track latest record in month
+
             foreach ($collList as $coll) {
                 $collDate = strtotime($coll['coll_date']);
-                if ($collDate < $start_month) {  // strictly before 1st Aug
-                    $collectedTillMonthStart += (int)$coll['due_amt_track']; // cast to int
+
+                // Collections before this month
+                if ($collDate < $start_month) {
+                    $collectedTillMonthStart += (int)$coll['due_amt_track'];
+                }
+
+                // Find last record in the search month
+                if (date('Y-m', $collDate) === $searchMonth) {
+                    if ($lastCollDate === null || $collDate > $lastCollDate) {
+                        $lastCollDate = $collDate;
+                        $lastMonthStatus = $coll['coll_sub_status'];
+                    }
                 }
             }
 
@@ -347,6 +363,19 @@ GROUP BY c.req_id;
                 // echo $cust['loan_id'] . "<br>";
                 $isCurrentCustomer = true; // flag
             }
+            $isPendingMonthStart = $pending_amount_atMonthStart > 0 &&
+                (
+                    (
+                        ($cust['due_method_scheme'] === '1' || $cust['due_method_calc'] === 'Monthly')
+                        && date('Y-m', strtotime($cust['maturity_date'])) >= date('Y-m', strtotime($toDate_month_start))
+                    )
+                    ||
+                    (
+                        ($cust['due_method_scheme'] != '1' || $cust['due_method_calc'] != 'Monthly')
+                        && strtotime($cust['maturity_date']) > strtotime($toDate_month_start)
+                    )
+                );
+
 
             if ($isCurrentCustomer) {
                 if (isset($paidSummary[$cust['req_id']])) {
@@ -414,6 +443,26 @@ GROUP BY c.req_id;
                     $unpaid++;
                 }
             }
+            $isPendingCustomer = false; // flag
+            if ($isPendingMonthStart) {
+                $isPendingCustomer = true; // flag
+            }
+           
+            // Now use it in your pending logic
+            if ($isPendingCustomer) {
+                $customer_cleared = false;
+                $pay_amnt     = $paidSummary[$cust['req_id']]['expected_due'] ?? null;
+                $previous_due = $paidSummary[$cust['req_id']]['previous_due'] ?? null;
+                $total_paid   = $paidSummary[$cust['req_id']]['total_paid'] ?? null;
+                // Pending cleared within the month
+                if ($total_paid >= $previous_due && $total_paid < $pay_amnt && $lastMonthStatus != 'OD') {
+                    $customer_cleared = true;
+                }
+
+                if ($customer_cleared) {
+                    $from_pending++;
+                }
+            }
         }
 
         if ($type == 1) {
@@ -437,7 +486,8 @@ GROUP BY c.req_id;
             'responsible_zero' => $responsible_zero,  // ✅ new column
             'paid' => $paid,
             'partially_paid' => $partially_paid,
-            'unpaid' => $unpaid
+            'unpaid' => $unpaid,
+            'from_pending' => $from_pending,
         ];
     }
 }
@@ -455,7 +505,8 @@ $grand_total = [
     'responsible_zero' => 0,
     'paid' => 0,
     'partially_paid' => 0,
-    'unpaid' => 0
+    'unpaid' => 0,
+    'from_pending' => 0,
 ];
 
 foreach ($data as $row) {
@@ -466,6 +517,7 @@ foreach ($data as $row) {
     $grand_total['paid'] += $row['paid'];
     $grand_total['partially_paid']    += $row['partially_paid'];
     $grand_total['unpaid']            += $row['unpaid'];
+    $grand_total['from_pending']            += $row['from_pending'];
 }
 
 // Append totals to the end
