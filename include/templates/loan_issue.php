@@ -8,10 +8,10 @@ if (isset($_POST['submit_loanIssue']) && $_POST['submit_loanIssue'] != '') {
 
 	$response = $userObj->addloanIssue($mysqli, $userid);
 
-	if ($response != '') {
+	if ($response['loanid'] !='') {
 ?>
 		<script>
-			alert(`The Loan ID is: <?php echo $response; ?> `);
+			alert("The Loan ID is: <?php echo $response['loanid']; ?>\nThe Doc ID is: <?php echo $response['docid']; ?>");
 		</script>
 	<?php
 	}

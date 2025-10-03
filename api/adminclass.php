@@ -5332,25 +5332,26 @@ class admin
 			// Disable autocommit to start a transaction
 			$mysqli->autocommit(FALSE);
 
-			$select = $mysqli->query("SELECT doc_id FROM acknowlegement_documentation WHERE id = '$doc_table_id' AND doc_id IS NOT NULL ");
-			if ($select && $select->num_rows > 0) {
-				$code = $select->fetch_assoc();
-				$doc_id = $code['doc_id'];
-			} else {
-				$myStr = "DOC";
+			$doc_id = '';
+			// $select = $mysqli->query("SELECT doc_id FROM acknowlegement_documentation WHERE id = '$doc_table_id' AND doc_id IS NOT NULL ");
+			// if ($select && $select->num_rows > 0) {
+			// 	$code = $select->fetch_assoc();
+			// 	$doc_id = $code['doc_id'];
+			// } else {
+			// 	$myStr = "DOC";
 
-				$codeAvailable = $mysqli->query("SELECT MAX(CAST(SUBSTRING_INDEX(doc_id, '-', -1) AS UNSIGNED)) AS max_number FROM acknowlegement_documentation WHERE doc_id REGEXP '^DOC-[0-9]+' FOR UPDATE");
-				if ($codeAvailable && $codeAvailable->num_rows > 0) {
-					$row = $codeAvailable->fetch_assoc();
-					$maxNumber = isset($row["max_number"]) ? (int)$row["max_number"] : 0;
+			// 	$codeAvailable = $mysqli->query("SELECT MAX(CAST(SUBSTRING_INDEX(doc_id, '-', -1) AS UNSIGNED)) AS max_number FROM acknowlegement_documentation WHERE doc_id REGEXP '^DOC-[0-9]+' FOR UPDATE");
+			// 	if ($codeAvailable && $codeAvailable->num_rows > 0) {
+			// 		$row = $codeAvailable->fetch_assoc();
+			// 		$maxNumber = isset($row["max_number"]) ? (int)$row["max_number"] : 0;
 
-					$nextNumber = $maxNumber + 1;
-					$doc_id = $myStr . "-" . $nextNumber;
-				} else {
-					$initialapp = $myStr . "-101";
-					$doc_id = $initialapp;
-				}
-			}
+			// 		$nextNumber = $maxNumber + 1;
+			// 		$doc_id = $myStr . "-" . $nextNumber;
+			// 	} else {
+			// 		$initialapp = $myStr . "-101";
+			// 		$doc_id = $initialapp;
+			// 	}
+			// }
 
 
 			if ($doc_table_id == '') {
@@ -5441,6 +5442,7 @@ class admin
 			while ($row = $qry->fetch_assoc()) {
 				$detailrecords['doc_Tableid'] = $row['id'];
 				$detailrecords['req_id'] = $row['req_id'];
+				$detailrecords['doc_id'] = $row['doc_id'];
 				$detailrecords['mortgage_process'] = $row['mortgage_process'];
 				$detailrecords['Propertyholder_type'] = $row['Propertyholder_type'];
 				$detailrecords['Propertyholder_name'] = $row['Propertyholder_name'];
@@ -5882,6 +5884,7 @@ class admin
 		$maturity_month     = sanitize($mysqli, $_POST['maturity_month'] ?? '');
 
 		$loan_id = ""; //if bank transaction means loan id generate here itself and amount transfer by accounts user.
+		$doc_id = ""; //if bank transaction means doc id generate here itself and amount transfer by accounts user.
 
 		try {
 			// Disable autocommit to start a transaction
@@ -5916,6 +5919,12 @@ class admin
 				} elseif ($issueresult && $issueresult->num_rows > 0) {
 					$loan_row = $issueresult->fetch_assoc();
 					$loan_id = $loan_row['loan_id'];
+				}
+
+				//Doc id will generate while Loan id generate because both id have to same for a customer.
+				if($loan_id){
+					$doc_id = "DOC-" . "$loan_id";
+					$mysqli->query("UPDATE acknowlegement_documentation set doc_id = '$doc_id', update_login_id = $userid, updated_date = now() WHERE  req_id = '" . $req_id . "' ") or die('Error on Acknowledgement documentation Table');
 				}
 			}
 
@@ -5955,7 +5964,7 @@ class admin
 			echo "Error: " . $e->getMessage();
 		}
 
-		return $loan_id;
+		return ["loanid" => $loan_id, "docid" => $doc_id];
 	}
 
 	function getLoanList($mysqli, $id)

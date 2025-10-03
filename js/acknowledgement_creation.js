@@ -1697,20 +1697,21 @@ function onLoadDocEditFunction() {//On load for Loan Calculation edit
 
 }
 //Get DOC id 
-function getDocID() {
-    let doc_Id = $('#doc_table_id').val();
-    $.ajax({
-        url: 'verificationFile/documentation/doc_id_autoGen.php',
-        type: "post",
-        dataType: "json",
-        data: { "id": doc_Id },
-        cache: false,
-        success: function (response) {
-            var docId = response;
-            $('#doc_id').val(docId);
-        }
-    })
-}
+//Doc id will generate while Loan id generate because both id have to same for a customer.
+// function getDocID() {
+//     let doc_Id = $('#doc_table_id').val();
+//     $.ajax({
+//         url: 'verificationFile/documentation/doc_id_autoGen.php',
+//         type: "post",
+//         dataType: "json",
+//         data: { "id": doc_Id },
+//         cache: false,
+//         success: function (response) {
+//             var docId = response;
+//             $('#doc_id').val(docId);
+//         }
+//     })
+// }
 
 function endorseHolderName() {
 
@@ -2635,7 +2636,8 @@ function doc_submit_validation(submit_btn) {
 }
 
 async function getDocumentFunc() {
-    getDocID(); // Atuo Generate Doc ID.
+    //Doc id will generate while Loan id generate because both id have to same for a customer.
+    // getDocID(); // Atuo Generate Doc ID.
 
     await resetsigninfoList(); // Signed Doc List Reset.
 

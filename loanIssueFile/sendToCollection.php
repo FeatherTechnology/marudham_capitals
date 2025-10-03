@@ -40,6 +40,12 @@ try {
     $connect->query("UPDATE `in_acknowledgement` SET `cus_status`= 14,`update_login_id`= $userid and `updated_date`= current_date WHERE req_id = '" . $req_id . "' ") or die('Error on in_acknowledgement Table');
     $insertIssue = $connect->query("UPDATE `in_issue` SET `loan_id` = '$loan_id',`cus_status`= 14,`updated_date`=now(),`update_login_id` = $userid where req_id = '" . $req_id . "' ") or die('Error on in_issue Table');
 
+    //Doc id will generate while Loan id generate because both id have to same for a customer.
+    if($loan_id){
+        $doc_id = "DOC-" . "$loan_id";
+        $connect->query("UPDATE acknowlegement_documentation set doc_id = '$doc_id', update_login_id = $userid, updated_date = now() WHERE  req_id = '" . $req_id . "' ") or die('Error on Acknowledgement documentation Table');
+    }
+    
     $qry = $connect->query("SELECT agent_id FROM in_verification where req_id = $req_id ");
     $ag_id = $qry->fetch()['agent_id'];
 
@@ -77,6 +83,7 @@ try {
     // Rollback the transaction on error
     $connect->rollBack();
     $loan_id = "";
+    $doc_id = "";
     $response = "Error: " . $e->getMessage();
 }
 
@@ -99,7 +106,7 @@ try {
 // // Process your response here
 // return $response; 
 
-echo json_encode(["response" => $response, "loanid" => $loan_id]);
+echo json_encode(["response" => $response, "loanid" => $loan_id, "docid" => $doc_id]);
 
 // Close the database connection
 $connect = null;
