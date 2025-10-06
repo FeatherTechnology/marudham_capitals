@@ -22,18 +22,28 @@ class getTrackTableDetails
         $i = 0;
         $data = array();
 
-        $qry = $connect->query("SELECT cus_status FROM request_creation where req_id = '$req_id' ");
-        $cus_status = $qry->fetch()['cus_status'] ?? '';
+        $qry = $connect->query("SELECT cus_status, update_login_id, updated_date FROM request_creation WHERE req_id = '$req_id'");
+        $row = $qry->fetch();
+        $cus_status = $row['cus_status'] ?? '';
+        $update_login_id = $row['update_login_id'] ?? '';
+        $updated_date = $row['updated_date'] ?? '';
 
         if ($cus_status != '') {
 
             // Request
-            $qry = $connect->query("SELECT cus_id,sub_area,insert_login_id,created_date from request_creation where req_id = $req_id");
+            $qry = $connect->query("SELECT cus_id,sub_area,insert_login_id,created_date,update_login_id,updated_date from request_creation where req_id = $req_id");
             if ($qry->rowCount() > 0) {
                 $row = $qry->fetch();
                 $cus_id = $row['cus_id'];
                 $branch = $this->getBranchName($connect, $row['sub_area'], 'group');
                 $data[] = $this->getTrackDetails($connect, 'Request', $row['created_date'], $row['insert_login_id'], $branch);
+
+                // ✅ If customer canceled at Request stage
+                if ($cus_status == 4) {
+                    $data[] = $this->getTrackDetails($connect, 'Request - Cancel', $row['updated_date'], $row['update_login_id'], $branch);
+                } else if ($cus_status == 8) {  // Revoke
+                    $data[] = $this->getTrackDetails($connect, 'Request - Revoke', $row['updated_date'], $row['update_login_id'], $branch);
+                }
             }
 
             // Customer Profile
@@ -57,6 +67,14 @@ class getTrackTableDetails
                 $row = $qry->fetch();
                 $data[] = $this->getTrackDetails($connect, 'Loan Calculation', $row['create_date'], $row['insert_login_id'], $branch);
             }
+            // Verification Cancel / Revoke
+            if ($cus_status == 5) {
+                $data[] = $this->getTrackDetails($connect, 'Verification - Cancel', $updated_date, $update_login_id, $branch);
+            } else if ($cus_status == 9) {
+                $data[] = $this->getTrackDetails($connect, 'Verification - Revoke', $updated_date, $update_login_id, $branch);
+            } else if ($cus_status == 6) { //Appoval - Cancel
+                $data[] = $this->getTrackDetails($connect, 'Approval - Cancel', $updated_date, $update_login_id, $branch);
+            }
 
             // Approval
             $qry = $connect->query("SELECT inserted_user,inserted_date from in_acknowledgement where req_id = $req_id");
@@ -64,7 +82,10 @@ class getTrackTableDetails
                 $row = $qry->fetch();
                 $data[] = $this->getTrackDetails($connect, 'Approval', $row['inserted_date'], $row['inserted_user'], $branch);
             }
-
+            // Acknowledgment Cancel
+            if ($cus_status == 7) { 
+                $data[] = $this->getTrackDetails($connect, 'Acknowledgment - Cancel', $updated_date, $update_login_id, $branch);
+            }
             // Acknowledgment
             $qry = $connect->query("SELECT inserted_user,inserted_date from in_issue where req_id = $req_id");
             if ($qry->rowCount() > 0) {
@@ -110,7 +131,6 @@ class getTrackTableDetails
                 <th>Date</th>
                 <th>User Type</th>
                 <th>User Name</th>
-                <th>Name</th>
                 <th>Branch</th>
                 <th>Details</th>
             </thead>
@@ -123,7 +143,6 @@ class getTrackTableDetails
                         <td><?php echo $item['stage']; ?></td>
                         <td><?php echo $item['date']; ?></td>
                         <td><?php echo $item['usertype']; ?></td>
-                        <td><?php echo $item['username']; ?></td>
                         <td><?php echo $item['fullname']; ?></td>
                         <td><?php echo $item['branch']; ?></td>
                         <td><?php echo $item['action']; ?></td>
@@ -140,13 +159,13 @@ class getTrackTableDetails
     {
         $req_id = $_POST['req_id'] ?? '';
         $user_id = $connect->quote($user_id);
-        $qry = $connect->query("SELECT `role`,`user_name`,`fullname` FROM `user` WHERE user_id=" . $user_id);
+        $qry = $connect->query("SELECT `role`,`fullname` FROM `user` WHERE user_id=" . $user_id);
         $row = $qry->fetch();
 
         $date = date('d-m-Y', strtotime($date));
         $usertype = $this->usertypeArr[$row['role']];
 
-        $response = array('stage' => $stage, 'date' => $date, 'usertype' => $usertype, 'username' => $row['user_name'], 'fullname' => $row['fullname'], 'branch' => $branch);
+        $response = array('stage' => $stage, 'date' => $date, 'usertype' => $usertype, 'fullname' => $row['fullname'], 'branch' => $branch);
 
         $response['action'] = '';
 

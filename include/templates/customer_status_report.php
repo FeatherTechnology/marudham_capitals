@@ -74,6 +74,7 @@
                                         <th>Paid</th>
                                         <th>Partial Paid</th>
                                         <th>Un Paid</th>
+                                        <th>From Pending</th>
 									</tr>
 								</thead>
 								<tbody></tbody>

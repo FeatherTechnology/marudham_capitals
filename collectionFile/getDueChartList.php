@@ -588,7 +588,7 @@ function moneyFormatIndia($num)
                                 }
                                 ?>
                             </td>
-                        <?php } ?>
+                        <?php }  $totalpaid = ($loan_type == 'emi') ? $totalPaid : $totalPaidPrinc;?>
 
                         <td>
                             <?php echo moneyFormatIndia($bal_amt);

@@ -147,8 +147,10 @@ $DueNilReqIdStr = !empty($DueNilReqIds) ? implode(',', $DueNilReqIds) : 'NULL';
 foreach ($loan_category as $cat_id) {
     // Step 1: Fetch customers
     $where = "AND alc.loan_category = $cat_id";
+    $grp_condition="";
     if ($type == 4) {
-        $where .= " AND adm.loan_category_id = $cat_id";
+        // $where .= " AND adm.loan_category_id = $cat_id";
+        $grp_condition = "GROUP BY ii.req_id";
     }
 
     $custQry = $connect->query("
@@ -191,7 +193,7 @@ foreach ($loan_category as $cat_id) {
              OR (ii.req_id IN ($odReqIdStr))
              OR (ii.req_id IN ($DueNilReqIdStr))
           )
-          AND DATE(ii.updated_date) < '$toDate_month_start'
+          AND DATE(ii.updated_date) < '$toDate_month_start' $grp_condition;
     ");
     $customers = $custQry->fetchAll(PDO::FETCH_ASSOC);
     if (empty($customers)) continue;

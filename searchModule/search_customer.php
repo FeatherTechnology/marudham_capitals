@@ -99,8 +99,8 @@ if ($runSql->rowCount() > 0) {
     while ($row = $runSql->fetch()){
         $req_sql = $connect->query("SELECT cr.cus_id, cr.customer_name, ac.area_name, sac.sub_area_name, bc.branch_name, alm.line_name, agm.group_name, cr.mobile1, cr.mobile2 
                     FROM customer_register cr 
-                    LEFT JOIN area_list_creation ac ON cr.area = ac.area_id 
-                    LEFT JOIN sub_area_list_creation sac ON cr.sub_area = sac.sub_area_id 
+                    LEFT JOIN area_list_creation ac ON ac.area_id = COALESCE(NULLIF(cr.area_confirm_area, ''), cr.area) 
+                    LEFT JOIN sub_area_list_creation sac ON  sac.sub_area_id = COALESCE(NULLIF(cr.area_confirm_subarea, ''), cr.sub_area) 
                     LEFT JOIN area_line_mapping alm ON FIND_IN_SET(sac.sub_area_id,alm.sub_area_id)
                     LEFT JOIN area_group_mapping agm ON FIND_IN_SET(sac.sub_area_id,agm.sub_area_id)
                     LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
