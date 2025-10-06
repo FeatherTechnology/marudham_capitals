@@ -12,10 +12,9 @@ $(document).ready(function () {
         let type = $(this).val();
         let append;
         if (type == 1) {//direct
-            append = `<option value="">Select Follow Up Status</option><option value='1'>Commitment</option><option value='2'>Unavailable</option>`;
+            append = `<option value="">Select Follow Up Status</option><option value='1'>Commitment</option><option value='2'>Unavailable</option><option value='8'>Paid</option>`;
         } else if (type == 2) {//mobile
-            append = `<option value="">Select Follow Up Status</option><option value='1'>Commitment</option><option value='3'>RNR</option><option value='4'>Not Reachable</option>
-            <option value='5'>Switch Off</option><option value='6'>Not in Use</option><option value='7'>Blocked</option>`;
+            append = `<option value="">Select Follow Up Status</option><option value='1'>Commitment</option><option value='3'>RNR</option><option value='4'>Not Reachable</option><option value='5'>Switch Off</option><option value='6'>Not in Use</option><option value='7'>Blocked</option><option value='8'>Paid</option>`;
         } else {
             append = `<option value="">Select Follow Up Status</option>`;
         }

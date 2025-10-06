@@ -12,7 +12,7 @@ $sql = $connect->query("SELECT a.*,b.fullname, CASE b.role WHEN 1 then 'Director
 //this query will take Confirmation followup data from that table with username and user type according to inserted login id and using switch case in query for output
 
 $ftype = [1=>'Direct',2=>'Mobile'];
-$fstatus = [1=>'Commitment',2=>'Unavailable',3=>'RNR',4=>'Not Reachable',5=>'Switch Off',6=>'Not in Use',7=>'Blocked'];
+$fstatus = [1=>'Commitment',2=>'Unavailable',3=>'RNR',4=>'Not Reachable',5=>'Switch Off',6=>'Not in Use',7=>'Blocked',8=>'Paid'];
 $per_type_arr = [1=>'Customer',2=>'Garentor',3=>'Family Member'];
 $sno = 1;
 
