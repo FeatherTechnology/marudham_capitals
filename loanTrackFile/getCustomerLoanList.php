@@ -2,7 +2,7 @@
 session_start();
 $user_id = $_SESSION["userid"];
 include('../ajaxconfig.php');
-include('moneyFormatIndia.php');
+include('../moneyFormatIndia.php');
 
 
 if (isset($_POST['cus_id'])) {

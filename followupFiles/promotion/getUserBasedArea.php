@@ -33,12 +33,10 @@ if ($user_id && $area_id ==" ") {
             $sql2 = $connect->query("SELECT * FROM $table WHERE  map_id IN ($ids_string)");
 
             while ($row = $sql2->fetch(PDO::FETCH_ASSOC)) {
-                $area_ids = explode(',', $row['area_id']); // CSV to array
-                $area_ids = array_map('trim', $area_ids);
 
                 // Step 3: Fetch area names from area_list_creation
-                if (!empty($area_ids)) {
-                    $area_ids_str = implode(',', $area_ids);
+                if (!empty($row['area_id'])) {
+                    $area_ids_str = $row['area_id'];
                     $sql_area = $connect->query("SELECT area_id, area_name FROM area_list_creation WHERE area_id IN ($area_ids_str)");
 
                     while ($area = $sql_area->fetch(PDO::FETCH_ASSOC)) {
@@ -53,12 +51,9 @@ if ($user_id && $area_id ==" ") {
     }
 }
 else{
-     // New logic to fetch sub-areas for the given area IDs
-    $area_ids = explode(',', $area_id);
-    $area_ids = array_map('intval', $area_ids); // sanitize
-    if (!empty($area_ids)) {
-        $ids_string = implode(',', $area_ids);
-        $sql_sub = $connect->query("SELECT sub_area_id, sub_area_name FROM sub_area_list_creation WHERE area_id_ref IN ($ids_string) AND status = 0 ORDER BY sub_area_name ASC");
+ 
+    if (!empty($area_id)) {
+        $sql_sub = $connect->query("SELECT sub_area_id, sub_area_name FROM sub_area_list_creation WHERE area_id_ref IN ($area_id) AND status = 0 ORDER BY sub_area_name ASC");
         while ($sub = $sql_sub->fetch(PDO::FETCH_ASSOC)) {
             $detailrecords[] = [
                 'sub_area_id' => $sub['sub_area_id'],

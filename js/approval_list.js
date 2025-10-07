@@ -79,7 +79,7 @@ function callOnClickEvents() {
                     Swal.fire({
                         icon: 'info',
                         title: 'Customer Limit',
-                        text: `Customer Limit is set to ${cus_limit}. Do you want to Approve?`,
+                        text: `Customer Limit is set to ${moneyFormatIndia(cus_limit)}. Do you want to Approve?`,
                         showCancelButton: true,
                         confirmButtonColor: '#009688',
                         cancelButtonColor: '#d33',
