@@ -104,6 +104,7 @@ $due_followup_customer_count_report = '';
 $commitment_report = '';
 $customer_status_report = '';
 $promotion_activity_report = '';
+$uncleared_report = '';
 $search_module = '';
 $search_screen = '';
 $bulk_upload_module = '';
@@ -259,6 +260,7 @@ if($idupd>0)
 			$commitment_report  = $getUser['commitment_report'];
 			$customer_status_report  = $getUser['customer_status_report'];
 			$promotion_activity_report  = $getUser['promotion_activity_report'];
+			$uncleared_report  = $getUser['uncleared_report'];
 
 			$search_module = $getUser['search_module'];
 			$search_screen = $getUser['search'];
@@ -1178,6 +1180,12 @@ if($idupd>0)
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($promotion_activity_report==0){ echo'checked'; }} ?> tabindex="71" class="report-checkbox" id="promotion_activity_report" name="promotion_activity_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="promotion_activity_report">Promotion Activity Report</label>
+                            </div>
+                        </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($uncleared_report==0){ echo'checked'; }} ?> tabindex="71" class="report-checkbox" id="uncleared_report" name="uncleared_report" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="uncleared_report">Uncleared Report</label>
                             </div>
                         </div>
 					</div>

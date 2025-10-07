@@ -69,6 +69,14 @@ if (
     }
     $coll_DueNilReqIdStr = !empty($coll_DueNilReqIds) ? implode(',', $coll_DueNilReqIds) : 0;
 
+    $loan_category = [];
+    $loanCategoryQry = $connect->query("SELECT DISTINCT loan_category FROM loan_calculation WHERE status = 0");
+    while ($row = $loanCategoryQry->fetch(PDO::FETCH_ASSOC)) {
+        $loan_category[] = (int)$row['loan_category'];
+    }
+
+    $loanCatStr = !empty($loan_category) ? implode(',', $loan_category) : 0;
+
     //  Query 1: Loan Count  
     // JOIN acknowlegement_loan_calculation alc ON ii.req_id = alc.req_id , AND alc.loan_category = $loanCatId, AND alm.map_id IN ($mapId)
     $stmt = $connect->query("SELECT COUNT(ii.loan_id) AS loanCount
@@ -76,9 +84,10 @@ if (
         JOIN acknowlegement_customer_profile acp ON ii.req_id = acp.req_id 
         JOIN customer_status cs ON ii.req_id = cs.req_id 
         JOIN area_list_creation al ON acp.area_confirm_area = al.area_id 
-        JOIN area_line_mapping alm ON FIND_IN_SET(al.area_id, alm.area_id) 
         LEFT JOIN closing_customer cc ON ii.req_id = cc.req_id
+        JOIN acknowlegement_loan_calculation alc ON ii.req_id = alc.req_id
         WHERE acp.area_confirm_area IN ($areaid) 
+        AND alc.loan_category IN ($loanCatStr)
         AND (
             FIND_IN_SET(cs.sub_status, '$subStatus')
             OR (
@@ -104,9 +113,10 @@ if (
         JOIN acknowlegement_customer_profile acp ON ii.req_id = acp.req_id 
         JOIN customer_status cs ON ii.req_id = cs.req_id 
         JOIN area_list_creation al ON acp.area_confirm_area = al.area_id 
-        JOIN area_line_mapping alm ON FIND_IN_SET(al.area_id, alm.area_id) 
         LEFT JOIN closing_customer cc ON ii.req_id = cc.req_id
+        JOIN acknowlegement_loan_calculation alc ON ii.req_id = alc.req_id
         WHERE acp.area_confirm_area IN ($areaid) 
+        AND alc.loan_category IN ($loanCatStr)
         AND (
             FIND_IN_SET(cs.sub_status, '$subStatus')
             OR (

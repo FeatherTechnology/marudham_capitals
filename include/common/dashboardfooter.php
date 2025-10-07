@@ -1377,6 +1377,9 @@
     if ($current_page == 'promotion_activity_report') { ?>
         <script src="js/promotion_activity_report.js"></script>
     <?php }
+    if ($current_page == 'uncleared_report') { ?>
+        <script src="js/uncleared_report.js"></script>
+    <?php }
 
     if ($current_page == 'intrest_ledger_report') { ?>
         <script src="js/intrest_ledger_report.js"></script>

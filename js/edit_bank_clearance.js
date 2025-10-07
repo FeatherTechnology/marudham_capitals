@@ -181,10 +181,11 @@ function clrcatClickEvent() {
             var crdb = $(this).next().val();
             var trans_id = $(this).parent().prev().prev().prev().prev().text();
             var trans_amt = $(this).closest('tr').attr('data-crdr');
+            var trans_date = $(this).parent().prev().prev().prev().prev().prev().prev().text().trim();
     
             $.ajax({
                 url: 'accountsFile/bankclearance/getRefCodetoClear.php',
-                data: { 'clr_cat': clr_cat, 'bank_id': bank_id, 'crdb': crdb, 'trans_id': trans_id, 'trans_amt': trans_amt },
+                data: { 'clr_cat': clr_cat, 'bank_id': bank_id, 'crdb': crdb, 'trans_id': trans_id, 'trans_amt': trans_amt , 'trans_date': trans_date},
                 dataType: 'json',
                 type: 'post',
                 cache: false,
