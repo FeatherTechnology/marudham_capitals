@@ -1,11 +1,11 @@
 <?php
-session_start();
-$user_id = $_SESSION['userid'];
+// session_start();
+// $user_id = $_SESSION['userid'];
 
 include('../../../ajaxconfig.php');
 
-$bankqry = $connect->query("SELECT `bank_details` FROM `user` WHERE `user_id`= $user_id");
-$bank_id = $bankqry->fetch()['bank_details'];
+// $bankqry = $connect->query("SELECT `bank_details` FROM `user` WHERE `user_id`= $user_id");
+// $bank_id = $bankqry->fetch()['bank_details'];
 
 $sheet_type = $_POST['sheet_type'];
 
@@ -59,8 +59,29 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
 
     $tableHeaders = "<th width='50'>S.No</th><th>Date</th><th>Cash Type</th><th>Credit</th><th>Debit</th>";
 
-    $qry = $connect->query("SELECT created_date AS 'tdate', from_bank_id AS 'ctype', '' AS 'Credit', amt AS 'Debit', amt AS 'Amount' FROM ct_db_cash_withdraw WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) and FIND_IN_SET(from_bank_id,'$bank_id') UNION ALL SELECT created_date AS 'tdate', 'Hand Cash' AS 'ctype', '' AS 'Credit', amount AS 'Debit', amount AS 'Amount' FROM ct_db_bank_deposit WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) and FIND_IN_SET(to_bank_id,'$bank_id') UNION ALL SELECT created_date AS 'tdate', 'Hand Cash' AS 'ctype', amt AS 'Credit', '' AS 'Debit', amt AS 'Amount' FROM ct_cr_bank_withdraw WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) and FIND_IN_SET(from_bank_id,'$bank_id') UNION ALL SELECT created_date AS 'tdate', to_bank_id AS 'ctype', amt AS 'Credit', '' AS 'Debit', amt AS 'Amount' FROM ct_cr_cash_deposit WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) and FIND_IN_SET(to_bank_id,'$bank_id') ORDER BY 1");
+    $qry = $connect->query("SELECT created_date AS 'tdate', from_bank_id AS 'ctype', '' AS 'Credit', amt AS 'Debit', amt AS 'Amount' 
+    FROM ct_db_cash_withdraw 
+    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) 
 
+    UNION ALL 
+
+    SELECT created_date AS 'tdate', 'Hand Cash' AS 'ctype', '' AS 'Credit', amount AS 'Debit', amount AS 'Amount' 
+    FROM ct_db_bank_deposit 
+    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) 
+    
+    UNION ALL 
+    
+    SELECT created_date AS 'tdate', 'Hand Cash' AS 'ctype', amt AS 'Credit', '' AS 'Debit', amt AS 'Amount' 
+    FROM ct_cr_bank_withdraw 
+    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) 
+    
+    UNION ALL 
+    
+    SELECT created_date AS 'tdate', to_bank_id AS 'ctype', amt AS 'Credit', '' AS 'Debit', amt AS 'Amount' 
+    FROM ct_cr_cash_deposit 
+    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) 
+    
+    ORDER BY 1 ");
 
     $i = 1;
     $creditSum = 0;
@@ -99,34 +120,34 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
     }
     $tabBodyEnd = "<tr><td></td><td colspan='2'><b>Total</b></td><td>" . moneyFormatIndia($creditSum) . "</td><td>" . moneyFormatIndia($debitSum) . "</td></tr>";
     $tabBodyEnd .= "<tr><td></td><td colspan='2'><b>Difference</b></td><td colspan='2'>" . moneyFormatIndia($creditSum - $debitSum) . "</td></tr>";
+
 } else if ($sheet_type == 2) { // 2 Means Exchange Balance Sheet
 
     $tableHeaders = "<th width='50'>S.No</th><th>Date</th><th>Cash Type</th><th>Exchange Entry</th><th>Credit</th><th>Debit</th>";
 
     $qry = $connect->query("SELECT created_date AS tdate, 'Hand Cash' AS ctype, insert_login_id AS from_user_id, '' AS Credit, amt AS Debit, amt AS Amount 
     FROM ct_db_hexchange 
-    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND to_user_id = '$user_id'
+    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE())
     
     UNION ALL 
     
     SELECT created_date AS tdate, to_bank_id AS ctype, insert_login_id AS from_user_id, '' AS Credit, amt AS Debit, amt AS Amount 
     FROM ct_db_bexchange 
-    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(to_bank_id, '$bank_id')
+    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE())
     
     UNION ALL 
     
     SELECT created_date AS tdate, 'Hand Cash' AS ctype, insert_login_id AS from_user_id, amt AS Credit, '' AS Debit, amt AS Amount 
     FROM ct_cr_hexchange 
-    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND to_user_id = '$user_id'
+    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE())
     
     UNION ALL 
     
     SELECT created_date AS tdate, to_bank_id AS ctype, insert_login_id AS from_user_id, amt AS Credit, '' AS Debit, amt AS Amount 
     FROM ct_cr_bexchange 
-    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(to_bank_id, '$bank_id')
+    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE())
     
-    ORDER BY 1
-    ");
+    ORDER BY 1 ");
 
     $i = 1;
     $creditSum = 0;
@@ -173,22 +194,22 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
 
     $tabBodyEnd = "<tr><td></td><td colspan='3'><b>Total</b></td><td>" . moneyFormatIndia($creditSum) . "</td><td>" . moneyFormatIndia($debitSum) . "</td></tr>";
     $tabBodyEnd .= "<tr><td></td><td colspan='3'><b>Difference</b></td><td colspan='2'>" . moneyFormatIndia($difference) . "</td></tr>";
+
 } else if ($sheet_type == 3) { // 3 Means Other income Balance Sheet
 
     $tableHeaders = "<th width='50'>S.No</th><th>Date</th><th>Cash Type</th><th>Category</th><th>Credit Amount</th>";
 
     $qry = $connect->query("SELECT created_date AS tdate, 'Hand Cash' AS ctype, category , amt AS Credit
     FROM ct_cr_hoti 
-    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND insert_login_id = '$user_id'
+    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE())
     
     UNION ALL 
     
     SELECT created_date AS tdate, to_bank_id AS ctype, category, amt AS Credit
     FROM ct_cr_boti 
-    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(to_bank_id, '$bank_id')
+    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE())
     
-    ORDER BY 1
-    ");
+    ORDER BY 1 ");
 
     $i = 1;
     $creditSum = 0;
@@ -229,21 +250,21 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
     }
 
     $tabBodyEnd = "<tr><td></td><td colspan='3'><b>Total</b></td><td>" . moneyFormatIndia($creditSum) . "</td></tr>";
+
 } else if ($sheet_type == 4 and $exp_cat_type == '') { //4 Means Expense Balance Sheet
     $tableHeaders = "<th width='50'>S.No</th><th>Date</th><th>Cash Type</th><th>Category</th><th>Debit Amount</th>";
 
     $qry = $connect->query("SELECT created_date AS tdate, 'Hand Cash' AS ctype, cat , amt AS Debit
     FROM ct_db_hexpense 
-    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND insert_login_id = '$user_id'
+    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE())
     
     UNION ALL 
     
     SELECT created_date AS tdate, bank_id AS ctype, cat, amt AS Debit
     FROM ct_db_bexpense 
-    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(bank_id, '$bank_id')
+    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE())
     
-    ORDER BY 1
-    ");
+    ORDER BY 1 ");
 
     $i = 1;
     $creditSum = 0;
@@ -285,21 +306,21 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
     }
 
     $tabBodyEnd = "<tr><td></td><td colspan='3'><b>Total</b></td><td>" . moneyFormatIndia($debitSum) . "</td></tr>";
+
 } else if ($sheet_type == 4 and $exp_cat_type != '') { //4 Means Expense Balance Sheet and exp_cat type if has values then show category wise
     $tableHeaders = "<th width='50'>S.No</th><th>Date</th><th>Cash Type</th><th>Category</th><th>Debit Amount</th>";
 
     $qry = $connect->query("SELECT created_date AS tdate, 'Hand Cash' AS ctype, cat , amt AS Debit
     FROM ct_db_hexpense 
-    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND insert_login_id = '$user_id' and cat = $exp_cat_type
+    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND cat = $exp_cat_type
     
     UNION ALL 
     
     SELECT created_date AS tdate, bank_id AS ctype, cat, amt AS Debit
     FROM ct_db_bexpense 
-    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(bank_id, '$bank_id') and cat = $exp_cat_type
+    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND cat = $exp_cat_type
     
-    ORDER BY 1
-    ");
+    ORDER BY 1 ");
 
     $i = 1;
     $creditSum = 0;
@@ -341,6 +362,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
         $tabBody = '';
         $tabBodyEnd = '';
     }
+
 } else if ($sheet_type == 5 and $IDEtype == 1 and $IDEview_type == 1 and $IDE_name_id == '') { //5 Means IDE Balance Sheet, 1 Means Investment Balance Sheet, 1 Means Overall Balance sheet
 
     $tableHeaders = "<th width='50'>S.No</th><th>Date</th><th>Name</th><th>Cash Type</th><th>Credit</th><th>Debit</th>";
@@ -348,31 +370,30 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
     $qry = $connect->query("SELECT cdh.created_date AS tdate, 'Hand Cash' AS ctype, '' AS Credit, cdh.amt AS Debit, cdh.amt AS Amount, ndc.name 
     FROM ct_db_hinvest cdh
     JOIN name_detail_creation ndc ON cdh.name_id = ndc.name_id
-    WHERE MONTH(cdh.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cdh.created_date) = YEAR(CURRENT_DATE()) AND cdh.insert_login_id = '$user_id'
+    WHERE MONTH(cdh.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cdh.created_date) = YEAR(CURRENT_DATE())
     
     UNION ALL 
     
     SELECT cdb.created_date AS tdate, cdb.bank_id AS ctype, '' AS Credit, cdb.amt AS Debit, cdb.amt AS Amount, ndc.name 
     FROM ct_db_binvest cdb
     JOIN name_detail_creation ndc ON cdb.name_id = ndc.name_id
-    WHERE MONTH(cdb.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cdb.created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(cdb.bank_id, '$bank_id')
+    WHERE MONTH(cdb.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cdb.created_date) = YEAR(CURRENT_DATE())
     
     UNION ALL 
     
     SELECT cch.created_date AS tdate, 'Hand Cash' AS ctype, cch.amt AS Credit, '' AS Debit, cch.amt AS Amount, ndc.name 
     FROM ct_cr_hinvest cch
     JOIN name_detail_creation ndc ON cch.name_id = ndc.name_id
-    WHERE MONTH(cch.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cch.created_date) = YEAR(CURRENT_DATE()) AND cch.insert_login_id = '$user_id'
+    WHERE MONTH(cch.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cch.created_date) = YEAR(CURRENT_DATE())
     
     UNION ALL 
     
     SELECT ccb.created_date AS tdate, ccb.bank_id AS ctype, ccb.amt AS Credit, '' AS Debit, ccb.amt AS Amount, ndc.name 
     FROM ct_cr_binvest ccb
     JOIN name_detail_creation ndc ON ccb.name_id = ndc.name_id
-    WHERE MONTH(ccb.created_date) = MONTH(CURRENT_DATE()) AND YEAR(ccb.created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(ccb.bank_id, '$bank_id')
+    WHERE MONTH(ccb.created_date) = MONTH(CURRENT_DATE()) AND YEAR(ccb.created_date) = YEAR(CURRENT_DATE())
     
-    ORDER BY 1
-    ");
+    ORDER BY 1 ");
 
     $i = 1;
     $creditSum = 0;
@@ -416,6 +437,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
 
     $tabBodyEnd = "<tr><td colspan='4'><b>Total</b></td><td>" . moneyFormatIndia($creditSum) . "</td><td>" . moneyFormatIndia($debitSum) . "</td></tr>";
     $tabBodyEnd .= "<tr><td colspan='4'><b>Difference</b></td><td colspan='2'>" . moneyFormatIndia($difference) . "</td></tr>";
+
 } else if ($sheet_type == 5 and $IDEtype == 1 and $IDEview_type == 2 and $IDE_name_id != '') { //5 Means IDE Balance Sheet, 1 Means Investment Balance Sheet, 2 Means Individual Balance sheet
 
     $tableHeaders = "<th width='50'>S.No</th><th>Date</th><th>Name</th><th>Cash Type</th><th>Credit</th><th>Debit</th>";
@@ -423,31 +445,30 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
     $qry = $connect->query("SELECT cdh.created_date AS tdate, 'Hand Cash' AS ctype, '' AS Credit, cdh.amt AS Debit, cdh.amt AS Amount, ndc.name  
     FROM ct_db_hinvest cdh
     JOIN name_detail_creation ndc ON cdh.name_id = ndc.name_id
-    WHERE MONTH(cdh.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cdh.created_date) = YEAR(CURRENT_DATE()) AND cdh.insert_login_id = '$user_id' and cdh.name_id = '$IDE_name_id'
+    WHERE MONTH(cdh.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cdh.created_date) = YEAR(CURRENT_DATE()) AND cdh.name_id = '$IDE_name_id'
     
     UNION ALL 
     
     SELECT cdb.created_date AS tdate, cdb.bank_id AS ctype, '' AS Credit, cdb.amt AS Debit, cdb.amt AS Amount, ndc.name 
     FROM ct_db_binvest cdb
     JOIN name_detail_creation ndc ON cdb.name_id = ndc.name_id
-    WHERE MONTH(cdb.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cdb.created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(cdb.bank_id, '$bank_id') and cdb.name_id = '$IDE_name_id'
+    WHERE MONTH(cdb.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cdb.created_date) = YEAR(CURRENT_DATE()) AND cdb.name_id = '$IDE_name_id'
     
     UNION ALL 
     
     SELECT cch.created_date AS tdate, 'Hand Cash' AS ctype, cch.amt AS Credit, '' AS Debit, cch.amt AS Amount, ndc.name 
     FROM ct_cr_hinvest cch
     JOIN name_detail_creation ndc ON cch.name_id = ndc.name_id
-    WHERE MONTH(cch.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cch.created_date) = YEAR(CURRENT_DATE()) AND cch.insert_login_id = '$user_id' and cch.name_id = '$IDE_name_id'
+    WHERE MONTH(cch.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cch.created_date) = YEAR(CURRENT_DATE()) AND cch.name_id = '$IDE_name_id'
     
     UNION ALL 
     
     SELECT ccb.created_date AS tdate, ccb.bank_id AS ctype, ccb.amt AS Credit, '' AS Debit, ccb.amt AS Amount, ndc.name 
     FROM ct_cr_binvest ccb
     JOIN name_detail_creation ndc ON ccb.name_id = ndc.name_id
-    WHERE MONTH(ccb.created_date) = MONTH(CURRENT_DATE()) AND YEAR(ccb.created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(ccb.bank_id, '$bank_id') and ccb.name_id = '$IDE_name_id'
+    WHERE MONTH(ccb.created_date) = MONTH(CURRENT_DATE()) AND YEAR(ccb.created_date) = YEAR(CURRENT_DATE()) AND ccb.name_id = '$IDE_name_id'
     
-    ORDER BY 1
-    ");
+    ORDER BY 1 ");
 
     $i = 1;
     $creditSum = 0;
@@ -491,6 +512,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
 
     $tabBodyEnd = "<tr><td colspan='4'><b>Total</b></td><td>" . moneyFormatIndia($creditSum) . "</td><td>" . moneyFormatIndia($debitSum) . "</td></tr>";
     $tabBodyEnd .= "<tr><td colspan='4'><b>Difference</b></td><td colspan='2'>" . moneyFormatIndia($difference) . "</td></tr>";
+
 } else if ($sheet_type == 5 and $IDEtype == 2 and $IDEview_type == 1 and $IDE_name_id == '') { //5 Means IDE Balance Sheet, 2 Means Deposit Balance Sheet, 1 Means Overall Balance sheet
     {
         $opening_qry = $connect->query("SELECT
@@ -502,7 +524,6 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
             FROM ct_db_hdeposit
             WHERE
                 created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                AND insert_login_id = '$user_id'
 
             UNION ALL
 
@@ -512,7 +533,6 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
             FROM ct_cr_hdeposit
             WHERE
                 created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                AND insert_login_id = '$user_id'
 
             UNION ALL
 
@@ -522,7 +542,6 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
             FROM ct_db_bdeposit
             WHERE
                 created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                AND insert_login_id = '$user_id'
 
             UNION ALL
 
@@ -532,97 +551,88 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
             FROM ct_cr_bdeposit
             WHERE
                 created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                AND insert_login_id = '$user_id'
-        ) AS opening
-    ");
+        ) AS opening ");
+
         $opening_bal = $opening_qry->fetch()['opening_balance'];
 
         $closing_qry = $connect->query("SELECT
-        IFNULL(SUM(Credit), 0) - IFNULL(SUM(Debit), 0) AS closing_balance
-        FROM (
-            SELECT
-                '' AS Credit,
-                amt AS Debit
-            FROM ct_db_hdeposit
-            WHERE
-                created_date <= LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
-                AND insert_login_id = '$user_id'
+            IFNULL(SUM(Credit), 0) - IFNULL(SUM(Debit), 0) AS closing_balance
+            FROM (
+                SELECT
+                    '' AS Credit,
+                    amt AS Debit
+                FROM ct_db_hdeposit
+                WHERE
+                    created_date <= LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
 
-            UNION ALL
+                UNION ALL
 
-            SELECT
-                amt AS Credit,
-                '' AS Debit
-            FROM ct_cr_hdeposit
-            WHERE
-                created_date <= LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
-                AND insert_login_id = '$user_id'
-            
-            UNION ALL
-            
-            SELECT
-                '' AS Credit,
-                amt AS Debit
-            FROM ct_db_bdeposit
-            WHERE
-                created_date <= LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
-                AND insert_login_id = '$user_id'
+                SELECT
+                    amt AS Credit,
+                    '' AS Debit
+                FROM ct_cr_hdeposit
+                WHERE
+                    created_date <= LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
+                
+                UNION ALL
+                
+                SELECT
+                    '' AS Credit,
+                    amt AS Debit
+                FROM ct_db_bdeposit
+                WHERE
+                    created_date <= LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
 
-            UNION ALL
+                UNION ALL
 
-            SELECT
-                amt AS Credit,
-                '' AS Debit
-            FROM ct_cr_bdeposit
-            WHERE
-                created_date <= LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
-                AND insert_login_id = '$user_id'
+                SELECT
+                    amt AS Credit,
+                    '' AS Debit
+                FROM ct_cr_bdeposit
+                WHERE
+                    created_date <= LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
 
-            UNION ALL
+                UNION ALL
 
-            SELECT
-                '' AS Credit,
-                amt AS Debit
-            FROM ct_db_hdeposit
-            WHERE
-                MONTH(created_date) = MONTH(CURRENT_DATE())
-                AND YEAR(created_date) = YEAR(CURRENT_DATE())
-                AND insert_login_id = '$user_id'
+                SELECT
+                    '' AS Credit,
+                    amt AS Debit
+                FROM ct_db_hdeposit
+                WHERE
+                    MONTH(created_date) = MONTH(CURRENT_DATE())
+                    AND YEAR(created_date) = YEAR(CURRENT_DATE())
 
-            UNION ALL
+                UNION ALL
 
-            SELECT
-                amt AS Credit,
-                '' AS Debit
-            FROM ct_cr_hdeposit
-            WHERE
-                MONTH(created_date) = MONTH(CURRENT_DATE())
-                AND YEAR(created_date) = YEAR(CURRENT_DATE())
-                AND insert_login_id = '$user_id'
-            
-            UNION ALL
+                SELECT
+                    amt AS Credit,
+                    '' AS Debit
+                FROM ct_cr_hdeposit
+                WHERE
+                    MONTH(created_date) = MONTH(CURRENT_DATE())
+                    AND YEAR(created_date) = YEAR(CURRENT_DATE())
+                
+                UNION ALL
 
-            SELECT
-                '' AS Credit,
-                amt AS Debit
-            FROM ct_db_bdeposit
-            WHERE
-                MONTH(created_date) = MONTH(CURRENT_DATE())
-                AND YEAR(created_date) = YEAR(CURRENT_DATE())
-                AND insert_login_id = '$user_id'
+                SELECT
+                    '' AS Credit,
+                    amt AS Debit
+                FROM ct_db_bdeposit
+                WHERE
+                    MONTH(created_date) = MONTH(CURRENT_DATE())
+                    AND YEAR(created_date) = YEAR(CURRENT_DATE())
 
-            UNION ALL
+                UNION ALL
 
-            SELECT
-                amt AS Credit,
-                '' AS Debit
-            FROM ct_cr_bdeposit
-            WHERE
-                MONTH(created_date) = MONTH(CURRENT_DATE())
-                AND YEAR(created_date) = YEAR(CURRENT_DATE())
-                AND insert_login_id = '$user_id'
-        ) AS closing
-    ");
+                SELECT
+                    amt AS Credit,
+                    '' AS Debit
+                FROM ct_cr_bdeposit
+                WHERE
+                    MONTH(created_date) = MONTH(CURRENT_DATE())
+                    AND YEAR(created_date) = YEAR(CURRENT_DATE())
+            ) AS closing ");
+        
         $closing_bal = $closing_qry->fetch()['closing_balance'];
     }
     $tableHeaders = "<th width='50'>S.No</th><th>Date</th><th>Name</th><th>Cash Type</th><th>Credit</th><th>Debit</th>";
@@ -631,31 +641,30 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
     $qry = $connect->query("SELECT cdh.created_date AS tdate, 'Hand Cash' AS ctype, '' AS Credit, cdh.amt AS Debit, cdh.amt AS Amount, ndc.name 
     FROM ct_db_hdeposit cdh
     JOIN name_detail_creation ndc ON cdh.name_id = ndc.name_id
-    WHERE MONTH(cdh.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cdh.created_date) = YEAR(CURRENT_DATE()) AND cdh.insert_login_id = '$user_id'
+    WHERE MONTH(cdh.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cdh.created_date) = YEAR(CURRENT_DATE()) 
     
     UNION ALL 
     
     SELECT cdb.created_date AS tdate, cdb.bank_id AS ctype, '' AS Credit, cdb.amt AS Debit, cdb.amt AS Amount, ndc.name 
     FROM ct_db_bdeposit cdb 
     JOIN name_detail_creation ndc ON cdb.name_id = ndc.name_id
-    WHERE MONTH(cdb.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cdb.created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(cdb.bank_id, '$bank_id')
+    WHERE MONTH(cdb.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cdb.created_date) = YEAR(CURRENT_DATE()) 
     
     UNION ALL 
     
     SELECT cch.created_date AS tdate, 'Hand Cash' AS ctype, cch.amt AS Credit, '' AS Debit, cch.amt AS Amount, ndc.name 
     FROM ct_cr_hdeposit cch 
     JOIN name_detail_creation ndc ON cch.name_id = ndc.name_id
-    WHERE MONTH(cch.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cch.created_date) = YEAR(CURRENT_DATE()) AND cch.insert_login_id = '$user_id'
+    WHERE MONTH(cch.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cch.created_date) = YEAR(CURRENT_DATE()) 
     
     UNION ALL 
     
     SELECT ccb.created_date AS tdate, ccb.bank_id AS ctype, ccb.amt AS Credit, '' AS Debit, ccb.amt AS Amount, ndc.name 
     FROM ct_cr_bdeposit ccb
     JOIN name_detail_creation ndc ON ccb.name_id = ndc.name_id
-    WHERE MONTH(ccb.created_date) = MONTH(CURRENT_DATE()) AND YEAR(ccb.created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(ccb.bank_id, '$bank_id')
+    WHERE MONTH(ccb.created_date) = MONTH(CURRENT_DATE()) AND YEAR(ccb.created_date) = YEAR(CURRENT_DATE()) 
     
-    ORDER BY 1
-    ");
+    ORDER BY 1 ");
 
     $i = 1;
     $creditSum = 0;
@@ -700,6 +709,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
     $tabBodyEnd = "<tr><td colspan='4'><b>Total</b></td><td>" . moneyFormatIndia($creditSum) . "</td><td>" . moneyFormatIndia($debitSum) . "</td></tr>";
     $tabBodyEnd .= "<tr><td colspan='4'><b>Difference</b></td><td colspan='2'>" . moneyFormatIndia($difference) . "</td></tr>";
     $tabBodyEnd .= "<tr><td colspan='4'><b>Closing Balance</b></td><td colspan='2'>" . moneyFormatIndia($closing_bal) . "</td></tr>";
+
 } else if ($sheet_type == 5 and $IDEtype == 2 and $IDEview_type == 2 and $IDE_name_id != '') { //5 Means IDE Balance Sheet, 2 Means Deposit Balance Sheet, 2 Means Individual Balance sheet
     {
         $opening_qry = $connect->query("SELECT
@@ -711,7 +721,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 FROM ct_db_hdeposit
                 WHERE
                     created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                    AND insert_login_id = '$user_id' and name_id = '$IDE_name_id'
+                    AND name_id = '$IDE_name_id'
     
                 UNION ALL
     
@@ -721,7 +731,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 FROM ct_cr_hdeposit
                 WHERE
                     created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                    AND insert_login_id = '$user_id' and name_id = '$IDE_name_id'
+                    AND name_id = '$IDE_name_id'
     
                 UNION ALL
     
@@ -731,7 +741,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 FROM ct_db_bdeposit
                 WHERE
                     created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                    AND insert_login_id = '$user_id' and name_id = '$IDE_name_id'
+                    AND name_id = '$IDE_name_id'
     
                 UNION ALL
     
@@ -741,9 +751,9 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 FROM ct_cr_bdeposit
                 WHERE
                     created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                    AND insert_login_id = '$user_id' and name_id = '$IDE_name_id'
-            ) AS opening
-        ");
+                    AND name_id = '$IDE_name_id'
+            ) AS opening ");
+
         $opening_bal = $opening_qry->fetch()['opening_balance'];
 
         $closing_qry = $connect->query("SELECT
@@ -755,7 +765,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 FROM ct_db_hdeposit
                 WHERE
                     created_date <= LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
-                    AND insert_login_id = '$user_id' and name_id = '$IDE_name_id'
+                    AND name_id = '$IDE_name_id'
     
                 UNION ALL
     
@@ -765,7 +775,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 FROM ct_cr_hdeposit
                 WHERE
                     created_date <= LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
-                    AND insert_login_id = '$user_id' and name_id = '$IDE_name_id'
+                    AND name_id = '$IDE_name_id'
                 
                 UNION ALL
                 
@@ -775,7 +785,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 FROM ct_db_bdeposit
                 WHERE
                     created_date <= LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
-                    AND insert_login_id = '$user_id' and name_id = '$IDE_name_id'
+                    AND name_id = '$IDE_name_id'
     
                 UNION ALL
     
@@ -785,7 +795,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 FROM ct_cr_bdeposit
                 WHERE
                     created_date <= LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
-                    AND insert_login_id = '$user_id' and name_id = '$IDE_name_id'
+                    AND name_id = '$IDE_name_id'
     
                 UNION ALL
     
@@ -796,7 +806,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 WHERE
                     MONTH(created_date) = MONTH(CURRENT_DATE())
                     AND YEAR(created_date) = YEAR(CURRENT_DATE())
-                    AND insert_login_id = '$user_id' and name_id = '$IDE_name_id'
+                    AND name_id = '$IDE_name_id'
     
                 UNION ALL
     
@@ -807,7 +817,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 WHERE
                     MONTH(created_date) = MONTH(CURRENT_DATE())
                     AND YEAR(created_date) = YEAR(CURRENT_DATE())
-                    AND insert_login_id = '$user_id' and name_id = '$IDE_name_id'
+                    AND name_id = '$IDE_name_id'
                 
                 UNION ALL
     
@@ -818,7 +828,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 WHERE
                     MONTH(created_date) = MONTH(CURRENT_DATE())
                     AND YEAR(created_date) = YEAR(CURRENT_DATE())
-                    AND insert_login_id = '$user_id' and name_id = '$IDE_name_id'
+                    AND name_id = '$IDE_name_id'
     
                 UNION ALL
     
@@ -829,7 +839,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 WHERE
                     MONTH(created_date) = MONTH(CURRENT_DATE())
                     AND YEAR(created_date) = YEAR(CURRENT_DATE())
-                    AND insert_login_id = '$user_id' and name_id = '$IDE_name_id'
+                    AND name_id = '$IDE_name_id'
             ) AS closing
         ");
         $closing_bal = $closing_qry->fetch()['closing_balance'];
@@ -840,31 +850,30 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
     $qry = $connect->query("SELECT cdh.created_date AS tdate, 'Hand Cash' AS ctype, '' AS Credit, cdh.amt AS Debit, cdh.amt AS Amount, ndc.name 
     FROM ct_db_hdeposit cdh
     JOIN name_detail_creation ndc ON cdh.name_id = ndc.name_id
-    WHERE MONTH(cdh.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cdh.created_date) = YEAR(CURRENT_DATE()) AND cdh.insert_login_id = '$user_id' and cdh.name_id = '$IDE_name_id'
+    WHERE MONTH(cdh.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cdh.created_date) = YEAR(CURRENT_DATE()) AND cdh.name_id = '$IDE_name_id'
     
     UNION ALL 
     
     SELECT cdb.created_date AS tdate, cdb.bank_id AS ctype, '' AS Credit, cdb.amt AS Debit, cdb.amt AS Amount, ndc.name 
     FROM ct_db_bdeposit cdb 
     JOIN name_detail_creation ndc ON cdb.name_id = ndc.name_id
-    WHERE MONTH(cdb.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cdb.created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(cdb.bank_id, '$bank_id') and cdb.name_id = '$IDE_name_id'
+    WHERE MONTH(cdb.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cdb.created_date) = YEAR(CURRENT_DATE()) AND cdb.name_id = '$IDE_name_id'
     
     UNION ALL 
     
     SELECT cch.created_date AS tdate, 'Hand Cash' AS ctype, cch.amt AS Credit, '' AS Debit, cch.amt AS Amount, ndc.name 
     FROM ct_cr_hdeposit cch 
     JOIN name_detail_creation ndc ON cch.name_id = ndc.name_id
-    WHERE MONTH(cch.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cch.created_date) = YEAR(CURRENT_DATE()) AND cch.insert_login_id = '$user_id' and cch.name_id = '$IDE_name_id'
+    WHERE MONTH(cch.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cch.created_date) = YEAR(CURRENT_DATE()) AND cch.name_id = '$IDE_name_id'
     
     UNION ALL 
     
     SELECT ccb.created_date AS tdate, ccb.bank_id AS ctype, ccb.amt AS Credit, '' AS Debit, ccb.amt AS Amount, ndc.name 
     FROM ct_cr_bdeposit ccb
     JOIN name_detail_creation ndc ON ccb.name_id = ndc.name_id
-    WHERE MONTH(ccb.created_date) = MONTH(CURRENT_DATE()) AND YEAR(ccb.created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(ccb.bank_id, '$bank_id') and ccb.name_id = '$IDE_name_id'
+    WHERE MONTH(ccb.created_date) = MONTH(CURRENT_DATE()) AND YEAR(ccb.created_date) = YEAR(CURRENT_DATE()) AND ccb.name_id = '$IDE_name_id'
     
-    ORDER BY 1
-    ");
+    ORDER BY 1 ");
 
     $i = 1;
     $creditSum = 0;
@@ -909,6 +918,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
     $tabBodyEnd = "<tr><td colspan='4'><b>Total</b></td><td>" . moneyFormatIndia($creditSum) . "</td><td>" . moneyFormatIndia($debitSum) . "</td></tr>";
     $tabBodyEnd .= "<tr><td colspan='4'><b>Difference</b></td><td colspan='2'>" . moneyFormatIndia($difference) . "</td></tr>";
     $tabBodyEnd .= "<tr><td colspan='4'><b>Closing Balance</b></td><td colspan='2'>" . moneyFormatIndia($closing_bal) . "</td></tr>";
+
 } else if ($sheet_type == 5 and $IDEtype == 3 and $IDEview_type == 1 and $IDE_name_id == '') { //5 Means IDE Balance Sheet, 3 Means EL Balance Sheet, 1 Means Overall Balance sheet
     {
         $opening_qry = $connect->query("SELECT
@@ -920,7 +930,6 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 FROM ct_db_hel
                 WHERE
                     created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                    AND insert_login_id = '$user_id' 
     
                 UNION ALL
     
@@ -930,7 +939,6 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 FROM ct_cr_hel
                 WHERE
                     created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                    AND insert_login_id = '$user_id' 
     
                 UNION ALL
     
@@ -940,7 +948,6 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 FROM ct_db_bel
                 WHERE
                     created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                    AND insert_login_id = '$user_id' 
     
                 UNION ALL
     
@@ -950,7 +957,6 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 FROM ct_cr_bel
                 WHERE
                     created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                    AND insert_login_id = '$user_id' 
             ) AS opening
         ");
         $opening_bal = $opening_qry->fetch()['opening_balance'];
@@ -964,7 +970,6 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 FROM ct_db_hel
                 WHERE
                     created_date <= LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
-                    AND insert_login_id = '$user_id' 
     
                 UNION ALL
     
@@ -974,7 +979,6 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 FROM ct_cr_hel
                 WHERE
                     created_date <= LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
-                    AND insert_login_id = '$user_id' 
                 
                 UNION ALL
                 
@@ -984,7 +988,6 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 FROM ct_db_bel
                 WHERE
                     created_date <= LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
-                    AND insert_login_id = '$user_id' 
     
                 UNION ALL
     
@@ -994,7 +997,6 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 FROM ct_cr_bel
                 WHERE
                     created_date <= LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
-                    AND insert_login_id = '$user_id' 
     
                 UNION ALL
     
@@ -1005,7 +1007,6 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 WHERE
                     MONTH(created_date) = MONTH(CURRENT_DATE())
                     AND YEAR(created_date) = YEAR(CURRENT_DATE())
-                    AND insert_login_id = '$user_id' 
     
                 UNION ALL
     
@@ -1016,7 +1017,6 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 WHERE
                     MONTH(created_date) = MONTH(CURRENT_DATE())
                     AND YEAR(created_date) = YEAR(CURRENT_DATE())
-                    AND insert_login_id = '$user_id' 
                 
                 UNION ALL
     
@@ -1027,7 +1027,6 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 WHERE
                     MONTH(created_date) = MONTH(CURRENT_DATE())
                     AND YEAR(created_date) = YEAR(CURRENT_DATE())
-                    AND insert_login_id = '$user_id' 
     
                 UNION ALL
     
@@ -1038,7 +1037,6 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 WHERE
                     MONTH(created_date) = MONTH(CURRENT_DATE())
                     AND YEAR(created_date) = YEAR(CURRENT_DATE())
-                    AND insert_login_id = '$user_id' 
             ) AS closing
         ");
         $closing_bal = $closing_qry->fetch()['closing_balance'];
@@ -1049,31 +1047,30 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
     $qry = $connect->query("SELECT cdh.created_date AS tdate, 'Hand Cash' AS ctype, '' AS Credit, cdh.amt AS Debit, cdh.amt AS Amount, ndc.name 
     FROM ct_db_hel cdh
     JOIN name_detail_creation ndc ON cdh.name_id = ndc.name_id
-    WHERE MONTH(cdh.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cdh.created_date) = YEAR(CURRENT_DATE()) AND cdh.insert_login_id = '$user_id'
+    WHERE MONTH(cdh.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cdh.created_date) = YEAR(CURRENT_DATE())
     
     UNION ALL 
     
     SELECT cdb.created_date AS tdate, cdb.bank_id AS ctype, '' AS Credit, cdb.amt AS Debit, cdb.amt AS Amount, ndc.name 
     FROM ct_db_bel cdb 
     JOIN name_detail_creation ndc ON cdb.name_id = ndc.name_id
-    WHERE MONTH(cdb.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cdb.created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(cdb.bank_id, '$bank_id')
+    WHERE MONTH(cdb.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cdb.created_date) = YEAR(CURRENT_DATE())
     
     UNION ALL 
     
     SELECT cch.created_date AS tdate, 'Hand Cash' AS ctype, cch.amt AS Credit, '' AS Debit, cch.amt AS Amount, ndc.name 
     FROM ct_cr_hel cch
     JOIN name_detail_creation ndc ON cch.name_id = ndc.name_id
-    WHERE MONTH(cch.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cch.created_date) = YEAR(CURRENT_DATE()) AND cch.insert_login_id = '$user_id'
+    WHERE MONTH(cch.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cch.created_date) = YEAR(CURRENT_DATE())
     
     UNION ALL 
     
     SELECT ccb.created_date AS tdate, ccb.bank_id AS ctype, ccb.amt AS Credit, '' AS Debit, ccb.amt AS Amount, ndc.name 
     FROM ct_cr_bel ccb
     JOIN name_detail_creation ndc ON ccb.name_id = ndc.name_id
-    WHERE MONTH(ccb.created_date) = MONTH(CURRENT_DATE()) AND YEAR(ccb.created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(ccb.bank_id, '$bank_id')
+    WHERE MONTH(ccb.created_date) = MONTH(CURRENT_DATE()) AND YEAR(ccb.created_date) = YEAR(CURRENT_DATE())
     
-    ORDER BY 1
-    ");
+    ORDER BY 1 ");
 
     $i = 1;
     $creditSum = 0;
@@ -1118,6 +1115,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
     $tabBodyEnd = "<tr><td colspan='4'><b>Total</b></td><td>" . moneyFormatIndia($creditSum) . "</td><td>" . moneyFormatIndia($debitSum) . "</td></tr>";
     $tabBodyEnd .= "<tr><td colspan='4'><b>Difference</b></td><td colspan='2'>" . moneyFormatIndia($difference) . "</td></tr>";
     $tabBodyEnd .= "<tr><td colspan='4'><b>Closing Balance</b></td><td colspan='2'>" . moneyFormatIndia($closing_bal) . "</td></tr>";
+
 } else if ($sheet_type == 5 and $IDEtype == 3 and $IDEview_type == 2 and $IDE_name_id != '') { //5 Means IDE Balance Sheet, 3 Means EL Balance Sheet, 2 Means Individual Balance sheet
     {
         $opening_qry = $connect->query("SELECT
@@ -1129,7 +1127,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 FROM ct_db_hel
                 WHERE
                     created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                    AND insert_login_id = '$user_id' and name_id = '$IDE_name_id'
+                    AND name_id = '$IDE_name_id'
     
                 UNION ALL
     
@@ -1139,7 +1137,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 FROM ct_cr_hel
                 WHERE
                     created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                    AND insert_login_id = '$user_id' and name_id = '$IDE_name_id'
+                    AND name_id = '$IDE_name_id'
     
                 UNION ALL
     
@@ -1149,7 +1147,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 FROM ct_db_bel
                 WHERE
                     created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                    AND insert_login_id = '$user_id' and name_id = '$IDE_name_id'
+                    AND name_id = '$IDE_name_id'
     
                 UNION ALL
     
@@ -1159,7 +1157,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 FROM ct_cr_bel
                 WHERE
                     created_date < DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
-                    AND insert_login_id = '$user_id' and name_id = '$IDE_name_id'
+                    AND name_id = '$IDE_name_id'
             ) AS opening
         ");
         $opening_bal = $opening_qry->fetch()['opening_balance'];
@@ -1173,7 +1171,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 FROM ct_db_hel
                 WHERE
                     created_date <= LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
-                    AND insert_login_id = '$user_id' and name_id = '$IDE_name_id'
+                    AND name_id = '$IDE_name_id'
     
                 UNION ALL
     
@@ -1183,7 +1181,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 FROM ct_cr_hel
                 WHERE
                     created_date <= LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
-                    AND insert_login_id = '$user_id' and name_id = '$IDE_name_id'
+                    AND name_id = '$IDE_name_id'
                 
                 UNION ALL
                 
@@ -1193,7 +1191,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 FROM ct_db_bel
                 WHERE
                     created_date <= LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
-                    AND insert_login_id = '$user_id' and name_id = '$IDE_name_id'
+                    AND name_id = '$IDE_name_id'
     
                 UNION ALL
     
@@ -1203,7 +1201,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 FROM ct_cr_bel
                 WHERE
                     created_date <= LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
-                    AND insert_login_id = '$user_id' and name_id = '$IDE_name_id'
+                    AND name_id = '$IDE_name_id'
     
                 UNION ALL
     
@@ -1214,7 +1212,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 WHERE
                     MONTH(created_date) = MONTH(CURRENT_DATE())
                     AND YEAR(created_date) = YEAR(CURRENT_DATE())
-                    AND insert_login_id = '$user_id' and name_id = '$IDE_name_id'
+                    AND name_id = '$IDE_name_id'
     
                 UNION ALL
     
@@ -1225,7 +1223,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 WHERE
                     MONTH(created_date) = MONTH(CURRENT_DATE())
                     AND YEAR(created_date) = YEAR(CURRENT_DATE())
-                    AND insert_login_id = '$user_id' and name_id = '$IDE_name_id'
+                    AND name_id = '$IDE_name_id'
                 
                 UNION ALL
     
@@ -1236,7 +1234,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 WHERE
                     MONTH(created_date) = MONTH(CURRENT_DATE())
                     AND YEAR(created_date) = YEAR(CURRENT_DATE())
-                    AND insert_login_id = '$user_id' and name_id = '$IDE_name_id'
+                    AND name_id = '$IDE_name_id'
     
                 UNION ALL
     
@@ -1247,7 +1245,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 WHERE
                     MONTH(created_date) = MONTH(CURRENT_DATE())
                     AND YEAR(created_date) = YEAR(CURRENT_DATE())
-                    AND insert_login_id = '$user_id' and name_id = '$IDE_name_id'
+                    AND name_id = '$IDE_name_id'
             ) AS closing
         ");
         $closing_bal = $closing_qry->fetch()['closing_balance'];
@@ -1258,31 +1256,30 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
     $qry = $connect->query("SELECT cdh.created_date AS tdate, 'Hand Cash' AS ctype, '' AS Credit, cdh.amt AS Debit, cdh.amt AS Amount, ndc.name 
     FROM ct_db_hel cdh
     JOIN name_detail_creation ndc ON cdh.name_id = ndc.name_id
-    WHERE MONTH(cdh.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cdh.created_date) = YEAR(CURRENT_DATE()) AND cdh.insert_login_id = '$user_id' and cdh.name_id = '$IDE_name_id'
+    WHERE MONTH(cdh.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cdh.created_date) = YEAR(CURRENT_DATE()) AND cdh.name_id = '$IDE_name_id'
     
     UNION ALL 
     
     SELECT cdb.created_date AS tdate, cdb.bank_id AS ctype, '' AS Credit, cdb.amt AS Debit, cdb.amt AS Amount, ndc.name 
     FROM ct_db_bel cdb 
     JOIN name_detail_creation ndc ON cdb.name_id = ndc.name_id
-    WHERE MONTH(cdb.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cdb.created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(cdb.bank_id, '$bank_id') and cdb.name_id = '$IDE_name_id'
+    WHERE MONTH(cdb.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cdb.created_date) = YEAR(CURRENT_DATE()) AND cdb.name_id = '$IDE_name_id'
     
     UNION ALL 
     
     SELECT cch.created_date AS tdate, 'Hand Cash' AS ctype, cch.amt AS Credit, '' AS Debit, cch.amt AS Amount, ndc.name 
     FROM ct_cr_hel cch
     JOIN name_detail_creation ndc ON cch.name_id = ndc.name_id
-    WHERE MONTH(cch.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cch.created_date) = YEAR(CURRENT_DATE()) AND cch.insert_login_id = '$user_id' and cch.name_id = '$IDE_name_id'
+    WHERE MONTH(cch.created_date) = MONTH(CURRENT_DATE()) AND YEAR(cch.created_date) = YEAR(CURRENT_DATE()) AND cch.name_id = '$IDE_name_id'
     
     UNION ALL 
     
     SELECT ccb.created_date AS tdate, ccb.bank_id AS ctype, ccb.amt AS Credit, '' AS Debit, ccb.amt AS Amount, ndc.name 
     FROM ct_cr_bel ccb
     JOIN name_detail_creation ndc ON ccb.name_id = ndc.name_id
-    WHERE MONTH(ccb.created_date) = MONTH(CURRENT_DATE()) AND YEAR(ccb.created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(ccb.bank_id, '$bank_id') and ccb.name_id = '$IDE_name_id'
+    WHERE MONTH(ccb.created_date) = MONTH(CURRENT_DATE()) AND YEAR(ccb.created_date) = YEAR(CURRENT_DATE()) AND ccb.name_id = '$IDE_name_id'
     
-    ORDER BY 1
-    ");
+    ORDER BY 1 ");
 
     $i = 1;
     $creditSum = 0;
@@ -1327,14 +1324,14 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
     $tabBodyEnd = "<tr><td colspan='4'><b>Total</b></td><td>" . moneyFormatIndia($creditSum) . "</td><td>" . moneyFormatIndia($debitSum) . "</td></tr>";
     $tabBodyEnd .= "<tr><td colspan='4'><b>Difference</b></td><td colspan='2'>" . moneyFormatIndia($difference) . "</td></tr>";
     $tabBodyEnd .= "<tr><td colspan='4'><b>Closing Balance</b></td><td colspan='2'>" . moneyFormatIndia($closing_bal) . "</td></tr>";
+
 } else if ($sheet_type == 6) { //6 Means Excess Fund Balance Sheet
 
     $tableHeaders = "<th width='50'>S.No</th><th>Date</th><th>Bank</th><th>Ref ID</th><th>Remark</th><th>Transaction ID</th><th>Amount</th>";
 
     $qry = $connect->query(" SELECT created_date AS tdate, bank_id AS ctype, ref_code, remark, trans_id, amt AS Debit
     FROM ct_db_exf 
-    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) AND FIND_IN_SET(bank_id, '$bank_id')
-    
+    WHERE MONTH(created_date) = MONTH(CURRENT_DATE()) AND YEAR(created_date) = YEAR(CURRENT_DATE()) 
     ORDER BY 1
     ");
 
@@ -1378,23 +1375,25 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
     }
 
     $tabBodyEnd = "<tr><td colspan='6'><b>Total</b></td><td><b>" . moneyFormatIndia($debitSum) . "</b></td></tr>";
+
 } else if ($sheet_type == 7 && $ag_view_type == 1 && $ag_name == '') { //7 Means Agent Balance Sheet and 1 means overall
 
-
     //get agent user id to get data from collection
-    $ag_userid_qry = $connect->query("SELECT `user_id` from user where FIND_IN_SET( `ag_id`, (SELECT `agentforstaff` from user where `user_id` = '$user_id')) ");
-    $ids = array();
-    while ($row = $ag_userid_qry->fetch()) {
-        $ids[] = $row['user_id'];
-    }
-    $ag_user_id = implode(',', $ids);
+    // $ag_userid_qry = $connect->query("SELECT `user_id` from user where ag_id !='' ");
+    // $ids = array();
+    // while ($row = $ag_userid_qry->fetch()) {
+    //     $ids[] = $row['user_id'];
+    // }
+    // $ag_user_id = implode(',', $ids);
 
     //only for collections we need user ids of agents
-    if ($user_id != '') {
-        $qry = $connect->query("SELECT ag.ag_id FROM agent_creation ag JOIN user us ON FIND_IN_SET(ag.ag_id,us.agentforstaff) where us.user_id = '$user_id'");
-    } else {
-        $qry = $connect->query("SELECT ag_id FROM agent_creation where 1");
-    }
+    // if ($user_id != '') {
+    //     $qry = $connect->query("SELECT ag.ag_id FROM agent_creation ag JOIN user us ON FIND_IN_SET(ag.ag_id,us.agentforstaff) where us.user_id = '$user_id'");
+    // } else {
+    //     $qry = $connect->query("SELECT ag_id FROM agent_creation where 1");
+    // }
+
+    $qry = $connect->query("SELECT ag_id FROM agent_creation where status = 0 ");
     $ag_ids = [];
     while ($rww = $qry->fetch()) {
         $ag_ids[] = $rww["ag_id"];
@@ -1413,89 +1412,91 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
 
     $tabBody = '';
 
-    foreach ($ag_ids as $ag_id) { {
+    foreach ($ag_ids as $ag_id) { 
+        $ag_userid_qry = $connect->query("SELECT `user_id` from user where ag_id = $ag_id ");
+        $row = $ag_userid_qry->fetch();
+            $ag_user_id = $row['user_id'] ?? '';
+
+        {
             $opening_qry = $connect->query("SELECT 
-    -- (Credit - Debit) + (Debit - Credit)
-    IFNULL(SUM(CASE WHEN grp = 'coll_loan' THEN Credit - Debit END), 0) 
-  + IFNULL(SUM(CASE WHEN grp = 'ct_tables' THEN Debit - Credit END), 0) 
-  AS opening_balance
-FROM (
-    -- Collection
-    SELECT cl.total_paid_track AS Credit, 0 AS Debit, 'coll_loan' AS grp
-    FROM collection cl JOIN user us  ON us.user_id = '$user_id' and FIND_IN_SET('$ag_id',us.agentforstaff)
-    WHERE cl.created_date < DATE_FORMAT('$op_date', '%Y-%m-01') and cl.insert_login_id = '$ag_user_id'
-                    
-    UNION ALL
-    -- Loan issue
-    SELECT 0 AS Credit, (IFNULL(li.cash,0) + IFNULL(li.cheque_value,0) + IFNULL(li.transaction_value,0)) AS Debit, 'coll_loan' AS grp
-    FROM loan_issue li  JOIN user us ON us.user_id = '$user_id' and FIND_IN_SET('$ag_id',us.agentforstaff) WHERE li.created_date < DATE_FORMAT('$op_date', '%Y-%m-01') and li.agent_id = '$ag_id'
+                -- (Credit - Debit) + (Debit - Credit)
+                IFNULL(SUM(CASE WHEN grp = 'coll_loan' THEN Credit - Debit END), 0) 
+            + IFNULL(SUM(CASE WHEN grp = 'ct_tables' THEN Debit - Credit END), 0) 
+            AS opening_balance
+            FROM (
+                -- Collection
+                SELECT cl.total_paid_track AS Credit, 0 AS Debit, 'coll_loan' AS grp
+                FROM collection cl 
+                WHERE cl.created_date < DATE_FORMAT('$op_date', '%Y-%m-01') and cl.insert_login_id = '$ag_user_id'
+                                
+                UNION ALL
+                -- Loan issue
+                SELECT 0 AS Credit, (IFNULL(li.cash,0) + IFNULL(li.cheque_value,0) + IFNULL(li.transaction_value,0)) AS Debit, 'coll_loan' AS grp
+                FROM loan_issue li WHERE li.created_date < DATE_FORMAT('$op_date', '%Y-%m-01') and li.agent_id = '$ag_id'
 
-    UNION ALL
-    -- ct_db_hag → Debit
-    SELECT 0 AS Credit, amt AS Debit, 'ct_tables' AS grp
-    FROM ct_db_hag
-       WHERE created_date < DATE_FORMAT('$op_date', '%Y-%m-01') AND insert_login_id = '$user_id' and ag_id = '$ag_id'
+                UNION ALL
+                -- ct_db_hag → Debit
+                SELECT 0 AS Credit, amt AS Debit, 'ct_tables' AS grp
+                FROM ct_db_hag
+                WHERE created_date < DATE_FORMAT('$op_date', '%Y-%m-01') AND ag_id = '$ag_id'
 
-    UNION ALL
-    -- ct_cr_hag → Credit
-    SELECT amt AS Credit, 0 AS Debit, 'ct_tables' AS grp
-    FROM ct_cr_hag
-     WHERE created_date < DATE_FORMAT('$op_date', '%Y-%m-01') AND insert_login_id = '$user_id' and ag_id = '$ag_id'
+                UNION ALL
+                -- ct_cr_hag → Credit
+                SELECT amt AS Credit, 0 AS Debit, 'ct_tables' AS grp
+                FROM ct_cr_hag
+                WHERE created_date < DATE_FORMAT('$op_date', '%Y-%m-01') AND ag_id = '$ag_id'
 
-    UNION ALL
-    -- ct_db_bag → Debit
-    SELECT 0 AS Credit, amt AS Debit, 'ct_tables' AS grp
-    FROM ct_db_bag
-     WHERE created_date < DATE_FORMAT('$op_date', '%Y-%m-01') AND insert_login_id = '$user_id' and ag_id = '$ag_id'
+                UNION ALL
+                -- ct_db_bag → Debit
+                SELECT 0 AS Credit, amt AS Debit, 'ct_tables' AS grp
+                FROM ct_db_bag
+                WHERE created_date < DATE_FORMAT('$op_date', '%Y-%m-01') AND ag_id = '$ag_id'
 
-    UNION ALL
-    -- ct_cr_bag → Credit
-    SELECT amt AS Credit, 0 AS Debit, 'ct_tables' AS grp
-    FROM ct_cr_bag
-     WHERE created_date < DATE_FORMAT('$op_date', '%Y-%m-01') AND insert_login_id = '$user_id' and ag_id = '$ag_id'
-) AS opening;
-            ");
+                UNION ALL
+                -- ct_cr_bag → Credit
+                SELECT amt AS Credit, 0 AS Debit, 'ct_tables' AS grp
+                FROM ct_cr_bag
+                WHERE created_date < DATE_FORMAT('$op_date', '%Y-%m-01') AND ag_id = '$ag_id'
+            ) AS opening; ");
+
             $op_bal = $opening_qry->fetch()['opening_balance'];
         }
-
 
         $qry = $connect->query("SELECT ag_id, SUM(coll_amt) AS coll_amt, SUM(netcash) AS netcash, SUM(Credit) AS Credit, SUM(Debit) AS Debit FROM ( 
         
         SELECT $ag_id AS ag_id, date(cl.created_date) as tdate, SUM(cl.total_paid_track) as coll_amt,'' AS netcash, '' AS Credit, '' AS Debit
-        FROM collection cl JOIN user us 
-        ON us.user_id = '$user_id' AND FIND_IN_SET('$ag_id',us.agentforstaff)
+        FROM collection cl 
         WHERE cl.total_paid_track != '' AND cl.created_date BETWEEN '$op_date_start' AND '$op_date_time' AND cl.insert_login_id = '$ag_user_id'
         
         UNION ALL
 
         SELECT li.agent_id AS ag_id, date(li.created_date) as tdate,'' as coll_amt, SUM(COALESCE(li.cash, 0) + COALESCE(li.cheque_value, 0) + COALESCE(li.transaction_value, 0)) AS netcash, '' AS Credit, '' AS Debit 
-        FROM loan_issue li JOIN user us 
-        ON us.user_id = '$user_id' AND FIND_IN_SET('$ag_id',us.agentforstaff)
+        FROM loan_issue li 
         WHERE li.created_date BETWEEN '$op_date_start' AND '$op_date_time' AND li.agent_id = '$ag_id'
 
         UNION ALL
 
         SELECT ag_id, created_date AS tdate, '' AS coll_amt,'' AS netcash, '' AS Credit, SUM(amt) AS Debit
         FROM ct_db_hag 
-        WHERE created_date BETWEEN '$op_date_start' AND '$op_date_time'  AND insert_login_id = '$user_id' AND ag_id = '$ag_id'
+        WHERE created_date BETWEEN '$op_date_start' AND '$op_date_time'  AND ag_id = '$ag_id'
         
         UNION ALL 
         
         SELECT ag_id, created_date AS tdate,'' AS coll_amt,'' AS netcash, '' AS Credit, SUM(amt) AS Debit
         FROM ct_db_bag 
-        WHERE created_date BETWEEN '$op_date_start' AND '$op_date_time'  AND FIND_IN_SET(bank_id, '$bank_id') AND ag_id = '$ag_id'
+        WHERE created_date BETWEEN '$op_date_start' AND '$op_date_time'  AND ag_id = '$ag_id'
         
         UNION ALL 
         
         SELECT ag_id, created_date AS tdate,'' AS coll_amt,'' AS netcash, SUM(amt) AS Credit, '' AS Debit
         FROM ct_cr_hag 
-        WHERE created_date BETWEEN '$op_date_start' AND '$op_date_time'  AND insert_login_id = '$user_id' AND ag_id = '$ag_id'
+        WHERE created_date BETWEEN '$op_date_start' AND '$op_date_time'  AND ag_id = '$ag_id'
         
         UNION ALL 
         
         SELECT ag_id, created_date AS tdate,'' AS coll_amt,'' AS netcash, SUM(amt) AS Credit, '' AS Debit
         FROM ct_cr_bag 
-        WHERE created_date BETWEEN '$op_date_start' AND '$op_date_time'  AND FIND_IN_SET(bank_id, '$bank_id') AND ag_id = '$ag_id'
+        WHERE created_date BETWEEN '$op_date_start' AND '$op_date_time'  AND ag_id = '$ag_id'
         
         ORDER BY tdate ) AS combined ");
 
@@ -1505,7 +1506,7 @@ FROM (
                 $tabBody .= '<tr>';
                 $tabBody .= "<td>$i</td>";
 
-                $agqry = $connect->query("SELECT ag_name from agent_creation where ag_id = '" . $row['ag_id'] . "' ");
+                $agqry = $connect->query("SELECT ag_name from agent_creation where ag_id = '$ag_id' ");
                 $ag_name = $agqry->fetch()['ag_name'] ?? '';
 
                 $tabBody .= "<td>" . $ag_name . "</td>";
@@ -1525,6 +1526,7 @@ FROM (
     }
 
     $tabBodyEnd = "<tr><td colspan='2'><b>Total</b></td><td><b>" . moneyFormatIndia($c_bal) . "</b></td></tr>";
+
 } else if ($sheet_type == 7 && $ag_view_type == 2 && $ag_name != '') { //7 Means Agent Balance Sheet and 2 means individual and agent id
 
     //get agent user id to get data from collection
@@ -1533,88 +1535,84 @@ FROM (
 
     $tableHeaders = "<th width='50'>S.No</th><th>Agent</th><th>Date</th><th>Coll Amount</th><th>Net Cash</th><th>Credit</th><th>Debit</th>"; {
         $opening_qry = $connect->query("SELECT 
-    -- (Credit - Debit) + (Debit - Credit)
-    IFNULL(SUM(CASE WHEN grp = 'coll_loan' THEN Credit - Debit END), 0) 
-  + IFNULL(SUM(CASE WHEN grp = 'ct_tables' THEN Debit - Credit END), 0) 
-  AS opening_balance
-FROM (
-    -- Collection
-    SELECT cl.total_paid_track AS Credit, 0 AS Debit, 'coll_loan' AS grp
-    FROM collection cl JOIN user us  ON us.user_id = '$user_id' and FIND_IN_SET('$ag_name',us.agentforstaff)
-    WHERE cl.created_date < DATE_FORMAT('$op_date', '%Y-%m-01') and cl.insert_login_id = '$ag_user_id'
-                    
-    UNION ALL
-    -- Loan issue
-    SELECT 0 AS Credit, (IFNULL(li.cash,0) + IFNULL(li.cheque_value,0) + IFNULL(li.transaction_value,0)) AS Debit, 'coll_loan' AS grp
-    FROM loan_issue li  JOIN user us ON us.user_id = '$user_id' and FIND_IN_SET('$ag_name',us.agentforstaff) WHERE li.created_date < DATE_FORMAT('$op_date', '%Y-%m-01') and li.agent_id = '$ag_name'
+                -- (Credit - Debit) + (Debit - Credit)
+                IFNULL(SUM(CASE WHEN grp = 'coll_loan' THEN Credit - Debit END), 0) 
+                + IFNULL(SUM(CASE WHEN grp = 'ct_tables' THEN Debit - Credit END), 0) 
+            AS opening_balance
+            FROM (
+                -- Collection
+                SELECT cl.total_paid_track AS Credit, 0 AS Debit, 'coll_loan' AS grp
+                FROM collection cl 
+                WHERE cl.created_date < DATE_FORMAT('$op_date', '%Y-%m-01') and cl.insert_login_id = '$ag_user_id'
+                                
+                UNION ALL
+                -- Loan issue
+                SELECT 0 AS Credit, (IFNULL(li.cash,0) + IFNULL(li.cheque_value,0) + IFNULL(li.transaction_value,0)) AS Debit, 'coll_loan' AS grp
+                FROM loan_issue li  WHERE li.created_date < DATE_FORMAT('$op_date', '%Y-%m-01') and li.agent_id = '$ag_name'
 
-    UNION ALL
-    -- ct_db_hag → Debit
-    SELECT 0 AS Credit, amt AS Debit, 'ct_tables' AS grp
-    FROM ct_db_hag
-       WHERE created_date < DATE_FORMAT('$op_date', '%Y-%m-01') AND insert_login_id = '$user_id' and ag_id = '$ag_name'
+                UNION ALL
+                -- ct_db_hag → Debit
+                SELECT 0 AS Credit, amt AS Debit, 'ct_tables' AS grp
+                FROM ct_db_hag
+                WHERE created_date < DATE_FORMAT('$op_date', '%Y-%m-01') AND ag_id = '$ag_name'
 
-    UNION ALL
-    -- ct_cr_hag → Credit
-    SELECT amt AS Credit, 0 AS Debit, 'ct_tables' AS grp
-    FROM ct_cr_hag
-     WHERE created_date < DATE_FORMAT('$op_date', '%Y-%m-01') AND insert_login_id = '$user_id' and ag_id = '$ag_name'
+                UNION ALL
+                -- ct_cr_hag → Credit
+                SELECT amt AS Credit, 0 AS Debit, 'ct_tables' AS grp
+                FROM ct_cr_hag
+                WHERE created_date < DATE_FORMAT('$op_date', '%Y-%m-01') AND ag_id = '$ag_name'
 
-    UNION ALL
-    -- ct_db_bag → Debit
-    SELECT 0 AS Credit, amt AS Debit, 'ct_tables' AS grp
-    FROM ct_db_bag
-     WHERE created_date < DATE_FORMAT('$op_date', '%Y-%m-01') AND insert_login_id = '$user_id' and ag_id = '$ag_name'
+                UNION ALL
+                -- ct_db_bag → Debit
+                SELECT 0 AS Credit, amt AS Debit, 'ct_tables' AS grp
+                FROM ct_db_bag
+                WHERE created_date < DATE_FORMAT('$op_date', '%Y-%m-01') AND ag_id = '$ag_name'
 
-    UNION ALL
-    -- ct_cr_bag → Credit
-    SELECT amt AS Credit, 0 AS Debit, 'ct_tables' AS grp
-    FROM ct_cr_bag
-     WHERE created_date < DATE_FORMAT('$op_date', '%Y-%m-01') AND insert_login_id = '$user_id' and ag_id = '$ag_name'
-) AS opening;
+                UNION ALL
+                -- ct_cr_bag → Credit
+                SELECT amt AS Credit, 0 AS Debit, 'ct_tables' AS grp
+                FROM ct_cr_bag
+                WHERE created_date < DATE_FORMAT('$op_date', '%Y-%m-01') AND ag_id = '$ag_name'
+            ) AS opening;
         ");
         $opening_bal = $opening_qry->fetch()['opening_balance'];
     }
 
     $qry = $connect->query("SELECT $ag_name AS ag_id, date(cl.created_date) as tdate, cl.total_paid_track as coll_amt,'' AS netcash, '' AS Credit, '' AS Debit
-    FROM collection cl JOIN user us 
-    ON us.user_id = '$user_id' and FIND_IN_SET('$ag_name',us.agentforstaff)
+    FROM collection cl
     WHERE cl.total_paid_track != '' AND cl.created_date BETWEEN '$op_date_start' AND '$op_date_time'  and cl.insert_login_id = '$ag_user_id'
     
     UNION ALL
 
     SELECT li.agent_id AS ag_id, date(li.created_date) as tdate,'' as coll_amt, COALESCE(li.cash, 0) + COALESCE(li.cheque_value, 0) + COALESCE(li.transaction_value, 0) AS netcash, '' AS Credit, '' AS Debit 
-    FROM loan_issue li JOIN user us 
-    ON us.user_id = '$user_id' and FIND_IN_SET('$ag_name',us.agentforstaff)
+    FROM loan_issue li 
     WHERE li.created_date BETWEEN '$op_date_start' AND '$op_date_time' and li.agent_id = '$ag_name'
 
     UNION ALL
 
     SELECT ag_id, created_date AS tdate, '' AS coll_amt,'' AS netcash, '' AS Credit, amt AS Debit
     FROM ct_db_hag 
-    WHERE created_date BETWEEN '$op_date_start' AND '$op_date_time'  AND insert_login_id = '$user_id' and ag_id = '$ag_name'
+    WHERE created_date BETWEEN '$op_date_start' AND '$op_date_time' AND ag_id = '$ag_name'
     
     UNION ALL 
     
     SELECT ag_id, created_date AS tdate,'' AS coll_amt,'' AS netcash, '' AS Credit, amt AS Debit
     FROM ct_db_bag 
-    WHERE created_date BETWEEN '$op_date_start' AND '$op_date_time'  AND FIND_IN_SET(bank_id, '$bank_id') and ag_id = '$ag_name'
+    WHERE created_date BETWEEN '$op_date_start' AND '$op_date_time' AND ag_id = '$ag_name'
     
     UNION ALL 
     
     SELECT ag_id, created_date AS tdate,'' AS coll_amt,'' AS netcash, amt AS Credit, '' AS Debit
     FROM ct_cr_hag 
-    WHERE created_date BETWEEN '$op_date_start' AND '$op_date_time'  AND insert_login_id = '$user_id' and ag_id = '$ag_name'
+    WHERE created_date BETWEEN '$op_date_start' AND '$op_date_time' AND ag_id = '$ag_name'
     
     UNION ALL 
     
     SELECT ag_id, created_date AS tdate,'' AS coll_amt,'' AS netcash, amt AS Credit, '' AS Debit
     FROM ct_cr_bag 
-    WHERE created_date BETWEEN '$op_date_start' AND '$op_date_time'  AND FIND_IN_SET(bank_id, '$bank_id') and ag_id = '$ag_name'
+    WHERE created_date BETWEEN '$op_date_start' AND '$op_date_time' AND ag_id = '$ag_name'
     
-    ORDER BY tdate
-    ");
-
+    ORDER BY tdate ");
 
     $i = 1;
     $creditSum = 0;
@@ -1718,26 +1716,8 @@ if ($opening_bal != '') {
                     extend: 'colvis',
                     collectionLayout: 'fixed four-column',
                 }
-            ],
-            //To change total amount dynamically
-            // "footerCallback": function () {
-            //     var api = this.api();
-            //     var columnIdx = 4; // Replace with the index of the desired column
-            //     var columnData = api.column(columnIdx, { search: 'applied' }).data();
-
-            //     // Calculate the total value of the column
-            //     var total = columnData.reduce(function (a, b) {
-            //         b = b.replace(',','');
-            //         return parseInt(a) + parseInt(b);
-            //     }, 0);
-
-            //     // Display the total in the table footer
-            //     $(api.column(columnIdx).footer()).html( total);
-            // }
+            ]
         });
-
-
-
     });
 </script>
 

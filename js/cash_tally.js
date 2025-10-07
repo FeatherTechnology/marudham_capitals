@@ -240,7 +240,7 @@ $(document).ready(function () {
         triggerExpViewActions();
     });
 
-    $('#exp_cat_type').click(function () {
+    $('#exp_cat_type').change(function () {
         var sheet_type = $('#sheet_type').val();
         var exp_cat_type = $(this).val();
 
@@ -466,14 +466,14 @@ function getAllClosingBalance() {
         cache: false,
         success: function (response) {
             var closing = parseInt(response[0]['closing_balance']);
-            $('#all_closing_balance').text(closing)
-            $('#all_hand_closing').text(response[0]['hand_closing'])
+            $('#all_closing_balance').text(moneyFormatIndia(closing))
+            $('#all_hand_closing').text(moneyFormatIndia(response[0]['hand_closing']))
             var i = 0;
             $.each(response, function (index, item) {
-                $('#all_bank_closing' + i).text(item['bank_closing'] ?? 0)
+                $('#all_bank_closing' + i).text(moneyFormatIndia(item['bank_closing'] ?? 0))
                 i++;
             })
-            $('#all_agent_closing').text(response[0]['agent_closing'])
+            $('#all_agent_closing').text(moneyFormatIndia(response[0]['agent_closing']))
         }
     })
 }
