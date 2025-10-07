@@ -147,7 +147,7 @@ $DueNilReqIdStr = !empty($DueNilReqIds) ? implode(',', $DueNilReqIds) : 'NULL';
 foreach ($loan_category as $cat_id) {
     // Step 1: Fetch customers
     $where = "AND alc.loan_category = $cat_id";
-    $grp_condition="";
+    $grp_condition = "";
     if ($type == 4) {
         // $where .= " AND adm.loan_category_id = $cat_id";
         $grp_condition = "GROUP BY ii.req_id";
@@ -215,6 +215,43 @@ foreach ($loan_category as $cat_id) {
             $collectionData[$col['req_id']][] = $col;
         }
     }
+
+    $paidSummary = [];
+    $paidQry = $connect->query("SELECT 
+    c.req_id, 
+    SUM(c.due_amt_track) AS total_paid, 
+    MIN(c.due_amt) AS monthly_due, 
+    MIN(a.due_start_from) AS due_start_from, 
+    MAX(c.coll_date) AS last_paid_date,
+    COUNT(DISTINCT EXTRACT(YEAR_MONTH FROM c.coll_date)) AS paid_month_count,
+    COALESCE(SUM(CASE WHEN c.coll_date < DATE_FORMAT('$search_date', '%Y-%m-01') 
+                      THEN c.due_amt_track ELSE 0 END), 0) AS till_last_month_paid
+FROM collection c
+JOIN acknowlegement_loan_calculation a 
+      ON c.req_id = a.req_id
+WHERE DATE(c.coll_date) <= '$search_date'
+  AND c.req_id IN ($id_list)
+GROUP BY c.req_id;
+");
+    while ($row = $paidQry->fetch()) {
+        $start = new DateTime($row['due_start_from']);
+        $end = new DateTime($search_date);
+        $months = ($end->format('Y') - $start->format('Y')) * 12 + ($end->format('m') - $start->format('m')) + 1;
+
+        $paidSummary[$row['req_id']] = [
+            'total_paid' => (float)$row['total_paid'],
+            'expected_due' => (float)($months * $row['monthly_due']),
+            'previous_due' => (float)(($months - 1) * $row['monthly_due']),
+            'last_paid_date' => $row['last_paid_date'],
+            'till_last_month_paid' => $row['till_last_month_paid'],
+            'paid_month_count' => $row['paid_month_count'],
+            'monthly_due' => (float)$row['monthly_due'],
+            'due_start_from' => $row['due_start_from'],
+            'future_due' => (float)(($months + 1) * $row['monthly_due']),
+        ];
+    }
+
+
     $coll_DueNilReqIds = [];
     $coll_DueNilQuery = $connect->query("SELECT DISTINCT cs5.req_id
 FROM customer_status cs5
@@ -299,48 +336,50 @@ AND col.coll_sub_status IN ('Due Nil');
                 $isPendingCustomer = true; // flag
             }
             if ($isPendingCustomer) {
-                $customer_cleared = false;
-                $customer_partial = false;
                 $hadCollectionThisMonth = false;
 
-                $searchMonth = date('m', strtotime($search_date));
-                $searchYear  = date('Y', strtotime($search_date));
+                // // Pending cleared within the month
+                if (isset($paidSummary[$cust['req_id']])) {
+                    $pay_amnt     = $paidSummary[$cust['req_id']]['expected_due'] ?? null;
+                    $previous_due = $paidSummary[$cust['req_id']]['previous_due'] ?? null;
+                    $total_paid   = $paidSummary[$cust['req_id']]['total_paid'] ?? null;
+                    $hadCollectionThisMonth = false;
+                    $hadCollectionToday = false; // ✅ New flag
 
-                foreach ($collList as $coll) {
-                    $coll_date = strtotime($coll['coll_date']);
-                    if (date('m', $coll_date) == $searchMonth && date('Y', $coll_date) == $searchYear) {
-                        $hadCollectionThisMonth = true;
+                    foreach ($collList as $coll) {
+                        $collDate = date('Y-m-d', strtotime($coll['coll_date']));
 
-                        $pending_amt   = (int)$coll['pending_amt'];
-                        $due_amt_track = (int)$coll['due_amt_track'];
-
-                        // Today pending clear
-                        if ($due_amt_track >= $pending_amt && date('Y-m-d', $coll_date) == $search_date) {
-                            $today_pending_clear++;
-                            $customer_cleared = true;
+                        // ✅ Check if this collection happened in the same month
+                        if (
+                            date('m', strtotime($collDate)) == date('m', strtotime($search_date)) &&
+                            date('Y', strtotime($collDate)) == date('Y', strtotime($search_date))
+                        ) {
+                            $hadCollectionThisMonth = true;
                         }
 
-                        // Pending cleared within the month
-                        if ($due_amt_track >= $pending_amt) {
-                            $customer_cleared = true;
-                        }
-                        // Partial
-                        elseif ($pending_amt > 0 && $due_amt_track < $pending_amt) {
-                            $customer_partial = true;
+                        // ✅ Check if collection happened exactly on $search_date
+                        if ($collDate == $search_date) {
+                            $hadCollectionToday = true;
                         }
                     }
-                }
 
-                // Decide final classification once per customer
-                if ($customer_cleared) {
-                    $t_pending_clear++;
-                } elseif ($customer_partial) {
-                    $partially_paid++;
-                } elseif (!$hadCollectionThisMonth) {
-                    // No collection in this month at all
-                    $unpaid++;
+                    // ✅ Classification logic
+                    if ($total_paid >= $previous_due && $total_paid >= $pay_amnt) {
+                        // Fully cleared till this month
+                        $t_pending_clear++;
+
+                        // ✅ Check if cleared exactly today
+                        if ($hadCollectionToday) {
+                            $today_pending_clear++;
+                        }
+                    } elseif ($hadCollectionThisMonth) {
+                        // Payment happened this month but not full
+                        $partially_paid++;
+                    } else {
+                        // No payment in this month at all
+                        $unpaid++;
+                    }
                 } else {
-                    // Had collection but still unpaid
                     $unpaid++;
                 }
             }
