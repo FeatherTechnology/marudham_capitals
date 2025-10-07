@@ -276,15 +276,14 @@ if (sizeof($getUser) > 0) {
 						<button type="button" class="btn btn-primary" id="back">Back</button>
 					</div>
 
-					<div class="card-body" style="overflow-x: auto;">
+					<div class="card-body">
 						<div class="row">
 							<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
 								<div class="form-group">
 									<label for="disabledInput">Event Name</label>&nbsp;<span class="required">*</span>
-									<input type="hidden" name="update_id" id="update_id">
-									<input type="hidden" name="created_date" id="created_date">
-									<input type="text" class="form-control" id="event_name" name="event_name" value="" tabindex="3" placeholder="Enter Event Name">
-									<span id="eventNameCheck" class="text-danger" style="display: none;">Enter Event Name</span>
+									<input type="hidden" name="event_area_id" id="event_area_id">
+									<input type="hidden" name="event_hidden_id" id="event_hidden_id">
+									<input type="text" class="form-control" id="event_name" name="event_name" value="" placeholder="Enter Event Name">
 								</div>
 							</div>
 							<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
@@ -293,9 +292,6 @@ if (sizeof($getUser) > 0) {
 									<select type="text" class="form-control" id="area_name" name="area_name" multiple>
 										<option value="">Select Area Name</option>
 									</select>
-									<span id="areaNameCheck" class="text-danger" style="display: none;">Enter Area Name</span>
-
-
 								</div>
 							</div>
 						</div><br><br><br>
@@ -312,12 +308,12 @@ if (sizeof($getUser) > 0) {
 											<th colspan="2">Action</th>
 										</tr>
 									</thead>
-									<?php if ($idupd <= 0) { ?>
 										<tbody>
 											<tr>
 												<td class="current_date"></td>
-												<td><input type="text" tabindex="5" name="cus_name" id="cus_name" class="form-control cus_name" value=""></td>
-												<td><input type="text" tabindex="5" name="cus_mobile_num" id="cus_mobile_num" class="form-control cus_mobile_num" value=""></td>
+												<td><input type="text"  name="cus_name" id="cus_name" class="form-control cus_name" value="" placeholder="Enter Customer Name"></td>
+												<td>
+												<input type="number" class="form-control cus_mobile_num" id="cus_mobile_num" name="cus_mobile_num" value='' placeholder="Enter Mobile Number"></td>
 
 												<td><select type="text" class="form-control cus_area_name" id="cus_area_name" name="area_name" >
 														<option value="">Select Area Name</option>
@@ -328,16 +324,13 @@ if (sizeof($getUser) > 0) {
 													</select></td>
 												<td>
 
-													<button type="button" tabindex="5" id="add_event_mem" name="add_event_mem" value="Submit" class="btn btn-primary add_event_mem">Add</button>
+													<button type="button"  id="add_event_mem" name="add_event_mem" value="Submit" class="btn btn-primary add_event_mem">Add</button>
 												</td>
 												<td>
-													<span class='icon-trash-2' tabindex="5" class="delet_event"></span>
+													<span class='icon-trash-2 delet_event'></span>
 												</td>
 											</tr>
 										</tbody>
-									<?php }
-									if ($idupd > 0) {
-									} ?>
 								</table>
 							</div>
 						</div>

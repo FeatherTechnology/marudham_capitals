@@ -66,7 +66,7 @@ $(document).ready(function () {
         $('#transaction_value').val('');
         $('#transaction_remark').val('');
         var type = $(this).val();
-        var netcash = $('#net_cash').val();
+        var netcash = $('#net_cash').val().replace(/,/g, '');
         let issue_mode = $('#issued_mode').val();
         if (issue_mode == 0) {
             if (type == '0') {
@@ -1658,7 +1658,7 @@ function checkBalance() {
         dataType: 'json',
         success: function (response) {
             if (response['rowCnt'] > '0') {
-                $('#net_cash').val(response['balance_amount']);
+                $('#net_cash').val(moneyFormatIndia(response['balance_amount']));
                 BalanceAmount = response['balance_amount'];
                 if (response['balance_amount'] > '0') {
                     $('#int_rate').attr('readonly', true);
@@ -1680,7 +1680,7 @@ function checkBalance() {
                     $('#submit_loanIssue').hide();
                 }
             } else {
-                var netcashamnt = parseInt($('#net_cash_cal').val());
+                var netcashamnt = $('#net_cash_cal').val(); 
                 $('#net_cash').val(netcashamnt);
 
             }
