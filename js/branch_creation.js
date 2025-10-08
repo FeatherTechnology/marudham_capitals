@@ -19,28 +19,19 @@ $(document).ready(function () {
         $('#taluk1').val(talukselected);
     })
 
-    $('#submitbranch_creation').click(function () {
-        //  event.preventDefault();
-        let mobile = $('#mobile_number').val()
-        let wapp = $('#whatsapp_number').val()
-        if (mobile != '' && mobile.length < 10) {
-            alert('Please enter 10 digit valid number');
-            $('#mobile_number').focus();
-            event.preventDefault();
-            return false;
-        } else
-            if (wapp != '' && wapp.length < 10) {
-                alert('Please enter 10 digit valid number');
-                $('#whatsapp_number').focus();
-                event.preventDefault();
-                return false;
-            }
+   $('#submitbranch_creation').click(function (event) {
+    if (validateBranchForm()) {
         let confirmAction = confirm("Are you sure you want to submit this branch?");
         if (!confirmAction) {
-            event.preventDefault(); // Stop form submission if canceled
-            return false;
+            event.preventDefault();
+            return false; // stop if user cancels
         }
-    })
+    } else {
+        event.preventDefault();
+        return false; // stop if validation fails
+    }
+});
+
 });
 
 $(function () {
@@ -282,4 +273,34 @@ function getTalukDropdown(DistSelected) {
 
     // Sort Taluk dropdown
     sortDropdownAlphabetically("#taluk");
+}
+function validateBranchForm() {
+    var mobile = $('#mobile_number').val();
+    var wapp = $('#whatsapp_number').val();
+
+    if (mobile != '' && mobile.length < 10) {
+        Swal.fire({
+            timerProgressBar: true,
+            timer: 2000,
+            title: 'Please enter a 10-digit valid mobile number!',
+            icon: 'error',
+            showConfirmButton: true,
+            confirmButtonColor: '#009688'
+        });
+        return false; // validation failed
+    }
+
+    if (wapp != '' && wapp.length < 10) {
+        Swal.fire({
+            timerProgressBar: true,
+            timer: 2000,
+            title: 'Please enter a 10-digit valid WhatsApp number!',
+            icon: 'error',
+            showConfirmButton: true,
+            confirmButtonColor: '#009688'
+        });
+        return false; // validation failed
+    }
+
+    return true; // validation passed
 }

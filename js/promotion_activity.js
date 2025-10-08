@@ -361,6 +361,10 @@ areaSelect.addEventListener('change', function() {
         });
         return;
     }
+    let confirmAction = confirm("Are you sure you want to submit This Event?");
+    if (!confirmAction) {
+        return;
+    }
 
     // Collect all rows into an array
     var allRowsData = [];

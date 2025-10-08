@@ -201,43 +201,49 @@ $(document).ready(function () {
     }
 
     // Submit Button 
-    $('#submitLoanCategory').click(function () {
-
-        validation(); validateLoanCategoryTable();
-          let confirmAction = confirm("Are you sure you want to submit Loan Category?");
+    $('#submitLoanCategory').click(function (event) {
+    if (validation() && validateLoanCategoryTable()) {
+        let confirmAction = confirm("Are you sure you want to submit Loan Category?");
         if (!confirmAction) {
-            event.preventDefault(); // Stop form submission if canceled
+            event.preventDefault();
             return false;
         }
-    });
+    } else {
+        event.preventDefault();
+        return false;
+    }
+});
 
 });
 
 function validation() {
-    let sub_category_name = $('#sub_category_name').val(); let loancategoryValue = $('#loan_category_name').val(); let loanlimit = $('#loan_limit').val();
-    if (sub_category_name.length == '') {
+    let isValid = true;
+
+    let sub_category_name = $('#sub_category_name').val().trim();
+    let loancategoryValue = $('#loan_category_name').val().trim();
+    let loanlimit = $('#loan_limit').val().trim();
+
+    if (sub_category_name === '') {
         $('#subCategoryCheck').show();
-        event.preventDefault();
-    }
-    else {
+        isValid = false;
+    } else {
         $('#subCategoryCheck').hide();
     }
 
-    if (loancategoryValue.length == '') {
+    if (loancategoryValue === '') {
         $('#loanCategoryCheck').show();
-        event.preventDefault();
-    }
-    else {
+        isValid = false;
+    } else {
         $('#loanCategoryCheck').hide();
     }
 
-    if (loanlimit.length == '') {
+    if (loanlimit === '') {
         $('#loan_limitCheck').show();
-        event.preventDefault();
-    }
-    else {
+        isValid = false;
+    } else {
         $('#loan_limitCheck').hide();
     }
+    return isValid; // return true if all fields are valid
 }
 
 

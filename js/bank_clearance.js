@@ -68,7 +68,13 @@ $(document).ready(function () {
         if (submitValidation() == 0) {
             //call submit function directly with empty parameters so it will not overwrite or delete anything
             //because one day has one or more transactions
-            submitTransaction('');
+            let confirmAction = confirm("Are you sure you want to submit Bank Clearance?");
+            if (!confirmAction) {
+                event.preventDefault(); // Stop form submission if canceled
+                return false;
+            }else{
+                submitTransaction('');
+            }   
         }
     })
 

@@ -628,10 +628,15 @@ $(document).ready(function () {
     $('#submit_loanIssue').click(function () { // loan Issue Submit Validation.
         hideCheckSpan();
         //   $('#refresh_cal').trigger('click');
-        loanIssueSumitValidation();
+        if(loanIssueSumitValidation()){
         let confirmAction = confirm("Are you sure you want to submit Loan Issue ?");
-        if (!confirmAction) {
-            event.preventDefault(); // Stop form submission if canceled
+            if (!confirmAction) {
+                event.preventDefault(); // Stop form submission if canceled
+                return false;
+            }
+        }else{
+            event.preventDefault(); 
+            return false;
         }
 
     });
@@ -1695,10 +1700,12 @@ function loanIssueSumitValidation() {
     var issueMode = $('#issued_mode').val(); var paymenType = $('#payment_type').val(); var cash = $('#cash').val(); var guarentorName = $('#cash_guarentor_name').val();
     // var fingerMatch = $('#fingerValidation').val();
     var ag_id = $('#agent_id').val(); var bank_id = $('#bank_id').val();
+    var validation = true ;
     //Check Issue Mode
     if (issueMode == '') {
         event.preventDefault();
         $('#issue').show();
+        validation = false ;
     } else {
         $('#issue').hide();
     }
@@ -1707,6 +1714,7 @@ function loanIssueSumitValidation() {
     if (paymenType == '') {
         event.preventDefault();
         $('#pay_type').show();
+        validation = false ;
     } else {
         $('#pay_type').hide();
     }
@@ -1716,6 +1724,7 @@ function loanIssueSumitValidation() {
         if (cash == '') {
             event.preventDefault();
             $('#cash_amnt').show();
+            validation = false ;
         } else {
             $('#cash_amnt').hide();
         }
@@ -1725,6 +1734,7 @@ function loanIssueSumitValidation() {
         if (bank_id == '') {
             event.preventDefault();
             $('#bank_idCheck').show();
+            validation = false ;
         } else {
             $('#bank_idCheck').hide();
         }
@@ -1732,6 +1742,7 @@ function loanIssueSumitValidation() {
         if (!isAnyCheckboxChecked()) {
             event.preventDefault(); // Prevent form submission if no checkbox is checked
             alert('Please select Bank Info.'); // Show error message
+            validation = false ;
         }
     }
 
@@ -1740,6 +1751,7 @@ function loanIssueSumitValidation() {
             if (guarentorName == '') {
                 event.preventDefault();
                 $('#cash_guarentor').show();
+                validation = false ;
             } else {
                 $('#cash_guarentor').hide();
             }
@@ -1752,6 +1764,7 @@ function loanIssueSumitValidation() {
             // }
         }
     }
+    return validation;
 }
 
 //Span Hide

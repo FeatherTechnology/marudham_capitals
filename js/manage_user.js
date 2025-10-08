@@ -357,9 +357,15 @@ $(document).ready(function () {
         multiselectValue();// for taking selected values from multiselect to hidden input field. so that it can be passed as comma imploded string
 
         validation();
-        let confirmAction = confirm("Are you sure you want to submit Manage user ?");
-        if (!confirmAction) {
-            event.preventDefault(); // Stop form submission if canceled
+        if(validation() && multiselectValue()){
+            let confirmAction = confirm("Are you sure you want to submit Manage user ?");
+            if (!confirmAction) {
+                event.preventDefault(); // Stop form submission if canceled
+                return false;
+            }
+        }else{
+            event.preventDefault();
+            return false;
         }
     })
 });
@@ -932,6 +938,7 @@ function checkbox(checkboxesToEnable, module) {
 function multiselectValue() {
     var branch_id1 = branchMultiselect.getValue();
     var branch_id = '';
+    var validation = true;
     for (var i = 0; i < branch_id1.length; i++) {
         if (i > 0) {
             branch_id += ',';
@@ -973,7 +980,7 @@ function multiselectValue() {
     $('#loan_cat').val(sortedStr);
     var loan_cat = $('#loan_cat').val();
     var role = $('#role').val();
-    if (loan_cat == '' && role == '3') { event.preventDefault(); $('#loan_catCheck').show(); } else { $('#loan_catCheck').hide(); }
+    if (loan_cat == '' && role == '3') { event.preventDefault(); $('#loan_catCheck').show(); validation = false;} else { $('#loan_catCheck').hide(); }
     //////////////////////////////////////////////////
 
     var line1 = lineMultiselect.getValue();
@@ -990,7 +997,7 @@ function multiselectValue() {
     $('#line').val(sortedStr);
     var line = $('#line').val();
     var role = $('#role').val();
-    if (line == '' && role != '2') { event.preventDefault(); $('#lineCheck').show(); } else { $('#lineCheck').hide(); }
+    if (line == '' && role != '2') { event.preventDefault(); $('#lineCheck').show(); validation = false;} else { $('#lineCheck').hide(); }
     //////////////////////////////////////////////////
     var group1 = groupMultiselect.getValue();
     var group = '';
@@ -1005,7 +1012,7 @@ function multiselectValue() {
     var sortedStr = arr.join(",");
     $('#group').val(sortedStr);
     var group = $('#group').val();
-    if (group == '') { event.preventDefault(); $('#groupCheck').show(); } else { $('#groupCheck').hide(); }
+    if (group == '') { event.preventDefault(); $('#groupCheck').show();validation = false; } else { $('#groupCheck').hide(); }
     //////////////////////////////////////////////////
     var isPromotionChecked = $('#promotion_activity').is(':checked');
     if(isPromotionChecked){
@@ -1022,13 +1029,15 @@ function multiselectValue() {
     var sortedStr = arr.join(",");
     $('#pro_aty_access_id').val(sortedStr);
     var pro_acc = $('#pro_aty_access_id').val();
-    if (pro_acc == '') { event.preventDefault(); $('#proCheck').show(); } else { $('#proCheck').hide(); }  
+    if (pro_acc == '') { event.preventDefault(); $('#proCheck').show();validation = false; } else { $('#proCheck').hide(); }  
 }
     //////////////////////////////////////////////////
+     return validation ;
 }
 
 function validation() {
     var role = $('#role').val();
+    var validation = true ;
     if (role == '1') {
         $('#roleCheck').hide();
         var role_type = $('#role_type').val();
@@ -1038,6 +1047,7 @@ function validation() {
             if (dir_name == '') {
                 $('#dirnameCheck').show();
                 event.preventDefault();
+                validation = false ;
             } else {
                 $('#dirnameCheck').hide();
             }
@@ -1050,6 +1060,7 @@ function validation() {
         if (ag_name == '') {
             $('#agnameCheck').show();
             event.preventDefault();
+            validation = false ;
         } else {
             $('#agnameCheck').hide();
         }
@@ -1062,6 +1073,7 @@ function validation() {
             if (staff_name == '') {
                 $('#staffnameCheck').show();
                 event.preventDefault();
+                validation = false ;
             } else {
                 $('#staffnameCheck').hide();
             }
@@ -1082,6 +1094,7 @@ function validation() {
     if (user_id == '') {
         $('#usernameCheck').show();
         event.preventDefault();
+        validation = false ;
     } else {
         $('#usernameCheck').hide();
     }
@@ -1089,6 +1102,7 @@ function validation() {
     if (pass == '') {
         $('#passCheck').show();
         event.preventDefault();
+        validation = false ;
     } else {
         $('#passCheck').hide();
     }
@@ -1096,18 +1110,21 @@ function validation() {
     if (cnf_pass == '') {
         $('#cnfpassCheck').show();
         event.preventDefault();
+        validation = false ;
     } else {
         $('#cnfpassCheck').hide();
     }
     if (pass != cnf_pass) {
         $('#passworkCheck').show();
         event.preventDefault();
+        validation = false ;
     } else { $('#passworkCheck').hide(); }
 
     var branch_id = $('#branch_id').val();
     if (branch_id == '') {
         $('#BranchCheck').show();
         event.preventDefault();
+        validation = false ;
     } else {
         $('#BranchCheck').hide();
     }
@@ -1149,6 +1166,7 @@ function validation() {
 
     if (hasError) {
         event.preventDefault();
+        validation = false ;
     }
 
     var update = document.querySelector('#update');
@@ -1160,6 +1178,7 @@ function validation() {
             event.preventDefault();
             $('.update_screen_div').show();
             $('.updateScreenCheck').show();
+            validation = false ;
         }else{
             $('.updateScreenCheck').hide();
         }
@@ -1191,6 +1210,7 @@ function validation() {
 
     if (hasError) {
         event.preventDefault();
+        validation = false ;
     }
 
     // validtaion for promotion activity
@@ -1218,9 +1238,10 @@ function validation() {
 
     if (hasError) {
         event.preventDefault();
+        validation = false ;
     }
 
-
+return validation ;
 }
 
 

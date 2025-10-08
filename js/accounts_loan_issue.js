@@ -1165,7 +1165,7 @@ function checkIssuedAmount(type) {
         var chequeValue = parseInt($('#chequeValue').val());
         var transactionValue = parseInt($('#transaction_value').val());
         totalValue = (isNaN(cashValue) ? 0 : cashValue) + (isNaN(chequeValue) ? 0 : chequeValue) + (isNaN(transactionValue) ? 0 : transactionValue);
-        netCash = parseInt($('#net_cash').val());
+        netCash = parseInt($('#net_cash').val().replace(/,/g, ''));
         var bal = parseInt(netCash) - parseInt(totalValue);
         if (bal >= 0) {
             $('#balance').val(bal);
@@ -1213,7 +1213,7 @@ function checkBalance() {
         dataType: 'json',
         success: function (response) {
             if (response['rowCnt'] > '0') {
-                $('#net_cash').val(response['balance_amount']);
+                $('#net_cash').val(moneyFormatIndia(response['balance_amount']));
                 BalanceAmount = response['balance_amount'];
                 if (response['balance_amount'] > '0') {
                     $('#int_rate').attr('readonly', true);
@@ -1235,8 +1235,8 @@ function checkBalance() {
                     $('#submit_loanIssue').hide();
                 }
             } else {
-                var netcashamnt = parseInt($('#net_cash_cal').val());
-                $('#net_cash').val(netcashamnt);
+                var netcashamnt = parseInt($('#net_cash_cal').val().replace(/,/g, ''));
+                $('#net_cash').val(moneyFormatIndia(netcashamnt));
 
             }
 
