@@ -23,34 +23,17 @@ $(document).ready(function () {
     })
 
     $('#submit_director_creation').click(function () {
-        //Validation
-        var dir_type = $('#dir_type').val(); var dir_id = $('#dir_id').val(); var dir_name = $('#dir_name').val(); var state = $('#state').val(); var district = $('#district1').val(); var taluk = $('#taluk1').val(); var place = $('#place').val(); var pincode = $('#pincode').val(); var mobile = $('#mobile').val(); var whatsapp = $('#whatsapp').val();
-        if (dir_type === '' || dir_id === '' || dir_name === '' || state === '' || district === '' || taluk === '' || place === '' || pincode === '') {
-            Swal.fire({
-                timerProgressBar: true,
-                timer: 2000,
-                title: 'Please Fill out Mandatory fields!',
-                icon: 'error',
-                showConfirmButton: true,
-                confirmButtonColor: '#009688'
-            });
-            return false;
-        } else if (whatsapp != '' && whatsapp.length < 10) {
-            alert('Please enter 10 digit valid number');
-            $('#whatsapp').focus();
-            event.preventDefault();
-            return false;
-        } else if (mobile != '' && mobile.length < 10) {
-            alert('Please enter 10 digit valid number');
-            $('#mobile').focus();
-            event.preventDefault();
-            return false;
-        }
-        let confirmAction = confirm("Are you sure you want to submit Director Creation?");
+       if (validateDirectorForm()) {
+         let confirmAction = confirm("Are you sure you want to submit Director Creation?");
         if (!confirmAction) {
             event.preventDefault(); // Stop form submission if canceled
             return false;
         }
+    } else {
+       event.preventDefault();
+        return false;
+    }
+       
     })
 
 });
@@ -325,4 +308,29 @@ function getBranchDropdown(company_id) {
             sortDropdownAlphabetically("#branch_id");
         }
     })
+}
+function validateDirectorForm() {
+    var dir_type = $('#dir_type').val(); var dir_id = $('#dir_id').val(); var dir_name = $('#dir_name').val(); var state = $('#state').val(); var district = $('#district1').val(); var taluk = $('#taluk1').val(); var place = $('#place').val(); var pincode = $('#pincode').val(); var mobile = $('#mobile').val(); var whatsapp = $('#whatsapp').val();
+        if (dir_type === '' || dir_id === '' || dir_name === '' || state === 'SelectState' || district === 'Select District' || taluk === 'Select Taluk' || place === '' || pincode === '') {
+            Swal.fire({
+                timerProgressBar: true,
+                timer: 2000,
+                title: 'Please Fill out Mandatory fields!',
+                icon: 'error',
+                showConfirmButton: true,
+                confirmButtonColor: '#009688'
+            });
+            return false;
+        } else if (whatsapp != '' && whatsapp.length < 10) {
+            alert('Please enter 10 digit valid number');
+            $('#whatsapp').focus();
+            event.preventDefault();
+            return false;
+        } else if (mobile != '' && mobile.length < 10) {
+            alert('Please enter 10 digit valid number');
+            $('#mobile').focus();
+            event.preventDefault();
+            return false;
+        }
+    return true; // validation passed
 }

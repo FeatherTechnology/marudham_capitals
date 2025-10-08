@@ -18,26 +18,21 @@ $(document).ready(function () {
         $('#taluk1').val(talukselected);
     })
 
-    $('#submit_company_creation').click(function () {
-        //Validation
-        var company_name = $('#company_name').val(); var address1 = $('#address1').val();/*var address2 = $('#address2').val();*/ var state = $('#state').val(); var district = $('#district1').val(); var taluk = $('#taluk1').val(); var pincode = $('#pincode').val(); var mobile = $('#mobile').val();
-        if (company_name === '' || address1 === '' || state === '' || district === '' || taluk === '' || pincode === '' || (mobile != '' && mobile.length < 10)) {
-            Swal.fire({
-                timerProgressBar: true,
-                timer: 2000,
-                title: 'Please Fill out Mandatory fields!',
-                icon: 'error',
-                showConfirmButton: true,
-                confirmButtonColor: '#009688'
-            });
-            return false;
-        }
+    $('#submit_company_creation').click(function (event) {
+    // Run validation
+    if (validateCompanyForm()) {
         let confirmAction = confirm("Are you sure you want to submit Company Creation?");
         if (!confirmAction) {
-            event.preventDefault(); // Stop form submission if canceled
+            event.preventDefault();
             return false;
         }
-    })
+    } else {
+        event.preventDefault();
+        return false;
+    }
+
+});
+
 
 });
 
@@ -268,4 +263,27 @@ function getTalukDropdown(DistSelected) {
 
     // Sort Taluk dropdown
     sortDropdownAlphabetically("#taluk");
+}
+function validateCompanyForm() {
+    var company_name = $('#company_name').val();
+    var address1 = $('#address1').val();
+    var state = $('#state').val();
+    var district = $('#district1').val();
+    var taluk = $('#taluk1').val();
+    var pincode = $('#pincode').val();
+    var mobile = $('#mobile').val();
+
+    if (company_name === '' || address1 === '' || state === '' || district === '' || taluk === '' || pincode === '' || (mobile != '' && mobile.length < 10)) {
+        Swal.fire({
+            timerProgressBar: true,
+            timer: 2000,
+            title: 'Please Fill out Mandatory fields!',
+            icon: 'error',
+            showConfirmButton: true,
+            confirmButtonColor: '#009688'
+        });
+        return false; // validation failed
+    }
+
+    return true; // validation passed
 }

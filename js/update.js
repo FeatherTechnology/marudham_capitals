@@ -2356,11 +2356,16 @@ $('#guarentor_name').change(function () { //Select Guarantor Name relationship w
 
 ///Customer profile submit///
 $('#submit_update_cus_profile').click(function () {
-    validation();
+    if(validation()){
     let confirmAction = confirm("Are you sure you want to submit Loan Issue ?");
         if (!confirmAction) {
             event.preventDefault(); // Stop form submission if canceled
+            return false;
         }
+    }else{
+        event.preventDefault(); 
+        return false;
+    }
 
 });
 
@@ -2375,106 +2380,123 @@ function validation() {
     var area_state = $('#area_state').val(); var area_district = $('#area_district').val(); var area_taluk = $('#area_taluk').val(); 
     var area_confirm = $('#area_confirm').val(); var area_sub_area = $('#area_sub_area').val();
     var cus_how_know = $('#cus_how_know').val(); var cus_monthly_income = $('#cus_monthly_income').val(); var cus_other_income = $('#cus_other_income').val(); var cus_support_income = $('#cus_support_income').val(); var cus_Commitment = $('#cus_Commitment').val(); var cus_monDue_capacity = $('#cus_monDue_capacity').val(); var cus_loan_limit = $('#cus_loan_limit').val(); var about_cus = $('#about_cus').val();
-    var guarentor_name = $('#guarentor_name').val(); var guarentor_image = $('#guarentor_image').val(); var guarentorpic = $('#guarentorpic').val(); var loan_id = $('#loan_id').val();
+    var guarentor_name = $('#guarentor_name').val(); var guarentor_image = $('#guarentor_image').val(); var guarentorpic = $('#guarentorpic').val(); var loan_id = $('#loan_id').val();var validation = true;
 
     if (cus_id == '') {
         event.preventDefault();
+        validation = false;
         $('#cusidCheck').show();
     } else {
         $('#cusidCheck').hide();
     }
     if (cus_name == '') {
         event.preventDefault();
+        validation = false;
         $('#cusnameCheck').show();
     } else {
         $('#cusnameCheck').hide();
     }
     if (dob == '') {
         event.preventDefault();
+        validation = false;
         $('#dobCheck').show();
     } else {
         $('#dobCheck').hide();
     }
     if (gender == '') {
         event.preventDefault();
+        validation = false;
         $('#genderCheck').show();
     } else {
         $('#genderCheck').hide();
     }
     if (state == 'SelectState') {
         event.preventDefault();
+        validation = false;
         $('#stateCheck').show();
     } else {
         $('#stateCheck').hide();
     }
     if (district == 'Select District') {
         event.preventDefault();
+        validation = false;
         $('#districtCheck').show();
     } else {
         $('#districtCheck').hide();
     }
     if (taluk == 'Select Taluk') {
         event.preventDefault();
+        validation = false;
         $('#talukCheck').show();
     } else {
         $('#talukCheck').hide();
     }
     if (area == '') {
         event.preventDefault();
+        validation = false;
         $('#areaCheck').show();
     } else {
         $('#areaCheck').hide();
     }
     if (sub_area == '') {
         event.preventDefault();
+        validation = false;
         $('#subareaCheck').show();
     } else {
         $('#subareaCheck').hide();
     }
     if (cus_address == '') {
         event.preventDefault();
+        validation = false;
         $('#addressCheck').show();
     } else {
         $('#addressCheck').hide();
     }
     if (mobile1 == '' || mobile1.length < 10) {
         event.preventDefault();
+        validation = false;
         $('#mobile1Check').show();
     } else {
         $('#mobile1Check').hide();
     }
     if (mobile2 != '' && mobile2.length < 10) {
         event.preventDefault();
+        validation = false;
         $('#mobile2Check').show();
     } else {
         $('#mobile2Check').hide();
     }
     if (father_name == '') {
         event.preventDefault();
+        validation = false;
         $('#fathernameCheck').show();
     } else {
         $('#fathernameCheck').hide();
     }
     if (mother_name == '') {
         event.preventDefault();
+        validation = false;
         $('#mothernameCheck').show();
     } else {
         $('#mothernameCheck').hide();
     }
     if (marital == '') {
         event.preventDefault();
+        validation = false;
         $('#maritalCheck').show();
     } else {
         $('#maritalCheck').hide();
     }
     if (occupation_type == '') {
         event.preventDefault();
+        validation = false;
         $('#occupationtypeCheck').show();
     } else {
         $('#occupationtypeCheck').hide();
     }
     if (occupation == '') {
         event.preventDefault();
+        validation = false;
         $('#occupationCheck').show();
     } else {
         $('#occupationCheck').hide();
@@ -2483,6 +2505,7 @@ function validation() {
         $('#areacnfrmCheck').hide();
         if (cus_res_type == '' || cus_res_details == '' || cus_res_address == '' || cus_res_native == '') {
             event.preventDefault();
+            validation = false;
             $('#occ_infoCheck').hide();
             $('#res_infoCheck').show();
         } else {
@@ -2493,6 +2516,7 @@ function validation() {
         $('#areacnfrmCheck').hide();
         if (cus_occ_type == '' || cus_occ_detail == '' || cus_occ_income == '' || cus_occ_address == '' || cus_occ_dow == '' || cus_occ_abt == '') {
             event.preventDefault();
+            validation = false;
             $('#res_infoCheck').hide();
             $('#occ_infoCheck').show();
         } else {
@@ -2501,82 +2525,96 @@ function validation() {
         }
     } else {
         event.preventDefault();
+        validation = false;
         $('#areacnfrmCheck').show();
     }
     if (area_state == 'SelectState') {
         event.preventDefault();
+        validation = false;
         $('#areastateCheck').show();
     } else {
         $('#areastateCheck').hide();
     }
     if (area_district == 'Select District') {
         event.preventDefault();
+        validation = false;
         $('#areadistrictCheck').show();
     } else {
         $('#areadistrictCheck').hide();
     }
     if (area_taluk == 'Select Taluk') {
         event.preventDefault();
+        validation = false;
         $('#areatalukCheck').show();
     } else {
         $('#areatalukCheck').hide();
     }
     if (area_confirm == '') {
         event.preventDefault();
+        validation = false;
         $('#areaconfirmCheck').show();
     } else {
         $('#areaconfirmCheck').hide();
     }
     if (area_sub_area == '') {
         event.preventDefault();
+        validation = false;
         $('#areasubareaCheck').show();
     } else {
         $('#areasubareaCheck').hide();
     }
     if (cus_how_know == '') {
         event.preventDefault();
+        validation = false;
         $('#howToKnowCheck').show();
     } else {
         $('#howToKnowCheck').hide();
     }
     if (cus_monthly_income == '') {
         event.preventDefault();
+        validation = false;
         $('#monthlyIncomeCheck').show();
     } else {
         $('#monthlyIncomeCheck').hide();
     }
     if (cus_other_income == '') {
         event.preventDefault();
+        validation = false;
         $('#otherIncomeCheck').show();
     } else {
         $('#otherIncomeCheck').hide();
     }
     if (cus_support_income == '') {
         event.preventDefault();
+        validation = false;
         $('#supportIncomeCheck').show();
     } else {
         $('#supportIncomeCheck').hide();
     }
     if (cus_Commitment == '') {
         event.preventDefault();
+        validation = false;
         $('#commitmentCheck').show();
     } else {
         $('#commitmentCheck').hide();
     }
     if (cus_monDue_capacity == '') {
         event.preventDefault();
+        validation = false;
         $('#monthlyDueCapacityCheck').show();
     } else {
         $('#monthlyDueCapacityCheck').hide();
     }
     if (cus_loan_limit == '') {
         event.preventDefault();
+        validation = false;
         $('#loanLimitCheck').show();
     } else {
         $('#loanLimitCheck').hide();
     }
     if (about_cus == '') {
         event.preventDefault();
+        validation = false;
         $('#aboutcusCheck').show();
     } else {
         $('#aboutcusCheck').hide();
@@ -2584,6 +2622,7 @@ function validation() {
     if (pic == '') {
         if (cus_image == '') {
             event.preventDefault();
+            validation = false;
             $('#customerpicCheck').show();
         }else{
             $('#customerpicCheck').hide();
@@ -2595,6 +2634,7 @@ function validation() {
     if (loanidResponse === "true"){
         if (guarentor_name == '') {
             event.preventDefault();
+            validation = false;
             $('#guarentor_nameCheck').show();
         } else {
             $('#guarentor_nameCheck').hide();
@@ -2602,6 +2642,7 @@ function validation() {
         if (guarentor_image == '') {
             if (guarentorpic == '') {
                 event.preventDefault();
+                validation = false;
                 $('#guarentorpicCheck').show();
             } else {
                 $('#guarentorpicCheck').hide();
@@ -2609,11 +2650,13 @@ function validation() {
         }
         if (loan_id == '') {
             event.preventDefault();
+            validation = false;
             $('#loan_idCheck').show();  
         }else{
             $('#loan_idCheck').hide();  
         }
     }
+    return validation;
 } //Validation END.///
 
 $('#Communitcation_to_cus').change(function () {

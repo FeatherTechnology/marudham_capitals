@@ -28,11 +28,16 @@ $(document).ready(function () {
         var sortedStr = arr.join(",");
         $('#under_branch').val(sortedStr);
 
-        validations();
-         let confirmAction = confirm("Are you sure you want to submit Bank Creation?");
+        if ( validations()) {
+        let confirmAction = confirm("Are you sure you want to submit Bank Creation?");
         if (!confirmAction) {
-            event.preventDefault(); // Stop form submission if canceled
+            event.preventDefault(); 
+            return false;
         }
+    } else {
+        event.preventDefault(); 
+        return false;
+    }
     })
 
 })//Document ready END
@@ -85,43 +90,44 @@ function getBranchDropdown(company_id) {
 
 function validations() {
     var bank_name = $('#bank_name').val(); var short_name = $('#short_name').val(); var acc_no = $('#acc_no').val(); var ifsc = $('#ifsc').val(); var branch = $('#branch').val();
-    var under_branch = branchMultiselect.getValue();
+    var under_branch = branchMultiselect.getValue();var validation = true;
 
     if (bank_name == '') {
         $('#banknameCheck').show();
-        event.preventDefault();
+        validation = false;
     } else {
         $('#banknameCheck').hide();
     }
     if (short_name == '') {
         $('#shortnameCheck').show();
-        event.preventDefault();
+        validation = false;
     } else {
         $('#shortnameCheck').hide();
     }
     if (acc_no == '') {
         $('#accnoCheck').show();
-        event.preventDefault();
+        validation = false;
     } else {
         $('#accnoCheck').hide();
     }
     if (ifsc == '') {
         $('#ifscCheck').show();
-        event.preventDefault();
+        validation = false;
     } else {
         $('#ifscCheck').hide();
     }
     if (branch == '') {
         $('#branchCheck').show();
-        event.preventDefault();
+        validation = false;
     } else {
         $('#branchCheck').hide();
     }
     if (under_branch.length == 0) {
         // $('.choices__inner').attr('style','border-color:red');
         $('#underbranchCheck').show();
-        event.preventDefault();
+        validation = false;
     } else {
         $('#underbranchCheck').hide();
     }
+    return validation;
 }

@@ -102,56 +102,21 @@ $(document).ready(function () {
     // }
 
     //on submit add sub area list to hidden input
-    $('#submit_area_mapping_line').click(function () {
-        var sub_area_list = intance.getValue();
-        var area_list = areaMultiselect.getValue();
+    $('#submit_area_mapping_line').click(function(event) {
 
-        //Validation
-        var line_name = $('#line_name').val(); var company_name = $('#company_name').val(); var branch = $('#branch').val(); var area = $('#area').val();
-        if (line_name == '' || company_name == '' || branch == '' || area_list.length == 0 || sub_area_list.length == 0) {
-            Swal.fire({
-                timerProgressBar: true,
-                timer: 2000,
-                title: 'Please Fill out Mandatory fields!',
-                icon: 'error',
-                showConfirmButton: true
-            });
-            event.preventDefault();
-        }
-
-        //Area Multi select store
-        var area_list = areaMultiselect.getValue();
-        var area = '';
-        for (var i = 0; i < area_list.length; i++) {
-            if (i > 0) {
-                area += ',';
-            }
-            area += area_list[i].value;
-        }
-        var arr = area.split(",");
-        arr.sort(function (a, b) { return a - b });
-        var sortedStr = arr.join(",");
-        $('#area').val(sortedStr);
-
-        //Sub area multi select store
-        var sub_area_list = intance.getValue();
-        var sub_area = '';
-        for (var i = 0; i < sub_area_list.length; i++) {
-            if (i > 0) {
-                sub_area += ',';
-            }
-            sub_area += sub_area_list[i].value;
-        }
-        var arr = sub_area.split(",");
-        arr.sort(function (a, b) { return a - b });
-        var sortedStr = arr.join(",");
-        $('#sub_area').val(sortedStr);
-
-           let confirmAction = confirm("Are you sure you want to submit Line area mapping?");
+    if (validateLineAreaMappingForm()) {
+        // Ask confirmation only if validation passed
+        let confirmAction = confirm("Are you sure you want to submit Line area mapping?");
         if (!confirmAction) {
-            event.preventDefault(); // Stop form submission if canceled
+            event.preventDefault(); // stop default form submission
+            return false; // user canceled
         }
-    })
+    } else {
+        event.preventDefault(); // stop default form submission
+        return false;
+    }
+});
+
 
     // ************************************************************** Group Mapping *************************************************************************************** 
 
@@ -181,54 +146,20 @@ $(document).ready(function () {
     // }
     // })
     //on submit add sub area list to hidden input
-    $('#submit_area_mapping_group').click(function () {
-        var sub_area_list = intance1.getValue();
-        var area_list = areaMultiselect1.getValue();
-        //Validation
-        var group_name = $('#group_name').val(); var company_name = $('#company_name1').val(); var branch = $('#branch1').val();
-        if (group_name == '' || company_name == '' || branch == '' || area_list.length == 0 || sub_area_list.length == 0) {
-            Swal.fire({
-                timerProgressBar: true,
-                timer: 2000,
-                title: 'Please Fill out Mandatory fields!',
-                icon: 'error',
-                showConfirmButton: true,
-                confirmButtonColor: '#009688'
-            });
-            event.preventDefault();
-        }
-        //Area Multi select store
-        var area_list = areaMultiselect1.getValue();
-        var area = '';
-        for (var i = 0; i < area_list.length; i++) {
-            if (i > 0) {
-                area += ',';
-            }
-            area += area_list[i].value;
-        }
-        var arr = area.split(",");
-        arr.sort(function (a, b) { return a - b });
-        var sortedStr = arr.join(",");
-        $('#area1').val(sortedStr);
+    $('#submit_area_mapping_group').click(function(event) {
 
-        //Sub Area Multi select store
-        var sub_area_list = intance1.getValue();
-        var sub_area = '';
-        for (var i = 0; i < sub_area_list.length; i++) {
-            if (i > 0) {
-                sub_area += ',';
-            }
-            sub_area += sub_area_list[i].value;
-        }
-        var arr = sub_area.split(",");
-        arr.sort(function (a, b) { return a - b });
-        var sortedStr = arr.join(",");
-        $('#sub_area1').val(sortedStr);
+    if (validateGroupAreaMappingForm()) {
         let confirmAction = confirm("Are you sure you want to submit Group Area Mapping?");
         if (!confirmAction) {
-            event.preventDefault(); // Stop form submission if canceled
+             event.preventDefault();
+            return false; // user cancelled
         }
-    })
+    } else {
+         event.preventDefault();
+        return false;
+    }
+});
+
 
 
     // ************************************************************** Due Followup Mapping ****************************************************************** 
@@ -310,48 +241,20 @@ $(document).ready(function () {
         getCusLoanCount();
     })
     //on submit add sub area list to hidden input
-    $('#submit_area_mapping_duefollowup').click(function () {
-        // var loanCategory = $('#loan_cat1').val();
-        // var due_line = dueLine.getValue();
-        var area_list = areaMultiselect2.getValue();
-        // var sub_area_list = intance2.getValue();
-        var subStatus = subStatusMultiselect.getValue();
+    $('#submit_area_mapping_duefollowup').click(function(event) {
 
-        //Validation
-        var duefollowup_name = $('#duefollowup_name').val(); var company_name = $('#company_name2').val(); var branch = $('#branch2').val(); var cuscnt = $('#cus_count').val(); var loancnt = $('#loan_count').val();
-        if (duefollowup_name == '' || company_name == '' || branch == '' || subStatus.length == 0 || area_list.length == 0 || cuscnt == '' || loancnt == '' ) {
-            Swal.fire({
-                timerProgressBar: true,
-                title: 'Please Fill out Mandatory fields!',
-                icon: 'error',
-                showConfirmButton: true
-            });
-            event.preventDefault();
-        }
-
-        // Line multi-select
-        // const dueLineStr = getSortedCommaSeparatedValues(dueLine);
-        // $('#dueline').val(dueLineStr);
-
-        // Area multi-select
-        const areaStr = getSortedCommaSeparatedValues(areaMultiselect2);
-        $('#area2').val(areaStr);
-
-        // // Sub-area multi-select
-        // const subAreaStr = getSortedCommaSeparatedValues(intance2);
-        // $('#sub_area2').val(subAreaStr);        
-
-        // $('#loan_cat').val(loanCategory);
-
-        // Sub Status multi-select
-        getSubStatusValues();
+    if (validateDueFollowupForm()) {
+        // Ask confirmation only if validation passed
         let confirmAction = confirm("Are you sure you want to submit Due Followup?");
         if (!confirmAction) {
-            event.preventDefault(); // Stop form submission if canceled
+            event.preventDefault(); 
+            return false; 
         }
-        
-
-    });
+    } else {
+        event.preventDefault();
+        return false;
+    }
+});
 
 });//document ready end
 
@@ -924,3 +827,102 @@ function getSubStatusValues(){
         .join(',');
     $('#customer_status').val(subStsStr);
 }
+function validateLineAreaMappingForm() {
+    var line_name = $('#line_name').val().trim();
+    var company_name = $('#company_name').val().trim();
+    var branch = $('#branch').val().trim();
+    var area_list = areaMultiselect.getValue();
+    var sub_area_list = intance.getValue();
+
+    if (line_name === '' || company_name === '' || branch === '' || area_list.length === 0 || sub_area_list.length === 0) {
+        Swal.fire({
+            timerProgressBar: true,
+            timer: 2000,
+            title: 'Please Fill out Mandatory fields!',
+            icon: 'error',
+            showConfirmButton: true
+        });
+        return false; // validation failed
+    }
+    // Process area multi-select
+    var area = area_list.map(item => item.value);
+    area.sort((a, b) => a - b); // sort numerically
+    $('#area').val(area.join(','));
+
+    // Process sub-area multi-select
+    var sub_area = sub_area_list.map(item => item.value);
+    sub_area.sort((a, b) => a - b); // sort numerically
+    $('#sub_area').val(sub_area.join(','));
+
+    return true; // validation passed
+}
+function validateGroupAreaMappingForm() {
+    var group_name = $('#group_name').val().trim();
+    var company_name = $('#company_name1').val().trim();
+    var branch = $('#branch1').val().trim();
+    var area_list = areaMultiselect1.getValue();
+    var sub_area_list = intance1.getValue();
+
+    if (group_name === '' || company_name === '' || branch === '' || area_list.length === 0 || sub_area_list.length === 0) {
+        Swal.fire({
+            timerProgressBar: true,
+            timer: 2000,
+            title: 'Please Fill out Mandatory fields!',
+            icon: 'error',
+            showConfirmButton: true,
+            confirmButtonColor: '#009688'
+        });
+        return false; // validation failed
+    }
+
+    // Process area multi-select
+    var area = area_list.map(item => item.value);
+    area.sort((a, b) => a - b); // numeric sort
+    $('#area1').val(area.join(','));
+
+    // Process sub-area multi-select
+    var sub_area = sub_area_list.map(item => item.value);
+    sub_area.sort((a, b) => a - b); // numeric sort
+    $('#sub_area1').val(sub_area.join(','));
+
+    return true; // validation passed
+}
+function validateDueFollowupForm() {
+    var duefollowup_name = $('#duefollowup_name').val().trim();
+    var company_name = $('#company_name2').val().trim();
+    var branch = $('#branch2').val().trim();
+    var cuscnt = $('#cus_count').val().trim();
+    var loancnt = $('#loan_count').val().trim();
+    var area_list = areaMultiselect2.getValue();
+    var subStatus = subStatusMultiselect.getValue();
+
+    if (
+        duefollowup_name === '' ||
+        company_name === '' ||
+        branch === '' ||
+        subStatus.length === 0 ||
+        area_list.length === 0 ||
+        cuscnt === '' ||
+        loancnt === ''
+    ) {
+        Swal.fire({
+            timerProgressBar: true,
+            title: 'Please Fill out Mandatory fields!',
+            icon: 'error',
+            showConfirmButton: true
+        });
+        return false; // validation failed
+    }
+
+    // Process area multi-select
+    const area = area_list.map(item => item.value);
+    area.sort((a, b) => a - b); // numeric sort
+    $('#area2').val(area.join(','));
+
+    // Process subStatus multi-select
+    getSubStatusValues(); // assuming this function fills the correct field
+
+    return true; // validation passed
+}
+
+

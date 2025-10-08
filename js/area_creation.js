@@ -106,40 +106,19 @@ $(document).ready(function () {
     });
 
     //on submit add sub area list to hidden input
-    $('#submit_area_creation').click(function () {
-        var sub_area_list = intance.getValue();
-        //Validation
-        var state = $('#state').val(); var district = $('#district').val(); var taluk = $('#taluk').val(); var area = $('#area').val();
-        if (state == '' || district == '' || taluk == '' || area == '' || sub_area_list.length == 0) {
-            Swal.fire({
-                timerProgressBar: true,
-                timer: 2000,
-                title: 'Please Fill out Mandatory fields!',
-                icon: 'error',
-                showConfirmButton: true,
-                confirmButtonColor: '#009688'
-            });
-            return false;
+   $('#submit_area_creation').click(function(event) {
+    if (validateAreaForm()) {
+        let confirmAction = confirm("Are you sure you want to submit Area Creation?");
+        if (!confirmAction) {
+            event.preventDefault();
+            return false; 
         }
-
-        var sub_area_list = intance.getValue();
-        var sub_area = '';
-        for (var i = 0; i < sub_area_list.length; i++) {
-            if (i > 0) {
-                sub_area += ',';
-            }
-            sub_area += sub_area_list[i].value;
-        }
-        $('#sub_area').val(sub_area);
-         // Confirmation before submit
-    let confirmAction = confirm("Are you sure you want to submit Area Creation?");
-    if (confirmAction) {
-        $(this).closest("form").submit(); // manually submit
     } else {
-        return false; // cancel submit
+        event.preventDefault();
+        return false;
     }
+});
 
-    })
     $('#swap_area_creation').click(function () {
         var area_id   = $("#swap_area_id").val();
         var states    = $("#swap_states").val();
@@ -854,3 +833,32 @@ function swaparea(area_id,states,districts,taluks,pincodes) {
             }
         });
 }    
+function validateAreaForm() {
+    var state = $('#state').val();
+    var district = $('#district').val();
+    var taluk = $('#taluk').val();
+    var area = $('#area').val();
+    var sub_area_list = intance.getValue();
+
+    if (state === 'SelectState' || district === 'Select District' || taluk === 'Select Taluk' || area === '' || sub_area_list.length === 0) {
+        Swal.fire({
+            timerProgressBar: true,
+            timer: 2000,
+            title: 'Please Fill out Mandatory fields!',
+            icon: 'error',
+            showConfirmButton: true,
+            confirmButtonColor: '#009688'
+        });
+        return false; // validation failed
+    }
+
+    // Combine sub_area values into a single string
+    var sub_area = '';
+    for (var i = 0; i < sub_area_list.length; i++) {
+        if (i > 0) sub_area += ',';
+        sub_area += sub_area_list[i].value;
+    }
+    $('#sub_area').val(sub_area);
+
+    return true; // validation passed
+}
