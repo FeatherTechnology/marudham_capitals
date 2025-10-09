@@ -3495,12 +3495,19 @@ $('#cus_responsible').change(function () {
 ////////////////////////////////////////////////Submit Verification //////////////////////////////////////////////////////////////////////////////
 
 $("#submit_verification").click(function (event) {
-  var submit_btn = $(this);
-  submit_btn.attr("disabled", true);
-  validation(submit_btn, event);
+    if(validation(event)){
+            let confirmAction = confirm("Are you sure you want to Customer Profile?");
+            if (!confirmAction) {
+            event.preventDefault();
+            return false; 
+            }
+        }else{
+            event.preventDefault();
+            return false;
+    }
 });
 
-function validation(submit_btn, event) {
+function validation( event) {
   var cus_id = $("#cus_id").val();
   var cus_name = $("#cus_name").val();
   var dob = $("#dob").val();
@@ -3538,11 +3545,12 @@ function validation(submit_btn, event) {
   var cus_loan_limit = $("#cus_loan_limit").val();
   var about_cus = $("#about_cus").val();
   var req_id = $("#req_id").val();
-
+var validation = true;
   var responsible = $("#cus_responsible").val();
   if (responsible == "" && $(".responsible").css("display") != "none") {
     event.preventDefault();
     $("#cusResponsibleCheck").show();
+    validation = false;
   } else {
     $("#cusResponsibleCheck").hide();
   }
@@ -3550,48 +3558,56 @@ function validation(submit_btn, event) {
   if (cus_id == "") {
     event.preventDefault();
     $("#cusidCheck").show();
+    validation = false;
   } else {
     $("#cusidCheck").hide();
   }
   if (cus_name == "") {
     event.preventDefault();
     $("#cusnameCheck").show();
+    validation = false;
   } else {
     $("#cusnameCheck").hide();
   }
   if (dob == "") {
     event.preventDefault();
     $("#dobCheck").show();
+    validation = false;
   } else {
     $("#dobCheck").hide();
   }
   if (gender == "") {
     event.preventDefault();
     $("#genderCheck").show();
+    validation = false;
   } else {
     $("#genderCheck").hide();
   }
   if (mobile1 == "" || mobile1.length < 10) {
     event.preventDefault();
     $("#mobile1Check").show();
+    validation = false;
   } else {
     $("#mobile1Check").hide();
   }
   if (mobile2 != "" && mobile2.length < 10) {
     event.preventDefault();
     $("#mobile2Check").show();
+    validation = false;
   } else {
     $("#mobile2Check").hide();
   }
   if (whatsapp_no != "" && whatsapp_no.length < 10) {
     event.preventDefault();
     $("#whatsapp_noCheck").show();
+    validation = false;
   } else {
     $("#whatsapp_noCheck").hide();
   }
   if (guarentor_name == "") {
     event.preventDefault();
     $("#guarentor_nameCheck").show();
+    validation = false;
   } else {
     $("#guarentor_nameCheck").hide();
   }
@@ -3599,6 +3615,7 @@ function validation(submit_btn, event) {
     if (guarentorpic == "") {
       event.preventDefault();
       $("#guarentorpicCheck").show();
+      validation = false;
     } else {
       $("#guarentorpicCheck").hide();
     }
@@ -3614,6 +3631,7 @@ function validation(submit_btn, event) {
       event.preventDefault();
       $("#occ_infoCheck").hide();
       $("#res_infoCheck").show();
+      validation = false;
     } else {
       $("#occ_infoCheck").hide();
       $("#res_infoCheck").hide();
@@ -3631,6 +3649,7 @@ function validation(submit_btn, event) {
       event.preventDefault();
       $("#res_infoCheck").hide();
       $("#occ_infoCheck").show();
+      validation = false;
     } else {
       $("#res_infoCheck").hide();
       $("#occ_infoCheck").hide();
@@ -3638,70 +3657,82 @@ function validation(submit_btn, event) {
   } else {
     event.preventDefault();
     $("#areacnfrmCheck").show();
+    validation = false;
   }
   if (state == "SelectState") {
     event.preventDefault();
     $("#stateCheck").show();
+    validation = false;
   } else {
     $("#stateCheck").hide();
   }
   if (district == "") {
     event.preventDefault();
     $("#districtCheck").show();
+    validation = false;
   } else {
     $("#districtCheck").hide();
   }
   if (taluk == "") {
     event.preventDefault();
     $("#talukCheck").show();
+    validation = false;
   } else {
     $("#talukCheck").hide();
   }
   if (area == "") {
     event.preventDefault();
     $("#areaCheck").show();
+    validation = false;
   } else {
     $("#areaCheck").hide();
   }
   if (sub_area == "") {
     event.preventDefault();
     $("#subareaCheck").show();
+    validation = false;
   } else {
     $("#subareaCheck").hide();
   }
   if (cus_how_know == "") {
     event.preventDefault();
     $("#howToKnowCheck").show();
+    validation = false;
   } else {
     $("#howToKnowCheck").hide();
   }
   if (cus_monthly_income == "") {
     event.preventDefault();
     $("#monthlyIncomeCheck").show();
+    validation = false;
   } else {
     $("#monthlyIncomeCheck").hide();
   }
   if (cus_other_income == "") {
     event.preventDefault();
     $("#otherIncomeCheck").show();
+    validation = false;
   } else {
     $("#otherIncomeCheck").hide();
   }
   if (cus_support_income == "") {
     event.preventDefault();
     $("#supportIncomeCheck").show();
+    validation = false;
   } else {
     $("#supportIncomeCheck").hide();
   }
   if (cus_Commitment == "") {
     event.preventDefault();
     $("#commitmentCheck").show();
+    validation = false;
   } else {
     $("#commitmentCheck").hide();
   }
   if (cus_monDue_capacity == "") {
     event.preventDefault();
     $("#monthlyDueCapacityCheck").show();
+    validation = false;
   } else {
     $("#monthlyDueCapacityCheck").hide();
   }
@@ -3714,6 +3745,7 @@ function validation(submit_btn, event) {
   if (about_cus == "") {
     event.preventDefault();
     $("#aboutcusCheck").show();
+    validation = false;
   } else {
     $("#aboutcusCheck").hide();
   }
@@ -3722,6 +3754,7 @@ function validation(submit_btn, event) {
   if(famCnt == 0 ){
     event.preventDefault();
     $("#kyc_infoCheck").show();
+    validation = false;
   } else {
     $("#kyc_infoCheck").hide();
   }
@@ -3730,13 +3763,11 @@ function validation(submit_btn, event) {
   if(kycCnt == 0 ){
     event.preventDefault();
     $("#kyc_infoCheck").show();
+    validation = false;
   } else {
     $("#kyc_infoCheck").hide();
   }
-  let confirmAction = confirm("Are you sure you want to Customer Profile?");
-        if (!confirmAction) {
-            event.preventDefault(); // Stop form submission if canceled
-        }
+ return validation ;
 
   // $.ajax({
   //   url: "verificationFile/validateModals.php",
@@ -3767,7 +3798,7 @@ function validation(submit_btn, event) {
   //   },
   // });
 
-  submit_btn.removeAttr("disabled");
+  // submit_btn.removeAttr("disabled");
 }
 
 $("#Communitcation_to_cus").change(function () {
@@ -4728,16 +4759,19 @@ function getDocumentHistory() {
 
 //Documentation Submit Validation
 $("#submit_documentation").click(function () {
-  var submit_btn = $(this);
-  submit_btn.attr("disabled", true);
-  doc_submit_validation(submit_btn);
+  if(doc_submit_validation()){
   let confirmAction = confirm("Are you sure you want to submit Documentation ?");
         if (!confirmAction) {
-            event.preventDefault(); // Stop form submission if canceled
+            event.preventDefault(); 
+            return false;
         }
+      }else{
+        event.preventDefault();
+        return false;
+      }
 });
 
-function doc_submit_validation(submit_btn) {
+function doc_submit_validation() {
   var cus_id_doc = $("#cus_id_doc").val();
   var mortgage_process = $("#mortgage_process").val();
   var Propertyholder_type = $("#Propertyholder_type").val();
@@ -4751,11 +4785,13 @@ function doc_submit_validation(submit_btn) {
   var vehicle_process = $("#vehicle_process").val();
   var en_Company = $("#en_Company").val();
   var en_Model = $("#en_Model").val();
+  var validation= true;
 
   var responsible = $("#doc_responsible").val();
   if (responsible == "" && $(".responsible").css("display") != "none") {
     $("#docResponsibleCheck").show();
     event.preventDefault();
+    validation= false;
   } else {
     $("#docResponsibleCheck").hide();
   }
@@ -4770,11 +4806,13 @@ function doc_submit_validation(submit_btn) {
       confirmButtonColor: "#009688",
     });
     event.preventDefault();
+    validation= false;
   }
 
   if (mortgage_process == "") {
     event.preventDefault();
     $("#mortgageprocessCheck").show();
+    validation= false;
   } else {
     $("#mortgageprocessCheck").hide();
   }
@@ -4783,30 +4821,35 @@ function doc_submit_validation(submit_btn) {
     if (Propertyholder_type == "") {
       event.preventDefault();
       $("#propertyholdertypeCheck").show();
+      validation= false;
     } else {
       $("#propertyholdertypeCheck").hide();
     }
     if (doc_property_pype == "") {
       event.preventDefault();
       $("#docpropertytypeCheck").show();
+      validation= false;
     } else {
       $("#docpropertytypeCheck").hide();
     }
     if (doc_property_measurement == "") {
       event.preventDefault();
       $("#docpropertymeasureCheck").show();
+      validation= false;
     } else {
       $("#docpropertymeasureCheck").hide();
     }
     if (doc_property_location == "") {
       event.preventDefault();
       $("#docpropertylocCheck").show();
+      validation= false;
     } else {
       $("#docpropertylocCheck").hide();
     }
     if (doc_property_value == "") {
       event.preventDefault();
       $("#docpropertyvalueCheck").show();
+      validation= false;
     } else {
       $("#docpropertyvalueCheck").hide();
     }
@@ -4815,6 +4858,7 @@ function doc_submit_validation(submit_btn) {
   if (endorsement_process == "") {
     event.preventDefault();
     $("#endorsementprocessCheck").show();
+    validation= false;
   } else {
     $("#endorsementprocessCheck").hide();
   }
@@ -4823,36 +4867,40 @@ function doc_submit_validation(submit_btn) {
     if (owner_type == "") {
       event.preventDefault();
       $("#ownertypeCheck").show();
+      validation= false;
     } else {
       $("#ownertypeCheck").hide();
     }
     if (vehicle_type == "") {
       event.preventDefault();
       $("#vehicletypeCheck").show();
+      validation= false;
     } else {
       $("#vehicletypeCheck").hide();
     }
     if (vehicle_process == "") {
       event.preventDefault();
       $("#vehicleprocessCheck").show();
+      validation= false;
     } else {
       $("#vehicleprocessCheck").hide();
     }
     if (en_Company == "") {
       event.preventDefault();
       $("#enCompanyCheck").show();
+      validation= false;
     } else {
       $("#enCompanyCheck").hide();
     }
     if (en_Model == "") {
       event.preventDefault();
       $("#enModelCheck").show();
+      validation= false;
     } else {
       $("#enModelCheck").hide();
     }
   }
-
-  submit_btn.removeAttr("disabled");
+return validation
 }
 
 async function getDocumentFunc() {
@@ -5014,14 +5062,17 @@ $("#due_start_from").change(function () {
 $("#submit_loan_calculation").click(function () {
   $('#due_start_from').trigger('change');
   $("#refresh_cal").trigger("click"); //For calculate once again if user missed to refresh calculation
-
-  var submit_btn = $(this);
-  submit_btn.attr("disabled", true);
-  loan_calc_validation(submit_btn);
-  let confirmAction = confirm("Are you sure you want to submit Loan Calculation?");
+  if(loan_calc_validation()){
+        let confirmAction = confirm("Are you sure you want to submit Loan Calculation?");
         if (!confirmAction) {
             event.preventDefault(); // Stop form submission if canceled
+            return false ;
         }
+  }else{
+    event.preventDefault();
+    return false;
+  }
+  
 });
 
 function getGroupandLine(sub_area_id) {
@@ -6746,7 +6797,7 @@ function getSchemeAfterIntreset() {
 // }
 
 //Validation for Loan calculation
-function loan_calc_validation(submit_btn) {
+function loan_calc_validation() {
   var cus_id_loan = $("#cus_id_loan").val(); //if this is empty means , customer profile is not submitted yet
   var loan_category = $("#loan_category").val();
   var sub_category = $("#sub_category").val();
@@ -6777,11 +6828,13 @@ function loan_calc_validation(submit_btn) {
   var collection_method = $("#collection_method").val();
   var Communitcation_to_cus = $("#Communitcation_to_cus").val();
   var verification_location = $("#verification_location").val();
+  var validation = true ;
 
   var responsible = $("#loan_responsible").val();
   if (responsible == "" && $(".responsible").css("display") != "none") {
     $("#loanResponsibleCheck").show();
     event.preventDefault();
+    validation = false ;
   } else {
     $("#loanResponsibleCheck").hide();
   }
@@ -6805,18 +6858,21 @@ function loan_calc_validation(submit_btn) {
   if (Communitcation_to_cus == "") {
     event.preventDefault();
     $("#communicationCheck").show();
+    validation = false ;
   } else {
     $("#communicationCheck").hide();
   }
   if (person_list.length == 0) {
     event.preventDefault();
     $("#verificationPersonCheck").show();
+    validation = false ;
   } else {
     $("#verificationPersonCheck").hide();
   }
   if (verification_location == "") {
     event.preventDefault();
     $("#verificationLocCheck").show();
+    validation = false ;
   } else {
     $("#verificationLocCheck").hide();
   }
@@ -6831,11 +6887,13 @@ function loan_calc_validation(submit_btn) {
       confirmButtonColor: "#009688",
     });
     event.preventDefault();
+    validation = false ;
   }
 
   if (loan_category == "") {
     $("#loancategoryCheck").show();
     event.preventDefault();
+    validation = false ;
   } else {
     $("#loancategoryCheck").hide();
   }
@@ -6843,6 +6901,7 @@ function loan_calc_validation(submit_btn) {
   if (sub_category == "") {
     $("#subcategoryCheck").show();
     event.preventDefault();
+    validation = false ;
   } else {
     $("#subcategoryCheck").hide();
   }
@@ -6850,6 +6909,7 @@ function loan_calc_validation(submit_btn) {
   if (tot_value == "" && $(".advance_yes").css("display") != "none") {
     $("#total_valueCheck").show();
     event.preventDefault();
+    validation = false ;
   } else {
     $("#total_valueCheck").hide();
   }
@@ -6857,6 +6917,7 @@ function loan_calc_validation(submit_btn) {
   if (ad_amt == "" && $(".advance_yes").css("display") != "none") {
     $("#ad_amtCheck").show();
     event.preventDefault();
+    validation = false ;
   } else {
     $("#ad_amtCheck").hide();
   }
@@ -6864,6 +6925,7 @@ function loan_calc_validation(submit_btn) {
   if (loan_amt == "") {
     $("#loan_amtCheck").show();
     event.preventDefault();
+    validation = false ;
   } else {
     $("#loan_amtCheck").hide();
   }
@@ -6871,6 +6933,7 @@ function loan_calc_validation(submit_btn) {
   if (profit_type == "") {
     $("#profit_typeCheck").show();
     event.preventDefault();
+    validation = false ;
   } else {
     $("#profit_typeCheck").hide();
   }
@@ -6878,6 +6941,7 @@ function loan_calc_validation(submit_btn) {
   if (profit_method == "" && due_type == "EMI") {
     $("#profit_methodCheck").show();
     event.preventDefault();
+    validation = false ;
   } else {
     $("#profit_methodCheck").hide();
   }
@@ -6885,6 +6949,7 @@ function loan_calc_validation(submit_btn) {
   if (due_method_scheme == "" && $(".scheme").css("display") != "none") {
     $("#due_method_schemeCheck").show();
     event.preventDefault();
+    validation = false ;
   } else {
     $("#due_method_schemeCheck").hide();
   }
@@ -6894,12 +6959,14 @@ function loan_calc_validation(submit_btn) {
   ) {
     $("#scheme_methodCheck").show();
     event.preventDefault();
+    validation = false ;
   } else {
     $("#scheme_methodCheck").hide();
   }
   if (day_scheme == "" && $(".day_scheme").css("display") != "none") {
     $("#day_schemeCheck").show();
     event.preventDefault();
+    validation = false ;
   } else {
     $("#day_schemeCheck").hide();
   }
@@ -6907,6 +6974,7 @@ function loan_calc_validation(submit_btn) {
   if (scheme_name == "" && $(".scheme").css("display") != "none") {
     $("#scheme_nameCheck").show();
     event.preventDefault();
+    validation = false ;
   } else {
     $("#scheme_nameCheck").hide();
   }
@@ -6914,6 +6982,7 @@ function loan_calc_validation(submit_btn) {
   if (int_rate == "") {
     $("#int_rateCheck").show();
     event.preventDefault();
+    validation = false ;
   } else {
     $("#int_rateCheck").hide();
   }
@@ -6921,6 +6990,7 @@ function loan_calc_validation(submit_btn) {
   if (due_period == "") {
     $("#due_periodCheck").show();
     event.preventDefault();
+    validation = false ;
   } else {
     $("#due_periodCheck").hide();
   }
@@ -6928,6 +6998,7 @@ function loan_calc_validation(submit_btn) {
   if (doc_charge == "") {
     $("#doc_chargeCheck").show();
     event.preventDefault();
+    validation = false ;
   } else {
     $("#doc_chargeCheck").hide();
   }
@@ -6935,6 +7006,7 @@ function loan_calc_validation(submit_btn) {
   if (proc_fee == "") {
     $("#proc_feeCheck").show();
     event.preventDefault();
+    validation = false ;
   } else {
     $("#proc_feeCheck").hide();
   }
@@ -6942,6 +7014,7 @@ function loan_calc_validation(submit_btn) {
   if (due_start_from == "") {
     $("#due_start_fromCheck").show();
     event.preventDefault();
+    validation = false ;
   } else {
     $("#due_start_fromCheck").hide();
   }
@@ -6949,6 +7022,7 @@ function loan_calc_validation(submit_btn) {
   if (maturity_month == "") {
     $("#maturity_monthCheck").show();
     event.preventDefault();
+    validation = false ;
   } else {
     $("#maturity_monthCheck").hide();
   }
@@ -6956,11 +7030,11 @@ function loan_calc_validation(submit_btn) {
   if (collection_method == "") {
     $("#collection_methodCheck").show();
     event.preventDefault();
+    validation = false ;
   } else {
     $("#collection_methodCheck").hide();
   }
-
-  submit_btn.removeAttr("disabled");
+return validation;
 }
 function fingerprintTable() {//To Get family member's name are required for scanning fingerprint
   var cus_name = $('#cus_name').val();

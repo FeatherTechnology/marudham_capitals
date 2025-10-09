@@ -18,39 +18,17 @@ $(document).ready(function () {
     })
 
     $('#submit_staff_creation').click(function () {
-        //Validation
-        var staff_name = $('#staff_name').val(); var staff_type = $('#staff_type').val(); var address = $('#address').val(); var state = $('#state').val(); var district = $('#district').val(); var taluk = $('#taluk').val(); var place = $('#place').val(); var pincode = $('#pincode').val(); let mobile1 = $('#mobile1').val(); let mobile2 = $('#mobile2').val(); let whatsapp = $('#whatsapp').val();
-        if (staff_name === '' || staff_type === '' || address === '' || state === '' || district === '' || taluk === '' || place === '' || pincode === '') {
-            Swal.fire({
-                timerProgressBar: true,
-                timer: 2000,
-                title: 'Please Fill out Mandatory fields!',
-                icon: 'error',
-                showConfirmButton: true,
-                confirmButtonColor: '#009688'
-            });
-            event.preventDefault();
-        } else if (whatsapp != '' && whatsapp.length < 10) {
-            alert('Please enter 10 digit valid number');
-            $('#whatsapp').focus();
-            event.preventDefault();
-            return false;
-        } else if (mobile1 != '' && mobile1.length < 10) {
-            alert('Please enter 10 digit valid number');
-            $('#mobile1').focus();
-            event.preventDefault();
-            return false;
-        } else if (mobile2 != '' && mobile2.length < 10) {
-            alert('Please enter 10 digit valid number');
-            $('#mobile2').focus();
-            event.preventDefault();
-            return false;
-        }
+              //Validation
+    if (submitValidation()) {
         let confirmAction = confirm("Are you sure you want to submit Staff Creation?");
         if (!confirmAction) {
-            event.preventDefault(); // Stop form submission if canceled
+            event.preventDefault(); 
             return false;
         }
+    } else {
+        event.preventDefault(); 
+        return false;
+    }
 
     })
 
@@ -507,6 +485,37 @@ function getStaffTypeDropdown() {
         });
     }
 
+}
+
+function submitValidation() { 
+ var staff_name = $('#staff_name').val(); var staff_type = $('#staff_type').val(); var address = $('#address').val(); var state = $('#state').val(); var district = $('#district').val(); var taluk = $('#taluk').val(); var place = $('#place').val(); var pincode = $('#pincode').val(); let mobile1 = $('#mobile1').val(); let mobile2 = $('#mobile2').val(); let whatsapp = $('#whatsapp').val();
+        if (staff_name === '' || staff_type === '' || address === '' || state === '' || district === '' || taluk === '' || place === '' || pincode === '') {
+            Swal.fire({
+                timerProgressBar: true,
+                timer: 2000,
+                title: 'Please Fill out Mandatory fields!',
+                icon: 'error',
+                showConfirmButton: true,
+                confirmButtonColor: '#009688'
+            });
+            return false;
+        } else if (whatsapp != '' && whatsapp.length < 10) {
+            alert('Please enter 10 digit valid number');
+            $('#whatsapp').focus();
+            event.preventDefault();
+            return false;
+        } else if (mobile1 != '' && mobile1.length < 10) {
+            alert('Please enter 10 digit valid number');
+            $('#mobile1').focus();
+            event.preventDefault();
+            return false;
+        } else if (mobile2 != '' && mobile2.length < 10) {
+            alert('Please enter 10 digit valid number');
+            $('#mobile2').focus();
+            event.preventDefault();
+            return false;
+        }
+        return true;
 }
 
 

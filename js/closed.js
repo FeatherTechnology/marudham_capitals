@@ -1,11 +1,16 @@
 $(document).ready(function () {
     /// noc_req_id = get particular line item request id becuase multiple request show in list against single customer.. the Customer is same but request is not so have to take particular req id to show details.
     $('#submit_closed').click(function () {
-        validations();
+        if(validations()){
         let confirmAction = confirm("Are you sure you want to submit Closed ?");
         if (!confirmAction) {
             event.preventDefault(); // Stop form submission if canceled
+            return false;
         }
+    }else{
+        event.preventDefault(); 
+        return false;
+    }
 
     })
 
@@ -344,10 +349,12 @@ function getCustomerSummary() {
 
 function validations() {
     var closed_Sts = $('#closed_Sts').val(); var closed_Sts_consider = $('#closed_Sts_consider').val(); var closed_Sts_remark = $('#closed_Sts_remark').val();
+    var validation = true ;
 
     if (closed_Sts == '') {
         $('#closedStatusCheck').show();
         event.preventDefault();
+        validation = false ;
     } else {
         $('#closedStatusCheck').hide();
     }
@@ -356,6 +363,7 @@ function validations() {
         if (closed_Sts_consider == '') {
             $('#considerLevelCheck').show();
             event.preventDefault();
+            validation = false ;
         } else {
             $('#considerLevelCheck').hide();
         }
@@ -364,9 +372,11 @@ function validations() {
     if (closed_Sts_remark == '') {
         $('#remarkCheck').show();
         event.preventDefault();
+        validation = false ;
     } else {
         $('#remarkCheck').hide();
     }
+    return validation;
 }
 
 //Due Chart List
