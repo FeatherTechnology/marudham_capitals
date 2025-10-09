@@ -1,10 +1,10 @@
 <?php
 include("../../ajaxconfig.php");
 
-$event_name = $_POST['event_name'];
+$event_id = $_POST['event_id'];
 
 // Step 1: Fetch event row
-$eventQry = $connect->query("SELECT * FROM events WHERE event_name = '$event_name'");
+$eventQry = $connect->query("SELECT * FROM events WHERE id = '$event_id'");
 $event = $eventQry->fetch(PDO::FETCH_ASSOC);
 
 if($event) {

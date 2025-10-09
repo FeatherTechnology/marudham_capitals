@@ -366,7 +366,7 @@ if (sizeof($getUser) > 0) {
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<label for="cus_name">Customer Name</label><span class="required">&nbsp;*</span>
-								<input type="text" name="cus_name" id="cus_name" class='form-control' placeholder="Enter Customer Name" tabindex="2">
+								<input type="text" name="new_cus_name" id="new_cus_name" class='form-control' placeholder="Enter Customer Name" tabindex="2">
 								<span class="text-danger" id='cus_nameCheck' style="display: none;">Please Enter Customer Name</span>
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
