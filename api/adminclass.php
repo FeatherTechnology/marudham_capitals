@@ -118,7 +118,6 @@ class admin
 			$detailrecords['intrest_collection_report'] = strip_tags($row->intrest_collection_report);
 			$detailrecords['intrest_balance_report'] = strip_tags($row->intrest_balance_report);
 			$detailrecords['intrest_closed_report'] = strip_tags($row->intrest_closed_report);
-			$detailrecords['customer_status_report'] = strip_tags($row->customer_status_report);
 
 			$detailrecords['search_module'] = strip_tags($row->search_module);
 			$detailrecords['search'] = strip_tags($row->search);

@@ -310,7 +310,6 @@ if (sizeof($getUser) > 0) {
 		$intrest_collection_report          		     = $getUser['intrest_collection_report'];
 		$intrest_balance_report          		     = $getUser['intrest_balance_report'];
 		$intrest_closed_report          		     = $getUser['intrest_closed_report'];
-		$customer_status_report  = $getUser['customer_status_report'];
 
 		$search_module          		     = $getUser['search_module'];
 		$search          		     = $getUser['search'];
