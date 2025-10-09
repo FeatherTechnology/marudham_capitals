@@ -134,6 +134,10 @@ $(document).ready(function () {
         $('#event_name').val("");
         $('#event_hidden_id').val("");
          var currentDate = getCurrentDate();
+          // Clear Choices multiselect
+        areaMultiselect.clearStore(); // remove all items
+        areaMultiselect.setChoices([], 'value', 'label', true); // optionally reset with empty choices
+
 
     // reset table body with one empty row
     var emptyRow = `
@@ -419,13 +423,13 @@ $(document).on('click', '.edit_event', function (event) {
     $('.event_card').hide();
     $('.add_event_card').show();
 
-    var eventName = $(this).data('event');
+    var event_id = $(this).data('event');
 
     $.ajax({
         url: 'followupFiles/promotion/getEventDetails.php',
         type: 'POST',
         dataType: 'json',
-        data: { event_name: eventName },
+        data: { event_id: event_id },
         success: function(response) {
             if (!response.success) {
                 alert("Event not found!");
@@ -622,7 +626,7 @@ function resetNewPromotionTable() {
 }
 
 function submitNewCustomer() {
-    let cus_id = $('#cus_id').val(); let cus_name = $('#cus_name').val(); let cus_mob = $('#cus_mob').val();
+    let cus_id = $('#cus_id').val(); let cus_name = $('#new_cus_name').val(); let cus_mob = $('#cus_mob').val();
     let area = $('#area').val(); let sub_area = $('#sub_area').val();
     let args = { 'cus_id': cus_id, 'cus_name': cus_name, 'cus_mob': cus_mob, 'area': area, 'sub_area': sub_area }
     $.post('followupFiles/promotion/submitNewCustomer.php', args, function (response) {
@@ -642,7 +646,7 @@ function submitNewCustomer() {
 
 function validateNewCusAdd() {
     let response = true;
-    let cus_id = $('#cus_id').val(); let cus_name = $('#cus_name').val(); let cus_mob = $('#cus_mob').val();
+    let cus_id = $('#cus_id').val(); let cus_name = $('#new_cus_name').val(); let cus_mob = $('#cus_mob').val();
     let area = $('#area').val(); let sub_area = $('#sub_area').val();
 
     validateField(cus_name, '#cus_nameCheck');
@@ -772,7 +776,7 @@ function validatePromoAdd() {
 }
 
 function update() {//this function will update customer details of after confirmation
-    let cus_id = $('#cus_id').val(); let cus_name = $('#cus_name').val(); let cus_mob = $('#cus_mob').val();
+    let cus_id = $('#cus_id').val(); let cus_name = $('#new_cus_name').val(); let cus_mob = $('#cus_mob').val();
     let area = $('#area').val(); let sub_area = $('#sub_area').val();
     let args = { 'cus_id': cus_id, 'cus_name': cus_name, 'cus_mob': cus_mob, 'area': area, 'sub_area': sub_area, 'update': 'yes' }
     $.post('followupFiles/promotion/submitNewCustomer.php', args, function (response) {

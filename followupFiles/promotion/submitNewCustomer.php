@@ -46,8 +46,8 @@ if($sql->rowCount() == 0){
             }
         }else{
             //if update is not 'yes' then ask confirmation from user to update the customer details or not
-            $response = "Customer Already Added!";
-            echo json_encode($response);
+            $response = 'Customer Already Added!';
+            echo $response;
             return;
         }
 
@@ -57,7 +57,7 @@ if($sql->rowCount() == 0){
             VALUES('$cus_id', '$cus_name', '$cus_mob', '$area', '$sub_area','$userid',now())");
         //insert customer details if customer id is not present in the table
         if($sql){
-            $response = 'Customer Added Successfully';
+            $response = 'Customer Inserted Successfully';
         }else{
             $response = 'Error While Inserting';
         }

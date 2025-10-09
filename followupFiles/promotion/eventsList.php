@@ -15,6 +15,7 @@ if ($user_id != '') {
     if ($role_type == 7 || $role_type == 3) {
         $sql = $connect->query("
         SELECT 
+        e.id,
             e.event_name,
             MIN(ep.event_created_date) AS created_date, 
             GROUP_CONCAT(DISTINCT al.area_name ORDER BY al.area_name SEPARATOR ', ') AS area_names,
@@ -30,6 +31,7 @@ if ($user_id != '') {
     } else {
         $sql = $connect->query("
         SELECT 
+          e.id,
             e.event_name,
             MIN(ep.event_created_date) AS created_date, 
             GROUP_CONCAT(DISTINCT al.area_name ORDER BY al.area_name SEPARATOR ', ') AS area_names,
@@ -48,7 +50,7 @@ if ($user_id != '') {
         $i = 1;
         while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
             $formattedDate = date('d-m-Y', strtotime($row['created_date']));
-            $action = '<button class="btn btn-primary edit_event" data-event="' . $row['event_name'] . '">Edit</button>';
+            $action = '<button class="btn btn-primary edit_event" data-event="' . $row['id'] . '">Edit</button>';
             $rows[] = [
                 $i++,
                 $formattedDate,
