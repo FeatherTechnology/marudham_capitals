@@ -20,8 +20,8 @@ if (!empty($id_list)) {
 
 $role_arr = [1 => 'Director', 2 => 'Agent', 3 => 'Staff'];
 $comm_err = [1 => 'Error', 2 => 'Clear'];
-$ftype = [1 => 'Direct', 2 => 'Mobile'];
-$fstatus = [1 => 'Commitment', 2 => 'Unavailable', 3 => 'RNR', 4 => 'Not Reachable', 5 => 'Switch Off', 6 => 'Not in Use', 7 => 'Blocked'];
+$ftype = [1 => 'Direct', 2 => 'Mobile' , 8 =>'Paid'];
+$fstatus = [1 => 'Commitment', 2 => 'Unavailable', 3 => 'RNR', 4 => 'Not Reachable', 5 => 'Switch Off', 6 => 'Not in Use', 7 => 'Blocked', 8 =>'Paid'];
 $per_type_arr = [1 => 'Customer', 2 => 'Guarantor', 3 => 'Family Member'];
 
 $column = array(
@@ -194,28 +194,6 @@ $output = array(
 );
 
 echo json_encode($output);
-
-function moneyFormatIndia($num)
-{
-    $explrestunits = "";
-    if (strlen($num) > 3) {
-        $lastthree = substr($num, strlen($num) - 3, strlen($num));
-        $restunits = substr($num, 0, strlen($num) - 3);
-        $restunits = (strlen($restunits) % 2 == 1) ? "0" . $restunits : $restunits;
-        $expunit = str_split($restunits, 2);
-        for ($i = 0; $i < sizeof($expunit); $i++) {
-            if ($i == 0) {
-                $explrestunits .= (int)$expunit[$i] . ",";
-            } else {
-                $explrestunits .= $expunit[$i] . ",";
-            }
-        }
-        $thecash = $explrestunits . $lastthree;
-    } else {
-        $thecash = $num;
-    }
-    return $thecash;
-}
 
 // Close the database connection
 $connect = null;

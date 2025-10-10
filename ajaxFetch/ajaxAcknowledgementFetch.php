@@ -138,12 +138,11 @@ foreach ($result as $row) {
 
     $sub_array[] = moneyFormatIndia($row['loan_amt']);
 
-    $req_id = $row['req_id'];
+    $update_login_id = $row['update_login_id'];
 
     $qry = $connect->query("SELECT u.role AS user_type, u.fullname AS user_name
-    FROM verification_loan_calculation v
-    LEFT JOIN user u ON u.user_id = v.insert_login_id
-    WHERE v.req_id = $req_id");
+    FROM user u 
+    WHERE u.user_id = $update_login_id");
 
     $row1 = $qry->fetch(PDO::FETCH_ASSOC);
 

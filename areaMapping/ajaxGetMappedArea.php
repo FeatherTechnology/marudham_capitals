@@ -3,10 +3,16 @@ include('../ajaxconfig.php');
 
 $detailrecords = array();
 
-if (isset($_POST['branchid'])) {
+if (isset($_POST['branchid']) && isset($_POST['status'])) {
     $branchid = $_POST['branchid'];
+    $status = $_POST['status'];
+    // Convert comma-separated string to array
+    $statusArr = array_map('trim', explode(',', $status));
 
-    $qry = $connect->query("SELECT `area_id` FROM `area_duefollowup_mapping` WHERE `branch_id` = $branchid ");
+    // Build properly quoted list for SQL IN()
+    $statusList = "'" . implode("','", $statusArr) . "'";
+
+    $qry = $connect->query("SELECT `area_id` FROM `area_duefollowup_mapping` WHERE `branch_id` = $branchid AND `customer_status` IN ($statusList)");
     $excludeAreaIds = [];
     if($qry->rowCount() > 0){
         while($duerow = $qry->fetchObject()){
