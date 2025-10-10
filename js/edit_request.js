@@ -25,16 +25,17 @@ function callOnClickEvents() {
                     success: function (response) {
                         if (response.includes('Moved')) {
                             Swal.fire({
-                                timerProgressBar: true,
-                                timer: 2000,
                                 title: response,
                                 icon: 'success',
                                 showConfirmButton: true,
-                                confirmButtonColor: '#009688'
+                                confirmButtonColor: '#009688',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // Redirect only when OK is clicked
+                                    window.location = 'edit_request';
+                                }
                             });
-                            setTimeout(function () {
-                                window.location = 'edit_request';
-                            }, 2000)
                         }
                     }
                 })

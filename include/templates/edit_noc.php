@@ -105,13 +105,15 @@
 						Swal.fire({
 							title: 'Removed Successfully!',
 							icon: 'success',
-							showConfirmButton: false,
-							timer: 2000,
-							timerProgressBar: true,
-						})
-						setTimeout(() => {
-							window.location = 'edit_noc'
-						}, 2000);
+							showConfirmButton: true,
+							confirmButtonColor: '#009688',
+							confirmButtonText: 'OK'
+						}).then((result) => {
+							// Redirect only when OK is clicked
+							if (result.isConfirmed) {
+								window.location = 'edit_noc';
+							}
+						});
 					}
 				}
 			})

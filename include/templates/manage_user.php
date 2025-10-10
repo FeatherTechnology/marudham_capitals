@@ -167,7 +167,9 @@ if($idupd>0)
 			$staff_id          		     = $getUser['staff_id'];
 			$company_id          		     = $getUser['company_id'];
 			$branch_id          		     = $getUser['branch_id'];
-			$loan_cat          		     = $getUser['loan_cat'];
+			$ver_loan_cat          		     = $getUser['ver_loan_cat'];
+			$app_loan_cat          		     = $getUser['app_loan_cat'];
+			$ack_loan_cat          		     = $getUser['ack_loan_cat'];
 			$agentforstaff          		     = $getUser['agentforstaff'];
 			$line_id          		     = $getUser['line_id'];
 			$group_id          		     = $getUser['group_id'];
@@ -304,7 +306,9 @@ if($idupd>0)
 		<input type="hidden" class="form-control" value="<?php if(isset($company_id)) echo $company_id; ?>"  id="company_id_upd" name="company_id_upd">
 		<input type="hidden" class="form-control" value="<?php if(isset($branch_id)) echo $branch_id; ?>"  id="branch_id_upd" name="branch_id_upd">
 		<input type="hidden" class="form-control" value="<?php if(isset($agentforstaff)) echo $agentforstaff; ?>"  id="agentforstaff_upd" name="agentforstaff_upd">
-		<input type="hidden" class="form-control" value="<?php if(isset($loan_cat)) echo $loan_cat; ?>"  id="loan_cat_upd" name="loan_cat_upd">
+		<input type="hidden" class="form-control" value="<?php if(isset($ver_loan_cat)) echo $ver_loan_cat; ?>"  id="ver_loan_cat_upd" name="ver_loan_cat_upd">
+		<input type="hidden" class="form-control" value="<?php if(isset($app_loan_cat)) echo $app_loan_cat; ?>"  id="app_loan_cat_upd" name="app_loan_cat_upd">
+		<input type="hidden" class="form-control" value="<?php if(isset($ack_loan_cat)) echo $ack_loan_cat; ?>"  id="ack_loan_cat_upd" name="ackloan_cat_upd">
 		<input type="hidden" class="form-control" value="<?php if(isset($agent_id)) echo $agent_id; ?>"  id="agent_id_upd" name="agent_id_upd">
 		<input type="hidden" class="form-control" value="<?php if(isset($line_id)) echo $line_id; ?>"  id="line_id_upd" name="line_id_upd">
 		<input type="hidden" class="form-control" value="<?php if(isset($group_id)) echo $group_id; ?>"  id="group_id_upd" name="group_id_upd">
@@ -491,89 +495,32 @@ if($idupd>0)
 											<span class="text-danger" style='display:none' id='BranchCheck'>Please select Branch Name</span>
                                         </div>	
                                     </div>
-									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 agent_div" style="display: none">
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12"></div>
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                                         <div class="form-group">
-                                            <label for="disabledInput">Agent Name</label>
-											<input type='hidden' class='form-control' id='agentforstaff' name='agentforstaff' value="<?php if(isset($agentforstaff)){echo $agentforstaff;}?>">
-											<select  tabindex="9" type="text" class="form-control" id="agent1" name="agent1" multiple >
-												<option value="">Select Agent Name</option>
+                                            <label for="disabledInput">Group Name</label>&nbsp;<span class="text-danger">*</span>
+											<input type='hidden' class='form-control' id='group' name='group' >
+											<select tabindex="9" type="text" class="form-control" id="group1" name="group1" multiple>
+												<option value="">Select Group Name</option>
 											</select>
-											<span class="text-danger" style='display:none' id='AgentCheck'>Please select Agent Name</span>
-                                        </div>
-                                    </div>
-									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 loancat_div">
-                                        <div class="form-group">
-                                            <label for="disabledInput">Loan Category</label>&nbsp;<span class="text-danger">*</span>
-											<input type='hidden' class='form-control' id='loan_cat' name='loan_cat' >
-											<select tabindex="9" type="text" class="form-control" id="loan_cat1" name="loan_cat1" multiple>
-												<option value="">Select Loan Category</option>
-											</select>
-											<span class="text-danger" style='display:none' id='loan_catCheck'>Please select Loan Category</span>
+											<span class="text-danger" style='display:none' id='groupCheck'>Please select Group Name</span>
                                         </div>
                                     </div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 line_div">
                                         <div class="form-group">
                                             <label for="disabledInput">Line Name</label>&nbsp;<span class="text-danger">*</span>
 											<input type='hidden' class='form-control' id='line' name='line' >
-											<select tabindex="9" type="text" class="form-control" id="line1" name="line1" multiple>
+											<select tabindex="10" type="text" class="form-control" id="line1" name="line1" multiple>
 												<option value="">Select Line Name</option>
 											</select>
 											<span class="text-danger" style='display:none' id='lineCheck'>Please select Line Name</span>
-                                        </div>
-                                    </div>
-									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label for="disabledInput">Group Name</label>&nbsp;<span class="text-danger">*</span>
-											<input type='hidden' class='form-control' id='group' name='group' >
-											<select tabindex="10" type="text" class="form-control" id="group1" name="group1" multiple>
-												<option value="">Select Group Name</option>
-											</select>
-											<span class="text-danger" style='display:none' id='groupCheck'>Please select Group Name</span>
-                                        </div>
-                                    </div>
-									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-										<div class="form-group">
-											<br>
-												<label>Download Access</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-												<input class="form-check-input" type="radio" name="download_access" id="da_yes" value="0" <?php if($idupd > 0){ if($download_access==0){ echo'checked'; }} ?>>
-													<label class="form-check-label" for="download_access1">Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-												<input class="form-check-input" type="radio" name="download_access" id="da_no" value="1" <?php if($idupd > 0){ if($download_access==1){ echo'checked'; }}?> >
-													<label class="form-check-label" for="download_access2">No</label>
-										<!-- <input type="checkbox" value="Yes"  tabindex="10" id="downloan_access" name="downloan_access">&nbsp;&nbsp; -->
-										<!-- <label class="custom-control-label" for="downloan_access">Download Access</label> -->
-                                        </div>
-                                    </div>
-									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-										<div class="form-group">
-											<label class="custom-control-label" for="report_access">Report Access</label>
-											<select class="form-control" name="report_access" id="report_access">
-												<option value="">Select Report Access</option>
-												<option value="1" <?php if($report_access == '1') echo 'selected';?> >Individual</option>
-												<option value="2" <?php if($report_access == '2') echo 'selected';?> >Overall</option>
-											</select>
-											<br>
-											<span class="text-danger" style='display:none' id='reportAccessCheck'>Please select Report Access</span>
-										</div>
-									</div>
-									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label for="pro_aty_access">Promotion Activity Access</label>&nbsp;<span class="text-danger">*</span>
-											<input type='hidden' class='form-control' id='pro_aty_access_id' name='pro_aty_access_id' >
-											<select tabindex="10" type="text" class="form-control" id="pro_aty_access" name="pro_aty_access" multiple>
-												<option value="">Select Promotion Activity</option>
-												<option value="1">Existing</option>
-												<option value="2">New</option>
-												<option value="3">Repromotion</option>
-												<option value="4">Events</option>
-											</select>
-											<span class="text-danger" style='display:none' id='proCheck'>Please select Promotion Activity Access</span>
                                         </div>
                                     </div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 due_followupline_div">
                                         <div class="form-group">
                                             <label for="due_follup_lines">Due Followup lines</label>&nbsp;<span class="text-danger">*</span>
 								            <input type='hidden' id='due_follup_line_id' name='due_follup_line_id' value=''>
-                                            <select class='form-control' id='due_follup_lines' name='due_follup_lines' multiple>
+                                            <select class='form-control' id='due_follup_lines' name='due_follup_lines' multiple tabindex="11">
 								        	    <option value="">Select Due Followup Lines</option>
 								            </select>
 								            <span class='text-danger duefollowupCheck' style="display:none">Please Select Due Followup Lines</span>
@@ -582,7 +529,7 @@ if($idupd>0)
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label for="pro_aty_map_access_id">Promotion Activity Mapping Access</label>&nbsp;<span class="text-danger">*</span>
-											<select tabindex="10" type="text" class="form-control" id="promotion_activity_mapping_access" name="promotion_activity_mapping_access">
+											<select tabindex="12" type="text" class="form-control" id="promotion_activity_mapping_access" name="promotion_activity_mapping_access">
 												<option value="">Select Promotion Mapping Activity</option>
 												<option value="1" <?php if($promotion_activity_mapping_access == '1') echo 'selected';?> >Group</option>
 												<option value="2" <?php if($promotion_activity_mapping_access == '2') echo 'selected';?> >Line</option>
@@ -592,6 +539,28 @@ if($idupd>0)
 											<span class="text-danger" style='display:none' id='proMapCheck'>Please select Promotion Activity Mapping Access</span>
                                         </div>
                                     </div>
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+										<div class="form-group">
+											<label class="custom-control-label" for="report_access">Report Access</label>
+											<select class="form-control" name="report_access" id="report_access" tabindex="13">
+												<option value="">Select Report Access</option>
+												<option value="1" <?php if($report_access == '1') echo 'selected';?> >Individual</option>
+												<option value="2" <?php if($report_access == '2') echo 'selected';?> >Overall</option>
+											</select>
+											<br>
+											<span class="text-danger" style='display:none' id='reportAccessCheck'>Please select Report Access</span>
+										</div>
+									</div>
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+										<div class="form-group">
+											<br>
+												<label>Download Access</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+												<input class="form-check-input" type="radio" name="download_access" id="da_yes" value="0" <?php if($idupd > 0){ if($download_access==0){ echo'checked'; }} ?>>
+													<label class="form-check-label" for="download_access1">Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+												<input class="form-check-input" type="radio" name="download_access" id="da_no" value="1" <?php if($idupd > 0){ if($download_access==1){ echo'checked'; }}?> >
+													<label class="form-check-label" for="download_access2">No</label>
+                                        </div>
+                                    </div>									
 								</div>
 							</div>
 						</div>
@@ -604,7 +573,7 @@ if($idupd>0)
 					</div>
                     <br>
                     <div class="custom-control custom-checkbox">
-                        <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($mastermodule==0){ echo'checked'; }} ?> tabindex="11" class="" id="mastermodule" name="mastermodule" >&nbsp;&nbsp;
+                        <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($mastermodule==0){ echo'checked'; }} ?> tabindex="12" class="" id="mastermodule" name="mastermodule" >&nbsp;&nbsp;
                         <label class="custom-control-label" for="mastermodule">
                             <h5>Master</h5>
                         </label>
@@ -613,49 +582,49 @@ if($idupd>0)
                     <div class="row">
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($company_creation==0){ echo'checked'; }} ?> tabindex="12" class="master-checkbox" id="company_creation" name="company_creation" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($company_creation==0){ echo'checked'; }} ?> tabindex="13" class="master-checkbox" id="company_creation" name="company_creation" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="company_creation">Company Creation</label>
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($branch_creation==0){echo'checked';}} ?> tabindex="13" class=" master-checkbox" id="branch_creation" name="branch_creation" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($branch_creation==0){echo'checked';}} ?> tabindex="14" class=" master-checkbox" id="branch_creation" name="branch_creation" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="branch_creation">Branch Creation</label>
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($loan_category==0){ echo'checked'; }} ?> tabindex="14" class=" master-checkbox" id="loan_category" name="loan_category" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($loan_category==0){ echo'checked'; }} ?> tabindex="15" class=" master-checkbox" id="loan_category" name="loan_category" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="loan_category">Loan Category</label>
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($loan_calculation==0){ echo'checked'; }} ?> tabindex="15" class=" master-checkbox" id="loan_calculation" name="loan_calculation" disabled >&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($loan_calculation==0){ echo'checked'; }} ?> tabindex="16" class=" master-checkbox" id="loan_calculation" name="loan_calculation" disabled >&nbsp;&nbsp;
                                 <label class="custom-control-label" for="loan_calculation">Loan Calculation</label>
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($loan_scheme==0){ echo'checked'; }} ?> tabindex="16" class=" master-checkbox" id="loan_scheme" name="loan_scheme" disabled >&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($loan_scheme==0){ echo'checked'; }} ?> tabindex="17" class=" master-checkbox" id="loan_scheme" name="loan_scheme" disabled >&nbsp;&nbsp;
                                 <label class="custom-control-label" for="loan_scheme">Loan Scheme</label>
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($area_creation==0){ echo'checked'; }} ?> tabindex="17" class=" master-checkbox" id="area_creation" name="area_creation" disabled >&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($area_creation==0){ echo'checked'; }} ?> tabindex="18" class=" master-checkbox" id="area_creation" name="area_creation" disabled >&nbsp;&nbsp;
                                 <label class="custom-control-label" for="area_creation">Area Creation</label>
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($area_mapping==0){ echo'checked'; }} ?> tabindex="18" class=" master-checkbox" id="area_mapping" name="area_mapping" disabled >&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($area_mapping==0){ echo'checked'; }} ?> tabindex="19" class=" master-checkbox" id="area_mapping" name="area_mapping" disabled >&nbsp;&nbsp;
                                 <label class="custom-control-label" for="area_mapping">Area Mapping</label>
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($area_status==0){ echo'checked'; }} ?> tabindex="19" class=" master-checkbox" id="area_status" name="area_status" disabled >&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($area_status==0){ echo'checked'; }} ?> tabindex="20" class=" master-checkbox" id="area_status" name="area_status" disabled >&nbsp;&nbsp;
                                 <label class="custom-control-label" for="area_status">Area Approval</label>
                             </div>
                         </div>
@@ -664,7 +633,7 @@ if($idupd>0)
 
                     <hr>
 					<div class="custom-control custom-checkbox">
-						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($adminmodule==0){ echo'checked'; }} ?> tabindex="20" class="" id="adminmodule" name="adminmodule" >&nbsp;&nbsp;
+						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($adminmodule==0){ echo'checked'; }} ?> tabindex="21" class="" id="adminmodule" name="adminmodule" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="adminmodule">
 							<h5>Administration</h5>
 						</label>
@@ -673,46 +642,40 @@ if($idupd>0)
 					<div class="row">
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($director_creation==0){ echo'checked'; }} ?> tabindex="21" class=" admin-checkbox" id="director_creation" name="director_creation" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($director_creation==0){ echo'checked'; }} ?> tabindex="22" class=" admin-checkbox" id="director_creation" name="director_creation" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="director_creation">Director Creation</label>
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($agent_creation==0){ echo'checked'; }} ?> tabindex="22" class=" admin-checkbox" id="agent_creation" name="agent_creation" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($agent_creation==0){ echo'checked'; }} ?> tabindex="23" class=" admin-checkbox" id="agent_creation" name="agent_creation" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="agent_creation">Agent Creation</label>
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($staff_creation==0){ echo'checked'; }} ?> tabindex="23" class=" admin-checkbox" id="staff_creation" name="staff_creation" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($staff_creation==0){ echo'checked'; }} ?> tabindex="24" class=" admin-checkbox" id="staff_creation" name="staff_creation" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="staff_creation">Staff Creation</label>
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($manage_user==0){ echo'checked'; }} ?> tabindex="24" class=" admin-checkbox" id="manage_user" name="manage_user" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($manage_user==0){ echo'checked'; }} ?> tabindex="25" class=" admin-checkbox" id="manage_user" name="manage_user" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="manage_user">Manage User</label>
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($bank_creation==0){ echo'checked'; }} ?> tabindex="24" class=" admin-checkbox" id="bank_creation" name="bank_creation" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($bank_creation==0){ echo'checked'; }} ?> tabindex="26" class=" admin-checkbox" id="bank_creation" name="bank_creation" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="bank_creation">Bank Creation</label>
                             </div>
                         </div>
-                        <!-- <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($doc_mapping==0){ echo'checked'; }} ?> tabindex="24" class=" admin-checkbox" id="doc_mapping" name="doc_mapping" disabled>&nbsp;&nbsp;
-                                <label class="custom-control-label" for="doc_mapping">Documentation Mapping</label>
-                            </div>
-                        </div> -->
 					</div>
 
 					<hr>
 
 					<div class="custom-control custom-checkbox">
-						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($requestmodule==0){ echo'checked'; }} ?> tabindex="25" class="" id="requestmodule" name="requestmodule" >&nbsp;&nbsp;
+						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($requestmodule==0){ echo'checked'; }} ?> tabindex="27" class="" id="requestmodule" name="requestmodule" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="requestmodule">
 							<h5>Request</h5>
 						</label>
@@ -721,13 +684,23 @@ if($idupd>0)
 					<div class="row">
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($request==0){ echo'checked'; }} ?> tabindex="26" class=" request-checkbox" id="request" name="request" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($request==0){ echo'checked'; }} ?> tabindex="28" class=" request-checkbox" id="request" name="request" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="request">Request</label>
                             </div>
                         </div>
+					<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 agent_div" style="display: none">
+                        <div class="form-group">
+                            <label for="disabledInput">Agent Name</label>
+							<input type='hidden' class='form-control' id='agentforstaff' name='agentforstaff' value="<?php if(isset($agentforstaff)){echo $agentforstaff;}?>">
+							<select  tabindex="9" type="text" class="form-control" id="agent1" name="agent1" multiple >
+								<option value="">Select Agent Name</option>
+							</select>
+							<span class="text-danger" style='display:none' id='AgentCheck'>Please select Agent Name</span>
+                        </div>
+					</div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
 							<div class="custom-control custom-checkbox">
-								<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($request_list_access==0){ echo'checked'; }} ?> tabindex="27" class=" request-checkbox" id="request_list_access" name="request_list_access" disabled>&nbsp;&nbsp;
+								<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($request_list_access==0){ echo'checked'; }} ?> tabindex="29" class=" request-checkbox" id="request_list_access" name="request_list_access" disabled>&nbsp;&nbsp;
 								<label class="custom-control-label" for="request_list_access">All Request List Access</label>
 							</div>
 						</div>
@@ -736,7 +709,7 @@ if($idupd>0)
 					<hr>
 
 					<div class="custom-control custom-checkbox">
-						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($verificationmodule==0){ echo'checked'; }} ?> tabindex="28" class="" id="verificationmodule" name="verificationmodule" >&nbsp;&nbsp;
+						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($verificationmodule==0){ echo'checked'; }} ?> tabindex="30" class="" id="verificationmodule" name="verificationmodule" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="verificationmodule">
 							<h5>Verification</h5>
 						</label>
@@ -745,8 +718,18 @@ if($idupd>0)
 					<div class="row">
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($verification==0){ echo'checked'; }} ?> tabindex="29" class="verification-checkbox" id="verification" name="verification" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($verification==0){ echo'checked'; }} ?> tabindex="31" class="verification-checkbox" id="verification" name="verification" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="verification">Verification</label>
+                            </div>
+                        </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 ver_loancat_div" style='display:none;'>
+                            <div class="form-group">
+								<label for="disabledInput">Verification Loan Category</label>&nbsp;<span class="text-danger">*</span>
+								<input type='hidden' class='form-control' id='ver_loan_cat' name='ver_loan_cat' >
+								<select tabindex="32" type="text" class="form-control" id="loan_cat1" name="loan_cat1" multiple>
+									<option value="">Select Loan Category</option>
+								</select>
+								<span class="text-danger" style='display:none' id='ver_loan_catCheck'>Please select Verification Loan Category</span>
                             </div>
                         </div>
 					</div>
@@ -754,7 +737,7 @@ if($idupd>0)
 					<hr>
 
 					<div class="custom-control custom-checkbox">
-						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($approvalmodule==0){ echo'checked'; }} ?> tabindex="30" class="" id="approvalmodule" name="approvalmodule" >&nbsp;&nbsp;
+						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($approvalmodule==0){ echo'checked'; }} ?> tabindex="33" class="" id="approvalmodule" name="approvalmodule" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="approvalmodule">
 							<h5>Approval</h5>
 						</label>
@@ -763,8 +746,18 @@ if($idupd>0)
 					<div class="row">
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($approval==0){ echo'checked'; }} ?> tabindex="31" class="approval-checkbox" id="approval" name="approval" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($approval==0){ echo'checked'; }} ?> tabindex="34" class="approval-checkbox" id="approval" name="approval" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="approval">Approval</label>
+                            </div>
+                        </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 app_loancat_div" style='display:none;'>
+                            <div class="form-group">
+								<label for="disabledInput">Approval Loan Category</label>&nbsp;<span class="text-danger">*</span>
+								<input type='hidden' class='form-control' id='app_loan_cat' name='app_loan_cat' >
+								<select tabindex="9" type="text" class="form-control" id="loan_cat2" name="loan_cat2" multiple>
+									<option value="">Select Loan Category</option>
+								</select>
+								<span class="text-danger" style='display:none' id='app_loan_catCheck'>Please select Approval Loan Category</span>
                             </div>
                         </div>
 					</div>
@@ -772,7 +765,7 @@ if($idupd>0)
 					<hr>
 
 					<div class="custom-control custom-checkbox">
-						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($acknowledgementmodule==0){ echo'checked'; }} ?> tabindex="32" class="" id="acknowledgementmodule" name="acknowledgementmodule" >&nbsp;&nbsp;
+						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($acknowledgementmodule==0){ echo'checked'; }} ?> tabindex="35" class="" id="acknowledgementmodule" name="acknowledgementmodule" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="acknowledgementmodule">
 							<h5>Acknowledgement</h5>
 						</label>
@@ -781,8 +774,18 @@ if($idupd>0)
 					<div class="row">
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($acknowledgement==0){ echo'checked'; }} ?> tabindex="33" class="acknowledgement-checkbox" id="acknowledgement" name="acknowledgement" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($acknowledgement==0){ echo'checked'; }} ?> tabindex="36" class="acknowledgement-checkbox" id="acknowledgement" name="acknowledgement" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="acknowledgement">Acknowledgement</label>
+                            </div>
+                        </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 ack_loancat_div" style='display:none;'>
+                            <div class="form-group">
+								<label for="disabledInput"> Acknowledgement Loan Category</label>&nbsp;<span class="text-danger">*</span>
+								<input type='hidden' class='form-control' id='ack_loan_cat' name='ack_loan_cat' >
+								<select tabindex="9" type="text" class="form-control" id="loan_cat3" name="loan_cat3" multiple>
+									<option value="">Select Loan Category</option>
+								</select>
+								<span class="text-danger" style='display:none' id='ack_loan_catCheck'>Please select Acknowledgement Loan Category</span>
                             </div>
                         </div>
 					</div>
@@ -790,7 +793,7 @@ if($idupd>0)
 					<hr>
 
 					<div class="custom-control custom-checkbox">
-						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($loanissuemodule==0){ echo'checked'; }} ?> tabindex="34" class="" id="loanissuemodule" name="loanissuemodule" >&nbsp;&nbsp;
+						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($loanissuemodule==0){ echo'checked'; }} ?> tabindex="37" class="" id="loanissuemodule" name="loanissuemodule" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="loanissuemodule">
 							<h5>Loan Issue</h5>
 						</label>
@@ -799,7 +802,7 @@ if($idupd>0)
 					<div class="row">
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($loan_issue==0){ echo'checked'; }} ?> tabindex="35" class="loan_issue-checkbox" id="loan_issue" name="loan_issue" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($loan_issue==0){ echo'checked'; }} ?> tabindex="38" class="loan_issue-checkbox" id="loan_issue" name="loan_issue" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="loan_issue">Loan Issue</label>
                             </div>
                         </div>
@@ -808,7 +811,7 @@ if($idupd>0)
 					<hr>
 
 					<div class="custom-control custom-checkbox">
-						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($collectionmodule==0){ echo'checked'; }} ?> tabindex="36" class="" id="collectionmodule" name="collectionmodule" >&nbsp;&nbsp;
+						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($collectionmodule==0){ echo'checked'; }} ?> tabindex="39" class="" id="collectionmodule" name="collectionmodule" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="collectionmodule">
 							<h5>Collection</h5>
 						</label>
@@ -817,13 +820,13 @@ if($idupd>0)
 					<div class="row">
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($collection==0){ echo'checked'; }} ?> tabindex="37" class="collection-checkbox" id="collection" name="collection" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($collection==0){ echo'checked'; }} ?> tabindex="40" class="collection-checkbox" id="collection" name="collection" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="collection">Collection</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($collection_access==0){ echo'checked'; }} ?> tabindex="38" class="collection-checkbox" id="collection_access" name="collection_access" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($collection_access==0){ echo'checked'; }} ?> tabindex="41" class="collection-checkbox" id="collection_access" name="collection_access" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="collection_access">Collection Access</label>
                             </div>
                         </div>
@@ -832,7 +835,7 @@ if($idupd>0)
 					<hr>
 
 					<div class="custom-control custom-checkbox">
-						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($closedmodule==0){ echo'checked'; }} ?> tabindex="39" class="" id="closedmodule" name="closedmodule" >&nbsp;&nbsp;
+						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($closedmodule==0){ echo'checked'; }} ?> tabindex="42" class="" id="closedmodule" name="closedmodule" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="closedmodule">
 							<h5>Closed</h5>
 						</label>
@@ -841,7 +844,7 @@ if($idupd>0)
 					<div class="row">
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($closed==0){ echo'checked'; }} ?> tabindex="40" class="closed-checkbox" id="closed" name="closed" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($closed==0){ echo'checked'; }} ?> tabindex="43" class="closed-checkbox" id="closed" name="closed" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="closed">Closed</label>
                             </div>
                         </div>
@@ -850,7 +853,7 @@ if($idupd>0)
 					<hr>
 
 					<div class="custom-control custom-checkbox">
-						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($nocmodule==0){ echo'checked'; }} ?> tabindex="41" class="" id="nocmodule" name="nocmodule" >&nbsp;&nbsp;
+						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($nocmodule==0){ echo'checked'; }} ?> tabindex="44" class="" id="nocmodule" name="nocmodule" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="nocmodule">
 							<h5>NOC</h5>
 						</label>
@@ -859,7 +862,7 @@ if($idupd>0)
 					<div class="row">
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($noc==0){ echo'checked'; }} ?> tabindex="42" class="noc-checkbox" id="noc" name="noc" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($noc==0){ echo'checked'; }} ?> tabindex="45" class="noc-checkbox" id="noc" name="noc" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="noc">NOC</label>
                             </div>
                         </div>
@@ -892,7 +895,7 @@ if($idupd>0)
 					<hr>
 
 					<div class="custom-control custom-checkbox">
-						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($updatemodule==0){ echo'checked'; }} ?> tabindex="43" class="" id="updatemodule" name="updatemodule" >&nbsp;&nbsp;
+						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($updatemodule==0){ echo'checked'; }} ?> tabindex="46" class="" id="updatemodule" name="updatemodule" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="updatemodule">
 							<h5>Update</h5>
 						</label>
@@ -901,7 +904,7 @@ if($idupd>0)
 					<div class="row">
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($update_screen==0){ echo'checked'; }} ?> tabindex="44" class="update-checkbox" id="update" name="update" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($update_screen==0){ echo'checked'; }} ?> tabindex="47" class="update-checkbox" id="update" name="update" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="update">Update</label>
                             </div>
                         </div>
@@ -918,13 +921,13 @@ if($idupd>0)
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($doctrack==0){ echo'checked'; }} ?> tabindex="45" class="update-checkbox" id="doctrack" name="doctrack" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($doctrack==0){ echo'checked'; }} ?> tabindex="48" class="update-checkbox" id="doctrack" name="doctrack" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="doctrack">Document Track</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($doc_rec_access==0){ echo'checked'; }} ?> tabindex="46" class="update-checkbox" id="doc_rec_access" name="doc_rec_access" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($doc_rec_access==0){ echo'checked'; }} ?> tabindex="49" class="update-checkbox" id="doc_rec_access" name="doc_rec_access" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="doc_rec_access">Document Receive Access</label>
                             </div>
                         </div>
@@ -933,7 +936,7 @@ if($idupd>0)
 					<hr>
 
 					<div class="custom-control custom-checkbox">
-						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($concernmodule==0){ echo'checked'; }} ?> tabindex="47" class="" id="concernmodule" name="concernmodule" >&nbsp;&nbsp;
+						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($concernmodule==0){ echo'checked'; }} ?> tabindex="50" class="" id="concernmodule" name="concernmodule" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="concernmodule">
 							<h5>Concern</h5>
 						</label>
@@ -942,21 +945,21 @@ if($idupd>0)
 					<div class="row">
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($concern_creation==0){ echo'checked'; }} ?> tabindex="48" class="concern-checkbox" id="concernCreation" name="concernCreation" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($concern_creation==0){ echo'checked'; }} ?> tabindex="51" class="concern-checkbox" id="concernCreation" name="concernCreation" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="concernCreation">Concern Creation</label>
                             </div>
                         </div>
 
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($concern_solution==0){ echo'checked'; }} ?> tabindex="49" class="concern-checkbox" id="concernSolution" name="concernSolution" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($concern_solution==0){ echo'checked'; }} ?> tabindex="52" class="concern-checkbox" id="concernSolution" name="concernSolution" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="concernSolution">Concern Solution</label>
                             </div>
                         </div>
 
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($concern_feedback==0){ echo'checked'; }} ?> tabindex="50" class="concern-checkbox" id="concernFeedback" name="concernFeedback" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($concern_feedback==0){ echo'checked'; }} ?> tabindex="53" class="concern-checkbox" id="concernFeedback" name="concernFeedback" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="concernFeedback">Concern Feedback</label>
                             </div>
                         </div>
@@ -966,7 +969,7 @@ if($idupd>0)
 					<hr>
 
 					<div class="custom-control custom-checkbox">
-						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($accountsmodule==0){ echo'checked'; }} ?> tabindex="51" class="" id="accountsmodule" name="accountsmodule" >&nbsp;&nbsp;
+						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($accountsmodule==0){ echo'checked'; }} ?> tabindex="54" class="" id="accountsmodule" name="accountsmodule" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="accountsmodule">
 							<h5>Accounts</h5>
 						</label>
@@ -975,13 +978,13 @@ if($idupd>0)
 					<div class="row">
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($cash_tally==0){ echo'checked'; }} ?> tabindex="52" class="accounts-checkbox" id="cash_tally" name="cash_tally" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($cash_tally==0){ echo'checked'; }} ?> tabindex="55" class="accounts-checkbox" id="cash_tally" name="cash_tally" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="cash_tally">Cash Tally</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 bank_details" style='display:none'>
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($cash_tally_admin==0){ echo'checked'; }} ?> tabindex="53" class="accounts-checkbox" id="cash_tally_admin" name="cash_tally_admin" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($cash_tally_admin==0){ echo'checked'; }} ?> tabindex="56" class="accounts-checkbox" id="cash_tally_admin" name="cash_tally_admin" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="cash_tally_admin">Cash Tally Admin</label>
                             </div>
                         </div>
@@ -997,19 +1000,19 @@ if($idupd>0)
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($bank_clearance==0){ echo'checked'; }} ?> tabindex="54" class="accounts-checkbox" id="bank_clearance" name="bank_clearance" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($bank_clearance==0){ echo'checked'; }} ?> tabindex="57" class="accounts-checkbox" id="bank_clearance" name="bank_clearance" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="bank_clearance">Bank Clearance</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($finance_insight==0){ echo'checked'; }} ?> tabindex="55" class="accounts-checkbox" id="finance_insight" name="finance_insight" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($finance_insight==0){ echo'checked'; }} ?> tabindex="58" class="accounts-checkbox" id="finance_insight" name="finance_insight" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="finance_insight">Financial Insights</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($accounts_loan_issue==0){ echo'checked'; }} ?> tabindex="55" class="accounts-checkbox" id="accounts_loan_issue" name="accounts_loan_issue" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($accounts_loan_issue==0){ echo'checked'; }} ?> tabindex="59" class="accounts-checkbox" id="accounts_loan_issue" name="accounts_loan_issue" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="accounts_loan_issue">Loan Issue</label>
                             </div>
                         </div>
@@ -1017,7 +1020,7 @@ if($idupd>0)
 					<hr>
 
 					<div class="custom-control custom-checkbox">
-						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($followupmodule==0){ echo'checked'; }} ?> tabindex="56" class="" id="followupmodule" name="followupmodule" >&nbsp;&nbsp;
+						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($followupmodule==0){ echo'checked'; }} ?> tabindex="60" class="" id="followupmodule" name="followupmodule" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="followupmodule">
 							<h5>Follow up</h5>
 						</label>
@@ -1026,26 +1029,40 @@ if($idupd>0)
 					<div class="row">
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($promotion_activity==0){ echo'checked'; }} ?> tabindex="57" class="followup-checkbox" id="promotion_activity" name="promotion_activity" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($promotion_activity==0){ echo'checked'; }} ?> tabindex="61" class="followup-checkbox" id="promotion_activity" name="promotion_activity" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="promotion_activity">Promotion Activity</label>&nbsp;&nbsp;
 								<span class='text-danger promotionActivityCheck' style="display:none">Please Select Promotion Activity </span> 
                             </div>
                         </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 promotion_activity_div" style="display: none;" >
+                                        <div class="form-group">
+                                            <label for="pro_aty_access">Promotion Activity Access</label>&nbsp;<span class="text-danger">*</span>
+											<input type='hidden' class='form-control' id='pro_aty_access_id' name='pro_aty_access_id' >
+											<select tabindex="62" type="text" class="form-control" id="pro_aty_access" name="pro_aty_access" multiple>
+												<option value="">Select Promotion Activity</option>
+												<option value="1">Existing</option>
+												<option value="2">New</option>
+												<option value="3">Repromotion</option>
+												<option value="4">Events</option>
+											</select>
+											<span class="text-danger" style='display:none' id='proCheck'>Please select Promotion Activity Access</span>
+                                        </div>
+                                    </div>
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($loan_followup==0){ echo'checked'; }} ?> tabindex="58" class="followup-checkbox" id="loan_followup" name="loan_followup" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($loan_followup==0){ echo'checked'; }} ?> tabindex="63" class="followup-checkbox" id="loan_followup" name="loan_followup" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="loan_followup">Loan Followup</label>
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($conf_followup==0){ echo'checked'; }} ?> tabindex="59" class="followup-checkbox" id="conf_followup" name="conf_followup" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($conf_followup==0){ echo'checked'; }} ?> tabindex="64" class="followup-checkbox" id="conf_followup" name="conf_followup" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="conf_followup">Confirmation Followup</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($due_followup==0){ echo'checked'; }} ?> tabindex="60" class="followup-checkbox" id="due_followup" name="due_followup" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($due_followup==0){ echo'checked'; }} ?> tabindex="65" class="followup-checkbox" id="due_followup" name="due_followup" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="due_followup">Due Followup</label>&nbsp;&nbsp;
 								<span class='text-danger dueFollowupCheck' style="display:none">Please Select Due Followup </span> 
                             </div>
@@ -1055,7 +1072,7 @@ if($idupd>0)
 					<hr>
 
 					<div class="custom-control custom-checkbox">
-						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($reportmodule==0){ echo'checked'; }} ?> tabindex="61" class="" id="reportmodule" name="reportmodule" >&nbsp;&nbsp;
+						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($reportmodule==0){ echo'checked'; }} ?> tabindex="66" class="" id="reportmodule" name="reportmodule" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="reportmodule">
 							<h5>Report - EMI &nbsp;&nbsp;<span class='text-danger reportCheck' style="display:none;font-size:14px;font-weight:500">Please Select Report </span> </h5>
 						</label>
@@ -1064,127 +1081,127 @@ if($idupd>0)
 					<div class="row">
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($ledger_report==0){ echo'checked'; }} ?> tabindex="62" class="report-checkbox" id="ledger_report" name="ledger_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($ledger_report==0){ echo'checked'; }} ?> tabindex="67" class="report-checkbox" id="ledger_report" name="ledger_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="ledger_report">Ledger View</label>
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($request_report==0){ echo'checked'; }} ?> tabindex="63" class="report-checkbox" id="request_report" name="request_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($request_report==0){ echo'checked'; }} ?> tabindex="68" class="report-checkbox" id="request_report" name="request_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="request_report">Request</label>
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($cancel_revoke_report==0){ echo'checked'; }} ?> tabindex="63" class="report-checkbox" id="cancel_revoke_report" name="cancel_revoke_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($cancel_revoke_report==0){ echo'checked'; }} ?> tabindex="69" class="report-checkbox" id="cancel_revoke_report" name="cancel_revoke_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="cancel_revoke_report">Cancel / Revoke</label>
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($cus_profile_report==0){ echo'checked'; }} ?> tabindex="64" class="report-checkbox" id="cus_profile_report" name="cus_profile_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($cus_profile_report==0){ echo'checked'; }} ?> tabindex="70" class="report-checkbox" id="cus_profile_report" name="cus_profile_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="cus_profile_report">Customer Profile</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($loan_issue_report==0){ echo'checked'; }} ?> tabindex="65" class="report-checkbox" id="loan_issue_report" name="loan_issue_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($loan_issue_report==0){ echo'checked'; }} ?> tabindex="71" class="report-checkbox" id="loan_issue_report" name="loan_issue_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="loan_issue_report">Loan Issue</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($collection_report==0){ echo'checked'; }} ?> tabindex="66" class="report-checkbox" id="collection_report" name="collection_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($collection_report==0){ echo'checked'; }} ?> tabindex="72" class="report-checkbox" id="collection_report" name="collection_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="collection_report">Collection</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($principal_interest_report==0){ echo'checked'; }} ?> tabindex="66" class="report-checkbox" id="principal_interest_report" name="principal_interest_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($principal_interest_report==0){ echo'checked'; }} ?> tabindex="73" class="report-checkbox" id="principal_interest_report" name="principal_interest_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="principal_interest_report">Principal / Interest</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($balance_report==0){ echo'checked'; }} ?> tabindex="67" class="report-checkbox" id="balance_report" name="balance_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($balance_report==0){ echo'checked'; }} ?> tabindex="74" class="report-checkbox" id="balance_report" name="balance_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="balance_report">Balance</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($due_list_report==0){ echo'checked'; }} ?> tabindex="68" class="report-checkbox" id="due_list_report" name="due_list_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($due_list_report==0){ echo'checked'; }} ?> tabindex="75" class="report-checkbox" id="due_list_report" name="due_list_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="due_list_report">Due List</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
 							<div class="custom-control custom-checkbox">
-								<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($in_closed_report==0){ echo'checked'; }} ?> tabindex="69" class="report-checkbox" id="in_closed_report" name="in_closed_report" disabled>&nbsp;&nbsp;
+								<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($in_closed_report==0){ echo'checked'; }} ?> tabindex="76" class="report-checkbox" id="in_closed_report" name="in_closed_report" disabled>&nbsp;&nbsp;
 								<label class="custom-control-label" for="in_closed_report">In Closed</label>
 							</div>
 						</div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($closed_report==0){ echo'checked'; }} ?> tabindex="69" class="report-checkbox" id="closed_report" name="closed_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($closed_report==0){ echo'checked'; }} ?> tabindex="77" class="report-checkbox" id="closed_report" name="closed_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="closed_report">Closed</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($confirmation_followup_report==0){ echo'checked'; }} ?> tabindex="70" class="report-checkbox" id="confirmation_followup_report" name="confirmation_followup_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($confirmation_followup_report==0){ echo'checked'; }} ?> tabindex="78" class="report-checkbox" id="confirmation_followup_report" name="confirmation_followup_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="confirmation_followup_report">Confirmation Follow Up</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($agent_report==0){ echo'checked'; }} ?> tabindex="71" class="report-checkbox" id="agent_report" name="agent_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($agent_report==0){ echo'checked'; }} ?> tabindex="79" class="report-checkbox" id="agent_report" name="agent_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="agent_report">Agent</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($no_due_pay_report==0){ echo'checked'; }} ?> tabindex="72" class="report-checkbox" id="no_due_pay_report" name="no_due_pay_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($no_due_pay_report==0){ echo'checked'; }} ?> tabindex="80" class="report-checkbox" id="no_due_pay_report" name="no_due_pay_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="no_due_pay_report">No Due Pay </label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($other_trans_report==0){ echo'checked'; }} ?> tabindex="72" class="report-checkbox" id="other_trans_report" name="other_trans_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($other_trans_report==0){ echo'checked'; }} ?> tabindex="81" class="report-checkbox" id="other_trans_report" name="other_trans_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="other_trans_report">Other Transaction </label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($day_end_report==0){ echo'checked'; }} ?> tabindex="72" class="report-checkbox" id="day_end_report" name="day_end_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($day_end_report==0){ echo'checked'; }} ?> tabindex="82" class="report-checkbox" id="day_end_report" name="day_end_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="day_end_report">Day End Report </label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($due_followup_customer_count_report==0){ echo'checked'; }} ?> tabindex="70" class="report-checkbox" id="due_followup_customer_count_report" name="due_followup_customer_count_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($due_followup_customer_count_report==0){ echo'checked'; }} ?> tabindex="83" class="report-checkbox" id="due_followup_customer_count_report" name="due_followup_customer_count_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="due_followup_customer_count_report">Due Follow Up Customer Count</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($commitment_report==0){ echo'checked'; }} ?> tabindex="70" class="report-checkbox" id="commitment_report" name="commitment_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($commitment_report==0){ echo'checked'; }} ?> tabindex="84" class="report-checkbox" id="commitment_report" name="commitment_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="commitment_report">Commitment</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($customer_status_report==0){ echo'checked'; }} ?> tabindex="70" class="report-checkbox" id="customer_status_report" name="customer_status_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($customer_status_report==0){ echo'checked'; }} ?> tabindex="85" class="report-checkbox" id="customer_status_report" name="customer_status_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="customer_status_report">Customer Status Report</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($promotion_activity_report==0){ echo'checked'; }} ?> tabindex="71" class="report-checkbox" id="promotion_activity_report" name="promotion_activity_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($promotion_activity_report==0){ echo'checked'; }} ?> tabindex="86" class="report-checkbox" id="promotion_activity_report" name="promotion_activity_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="promotion_activity_report">Promotion Activity Report</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($uncleared_report==0){ echo'checked'; }} ?> tabindex="71" class="report-checkbox" id="uncleared_report" name="uncleared_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($uncleared_report==0){ echo'checked'; }} ?> tabindex="87" class="report-checkbox" id="uncleared_report" name="uncleared_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="uncleared_report">Uncleared Report</label>
                             </div>
                         </div>
@@ -1194,7 +1211,7 @@ if($idupd>0)
 					<hr>
 
 					<div class="custom-control custom-checkbox">
-						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($reportmodule_intrest==0){ echo'checked'; }} ?> tabindex="71" class="" id="reportmodule_intrest" name="reportmodule_intrest" >&nbsp;&nbsp;
+						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($reportmodule_intrest==0){ echo'checked'; }} ?> tabindex="88" class="" id="reportmodule_intrest" name="reportmodule_intrest" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="reportmodule_intrest">
 							<h5>Report - INTEREST &nbsp;&nbsp;<span class='text-danger' style="display:none;font-size:14px;font-weight:500">Please Select Report </span> </h5>
 						</label>
@@ -1203,31 +1220,31 @@ if($idupd>0)
 					<div class="row">
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($intrest_ledger_report==0){ echo'checked'; }} ?> tabindex="72" class="intrest-report-checkbox" id="intrest_ledger_report" name="intrest_ledger_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($intrest_ledger_report==0){ echo'checked'; }} ?> tabindex="89" class="intrest-report-checkbox" id="intrest_ledger_report" name="intrest_ledger_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="intrest_ledger_report">Ledger View</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($intrest_loan_issue_report==0){ echo'checked'; }} ?> tabindex="73" class="intrest-report-checkbox" id="intrest_loan_issue_report" name="intrest_loan_issue_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($intrest_loan_issue_report==0){ echo'checked'; }} ?> tabindex="90" class="intrest-report-checkbox" id="intrest_loan_issue_report" name="intrest_loan_issue_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="intrest_loan_issue_report">Loan Issue</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($intrest_collection_report==0){ echo'checked'; }} ?> tabindex="74" class="intrest-report-checkbox" id="intrest_collection_report" name="intrest_collection_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($intrest_collection_report==0){ echo'checked'; }} ?> tabindex="91" class="intrest-report-checkbox" id="intrest_collection_report" name="intrest_collection_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="intrest_collection_report">Collection</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($intrest_balance_report==0){ echo'checked'; }} ?> tabindex="75" class="intrest-report-checkbox" id="intrest_balance_report" name="intrest_balance_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($intrest_balance_report==0){ echo'checked'; }} ?> tabindex="92" class="intrest-report-checkbox" id="intrest_balance_report" name="intrest_balance_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="intrest_balance_report">Balance</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($intrest_closed_report==0){ echo'checked'; }} ?> tabindex="76" class="intrest-report-checkbox" id="intrest_closed_report" name="intrest_closed_report" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($intrest_closed_report==0){ echo'checked'; }} ?> tabindex="93" class="intrest-report-checkbox" id="intrest_closed_report" name="intrest_closed_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="intrest_closed_report">Closed</label>
                             </div>
                         </div>
@@ -1237,7 +1254,7 @@ if($idupd>0)
 					<hr>
 
 					<div class="custom-control custom-checkbox">
-						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($search_module==0){ echo'checked'; }} ?> tabindex="77" class="" id="searchmodule" name="searchmodule" >&nbsp;&nbsp;
+						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($search_module==0){ echo'checked'; }} ?> tabindex="94" class="" id="searchmodule" name="searchmodule" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="searchmodule">
 							<h5>Search</h5>
 						</label>
@@ -1246,7 +1263,7 @@ if($idupd>0)
 					<div class="row">
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($search_screen==0){ echo'checked'; }} ?> tabindex="78" class="search-checkbox" id="search_screen" name="search_screen" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($search_screen==0){ echo'checked'; }} ?> tabindex="95" class="search-checkbox" id="search_screen" name="search_screen" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="search_screen">Search</label>
                             </div>
                         </div>
@@ -1256,7 +1273,7 @@ if($idupd>0)
 					<hr>
 
 					<div class="custom-control custom-checkbox">
-						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($bulk_upload_module==0){ echo'checked'; }} ?> tabindex="79" class="" id="bulk_upload_module" name="bulk_upload_module" >&nbsp;&nbsp;
+						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($bulk_upload_module==0){ echo'checked'; }} ?> tabindex="96" class="" id="bulk_upload_module" name="bulk_upload_module" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="bulk_upload_module">
 							<h5>Bulk Upload</h5>
 						</label>
@@ -1265,7 +1282,7 @@ if($idupd>0)
 					<div class="row">
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($bulk_upload==0){ echo'checked'; }} ?> tabindex="80" class="bulk_upload-checkbox" id="bulk_upload" name="bulk_upload" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($bulk_upload==0){ echo'checked'; }} ?> tabindex="97" class="bulk_upload-checkbox" id="bulk_upload" name="bulk_upload" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="bulk_upload">Bulk Upload</label>
                             </div>
                         </div>
@@ -1274,7 +1291,7 @@ if($idupd>0)
 					<hr>
 
 					<div class="custom-control custom-checkbox">
-						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($loan_track_module==0){ echo'checked'; }} ?> tabindex="81" class="" id="loan_track_module" name="loan_track_module" >&nbsp;&nbsp;
+						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($loan_track_module==0){ echo'checked'; }} ?> tabindex="98" class="" id="loan_track_module" name="loan_track_module" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="loan_track_module">
 							<h5>Loan Track</h5>
 						</label>
@@ -1283,7 +1300,7 @@ if($idupd>0)
 					<div class="row">
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($loan_track==0){ echo'checked'; }} ?> tabindex="82" class="loan_track-checkbox" id="loan_track" name="loan_track" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($loan_track==0){ echo'checked'; }} ?> tabindex="99" class="loan_track-checkbox" id="loan_track" name="loan_track" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="loan_track">Loan Track</label>
                             </div>
                         </div>
@@ -1292,7 +1309,7 @@ if($idupd>0)
 					<hr>
 
 					<div class="custom-control custom-checkbox">
-						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($sms_module==0){ echo'checked'; }} ?> tabindex="83" id="sms_module" name="sms_module" >&nbsp;&nbsp;
+						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($sms_module==0){ echo'checked'; }} ?> tabindex="100" id="sms_module" name="sms_module" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="sms_module">
 							<h5>SMS</h5>
 						</label>
@@ -1301,7 +1318,7 @@ if($idupd>0)
 					<div class="row">
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($sms_generation==0){ echo'checked'; }} ?> tabindex="84" class="sms_generation-checkbox" id="sms_generation" name="sms_generation" disabled>&nbsp;&nbsp;
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($sms_generation==0){ echo'checked'; }} ?> tabindex="101" class="sms_generation-checkbox" id="sms_generation" name="sms_generation" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="sms_generation">SMS Generation</label>
                             </div>
                         </div>
@@ -1314,8 +1331,8 @@ if($idupd>0)
 				
 				<div class="col-md-12 ">
 					<div class="text-right">
-						<button type="submit" name="submit_manage_user" id="submit_manage_user" class="btn btn-primary" value="Submit" tabindex="85"><span class="icon-check"></span>&nbsp;Submit</button>
-						<button type="reset" class="btn btn-outline-secondary" tabindex="100" >Clear</button>
+						<button type="submit" name="submit_manage_user" id="submit_manage_user" class="btn btn-primary" value="Submit" tabindex="102"><span class="icon-check"></span>&nbsp;Submit</button>
+						<button type="reset" class="btn btn-outline-secondary" tabindex="103" >Clear</button>
 					</div>
 				</div>
 
