@@ -96,18 +96,22 @@ function callOnClickEvents() {
                                 cache: false,
                                 success: function (response) {
                                    
-                                    if (response.includes('Approved')) {
+                                  if (response.includes('Approved')) {
                                         Swal.fire({
-                                            timerProgressBar: true,
-                                            timer: 2000,
                                             title: response,
                                             icon: 'success',
                                             showConfirmButton: true,
-                                            confirmButtonColor: '#009688'
-                                        }).then(function () {
-                                             window.location = 'approval_list';
-                                             button.prop('disabled', false);
-                                        })
+                                            confirmButtonColor: '#009688',
+                                            confirmButtonText: 'OK'
+                                        }).then((result) => {
+                                            // Re-enable button regardless
+                                            button.prop('disabled', false);
+
+                                            // Redirect only if user clicks OK
+                                            if (result.isConfirmed) {
+                                                window.location = 'approval_list';
+                                            }
+                                        });
                                     }
                                 }
                             })

@@ -200,14 +200,16 @@ $(document).ready(function () {
                 success: function (result) {
                     if (result.response.includes('Completed')) {
                         Swal.fire({
-                            timer: 1500,
-                            timerProgressBar: true,
                             title: result.response,
                             icon: 'success',
-                            showConfirmButton: false,
-                            confirmButtonColor: '#009688'
-                        }).then(() => {
-                            window.location.href = 'edit_accounts_loan_issue';
+                            showConfirmButton: true,
+                            confirmButtonColor: '#009688',
+                            confirmButtonText: 'OK'
+                        }).then((swalResult) => {
+                            // Redirect only when OK is clicked
+                            if (swalResult.isConfirmed) {
+                                window.location.href = 'edit_accounts_loan_issue';
+                            }
                         });
                     }
                 },

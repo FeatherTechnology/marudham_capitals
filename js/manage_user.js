@@ -11,7 +11,19 @@ const agentMultiselect = new Choices('#agent1', {
     allowHTML: true
 
 });
-const loanCatMultiselect = new Choices('#loan_cat1', {
+const verificationloanCatMultiselect = new Choices('#loan_cat1', {
+    removeItemButton: true,
+    noChoicesText: 'Select Loan Category',
+    allowHTML: true
+
+});
+const approvalloanCatMultiselect = new Choices('#loan_cat2', {
+    removeItemButton: true,
+    noChoicesText: 'Select Loan Category',
+    allowHTML: true
+
+});
+const acknowledgementloanCatMultiselect = new Choices('#loan_cat3', {
     removeItemButton: true,
     noChoicesText: 'Select Loan Category',
     allowHTML: true
@@ -70,7 +82,9 @@ $(document).ready(function () {
         $('#company_id').val('');
         $('#company_name').val('');
         branchMultiselect.clearStore();
-        loanCatMultiselect.clearStore();
+        verificationloanCatMultiselect.clearStore();
+        approvalloanCatMultiselect.clearStore();
+        acknowledgementloanCatMultiselect.clearStore();
         lineMultiselect.clearStore();
         groupMultiselect.clearStore();
 
@@ -85,7 +99,9 @@ $(document).ready(function () {
         $('#company_id').val('');
         $('#company_name').val('');
         branchMultiselect.clearStore();
-        loanCatMultiselect.clearStore();
+        verificationloanCatMultiselect.clearStore();
+        approvalloanCatMultiselect.clearStore();
+        acknowledgementloanCatMultiselect.clearStore();
         lineMultiselect.clearStore();
         groupMultiselect.clearStore();
 
@@ -351,6 +367,46 @@ $(document).ready(function () {
             $('.update_screen_div').hide();
         }
     });
+    $('#request').click(function () {
+        var request_screen = document.querySelector('#request');
+        if (request_screen.checked) {
+            $('.agent_div').show();
+        } else {
+            $('.agent_div').hide();
+        }
+    });
+    $('#verification').click(function () {
+        var verification_screen = document.querySelector('#verification');
+        if (verification_screen.checked) {
+            $('.ver_loancat_div').show();
+        } else {
+            $('.ver_loancat_div').hide();
+        }
+    });
+    $('#approval').click(function () {
+        var approval_screen = document.querySelector('#approval');
+        if (approval_screen.checked) {
+            $('.app_loancat_div').show();
+        } else {
+            $('.app_loancat_div').hide();
+        }
+    });
+    $('#acknowledgement').click(function () {
+        var acknowledgement_screen = document.querySelector('#acknowledgement');
+        if (acknowledgement_screen.checked) {
+            $('.ack_loancat_div').show();
+        } else {
+            $('.ack_loancat_div').hide();
+        }
+    });
+    $('#promotion_activity').click(function () {
+        var promotion_activity_screen = document.querySelector('#promotion_activity');
+        if (promotion_activity_screen.checked) {
+            $('.promotion_activity_div').show();
+        } else {
+            $('.promotion_activity_div').hide();
+        }
+    });
 
     $('#submit_manage_user').click(function () {
 
@@ -416,6 +472,36 @@ $(function () {
             }
 
             $('.update_screen_div').show()
+        }
+        var request_screen = document.querySelector('#request');
+        if (request_screen.checked) {
+            $('.agent_div').show()
+        }else{
+            $('.agent_div').hide()
+        }
+        var approval_screen = document.querySelector('#approval');
+        if (approval_screen.checked) {
+            $('.app_loancat_div').show()
+        }else{
+            $('.app_loancat_div').hide()
+        }
+        var verification_screen = document.querySelector('#verification');
+        if (verification_screen.checked) {
+            $('.ver_loancat_div').show()
+        }else{
+            $('.ver_loancat_div').hide()
+        }
+        var acknowledgement_screen = document.querySelector('#acknowledgementmodule');
+        if (acknowledgement_screen.checked) {
+            $('.ack_loancat_div').show()
+        }else{
+            $('.ack_loancat_div').hide()
+        }
+        var promotionActivity_screen = document.querySelector('#promotion_activity');
+        if (promotionActivity_screen.checked) {
+            $('.promotion_activity_div').show()
+        }else{
+            $('.promotion_activity_div').hide()
         }
 
         var mastermodule = document.getElementById('mastermodule');
@@ -641,7 +727,9 @@ function getStaffDetails(staff_id) {
 
             getBranchDropdown(response[0]['company_id']);
             getAgentDropdown(response[0]['company_id']);
-            getLoanCatDropdown();
+            getVerLoanCatDropdown();
+            getAppLoanCatDropdown();
+            getAckLoanCatDropdown();
         }
     })
 }
@@ -716,8 +804,8 @@ function getAgentDropdown(company_id) {
 }
 
 //get Loan category Dropdown
-function getLoanCatDropdown() {
-    var loan_cat_upd = $('#loan_cat_upd').val().split(',');
+function getVerLoanCatDropdown() {
+    var loan_cat_upd = $('#ver_loan_cat_upd').val().split(',');
     $.ajax({
         url: 'manageUser/getLoanCatDropdown.php',
         data: {},
@@ -725,7 +813,7 @@ function getLoanCatDropdown() {
         type: 'post',
         cache: false,
         success: function (response) {
-            loanCatMultiselect.clearStore();
+            verificationloanCatMultiselect.clearStore();
             for (var i = 0; i < response.length; i++) {
                 var loan_cat_id = response[i]['loan_cat_id'];
                 var loan_cat_name = response[i]['loan_cat_name'];
@@ -742,8 +830,74 @@ function getLoanCatDropdown() {
                     label: loan_cat_name,
                     selected: selected
                 }]
-                loanCatMultiselect.setChoices(items);
-                loanCatMultiselect.init();
+                verificationloanCatMultiselect.setChoices(items);
+                verificationloanCatMultiselect.init();
+            }
+        }
+    })
+}
+//get Loan category Dropdown
+function getAppLoanCatDropdown() {
+    var loan_cat_upd = $('#app_loan_cat_upd').val().split(',');
+    $.ajax({
+        url: 'manageUser/getLoanCatDropdown.php',
+        data: {},
+        dataType: 'json',
+        type: 'post',
+        cache: false,
+        success: function (response) {
+            approvalloanCatMultiselect.clearStore();
+            for (var i = 0; i < response.length; i++) {
+                var loan_cat_id = response[i]['loan_cat_id'];
+                var loan_cat_name = response[i]['loan_cat_name'];
+                var selected = '';
+                if (loan_cat_upd != '') {
+                    for (var j = 0; j < loan_cat_upd.length; j++) {
+                        if (loan_cat_upd[j] == loan_cat_id) {
+                            selected = 'selected';
+                        }
+                    }
+                }
+                var items = [{
+                    value: loan_cat_id,
+                    label: loan_cat_name,
+                    selected: selected
+                }]
+                approvalloanCatMultiselect.setChoices(items);
+                approvalloanCatMultiselect.init();
+            }
+        }
+    })
+}
+//get Loan category Dropdown
+function getAckLoanCatDropdown() {
+    var loan_cat_upd = $('#ack_loan_cat_upd').val().split(',');
+    $.ajax({
+        url: 'manageUser/getLoanCatDropdown.php',
+        data: {},
+        dataType: 'json',
+        type: 'post',
+        cache: false,
+        success: function (response) {
+            acknowledgementloanCatMultiselect.clearStore();
+            for (var i = 0; i < response.length; i++) {
+                var loan_cat_id = response[i]['loan_cat_id'];
+                var loan_cat_name = response[i]['loan_cat_name'];
+                var selected = '';
+                if (loan_cat_upd != '') {
+                    for (var j = 0; j < loan_cat_upd.length; j++) {
+                        if (loan_cat_upd[j] == loan_cat_id) {
+                            selected = 'selected';
+                        }
+                    }
+                }
+                var items = [{
+                    value: loan_cat_id,
+                    label: loan_cat_name,
+                    selected: selected
+                }]
+                acknowledgementloanCatMultiselect.setChoices(items);
+                acknowledgementloanCatMultiselect.init();
             }
         }
     })
@@ -965,7 +1119,7 @@ function multiselectValue() {
 
     //////////////////////////////////////////////////
 
-    var loan_cat1 = loanCatMultiselect.getValue();
+    var loan_cat1 = verificationloanCatMultiselect.getValue();
     var loan_cat = '';
     for (var i = 0; i < loan_cat1.length; i++) {
         if (i > 0) {
@@ -977,10 +1131,46 @@ function multiselectValue() {
     arr.sort(function (a, b) { return a - b });
     var sortedStr = arr.join(",");
 
-    $('#loan_cat').val(sortedStr);
-    var loan_cat = $('#loan_cat').val();
+    $('#ver_loan_cat').val(sortedStr);
+    var loan_cat = $('#ver_loan_cat').val();
     var role = $('#role').val();
-    if (loan_cat == '' && role == '3') { event.preventDefault(); $('#loan_catCheck').show(); validation = false;} else { $('#loan_catCheck').hide(); }
+    if (loan_cat == '' &&  $('#verification').is(':checked')) { event.preventDefault(); $('#ver_loan_catCheck').show(); validation = false;} else { $('#ver_loan_catCheck').hide(); }
+
+    //////////////////////////////////////////////////
+    var loan_cat2 = approvalloanCatMultiselect.getValue();
+    var loan_cat = '';
+    for (var i = 0; i < loan_cat2.length; i++) {
+        if (i > 0) {
+            loan_cat += ',';
+        }
+        loan_cat += loan_cat2[i].value;
+    }
+    var arr = loan_cat.split(",");
+    arr.sort(function (a, b) { return a - b });
+    var sortedStr = arr.join(",");
+
+    $('#app_loan_cat').val(sortedStr);
+    var loan_cat = $('#app_loan_cat').val();
+    var role = $('#role').val();
+    if (loan_cat == '' &&  $('#approval').is(':checked')) { event.preventDefault(); $('#app_loan_catCheck').show(); validation = false;} else { $('#app_loan_catCheck').hide(); }
+
+    //////////////////////////////////////////////////
+    var loan_cat3 = acknowledgementloanCatMultiselect.getValue();
+    var loan_cat = '';
+    for (var i = 0; i < loan_cat3.length; i++) {
+        if (i > 0) {
+            loan_cat += ',';
+        }
+        loan_cat += loan_cat3[i].value;
+    }
+    var arr = loan_cat.split(",");
+    arr.sort(function (a, b) { return a - b });
+    var sortedStr = arr.join(",");
+
+    $('#ack_loan_cat').val(sortedStr);
+    var loan_cat = $('#ack_loan_cat').val();
+    var role = $('#role').val();
+    if (loan_cat == ''  &&  $('#acknowledgement').is(':checked')) { event.preventDefault(); $('#ack_loan_catCheck').show(); validation = false;} else { $('#ack_loan_catCheck').hide(); }
     //////////////////////////////////////////////////
 
     var line1 = lineMultiselect.getValue();
@@ -1254,9 +1444,7 @@ function getRoleBasedDetails(role) {
         $('.agent').hide();
         $('.staff').hide();
         $('.director').hide();
-        $(".loancat_div").hide();
         $('.line_div').show();
-        $('.agent_div').hide();
         $("#role_type").empty();
         $('#role_type').append(`<option value="">Select Role Type</option><option value='11'>Director</option>
         <option value='12'>Executive Director</option>`);
@@ -1264,17 +1452,13 @@ function getRoleBasedDetails(role) {
         if (role == '2') {
             $('.agent').show();
             $(".role_type").hide();
-            $(".loancat_div").hide();
             $('.line_div').hide();
-            $('.agent_div').hide();
             $('.staff').hide();
             $('.director').hide();
         } else
             if (role == '3') {
                 $(".role_type").show();
-                $(".loancat_div").show();
                 $('.line_div').show();
-                $('.agent_div').show();
                 $('.agent').hide();
                 $('.staff').hide();
                 $('.director').hide();
@@ -1285,9 +1469,7 @@ function getRoleBasedDetails(role) {
                 $('.agent').hide();
                 $('.staff').hide();
                 $('.director').hide();
-                $(".loancat_div").hide();
                 $('.line_div').hide();
-                $('.agent_div').hide();
                 $("#role_type").empty();
             }
 }

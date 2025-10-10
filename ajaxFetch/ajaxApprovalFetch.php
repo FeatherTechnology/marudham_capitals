@@ -12,9 +12,10 @@ if (isset($_SESSION["userid"])) {
 }
 if ($userid != 1) {
 
-    $userQry = $connect->query("SELECT * FROM USER WHERE user_id = $userid ");
+    $userQry = $connect->query("SELECT group_id , app_loan_cat  FROM USER WHERE user_id = $userid ");
     while ($rowuser = $userQry->fetch()) {
         $group_id = $rowuser['group_id'];
+        $app_loan_cat = $rowuser['app_loan_cat'];
     }
     $group_id = explode(',', $group_id);
     $sub_area_list = array();
@@ -72,7 +73,7 @@ if ($userid == 1) {
     JOIN branch_creation bc ON ag.branch_id = bc.branch_id
     JOIN area_line_mapping alm ON FIND_IN_SET(sa.sub_area_id, alm.sub_area_id)
     JOIN loan_category_creation lcc ON lcc.loan_category_creation_id = v.loan_category
-    WHERE v.status = 0 and v.cus_status IN(2,3,13) and v.sub_area IN ($sub_area_list) "; //show only moved to Approval list and Approve the verification.
+    WHERE v.status = 0 and v.cus_status IN(2,3,13) and v.sub_area IN ($sub_area_list) and v.loan_category IN ($app_loan_cat)"; //show only moved to Approval list and Approve the verification.
 }
 
 if (isset($_POST['search']) && $_POST['search'] != "") {
@@ -103,7 +104,6 @@ $query1 = '';
 if ($_POST['length'] != -1) {
     $query1 = 'LIMIT ' . $_POST['start'] . ', ' . $_POST['length'];
 }
-
 $statement = $connect->prepare($query);
 
 $statement->execute();
