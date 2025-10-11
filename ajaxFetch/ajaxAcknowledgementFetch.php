@@ -12,9 +12,10 @@ if (isset($_SESSION["userid"])) {
 }
 if ($userid != 1) {
 
-    $userQry = $connect->query("SELECT * FROM USER WHERE user_id = $userid ");
+    $userQry = $connect->query("SELECT group_id , ack_loan_cat FROM USER WHERE user_id = $userid ");
     while ($rowuser = $userQry->fetch()) {
         $group_id = $rowuser['group_id'];
+        $ack_loan_cat = $rowuser['ack_loan_cat'];
     }
     $group_id = explode(',', $group_id);
     $sub_area_list = array();
@@ -72,7 +73,7 @@ if ($userid == 1) {
     JOIN branch_creation bc ON ag.branch_id = bc.branch_id
     JOIN area_line_mapping alm ON FIND_IN_SET(sa.sub_area_id, alm.sub_area_id)
     JOIN loan_category_creation lcc ON lcc.loan_category_creation_id = v.loan_category
-    WHERE v.status = 0 and v.cus_status IN (3,13) and v.sub_area IN ($sub_area_list) "; //show only Approved Verification in Acknowledgement. // 13 Move to Issue. 
+    WHERE v.status = 0 and v.cus_status IN (3,13) and v.sub_area IN ($sub_area_list) AND v.loan_category IN($ack_loan_cat) "; //show only Approved Verification in Acknowledgement. // 13 Move to Issue. 
 }
 
 if (isset($_POST['search'])) {
@@ -138,12 +139,11 @@ foreach ($result as $row) {
 
     $sub_array[] = moneyFormatIndia($row['loan_amt']);
 
-    $req_id = $row['req_id'];
+    $update_login_id = $row['update_login_id'];
 
     $qry = $connect->query("SELECT u.role AS user_type, u.fullname AS user_name
-    FROM verification_loan_calculation v
-    LEFT JOIN user u ON u.user_id = v.insert_login_id
-    WHERE v.req_id = $req_id");
+    FROM user u 
+    WHERE u.user_id = $update_login_id");
 
     $row1 = $qry->fetch(PDO::FETCH_ASSOC);
 

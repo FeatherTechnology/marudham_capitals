@@ -90,8 +90,8 @@ while ($userRow = $userQry->fetch()) {
 
         // ===== Fetch Customers =====
         $custQry = $connect->query("SELECT ii.req_id, ii.loan_id, cs.sub_status, cs.bal_amnt, 
-                iv.responsible, alc.due_amt_cal, alc.due_period, alc.tot_amt_cal,
-                alc.sub_category, alc.due_start_from, alc.due_method_scheme, alc.due_method_calc, 
+                iv.responsible, alc.due_amt_cal, alc.tot_amt_cal,
+                alc.due_start_from, alc.due_method_scheme, alc.due_method_calc, 
                 alc.maturity_month as maturity_date
                 FROM in_issue ii
                 LEFT JOIN in_verification iv ON ii.req_id = iv.req_id

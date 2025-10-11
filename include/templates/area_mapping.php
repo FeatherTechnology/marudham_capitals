@@ -117,6 +117,8 @@ if ($idupd > 0) {
 				$sub_area_id      			     = $getAreaMappingLine['sub_area_id'];
 				$company_id      			 = $getAreaMappingLine['company_id'];
 				$branch_id      			 = $getAreaMappingLine['branch_id'];
+				$cus_count1      			 = $getAreaMappingLine['cus_count'];
+				$loan_count1      			 = $getAreaMappingLine['loan_count'];
 			}
 		}
 		$area_array = explode(',', $area_id);
@@ -131,6 +133,8 @@ if ($idupd > 0) {
 				$sub_area_id1      			     = $getAreaMappingGroup['sub_area_id'];
 				$company_id1     			 = $getAreaMappingGroup['company_id'];
 				$branch_id1      			 = $getAreaMappingGroup['branch_id'];
+				$cus_count2      			 = $getAreaMappingGroup['cus_count'];
+				$loan_count2      			 = $getAreaMappingGroup['loan_count'];
 			}
 		}
 		$area_array = explode(',', $area_id1);
@@ -254,12 +258,25 @@ if (isset($_GET['type'])) {
 											</select>
 										</div>
 									</div>
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+										<div class="form-group">
+											<label for="cus_count1">Customer Count</label>&nbsp;<span class="text-danger">*</span>
+											<input type="text" class="form-control" id="cus_count1" name="cus_count1" value="<?php if(isset($cus_count1)) echo $cus_count1; ?>" readonly tabindex='6'>
+										</div>
+									</div>
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+										<div class="form-group">
+											<label for="loan_count1">Loan Count</label>&nbsp;<span class="text-danger">*</span>
+											<input type="text" class="form-control" id="loan_count1" name="loan_count1" value="<?php if(isset($loan_count1)) echo $loan_count1; ?>" readonly tabindex='7'>
+										</div>
+									</div>
 
 								</div>
 							</div>
 						</div>
 						<div class="col-md-12 ">
 							<div class="text-right">
+								<button class="btn btn-primary refresh_count" tabindex="9" id="refresh_count">Refresh</button>
 								<button type="submit" name="submit_area_mapping_line" id="submit_area_mapping_line" class="btn btn-primary" value="Submit" tabindex="6"><span class="icon-check"></span>&nbsp;Submit</button>
 								<button type="reset" class="btn btn-outline-secondary" tabindex="7">Clear</button>
 							</div>
@@ -327,12 +344,25 @@ if (isset($_GET['type'])) {
 											</select>
 										</div>
 									</div>
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+										<div class="form-group">
+											<label for="cus_count2">Customer Count</label>&nbsp;<span class="text-danger">*</span>
+											<input type="text" class="form-control" id="cus_count2" name="cus_count2" value="<?php if(isset($cus_count2)) echo $cus_count2; ?>" readonly tabindex='6'>
+										</div>
+									</div>
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+										<div class="form-group">
+											<label for="loan_count2">Loan Count</label>&nbsp;<span class="text-danger">*</span>
+											<input type="text" class="form-control" id="loan_count2" name="loan_count2" value="<?php if(isset($loan_count2)) echo $loan_count2; ?>" readonly tabindex='7'>
+										</div>
+									</div>
 
 								</div>
 							</div>
 						</div>
 						<div class="col-md-12 ">
 							<div class="text-right">
+								<button class="btn btn-primary refresh_count" tabindex="9" id="refresh_count">Refresh</button>
 								<button type="submit" name="submit_area_mapping_group" id="submit_area_mapping_group" class="btn btn-primary" value="Submit" tabindex="5"><span class="icon-check"></span>&nbsp;Submit</button>
 								<button type="reset" class="btn btn-outline-secondary" tabindex="6">Clear</button>
 							</div>
@@ -439,7 +469,7 @@ if (isset($_GET['type'])) {
 						</div>
 						<div class="col-md-12 ">
 							<div class="text-right">
-								<button class="btn btn-primary" tabindex="9" id="refresh_count">Refresh</button>
+								<button class="btn btn-primary refresh_count" tabindex="9" id="refresh_count">Refresh</button>
 								<button type="submit" name="submit_area_mapping_duefollowup" id="submit_area_mapping_duefollowup" class="btn btn-primary" value="Submit" tabindex="10"><span class="icon-check"></span>&nbsp;Submit</button>
 								<button type="reset" class="btn btn-outline-secondary" tabindex="11">Clear</button>
 							</div>
