@@ -329,7 +329,7 @@ if($idupd>0)
 								<div class="row">
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                                         <div class="form-group">
-                                            <label for="disabledInput">Role</label>&nbsp;<span class="text-danger">*</span>
+                                            <label for="role">Role</label>&nbsp;<span class="text-danger">*</span>
 											<select tabindex="1" type="text" class="form-control" id="role" name="role"  >
 												<option value="">Select role</option>   
 												<option value="1" <?php if(isset($role)) if($role == '1') echo 'selected'; ?>>Director</option>   
@@ -341,14 +341,14 @@ if($idupd>0)
                                     </div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                                         <div class="form-group role_type" style="display:none">
-                                            <label for="disabledInput">Role Type</label>&nbsp;<span class="text-danger">*</span>
+                                            <label for="role_type">Role Type</label>&nbsp;<span class="text-danger">*</span>
                                             <select tabindex="2" type="text" class="form-control" id="role_type" name="role_type" >
 												<option value="">Select Role Type</option>
 											</select> 
 											<span class="text-danger" style='display:none' id='roleTypeCheck'>Please select Role Type</span>
                                         </div>
                                         <div class="form-group agent" style="display:none">
-                                            <label for="disabledInput">Agent Name</label>&nbsp;<span class="text-danger">*</span>
+                                            <label for="ag_name">Agent Name</label>&nbsp;<span class="text-danger">*</span>
                                             <select tabindex="2" type="text" class="form-control" id="ag_name" name="ag_name" >
 												<option value="">Select Agent Name</option>
 												<?php if (sizeof($agentNameList)>0) { 
@@ -362,14 +362,14 @@ if($idupd>0)
                                     </div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12" >
                                         <div class="form-group director" style="display:none">
-                                            <label for="disabledInput">Director Name</label>&nbsp;<span class="text-danger">*</span>
+                                            <label for="dir_name">Director Name</label>&nbsp;<span class="text-danger">*</span>
                                             <select tabindex="3" type="text" class="form-control" id="dir_name" name="dir_name" >
 												<option value="">Select Director Name</option>
 											</select> 
 											<span class="text-danger" style='display:none' id='dirnameCheck'>Please select Director Name</span>
                                         </div>
 										<div class="form-group staff" style="display:none">
-                                            <label for="disabledInput">Staff Name</label>&nbsp;<span class="text-danger">*</span>
+                                            <label for="staff_name">Staff Name</label>&nbsp;<span class="text-danger">*</span>
                                             <select tabindex="3" type="text" class="form-control" id="staff_name" name="staff_name" >
 												<option value="">Select Staff Name</option>
 											</select> 
@@ -444,21 +444,21 @@ if($idupd>0)
 								<div class="row">
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                                         <div class="form-group">
-                                            <label for="disabledInput">User ID</label>&nbsp;<span class="text-danger">*</span>
+                                            <label for="user_id">User ID</label>&nbsp;<span class="text-danger">*</span>
 											<input type='text' class='form-control' id='user_id' name='user_id' placeholder="Enter User ID" tabindex='4' value='<?php if(isset($user_name)) echo $user_name; ?>'>
 											<span class="text-danger" style='display:none' id='usernameCheck'>Please Enter UserID</span>
                                         </div>
                                     </div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                                         <div class="form-group">
-                                            <label for="disabledInput">Password</label>&nbsp;<span class="text-danger">*</span>
+                                            <label for="password">Password</label>&nbsp;<span class="text-danger">*</span>
 											<input type='text' class='form-control' id='password' name='password' placeholder="Enter Password" tabindex='5' value='<?php if(isset($password)) echo $password; ?>'>
 											<span class="text-danger" style='display:none' id='passCheck'>Please Enter Password</span>
                                         </div>
                                     </div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                                         <div class="form-group">
-                                            <label for="disabledInput">Confirm Password</label>&nbsp;<span class="text-danger">*</span>
+                                            <label for="cnf_password">Confirm Password</label>&nbsp;<span class="text-danger">*</span>
 											<input type='text' class='form-control' id='cnf_password' name='cnf_password' placeholder="Confirm Password" tabindex='6' value='<?php if(isset($password)) echo $password; ?>'>
 											<span class="text-danger" style='display:none' id='cnfpassCheck'>Please Enter Confirm Password</span><br>
                                             <span class="text-danger" style='display:none' id='passworkCheck'>Password not matching!</span>
@@ -480,14 +480,14 @@ if($idupd>0)
 								<div class="row">
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                                         <div class="form-group">
-                                            <label for="disabledInput">Company Name</label>&nbsp;<span class="text-danger">*</span>
+                                            <label for="company_name">Company Name</label>&nbsp;<span class="text-danger">*</span>
 											<input type='hidden' class='form-control' id='company_id' name='company_id' >
 											<input type='text' class='form-control' id='company_name' name='company_name' tabindex='7' readonly>
                                         </div>
                                     </div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                                         <div class="form-group">
-                                            <label for="disabledInput">Branch Name</label>&nbsp;<span class="text-danger">*</span>
+                                            <label for="branch_id1">Branch Name</label>&nbsp;<span class="text-danger">*</span>
 											<input type='hidden' class='form-control' id='branch_id' name='branch_id' value="<?php if(isset($branch_id)){echo $branch_id;}?>">
                                             <select tabindex="8" type="text" class="form-control" id="branch_id1" name="branch_id1" multiple>
 												<option value="">Select Branch Name</option>
@@ -498,7 +498,7 @@ if($idupd>0)
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12"></div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                                         <div class="form-group">
-                                            <label for="disabledInput">Group Name</label>&nbsp;<span class="text-danger">*</span>
+                                            <label for="group1">Group Name</label>&nbsp;<span class="text-danger">*</span>
 											<input type='hidden' class='form-control' id='group' name='group' >
 											<select tabindex="9" type="text" class="form-control" id="group1" name="group1" multiple>
 												<option value="">Select Group Name</option>
@@ -508,7 +508,7 @@ if($idupd>0)
                                     </div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 line_div">
                                         <div class="form-group">
-                                            <label for="disabledInput">Line Name</label>&nbsp;<span class="text-danger">*</span>
+                                            <label for="line1">Line Name</label>&nbsp;<span class="text-danger">*</span>
 											<input type='hidden' class='form-control' id='line' name='line' >
 											<select tabindex="10" type="text" class="form-control" id="line1" name="line1" multiple>
 												<option value="">Select Line Name</option>
@@ -528,7 +528,7 @@ if($idupd>0)
                                     </div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                                         <div class="form-group">
-                                            <label for="pro_aty_map_access_id">Promotion Activity Mapping Access</label>&nbsp;<span class="text-danger">*</span>
+                                            <label for="promotion_activity_mapping_access">Promotion Activity Mapping Access</label>&nbsp;<span class="text-danger">*</span>
 											<select tabindex="12" type="text" class="form-control" id="promotion_activity_mapping_access" name="promotion_activity_mapping_access">
 												<option value="">Select Promotion Mapping Activity</option>
 												<option value="1" <?php if($promotion_activity_mapping_access == '1') echo 'selected';?> >Group</option>
@@ -541,7 +541,7 @@ if($idupd>0)
                                     </div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
-											<label class="custom-control-label" for="report_access">Report Access</label>
+											<label for="report_access">Report Access</label>
 											<select class="form-control" name="report_access" id="report_access" tabindex="13">
 												<option value="">Select Report Access</option>
 												<option value="1" <?php if($report_access == '1') echo 'selected';?> >Individual</option>
@@ -556,9 +556,9 @@ if($idupd>0)
 											<br>
 												<label>Download Access</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 												<input class="form-check-input" type="radio" name="download_access" id="da_yes" value="0" <?php if($idupd > 0){ if($download_access==0){ echo'checked'; }} ?>>
-													<label class="form-check-label" for="download_access1">Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+													<label for="download_access">Yes</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 												<input class="form-check-input" type="radio" name="download_access" id="da_no" value="1" <?php if($idupd > 0){ if($download_access==1){ echo'checked'; }}?> >
-													<label class="form-check-label" for="download_access2">No</label>
+													<label for="download_access">No</label>
                                         </div>
                                     </div>									
 								</div>
@@ -690,8 +690,8 @@ if($idupd>0)
                         </div>
 					<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 agent_div" style="display: none">
                         <div class="form-group">
-                            <label for="disabledInput">Agent Name</label>
-							<input type='hidden' class='form-control' id='agentforstaff' name='agentforstaff' value="<?php if(isset($agentforstaff)){echo $agentforstaff;}?>">
+                            <label for="agent1">Agent Name</label>
+							<input type='hidden' class='form-control' id="agentforstaff" name="agentforstaff" value="<?php if(isset($agentforstaff)){echo $agentforstaff;}?>">
 							<select  tabindex="9" type="text" class="form-control" id="agent1" name="agent1" multiple >
 								<option value="">Select Agent Name</option>
 							</select>
@@ -724,7 +724,7 @@ if($idupd>0)
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 ver_loancat_div" style='display:none;'>
                             <div class="form-group">
-								<label for="disabledInput">Verification Loan Category</label>&nbsp;<span class="text-danger">*</span>
+								<label for="loan_cat1">Verification Loan Category</label>&nbsp;<span class="text-danger">*</span>
 								<input type='hidden' class='form-control' id='ver_loan_cat' name='ver_loan_cat' >
 								<select tabindex="32" type="text" class="form-control" id="loan_cat1" name="loan_cat1" multiple>
 									<option value="">Select Loan Category</option>
@@ -752,8 +752,8 @@ if($idupd>0)
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 app_loancat_div" style='display:none;'>
                             <div class="form-group">
-								<label for="disabledInput">Approval Loan Category</label>&nbsp;<span class="text-danger">*</span>
-								<input type='hidden' class='form-control' id='app_loan_cat' name='app_loan_cat' >
+								<label for="loan_cat2">Approval Loan Category</label>&nbsp;<span class="text-danger">*</span>
+								<input type='hidden' class='form-control' id="app_loan_cat" name="app_loan_cat" >
 								<select tabindex="9" type="text" class="form-control" id="loan_cat2" name="loan_cat2" multiple>
 									<option value="">Select Loan Category</option>
 								</select>
@@ -780,7 +780,7 @@ if($idupd>0)
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 ack_loancat_div" style='display:none;'>
                             <div class="form-group">
-								<label for="disabledInput"> Acknowledgement Loan Category</label>&nbsp;<span class="text-danger">*</span>
+								<label for="loan_cat3"> Acknowledgement Loan Category</label>&nbsp;<span class="text-danger">*</span>
 								<input type='hidden' class='form-control' id='ack_loan_cat' name='ack_loan_cat' >
 								<select tabindex="9" type="text" class="form-control" id="loan_cat3" name="loan_cat3" multiple>
 									<option value="">Select Loan Category</option>
