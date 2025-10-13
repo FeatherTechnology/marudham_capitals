@@ -55,17 +55,12 @@ foreach ($result as $row) {
     $sub_array[] = $sno;
     $sub_array[] = $row["area_name"];
 
-    $sub_area_id = explode(',', $row['sub_area']);
-    $sub_area_name = '';
-    foreach ($sub_area_id as $id) {
-        $getsubareaQry = "SELECT * from sub_area_list_creation where sub_area_id = '" . $id . "' and status = 0 ";
-        $res = $connect->query($getsubareaQry);
-        $row1 = $res->fetch();
-        $sub_area_name .= $row1["sub_area_name"] . ', ';
-    }
-    $sub_area_name = rtrim($sub_area_name, ' , '); // will remove the last comma from string
+    $sub_area_id = rtrim($row['sub_area'], ' , ') ?? '';
+    $getsubareaQry = "SELECT GROUP_CONCAT(sub_area_name) AS sub_area_name from sub_area_list_creation where sub_area_id IN ($sub_area_id) and status = 0 ";
+    $res = $connect->query($getsubareaQry);
+    $row1 = $res->fetch();
 
-    $sub_array[] = $sub_area_name;
+    $sub_array[] = $row1["sub_area_name"] ?? '';
     $sub_array[] = $row['taluk'];
     $sub_array[] = $row['district'];
     $sub_array[] = $row['state'];

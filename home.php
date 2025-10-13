@@ -521,6 +521,11 @@ if (isset($getuserdetails['download_access'])) {
 			<?php if ($current_page == 'uncleared_report') { ?>
 				<?php include "include/templates/uncleared_report.php" ?>
 			<?php } else ?>
+
+			<!-- User Tracking report -->
+			<?php if ($current_page == 'user_tracking_report') { ?>
+				<?php include "include/templates/user_tracking_report.php" ?>
+			<?php } else ?>
 			
 			<!-- Intrest Ledger Report -->
 			<?php if ($current_page == 'intrest_ledger_report') { ?>

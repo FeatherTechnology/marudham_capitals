@@ -400,7 +400,15 @@ function getNOCDocDetails($connect, $req_id, $cus_id)
             }
         ],
     });
+    
+    // 1️⃣ Run once immediately after initialization
     customerStatusOnClickEvents();
+
+    // 2️⃣ Also re-run whenever DataTable redraws (pagination, search, etc.)
+    $('#custStatusTable').on('draw.dt', function () {
+        customerStatusOnClickEvents();
+    });
+
 </script>
 
 <?php
