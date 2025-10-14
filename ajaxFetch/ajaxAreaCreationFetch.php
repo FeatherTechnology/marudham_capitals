@@ -14,7 +14,8 @@ $column = array(
     'ac.district',
     'ac.state',
     'ac.pincode',
-    'ac.status'
+    'ac.area_creation_id',
+    // 'ac.status'
 );
 
 $query = "SELECT ac.*,alc.area_name FROM area_creation ac 
@@ -65,17 +66,16 @@ foreach ($result as $row) {
     $sub_array[] = $row['district'];
     $sub_array[] = $row['state'];
     $sub_array[] = $row['pincode'];
-    $status      = $row['status'];
-    if ($status == 1) {
-        $sub_array[] = "<span style='width: 144px;'><span class='kt-badge  kt-badge--danger kt-badge--inline kt-badge--pill'>Inactive</span></span>";
-    } else {
-        $sub_array[] = "<span style='width: 144px;'><span class='kt-badge  kt-badge--success kt-badge--inline kt-badge--pill'>Active</span></span>";
-    }
+    // $status      = $row['status'];
+    // if ($status == 1) {
+    //     $sub_array[] = "<span style='width: 144px;'><span class='kt-badge  kt-badge--danger kt-badge--inline kt-badge--pill'>Inactive</span></span>";
+    // } else {
+    //     $sub_array[] = "<span style='width: 144px;'><span class='kt-badge  kt-badge--success kt-badge--inline kt-badge--pill'>Active</span></span>";
+    // }
     $id   = $row['area_creation_id'];
 
-    $action = "<a href='area_creation&upd=$id' title='Edit details'><span class='icon-border_color'></span></a>&nbsp;&nbsp; 
-	<a href='area_creation&del=$id' title='Delete details' class='delete_area'><span class='icon-trash-2'></span></a>";
-
+    $action = "<a href='area_creation&upd=$id' title='Edit details'><span class='icon-border_color'></span></a>&nbsp;&nbsp;</a>";
+// <a href='area_creation&del=$id' title='Delete details' class='delete_area'><span class='icon-trash-2'></span>
     $sub_array[] = $action;
     $data[]      = $sub_array;
     $sno = $sno + 1;

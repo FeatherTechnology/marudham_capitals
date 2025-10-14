@@ -1,4 +1,5 @@
 <!-- Page header start -->
+ <!-- Area Creation Table -  Remove Active/Inactive Status ,it is not used anywhere. -->
 <br><br>
 <div class="page-header">
 	<div style="background-color:#009688; width:100%; padding:12px; color: #ffff; font-size: 20px; border-radius:5px;">
@@ -38,12 +39,12 @@
 							</div>
 						<?php
 						}
-						if ($mscid == 3) { ?>
+						/*if ($mscid == 3) { ?>
 							<div class="alert alert-danger" role="alert">
 								<div class="alert-text">Area Creation Inactive Successfully!</div>
 							</div>
 					<?php
-						}
+						}*/
 					}
 					?>
 					<table id="area_creation_info" class="table custom-table">
@@ -57,7 +58,7 @@
 								<th>State</th>
 								<th>Pincode</th>
 								<!-- <th width="100px">Enabled / Disabled</th> -->
-								<th>Status</th>
+								<!-- <th>Status</th>-->
 								<th>Action</th>
 							</tr>
 						</thead>
