@@ -1470,14 +1470,14 @@
             }
         });
         // Area Creation delete
-        $(document).on("click", '.delete_area', function() {
-            var dlt = confirm("Do you want to delete this Area ?");
-            if (dlt) {
-                return true;
-            } else {
-                return false;
-            }
-        });
+        // $(document).on("click", '.delete_area', function() {
+        //     var dlt = confirm("Do you want to delete this Area ?");
+        //     if (dlt) {
+        //         return true;
+        //     } else {
+        //         return false;
+        //     }
+        // });
         // Loan Scheme delete
         $(document).on("click", '.delete_loan_scheme', function() {
             var dlt = confirm("Do you want to delete this Scheme ?");

@@ -934,11 +934,11 @@ class admin
 	}
 
 	//  Delete Area Creation
-	public function deleteAreaCreation($mysqli, $id, $userid)
-	{
-		$branchDelete = "UPDATE area_creation set status='1', delete_login_id='" . strip_tags($userid) . "' WHERE area_creation_id = '" . strip_tags($id) . "' ";
-		$runQry = $mysqli->query($branchDelete) or die("Error in delete query" . $mysqli->error);
-	}
+	// public function deleteAreaCreation($mysqli, $id, $userid)
+	// {
+	// 	$branchDelete = "UPDATE area_creation set status='1', delete_login_id='" . strip_tags($userid) . "' WHERE area_creation_id = '" . strip_tags($id) . "' ";
+	// 	$runQry = $mysqli->query($branchDelete) or die("Error in delete query" . $mysqli->error);
+	// }
 
 	// Get Loan caltegory list for loan calculation
 	public function getloanCategoryList($mysqli)

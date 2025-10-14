@@ -26,11 +26,12 @@ if (isset($_POST['submit_area_creation']) && $_POST['submit_area_creation'] != '
 	}
 }
 
-$del = 0;
+// $del = 0;
 $costcenter = 0;
-if (isset($_GET['del'])) {
-	$del = $_GET['del'];
-}
+// if (isset($_GET['del'])) {
+// 	$del = $_GET['del'];
+// }
+/*
 if ($del > 0) {
 	$userObj->deleteAreaCreation($mysqli, $del, $userid);
 	?>
@@ -38,7 +39,7 @@ if ($del > 0) {
 		location.href = '<?php echo $HOSTPATH;  ?>edit_area_creation&msc=3';
 	</script>
 <?php
-}
+}*/
 
 if (isset($_GET['upd'])) {
 	$idupd = $_GET['upd'];
