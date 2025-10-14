@@ -336,6 +336,14 @@ $(document).ready(function () {
         }
     });
 
+    $('#verificationmodule').click(function () {
+        var verification_screen = document.querySelector('#verificationmodule');
+        if (!verification_screen.checked) {
+            verificationloanCatMultiselect.clearStore();
+            $('.ver_loancat_div').hide();
+        }
+    });
+
     $('#verification').click(function () {
         var verification_screen = document.querySelector('#verification');
         if (verification_screen.checked) {
@@ -347,6 +355,14 @@ $(document).ready(function () {
         }
     });
 
+    $('#approvalmodule').click(function () {
+        var approval_screen = document.querySelector('#approvalmodule');
+        if (!approval_screen.checked) {
+            approvalloanCatMultiselect.clearStore();
+            $('.app_loancat_div').hide();
+        }
+    });
+
     $('#approval').click(function () {
         var approval_screen = document.querySelector('#approval');
         if (approval_screen.checked) {
@@ -355,6 +371,14 @@ $(document).ready(function () {
         } else {
             approvalloanCatMultiselect.clearStore();
             $('.app_loancat_div').hide();
+        }
+    });
+
+    $('#acknowledgementmodule').click(function () {
+        var acknowledgement_screen = document.querySelector('#acknowledgementmodule');
+        if (!acknowledgement_screen.checked) {
+            acknowledgementloanCatMultiselect.clearStore();
+            $('.ack_loancat_div').hide();
         }
     });
 
@@ -378,19 +402,31 @@ $(document).ready(function () {
         }
     });
 
-    $('#submit_manage_user').click(function (event) {
+	$('#submit_manage_user').click(function (event) {
+		event.preventDefault(); // Stop default submit; we'll submit programmatically after validation
 
-        if(multiselectValue(event) && validation(event)){
-            let confirmAction = confirm("Are you sure you want to submit Manage user ?");
-            if (!confirmAction) {
-                event.preventDefault(); // Stop form submission if canceled
-                return false;
-            }
-        }else{
-            event.preventDefault();
-            return false;
-        }
-    });
+		if (validation()) {
+			let confirmAction = confirm("Are you sure you want to submit Manage user ?");
+			if (confirmAction) {
+				// Ensure the submit button name/value is posted so PHP sees $_POST['submit_manage_user']
+				if (!document.querySelector('input[name="submit_manage_user"]')) {
+					const hiddenSubmit = document.createElement('input');
+					hiddenSubmit.type = 'hidden';
+					hiddenSubmit.name = 'submit_manage_user';
+					hiddenSubmit.value = 'Submit';
+					document.getElementById('manage_user_form').appendChild(hiddenSubmit);
+				}
+
+				const formEl = document.getElementById('manage_user_form');
+				const submitBtn = document.getElementById('submit_manage_user');
+				if (formEl.requestSubmit) {
+					formEl.requestSubmit(submitBtn);
+				} else {
+					formEl.submit();
+				}
+			}
+		}
+	});
 });
 
 
@@ -781,7 +817,7 @@ function getAgentDropdown(company_id) {
 
 //get Loan category Dropdown
 function getLoanCatDropdown(updId, multipleSelectID) {
-    var loan_cat_upd = $(updId).val().split(',');
+    var loan_cat_upd = $(updId).val().split(',').map(s => s.trim());
     $.ajax({
         url: 'manageUser/getLoanCatDropdown.php',
         data: {},
@@ -793,7 +829,7 @@ function getLoanCatDropdown(updId, multipleSelectID) {
             const items = response.map(item => ({
                 value: item.loan_cat_id,
                 label: item.loan_cat_name,
-                selected: loan_cat_upd.includes(item.loan_cat_id)
+                selected: loan_cat_upd.includes(String(item.loan_cat_id))
             }));
             multipleSelectID.setChoices(items, 'value', 'label', true);
         }
@@ -989,16 +1025,27 @@ function checkbox(checkboxesToEnable, module) {
 }
 
 // for taking selected values from multiselect to hidden input field. so that it can be passed as comma imploded string
-function multiselectValue(event) {
+function multipleSelectSort(instanceId, storeId){
+    const screenList = instanceId.getValue();
+    const screenSortedStr = screenList
+        .map(item => (item && item.value !== undefined ? String(item.value) : ''))
+        .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+        .join(',');
 
+    $(storeId).val(screenSortedStr); 
+    
+    return screenSortedStr ? screenSortedStr.split(',').length : 0;
+}
+
+function validation() {
+    var role = $('#role').val();
     var validation = true;
 
     multipleSelectSort(branchMultiselect, '#branch_id');
     multipleSelectSort(agentMultiselect, '#agentforstaff');
 
     let groupSort = multipleSelectSort(groupMultiselect, '#group');
-    if (groupSort == 0) { 
-        event.preventDefault(); 
+    if (groupSort == 0) {  
         $('#groupCheck').show();
         validation = false; 
     } else { 
@@ -1007,8 +1054,7 @@ function multiselectValue(event) {
 
     let lineSort = multipleSelectSort(lineMultiselect, '#line');
     var role = $('#role').val();
-    if (lineSort == 0 && role != '2') { 
-        event.preventDefault(); 
+    if (lineSort == 0 && role != '2') {  
         $('#lineCheck').show(); 
         validation = false;
     } else { 
@@ -1018,8 +1064,7 @@ function multiselectValue(event) {
     let varLoanCatchecked = $('#verification').is(':checked');
     if(varLoanCatchecked){
         let varLoanCat = multipleSelectSort(verificationloanCatMultiselect, '#ver_loan_cat');
-        if (varLoanCat == 0) { 
-            event.preventDefault(); 
+        if (varLoanCat == 0) {  
             $('#ver_loan_catCheck').show(); 
             validation = false;
         } else { 
@@ -1030,8 +1075,7 @@ function multiselectValue(event) {
     let appLoanCatchecked = $('#approval').is(':checked');
     if(appLoanCatchecked){
         let appLoanCat = multipleSelectSort(approvalloanCatMultiselect, '#app_loan_cat');
-        if (appLoanCat == 0) { 
-            event.preventDefault(); 
+        if (appLoanCat == 0) {  
             $('#app_loan_catCheck').show(); 
             validation = false;
         } else { 
@@ -1042,8 +1086,7 @@ function multiselectValue(event) {
     let ackLoanCatchecked = $('#acknowledgement').is(':checked');
     if(ackLoanCatchecked){
         let ackLoanCat = multipleSelectSort(acknowledgementloanCatMultiselect, '#ack_loan_cat');
-        if (ackLoanCat == 0) { 
-            event.preventDefault(); 
+        if (ackLoanCat == 0) {  
             $('#ack_loan_catCheck').show(); 
             validation = false;
         } else { 
@@ -1054,8 +1097,7 @@ function multiselectValue(event) {
     var isPromotionChecked = $('#promotion_activity').is(':checked');
     if(isPromotionChecked){
         let proAtyAccessIdSort = multipleSelectSort(promotionAccess, '#pro_aty_access_id');
-        if (proAtyAccessIdSort == 0) { 
-            event.preventDefault(); 
+        if (proAtyAccessIdSort == 0) {  
             $('#proCheck').show();
             validation = false; 
         } else { 
@@ -1065,37 +1107,18 @@ function multiselectValue(event) {
 
     let dueFollowupChecked = $('#due_followup').is(':checked');
     let dueFollowupIdSort = multipleSelectSort(dueFollowupLines, '#due_follup_line_id');
-    if (dueFollowupChecked && dueFollowupIdSort == 0) { //Checkbox checked but no lines selected
-        event.preventDefault(); 
+    if (dueFollowupChecked && dueFollowupIdSort == 0) { //Checkbox checked but no lines selected 
         $('.duefollowupCheck').show();
         $('.dueFollowupCheck').hide(); 
         validation = false; 
         
-    } else if(!dueFollowupChecked && dueFollowupIdSort > 0){ //Lines selected but checkbox not checked
-        event.preventDefault(); 
+    } else if(!dueFollowupChecked && dueFollowupIdSort > 0){ //Lines selected but checkbox not checked 
         $('.dueFollowupCheck').show();
         $('.duefollowupCheck').hide(); 
         validation = false; 
-    }  
+    } 
 
-    return validation;
-}
 
-function multipleSelectSort(instanceId, storeId){
-    const screenList = instanceId.getValue();
-    const screenSortedStr = screenList
-        .map(item => item.value)
-        .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
-        .join(',');
-
-    $(storeId).val(screenSortedStr); 
-    
-    return screenSortedStr ? screenSortedStr.split(',').length : 0;
-}
-
-function validation(event) {
-    var role = $('#role').val();
-    var validation = true;
     if (role == '1') {
         $('#roleCheck').hide();
         var role_type = $('#role_type').val();
@@ -1104,21 +1127,20 @@ function validation(event) {
             var dir_name = $('#dir_name').val();
             if (dir_name == '') {
                 $('#dirnameCheck').show();
-                event.preventDefault();
-                validation = false ;
+                validation = false;
             } else {
                 $('#dirnameCheck').hide();
             }
         } else {
             $('#roleTypeCheck').show();
+            validation = false;
         }
     } else if (role == '2') {
         $('#roleCheck').hide();
         var ag_name = $('#ag_name').val();
         if (ag_name == '') {
             $('#agnameCheck').show();
-            event.preventDefault();
-            validation = false ;
+            validation = false;
         } else {
             $('#agnameCheck').hide();
         }
@@ -1130,23 +1152,23 @@ function validation(event) {
             var staff_name = $('#staff_name').val();
             if (staff_name == '') {
                 $('#staffnameCheck').show();
-                event.preventDefault();
-                validation = false ;
+                validation = false;
             } else {
                 $('#staffnameCheck').hide();
             }
         } else {
             $('#roleTypeCheck').show();
+            validation = false;
         }
     } else {
         $('#roleCheck').show();
+        validation = false;
     }
 
     var user_id = $('#user_id').val();
     if (user_id == '') {
         $('#usernameCheck').show();
-        event.preventDefault();
-        validation = false ;
+        validation = false;
     } else {
         $('#usernameCheck').hide();
     }
@@ -1154,8 +1176,7 @@ function validation(event) {
     var pass = $('#password').val();
     if (pass == '') {
         $('#passCheck').show();
-        event.preventDefault();
-        validation = false ;
+        validation = false;
     } else {
         $('#passCheck').hide();
     }
@@ -1163,23 +1184,22 @@ function validation(event) {
     var cnf_pass = $('#cnf_password').val();
     if (cnf_pass == '') {
         $('#cnfpassCheck').show();
-        event.preventDefault();
-        validation = false ;
+        validation = false;
     } else {
         $('#cnfpassCheck').hide();
     }
 
     if (pass != cnf_pass) {
         $('#passworkCheck').show();
-        event.preventDefault();
-        validation = false ;
-    } else { $('#passworkCheck').hide(); }
+        validation = false;
+    } else { 
+        $('#passworkCheck').hide(); 
+    }
 
     var branch_id = $('#branch_id').val();
     if (branch_id == '') {
         $('#BranchCheck').show();
-        event.preventDefault();
-        validation = false ;
+        validation = false;
     } else {
         $('#BranchCheck').hide();
     }
@@ -1195,10 +1215,9 @@ function validation(event) {
         $('#update_screen_id').val('')
     } else{
          if(update_screen.length == 0){
-            event.preventDefault();
             $('.update_screen_div').show();
             $('.updateScreenCheck').show();
-            validation = false ;
+            validation = false;
         }else{
             $('.updateScreenCheck').hide();
         }
@@ -1208,12 +1227,10 @@ function validation(event) {
     var reportmodule = document.querySelector('#reportmodule');
     var report_access = $('#report_access').val();
 
-    var hasError = false;
-
     // Case 1: Checkbox checked but dropdown empty
     if (reportmodule.checked && report_access == '') {
         $('#reportAccessCheck').show();
-        hasError = true;
+        validation = false;
     } else {
         $('#reportAccessCheck').hide();
     }
@@ -1221,27 +1238,19 @@ function validation(event) {
     // Case 2: Dropdown has value but checkbox not checked
     if (!reportmodule.checked && report_access != '') {
         $('.reportCheck').show();
-        hasError = true;
+        validation = false;
     } else {
         $('.reportCheck').hide();
     }
 
-    if (hasError) {
-        event.preventDefault();
-        validation = false ;
-    }
-
     // validtaion for promotion activity
-
     var promotion_activity = document.querySelector('#promotion_activity');
     var promotion_activity_mapping_access = $('#promotion_activity_mapping_access').val();
-
-    var hasError = false;
 
     // Case 1: Checkbox checked but dropdown empty
     if (promotion_activity.checked && promotion_activity_mapping_access == '') {
         $('#proMapCheck').show();
-        hasError = true;
+        validation = false;
     } else {
         $('#proMapCheck').hide();
     }
@@ -1249,17 +1258,12 @@ function validation(event) {
     // Case 2: Dropdown has value but checkbox not checked
     if (!promotion_activity.checked && promotion_activity_mapping_access != '') {
         $('.promotionActivityCheck').show();
-        hasError = true;
+        validation = false;
     } else {
         $('.promotionActivityCheck').hide();
     }
 
-    if (hasError) {
-        event.preventDefault();
-        validation = false ;
-    }
-
-return validation ;
+return validation;
 }
 
 //Edit Screen Functionalities
