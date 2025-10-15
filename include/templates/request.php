@@ -608,7 +608,7 @@ if ($idupd > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 advance_yes" style="display:none">
 						<div class="form-group">
 							<label for="tot_value">Total value</label><span class="required">&nbsp;*</span>
-							<input type="number" class="form-control" id="tot_value" name="tot_value" value='<?php if (isset($tot_value)) {
+							<input type="text" class="form-control" id="tot_value" name="tot_value" value='<?php if (isset($tot_value)) {
 																													echo moneyFormatIndia($tot_value);
 																												} ?>' tabindex='33' placeholder="Enter Total Value">
 						</div>
@@ -617,7 +617,7 @@ if ($idupd > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 advance_yes" style="display:none">
 						<div class="form-group">
 							<label for="ad_amt">Advance Amount</label><span class="required">&nbsp;*</span>
-							<input type="number" class="form-control" id="ad_amt" name="ad_amt" value='<?php if (isset($ad_amt)) {
+							<input type="text" class="form-control" id="ad_amt" name="ad_amt" value='<?php if (isset($ad_amt)) {
 																											echo moneyFormatIndia($ad_amt);
 																										} ?>' tabindex='34' placeholder="Enter Advance Amount">
 							<span class="text-danger" style='display:none' id='adamtCheck'>Please Enter Advance Amount</span>

@@ -13,16 +13,17 @@ function setNOCButton() {
                 success: function (response) {
                     if (response.includes('Moved')) {
                         Swal.fire({
-                            timerProgressBar: true,
-                            timer: 2000,
                             title: response,
                             icon: 'success',
                             showConfirmButton: true,
-                            confirmButtonColor: '#009688'
+                            confirmButtonColor: '#009688',
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            // Redirect only if OK is clicked
+                            if (result.isConfirmed) {
+                                window.location = 'edit_closed';
+                            }
                         });
-                        setTimeout(function () {
-                            window.location = 'edit_closed';
-                        }, 2000)
                     }
                 }
             })

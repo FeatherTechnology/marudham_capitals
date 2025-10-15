@@ -685,6 +685,11 @@ $(document).ready(function () {
         closeFamModal(gurantor_id,gu_pic)
        
     });
+    
+  $('#cus_monthly_income ,#cus_Commitment ,#cus_other_income ,#cus_support_income ,#cus_monDue_capacity , #cus_loan_limit').on('input', function () {
+        let value = $(this).val();
+        $(this).val(formatIndianNumber(value));
+    });
 
     /* ********************************************** Document info END ********************************************** */
 
@@ -2197,7 +2202,7 @@ function getGroupandLine(sub_area_id) {
 }
 
 $('#cus_loan_limit').change(function () { /// Loan Limit will Check the Loan Amount in Request Loan Category./////
-    let loanLimit = parseInt($(this).val());
+    let loanLimit = parseInt($(this).val().replace(/,/g, ''));
     let loanSubCat = $('#loan_sub_cat').val();
 
     $.ajax({

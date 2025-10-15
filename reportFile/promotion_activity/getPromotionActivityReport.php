@@ -37,7 +37,7 @@ $column = array(
     'np.follow_date',
     'u.role',
     'u.fullname',
-    'cp.id'
+    'np.id'
 );
 
 $query = "SELECT 

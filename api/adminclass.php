@@ -2655,18 +2655,18 @@ class admin
 		}
 		if (isset($_POST['acknowledgementmodule']) &&    $_POST['acknowledgementmodule'] == 'Yes') {
 			$acknowledgementmodule = 0;
-			if (isset($_POST['ack_loan_cat'])) {
-				$ack_loan_cat = $_POST['ack_loan_cat'];
-			}
 		} else {
 			$acknowledgementmodule = 1;
-			$ack_loan_cat = '';
 
 		}
 		if (isset($_POST['acknowledgement']) &&    $_POST['acknowledgement'] == 'Yes') {
 			$acknowledgement = 0;
+			if (isset($_POST['ack_loan_cat'])) {
+				$ack_loan_cat = $_POST['ack_loan_cat'];
+			}
 		} else {
 			$acknowledgement = 1;
+			$ack_loan_cat = '';
 		}
 		if (isset($_POST['loanissuemodule']) &&    $_POST['loanissuemodule'] == 'Yes') {
 			$loanissuemodule = 0;
@@ -3202,18 +3202,18 @@ class admin
 		}
 		if (isset($_POST['acknowledgementmodule']) &&    $_POST['acknowledgementmodule'] == 'Yes') {
 			$acknowledgementmodule = 0;
-			if (isset($_POST['ack_loan_cat'])) {
-				$ack_loan_cat = $_POST['ack_loan_cat'];
-			}
 		} else {
 			$acknowledgementmodule = 1;
-			$ack_loan_cat = '';
 
 		}
 		if (isset($_POST['acknowledgement']) &&    $_POST['acknowledgement'] == 'Yes') {
 			$acknowledgement = 0;
+			if (isset($_POST['ack_loan_cat'])) {
+				$ack_loan_cat = $_POST['ack_loan_cat'];
+			}
 		} else {
 			$acknowledgement = 1;
+			$ack_loan_cat = '';
 		}
 		if (isset($_POST['loanissuemodule']) &&    $_POST['loanissuemodule'] == 'Yes') {
 			$loanissuemodule = 0;
@@ -5931,15 +5931,15 @@ class admin
 		$agent_id           = sanitize($mysqli, $_POST['agent_id'] ?? '');
 		$issued_mode        = sanitize($mysqli, $_POST['issued_mode'] ?? '');
 		$payment_type       = sanitize($mysqli, $_POST['payment_type'] ?? '');
-		$cash               = sanitize($mysqli, $_POST['cash'] ?? '');
+		$cash               = sanitize($mysqli, preg_replace('/[,\s]+/', '', $_POST['cash'] ?? ''));
 		$bank_id            = sanitize($mysqli, $_POST['bank_id'] ?? '');
 		$chequeno           = sanitize($mysqli, $_POST['chequeno'] ?? '');
-		$chequeValue        = sanitize($mysqli, $_POST['chequeValue'] ?? '');
+		$chequeValue        = sanitize($mysqli, preg_replace('/[,\s]+/', '', $_POST['chequeValue'] ?? ''));
 		$chequeRemark       = sanitize($mysqli, $_POST['chequeRemark'] ?? '');
 		$transaction_id     = sanitize($mysqli, $_POST['transaction_id'] ?? '');
-		$transaction_value  = sanitize($mysqli, $_POST['transaction_value'] ?? '');
+		$transaction_value  = sanitize($mysqli, preg_replace('/[,\s]+/', '',$_POST['transaction_value'] ?? ''));
 		$transaction_remark = sanitize($mysqli, $_POST['transaction_remark'] ?? '');
-		$balance            = sanitize($mysqli, $_POST['balance'] ?? '');
+		$balance            = sanitize($mysqli, preg_replace('/[,\s]+/', '', $_POST['balance'] ?? ''));
 		$cash_guarentor_name = sanitize($mysqli, $_POST['cash_guarentor_name'] ?? '');
 		$relationship       = sanitize($mysqli, $_POST['relationship'] ?? '');
 		$due_start_from     = sanitize($mysqli, $_POST['due_start_from'] ?? '');

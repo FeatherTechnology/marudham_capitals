@@ -105,17 +105,19 @@ function callOnClickEvents() {
                     success: function (response) {
                         if (response.includes('Removed')) {
                             Swal.fire({
-                                timerProgressBar: true,
-                                timer: 2000,
                                 title: response,
                                 icon: 'success',
                                 showConfirmButton: true,
-                                confirmButtonColor: '#009688'
+                                confirmButtonColor: '#009688',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                // Redirect only if OK is clicked
+                                if (result.isConfirmed) {
+                                    window.location = 'edit_loan_issue';
+                                }
                             });
-                            setTimeout(function () {
-                                window.location = 'edit_loan_issue';
-                            }, 2000)
-                        } else if (response.includes('Error')) {
+                        }
+                        else if (response.includes('Error')) {
                             Swal.fire({
                                 timerProgressBar: true,
                                 timer: 2000,

@@ -82,19 +82,18 @@ function getAllDocumentList(req_id, cus_name, cus_id) {
 }
 
 function swalAlert(response) {
+    let iconType = 'info';
     if (response.includes('Successfully')) {
-        Swal.fire({
-            title: response,
-            icon: 'success',
-            timer: 1500,
-            showConfirmButton: false,
-        })
+        iconType = 'success';
     } else if (response.includes('Error')) {
-        Swal.fire({
-            title: response,
-            icon: 'error',
-            timer: 1500,
-            showConfirmButton: false,
-        });
+        iconType = 'error';
     }
+
+    return Swal.fire({
+        title: response,
+        icon: iconType,
+        showConfirmButton: true,
+        confirmButtonColor: '#009688',
+        confirmButtonText: 'OK'
+    });
 }

@@ -149,25 +149,25 @@ $(document).ready(function () {
         getCategoryInfo(subselected);
     })
 
-    $('#tot_value').blur(function () {// to calculate loan amount ant advance percentage
-        var amt = $('#tot_value').val();
-        var advance = $('#ad_amt').val();
-        var per = (advance / amt) * 100;
-        $('#ad_perc').val(per.toFixed(1));
+    // $('#tot_value').on('input', function () {// to calculate loan amount ant advance percentage
+    //     var amt = $('#tot_value').val().replace(/,/g, '');
+    //     var advance = $('#ad_amt').val().replace(/,/g, '');
+    //     var per = (advance / amt) * 100;
+    //     $('#ad_perc').val(per.toFixed(1));
 
-        var loan_amt = amt - advance;
-        $('#loan_amt').val(loan_amt.toFixed(0));
-    })
+    //     var loan_amt = amt - advance;
+    //     $('#loan_amt').val(formatIndianNumber(loan_amt.toFixed(0)));
+    // })
 
-    $('#ad_amt').blur(function () {//To calculate loan amount and advance percentage
-        var amt = $('#tot_value').val();
-        var advance = $('#ad_amt').val();
-        var per = (advance / amt) * 100;
-        $('#ad_perc').val(per.toFixed(1));
+    // $('#ad_amt').on('input', function () {
+    //     var amt = $('#tot_value').val().replace(/,/g, '');
+    //     var advance = $('#ad_amt').val().replace(/,/g, '');
+    //     var per = (advance / amt) * 100;
+    //     $('#ad_perc').val(per.toFixed(1));
 
-        var loan_amt = amt - advance;
-        $('#loan_amt').val(loan_amt.toFixed(0));
-    })
+    //     var loan_amt = amt - advance;
+    //     $('#loan_amt').val(formatIndianNumber(loan_amt.toFixed(0)));
+    // })
 
     $('#poss_type').change(function () {//to get due amount or due period
         var poss_type = $(this).val();
@@ -226,6 +226,10 @@ $(document).ready(function () {
             return false;
     }
     })
+    $('#due_amt').on('input', function () {
+        let value = $(this).val();
+        $(this).val(formatIndianNumber(value));
+    });
 
 });// Document ready end
 
@@ -766,15 +770,17 @@ function getLoaninfo(sub_cat_id) {
                 $('#loan_amt').val('');
                 $('#loan_amt').attr('readonly', true);
 
-                $('#tot_value').unbind('blur').blur(function () {// to calculate loan amount ant advance percentage
-                    var amt = $('#tot_value').val();
-                    var advance = $('#ad_amt').val();
+                $('#tot_value').on('input', function () {
+                    
+                    var amt = $('#tot_value').val().replace(/,/g, '');
+                    var advance = $('#ad_amt').val().replace(/,/g, '');
+                    $('#tot_value').val(formatIndianNumber(amt));
                     var per = (advance / amt) * 100;
                     $('#ad_perc').val(per.toFixed(1));
 
                     var loan_amt = amt - advance;
                     if (loan_amt <= response['loan_limit']) {
-                        $('#loan_amt').val(loan_amt.toFixed(0));
+                        $('#loan_amt').val(formatIndianNumber(loan_amt.toFixed(0)));
                     } else {
                         alert('Please Enter Lesser amount!');
                         $('#tot_value').val('');
@@ -782,14 +788,15 @@ function getLoaninfo(sub_cat_id) {
                     }
                 })
 
-                $('#ad_amt').unbind('blur').blur(function () {//To calculate loan amount and advance percentage
-                    var amt = $('#tot_value').val();
-                    var advance = $('#ad_amt').val();
+                $('#ad_amt').on('input', function () {
+                    var amt = $('#tot_value').val().replace(/,/g, '');
+                    var advance = $('#ad_amt').val().replace(/,/g, '');
+                    $('#ad_amt').val(formatIndianNumber(advance));
                     var per = (advance / amt) * 100;
                     $('#ad_perc').val(per.toFixed(1));
 
                     var loan_amt = amt - advance;
-                    $('#loan_amt').val(loan_amt.toFixed(0));
+                    $('#loan_amt').val(formatIndianNumber(loan_amt.toFixed(0)));
                 })
 
             } else if (response['advance'] == 'No') {
@@ -801,10 +808,11 @@ function getLoaninfo(sub_cat_id) {
                 $('#loan_amt').val('');
                 $('#loan_amt').removeAttr('readonly');
 
-                $('#loan_amt').unbind('blur').blur(function () {// to check loan amount not exceed loan limit
-                    let loan_amt = parseFloat($(this).val());
-                    if (loan_amt <= parseInt(response['loan_limit'])) {
-                        $('#loan_amt').val(loan_amt.toFixed(0));
+                $('#loan_amt').on('input', function () {// to check loan amount not exceed loan limit
+                    let loan_amt = $('#loan_amt').val().replace(/,/g, '');
+                    $('#loan_amt').val(formatIndianNumber(loan_amt));
+                    if (parseInt(loan_amt) <= parseInt(response['loan_limit'])) {
+                        $('#loan_amt').val(formatIndianNumber(loan_amt));
                     } else {
                         alert('Please Enter Lesser amount!');
                         $('#loan_amt').val('');
