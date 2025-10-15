@@ -46,58 +46,63 @@ if (isset($_POST['to_date']) && $_POST['to_date'] != '') {
     $li_where  = "AND date(li.created_date) <= date('$to_date') AND balance_amount = '0' ";
 }
 
-    $where  .= $user_based;
-    $consider_lvl_arr = [1 => 'Bronze', 2 => 'Silver', 3 => 'Gold', 4 => 'Platinum', 5 => 'Diamond'];
-    $statusObj = [
-        '14' => 'Current',
-        '15' => 'Error',
-        '16' => 'Legal',
-        '17' => 'Current',
-        '20' => 'In Closed',
-        '21' => 'Closed',
-    ];
-    $column = array(
-        'ii.loan_id',
-        'alm.line_name',
-        'ii.loan_id',
-        'ii.updated_date',
-        'lc.due_start_from',
-        'lc.maturity_date',
-        'lc.cus_id_loan',
-        'lc.cus_name_loan',
-        'cp.mobile1',
-        'al.area_name',
-        'sal.sub_area_name',
-        'lcc.loan_category_creation_name',
-        'lc.sub_category',
-        'ac.ag_name',
-        'iv.responsible',
-        'vfi.famname',
-        'vfi.relationship',
-        'vfi.relation_Mobile',
-        'lc.loan_amt',
-        'lc.due_amt_cal',
-        'lc.due_period',
-        'lc.tot_amt_cal',
-        'ii.loan_id',
-        'ii.loan_id',
-        'ii.loan_id',
-        'ii.loan_id',
-        'ii.loan_id',
-        'ii.loan_id',
-        'ii.loan_id',
-        'ii.loan_id'
-    );
+$where  .= $user_based;
+$consider_lvl_arr = [1 => 'Bronze', 2 => 'Silver', 3 => 'Gold', 4 => 'Platinum', 5 => 'Diamond'];
+$statusObj = [
+    '14' => 'Current',
+    '15' => 'Error',
+    '16' => 'Legal',
+    '17' => 'Current',
+    '20' => 'In Closed',
+    '21' => 'Closed',
+];
+$column = array(
+    'ii.loan_id',
+    'alm.line_name',
+    'ii.loan_id',
+    'ii.updated_date',
+    'lc.due_start_from',
+    'lc.maturity_date',
+    'lc.cus_id_loan',
+    'lc.cus_name_loan',
+    'cp.mobile1',
+    'al.area_name',
+    'sal.sub_area_name',
+    'lcc.loan_category_creation_name',
+    'lc.sub_category',
+    'ac.ag_name',
+    'iv.responsible',
+    'vfi.famname',
+    'vfi.relationship',
+    'vfi.relation_Mobile',
+    'lc.loan_amt',
+    'lc.due_amt_cal',
+    'lc.due_period',
+    'lc.tot_amt_cal',
+    'ii.loan_id',
+    'ii.loan_id',
+    'ii.loan_id',
+    'ii.loan_id',
+    'ii.loan_id',
+    'ii.loan_id',
+    'ii.loan_id',
+    'ii.loan_id'
+);
 
 $qry = " SELECT req.req_id FROM request_creation req JOIN acknowlegement_customer_profile cp ON req.req_id = cp.req_id
         JOIN customer_status cs ON req.req_id = cs.req_id
+         LEFT JOIN (
+    SELECT req_id, MAX(created_date) AS last_collection_date
+    FROM collection
+    GROUP BY req_id
+) coll ON req.req_id = coll.req_id
         JOIN loan_issue li ON req.req_id = li.req_id  AND DATE(li.created_date) <= DATE('$to_date')  AND balance_amount = '0'
-        WHERE req.cus_status BETWEEN 14 AND 18  AND ( cs.sub_status != 'Due Nil' OR (cs.sub_status = 'Due Nil' AND cs.created_date > '$to_date') )
+        WHERE req.cus_status BETWEEN 14 AND 18  AND ( cs.sub_status != 'Due Nil' OR (cs.sub_status = 'Due Nil' AND  coll.last_collection_date > '$to_date') )
 
         UNION 
 
         SELECT li.req_id FROM loan_issue li JOIN closing_customer cc ON li.req_id = cc.req_id LEFT JOIN ( SELECT req_id, MAX(coll_date) AS max_coll_date FROM collection WHERE coll_date <= '$to_date' GROUP BY req_id ) AS latest_collection ON li.req_id = latest_collection.req_id LEFT JOIN collection c ON latest_collection.req_id = c.req_id AND latest_collection.max_coll_date = c.coll_date WHERE DATE(cc.closing_date) >= DATE('$to_date') AND DATE(li.created_date) <= DATE('$to_date') AND ( c.req_id IS NULL OR (c.bal_amt - c.due_amt_track) > 0 )";
-   
+
 $run = $connect->query($qry);
 $req_id_list = [];
 while ($row = $run->fetch()) {
@@ -106,7 +111,7 @@ while ($row = $run->fetch()) {
 $req_id_list = implode(',', $req_id_list);
 
 
-    $query = "SELECT
+$query = "SELECT
     ii.updated_date AS loan_date,
     lc.maturity_month AS maturity_date,
     lc.cus_id_loan,
@@ -188,8 +193,8 @@ WHERE
 
 
 if (isset($_POST['search'])) {
-        if ($_POST['search'] != "") {
-            $query .= " and (ii.loan_id LIKE '%" . $_POST['search'] . "%'
+    if ($_POST['search'] != "") {
+        $query .= " and (ii.loan_id LIKE '%" . $_POST['search'] . "%'
                         OR ii.updated_date LIKE '%" . $_POST['search'] . "%'
                         OR lc.due_start_from LIKE '%" . $_POST['search'] . "%'
                         OR lc.maturity_month LIKE '%" . $_POST['search'] . "%'
@@ -206,13 +211,13 @@ if (isset($_POST['search'])) {
                         OR vfi.relation_Mobile LIKE '%" . $_POST['search'] . "%'
                         OR lc.loan_amt LIKE '%" . $_POST['search'] . "%'
                         OR lc.due_amt_cal LIKE '%" . $_POST['search'] . "%'
-                        OR lcc.loan_category_creation_name LIKE '%" . $_POST['search'] . "%') ";           
-            }
-        }
- if (isset($_POST['order'])) {
-  $query .= " ORDER BY " . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'];
+                        OR lcc.loan_category_creation_name LIKE '%" . $_POST['search'] . "%') ";
+    }
+}
+if (isset($_POST['order'])) {
+    $query .= " ORDER BY " . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'];
 } else {
-  $query .= ' ';
+    $query .= ' ';
 }
 
 $query1 = "";
@@ -241,33 +246,31 @@ foreach ($result as $row) {
         $search_date = strtotime($to_date);
         $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
         $pending = $months;
-         if (($row['due_method_calc'] == 'Monthly' || $row['due_method_scheme'] == '1')  ) {
-            if(date('m', $search_date) == date('m', $end) && date('Y', $search_date) == date('Y', $end) ){
-            $pending -= 1;
+        if (($row['due_method_calc'] == 'Monthly' || $row['due_method_scheme'] == '1')) {
+            if (date('m', $search_date) == date('m', $end) && date('Y', $search_date) == date('Y', $end)) {
+                $pending -= 1;
             }
         }
         $pending_month = $pending;
-        
     } else {
         $end = strtotime($to_date);
         $start = strtotime($row['due_start_from']);
         $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
-    
-        if (($row['due_method_calc'] != 'Monthly' && $row['due_method_scheme'] != '1')  ) {
-            if((date('d', $start) < date('d', $end)) && (date('m', $start) <= date('m', $end)) && (date('Y', $start) <= date('Y', $end)) ){
+
+        if (($row['due_method_calc'] != 'Monthly' && $row['due_method_scheme'] != '1')) {
+            if ((date('d', $start) < date('d', $end)) && (date('m', $start) <= date('m', $end)) && (date('Y', $start) <= date('Y', $end))) {
                 $months += 1;
             }
         }
 
         $pending_month = $months - 1;
-
     }
-    
+
     $balance_amount = $row['tot_amt_cal'] - $row['total_due_amt'];
     $paid_due = $row['total_due_amt'] / $row['due_amt_cal'];
     $balance_due = (float)$row['due_period'] - $paid_due;
-    $payable_amount = ($months * $row['due_amt_cal'] ) - $row['total_due_amt'];
-    $pending_amount = ($pending_month * $row['due_amt_cal'] ) - $row['total_due_amt'];
+    $payable_amount = ($months * $row['due_amt_cal']) - $row['total_due_amt'];
+    $pending_amount = ($pending_month * $row['due_amt_cal']) - $row['total_due_amt'];
     $pending_due = max(0, $pending_amount / $row['due_amt_cal']);
 
     $sub_array   = array();
@@ -285,7 +288,7 @@ foreach ($result as $row) {
     $sub_array[] = $row['loan_cat_name'];
     $sub_array[] = $row['sub_category'];
     $sub_array[] = $row['ag_name'];
-    $sub_array[] = (!empty($row['ag_name'])) ? (($row['responsible'] == '0') ? 'Yes': 'No') : '';
+    $sub_array[] = (!empty($row['ag_name'])) ? (($row['responsible'] == '0') ? 'Yes' : 'No') : '';
     $sub_array[] = $row['famname'];
     $sub_array[] = $row['relationship'];
     $sub_array[] = $row['relation_Mobile'];
@@ -294,40 +297,34 @@ foreach ($result as $row) {
     $sub_array[] = $row['due_period'];
     $sub_array[] = moneyFormatIndia($row['tot_amt_cal']);
     $sub_array[] = isset($balance_amount) && $balance_amount >= 0 ? moneyFormatIndia($balance_amount) : $row['tot_amt_cal'];
-    $sub_array[] = isset($balance_due) && $balance_due >= 0 ? number_format($balance_due , 1, '.', ''): 0 ;
+    $sub_array[] = isset($balance_due) && $balance_due >= 0 ? number_format($balance_due, 1, '.', '') : 0;
     $sub_array[] = isset($pending_amount) && ($pending_amount > 0) ? moneyFormatIndia($pending_amount) : 0;
-    $sub_array[] = isset($pending_due) && $pending_due >= 0 ? number_format($pending_due , 1, '.', ''): 0;
+    $sub_array[] = isset($pending_due) && $pending_due >= 0 ? number_format($pending_due, 1, '.', '') : 0;
     $sub_array[] = isset($row['od_months']) && $row['od_months'] >= 0 ? $row['od_months'] : 0;;
     $sub_array[] = isset($payable_amount) ? moneyFormatIndia($payable_amount) : 0;
     $sub_array[] = 'Present';
     $payable_amount = max(0, $payable_amount);
     $pending_amount = max(0, $pending_amount);
 
-    if($row['cus_status'] =='15' && strtotime($row['updated_date']) < strtotime($to_date)){
+    if ($row['cus_status'] == '15' && strtotime($row['updated_date']) < strtotime($to_date)) {
         $sub_array[] = 'Error';
-    }
-    else if($row['cus_status'] =='16' && strtotime($row['updated_date'])< strtotime($to_date)){
+    } else if ($row['cus_status'] == '16' && strtotime($row['updated_date']) < strtotime($to_date)) {
         $sub_array[] = 'Legal';
-    }
-    else if($payable_amount == 0  && $pending_amount == 0  && $balance_amount == 0){
+    } else if ($payable_amount == 0  && $pending_amount == 0  && $balance_amount == 0) {
         $sub_array[] = 'Due Nil';
-    }
-    else if($payable_amount <= $row['due_amt_cal'] && $pending_amount == 0  &&  ((($row['due_method_scheme'] === '1' || $row['due_method_calc'] ==='Monthly') && date('Y-m', strtotime($row['maturity_date'])) >= date('Y-m', strtotime($to_date))) ||(($row['due_method_scheme'] != '1'|| $row['due_method_calc'] !='Monthly') && strtotime($row['maturity_date']) >= strtotime($to_date))) && $balance_amount != 0 ){
+    } else if ($payable_amount <= $row['due_amt_cal'] && $pending_amount == 0  &&  ((($row['due_method_scheme'] === '1' || $row['due_method_calc'] === 'Monthly') && date('Y-m', strtotime($row['maturity_date'])) >= date('Y-m', strtotime($to_date))) || (($row['due_method_scheme'] != '1' || $row['due_method_calc'] != 'Monthly') && strtotime($row['maturity_date']) >= strtotime($to_date))) && $balance_amount != 0) {
         $sub_array[] = 'Current';
-    }
-    else if($pending_amount > 0 &&  (
-            (($row['due_method_scheme'] === '1' || $row['due_method_calc'] ==='Monthly') && date('Y-m', strtotime($row['maturity_date'])) >= date('Y-m', strtotime($to_date))) || (($row['due_method_scheme'] != '1'|| $row['due_method_calc'] !='Monthly') && strtotime($row['maturity_date']) > strtotime($to_date))
-        )){
+    } else if ($pending_amount > 0 &&  (
+        (($row['due_method_scheme'] === '1' || $row['due_method_calc'] === 'Monthly') && date('Y-m', strtotime($row['maturity_date'])) >= date('Y-m', strtotime($to_date))) || (($row['due_method_scheme'] != '1' || $row['due_method_calc'] != 'Monthly') && strtotime($row['maturity_date']) > strtotime($to_date))
+    )) {
         $sub_array[] = 'Pending';
-    }
-    else if (
-    (
-        ($balance_amount  > 0) &&((($row['due_method_scheme'] === '1' || $row['due_method_calc'] ==='Monthly') && date('Y-m', strtotime($row['maturity_date'])) < date('Y-m', strtotime($to_date))) ||(($row['due_method_scheme'] != '1'|| $row['due_method_calc'] !='Monthly') && strtotime($row['maturity_date']) < strtotime($to_date)))
-    )) 
-    {
-    $sub_array[] = 'OD';
-}
-    else {
+    } else if (
+        (
+            ($balance_amount  > 0) && ((($row['due_method_scheme'] === '1' || $row['due_method_calc'] === 'Monthly') && date('Y-m', strtotime($row['maturity_date'])) < date('Y-m', strtotime($to_date))) || (($row['due_method_scheme'] != '1' || $row['due_method_calc'] != 'Monthly') && strtotime($row['maturity_date']) < strtotime($to_date)))
+        )
+    ) {
+        $sub_array[] = 'OD';
+    } else {
         $sub_array[] = 'No Result';
     }
 
