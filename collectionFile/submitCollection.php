@@ -96,48 +96,48 @@ if (isset($_POST['collection_date'])) {
 //     $collection_id = $_POST['collection_id'];
 // }
 if (isset($_POST['due_amt_track'])) {
-    $due_amt_track = $_POST['due_amt_track'];
+    $due_amt_track = str_replace([',', ' '], '',$_POST['due_amt_track']);
 }
 if (isset($_POST['princ_amt_track'])) {
-    $princ_amt_track = $_POST['princ_amt_track'];
+    $princ_amt_track = str_replace([',', ' '], '',$_POST['princ_amt_track']);
 }
 if (isset($_POST['int_amt_track'])) {
-    $int_amt_track = $_POST['int_amt_track'];
+    $int_amt_track = str_replace([',', ' '], '',$_POST['int_amt_track']);
 }
 $penalty_track = '';
 if (isset($_POST['penalty_track'])) {
-    $penalty_track = $_POST['penalty_track'];
+    $penalty_track = str_replace([',', ' '], '',$_POST['penalty_track']);
 }
 $coll_charge_track = '';
 if (isset($_POST['coll_charge_track'])) {
-    $coll_charge_track = $_POST['coll_charge_track'];
+    $coll_charge_track = str_replace([',', ' '], '',$_POST['coll_charge_track']);
 }
 if (isset($_POST['total_paid_track'])) {
-    $total_paid_track = $_POST['total_paid_track'];
+    $total_paid_track = str_replace([',', ' '], '',$_POST['total_paid_track']);
 }
 $pre_close_waiver = '';
 if (isset($_POST['pre_close_waiver'])) {
-    $pre_close_waiver = $_POST['pre_close_waiver'];
+    $pre_close_waiver = str_replace([',', ' '], '',$_POST['pre_close_waiver']);
 }
 $interest_waiver = '';
 if (isset($_POST['interest_waiver'])) {
-    $interest_waiver = $_POST['interest_waiver'];
+    $interest_waiver = str_replace([',', ' '], '',$_POST['interest_waiver']);
 }
 $principal_waiver = '';
 if (isset($_POST['principal_waiver'])) {
-    $principal_waiver = $_POST['principal_waiver'];
+    $principal_waiver = str_replace([',', ' '], '',$_POST['principal_waiver']);
 }
 $penalty_waiver = '';
 if (isset($_POST['penalty_waiver'])) {
-    $penalty_waiver = $_POST['penalty_waiver'];
+    $penalty_waiver = str_replace([',', ' '], '',$_POST['penalty_waiver']);
 }
 $coll_charge_waiver = '';
 if (isset($_POST['coll_charge_waiver'])) {
-    $coll_charge_waiver = $_POST['coll_charge_waiver'];
+    $coll_charge_waiver = str_replace([',', ' '], '',$_POST['coll_charge_waiver']);
 }
 $total_waiver = '';
 if (isset($_POST['total_waiver'])) {
-    $total_waiver = $_POST['total_waiver'];
+    $total_waiver = str_replace([',', ' '], '',$_POST['total_waiver']);
 }
 
 try {

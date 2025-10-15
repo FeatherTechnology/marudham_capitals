@@ -51,16 +51,21 @@ $(document).ready(function () {
                         data: { 'id': id, "ratingVal": rating, "feedbackDate": feedback_date },
                         cache: false,
                         success: function (response) {
-                            if (response.includes('Concern')) {
-                                Swal.fire(
-                                    'Deleted!',
-                                    'Concern has been Closed Successfully.',
-                                    'success'
-                                )
-                                setTimeout(function () {
+                          if (response.includes('Concern')) {
+                            Swal.fire({
+                                title: 'Deleted!',
+                                text: 'Concern has been Closed Successfully.',
+                                icon: 'success',
+                                showConfirmButton: true,
+                                confirmButtonColor: '#009688',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                // Redirect only if OK is clicked
+                                if (result.isConfirmed) {
                                     window.location = 'edit_concern_feedback';
-                                }, 2000)
-                            }
+                                }
+                            });
+                        }
                         }
                     })
                 }

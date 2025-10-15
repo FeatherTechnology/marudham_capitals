@@ -161,16 +161,16 @@ $(document).ready(function () {
             let req_id = $('#req_id').val();
             let cus_id = $('#cus_id').val();
             let issue_to = $('#issue_to').val();
-            let net_cash = $('#net_cash').val();
-            let balance = $('#balance').val();
+            let net_cash = $('#net_cash').val().replace(/,/g, '');
+            let balance = $('#balance').val().replace(/,/g, '');
             let loan_amt_cal = $('#loan_amt_cal').val().replace(/[\s,]+/g, '');
             let issued_mode = $('#issued_mode').val();
             let payment_type = $('#payment_type').val();
             let chequeno = $('#chequeno').val();
-            let chequeValue = $('#chequeValue').val();
+            let chequeValue = $('#chequeValue').val().replace(/,/g, '');
             let chequeRemark = $('#chequeRemark').val();
             let transaction_id = $('#transaction_id').val();
-            let transaction_value = $('#transaction_value').val();
+            let transaction_value = $('#transaction_value').val().replace(/,/g, '');
             let transactionRemark = $('#transaction_remark').val();
             let bank_id = $('#bank_id').val();
 
@@ -259,9 +259,13 @@ function turnonCashKeyup() {
         checkIssuedAmount('0');
     });
     $('#chequeValue').keyup(function () {
+         var chequeValue = $("#chequeValue").val().replace(/,/g, '');
+        $('#chequeValue').val(formatIndianNumber(chequeValue));
         checkIssuedAmount('1');
     });
     $('#transaction_value').keyup(function () {
+        var transaction_value = $("#transaction_value").val().replace(/,/g, '');
+        $('#transaction_value').val(formatIndianNumber(transaction_value));
         checkIssuedAmount('2');
     });
 }
@@ -1164,13 +1168,13 @@ function checkIssuedAmount(type) {
 
     function calcBal() {
         var cashValue = parseInt($('#cash').val());
-        var chequeValue = parseInt($('#chequeValue').val());
-        var transactionValue = parseInt($('#transaction_value').val());
+        var chequeValue = parseInt($('#chequeValue').val().replace(/,/g, ''));
+        var transactionValue = parseInt($('#transaction_value').val().replace(/,/g, ''));
         totalValue = (isNaN(cashValue) ? 0 : cashValue) + (isNaN(chequeValue) ? 0 : chequeValue) + (isNaN(transactionValue) ? 0 : transactionValue);
         netCash = parseInt($('#net_cash').val().replace(/,/g, ''));
         var bal = parseInt(netCash) - parseInt(totalValue);
         if (bal >= 0) {
-            $('#balance').val(bal);
+            $('#balance').val(formatIndianNumber(String(bal)));
         }
     }
 

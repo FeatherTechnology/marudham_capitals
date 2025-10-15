@@ -9,8 +9,8 @@ const branchMultiselect = new Choices('#under_branch_dummy', {
 
 $(document).ready(function () {
 
-    var companySelected = $('#company').val();
-    getBranchDropdown(companySelected);
+    // var companySelected = $('#company').val();
+    // getBranchDropdown(companySelected);
 
     $('#submit_bank_creation').click(function () {
 
@@ -69,9 +69,8 @@ function getBranchDropdown(company_id) {
                 var branch_id = response[i]['branch_id'];
                 var branch_name = response[i]['branch_name'];
                 var selected = '';
-                if (branch_id_upd != '' && values.includes(branch_id)) {
+                if (branch_id_upd != '' && values.includes(branch_id.toString())) {
                     selected = 'selected';
-                    // checked = false;
                 }
                 var items = [
                     {

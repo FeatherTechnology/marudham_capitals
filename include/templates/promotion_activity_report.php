@@ -38,7 +38,7 @@
                                     <th>Branch</th>
                                     <th>Group</th>
                                     <th>Line</th>
-                                    <th>status</th>
+                                    <th>Status</th>
                                     <th>Remark</th>
                                     <th>Follow Date</th>
                                     <th>User Type</th>

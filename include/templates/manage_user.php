@@ -519,7 +519,7 @@ if($idupd>0)
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 due_followupline_div">
                                         <div class="form-group">
                                             <label for="due_follup_lines">Due Followup lines</label>&nbsp;<span class="text-danger">*</span>
-								            <input type='hidden' id='due_follup_line_id' name='due_follup_line_id' value=''>
+								            <input type='hidden' id='due_follup_line_id' name='due_follup_line_id' value='<?php if(isset($due_followup_lines)) echo $due_followup_lines; ?>'>
                                             <select class='form-control' id='due_follup_lines' name='due_follup_lines' multiple tabindex="11">
 								        	    <option value="">Select Due Followup Lines</option>
 								            </select>

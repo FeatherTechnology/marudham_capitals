@@ -213,7 +213,10 @@ $(document).ready(function () {
         return false;
     }
 });
-
+ $('#loan_limit').on('input', function () {
+        let value = $(this).val();
+        $(this).val(formatIndianNumber(value));
+    });
 });
 
 function validation() {

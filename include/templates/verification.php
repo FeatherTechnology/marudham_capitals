@@ -2045,7 +2045,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 										<div class="form-group">
 											<label for="">Due Amount</label><span class="required">&nbsp;*</span>
 											<input type="text" class="form-control" id="" name="" value='<?php if (isset($due_amt)) {
-																												echo $due_amt;
+																												echo moneyFormatIndia($due_amt);
 																											} ?>' tabindex='11' readonly>
 										</div>
 									</div>
@@ -2367,7 +2367,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 													<option value="">Select a Day</option>
 													<option value="1" <?php if (isset($day_scheme_lc) and $day_scheme_lc == '1') echo 'selected'; ?>>Monday</option>
 													<option value="2" <?php if (isset($day_scheme_lc) and $day_scheme_lc == '2') echo 'selected'; ?>>Tuesday</option>
-													<option value="3" <?php if (isset($day_scheme_lc) and $day_scheme_lc == '3') echo 'selected'; ?>>Wednesdat</option>
+													<option value="3" <?php if (isset($day_scheme_lc) and $day_scheme_lc == '3') echo 'selected'; ?>>Wednesday</option>
 													<option value="4" <?php if (isset($day_scheme_lc) and $day_scheme_lc == '4') echo 'selected'; ?>>Thursday</option>
 													<option value="5" <?php if (isset($day_scheme_lc) and $day_scheme_lc == '5') echo 'selected'; ?>>Friday</option>
 													<option value="6" <?php if (isset($day_scheme_lc) and $day_scheme_lc == '6') echo 'selected'; ?>>Saturday</option>

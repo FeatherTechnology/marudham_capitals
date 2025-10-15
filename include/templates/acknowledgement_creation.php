@@ -1191,7 +1191,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="minvcome"> Monthly Income </label> <span class="required">*</span>
-										<input type="number" class="form-control" name="cus_monthly_income" id="cus_monthly_income" placeholder="Enter Monthly Income" value="<?php if (isset($monthly_income)) {
+										<input type="text" class="form-control" name="cus_monthly_income" id="cus_monthly_income" placeholder="Enter Monthly Income" value="<?php if (isset($monthly_income)) {
 																																													echo moneyFormatIndia($monthly_income);
 																																												} ?>" tabindex="44">
 									</div>
@@ -1200,7 +1200,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="otherincome"> Other Income </label> <span class="required">*</span>
-										<input type="number" class="form-control" name="cus_other_income" id="cus_other_income" placeholder="Enter Other Income" value="<?php if (isset($other_income)) {
+										<input type="text" class="form-control" name="cus_other_income" id="cus_other_income" placeholder="Enter Other Income" value="<?php if (isset($other_income)) {
 																																											echo moneyFormatIndia($other_income);
 																																										} ?>" tabindex="45">
 									</div>
@@ -1209,7 +1209,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="suppincome"> Support Income </label> <span class="required">*</span>
-										<input type="number" class="form-control" name="cus_support_income" id="cus_support_income" placeholder="Enter Support Income" value="<?php if (isset($support_income)) {
+										<input type="text" class="form-control" name="cus_support_income" id="cus_support_income" placeholder="Enter Support Income" value="<?php if (isset($support_income)) {
 																																													echo moneyFormatIndia($support_income);
 																																												} ?>" tabindex="46">
 									</div>
@@ -1218,7 +1218,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="commit"> Commitment </label> <span class="required">*</span>
-										<input type="number" class="form-control" name="cus_Commitment" id="cus_Commitment" placeholder="Enter Commitment" value="<?php if (isset($commitment)) {
+										<input type="text" class="form-control" name="cus_Commitment" id="cus_Commitment" placeholder="Enter Commitment" value="<?php if (isset($commitment)) {
 																																										echo moneyFormatIndia($commitment);
 																																									} ?>" tabindex="47">
 									</div>
@@ -1227,7 +1227,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="duecapacity"> Monthly Due Capacity </label> <span class="required">*</span>
-										<input type="number" class="form-control" name="cus_monDue_capacity" id="cus_monDue_capacity" placeholder="Enter Monthly Due Capacity" value="<?php if (isset($monthly_due_capacity)) {
+										<input type="text" class="form-control" name="cus_monDue_capacity" id="cus_monDue_capacity" placeholder="Enter Monthly Due Capacity" value="<?php if (isset($monthly_due_capacity)) {
 																																															echo moneyFormatIndia($monthly_due_capacity);
 																																														} ?>" tabindex="48">
 									</div>
@@ -1236,7 +1236,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="loanlimit"> Customer Limit </label>
-										<input type="number" class="form-control" name="cus_loan_limit" id="cus_loan_limit" placeholder="Enter Customer Limit" value="<?php if (isset($loan_limit)) {
+										<input type="text" class="form-control" name="cus_loan_limit" id="cus_loan_limit" placeholder="Enter Customer Limit" value="<?php if (isset($loan_limit)) {
 																																											echo moneyFormatIndia($loan_limit);
 																																										} ?>" tabindex="49">
 									</div>
