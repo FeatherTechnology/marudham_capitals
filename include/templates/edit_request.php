@@ -65,6 +65,7 @@
 								<th width="50">S.No.</th>
 								<th>Requested Date</th>
 								<th>Customer ID</th>
+								<th>Adhaar Number</th>
 								<th>Customer Name</th>
 								<th>Branch</th>
 								<th>Group</th>

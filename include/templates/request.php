@@ -349,26 +349,37 @@ if ($idupd > 0) {
 			<div class="card-header">General Info <!--<input type="button" class="btn btn-outline-secondary text-right" id="cus_status" name="cus_status" value="Customer Status" style="float:right">--></div>
 			<div class="card-body">
 				<div class="row">
-					<div class="col-md-8">
+					<div class="col-md-12">
 						<div class="row">
-							<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-6">
 								<div class="form-group">
-									<label for="cus_id">Customer ID</label><span class="required">&nbsp;*</span>
+									<label for="autogen_cus_id">Customer ID</label><span class="required">&nbsp;*</span>
+									<input type="text" class="form-control" id="autogen_cus_id" name="autogen_cus_id" tabindex='9' readonly>
+								</div>
+							</div>
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-6">
+								<div class="form-group">
+									<label for="cus_id">Adhaar Number</label><span class="required">&nbsp;*</span>
 									<input type="text" class="form-control" id="cus_id" name="cus_id" value='<?php if (isset($cus_id)) {
 																													echo $cus_id;
-																												} ?>' tabindex='9' data-type="adhaar-number" maxlength="14" placeholder="Enter Adhaar Number">
+																												} ?>' tabindex='10' data-type="adhaar-number" maxlength="14" placeholder="Enter Adhaar Number">
 									<span class="text-danger" style='display:none' id='cusidCheck'>Please Enter Customer ID</span>
 								</div>
 							</div>
 							<?php if ($role != '2') { //customer status not for agents
 							?>
-								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-6">
 									<div class="form-group">
 										<br>
-										<input type="button" class="btn btn-outline-secondary text-right" id="cus_status" name="cus_status" value="Customer Status" tabindex='10'>
+										<input type="button" class="btn btn-outline-secondary text-right" id="cus_status" name="cus_status" value="Customer Status" tabindex='11'>
 									</div>
 								</div>
 							<?php } ?>
+						</div>
+					</div>
+
+					<div class="col-md-8">					
+						<div class="row">
 							<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
 								<div class="form-group">
 									<label for="cus_data">Customer Data</label><span class="required">&nbsp;*</span>

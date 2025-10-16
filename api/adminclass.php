@@ -3811,6 +3811,24 @@ class admin
 				$req_code = $initialapp;
 			}
 
+			$select = $mysqli->query("SELECT autogen_cus_id FROM customer_register WHERE cus_id = '$cus_id' AND autogen_cus_id !='' AND autogen_cus_id IS NOT NULL");
+			if ($select && $mysqli->affected_rows > 0) {
+				$code = $select->fetch_assoc();
+				$autogen_cus_id = $code['autogen_cus_id'];
+
+			} else {
+				// Find last auto ID
+				$codeAvailable = $mysqli->query("
+					SELECT MAX(CAST(autogen_cus_id AS UNSIGNED)) AS max_number 
+					FROM customer_register 
+					WHERE autogen_cus_id !='' AND autogen_cus_id IS NOT NULL 
+				");
+				$row = $codeAvailable->fetch_assoc();
+
+				$autogen_cus_id = !empty($row['max_number']) ? ((int)$row['max_number'] + 1) : 10001;
+			}
+
+
 			$insertQry = "INSERT INTO request_creation(`user_type`, `user_name`, `agent_id`, `responsible`, `remarks`, `declaration`, `req_code`, `dor`, `cus_id`,
 		`cus_data`, `cus_name`, `dob`, `age`, `gender`, `state`, `district`, `taluk`, `area`, `sub_area`, `address`, `mobile1`, `mobile2`, `father_name`, 
 		`mother_name`, `marital`, `spouse_name`, `occupation_type`, `occupation`, `pic`, `loan_category`, `sub_category`, `tot_value`, `ad_amt`, `ad_perc`, 
@@ -3826,15 +3844,15 @@ class admin
 			$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
 			$req_ref_id = $mysqli->insert_id;
 			if ($cus_data == 'New') {
-				$CustomerInsert = "INSERT INTO customer_register (`cus_id`,`req_ref_id`, `customer_name`, `dob`, `age`, `gender`, `state`, `district`,
+				$CustomerInsert = "INSERT INTO customer_register (`autogen_cus_id`, `cus_id`,`req_ref_id`, `customer_name`, `dob`, `age`, `gender`, `state`, `district`,
 				`taluk`, `area`, `sub_area`, `address`, `mobile1`, `mobile2`, `father_name`, `mother_name`, `marital`, `spouse`, `occupation_type`, `occupation`,`pic`)
-				VALUES('" . strip_tags($cus_id) . "','" . strip_tags($req_ref_id) . "','" . strip_tags($cus_name) . "','" . strip_tags($dob) . "', '" . strip_tags($age) . "', '" . strip_tags($gender) . "', '" . strip_tags($state) . "',
+				VALUES( '" . strip_tags($autogen_cus_id) . "', '" . strip_tags($cus_id) . "','" . strip_tags($req_ref_id) . "','" . strip_tags($cus_name) . "','" . strip_tags($dob) . "', '" . strip_tags($age) . "', '" . strip_tags($gender) . "', '" . strip_tags($state) . "',
 				'" . strip_tags($district) . "','" . strip_tags($taluk) . "','" . strip_tags($area) . "', '" . strip_tags($sub_area) . "', '" . strip_tags($address) . "', '" . strip_tags($mobile1) . "',
 				'" . strip_tags($mobile2) . "','" . strip_tags($father_name) . "','" . strip_tags($mother_name) . "', '" . strip_tags($marital) . "', '" . strip_tags($spouse_name) . "',
 				'" . strip_tags($occupation_type) . "','" . strip_tags($occupation) . "','" . strip_tags($pic) . "' )";
 				$insresult = $mysqli->query($CustomerInsert) or die("Error " . $mysqli->error);
 			} elseif ($cus_data == 'Existing') {
-				$mysqli->query("UPDATE customer_register SET `cus_id` = '" . strip_tags($cus_id) . "',`req_ref_id` = '" . strip_tags($req_ref_id) . "', `customer_name` = '" . strip_tags($cus_name) . "', `dob` = '" . strip_tags($dob) . "', `age` = '" . strip_tags($age) . "', `gender` = '" . strip_tags($gender) . "', `state` = '" . strip_tags($state) . "', `district` = '" . strip_tags($district) . "', `taluk` = '" . strip_tags($taluk) . "', `area` = '" . strip_tags($area) . "', `sub_area` = '" . strip_tags($sub_area) . "', `address` = '" . strip_tags($address) . "', `mobile1` = '" . strip_tags($mobile1) . "', `mobile2` = '" . strip_tags($mobile2) . "', `father_name` = '" . strip_tags($father_name) . "', `mother_name` = '" . strip_tags($mother_name) . "', `marital` = '" . strip_tags($marital) . "', `spouse` = '" . strip_tags($spouse_name) . "', `occupation_type` = '" . strip_tags($occupation_type) . "', `occupation` = '" . strip_tags($occupation) . "', `pic` = '" . strip_tags($pic) . "', `cus_status` = 0 WHERE `cus_id`= '" . strip_tags($cus_id) . "' ");
+				$mysqli->query("UPDATE customer_register SET `autogen_cus_id` = '" . strip_tags($autogen_cus_id) . "', `cus_id` = '" . strip_tags($cus_id) . "',`req_ref_id` = '" . strip_tags($req_ref_id) . "', `customer_name` = '" . strip_tags($cus_name) . "', `dob` = '" . strip_tags($dob) . "', `age` = '" . strip_tags($age) . "', `gender` = '" . strip_tags($gender) . "', `state` = '" . strip_tags($state) . "', `district` = '" . strip_tags($district) . "', `taluk` = '" . strip_tags($taluk) . "', `area` = '" . strip_tags($area) . "', `sub_area` = '" . strip_tags($sub_area) . "', `address` = '" . strip_tags($address) . "', `mobile1` = '" . strip_tags($mobile1) . "', `mobile2` = '" . strip_tags($mobile2) . "', `father_name` = '" . strip_tags($father_name) . "', `mother_name` = '" . strip_tags($mother_name) . "', `marital` = '" . strip_tags($marital) . "', `spouse` = '" . strip_tags($spouse_name) . "', `occupation_type` = '" . strip_tags($occupation_type) . "', `occupation` = '" . strip_tags($occupation) . "', `pic` = '" . strip_tags($pic) . "', `cus_status` = 0 WHERE `cus_id`= '" . strip_tags($cus_id) . "' ");
 			}
 
 			for ($i = 0; $i < sizeof($category_info); $i++) {
@@ -4080,47 +4098,114 @@ class admin
 			$category_info = $_POST['category_info'];
 		}
 
-
-
-		$insertQry = "UPDATE `request_creation` SET `user_type`='" . strip_tags($user_type) . "',`user_name`='" . strip_tags($user) . "',`agent_id`='" . strip_tags($agent) . "',
-		`responsible`='" . strip_tags($responsible) . "',`remarks`='" . strip_tags($remarks) . "',`declaration`='" . strip_tags($declaration) . "',`req_code`='" . strip_tags($req_code) . "',
-		`dor`='" . strip_tags($dor) . "',`cus_id`='" . strip_tags($cus_id) . "',
-		`cus_data`='" . strip_tags($cus_data) . "',`cus_name`='" . strip_tags($cus_name) . "',`dob`='" . strip_tags($dob) . "',`age`='" . strip_tags($age) . "',
-		`gender`='" . strip_tags($gender) . "',`state`='" . strip_tags($state) . "',`district`='" . strip_tags($district) . "',
-		`taluk`='" . strip_tags($taluk) . "',`area`='" . strip_tags($area) . "',`sub_area`='" . strip_tags($sub_area) . "',`address`='" . strip_tags($address) . "',`mobile1`='" . strip_tags($mobile1) . "',
-		`mobile2`='" . strip_tags($mobile2) . "',`father_name`='" . strip_tags($father_name) . "',
-		`mother_name`='" . strip_tags($mother_name) . "',`marital`='" . strip_tags($marital) . "',`spouse_name`='" . strip_tags($spouse_name) . "',`occupation_type`='" . strip_tags($occupation_type) . "',
-		`occupation`='" . strip_tags($occupation) . "',`pic`='" . strip_tags($pic) . "',
-		`loan_category`='" . strip_tags($loan_category) . "',`sub_category`='" . strip_tags($sub_category) . "',`tot_value`='" . strip_tags($tot_value) . "',`ad_amt`='" . strip_tags($ad_amt) . "',
-		`ad_perc`='" . strip_tags($ad_perc) . "',`loan_amt`='" . strip_tags($loan_amt) . "',
-		`poss_type`='" . strip_tags($poss_type) . "',`due_amt`='" . strip_tags($due_amt) . "',`due_period`='" . strip_tags($due_period) .
-			"',
-		`update_login_id`='" . strip_tags($userid) . "',`updated_date`=current_timestamp WHERE `req_id` = '" . $id . "' and `cus_status` = '0' ";
-
-		$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
-
-
-		//Comment because of it making duplicate entry. there is no need to delete and insert new entry there is only entry for the customer so can update the previous entry.
-		// $CustomerDelete = $mysqli->query("DELETE From customer_register where cus_id = '" . strip_tags($cus_id) . "' and cus_status= 0");
-
-		// $CustomerInsert = "INSERT INTO customer_register (`cus_id`,`req_ref_id`, `customer_name`, `dob`, `age`, `gender`, `state`, `district`,
-		// 	`taluk`, `area`, `sub_area`, `address`, `mobile1`, `mobile2`, `father_name`, `mother_name`, `marital`, `spouse`, `occupation_type`, `occupation`,`pic`)
-		// 	VALUES('" . strip_tags($cus_id) . "','" . strip_tags($id) . "','" . strip_tags($cus_name) . "','" . strip_tags($dob) . "', '" . strip_tags($age) . "', '" . strip_tags($gender) . "', '" . strip_tags($state) . "',
-		// 	'" . strip_tags($district) . "','" . strip_tags($taluk) . "','" . strip_tags($area) . "', '" . strip_tags($sub_area) . "', '" . strip_tags($address) . "', '" . strip_tags($mobile1) . "',
-		// 	'" . strip_tags($mobile2) . "','" . strip_tags($father_name) . "','" . strip_tags($mother_name) . "', '" . strip_tags($marital) . "', '" . strip_tags($spouse_name) . "',
-		// 	'" . strip_tags($occupation_type) . "','" . strip_tags($occupation) . "','" . strip_tags($pic) . "' )";
-		// $insresult = $mysqli->query($CustomerInsert) or die("Error " . $mysqli->error);
-
-		$mysqli->query("UPDATE customer_register SET `cus_id` = '" . strip_tags($cus_id) . "',`req_ref_id` = '" . strip_tags($id) . "', `customer_name` = '" . strip_tags($cus_name) . "', `dob` = '" . strip_tags($dob) . "', `age` = '" . strip_tags($age) . "', `gender` = '" . strip_tags($gender) . "', `state` = '" . strip_tags($state) . "', `district` = '" . strip_tags($district) . "',
-		`taluk` = '" . strip_tags($taluk) . "', `area` = '" . strip_tags($area) . "', `sub_area` = '" . strip_tags($sub_area) . "', `address` = '" . strip_tags($address) . "', `mobile1` = '" . strip_tags($mobile1) . "', `mobile2` = '" . strip_tags($mobile2) . "', `father_name` = '" . strip_tags($father_name) . "', `mother_name` = '" . strip_tags($mother_name) . "', `marital` = '" . strip_tags($marital) . "', `spouse` = '" . strip_tags($spouse_name) . "', `occupation_type` = '" . strip_tags($occupation_type) . "', `occupation` = '" . strip_tags($occupation) . "', `pic` = '" . strip_tags($pic) . "', `cus_status` = 0 WHERE `cus_id`= '" . strip_tags($cus_id) . "' ");
-
-
-		$categoryDelete = $mysqli->query("DELETE From request_category_info where req_ref_id = '" . strip_tags($id) . "' ");
-		for ($i = 0; $i < sizeof($category_info); $i++) {
-			$insertQry = "INSERT INTO `request_category_info`(`req_ref_id`, `category_info`) VALUES ('" . strip_tags($id) . "','" . strip_tags($category_info[$i]) . "') ";
-			$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
+		$cus_data_upd = '';
+		if (isset($_POST['cus_data_upd'])) {
+			$cus_data_upd = $_POST['cus_data_upd'];
 		}
-	}
+
+		$cus_id_upd = '';
+		if (isset($_POST['cus_id_upd'])) {
+			$cus_id_upd = $_POST['cus_id_upd'];
+		}
+
+		try {
+
+			// Disable autocommit to start a transaction
+			$mysqli->autocommit(FALSE);
+
+			$select = $mysqli->query("SELECT autogen_cus_id FROM customer_register WHERE cus_id = '$cus_id' AND autogen_cus_id !='' AND autogen_cus_id IS NOT NULL");
+			if ($select && $mysqli->affected_rows > 0) {
+				$code = $select->fetch_assoc();
+				$autogen_cus_id = $code['autogen_cus_id'];
+
+			} else {
+				// Find last auto ID
+				$codeAvailable = $mysqli->query("
+					SELECT MAX(CAST(autogen_cus_id AS UNSIGNED)) AS max_number 
+					FROM customer_register 
+					WHERE autogen_cus_id !='' AND autogen_cus_id IS NOT NULL 
+				");
+				$row = $codeAvailable->fetch_assoc();
+
+				$autogen_cus_id = !empty($row['max_number']) ? ((int)$row['max_number'] + 1) : 10001;
+			}
+
+			$insertQry = "UPDATE `request_creation` SET `user_type`='" . strip_tags($user_type) . "',`user_name`='" . strip_tags($user) . "',`agent_id`='" . strip_tags($agent) . "',
+			`responsible`='" . strip_tags($responsible) . "',`remarks`='" . strip_tags($remarks) . "',`declaration`='" . strip_tags($declaration) . "',`req_code`='" . strip_tags($req_code) . "',
+			`dor`='" . strip_tags($dor) . "',`cus_id`='" . strip_tags($cus_id) . "',
+			`cus_data`='" . strip_tags($cus_data) . "',`cus_name`='" . strip_tags($cus_name) . "',`dob`='" . strip_tags($dob) . "',`age`='" . strip_tags($age) . "',
+			`gender`='" . strip_tags($gender) . "',`state`='" . strip_tags($state) . "',`district`='" . strip_tags($district) . "',
+			`taluk`='" . strip_tags($taluk) . "',`area`='" . strip_tags($area) . "',`sub_area`='" . strip_tags($sub_area) . "',`address`='" . strip_tags($address) . "',`mobile1`='" . strip_tags($mobile1) . "',
+			`mobile2`='" . strip_tags($mobile2) . "',`father_name`='" . strip_tags($father_name) . "',
+			`mother_name`='" . strip_tags($mother_name) . "',`marital`='" . strip_tags($marital) . "',`spouse_name`='" . strip_tags($spouse_name) . "',`occupation_type`='" . strip_tags($occupation_type) . "',
+			`occupation`='" . strip_tags($occupation) . "',`pic`='" . strip_tags($pic) . "',
+			`loan_category`='" . strip_tags($loan_category) . "',`sub_category`='" . strip_tags($sub_category) . "',`tot_value`='" . strip_tags($tot_value) . "',`ad_amt`='" . strip_tags($ad_amt) . "',
+			`ad_perc`='" . strip_tags($ad_perc) . "',`loan_amt`='" . strip_tags($loan_amt) . "',
+			`poss_type`='" . strip_tags($poss_type) . "',`due_amt`='" . strip_tags($due_amt) . "',`due_period`='" . strip_tags($due_period) .
+				"',
+			`update_login_id`='" . strip_tags($userid) . "',`updated_date`=current_timestamp WHERE `req_id` = '" . $id . "' and `cus_status` = '0' ";
+
+			$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
+
+			$categoryDelete = $mysqli->query("DELETE From request_category_info where req_ref_id = '" . strip_tags($id) . "' ");
+			for ($i = 0; $i < sizeof($category_info); $i++) {
+				$insertQry = "INSERT INTO `request_category_info`(`req_ref_id`, `category_info`) VALUES ('" . strip_tags($id) . "','" . strip_tags($category_info[$i]) . "') ";
+				$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
+			}
+
+			//in request cus id can edit so there 4 scenerio inserted id -> edit id (New -> New => No issues, New -> Existing => Making duplicate, Existing -> New => Existing data will erase, Existing -> Existing => one cus data will erased and duplicate.) these are all while update by cus id without any condition.;
+			if($cus_id_upd != $cus_id){
+				$mysqli->query("SELECT * FROM customer_register WHERE cus_id = '$cus_id'");
+				$cus_reg_cnt = $mysqli->affected_rows;
+
+				if($cus_data_upd =="New"){
+					if($cus_reg_cnt == 0){ //New
+						//...update by old cus id.
+						$mysqli->query("UPDATE customer_register SET `autogen_cus_id` = '" . strip_tags($autogen_cus_id) . "', `cus_id` = '" . strip_tags($cus_id) . "', `req_ref_id` = '" . strip_tags($id) . "', `customer_name` = '" . strip_tags($cus_name) . "', `dob` = '" . strip_tags($dob) . "', `age` = '" . strip_tags($age) . "', `gender` = '" . strip_tags($gender) . "', `state` = '" . strip_tags($state) . "', `district` = '" . strip_tags($district) . "', `taluk` = '" . strip_tags($taluk) . "', `area` = '" . strip_tags($area) . "', `sub_area` = '" . strip_tags($sub_area) . "', `address` = '" . strip_tags($address) . "', `mobile1` = '" . strip_tags($mobile1) . "', `mobile2` = '" . strip_tags($mobile2) . "', `father_name` = '" . strip_tags($father_name) . "', `mother_name` = '" . strip_tags($mother_name) . "', `marital` = '" . strip_tags($marital) . "', `spouse` = '" . strip_tags($spouse_name) . "', `occupation_type` = '" . strip_tags($occupation_type) . "', `occupation` = '" . strip_tags($occupation) . "', `pic` = '" . strip_tags($pic) . "', `cus_status` = 0 WHERE `cus_id`= '" . strip_tags($cus_id_upd) . "' ");
+
+					} else{ //Existing
+						//...update by new cus id.
+						$mysqli->query("UPDATE customer_register SET `autogen_cus_id` = '" . strip_tags($autogen_cus_id) . "', `cus_id` = '" . strip_tags($cus_id) . "', `req_ref_id` = '" . strip_tags($id) . "', `customer_name` = '" . strip_tags($cus_name) . "', `dob` = '" . strip_tags($dob) . "', `age` = '" . strip_tags($age) . "', `gender` = '" . strip_tags($gender) . "', `state` = '" . strip_tags($state) . "', `district` = '" . strip_tags($district) . "', `taluk` = '" . strip_tags($taluk) . "', `area` = '" . strip_tags($area) . "', `sub_area` = '" . strip_tags($sub_area) . "', `address` = '" . strip_tags($address) . "', `mobile1` = '" . strip_tags($mobile1) . "', `mobile2` = '" . strip_tags($mobile2) . "', `father_name` = '" . strip_tags($father_name) . "', `mother_name` = '" . strip_tags($mother_name) . "', `marital` = '" . strip_tags($marital) . "', `spouse` = '" . strip_tags($spouse_name) . "', `occupation_type` = '" . strip_tags($occupation_type) . "', `occupation` = '" . strip_tags($occupation) . "', `pic` = '" . strip_tags($pic) . "', `cus_status` = 0 WHERE `cus_id`= '" . strip_tags($cus_id) . "' ");
+
+						//...delete old cus id.
+						$mysqli->query("DELETE From customer_register where cus_id = '" . strip_tags($cus_id_upd) . "' ");
+					}
+
+				} else if($cus_data_upd =="Existing"){
+					if($cus_reg_cnt == 0){ //New
+						//...insert by new cus id.
+						$CustomerInsert = "INSERT INTO customer_register (`autogen_cus_id`, `cus_id`, `req_ref_id`, `customer_name`, `dob`, `age`, `gender`, `state`, `district`,
+						`taluk`, `area`, `sub_area`, `address`, `mobile1`, `mobile2`, `father_name`, `mother_name`, `marital`, `spouse`, `occupation_type`, `occupation`, `pic`)
+						VALUES ( '" . strip_tags($autogen_cus_id) . "', '" . strip_tags($cus_id) . "', '" . strip_tags($id) . "', '" . strip_tags($cus_name) . "', '" . strip_tags($dob) . "', '" . strip_tags($age) . "', '" . strip_tags($gender) . "', '" . strip_tags($state) . "', '" . strip_tags($district) . "', '" . strip_tags($taluk) . "', '" . strip_tags($area) . "', '" . strip_tags($sub_area) . "', '" . strip_tags($address) . "', '" . strip_tags($mobile1) . "', '" . strip_tags($mobile2) . "', '" . strip_tags($father_name) . "', '" . strip_tags($mother_name) . "', '" . strip_tags($marital) . "', '" . strip_tags($spouse_name) . "', '" . strip_tags($occupation_type) . "', '" . strip_tags($occupation) . "', '" . strip_tags($pic) . "' )";
+						$insresult = $mysqli->query($CustomerInsert) or die("Error " . $mysqli->error);
+
+					} else{ //Existing
+						//...update by new cus id.
+						$mysqli->query("UPDATE customer_register SET `autogen_cus_id` = '" . strip_tags($autogen_cus_id) . "', `cus_id` = '" . strip_tags($cus_id) . "', `req_ref_id` = '" . strip_tags($id) . "', `customer_name` = '" . strip_tags($cus_name) . "', `dob` = '" . strip_tags($dob) . "', `age` = '" . strip_tags($age) . "', `gender` = '" . strip_tags($gender) . "', `state` = '" . strip_tags($state) . "', `district` = '" . strip_tags($district) . "', `taluk` = '" . strip_tags($taluk) . "', `area` = '" . strip_tags($area) . "', `sub_area` = '" . strip_tags($sub_area) . "', `address` = '" . strip_tags($address) . "', `mobile1` = '" . strip_tags($mobile1) . "', `mobile2` = '" . strip_tags($mobile2) . "', `father_name` = '" . strip_tags($father_name) . "', `mother_name` = '" . strip_tags($mother_name) . "', `marital` = '" . strip_tags($marital) . "', `spouse` = '" . strip_tags($spouse_name) . "', `occupation_type` = '" . strip_tags($occupation_type) . "', `occupation` = '" . strip_tags($occupation) . "', `pic` = '" . strip_tags($pic) . "', `cus_status` = 0 WHERE `cus_id`= '" . strip_tags($cus_id) . "' ");
+						
+					}
+
+					$mysqli->query(" UPDATE customer_register SET req_ref_id = ( SELECT req_id FROM request_creation WHERE cus_id = $cus_id_upd ORDER BY req_id DESC LIMIT 1)  WHERE cus_id = $cus_id_upd ");
+					
+				}
+
+			} else{ //if cus id not edit just update by cus id.
+					$mysqli->query("UPDATE customer_register SET `autogen_cus_id` = '" . strip_tags($autogen_cus_id) . "', `cus_id` = '" . strip_tags($cus_id) . "', `req_ref_id` = '" . strip_tags($id) . "', `customer_name` = '" . strip_tags($cus_name) . "', `dob` = '" . strip_tags($dob) . "', `age` = '" . strip_tags($age) . "', `gender` = '" . strip_tags($gender) . "', `state` = '" . strip_tags($state) . "', `district` = '" . strip_tags($district) . "', `taluk` = '" . strip_tags($taluk) . "', `area` = '" . strip_tags($area) . "', `sub_area` = '" . strip_tags($sub_area) . "', `address` = '" . strip_tags($address) . "', `mobile1` = '" . strip_tags($mobile1) . "', `mobile2` = '" . strip_tags($mobile2) . "', `father_name` = '" . strip_tags($father_name) . "', `mother_name` = '" . strip_tags($mother_name) . "', `marital` = '" . strip_tags($marital) . "', `spouse` = '" . strip_tags($spouse_name) . "', `occupation_type` = '" . strip_tags($occupation_type) . "', `occupation` = '" . strip_tags($occupation) . "', `pic` = '" . strip_tags($pic) . "', `cus_status` = 0 WHERE `cus_id`= '" . strip_tags($cus_id) . "' ");
+				}
+
+
+			// Commit the transaction
+			$mysqli->commit();
+
+			// Enable autocommit again
+			$mysqli->autocommit(TRUE);
+		} catch (Exception $e) {
+			// Rollback the transaction in case of error
+			$mysqli->rollback();
+			$mysqli->autocommit(TRUE);
+			echo "Error: " . $e->getMessage();
+		}
+}
 
 	//Cancel verification 
 	// function cancelVerification($mysqli,$id, $userid){

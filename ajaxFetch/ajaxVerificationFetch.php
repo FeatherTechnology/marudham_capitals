@@ -40,6 +40,7 @@ if ($userid != 1) {
 $column = array(
     'v.req_id',
     'v.dor',
+    'cr.autogen_cus_id',
     'v.cus_id',
     'v.cus_name',
     'bc.branch_name',
@@ -58,14 +59,14 @@ $column = array(
     'v.cus_data',
     'v.cus_data',
     'v.cus_status',
-    'v.status'
+    'v.req_id'
 );
 
 
-
 if ($userid == 1) {
-    $query = "SELECT v.*,a.area_name, sa.sub_area_name, ag.group_name, bc.branch_name, alm.line_name,lcc.loan_category_creation_name
+    $query = "SELECT v.*, cr.autogen_cus_id, a.area_name, sa.sub_area_name, ag.group_name, bc.branch_name, alm.line_name,lcc.loan_category_creation_name
     FROM in_verification v
+    JOIN customer_register cr ON v.cus_id = cr.cus_id
     JOIN area_list_creation a ON v.area = a.area_id
     JOIN sub_area_list_creation sa ON v.sub_area = sa.sub_area_id
     JOIN area_group_mapping ag ON FIND_IN_SET(sa.sub_area_id, ag.sub_area_id)
@@ -74,8 +75,9 @@ if ($userid == 1) {
     JOIN loan_category_creation lcc ON lcc.loan_category_creation_id = v.loan_category
     WHERE v.status = 0 and (v.cus_status NOT IN(4, 5, 6, 7, 8, 9) and v.cus_status < 14) "; //  < 14 means issued
 } else {
-    $query = "SELECT v.*,a.area_name, sa.sub_area_name, ag.group_name, bc.branch_name, alm.line_name,lcc.loan_category_creation_name
+    $query = "SELECT v.*, cr.autogen_cus_id, a.area_name, sa.sub_area_name, ag.group_name, bc.branch_name, alm.line_name,lcc.loan_category_creation_name
     FROM in_verification v
+    JOIN customer_register cr ON v.cus_id = cr.cus_id
     JOIN area_list_creation a ON v.area = a.area_id
     JOIN sub_area_list_creation sa ON v.sub_area = sa.sub_area_id
     JOIN area_group_mapping ag ON FIND_IN_SET(sa.sub_area_id, ag.sub_area_id)
@@ -88,6 +90,7 @@ if ($userid == 1) {
 if (isset($_POST['search']) && $_POST['search'] != "") {
 
     $query .= " AND (v.dor LIKE '%" . $_POST['search'] . "%'
+            OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%'
             OR v.cus_id LIKE '%" . $_POST['search'] . "%'
             OR v.cus_name LIKE '%" . $_POST['search'] . "%'
             OR bc.branch_name LIKE '%" . $_POST['search'] . "%'
@@ -136,7 +139,7 @@ foreach ($result as $row) {
 
     $sub_array[] = date('d-m-Y', strtotime($row['dor']));
 
-
+    $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = $row['cus_id'];
     $sub_array[] = $row['cus_name'];
 
