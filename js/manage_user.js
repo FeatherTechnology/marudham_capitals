@@ -162,8 +162,7 @@ $(document).ready(function () {
         var sortedStr = arr.join(",");
 
         $('#bank_details').val(sortedStr);
-
-    })
+    });
 
     $('#update_screen').change(function () {
         // Get values from multiselect and sort
@@ -193,24 +192,40 @@ $(document).ready(function () {
         const checkboxesToEnable = document.querySelectorAll("input.request-checkbox");
         var requestmodule = document.querySelector('#requestmodule');
         checkbox(checkboxesToEnable, requestmodule);
+        if (!requestmodule.checked) {
+            agentMultiselect.clearStore();
+            $('.agent_div').hide();
+        }
     });
 
     $("#verificationmodule").on("change", function () {
         const checkboxesToEnable = document.querySelectorAll("input.verification-checkbox");
         var verificationmodule = document.querySelector('#verificationmodule');
         checkbox(checkboxesToEnable, verificationmodule);
+        if (!verificationmodule.checked) {
+            verificationloanCatMultiselect.clearStore();
+            $('.ver_loancat_div').hide();
+        }
     });
 
     $("#approvalmodule").on("change", function () {
         const checkboxesToEnable = document.querySelectorAll("input.approval-checkbox");
         var approvalmodule = document.querySelector('#approvalmodule');
         checkbox(checkboxesToEnable, approvalmodule);
+        if (!approvalmodule.checked) {
+            approvalloanCatMultiselect.clearStore();
+            $('.app_loancat_div').hide();
+        }
     });
 
     $("#acknowledgementmodule").on("change", function () {
         const checkboxesToEnable = document.querySelectorAll("input.acknowledgement-checkbox");
         var acknowledgementmodule = document.querySelector('#acknowledgementmodule');
         checkbox(checkboxesToEnable, acknowledgementmodule);
+        if (!acknowledgementmodule.checked) {
+            acknowledgementloanCatMultiselect.clearStore();
+            $('.ack_loancat_div').hide();
+        }
     });
 
     $("#loanissuemodule").on("change", function () {
@@ -336,14 +351,6 @@ $(document).ready(function () {
         }
     });
 
-    $('#verificationmodule').click(function () {
-        var verification_screen = document.querySelector('#verificationmodule');
-        if (!verification_screen.checked) {
-            verificationloanCatMultiselect.clearStore();
-            $('.ver_loancat_div').hide();
-        }
-    });
-
     $('#verification').click(function () {
         var verification_screen = document.querySelector('#verification');
         if (verification_screen.checked) {
@@ -355,14 +362,6 @@ $(document).ready(function () {
         }
     });
 
-    $('#approvalmodule').click(function () {
-        var approval_screen = document.querySelector('#approvalmodule');
-        if (!approval_screen.checked) {
-            approvalloanCatMultiselect.clearStore();
-            $('.app_loancat_div').hide();
-        }
-    });
-
     $('#approval').click(function () {
         var approval_screen = document.querySelector('#approval');
         if (approval_screen.checked) {
@@ -371,14 +370,6 @@ $(document).ready(function () {
         } else {
             approvalloanCatMultiselect.clearStore();
             $('.app_loancat_div').hide();
-        }
-    });
-
-    $('#acknowledgementmodule').click(function () {
-        var acknowledgement_screen = document.querySelector('#acknowledgementmodule');
-        if (!acknowledgement_screen.checked) {
-            acknowledgementloanCatMultiselect.clearStore();
-            $('.ack_loancat_div').hide();
         }
     });
 
@@ -542,27 +533,27 @@ $(function () {
         var loan_track_module = document.getElementById('loan_track_module');
         var sms_module = document.getElementById('sms_module');
 
-        if (mastermodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.master-checkbox"); var mastermodule = document.querySelector('#mastermodule'); checkbox(checkboxesToEnable, mastermodule); }
-        if (adminmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.admin-checkbox"); var adminmodule = document.querySelector('#adminmodule'); checkbox(checkboxesToEnable, adminmodule); }
-        if (requestmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.request-checkbox"); var requestmodule = document.querySelector('#requestmodule'); checkbox(checkboxesToEnable, requestmodule); }
-        if (verificationmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.verification-checkbox"); var verificationmodule = document.querySelector('#verificationmodule'); checkbox(checkboxesToEnable, verificationmodule); }
-        if (approvalmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.approval-checkbox"); var approvalmodule = document.querySelector('#approvalmodule'); checkbox(checkboxesToEnable, approvalmodule); }
-        if (acknowledgementmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.acknowledgement-checkbox"); var acknowledgementmodule = document.querySelector('#acknowledgementmodule'); checkbox(checkboxesToEnable, acknowledgementmodule); }
-        if (loanissuemodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.loan_issue-checkbox"); var loanissuemodule = document.querySelector('#loanissuemodule'); checkbox(checkboxesToEnable, loanissuemodule); }
-        if (collectionmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.collection-checkbox"); var collectionmodule = document.querySelector('#collectionmodule'); checkbox(checkboxesToEnable, collectionmodule); }
-        if (closedmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.closed-checkbox"); var closedmodule = document.querySelector('#closedmodule'); checkbox(checkboxesToEnable, closedmodule); }
-        if (nocmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.noc-checkbox"); var nocmodule = document.querySelector('#nocmodule'); checkbox(checkboxesToEnable, nocmodule); }
+        if (mastermodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.master-checkbox"); checkbox(checkboxesToEnable, mastermodule); }
+        if (adminmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.admin-checkbox"); checkbox(checkboxesToEnable, adminmodule); }
+        if (requestmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.request-checkbox"); checkbox(checkboxesToEnable, requestmodule); }
+        if (verificationmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.verification-checkbox"); checkbox(checkboxesToEnable, verificationmodule); }
+        if (approvalmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.approval-checkbox"); checkbox(checkboxesToEnable, approvalmodule); }
+        if (acknowledgementmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.acknowledgement-checkbox"); checkbox(checkboxesToEnable, acknowledgementmodule); }
+        if (loanissuemodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.loan_issue-checkbox"); checkbox(checkboxesToEnable, loanissuemodule); }
+        if (collectionmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.collection-checkbox"); checkbox(checkboxesToEnable, collectionmodule); }
+        if (closedmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.closed-checkbox"); checkbox(checkboxesToEnable, closedmodule); }
+        if (nocmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.noc-checkbox"); checkbox(checkboxesToEnable, nocmodule); }
         // if(doctrackmodule.checked){const checkboxesToEnable = document.querySelectorAll("input.doctrack-checkbox");var doctrackmodule = document.querySelector('#doctrackmodule');checkbox(checkboxesToEnable,doctrackmodule);}
-        if (updatemodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.update-checkbox"); var updatemodule = document.querySelector('#updatemodule'); checkbox(checkboxesToEnable, updatemodule); }
-        if (concernmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.concern-checkbox"); var concernmodule = document.querySelector('#concernmodule'); checkbox(checkboxesToEnable, concernmodule); }
-        if (accountsmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.accounts-checkbox"); var accountsmodule = document.querySelector('#accountsmodule'); checkbox(checkboxesToEnable, accountsmodule); }
-        if (followupmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.followup-checkbox"); var followupmodule = document.querySelector('#followupmodule'); checkbox(checkboxesToEnable, followupmodule); }
-        if (reportmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.report-checkbox"); var reportmodule = document.querySelector('#reportmodule'); checkbox(checkboxesToEnable, reportmodule); }
-        if (reportmodule_intrest.checked) { const checkboxesToEnable = document.querySelectorAll("input.intrest-report-checkbox"); var reportmodule_intrest = document.querySelector('#reportmodule_intrest'); checkbox(checkboxesToEnable, reportmodule_intrest); }
-        if (searchmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.search-checkbox"); var searchmodule = document.querySelector('#searchmodule'); checkbox(checkboxesToEnable, searchmodule); }
-        if (bulk_upload_module.checked) { const checkboxesToEnable = document.querySelectorAll("input.bulk_upload-checkbox"); var bulk_upload_module = document.querySelector('#bulk_upload_module'); checkbox(checkboxesToEnable, bulk_upload_module); }
-        if (loan_track_module.checked) { const checkboxesToEnable = document.querySelectorAll("input.loan_track-checkbox"); var loan_track_module = document.querySelector('#loan_track_module'); checkbox(checkboxesToEnable, loan_track_module); }
-        if (sms_module.checked) { const checkboxesToEnable = document.querySelectorAll("input.sms_generation-checkbox"); var sms_module = document.querySelector('#sms_module'); checkbox(checkboxesToEnable, sms_module); }
+        if (updatemodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.update-checkbox"); checkbox(checkboxesToEnable, updatemodule); }
+        if (concernmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.concern-checkbox"); checkbox(checkboxesToEnable, concernmodule); }
+        if (accountsmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.accounts-checkbox"); checkbox(checkboxesToEnable, accountsmodule); }
+        if (followupmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.followup-checkbox"); checkbox(checkboxesToEnable, followupmodule); }
+        if (reportmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.report-checkbox"); checkbox(checkboxesToEnable, reportmodule); }
+        if (reportmodule_intrest.checked) { const checkboxesToEnable = document.querySelectorAll("input.intrest-report-checkbox"); checkbox(checkboxesToEnable, reportmodule_intrest); }
+        if (searchmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.search-checkbox"); checkbox(checkboxesToEnable, searchmodule); }
+        if (bulk_upload_module.checked) { const checkboxesToEnable = document.querySelectorAll("input.bulk_upload-checkbox"); checkbox(checkboxesToEnable, bulk_upload_module); }
+        if (loan_track_module.checked) { const checkboxesToEnable = document.querySelectorAll("input.loan_track-checkbox"); checkbox(checkboxesToEnable, loan_track_module); }
+        if (sms_module.checked) { const checkboxesToEnable = document.querySelectorAll("input.sms_generation-checkbox"); checkbox(checkboxesToEnable, sms_module); }
     }
 })
 
@@ -1116,7 +1107,12 @@ function validation() {
         $('.dueFollowupCheck').show();
         $('.duefollowupCheck').hide(); 
         validation = false; 
-    } 
+        
+    } else{
+        $('.dueFollowupCheck').hide();
+        $('.duefollowupCheck').hide(); 
+        
+    }
 
 
     if (role == '1') {
