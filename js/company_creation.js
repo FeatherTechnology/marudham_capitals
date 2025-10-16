@@ -273,7 +273,7 @@ function validateCompanyForm() {
     var pincode = $('#pincode').val();
     var mobile = $('#mobile').val();
 
-    if (company_name === '' || address1 === '' || state === '' || district === '' || taluk === '' || pincode === '' || (mobile != '' && mobile.length < 10)) {
+    if (company_name === '' || address1 === '' ||  state === 'SelectState' || district === 'Select District' || taluk === 'Select Taluk' || pincode === '' || (mobile != '' && mobile.length < 10)) {
         Swal.fire({
             timerProgressBar: true,
             timer: 2000,

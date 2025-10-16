@@ -882,7 +882,7 @@ if ($idupd > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label for="coll_amnt"> Amount </label> <span class="required">&nbsp;*</span>
-							<input type="number" class="form-control" id="collectionCharge_Amnt" name="collectionCharge_Amnt" placeholder="Enter Amount" tabindex='1'>
+							<input type="text" class="form-control" id="collectionCharge_Amnt" name="collectionCharge_Amnt" placeholder="Enter Amount" tabindex='1'>
 							<span class="text-danger" id="amntCheck"> Enter Amount </span>
 						</div>
 					</div>

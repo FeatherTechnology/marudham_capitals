@@ -172,10 +172,9 @@ function warningSwal(title, text) {
         title: title,
         html: text,
         icon: 'warning',
-        showConfirmButton: false,
-        timerProgressBar: true,
-        timer: 2000,
-        allowOutsideClick: false
+        showConfirmButton: true,
+        confirmButtonColor: '#009688', // warning color (orange/yellow)
+        confirmButtonText: 'OK'
     });
 }
 
@@ -184,12 +183,13 @@ function successSwal(title, text) {
         title: title,
         html: text,
         icon: 'success',
-        showConfirmButton: false,
-        timerProgressBar: true,
-        timer: 2000,
-        allowOutsideClick: false
-    })
-    setTimeout(() => {
-        location.reload();
-    }, 2000);
+        showConfirmButton: true,
+        confirmButtonColor: '#009688', // your success green
+        confirmButtonText: 'OK'
+    }).then((result) => {
+        // Reload only if OK is clicked
+        if (result.isConfirmed) {
+            location.reload();
+        }
+    });
 }
