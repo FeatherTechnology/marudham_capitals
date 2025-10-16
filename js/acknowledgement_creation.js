@@ -2778,12 +2778,6 @@ $('#submit_loan_calculation').click(function (e) {
 
     $('#due_start_from').trigger('change'); //For calculate once again if user missed to refresh due dates.
 
-    var due_type = $("#due_type").val();
-
-    if (due_type == 'Interest') {
-        $("#principal_amt_cal").val('');
-    }
-
     // Call your calculation directly
     performLoanCalculation(function () {
 
