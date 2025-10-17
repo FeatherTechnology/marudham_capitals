@@ -44,15 +44,15 @@ $(document).ready(function () {
     "#due_amt_track, #princ_amt_track, #int_amt_track, #penalty_track , #coll_charge_track"
   ).on('input', function () {
     var due_amt_track =
-      $("#due_amt_track").val() != "" ? $("#due_amt_track").val() : 0;
+      $("#due_amt_track").val() != "" ? $("#due_amt_track").val().replace(/,/g, '') : 0;
     var penalty_track =
-      $("#penalty_track").val() != "" ? $("#penalty_track").val() : 0;
+      $("#penalty_track").val() != "" ? $("#penalty_track").val().replace(/,/g, '') : 0;
     var coll_charge_track =
-      $("#coll_charge_track").val() != "" ? $("#coll_charge_track").val() : 0;
+      $("#coll_charge_track").val() != "" ? $("#coll_charge_track").val().replace(/,/g, '') : 0;
     var princ_amt_track =
-      $("#princ_amt_track").val() != "" ? $("#princ_amt_track").val() : 0;
+      $("#princ_amt_track").val() != "" ? $("#princ_amt_track").val().replace(/,/g, '') : 0;
     var int_amt_track =
-      $("#int_amt_track").val() != "" ? $("#int_amt_track").val() : 0;
+      $("#int_amt_track").val() != "" ? $("#int_amt_track").val().replace(/,/g, '') : 0;
 
     var total_paid_track =
       parseInt(due_amt_track) +
@@ -63,15 +63,14 @@ $(document).ready(function () {
     $("#total_paid_track").val(formatIndianNumber(String(total_paid_track)));
   });
 
-  $("#pre_close_waiver , #penalty_waiver , #coll_charge_waiver , #principal_waiver , #interest_waiver").blur(
-    function () {
+  $("#pre_close_waiver , #penalty_waiver , #coll_charge_waiver , #principal_waiver , #interest_waiver").on('input', function () {
       var pre_close_waiver =
-        $("#pre_close_waiver").val() != "" ? $("#pre_close_waiver").val() : 0;
+        $("#pre_close_waiver").val() != "" ? $("#pre_close_waiver").val().replace(/,/g, '') : 0;
       var penalty_waiver =
-        $("#penalty_waiver").val() != "" ? $("#penalty_waiver").val() : 0;
+        $("#penalty_waiver").val() != "" ? $("#penalty_waiver").val().replace(/,/g, '') : 0;
       var coll_charge_waiver =
         $("#coll_charge_waiver").val() != ""
-          ? $("#coll_charge_waiver").val()
+          ? $("#coll_charge_waiver").val().replace(/,/g, '')
           : 0;
 
       var principal_waiver = $("#principal_waiver").val() != "" ? $("#principal_waiver").val() : 0;
@@ -83,7 +82,7 @@ $(document).ready(function () {
         parseInt(coll_charge_waiver) +
         parseInt(principal_waiver) +
         parseInt(interest_waiver);
-      $("#total_waiver").val(total_waiver);
+      $("#total_waiver").val(formatIndianNumber(String(total_waiver)));
     }
   );
 
@@ -98,7 +97,7 @@ $(document).ready(function () {
     let colluserid = $("#colluserid").val();
     let collectionCharge_date = $("#collectionCharge_date").attr("value"); //coz value inside is not working properly
     let collectionCharge_purpose = $("#collectionCharge_purpose").val();
-    let collectionCharge_Amnt = $("#collectionCharge_Amnt").val();
+    let collectionCharge_Amnt = $("#collectionCharge_Amnt").val().replace(/,/g, '');
     if (
       collectionCharge_date != "" &&
       collectionCharge_purpose != "" &&
@@ -598,7 +597,7 @@ function OnLoadFunctions(req_id, cus_id) {
                   $(this).val("");
                   $("#total_paid_track").val("");
                 }
-                $("#pre_close_waiver").trigger("blur"); //this will check whether preclosure amount crosses limit
+                $("#pre_close_waiver").trigger("input"); //this will check whether preclosure amount crosses limit
               });
 
               $("#princ_amt_track").on('input', function () {
@@ -609,7 +608,7 @@ function OnLoadFunctions(req_id, cus_id) {
                   $(this).val("");
                   $("#total_paid_track").val("");
                 }
-                $("#pre_close_waiver").trigger("blur"); //this will check whether preclosure amount crosses limit
+                $("#pre_close_waiver").trigger("input"); //this will check whether preclosure amount crosses limit
               });
 
               $("#int_amt_track").on('input', function () {
@@ -1016,11 +1015,11 @@ function validations() {
   let total_waiver = $("#total_waiver").val();
   let retVal = true;
 
-  $("#due_amt_track").trigger("blur"); 
-  $("#penalty_track").trigger("blur"); 
-  $("#coll_charge_track").trigger("blur"); 
-  $("#penalty_waiver").trigger("blur"); 
-  $("#coll_charge_waiver").trigger("blur"); 
+  $("#due_amt_track").trigger("input"); 
+  $("#penalty_track").trigger("input"); 
+  $("#coll_charge_track").trigger("input"); 
+  $("#penalty_waiver").trigger("input"); 
+  $("#coll_charge_waiver").trigger("input"); 
 
   if(tot_amt == ""){
     $("#collectionInfoCheck").show();

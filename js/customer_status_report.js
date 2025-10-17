@@ -1,3 +1,5 @@
+// Remove User based loan category 
+// show the user who has collection and due followup Access
 const loanCategory = new Choices('#loan_category', {
     removeItemButton: true,
     noChoicesText: 'Select Category',
@@ -54,6 +56,7 @@ $(document).ready(function () {
             $('#line, #group_map, #due_followup').closest('.choices').hide();
             $('#by_user').show()
             getUserNames();
+             getUserLoanCategories('');
         } else if (type == '3') {
             $('#group_map').closest('.choices').show();
             $('#line,#due_followup').closest('.choices').hide();
@@ -68,32 +71,32 @@ $(document).ready(function () {
             getUserLoanCategories('');
         }
     })
-    $('#by_user').change(function () {
-        let user_id = $(this).val();
-        // Reset header text
-        $('.card-header').text('Customer Status Report');
+    // $('#by_user').change(function () {
+    //     let user_id = $(this).val();
+    //     // Reset header text
+    //     $('.card-header').text('Customer Status Report');
 
-        // Hide all tables and wrappers
-        $('#pending_table').hide().find('tbody').empty();
-        $('#current_table').hide().find('tbody').empty();
-        $('#od_table').hide().find('tbody').empty();
+    //     // Hide all tables and wrappers
+    //     $('#pending_table').hide().find('tbody').empty();
+    //     $('#current_table').hide().find('tbody').empty();
+    //     $('#od_table').hide().find('tbody').empty();
 
-        // If DataTables is used, destroy previous instances to avoid duplicates
-        if ($.fn.DataTable.isDataTable('#pending_table')) {
-            $('#pending_table').DataTable().clear().destroy();
-        }
-        if ($.fn.DataTable.isDataTable('#current_table')) {
-            $('#current_table').DataTable().clear().destroy();
-        }
-        if ($.fn.DataTable.isDataTable('#od_table')) {
-            $('#od_table').DataTable().clear().destroy();
-        }
-        if (user_id) {
-            getUserLoanCategories(user_id);
-        } else {
-            loanCategory.clearStore(); // clear if no user selected
-        }
-    });
+    //     // If DataTables is used, destroy previous instances to avoid duplicates
+    //     if ($.fn.DataTable.isDataTable('#pending_table')) {
+    //         $('#pending_table').DataTable().clear().destroy();
+    //     }
+    //     if ($.fn.DataTable.isDataTable('#current_table')) {
+    //         $('#current_table').DataTable().clear().destroy();
+    //     }
+    //     if ($.fn.DataTable.isDataTable('#od_table')) {
+    //         $('#od_table').DataTable().clear().destroy();
+    //     }
+    //     if (user_id) {
+    //         getUserLoanCategories(user_id);
+    //     } else {
+    //         loanCategory.clearStore(); // clear if no user selected
+    //     }
+    // });
 
     // $('#due_followup').on('change', function () {
     //     let followup_id = $(this).val();
@@ -168,18 +171,18 @@ function getUserNames() {
         });
     }, 'json');
 }
-
-function getUserLoanCategories(user_id, followup_id = null) {
-    let type = $("#type").val();
+// function getUserLoanCategories(user_id, followup_id = null)
+function getUserLoanCategories() {
+    // let type = $("#type").val();
 
     $.ajax({
         url: 'reportFile/customer_status_report/ajaxGetUserLoanCategory.php',
         type: 'POST',
-        data: {
-            user_id: user_id,
-            type: type,
-            followup_id: followup_id // only used when type=4
-        },
+        // data: {
+        //     user_id: user_id,
+        //     type: type,
+        //     followup_id: followup_id // only used when type=4
+        // },
         dataType: 'json',
         success: function (response) {
             loanCategory.clearStore();
