@@ -73,7 +73,7 @@ if ($userid == 1) {
     JOIN branch_creation bc ON ag.branch_id = bc.branch_id
     JOIN area_line_mapping alm ON FIND_IN_SET(sa.sub_area_id, alm.sub_area_id)
     JOIN loan_category_creation lcc ON lcc.loan_category_creation_id = v.loan_category
-    WHERE v.status = 0 and v.cus_status IN (3,13) and v.sub_area IN ($sub_area_list) AND v.loan_category IN($ack_loan_cat) "; //show only Approved Verification in Acknowledgement. // 13 Move to Issue. 
+    WHERE v.status = 0 and v.cus_status IN (3,13) and v.sub_area IN ($sub_area_list) AND v.loan_category IN ($ack_loan_cat) "; //show only Approved Verification in Acknowledgement. // 13 Move to Issue. 
 }
 
 if (isset($_POST['search'])) {
@@ -124,6 +124,8 @@ $sno = 1;
 foreach ($result as $row) {
     $sub_array   = array();
 
+    $id          = $row['req_id'];
+
     $sub_array[] = $sno;
     $sub_array[] = date('d-m-Y', strtotime($row['dor']));
     $sub_array[] = $row['cus_id'];
@@ -139,11 +141,10 @@ foreach ($result as $row) {
 
     $sub_array[] = moneyFormatIndia($row['loan_amt']);
 
-    $update_login_id = $row['update_login_id'];
-
     $qry = $connect->query("SELECT u.role AS user_type, u.fullname AS user_name
     FROM user u 
-    WHERE u.user_id = $update_login_id");
+    JOIN in_acknowledgement ia ON u.user_id = ia.inserted_user
+    WHERE ia.req_id = '$id' ");
 
     $row1 = $qry->fetch(PDO::FETCH_ASSOC);
 
@@ -178,7 +179,6 @@ foreach ($result as $row) {
         $sub_array[] = '';
     }
     $sub_array[] = $row['cus_data'];
-    $id = $row['req_id'];
     $cus_id = $row['cus_id'];
 
     $cus_status = $row['cus_status'];
@@ -203,7 +203,6 @@ foreach ($result as $row) {
         $sub_array[] = 'Issued';
     }
 
-    $id          = $row['req_id'];
     $user_type = $row['user_type'];
     $cus_id = $row['cus_id'];
 
@@ -220,8 +219,6 @@ foreach ($result as $row) {
     if ($login_user_type == 0 or $userid == 1) {
         $action .= "<a href='' data-value ='" . $cus_id . "' data-value1 = '$id' class='customer-status' data-toggle='modal' data-target='.customerstatus'>Customer Status</a>";
     }
-
-
 
     $action .= "</div></div>";
 

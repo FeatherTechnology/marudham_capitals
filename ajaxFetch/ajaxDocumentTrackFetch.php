@@ -15,6 +15,7 @@ if ($userid != 1) {
 
 $column = array(
     'dt.id',
+    'dt.created_date',
     'dt.cus_id',
     'cr.customer_name',
     'bc.branch_name',

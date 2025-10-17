@@ -37,6 +37,25 @@ $stage_arr = [
     13 => 'Loan Issue',
 ];
 
+$column = array(
+    'req_id',
+    'updated_date',
+    'cus_id',
+    'cus_name',
+    'area_name',
+    'sub_area_name',
+    'loan_category_creation_name',
+    'sub_category',
+    'ag_name',
+    'branch_name',
+    'group_name',
+    'line_name',
+    'cus_status',
+    'req_id',
+    'req_id',
+    'req_id'
+);
+
 $search = "";
 // Apply search filter if set
 if (isset($_POST['search']) && $_POST['search'] != "") {
@@ -92,7 +111,7 @@ UNION ALL
 
 // Apply ordering if set
 if (isset($_POST['order'])) {
-    $query = ' ORDER BY ' . ($_POST['order']['0']['column'] + 1) . ' ' . $_POST['order']['0']['dir'] . ' ';
+    $query = ' ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
     $sql .= $query;
 }
 

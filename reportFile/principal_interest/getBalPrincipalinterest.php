@@ -53,17 +53,19 @@ $column = [
     'sal.sub_area_name',
     'lc.loan_cal_id',
     'lc.sub_category',
+    'ac.ag_name',
+    'lc.loan_amt_cal',
+    'lc.due_amt_cal',
+    'lc.due_period',
+    'lc.tot_amt_cal',
     'lc.loan_cal_id',
     'lc.loan_cal_id',
     'lc.loan_cal_id',
     'lc.loan_cal_id',
     'lc.loan_cal_id',
     'lc.loan_cal_id',
-    'lc.loan_cal_id',
-    'lc.loan_cal_id',
-    'lc.loan_cal_id',
-    'lc.loan_cal_id',
-    'lc.loan_cal_id',
+    'lc.cus_status',
+    'lc.cus_status'
 ];
 
 

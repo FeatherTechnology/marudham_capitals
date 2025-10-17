@@ -30,10 +30,10 @@ $where .= $user_based;
 
 $column = array(
     'tdate',
+    'tdate',
     'ctype',
     'Credit',
-    'Debit',
-    'amt'
+    'Debit'
 );
 
 // Main data query
