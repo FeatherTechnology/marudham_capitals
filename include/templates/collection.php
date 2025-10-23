@@ -8,11 +8,9 @@ $idupd = 0;
 if (isset($_GET['upd'])) {
 	$idupd = $_GET['upd'];
 	$cusidupd = $_GET['cusidupd'];
-	// $customerStatus = $_GET['customerStatus'];  
 }
 if ($idupd > 0) {
 	$getLoanList = $userObj->getLoanList($mysqli, $idupd);
-	// print_r($getLoanList);
 	if (sizeof($getLoanList) > 0) {
 		$cus_id						= $getLoanList['cus_id'];
 		$cus_name					= $getLoanList['cus_name'];
@@ -59,6 +57,11 @@ if ($idupd > 0) {
 	if ($login_role == '3') {
 		$login_user_type = 'Staff';
 	}
+}
+
+$getCustomerReg = $userObj->getCustomerRegister($mysqli, $cus_id);
+if (sizeof($getCustomerReg) > 0) { 
+	$autogen_cus_id 			= $getCustomerReg['autogen_cus_id'];
 }
 ?>
 
@@ -154,10 +157,15 @@ if ($idupd > 0) {
 								<div class="row">
 									<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
 										<div class="form-group">
-											<label for="cus_id">Customer ID</label>
-											<input type="text" class="form-control" id="cus_id" name="cus_id" value='<?php if (isset($cus_id)) {
-																															echo $cus_id;
-																														} ?>' readonly tabindex='1'>
+											<label for="cus_id">Adhaar Number</label>
+											<input type="text" class="form-control" id="cus_id" name="cus_id" value='<?php if (isset($cus_id)) {echo $cus_id;} ?>' readonly tabindex='1'>
+										</div>
+									</div>
+
+									<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
+										<div class="form-group">
+											<label for="autogen_cus_id">Customer ID</label>
+											<input type="text" class="form-control" id="autogen_cus_id" name="autogen_cus_id" tabindex='2' value='<?php if (isset($autogen_cus_id)) { echo $autogen_cus_id; } ?>' readonly>
 										</div>
 									</div>
 
@@ -166,7 +174,7 @@ if ($idupd > 0) {
 											<label for="cus_name">Customer Name</label>
 											<input type="text" class="form-control" id="cus_name" name="cus_name" value='<?php if (isset($cus_name)) {
 																																echo $cus_name;
-																															} ?>' readonly tabindex='2'>
+																															} ?>' readonly tabindex='3'>
 										</div>
 									</div>
 
@@ -174,7 +182,7 @@ if ($idupd > 0) {
 										<div class="form-group">
 											<label for="area"> Area </label>
 											<input type="hidden" class="form-control" id="area_id" name="area_id" value="<?php if (isset($area_id)) echo $area_id; ?>" readonly>
-											<input type="text" class="form-control" id="area_name" name="area_name" value="<?php if (isset($area_name)) echo $area_name; ?>" readonly tabindex='3'>
+											<input type="text" class="form-control" id="area_name" name="area_name" value="<?php if (isset($area_name)) echo $area_name; ?>" readonly tabindex='4'>
 										</div>
 									</div>
 
@@ -182,7 +190,7 @@ if ($idupd > 0) {
 										<div class="form-group">
 											<label for="sub_area"> Sub Area </label>
 											<input type="hidden" class="form-control" id="sub_area_id" name="sub_area_id" value="<?php if (isset($sub_area_id)) echo $sub_area_id; ?>" readonly>
-											<input type="text" class="form-control" id="sub_area_name" name="sub_area_name" value='<?php if (isset($sub_area_name)) echo $sub_area_name; ?>' readonly tabindex='4'>
+											<input type="text" class="form-control" id="sub_area_name" name="sub_area_name" value='<?php if (isset($sub_area_name)) echo $sub_area_name; ?>' readonly tabindex='5'>
 										</div>
 									</div>
 
@@ -194,7 +202,7 @@ if ($idupd > 0) {
 																																} ?>">
 											<input type="text" class="form-control" name="branch_name" id="branch_name" value="<?php if (isset($branch_name)) {
 																																	echo $branch_name;
-																																} ?>" readonly tabindex='5'>
+																																} ?>" readonly tabindex='6'>
 										</div>
 									</div>
 
@@ -206,7 +214,7 @@ if ($idupd > 0) {
 																															} ?>">
 											<input type="text" class="form-control" name="line_name" id="line_name" value="<?php if (isset($line_name)) {
 																																echo $line_name;
-																															} ?>" readonly tabindex='6'>
+																															} ?>" readonly tabindex='7'>
 										</div>
 									</div>
 
@@ -215,7 +223,7 @@ if ($idupd > 0) {
 											<label for="mobile1">Mobile No</label>
 											<input type="number" class="form-control" id="mobile1" name="mobile1" value='<?php if (isset($mobile1)) {
 																																echo $mobile1;
-																															} ?>' readonly tabindex='7'>
+																															} ?>' readonly tabindex='8'>
 										</div>
 									</div>
 
@@ -229,8 +237,7 @@ if ($idupd > 0) {
 										<input type="hidden" name="cus_image" id="cus_image" value="<?php if (isset($cus_pic)) {
 																										echo $cus_pic;
 																									} ?>">
-										<img id='imgshow' class="img_show" src=<?php //if (isset($cus_pic)){echo 'uploads/request/customer/'.$cus_pic ;}else{ echo 'img/avatar.png'; }
-																				?> />
+										<img id='imgshow' class="img_show" src="" />
 									</div>
 								</div>
 							</div>
@@ -400,7 +407,7 @@ if ($idupd > 0) {
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" style="display: none">
 								<div class="form-group">
 									<label for="responsible">Responsible&nbsp;<span class="required">&nbsp;*</span></label>
-									<input tabindex="8" type="text" class="form-control" id="responsible" name="responsible" value="<?php if (isset($responsible) and $responsible == '0') {
+									<input tabindex="9" type="text" class="form-control" id="responsible" name="responsible" value="<?php if (isset($responsible) and $responsible == '0') {
 																																		echo 'Yes';
 																																	} else {
 																																		echo 'No';
@@ -410,19 +417,19 @@ if ($idupd > 0) {
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<div class="form-group">
 									<label for="user_type">User type</label><span class="required">&nbsp;*</span>
-									<input type="text" class="form-control" id="user_type" name="user_type" readonly value='<?php if (isset($user_type)) echo $user_type; ?>' tabindex="9">
+									<input type="text" class="form-control" id="user_type" name="user_type" readonly value='<?php if (isset($user_type)) echo $user_type; ?>' tabindex="10">
 								</div>
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<div class="form-group">
 									<label for="user">User Name</label><span class="required">&nbsp;*</span>
-									<input type="text" class="form-control" id="user" name="user" readonly value='<?php if (isset($user_name)) echo $user_name; ?>' tabindex='10'>
+									<input type="text" class="form-control" id="user" name="user" readonly value='<?php if (isset($user_name)) echo $user_name; ?>' tabindex='11'>
 								</div>
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<div class="form-group">
 									<label for="user">Agent Name</label><span class="required">&nbsp;*</span>
-									<input type="text" class="form-control" id="agent_name" name="agent_name" readonly value='<?php if (isset($agent_name)) echo $agent_name; ?>' tabindex='2'>
+									<input type="text" class="form-control" id="agent_name" name="agent_name" readonly value='<?php if (isset($agent_name)) echo $agent_name; ?>' tabindex='12'>
 								</div>
 							</div>
 
@@ -433,7 +440,7 @@ if ($idupd > 0) {
 																																			?>>
 								<div class="form-group">
 									<label for="remark">Remarks</label><span class="required">&nbsp;*</span>
-									<input type="text" class="form-control" id="remarks" name="remarks" value='<?php if (isset($remarks)) echo $remarks; ?>' tabindex='11' placeholder="Enter Remarks" pattern="[a-zA-Z\s]+" readonly>
+									<input type="text" class="form-control" id="remarks" name="remarks" value='<?php if (isset($remarks)) echo $remarks; ?>' tabindex='13' placeholder="Enter Remarks" pattern="[a-zA-Z\s]+" readonly>
 								</div>
 							</div>
 
@@ -442,7 +449,7 @@ if ($idupd > 0) {
 																																		} ?>>
 								<div class="form-group">
 									<label for="declaration">Declaration</label><span class="required">&nbsp;*</span>
-									<input type="text" class="form-control" id="declaration" name="declaration" value='<?php if (isset($declaration)) echo $declaration; ?>' tabindex='12' placeholder="Enter Declaration" pattern="[a-zA-Z\s]+" readonly>
+									<input type="text" class="form-control" id="declaration" name="declaration" value='<?php if (isset($declaration)) echo $declaration; ?>' tabindex='14' placeholder="Enter Declaration" pattern="[a-zA-Z\s]+" readonly>
 								</div>
 							</div>
 
@@ -464,38 +471,38 @@ if ($idupd > 0) {
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Total Amount</label>&nbsp;<span class="text-danger totspan">*</span>
-											<input type="text" class="form-control" readonly id="tot_amt" name="tot_amt" value='' tabindex='13'>
+											<input type="text" class="form-control" readonly id="tot_amt" name="tot_amt" value='' tabindex='15'>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Paid Amount</label>&nbsp;<span class="text-danger paidspan">*</span>
-											<input type="text" class="form-control" readonly id="paid_amt" name="paid_amt" value='' tabindex='14'>
+											<input type="text" class="form-control" readonly id="paid_amt" name="paid_amt" value='' tabindex='16'>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Balance Amount</label>&nbsp;<span class="text-danger balspan">*</span>
-											<input type="text" class="form-control" readonly id="bal_amt" name="bal_amt" value='' tabindex='15'>
+											<input type="text" class="form-control" readonly id="bal_amt" name="bal_amt" value='' tabindex='17'>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Due Amount</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" class="form-control" readonly id="due_amt" name="due_amt" value='' tabindex='16'>
+											<input type="text" class="form-control" readonly id="due_amt" name="due_amt" value='' tabindex='18'>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Pending Amount</label>&nbsp;<span class="text-danger pendingspan">*</span>
-											<input type="text" class="form-control" readonly id="pending_amt" name="pending_amt" value='' tabindex='17'>
+											<input type="text" class="form-control" readonly id="pending_amt" name="pending_amt" value='' tabindex='19'>
 											<input type="hidden" class="form-control" readonly id="pend_amt" name="pend_amt">
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Payable Amount</label>&nbsp;<span class="text-danger payablespan">*</span>
-											<input type="text" class="form-control" readonly id="payable_amt" name="payable_amt" value='' tabindex='18'>
+											<input type="text" class="form-control" readonly id="payable_amt" name="payable_amt" value='' tabindex='20'>
 											<input type="hidden" class="form-control" readonly id="payableAmount" name="payableAmount">
 										</div>
 									</div>
@@ -503,20 +510,20 @@ if ($idupd > 0) {
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 till-date-int">
 										<div class="form-group">
 											<label for="disabledInput">Till Date Interest</label>&nbsp;<span class="text-danger ">*</span>
-											<input type="text" class="form-control" readonly id="till_date_int" name="till_date_int" value='' tabindex='19'>
+											<input type="text" class="form-control" readonly id="till_date_int" name="till_date_int" value='' tabindex='21'>
 										</div>
 									</div>
 
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Penalty</label>&nbsp;<span class="text-danger ">*</span>
-											<input type="text" class="form-control" readonly id="penalty" name="penalty" value='' tabindex='20'>
+											<input type="text" class="form-control" readonly id="penalty" name="penalty" value='' tabindex='22'>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Fine</label>&nbsp;<span class="text-danger ">*</span>
-											<input type="text" class="form-control" readonly id="coll_charge" name="coll_charge" value='' tabindex='21'>
+											<input type="text" class="form-control" readonly id="coll_charge" name="coll_charge" value='' tabindex='23'>
 										</div>
 									</div>
 
@@ -538,42 +545,42 @@ if ($idupd > 0) {
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emiLoanDiv">
 										<div class="form-group">
 											<label for="disabledInput">Due Amount</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" class="form-control" id="due_amt_track" name="due_amt_track" value='' placeholder='Enter Due Amount' tabindex='22'>
+											<input type="text" class="form-control" id="due_amt_track" name="due_amt_track" value='' placeholder='Enter Due Amount' tabindex='24'>
 											<span class="text-danger totalpaidCheck" style="display: none;">Please Enter any one of these<span>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 intLoanDiv" style="display: none;">
 										<div class="form-group">
 											<label for="disabledInput">Principal Amount</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" class="form-control" id="princ_amt_track" name="princ_amt_track" value='' placeholder='Enter Principal Amount' tabindex='23'>
+											<input type="text" class="form-control" id="princ_amt_track" name="princ_amt_track" value='' placeholder='Enter Principal Amount' tabindex='25'>
 											<span class="text-danger totalpaidCheck" style="display: none;">Please Enter any one of these<span>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 intLoanDiv" style="display: none;">
 										<div class="form-group">
 											<label for="disabledInput">Interest Amount</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" class="form-control" id="int_amt_track" name="int_amt_track" value='' placeholder='Enter Interest Amount' tabindex='24'>
+											<input type="text" class="form-control" id="int_amt_track" name="int_amt_track" value='' placeholder='Enter Interest Amount' tabindex='26'>
 											<span class="text-danger totalpaidCheck" style="display: none;">Please Enter any one of these<span>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Penalty</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" class="form-control" id="penalty_track" name="penalty_track" value='' placeholder='Enter Penalty Amount' tabindex='25'>
+											<input type="text" class="form-control" id="penalty_track" name="penalty_track" value='' placeholder='Enter Penalty Amount' tabindex='27'>
 											<span class="text-danger totalpaidCheck" style="display: none;">Please Enter any one of these<span>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Fine</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" class="form-control" id="coll_charge_track" name="coll_charge_track" value='' placeholder='Enter Fine' tabindex='26'>
+											<input type="text" class="form-control" id="coll_charge_track" name="coll_charge_track" value='' placeholder='Enter Fine' tabindex='28'>
 											<span class="text-danger totalpaidCheck" style="display: none;">Please Enter any one of these<span>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Total Paid</label>
-											<input type="text" readonly class="form-control" id="total_paid_track" name="total_paid_track" value='' tabindex='27'>
+											<input type="text" readonly class="form-control" id="total_paid_track" name="total_paid_track" value='' tabindex='29'>
 										</div>
 									</div>
 								</div>
@@ -585,37 +592,37 @@ if ($idupd > 0) {
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emiLoanDiv">
 											<div class="form-group">
 												<label for="disabledInput">Pre Closure</label>
-												<input type="text" class="form-control" id="pre_close_waiver" name="pre_close_waiver" value='' placeholder='Enter Pre Closure Amount' tabindex='28'>
+												<input type="text" class="form-control" id="pre_close_waiver" name="pre_close_waiver" value='' placeholder='Enter Pre Closure Amount' tabindex='30'>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 intLoanDiv" style="display: none;">
 											<div class="form-group">
 												<label for="disabledInput">Principle Waiver</label>
-												<input type="text" class="form-control" id="principal_waiver" name="principal_waiver" value='' placeholder='Enter Principle Waiver Amount' tabindex='28'>
+												<input type="text" class="form-control" id="principal_waiver" name="principal_waiver" value='' placeholder='Enter Principle Waiver Amount' tabindex='31'>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 intLoanDiv" style="display: none;">
 											<div class="form-group">
 												<label for="disabledInput">Interest Waiver</label>
-												<input type="text" class="form-control" id="interest_waiver" name="interest_waiver" value='' placeholder='Enter Interest Waiver Amount' tabindex='28'>
+												<input type="text" class="form-control" id="interest_waiver" name="interest_waiver" value='' placeholder='Enter Interest Waiver Amount' tabindex='32'>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
 												<label for="disabledInput">Penalty Waiver</label>
-												<input type="text" class="form-control" id="penalty_waiver" name="penalty_waiver" value='' placeholder='Enter Penalty Waiver' tabindex='29'>
+												<input type="text" class="form-control" id="penalty_waiver" name="penalty_waiver" value='' placeholder='Enter Penalty Waiver' tabindex='33'>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
 												<label for="disabledInput">Fine Waiver</label>
-												<input type="text" class="form-control" id="coll_charge_waiver" name="coll_charge_waiver" value='' placeholder='Enter Fine Waiver' tabindex='30'>
+												<input type="text" class="form-control" id="coll_charge_waiver" name="coll_charge_waiver" value='' placeholder='Enter Fine Waiver' tabindex='34'>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
 												<label for="disabledInput">Total Waiver</label>
-												<input type="text" readonly class="form-control" id="total_waiver" name="total_waiver" value='' tabindex='31'>
+												<input type="text" readonly class="form-control" id="total_waiver" name="total_waiver" value='' tabindex='35'>
 											</div>
 										</div>
 										<div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12"></div>
@@ -627,7 +634,7 @@ if ($idupd > 0) {
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Collection Method</label>&nbsp;<span class="text-danger">*</span>
-											<select class='form-control' id='collection_loc' name='collection_loc' tabindex='32'>
+											<select class='form-control' id='collection_loc' name='collection_loc' tabindex='36'>
 												<option value=''>Select Collection Method</option>
 												<option value='1' selected>By Self</option>
 												<option value='2'>On Spot</option>
@@ -638,19 +645,19 @@ if ($idupd > 0) {
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Collection Date</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" readonly class="form-control" id="collection_date" name="collection_date" value='<?php echo date('d-m-Y'); ?>' tabindex='33'>
+											<input type="text" readonly class="form-control" id="collection_date" name="collection_date" value='<?php echo date('d-m-Y'); ?>' tabindex='37'>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Collection ID</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" readonly class="form-control" id="collection_id" name="collection_id" value='' tabindex='34'>
+											<input type="text" readonly class="form-control" id="collection_id" name="collection_id" value='' tabindex='38'>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Collection Mode</label>&nbsp;<span class="text-danger">*</span>
-											<select class='form-control' id='collection_mode' name='collection_mode' tabindex='35'>
+											<select class='form-control' id='collection_mode' name='collection_mode' tabindex='39'>
 												<option value=''>Select Collection Mode</option>
 												<option value='1' selected>Cash</option>
 												<option value='2'>Cheque</option>
@@ -664,7 +671,7 @@ if ($idupd > 0) {
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 cheque transaction" style="display:none">
 										<div class="form-group">
 											<label for="disabledInput">Bank Name</label>&nbsp;<span class="text-danger">*</span>
-											<select class='form-control' id='bank_id' name='bank_id' tabindex='36'>
+											<select class='form-control' id='bank_id' name='bank_id' tabindex='40'>
 												<option value=''>Select Bank Name</option>
 											</select>
 											<span class="text-danger" id='bank_idCheck' style="display: none;">Please Select Bank Name<span>
@@ -676,7 +683,7 @@ if ($idupd > 0) {
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 cheque" style="display:none">
 										<div class="form-group">
 											<label for="disabledInput">Cheque No</label>&nbsp;<span class="text-danger chequeSpan">*</span>
-											<select class='form-control' id='cheque_no' name='cheque_no' tabindex='37'>
+											<select class='form-control' id='cheque_no' name='cheque_no' tabindex='41'>
 												<option value=''>Select Cheque No</option>
 											</select>
 											<span class="text-danger" id='chequeCheck' style="display: none;">Please Select Cheque No<span>
@@ -685,14 +692,14 @@ if ($idupd > 0) {
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 transaction" style="display:none">
 										<div class="form-group">
 											<label for="disabledInput">Transaction ID</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" class="form-control" id="trans_id" name="trans_id" value='' placeholder="Enter Transaction ID" tabindex='38'>
+											<input type="text" class="form-control" id="trans_id" name="trans_id" value='' placeholder="Enter Transaction ID" tabindex='42'>
 											<span class="text-danger" id='transidCheck' style="display: none;">Please Enter Transaction ID<span>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 transaction" style="display:none">
 										<div class="form-group">
 											<label for="disabledInput">Transaction Date</label>&nbsp;<span class="text-danger">*</span>
-											<input type="date" class="form-control" id="trans_date" name="trans_date" value='' tabindex='39'>
+											<input type="date" class="form-control" id="trans_date" name="trans_date" value='' tabindex='43'>
 											<span class="text-danger" id='transdateCheck' style="display: none;">Please Choose Transaction Date<span>
 										</div>
 									</div>
@@ -708,8 +715,7 @@ if ($idupd > 0) {
 				<!-- Submit Button Start -->
 				<div class="col-md-12 ">
 					<div class="text-right">
-						<button type="submit" name="submit_collection" id="submit_collection" class="btn btn-primary" value="Submit" tabindex='40'><span class="icon-check"></span>&nbsp;Submit</button>
-						<!-- <button type="reset" class="btn btn-outline-secondary" tabindex="20">Clear</button> -->
+						<button type="submit" name="submit_collection" id="submit_collection" class="btn btn-primary" value="Submit" tabindex='44'><span class="icon-check"></span>&nbsp;Submit</button>
 					</div>
 				</div>
 				<!-- Submit Button End -->
@@ -875,20 +881,19 @@ if ($idupd > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label for="coll_purpose"> Purpose </label> <span class="required">&nbsp;*</span>
-							<input type="text" class="form-control" id="collectionCharge_purpose" name="collectionCharge_purpose" placeholder="Enter Purpose" onkeydown="return /[a-z ]/i.test(event.key)" tabindex='1'>
+							<input type="text" class="form-control" id="collectionCharge_purpose" name="collectionCharge_purpose" placeholder="Enter Purpose" onkeydown="return /[a-z ]/i.test(event.key)" tabindex='2'>
 							<span class="text-danger" id="purposeCheck"> Enter Purpose </span>
 						</div>
 					</div>
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label for="coll_amnt"> Amount </label> <span class="required">&nbsp;*</span>
-							<input type="text" class="form-control" id="collectionCharge_Amnt" name="collectionCharge_Amnt" placeholder="Enter Amount" tabindex='1'>
+							<input type="text" class="form-control" id="collectionCharge_Amnt" name="collectionCharge_Amnt" placeholder="Enter Amount" tabindex='3'>
 							<span class="text-danger" id="amntCheck"> Enter Amount </span>
 						</div>
 					</div>
 					<div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12">
-						<!-- <input type="hidden" name="bankID" id="bankID"> -->
-						<button type="button" tabindex="1" name="collChargeBtn" id="collChargeBtn" class="btn btn-primary" style="margin-top: 19px;">Submit</button>
+						<button type="button" tabindex="4" name="collChargeBtn" id="collChargeBtn" class="btn btn-primary" style="margin-top: 19px;">Submit</button>
 					</div>
 				</div>
 				</br>
@@ -900,7 +905,6 @@ if ($idupd > 0) {
 								<th> Date </th>
 								<th> Purpose </th>
 								<th> Amount </th>
-								<!-- <th> ACTION </th> -->
 							</tr>
 						</thead>
 						<tbody>
@@ -939,7 +943,7 @@ if ($idupd > 0) {
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<label for="comm_ftype">Follow Type</label> <span class="required">&nbsp;*</span>
-								<select class="form-control" id="comm_ftype" name="comm_ftype" tabindex="1">
+								<select class="form-control" id="comm_ftype" name="comm_ftype" tabindex="2">
 									<option value="">Select Follow Type</option>
 									<option value="1">Direct</option>
 									<option value="2">Mobile</option>
@@ -948,14 +952,14 @@ if ($idupd > 0) {
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<label for="comm_fstatus">Follow Up Status</label> <span class="required">&nbsp;*</span>
-								<select class="form-control" id="comm_fstatus" name="comm_fstatus" tabindex="1">
+								<select class="form-control" id="comm_fstatus" name="comm_fstatus" tabindex="3">
 									<option value="">Select Follow Up Status</option>
 								</select>
 								<span class="text-danger" id="comm_fstatusCheck" style="display:none">Please Select Follow Up Status</span>
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 person-div" style="display:none">
 								<label for="comm_person_type">Follow Person Type</label><span class="required">&nbsp;*</span>
-								<select name="comm_person_type" id="comm_person_type" class='form-control' tabindex="1">
+								<select name="comm_person_type" id="comm_person_type" class='form-control' tabindex="4">
 									<option value="">Select Person Type</option>
 									<option value="1">Customer</option>
 									<option value="2">Guarentor</option>
@@ -965,36 +969,36 @@ if ($idupd > 0) {
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 person-div" style="display:none">
 								<label for="comm_person_name">Person Name</label><span class="required">&nbsp;*</span>
-								<input type="text" name="comm_person_name" id="comm_person_name" class='form-control' tabindex="1" readonly>
-								<select name="comm_person_name1" id="comm_person_name1" class='form-control' tabindex="1" style="display: none;"></select>
+								<input type="text" name="comm_person_name" id="comm_person_name" class='form-control' tabindex="5" readonly>
+								<select name="comm_person_name1" id="comm_person_name1" class='form-control' tabindex="5" style="display: none;"></select>
 								<span class="text-danger" id="comm_person_nameCheck" style="display:none">Please Select Person Name</span>
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 person-div" style="display:none">
 								<label for="comm_relationship">Relationship</label><span class="required">&nbsp;*</span>
-								<input type="text" name="comm_relationship" id="comm_relationship" class='form-control' tabindex="1" readonly>
+								<input type="text" name="comm_relationship" id="comm_relationship" class='form-control' tabindex="6" readonly>
 								<span class="text-danger" id="comm_relationshipCheck" style="display:none">Please Select Relationship</span>
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<label for="comm_remark">Remark</label><span class="required">&nbsp;*</span>
-								<input type="text" name="comm_remark" id="comm_remark" class='form-control' tabindex="1" placeholder="Enter Remark">
+								<input type="text" name="comm_remark" id="comm_remark" class='form-control' tabindex="7" placeholder="Enter Remark">
 								<span class="text-danger" id='comm_remarkCheck' style="display: none;">Please Enter Remark</span>
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 person-div" style="display:none">
 								<label for="comm_date">Commitment Date</label><span class="required">&nbsp;*</span>
-								<input type="date" name="comm_date" id="comm_date" class='form-control' tabindex="1">
+								<input type="date" name="comm_date" id="comm_date" class='form-control' tabindex="8">
 								<span class="text-danger" id='comm_dateCheck' style="display: none;">Please Enter Commitment Date</span>
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<label for="comm_user_type">User Type</label><span class="required">&nbsp;*</span>
-								<input type="text" name="comm_user_type" id="comm_user_type" class='form-control' value='<?php echo $login_user_type; ?>' tabindex="1" readonly>
+								<input type="text" name="comm_user_type" id="comm_user_type" class='form-control' value='<?php echo $login_user_type; ?>' tabindex="9" readonly>
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<label for="comm_user">User Name</label><span class="required">&nbsp;*</span>
-								<input type="text" name="comm_user" id="comm_user" class='form-control' value="<?php echo $login_user_name; ?>" tabindex="1" readonly>
+								<input type="text" name="comm_user" id="comm_user" class='form-control' value="<?php echo $login_user_name; ?>" tabindex="10" readonly>
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<label for="comm_hint">Hint</label><span class="required">&nbsp;*</span>
-								<input type="text" name="comm_hint" id="comm_hint" class='form-control' tabindex="1" placeholder="Enter Hint">
+								<input type="text" name="comm_hint" id="comm_hint" class='form-control' tabindex="11" placeholder="Enter Hint">
 								<span class="text-danger" id='comm_hintCheck' style="display: none;">Please Enter Hint</span>
 							</div>
 
@@ -1004,8 +1008,8 @@ if ($idupd > 0) {
 
 			</div>
 			<div class="modal-footer">
-				<button class='btn btn-primary' name="sumit_add_comm" id="sumit_add_comm" tabindex="1">Submit</button>
-				<button class="btn btn-secondary closeModal" data-dismiss="modal" tabindex="1">Close</button>
+				<button class='btn btn-primary' name="sumit_add_comm" id="sumit_add_comm" tabindex="12">Submit</button>
+				<button class="btn btn-secondary closeModal" data-dismiss="modal" tabindex="13">Close</button>
 			</div>
 		</div>
 	</div>

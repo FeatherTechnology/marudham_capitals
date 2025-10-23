@@ -161,10 +161,9 @@ function OnLoadFunctions(req_id, cus_id) {
 
                 $(document).on('click', '.noc-window', function (event) {
                     let req_id = $(this).data('value');
-                    checkDocumentsStatus(req_id, (result) => { result == 'completed' ? checkit = 'completed' : checkit = 'pending'; });
-                    setTimeout(() => {
-                        if (checkit == 'completed') {//this function will check if the particular loan is completed all the document upload
 
+                    checkDocumentsStatus(req_id, (result) => {
+                        if (result === 'completed') {//this function will check if the particular loan is completed all the document upload
                             $('.loanlist_card').hide();
                             $('.datachecking_card').hide();
                             $('.customersummary_card').hide();
@@ -173,16 +172,15 @@ function OnLoadFunctions(req_id, cus_id) {
                             $('#close_noc_card').show();
                             $('#submit_closed').show();
 
-                            var reqID = $(this).attr('data-value');
-                            $('#noc_req_id').val(reqID);
+                            $('#noc_req_id').val(req_id);
 
                             resetfeedback(); //Reset Feedback Modal Table.
                             feedbackList(); // Feedback List.
                         } else {//else prevent closing the document due to not completing documents
                             event.preventDefault();
-                            alert('Please complete pending documents to Close!')
+                            alert('Please complete pending documents to Close!');
                         }
-                    }, 1000)
+                    });
                 });
 
                 $('#close_noc_card').click(function () {
@@ -197,16 +195,13 @@ function OnLoadFunctions(req_id, cus_id) {
 
                 $('.due-chart').click(function () {
                     var nocreq_id = $('#noc_req_id').val();
-                    dueChartList(nocreq_id, cus_id); // To show Due Chart List.
-                    setTimeout(() => {
-                        $('.print_due_coll').click(function () {
+                    dueChartList(nocreq_id, cus_id, function () {
+                        $(document).off("click", ".print_due_coll");
+                        $(document).on("click", ".print_due_coll", function () {
                             var id = $(this).attr('value');
                             Swal.fire({
                                 title: 'Print',
                                 text: 'Do you want to print this collection?',
-                                // icon: 'question',
-                                // showConfirmButton: true,
-                                // confirmButtonColor: '#009688',
                                 imageUrl: 'img/printer.png',
                                 imageWidth: 300,
                                 imageHeight: 210,
@@ -226,25 +221,25 @@ function OnLoadFunctions(req_id, cus_id) {
                                         success: function (html) {
                                             $('#printcollection').html(html)
                                             // Get the content of the div element
-                                            var content = $("#printcollection").html();
+                                            // var content = $("#printcollection").html();
 
-                                            // Create a new window
-                                            var w = window.open();
+                                            // // Create a new window
+                                            // var w = window.open();
 
-                                            // Write the content to the new window
-                                            $(w.document.body).html(content);
+                                            // // Write the content to the new window
+                                            // $(w.document.body).html(content);
 
-                                            // Print the new window
-                                            w.print();
+                                            // // Print the new window
+                                            // w.print();
 
-                                            // Close the new window
-                                            w.close();
+                                            // // Close the new window
+                                            // w.close();
                                         }
                                     })
                                 }
                             })
                         })
-                    }, 1000)
+                    });
                 })
 
                 $('.penalty-chart').click(function () {
@@ -393,7 +388,7 @@ function dueChartList(nocreq_id, cus_id) {
     }).then(function () {
 
         $.post('collectionFile/getDueMethodName.php', { "req_id": nocreq_id }, function (response) {
-            $('#dueChartTitle').text('Due Chart ( Cus ID : '+ response['cus_id'] + '  | Cus Name : ' + response['cus_name'] + '  | Loan ID : ' + response['loan_id'] + '  | Loan Category : ' + response['loan_category'] + ' )');
+            $('#dueChartTitle').text(`Due Chart ( Adhaar Number : ${response.cus_id} | Cus ID : ${response.autogen_cus_id}  | Cus Name : ${response.cus_name}  | Loan ID : ${response.loan_id}  | Loan Category : ${response.loan_category} )`);
         }, 'json');
     })
 }

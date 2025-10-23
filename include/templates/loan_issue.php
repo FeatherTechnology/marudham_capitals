@@ -29,71 +29,28 @@ $getRequestData = $userObj->getRequestForVerification($mysqli, $idupd);
 if (sizeof($getRequestData) > 0) {
 	for ($i = 0; $i < sizeof($getRequestData); $i++) {
 		$req_id						= $getRequestData['req_id'];
-		$user_type					= $getRequestData['user_type'];
-		if ($user_type == 'Director') {
-			$role = '1';
-		} else
-			if ($user_type == 'Agent') {
-			$role = '2';
-		} else
-			if ($user_type == 'Staff') {
-			$role = '3';
-		}
-		$user_name					= $getRequestData['user_name'];
-		$agent_id					= $getRequestData['agent_id'];
-		$responsible					= $getRequestData['responsible'];
-		$remarks					= $getRequestData['remarks'];
-		$declaration					= $getRequestData['declaration'];
-		$req_code					= $getRequestData['req_code'];
-		$dor					= date('d-m-Y', strtotime($getRequestData['dor']));
 		$cus_id					= $getRequestData['cus_id'];
-		$cus_data					= $getRequestData['cus_data'];
 		$cus_name					= $getRequestData['cus_name'];
-		$dob					= $getRequestData['dob'];
-		$age					= $getRequestData['age'];
-		$gender					= $getRequestData['gender'];
-		$blood_group					= $getRequestData['blood_group'];
-		$state					= $getRequestData['state'];
-		$district					= $getRequestData['district'];
-		$taluk					= $getRequestData['taluk'];
-		$area					= $getRequestData['area'];
-		$sub_area					= $getRequestData['sub_area'];
-		$address					= $getRequestData['address'];
-		$mobile1					= $getRequestData['mobile1'];
-		$mobile2					= $getRequestData['mobile2'];
-		$father_name					= $getRequestData['father_name'];
-		$mother_name					= $getRequestData['mother_name'];
-		$marital					= $getRequestData['marital'];
-		$spouse_name					= $getRequestData['spouse_name'];
-		$occupation_type					= $getRequestData['occupation_type'];
-		$occupation					= $getRequestData['occupation'];
-		$pic					= $getRequestData['pic'];
-		$loan_category					= $getRequestData['loan_category'];
 		$sub_category					= $getRequestData['sub_category'];
 		$tot_value					= $getRequestData['tot_value'];
 		$ad_amt					= $getRequestData['ad_amt'];
-		$ad_perc					= $getRequestData['ad_perc'];
 		$loan_amt					= $getRequestData['loan_amt'];
-		$poss_type					= $getRequestData['poss_type'];
-		$due_amt					= $getRequestData['due_amt'];
-		$due_period					= $getRequestData['due_period'];
-		$cus_status					= $getRequestData['cus_status'];
 	}
 }
 
-//////////////////////// Customer Profile Info ///////////////////////////////
+$getCustomerReg = $userObj->getCustomerRegister($mysqli, $cus_id);
+if (sizeof($getCustomerReg) > 0) { 
+	$autogen_cus_id 			= $getCustomerReg['autogen_cus_id'];
+}
+
+//////////////////////// Personal Info ///////////////////////////////
 
 $getCustomerProfile = $userObj->getAcknowlegeCustomerProfile($mysqli, $idupd);
 
 if (sizeof($getCustomerProfile) > 0) {
 	$cus_Tableid = $getCustomerProfile['cus_Tableid'];
-	$cus_req_id = $getCustomerProfile['req_id'];
 	$cp_cus_id = $getCustomerProfile['cus_id'];
 	$cp_cus_name = $getCustomerProfile['cus_name'];
-	$cp_gender = $getCustomerProfile['gender'];
-	$cp_dob = $getCustomerProfile['dob'];
-	$cp_age = $getCustomerProfile['age'];
-	$cp_blood_group = $getCustomerProfile['blood_group'];
 	$cp_mobile1  = $getCustomerProfile['mobile1'];
 	$cp_mobile2 = $getCustomerProfile['mobile2'];
 	$cp_whatsapp = $getCustomerProfile['whatsapp'];
@@ -103,151 +60,38 @@ if (sizeof($getCustomerProfile) > 0) {
 	$guarentor_photo = $getCustomerProfile['guarentor_photo'];
 	$cus_type = $getCustomerProfile['cus_type'];
 	$cus_exist_type = $getCustomerProfile['cus_exist_type'];
-	$residential_type = $getCustomerProfile['residential_type'];
-	$residential_details = $getCustomerProfile['residential_details'];
-	$residential_address = $getCustomerProfile['residential_address'];
-	$residential_native_address = $getCustomerProfile['residential_native_address'];
-	$cp_occupation_type = $getCustomerProfile['occupation_type'];
-	$occupation_details = $getCustomerProfile['occupation_details'];
-	$occupation_income = $getCustomerProfile['occupation_income'];
-	$occupation_address = $getCustomerProfile['occupation_address'];
-	$area_confirm_type = $getCustomerProfile['area_confirm_type'];
 	$area_confirm_state = $getCustomerProfile['area_confirm_state'];
 	$area_confirm_district = $getCustomerProfile['area_confirm_district'];
 	$area_confirm_taluk = $getCustomerProfile['area_confirm_taluk'];
 	$area_confirm_area = $getCustomerProfile['area_confirm_area'];
 	$area_confirm_subarea = $getCustomerProfile['area_confirm_subarea'];
-	$latlong = $getCustomerProfile['latlong'];
-	$area_group = $getCustomerProfile['area_group'];
-	$area_line = $getCustomerProfile['area_line'];
-	$communication = $getCustomerProfile['communication'];
-	$com_audio = $getCustomerProfile['com_audio'];
 	$verification_person = $getCustomerProfile['verification_person'];
-	$verification_location = $getCustomerProfile['verification_location'];
-	$cp_cus_status = $getCustomerProfile['cus_status'];
-	$how_to_know = $getCustomerProfile['how_to_know'];
-	$loan_count = $getCustomerProfile['loan_count'];
-	$first_loan_date = $getCustomerProfile['first_loan_date'];
-	$travel_with_company = $getCustomerProfile['travel_with_company'];
-	$monthly_income = $getCustomerProfile['monthly_income'];
-	$other_income = $getCustomerProfile['other_income'];
-	$support_income = $getCustomerProfile['support_income'];
-	$commitment = $getCustomerProfile['commitment'];
-	$monthly_due_capacity = $getCustomerProfile['monthly_due_capacity'];
-	$loan_limit = $getCustomerProfile['loan_limit'];
-	// $cus_character = $getCustomerProfile['cus_character'];
-	// $approach = $getCustomerProfile['approach'];
-	// $relationship = $getCustomerProfile['relationship'] ;
-	// $attitude = $getCustomerProfile['attitude'] ;
-	// $behavior = $getCustomerProfile['behavior'] ;
-	// $incident_remark  = $getCustomerProfile['incident_remark'] ;
-	$about_customer = $getCustomerProfile['about_customer'];
 }
 
-//////////////////////// Customer Profile Info END ///////////////////////////////
-
-////////  Document Customer Info ///// 
 $getcusInfoForDoc = $userObj->getAckcusInfoForDoc($mysqli, $idupd);
 if (sizeof($getcusInfoForDoc) > 0) {
-
-	$cus_profile_id = $getcusInfoForDoc['cus_profile_id'];
-	$doc_cus_id = $getcusInfoForDoc['cus_id'];
-	$doc_cus_name = $getcusInfoForDoc['cus_name'];
+	
 	$doc_area_name = $getcusInfoForDoc['area_name'];
 	$doc_sub_area_name = $getcusInfoForDoc['sub_area_name'];
-	$customer_profile_sts = $getcusInfoForDoc['cus_status'];
 }
-
-////   Documentation ////////////
-$documentationInfo = $userObj->getAcknowlegementDocument($mysqli, $req_id);
-
-if (sizeof($documentationInfo) > 0) {
-	$document_table_id = $documentationInfo['doc_Tableid'];
-	$document_sts = $documentationInfo['cus_status'];
-	$mortgage_process = $documentationInfo['mortgage_process'];
-	$Propertyholder_type = $documentationInfo['Propertyholder_type'];
-	$Propertyholder_name = $documentationInfo['Propertyholder_name'];
-	$Propertyholder_relationship_name = $documentationInfo['Propertyholder_relationship_name'];
-	$doc_property_relation = $documentationInfo['doc_property_relation'];
-	$doc_property_type = $documentationInfo['doc_property_type'];
-	$doc_property_measurement = $documentationInfo['doc_property_measurement'];
-	$doc_property_location = $documentationInfo['doc_property_location'];
-	$doc_property_value = $documentationInfo['doc_property_value'];
-	$mortgage_name = $documentationInfo['mortgage_name'];
-	$mortgage_dsgn = $documentationInfo['mortgage_dsgn'];
-	$mortgage_nuumber = $documentationInfo['mortgage_nuumber'];
-	$reg_office = $documentationInfo['reg_office'];
-	$mortgage_value = $documentationInfo['mortgage_value'];
-	$mortgage_document = $documentationInfo['mortgage_document'];
-	$mortgage_document_upd = $documentationInfo['mortgage_document_upd'];
-	$mortgage_document_pending = $documentationInfo['mortgage_document_pending'];
-	$endorsement_process = $documentationInfo['endorsement_process'];
-	$owner_type = $documentationInfo['owner_type'];
-	$owner_name = $documentationInfo['owner_name'];
-	$ownername_relationship_name = $documentationInfo['ownername_relationship_name'];
-	$en_relation = $documentationInfo['en_relation'];
-	$vehicle_type = $documentationInfo['vehicle_type'];
-	$vehicle_process = $documentationInfo['vehicle_process'];
-	$en_Company = $documentationInfo['en_Company'];
-	$en_Model = $documentationInfo['en_Model'];
-	$vehicle_reg_no = $documentationInfo['vehicle_reg_no'];
-	$endorsement_name = $documentationInfo['endorsement_name'];
-	$en_RC = $documentationInfo['en_RC'];
-	$Rc_document_upd = $documentationInfo['Rc_document_upd'];
-	$Rc_document_pending = $documentationInfo['Rc_document_pending'];
-	$en_Key = $documentationInfo['en_Key'];
-	$gold_info = $documentationInfo['gold_info'];
-	$gold_sts = $documentationInfo['gold_sts'];
-	$gold_type = $documentationInfo['gold_type'];
-	$Purity = $documentationInfo['Purity'];
-	$gold_Count = $documentationInfo['gold_Count'];
-	$gold_Weight = $documentationInfo['gold_Weight'];
-	$gold_Value = $documentationInfo['gold_Value'];
-	$document_name = $documentationInfo['document_name'];
-	$document_details = $documentationInfo['document_details'];
-	$document_type = $documentationInfo['document_type'];
-	$doc_info_upload = $documentationInfo['doc_info_upload'];
-	$document_holder = $documentationInfo['document_holder'];
-	$docholder_name = $documentationInfo['docholder_name'];
-	$docholder_relationship_name = $documentationInfo['docholder_relationship_name'];
-	$doc_relation = $documentationInfo['doc_relation'];
-}
-////////   Documentation End ////////////
+//////////////////////// Personal Info END ///////////////////////////////
 
 ///////// Loan Calculation ///////////////
-$getCusInfoForLoanCal = $userObj->getAcknowlegeCusInfoForLoanCal($mysqli, $idupd);
-if (sizeof($getCusInfoForLoanCal) > 0) {
-	for ($i = 0; $i < sizeof($getCusInfoForLoanCal); $i++) {
-		$cus_id_lc = $getCusInfoForLoanCal['cus_id'];
-		$cus_name_lc = $getCusInfoForLoanCal['cus_name'];
-		$cus_pic_lc = $getCusInfoForLoanCal['cus_pic'];
-		$cus_data_lc = $getCusInfoForLoanCal['cus_type'];
-		$mobile_lc = $getCusInfoForLoanCal['mobile'];
-	}
-}
-
 $emicheck = 0;
 
 //Get Loan Calculation info for edit
 $getLoanCalculation = $userObj->getAckLoanCalculationForVerification($mysqli, $req_id);
 if (sizeof($getLoanCalculation) > 0) {
 	for ($i = 0; $i < sizeof($getLoanCalculation); $i++) {
-		$loan_cal_id = $getLoanCalculation['loan_cal_id'];
-		$cus_id_loan = $getLoanCalculation['cus_id_loan'];
-		$cus_name_loan = $getLoanCalculation['cus_name_loan'];
-		$cus_data_loan = $getLoanCalculation['cus_data_loan'];
-		$mobile_loan = $getLoanCalculation['mobile_loan'];
-		$pic_loan = $getLoanCalculation['pic_loan'];
+
 		$loan_category_lc = $getLoanCalculation['loan_category'];
 		$sub_category_lc = $getLoanCalculation['sub_category'];
 		$tot_value_lc = $getLoanCalculation['tot_value'];
 		$ad_amt_lc = $getLoanCalculation['ad_amt'];
 		$loan_amt_lc = $getLoanCalculation['loan_amt'];
 		$profit_type_lc = $getLoanCalculation['profit_type'];
-		$due_method_calc_lc = $getLoanCalculation['due_method_calc'];
 		$due_type_lc = $getLoanCalculation['due_type'];
-		$profit_method_lc = $getLoanCalculation['profit_method'];
-		$calc_method_lc = $getLoanCalculation['calc_method'];
+		$profit_method_lc = $getLoanCalculation['profit_method'];	
 		$due_method_scheme_lc = $getLoanCalculation['due_method_scheme'];
 		$profit_method_scheme_lc = $getLoanCalculation['scheme_profit_method'];
 		$day_scheme_lc = $getLoanCalculation['day_scheme'];
@@ -267,21 +111,12 @@ if (sizeof($getLoanCalculation) > 0) {
 		$due_start_from = $getLoanCalculation['due_start_from'];
 		$maturity_month = $getLoanCalculation['maturity_month'];
 		$collection_method = $getLoanCalculation['collection_method'];
-		$cus_status_lc = $getLoanCalculation['cus_status'];
-	}
-
-	//Get Loan calculation Category info for edit
-	if ($loan_cal_id > 0) {
-		$getLoanCalCategory = $userObj->getAckVerificationLoanCalCategory($mysqli, $loan_cal_id);
 	}
 
 	$emicheck = strpos($due_type_lc, 'EMI') !== false;
 }
-
 ///////// Loan Calculation End ///////////////
-
 ?>
-
 
 <style>
 	.img_show {
@@ -467,10 +302,15 @@ if (sizeof($getLoanCalculation) > 0) {
 									<div class="row">
 										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
 											<div class="form-group">
-												<label for="cus_id">Customer ID</label>
-												<input type="text" class="form-control" id="cus_id" name="cus_id" value='<?php if (isset($cp_cus_id)) {
-																																echo $cp_cus_id;
-																															} ?>' readonly tabindex='1'>
+												<label for="cus_id">Adhaar Number</label>
+												<input type="text" class="form-control" id="cus_id" name="cus_id" value='<?php if (isset($cp_cus_id)) {echo $cp_cus_id;} ?>' readonly tabindex='1'>
+											</div>
+										</div>
+
+										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
+											<div class="form-group">
+												<label for="autogen_cus_id">Customer ID</label>
+												<input type="text" class="form-control" id="autogen_cus_id" name="autogen_cus_id" tabindex='2' value='<?php if (isset($autogen_cus_id)) { echo $autogen_cus_id; } ?>' readonly>
 											</div>
 										</div>
 
@@ -479,7 +319,7 @@ if (sizeof($getLoanCalculation) > 0) {
 												<label for="cus_name">Customer Name</label>
 												<input type="text" class="form-control" id="cus_name" name="cus_name" value='<?php if (isset($cp_cus_name)) {
 																																	echo $cp_cus_name;
-																																} ?>' readonly tabindex='2'>
+																																} ?>' readonly tabindex='3'>
 											</div>
 										</div>
 
@@ -488,7 +328,7 @@ if (sizeof($getLoanCalculation) > 0) {
 												<label for="name"> Customer Type </label>
 												<input type="text" class="form-control" name="cus_type" id="cus_type" value="<?php if (isset($cus_type)) {
 																																	echo $cus_type;
-																																} ?>" readonly tabindex='3'>
+																																} ?>" readonly tabindex='4'>
 											</div>
 										</div>
 
@@ -499,7 +339,7 @@ if (sizeof($getLoanCalculation) > 0) {
 												<label for="ExistType"> Exist Type </label>
 												<input type="text" class="form-control" name="cus_exist_type" id="cus_exist_type" value="<?php if (isset($cus_exist_type)) {
 																																				echo $cus_exist_type;
-																																			} ?>" readonly tabindex='4'>
+																																			} ?>" readonly tabindex='5'>
 											</div>
 										</div>
 
@@ -508,7 +348,7 @@ if (sizeof($getLoanCalculation) > 0) {
 												<label for="mobile1">Mobile No 1</label>
 												<input type="number" class="form-control" id="mobile1" name="mobile1" value='<?php if (isset($cp_mobile1)) {
 																																	echo $cp_mobile1;
-																																} ?>' readonly tabindex='5'>
+																																} ?>' readonly tabindex='6'>
 											</div>
 										</div>
 
@@ -517,7 +357,7 @@ if (sizeof($getLoanCalculation) > 0) {
 												<label for="mobile2">Mobile No 2</label>
 												<input type="number" class="form-control" id="mobile2" name="mobile2" value='<?php if (isset($cp_mobile2)) {
 																																	echo $cp_mobile2;
-																																} ?>' readonly tabindex='6'>
+																																} ?>' readonly tabindex='7'>
 											</div>
 										</div>
 
@@ -526,21 +366,21 @@ if (sizeof($getLoanCalculation) > 0) {
 												<label for="whatsapp">Whatsapp No </label>
 												<input type="number" class="form-control" id="whatsapp_no" name="whatsapp_no" value="<?php if (isset($cp_whatsapp)) {
 																																			echo $cp_whatsapp;
-																																		} ?>" readonly tabindex='7'>
+																																		} ?>" readonly tabindex='8'>
 											</div>
 										</div>
 
 										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
 											<div class="form-group">
 												<label for="DocArea"> Area </label>
-												<input type="text" class="form-control" id="doc_area" name="doc_area" value="<?php if (isset($doc_area_name)) echo $doc_area_name; ?>" readonly tabindex='8'>
+												<input type="text" class="form-control" id="doc_area" name="doc_area" value="<?php if (isset($doc_area_name)) echo $doc_area_name; ?>" readonly tabindex='9'>
 											</div>
 										</div>
 
 										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
 											<div class="form-group">
 												<label for="DocSubArea"> Sub Area </label>
-												<input type="text" class="form-control" id="doc_Sub_Area" name="doc_Sub_Area" value='<?php if (isset($doc_sub_area_name)) echo $doc_sub_area_name; ?>' readonly tabindex='9'>
+												<input type="text" class="form-control" id="doc_Sub_Area" name="doc_Sub_Area" value='<?php if (isset($doc_sub_area_name)) echo $doc_sub_area_name; ?>' readonly tabindex='10'>
 											</div>
 										</div>
 
@@ -574,7 +414,7 @@ if (sizeof($getLoanCalculation) > 0) {
 										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
 											<div class="form-group">
 												<label for="GuarentorName"> Guarentor Name </label>
-												<select type="text" class="form-control" id="guarentor_name" name="guarentor_name" disabled tabindex='10'>
+												<select type="text" class="form-control" id="guarentor_name" name="guarentor_name" disabled tabindex='11'>
 													<option> Select Guarantor </option>
 												</select>
 											</div>
@@ -585,7 +425,7 @@ if (sizeof($getLoanCalculation) > 0) {
 												<label for="GuarentorRelationship"> Guarentor Relationship </label>
 												<input type="text" class="form-control" id="guarentor_relationship" name="guarentor_relationship" value='<?php if (isset($guarentor_relation)) {
 																																								echo $guarentor_relation;
-																																							} ?>' readonly tabindex='11'>
+																																							} ?>' readonly tabindex='12'>
 											</div>
 										</div>
 									</div>
@@ -619,7 +459,7 @@ if (sizeof($getLoanCalculation) > 0) {
 										<label for="LoanCategory"> Loan Category </label>
 										<input type="text" class="form-control" id="loan_category" name="loan_category" value="<?php if (isset($loan_category_lc)) {
 																																	echo $loan_category_lc;
-																																} ?>" readonly tabindex='12'>
+																																} ?>" readonly tabindex='13'>
 									</div>
 								</div>
 
@@ -628,19 +468,19 @@ if (sizeof($getLoanCalculation) > 0) {
 										<label for="Subcategory"> Sub category </label>
 										<input type="text" class="form-control" id="sub_category" name="sub_category" value="<?php if (isset($sub_category_lc)) {
 																																	echo $sub_category_lc;
-																																} ?>" readonly tabindex='13'>
+																																} ?>" readonly tabindex='14'>
 									</div>
 								</div>
 
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="Agent"> Agent </label>
-										<input type="text" class="form-control" id="agent" name="agent" readonly tabindex='14'>
+										<input type="text" class="form-control" id="agent" name="agent" readonly tabindex='15'>
 									</div>
 								</div>
 
 								<div class="col-md-12">
-									<label for="disabledInput">Category Info</label><br><br>
+									<label>Category Info</label><br><br>
 									<table id="moduleTable" class="table custom-table">
 										<tbody> </tbody>
 									</table>
@@ -649,42 +489,42 @@ if (sizeof($getLoanCalculation) > 0) {
 
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 advance_yes" <?php if (isset($tot_value_lc) and $tot_value_lc == '') { ?>style="display: none;" <?php } ?>>
 									<div class="form-group">
-										<label for="disabledInput">Total Value</label>
+										<label for="tot_value">Total Value</label>
 										<input type="text" class="form-control" id="tot_value" name="tot_value" value='<?php if (isset($tot_value_lc)) {
 																															echo moneyFormatIndia($tot_value_lc);
 																														} elseif (isset($tot_value)) {
 																															echo moneyFormatIndia($tot_value);
-																														} ?>' readonly tabindex='15'>
+																														} ?>' readonly tabindex='16'>
 									</div>
 								</div>
 
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 advance_yes" <?php if (isset($ad_amt_lc) and $ad_amt_lc == '') { ?>style="display: none;" <?php } ?>>
 									<div class="form-group">
-										<label for="disabledInput">Advance Amount</label>
+										<label for="ad_amt">Advance Amount</label>
 										<input type="text" class="form-control" id="ad_amt" name="ad_amt" value='<?php if (isset($ad_amt_lc)) {
 																														echo moneyFormatIndia($ad_amt_lc);
 																													} elseif (isset($ad_amt)) {
 																														echo moneyFormatIndia($ad_amt);
-																													} ?>' readonly tabindex='16'>
+																													} ?>' readonly tabindex='17'>
 									</div>
 								</div>
 
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
-										<label for="disabledInput">Loan Amount</label>
+										<label for="loan_amt">Loan Amount</label>
 										<input type="text" class="form-control" id="loan_amt" name="loan_amt" value='<?php if (isset($loan_amt_lc)) {
 																															echo moneyFormatIndia($loan_amt_lc);
 																														} elseif (isset($loan_amt)) {
 																															echo moneyFormatIndia($loan_amt);
-																														} ?>' readonly tabindex='17'>
+																														} ?>' readonly tabindex='18'>
 									</div>
 								</div>
 								<hr>
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
-										<label for="disabledInput">Profit Type</label>&nbsp;<span class="text-danger">*</span>
+										<label for="profit_type">Profit Type</label>&nbsp;<span class="text-danger">*</span>
 										<input type="hidden" class="form-control" id="profit_type_ack" name="profit_type_ack" value="<?php echo $profit_type_lc; ?>">
-										<select tabindex="18" type="text" class="form-control" id="profit_type" name="profit_type">
+										<select tabindex="19" type="text" class="form-control" id="profit_type" name="profit_type">
 											<option value="">Select Profit Type</option>
 											<option value="1" <?php if (isset($profit_type_lc) and $profit_type_lc == '1') echo 'selected'; ?>>Calculation</option>
 											<option value="2" <?php if (isset($profit_type_lc) and $profit_type_lc == '2') echo 'selected'; ?>>Scheme</option>
@@ -694,21 +534,21 @@ if (sizeof($getLoanCalculation) > 0) {
 								</div>
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emi-calculation" style="display:none">
 									<div class="form-group">
-										<label for="disabledInput">Due Method</label>&nbsp;<span class="text-danger">*</span>
-										<input tabindex="19" type="text" class="form-control" id="due_method_calc" name="due_method_calc" readonly value='Monthly'>
+										<label for="due_method_calc">Due Method</label>&nbsp;<span class="text-danger">*</span>
+										<input tabindex="20" type="text" class="form-control" id="due_method_calc" name="due_method_calc" readonly value='Monthly'>
 									</div>
 								</div>
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 calculation" style="display:none">
 									<div class="form-group">
-										<label for="disabledInput">Due Type</label>&nbsp;<span class="text-danger">*</span>
-										<input tabindex="20" type="text" class="form-control" id="due_type" name="due_type" readonly value='<?php if (isset($due_type)) echo $due_type; ?>'>
+										<label for="due_type">Due Type</label>&nbsp;<span class="text-danger">*</span>
+										<input tabindex="21" type="text" class="form-control" id="due_type" name="due_type" readonly value='<?php if (isset($due_type)) echo $due_type; ?>'>
 									</div>
 								</div>
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emi-calculation" style="display:none">
 									<div class="form-group">
-										<label for="disabledInput">Profit Method</label>&nbsp;<span class="text-danger">*</span>
+										<label for="profit_method">Profit Method</label>&nbsp;<span class="text-danger">*</span>
 										<input type="hidden" class="form-control" id="profit_method_ack" name="profit_method_ack" value='<?php if (isset($profit_method_lc)) echo $profit_method_lc; ?>'>
-										<select tabindex="21" type="text" class="form-control" id="profit_method" name="profit_method">
+										<select tabindex="22" type="text" class="form-control" id="profit_method" name="profit_method">
 											<option value="">Select Profit Method</option>
 										</select>
 										<span class="text-danger" style='display:none' id='profit_methodCheck'>Please Select Profit Method</span>
@@ -716,15 +556,15 @@ if (sizeof($getLoanCalculation) > 0) {
 								</div>
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 interest-calculation" style="display:none">
 									<div class="form-group">
-										<label for="disabledInput">Calculation Method</label>&nbsp;<span class="text-danger">*</span>
-										<input tabindex="22" type="text" class="form-control" id="calc_method" name="calc_method" readonly value='<?php if (isset($calc_method)) echo $calc_method; ?>'>
+										<label for="calc_method">Calculation Method</label>&nbsp;<span class="text-danger">*</span>
+										<input tabindex="23" type="text" class="form-control" id="calc_method" name="calc_method" readonly value='<?php if (isset($calc_method)) echo $calc_method; ?>'>
 									</div>
 								</div>
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 scheme" style="display:none">
 									<div class="form-group">
-										<label for="disabledInput">Due Method</label>&nbsp;<span class="text-danger">*</span>
+										<label for="due_method_scheme">Due Method</label>&nbsp;<span class="text-danger">*</span>
 										<input type="hidden" class="form-control" id="due_method_scheme_ack" name="due_method_scheme_ack" value="<?php echo $due_method_scheme_lc; ?>">
-										<select tabindex="23" type="text" class="form-control" id="due_method_scheme" name="due_method_scheme">
+										<select tabindex="24" type="text" class="form-control" id="due_method_scheme" name="due_method_scheme">
 											<option value="">Select Due Method</option>
 											<option value="1" <?php if (isset($due_method_scheme_lc) and $due_method_scheme_lc == '1') echo 'selected'; ?>>Monthly</option>
 											<option value="2" <?php if (isset($due_method_scheme_lc) and $due_method_scheme_lc == '2') echo 'selected'; ?>>Weekly</option>
@@ -735,9 +575,9 @@ if (sizeof($getLoanCalculation) > 0) {
 								</div>
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 day_scheme" style="display:none">
 									<div class="form-group">
-										<label for="disabledInput">Day</label>&nbsp;<span class="text-danger">*</span>
+										<label for="day_scheme">Day</label>&nbsp;<span class="text-danger">*</span>
 										<input type="hidden" class="form-control" id="day_scheme_ack" name="day_scheme_ack" value="<?php echo $day_scheme_lc; ?>">
-										<select tabindex="24" type="text" class="form-control" id="day_scheme" name="day_scheme">
+										<select tabindex="25" type="text" class="form-control" id="day_scheme" name="day_scheme">
 											<option value="">Select a Day</option>
 											<option value="1" <?php if (isset($day_scheme_lc) and $day_scheme_lc == '1') echo 'selected'; ?>>Monday</option>
 											<option value="2" <?php if (isset($day_scheme_lc) and $day_scheme_lc == '2') echo 'selected'; ?>>Tuesday</option>
@@ -752,9 +592,9 @@ if (sizeof($getLoanCalculation) > 0) {
 								</div>
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 scheme" style="display:none">
 									<div class="form-group">
-										<label for="disabledInput">Scheme Name</label>&nbsp;<span class="text-danger">*</span>
+										<label for="scheme_name">Scheme Name</label>&nbsp;<span class="text-danger">*</span>
 										<input type="hidden" class="form-control" id="scheme_name_ack" name="scheme_name_ack" value="<?php echo $scheme_name_lc; ?>">
-										<select tabindex="25" type="text" class="form-control" id="scheme_name" name="scheme_name">
+										<select tabindex="26" type="text" class="form-control" id="scheme_name" name="scheme_name">
 											<option value="">Select Scheme Name</option>
 										</select>
 										<span class="text-danger" style='display:none' id='scheme_nameCheck'>Please Select Scheme Name</span>
@@ -764,7 +604,7 @@ if (sizeof($getLoanCalculation) > 0) {
 									<div class="form-group">
 										<label for="scheme_profit_method">Profit Method</label>&nbsp;<span class="text-danger">*</span>
 										<input type="hidden" class="form-control" id="profit_method_scheme_ack" name="profit_method_scheme_ack" value="<?php echo $profit_method_scheme_lc; ?>">
-										<select tabindex="26" type="text" class="form-control" id="scheme_profit_method" name="scheme_profit_method">
+										<select tabindex="27" type="text" class="form-control" id="scheme_profit_method" name="scheme_profit_method">
 											<option value="">Select Profit Method</option>
 										</select>
 										<span class="text-danger" style='display:none' id='scheme_methodCheck'>Please Select Profit Method</span>
@@ -772,29 +612,29 @@ if (sizeof($getLoanCalculation) > 0) {
 								</div>
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
-										<label for="disabledInput">Interest Rate </label>&nbsp;<span class="text-danger min-max-int">*</span><!-- Min and max intrest rate-->
-										<input tabindex="27" type="text" class="form-control" id="int_rate" name="int_rate" value='<?php if (isset($int_rate)) echo $int_rate; ?>'>
+										<label for="int_rate">Interest Rate </label>&nbsp;<span class="text-danger min-max-int">*</span><!-- Min and max intrest rate-->
+										<input tabindex="28" type="text" class="form-control" id="int_rate" name="int_rate" value='<?php if (isset($int_rate)) echo $int_rate; ?>'>
 										<span class="text-danger" style='display:none' id='int_rateCheck'>Please Enter Interest Rate</span>
 									</div>
 								</div>
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
-										<label for="disabledInput">Due Period </label>&nbsp;<span class="text-danger min-max-due">*</span><!-- Min and max Profit Method-->
-										<input tabindex="28" type="text" class="form-control" id="due_period" name="due_period">
+										<label for="due_period">Due Period </label>&nbsp;<span class="text-danger min-max-due">*</span><!-- Min and max Profit Method-->
+										<input tabindex="29" type="text" class="form-control" id="due_period" name="due_period">
 										<span class="text-danger" style='display:none' id='due_periodCheck'>Please Enter Due Period</span>
 									</div>
 								</div>
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
-										<label for="disabledInput">Document Charges </label>&nbsp;<span class="text-danger min-max-doc">*</span><!-- Min and max Document charges-->
-										<input tabindex="29" type="text" class="form-control" id="doc_charge" name="doc_charge" value='<?php if (isset($doc_charge)) echo $doc_charge; ?>'>
+										<label for="doc_charge">Document Charges </label>&nbsp;<span class="text-danger min-max-doc">*</span><!-- Min and max Document charges-->
+										<input tabindex="30" type="text" class="form-control" id="doc_charge" name="doc_charge" value='<?php if (isset($doc_charge)) echo $doc_charge; ?>'>
 										<span class="text-danger" style='display:none' id='doc_chargeCheck'>Please Enter Document Charge</span>
 									</div>
 								</div>
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
-										<label for="disabledInput">Processing Fees</label>&nbsp;<span class="text-danger min-max-proc">*</span><!-- Min and max Processing fee-->
-										<input tabindex="30" type="text" class="form-control" id="proc_fee" name="proc_fee" value='<?php if (isset($proc_fee)) echo $proc_fee; ?>'>
+										<label for="proc_fee">Processing Fees</label>&nbsp;<span class="text-danger min-max-proc">*</span><!-- Min and max Processing fee-->
+										<input tabindex="31" type="text" class="form-control" id="proc_fee" name="proc_fee" value='<?php if (isset($proc_fee)) echo $proc_fee; ?>'>
 										<span class="text-danger" style='display:none' id='proc_feeCheck'>Please Enter Processing fee</span>
 									</div>
 								</div>
@@ -813,51 +653,50 @@ if (sizeof($getLoanCalculation) > 0) {
 									<div class="row">
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
-												<label for="disabledInput">Loan Amount</label>
-												<input type="text" class="form-control" readonly id="loan_amt_cal" name="loan_amt_cal" value='<?php if (isset($loan_amt_cal)) echo moneyFormatIndia($loan_amt_cal); ?>' tabindex='31'>
+												<label for="loan_amt_cal">Loan Amount</label>
+												<input type="text" class="form-control" readonly id="loan_amt_cal" name="loan_amt_cal" value='<?php if (isset($loan_amt_cal)) echo moneyFormatIndia($loan_amt_cal); ?>' tabindex='32'>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emi_div" style="display: <?php echo ($emicheck ? 'block' : 'none'); ?>;">
 											<div class="form-group">
-												<label for="disabledInput">Principal Amount</label>
-												<input type="text" class="form-control" readonly id="principal_amt_cal" name="principal_amt_cal" value='<?php if (isset($principal_amt_cal)) echo moneyFormatIndia($principal_amt_cal); ?>' tabindex='32'>
+												<label for="principal_amt_cal">Principal Amount</label>
+												<input type="text" class="form-control" readonly id="principal_amt_cal" name="principal_amt_cal" value='<?php if (isset($principal_amt_cal)) echo moneyFormatIndia($principal_amt_cal); ?>' tabindex='33'>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
-												<label for="disabledInput">Interest Amount</label>
-												<input type="text" class="form-control" readonly id="int_amt_cal" name="int_amt_cal" value='<?php if (isset($int_amt_cal)) echo moneyFormatIndia($int_amt_cal); ?>' tabindex='33'>
+												<label for="int_amt_cal">Interest Amount</label>
+												<input type="text" class="form-control" readonly id="int_amt_cal" name="int_amt_cal" value='<?php if (isset($int_amt_cal)) echo moneyFormatIndia($int_amt_cal); ?>' tabindex='34'>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emi_div" style="display: <?php echo ($emicheck ? 'block' : 'none'); ?>;">
 											<div class="form-group">
-												<label for="disabledInput">Total Amount</label>
-												<input type="text" class="form-control" readonly id="tot_amt_cal" name="tot_amt_cal" value='<?php if (isset($tot_amt_cal)) echo moneyFormatIndia($tot_amt_cal); ?>' tabindex='34'>
+												<label for="tot_amt_cal">Total Amount</label>
+												<input type="text" class="form-control" readonly id="tot_amt_cal" name="tot_amt_cal" value='<?php if (isset($tot_amt_cal)) echo moneyFormatIndia($tot_amt_cal); ?>' tabindex='35'>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emi_div" style="display: <?php echo ($emicheck ? 'block' : 'none'); ?>;">
 											<div class="form-group">
-												<label for="disabledInput">Due Amount</label>
-												<input type="text" class="form-control" readonly id="due_amt_cal" name="due_amt_cal" value='<?php if (isset($due_amt_cal)) echo moneyFormatIndia($due_amt_cal); ?>' tabindex='35'>
+												<label for="due_amt_cal">Due Amount</label>
+												<input type="text" class="form-control" readonly id="due_amt_cal" name="due_amt_cal" value='<?php if (isset($due_amt_cal)) echo moneyFormatIndia($due_amt_cal); ?>' tabindex='36'>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
-												<label for="disabledInput">Document Charges</label>
-												<input type="text" class="form-control" readonly id="doc_charge_cal" name="doc_charge_cal" value='<?php if (isset($doc_charge_cal)) echo moneyFormatIndia($doc_charge_cal); ?>' tabindex='36'>
+												<label for="doc_charge_cal">Document Charges</label>
+												<input type="text" class="form-control" readonly id="doc_charge_cal" name="doc_charge_cal" value='<?php if (isset($doc_charge_cal)) echo moneyFormatIndia($doc_charge_cal); ?>' tabindex='37'>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
-												<label for="disabledInput">Processing Fee</label>
-												<input type="text" class="form-control" readonly id="proc_fee_cal" name="proc_fee_cal" value='<?php if (isset($proc_fee_cal)) echo moneyFormatIndia($proc_fee_cal); ?>' tabindex='37'>
+												<label for="proc_fee_cal">Processing Fee</label>
+												<input type="text" class="form-control" readonly id="proc_fee_cal" name="proc_fee_cal" value='<?php if (isset($proc_fee_cal)) echo moneyFormatIndia($proc_fee_cal); ?>' tabindex='38'>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
-												<label for="disabledInput">Net Cash</label>
-												<input type="text" class="form-control" readonly id="net_cash_cal" name="net_cash_cal" value='<?php if (isset($net_cash_cal)) echo moneyFormatIndia($net_cash_cal); ?>' tabindex='38'>
-												<!-- <input type="hidden" class="form-control"  id="net_cash" name="net_cash" > -->
+												<label for="net_cash_cal">Net Cash</label>
+												<input type="text" class="form-control" readonly id="net_cash_cal" name="net_cash_cal" value='<?php if (isset($net_cash_cal)) echo moneyFormatIndia($net_cash_cal); ?>' tabindex='39'>
 											</div>
 										</div>
 
@@ -877,26 +716,26 @@ if (sizeof($getLoanCalculation) > 0) {
 									<div class="row">
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
-												<label for="disabledInput">Due Start From</label>&nbsp;<span class="text-danger">*</span>
+												<label for="due_start_from">Due Start From</label>&nbsp;<span class="text-danger">*</span>
 
 												<input type="hidden" class="form-control" id="profit_type" name="profit_type" value='<?php if (isset($profit_type_lc)) echo $profit_type_lc; ?>'>
 												<input type="hidden" class="form-control" id="due_method_calc" name="due_method_calc" value='Monthly'>
 												<input type="hidden" class="form-control" id="due_method_scheme" name="due_method_scheme" value='<?php if (isset($due_method_scheme_lc)) echo $due_method_scheme_lc; ?>'>
 												<input type="hidden" class="form-control" id="day_scheme" name="day_scheme" value='<?php if (isset($day_scheme_lc)) echo $day_scheme_lc; ?>'>
 
-												<input type="date" class="form-control" id="due_start_from" name="due_start_from" value='<?php if (isset($due_start_from)) echo $due_start_from; ?>' tabindex="39">
+												<input type="date" class="form-control" id="due_start_from" name="due_start_from" value='<?php if (isset($due_start_from)) echo $due_start_from; ?>' tabindex="40">
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
-												<label for="disabledInput">Maturity Month</label>
-												<input type="date" class="form-control" id="maturity_month" name="maturity_month" value='<?php if (isset($maturity_month)) echo $maturity_month; ?>' readonly tabindex='40'>
+												<label for="maturity_month">Maturity Month</label>
+												<input type="date" class="form-control" id="maturity_month" name="maturity_month" value='<?php if (isset($maturity_month)) echo $maturity_month; ?>' readonly tabindex='41'>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
-												<label for="disabledInput">Collection Method</label>
-												<select type="text" class="form-control" id="collection_method" name="collection_method" disabled tabindex='41'>
+												<label for="collection_method">Collection Method</label>
+												<select type="text" class="form-control" id="collection_method" name="collection_method" disabled tabindex='42'>
 													<option value="">Select Collection Method</option>
 													<option value="1" <?php if (isset($collection_method) and $collection_method == '1') echo 'selected'; ?>>BySelf</option>
 													<option value="2" <?php if (isset($collection_method) and $collection_method == '2') echo 'selected'; ?>>Spot Collection</option>
@@ -923,23 +762,23 @@ if (sizeof($getLoanCalculation) > 0) {
 
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
-												<label for="disabledInput"> Balance To Issue </label>
-												<input type="text" class="form-control" id="net_cash" name="net_cash" readonly tabindex='42'>
+												<label for="net_cash"> Balance To Issue </label>
+												<input type="text" class="form-control" id="net_cash" name="net_cash" readonly tabindex='43'>
 											</div>
 										</div>
 
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
-												<label for="disabledInput">Issued to </label>&nbsp;<span class="text-danger issued_to_type"></span>
-												<input type="text" class="form-control" id="issue_to" name="issue_to" readonly tabindex='43'>
+												<label for="issue_to">Issued to </label>&nbsp;<span class="text-danger issued_to_type"></span>
+												<input type="text" class="form-control" id="issue_to" name="issue_to" readonly tabindex='44'>
 												<input type="hidden" class="form-control" id="agent_id" name="agent_id">
 											</div>
 										</div>
 
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
-												<label for="disabledInput">Issued mode</label>&nbsp;<span class="text-danger">*</span>
-												<select type="text" class="form-control" id="issued_mode" name="issued_mode" tabindex="44">
+												<label for="issued_mode">Issued mode</label>&nbsp;<span class="text-danger">*</span>
+												<select type="text" class="form-control" id="issued_mode" name="issued_mode" tabindex="45">
 													<option value=""> Select Issued Mood</option>
 													<option value="0"> Split Payment </option>
 													<option value="1"> Single Payment </option>
@@ -950,8 +789,8 @@ if (sizeof($getLoanCalculation) > 0) {
 
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 paymentType" style="display:none">
 											<div class="form-group">
-												<label for="disabledInput">Payment Type </label>&nbsp;<span class="text-danger">*</span>
-												<select type="text" class="form-control" id="payment_type" name="payment_type" tabindex="45">
+												<label for="payment_type">Payment Type </label>&nbsp;<span class="text-danger">*</span>
+												<select type="text" class="form-control" id="payment_type" name="payment_type" tabindex="46">
 													<option value=""> Select Payment Type</option>
 													<option value="0"> Cash </option>
 													<option value="1"> Cheque </option>
@@ -962,8 +801,8 @@ if (sizeof($getLoanCalculation) > 0) {
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" id="bankDiv" style="display:none">
 											<div class="form-group">
-												<label for="disabledInput">Bank Name </label>&nbsp;<span class="text-danger">*</span>
-												<select type="text" class="form-control" id="bank_id" name="bank_id" tabindex="46">
+												<label for="bank_id">Bank Name </label>&nbsp;<span class="text-danger">*</span>
+												<select type="text" class="form-control" id="bank_id" name="bank_id" tabindex="47">
 													<option value=""> Select Bank Name</option>
 													<?php if (sizeof($getBankDetails) > 0) {
 														for ($i = 0; $i < sizeof($getBankDetails); $i++) {
@@ -985,8 +824,8 @@ if (sizeof($getLoanCalculation) > 0) {
 
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 cash_issue" style="display:none">
 											<div class="form-group">
-												<label for="disabledInput">Cash</label>
-												<input type="text" class="form-control" id="cash" name="cash" tabindex="47">
+												<label for="cash">Cash</label>
+												<input type="text" class="form-control" id="cash" name="cash" tabindex="48">
 												<span class="text-danger" style="display: none;" id="cash_amnt"> Please Enter Cash </span>
 											</div>
 										</div>
@@ -996,23 +835,23 @@ if (sizeof($getLoanCalculation) > 0) {
 
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 checque" style="display:none">
 											<div class="form-group">
-												<label for="disabledInput">Cheque number</label>
-												<input type="number" class="form-control" id="chequeno" name="chequeno" tabindex="48">
+												<label for="chequeno">Cheque number</label>
+												<input type="number" class="form-control" id="chequeno" name="chequeno" tabindex="49">
 												<span class="text-danger" style="display: none;" id="cheque_num"> Please Enter Cheque Number </span>
 											</div>
 										</div>
 
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 checque" style="display:none">
 											<div class="form-group">
-												<label for="disabledInput">Cheque Value</label>
-												<input type="text" class="form-control" id="chequeValue" name="chequeValue" tabindex="49">
+												<label for="chequeValue">Cheque Value</label>
+												<input type="text" class="form-control" id="chequeValue" name="chequeValue" tabindex="50">
 												<span class="text-danger" style="display: none;" id="cheque_val"> Please Enter Cheque Value </span>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 checque" style="display:none">
 											<div class="form-group">
-												<label for="disabledInput">Cheque Remark</label>
-												<input type="text" class="form-control" id="chequeRemark" name="chequeRemark" tabindex="50">
+												<label for="chequeRemark">Cheque Remark</label>
+												<input type="text" class="form-control" id="chequeRemark" name="chequeRemark" tabindex="51">
 												<span class="text-danger" style="display: none;" id="cheque_remark"> Please Enter Cheque Remark </span>
 											</div>
 										</div>
@@ -1023,31 +862,31 @@ if (sizeof($getLoanCalculation) > 0) {
 
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 transaction" style="display:none">
 											<div class="form-group">
-												<label for="disabledInput">Transaction ID</label>
-												<input type="text" class="form-control" id="transaction_id" name="transaction_id" tabindex="51">
+												<label for="transaction_id">Transaction ID</label>
+												<input type="text" class="form-control" id="transaction_id" name="transaction_id" tabindex="52">
 												<span class="text-danger" style="display: none;" id="transact_id"> Please Enter Transaction ID </span>
 											</div>
 										</div>
 
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 transaction" style="display:none">
 											<div class="form-group">
-												<label for="disabledInput">Transaction Value </label>
-												<input type="text" class="form-control" id="transaction_value" name="transaction_value" tabindex="52">
+												<label for="transaction_value">Transaction Value </label>
+												<input type="text" class="form-control" id="transaction_value" name="transaction_value" tabindex="53">
 												<span class="text-danger" style="display: none;" id="transact_val"> Please Enter Transaction Value </span>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 transaction" style="display:none">
 											<div class="form-group">
-												<label for="disabledInput">Transaction Remark </label>
-												<input type="text" class="form-control" id="transaction_remark" name="transaction_remark" tabindex="53">
+												<label for="transaction_remark">Transaction Remark </label>
+												<input type="text" class="form-control" id="transaction_remark" name="transaction_remark" tabindex="54">
 												<span class="text-danger" style="display: none;" id="transact_remark"> Please Enter Transaction Remark </span>
 											</div>
 										</div>
 
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 balance" style="display:none">
 											<div class="form-group">
-												<label for="disabledInput">Balance Amount </label>
-												<input type="text" class="form-control" id="balance" name="balance" readonly tabindex='54'>
+												<label for="balance">Balance Amount </label>
+												<input type="text" class="form-control" id="balance" name="balance" readonly tabindex='55'>
 											</div>
 										</div>
 
@@ -1071,7 +910,7 @@ if (sizeof($getLoanCalculation) > 0) {
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
 												<label for="GuarentorName"> Name </label><span class="required">&nbsp;*</span>
-												<select type="text" class="form-control" id="cash_guarentor_name" name="cash_guarentor_name" tabindex="55">
+												<select type="text" class="form-control" id="cash_guarentor_name" name="cash_guarentor_name" tabindex="56">
 													<option> Select Guarantor </option>
 												</select>
 												<span class="text-danger" style="display: none;" id="cash_guarentor"> Please Select the Name </span>
@@ -1081,7 +920,7 @@ if (sizeof($getLoanCalculation) > 0) {
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
 												<label for="GuarentorRelationship"> Relationship </label>
-												<input type="text" class="form-control" id="relationship" name="relationship" readonly tabindex="56">
+												<input type="text" class="form-control" id="relationship" name="relationship" readonly tabindex="57">
 											</div>
 										</div>
 
@@ -1090,7 +929,7 @@ if (sizeof($getLoanCalculation) > 0) {
 												<input type="hidden" class="form-control" id="compare_finger" name="compare_finger"> <!--Already Store in Finger Print Table... when select fam name above the finger print will be shown here to compare. -->
 												<input type="hidden" class="form-control" id="ack_fingerprint" name="ack_fingerprint"> <!-- finger print value from Device when scanning.-->
 												<input type="hidden" class="form-control" id="fingerValidation" name="fingerValidation"> <!-- set val as 1 when finger Print Matching becuz to use for finger print validation if submit click.-->
-												<button type="button" class='btn btn-success scanBtn' style='background-color: #009688;margin-top: 19px;' onclick="event.preventDefault()" title='Put Your Thumb' tabindex='57'><i class="material-icons" id="icon-flipped"> &#xe90d; </i>&nbsp;Scan</button>
+												<button type="button" class='btn btn-success scanBtn' style='background-color: #009688;margin-top: 19px;' onclick="event.preventDefault()" title='Put Your Thumb' tabindex='58'><i class="material-icons" id="icon-flipped"> &#xe90d; </i>&nbsp;Scan</button>
 												<span class="text-danger" id="hand_type" style="position: relative;top: 12px;"> </span>
 											</div>
 										</div>
@@ -1106,7 +945,7 @@ if (sizeof($getLoanCalculation) > 0) {
 					<div class="card" id="bankInfo" style="display:none">
 
 						<div class="card-header"> Bank info <span style="font-weight:bold" class=""></span>
-							<button type="button" class="btn btn-primary" id="bank_add" name="bank_add" data-toggle="modal" data-target=".addbank" style="padding: 5px 35px;  float: right;" tabindex='58' onclick="resetbankInfo()"><span class="icon-add"></span></button>
+							<button type="button" class="btn btn-primary" id="bank_add" name="bank_add" data-toggle="modal" data-target=".addbank" style="padding: 5px 35px;  float: right;" tabindex='59' onclick="resetbankInfo()"><span class="icon-add"></span></button>
 						</div>
 
 						<div class="card-body">
@@ -1142,8 +981,7 @@ if (sizeof($getLoanCalculation) > 0) {
 					<!-- Submit Button Start -->
 					<div class="col-md-12 ">
 						<div class="text-right">
-							<button type="submit" name="submit_loanIssue" id="submit_loanIssue" class="btn btn-primary" value="Submit" tabindex="59"><span class="icon-check"></span>&nbsp;Submit</button>
-							<!-- <button type="reset" class="btn btn-outline-secondary" tabindex="20">Clear</button> -->
+							<button type="submit" name="submit_loanIssue" id="submit_loanIssue" class="btn btn-primary" value="Submit" tabindex="60"><span class="icon-check"></span>&nbsp;Submit</button>
 						</div>
 					</div>
 					<!-- Submit Button End -->
@@ -1191,7 +1029,7 @@ if (sizeof($getLoanCalculation) > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label for="bank_name "> Bank Name </label> <span class="required">&nbsp;*</span>
-							<input type="text" class="form-control" id="bank_name" name="bank_name" placeholder="Enter Bank Name" onkeydown="return /[a-z ]/i.test(event.key)" tabindex='60'>
+							<input type="text" class="form-control" id="bank_name" name="bank_name" placeholder="Enter Bank Name" onkeydown="return /[a-z ]/i.test(event.key)" tabindex='1'>
 							<span class="text-danger" id="bankNameCheck" style="display: none;"> Enter Bank Name </span>
 						</div>
 					</div>
@@ -1199,7 +1037,7 @@ if (sizeof($getLoanCalculation) > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label for="branch_name"> Branch Name </label> <span class="required">&nbsp;*</span>
-							<input type="text" class="form-control" id="branch_name" name="branch_name" placeholder="Enter Branch Name" onkeydown="return /[a-z ]/i.test(event.key)" tabindex='61'>
+							<input type="text" class="form-control" id="branch_name" name="branch_name" placeholder="Enter Branch Name" onkeydown="return /[a-z ]/i.test(event.key)" tabindex='2'>
 							<span class="text-danger" id="branchCheck" style="display: none;"> Enter Branch Name </span>
 						</div>
 					</div>
@@ -1207,7 +1045,7 @@ if (sizeof($getLoanCalculation) > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label for="account_holder_name"> Account Holder Name </label> <span class="required">&nbsp;*</span>
-							<input type="text" class="form-control" id="account_holder_name" name="account_holder_name" placeholder="Enter Account Holder Name" onkeydown="return /[a-z ]/i.test(event.key)" tabindex='62'>
+							<input type="text" class="form-control" id="account_holder_name" name="account_holder_name" placeholder="Enter Account Holder Name" onkeydown="return /[a-z ]/i.test(event.key)" tabindex='3'>
 							<span class="text-danger" id="accholdCheck" style="display: none;"> Enter Account Holder Name </span>
 						</div>
 					</div>
@@ -1215,7 +1053,7 @@ if (sizeof($getLoanCalculation) > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label for="account_number"> Account Number </label> <span class="required">&nbsp;*</span>
-							<input type="number" class="form-control" id="account_number" name="account_number" placeholder="Enter Account Number" tabindex='63'>
+							<input type="number" class="form-control" id="account_number" name="account_number" placeholder="Enter Account Number" tabindex='4'>
 							<span class="text-danger" id="accnoCheck" style="display: none;"> Enter Account Number </span>
 						</div>
 					</div>
@@ -1223,20 +1061,20 @@ if (sizeof($getLoanCalculation) > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label for="Ifsc_code"> IFSC Code </label> <span class="required">&nbsp;*</span>
-							<input type="text" class="form-control" id="Ifsc_code" name="Ifsc_code" placeholder="Enter IFSC Code" tabindex='64'>
+							<input type="text" class="form-control" id="Ifsc_code" name="Ifsc_code" placeholder="Enter IFSC Code" tabindex='5'>
 							<span class="text-danger" id="ifscCheck" style="display: none;"> Enter IFSC Code </span>
 						</div>
 					</div>
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label for="bank_upload"> Upload</label>
-							<input type="file" class="form-control" id="bank_upload" name="bank_upload" tabindex="65">
+							<input type="file" class="form-control" id="bank_upload" name="bank_upload" tabindex="6">
 							<input type="hidden" id="bank_upload_id">
 						</div>
 					</div>
 					<div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12">
 						<input type="hidden" name="bankID" id="bankID">
-						<button type="button" tabindex="66" name="bankInfoBtn" id="bankInfoBtn" class="btn btn-primary" style="margin-top: 19px;">Submit</button>
+						<button type="button" tabindex="7" name="bankInfoBtn" id="bankInfoBtn" class="btn btn-primary" style="margin-top: 19px;">Submit</button>
 					</div>
 
 				</div>
@@ -1261,7 +1099,7 @@ if (sizeof($getLoanCalculation) > 0) {
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal" tabindex='67' onclick="resetbankinfoList()">Close</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" tabindex='8' onclick="resetbankinfoList()">Close</button>
 			</div>
 		</div>
 	</div>

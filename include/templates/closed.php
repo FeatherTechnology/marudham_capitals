@@ -5,7 +5,6 @@ if (isset($_SESSION['userid'])) {
 	$userid = $_SESSION['userid'];
 }
 
-
 if (isset($_POST['submit_closed']) && $_POST['submit_closed'] != '') {
 	if (isset($_POST['noc_req_id'])) {
 		$close_req_id = $_POST['noc_req_id'];
@@ -27,7 +26,6 @@ if (isset($_GET['upd'])) {
 }
 if ($idupd > 0) {
 	$getLoanList = $userObj->getLoanList($mysqli, $idupd);
-	// print_r($getLoanList);
 	if (sizeof($getLoanList) > 0) {
 		$cus_id						= $getLoanList['cus_id'];
 		$cus_name					= $getLoanList['cus_name'];
@@ -44,6 +42,10 @@ if ($idupd > 0) {
 	}
 }
 
+$getCustomerReg = $userObj->getCustomerRegister($mysqli, $cus_id);
+if (sizeof($getCustomerReg) > 0) { 
+	$autogen_cus_id 			= $getCustomerReg['autogen_cus_id'];
+}
 ?>
 
 <style>
@@ -123,10 +125,17 @@ if ($idupd > 0) {
 								<div class="row">
 									<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
 										<div class="form-group">
-											<label for="cus_id">Customer ID</label>
+											<label for="cus_id">Adhaar Number</label>
 											<input type="text" class="form-control" id="cus_id" name="cus_id" value='<?php if (isset($cus_id)) {
 																															echo $cus_id;
 																														} ?>' readonly>
+										</div>
+									</div>
+
+									<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
+										<div class="form-group">
+											<label for="autogen_cus_id">Customer ID</label>
+											<input type="text" class="form-control" id="autogen_cus_id" name="autogen_cus_id" value='<?php if (isset($autogen_cus_id)) { echo $autogen_cus_id; } ?>' readonly>
 										</div>
 									</div>
 
@@ -503,7 +512,6 @@ if ($idupd > 0) {
 				<div class="col-md-12 ">
 					<div class="text-right">
 						<button type="submit" name="submit_closed" id="submit_closed" class="btn btn-primary" value="Submit"><span class="icon-check"></span>&nbsp;Submit</button>
-						<!-- <button type="reset" class="btn btn-outline-secondary" tabindex="20">Clear</button> -->
 					</div>
 				</div>
 				<!-- Submit Button End -->

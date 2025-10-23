@@ -90,8 +90,8 @@ if ($userid == 1) {
 if (isset($_POST['search']) && $_POST['search'] != "") {
 
     $query .= " AND (v.dor LIKE '%" . $_POST['search'] . "%'
-            OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%'
             OR v.cus_id LIKE '%" . $_POST['search'] . "%'
+            OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%'
             OR v.cus_name LIKE '%" . $_POST['search'] . "%'
             OR bc.branch_name LIKE '%" . $_POST['search'] . "%'
             OR ag.group_name LIKE '%" . $_POST['search'] . "%'
@@ -139,8 +139,8 @@ foreach ($result as $row) {
 
     $sub_array[] = date('d-m-Y', strtotime($row['dor']));
 
-    $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = $row['cus_id'];
+    $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = $row['cus_name'];
 
     $sub_array[] = $row["branch_name"];

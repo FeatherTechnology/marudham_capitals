@@ -6506,6 +6506,7 @@ class admin
 		if ($mysqli->affected_rows > 0) {
 			while ($row = $qry->fetch_assoc()) {
 				$detailrecords['cus_reg_id'] = $row['cus_reg_id'];
+				$detailrecords['autogen_cus_id'] = $row['autogen_cus_id'];
 				$detailrecords['req_id'] = $row['req_ref_id'];
 				$detailrecords['cus_id'] = $row['cus_id'];
 				// $detailrecords['cus_id'] = $row['cus_data']; //

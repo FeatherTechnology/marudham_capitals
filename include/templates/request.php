@@ -353,17 +353,17 @@ if ($idupd > 0) {
 						<div class="row">
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-6">
 								<div class="form-group">
-									<label for="autogen_cus_id">Customer ID</label><span class="required">&nbsp;*</span>
-									<input type="text" class="form-control" id="autogen_cus_id" name="autogen_cus_id" tabindex='9' readonly>
+									<label for="cus_id">Adhaar Number</label><span class="required">&nbsp;*</span>
+									<input type="text" class="form-control" id="cus_id" name="cus_id" value='<?php if (isset($cus_id)) {
+																													echo $cus_id;
+																												} ?>' tabindex='9' data-type="adhaar-number" maxlength="14" placeholder="Enter Adhaar Number">
+									<span class="text-danger" style='display:none' id='cusidCheck'>Please Enter Customer ID</span>
 								</div>
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-6">
 								<div class="form-group">
-									<label for="cus_id">Adhaar Number</label><span class="required">&nbsp;*</span>
-									<input type="text" class="form-control" id="cus_id" name="cus_id" value='<?php if (isset($cus_id)) {
-																													echo $cus_id;
-																												} ?>' tabindex='10' data-type="adhaar-number" maxlength="14" placeholder="Enter Adhaar Number">
-									<span class="text-danger" style='display:none' id='cusidCheck'>Please Enter Customer ID</span>
+									<label for="autogen_cus_id">Customer ID</label><span class="required">&nbsp;*</span>
+									<input type="text" class="form-control" id="autogen_cus_id" name="autogen_cus_id" tabindex='10' readonly>
 								</div>
 							</div>
 							<?php if ($role != '2') { //customer status not for agents

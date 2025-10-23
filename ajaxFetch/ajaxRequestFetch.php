@@ -115,8 +115,8 @@ foreach ($result as $row) {
 
     $sub_array[] = date('d-m-Y', strtotime($row['dor']));
 
-    $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = $row['cus_id'];
+    $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = $row['cus_name'];
 
     $sub_array[] = $row["branch_name"];
