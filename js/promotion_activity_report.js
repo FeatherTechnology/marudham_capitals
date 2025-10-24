@@ -30,7 +30,6 @@ function getUserNames() {
     }, 'json');
 }
 
-
 function commitmentReportTable() {
     let selected_date = $('#selected_date').val();
     let selected_user = $('#by_user').val();

@@ -49,6 +49,7 @@
 									<th>Doc ID</th>
 									<th>Loan Date</th>
 									<th>Maturity Date</th>
+									<th>Adhaar Number</th>
 									<th>Cust. ID</th>
 									<th>Cust. Name</th>
 									<th>Area</th>
@@ -70,7 +71,7 @@
 								<tbody></tbody>
 								<tfoot>
 									<tr>
-										<td colspan="13"></td>
+										<td colspan="14"></td>
 										<td></td>
 										<td></td>
 										<td></td>
@@ -95,6 +96,7 @@
 									<th>Doc ID</th>
 									<th>Loan Date</th>
 									<th>Maturity Date</th>
+									<th>Adhaar Number</th>
 									<th>Cust. ID</th>
 									<th>Cust. Name</th>
 									<th>Area</th>
@@ -118,7 +120,7 @@
 								<tbody></tbody>
 								<tfoot>
 									<tr>
-										<td colspan="13"></td>
+										<td colspan="14"></td>
 										<td></td>
 										<td></td>
 										<td></td>

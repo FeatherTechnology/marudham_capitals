@@ -11,7 +11,6 @@
 	<!--form start-->
 	<form id="no_pay_due_report_form" name="no_pay_due_report_form" action="" method="post" enctype="multipart/form-data">
 
-		<!-- <div class="row gutters" id="collection_card"> -->
 		<div class="row gutters" id="report_card">
 			<div class="toggle-container col-12">
 				<input type="month" id="from_date" name="from_date" class="toggle-button" value="">
@@ -29,6 +28,7 @@
 									<th>Loan ID</th>
 									<th>Loan Date</th>
 									<th>Maturity Date</th>
+									<th>Adhaar Number</th>
 									<th>Cust. ID</th>
 									<th>Cust. Name</th>
 									<th>Area</th>

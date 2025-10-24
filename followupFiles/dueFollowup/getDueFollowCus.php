@@ -28,7 +28,7 @@ if ($user_id != 1) {
                     $area_list = implode(',', $area_ids);
                     // $loan_cat_list = implode(',', $loan_cat_ids);
                     // $line_list = implode(',', $line_ids);
-                     $cnd = "(cp.area_confirm_area IN ($area_list))";
+                    $cnd = "(cp.area_confirm_area IN ($area_list))";
                     // $cnd = "(cp.area_confirm_area IN ($area_list) AND alm.map_id IN ($line_list) AND iv.loan_category IN ($loan_cat_list))";
                     $conditions[] = $cnd;
                 }
@@ -85,33 +85,31 @@ $searchValue = $_POST['search'];
 
 $data = [];
 
-$columns = ['cp.id', 'cp.cus_id', 'cp.cus_name', 'alc.area_name', 'salc.sub_area_name', 'bc.branch_name', 'alm.line_name', 'cp.mobile1', 'cs.sub_status', 'cp.id', 'cs.last_paid_date', 'cs.current_month_paid', 'cm.comm_err', 'cm.hint', 'cm.comm_date'];
+$columns = ['cp.id', 'cp.cus_id', 'cr.autogen_cus_id', 'cp.cus_name', 'alc.area_name', 'salc.sub_area_name', 'bc.branch_name', 'alm.line_name', 'cp.mobile1', 'cs.sub_status', 'cp.id', 'cs.last_paid_date', 'cs.current_month_paid', 'cm.comm_err', 'cm.hint', 'cm.comm_date'];
 
 $orderDir = $_POST['order'][0]['dir'];
 $order = $columns[$_POST['order'][0]['column']] ? "ORDER BY " . $columns[$_POST['order'][0]['column']] . " $orderDir" : "";
-$search = $searchValue != '' ? "AND (ii.cus_id LIKE '%$searchValue%' or cp.cus_name LIKE '%$searchValue%' or alc.area_name LIKE '%$searchValue%' or salc.sub_area_name LIKE '%$searchValue%' or cp.mobile1 LIKE '%$searchValue%' or cs.sub_status LIKE '%$searchValue%' )" : '';
+$search = $searchValue != '' ? "AND (ii.cus_id LIKE '%$searchValue%' OR cr.autogen_cus_id LIKE '%$searchValue%' OR cp.cus_name LIKE '%$searchValue%' OR alc.area_name LIKE '%$searchValue%' OR salc.sub_area_name LIKE '%$searchValue%' OR cp.mobile1 LIKE '%$searchValue%' OR cs.sub_status LIKE '%$searchValue%' )" : '';
 
 $query = "SELECT
-    iv.loan_category,
-    cs.payable_amnt,
     cp.cus_id AS cp_cus_id,
-    ii.cus_status,
+    cr.autogen_cus_id,
     cp.cus_name,
     alc.area_name,
     salc.sub_area_name,
     bc.branch_name,
     alm.line_name,
     cp.mobile1,
-    ii.cus_id AS ii_cus_id,
-    ii.req_id,
-    cs.sub_status,
+    cs.last_paid_date,
     cs.current_month_paid,
-    cm.comm_err,
     cm.hint,
+    cm.comm_err,
     cm.comm_date,
-    cs.last_paid_date
+    ii.req_id
 FROM
     in_issue ii
+JOIN 
+    customer_register cr ON ii.cus_id = cr.cus_id 
 JOIN acknowlegement_customer_profile cp ON
     ii.req_id = cp.req_id
 JOIN customer_status cs ON
@@ -240,6 +238,7 @@ foreach ($result as $row) {
     $data[] = [
         $finalData['sno'] = $sno,
         $finalData['cus_id'] = $cus_id,
+        $finalData['autogen_cus_id'] = $row['autogen_cus_id'],
         $finalData['cus_name'] = $cus_name,
         $finalData['area_name'] = $area_name,
         $finalData['sub_area_name'] = $sub_area_name,

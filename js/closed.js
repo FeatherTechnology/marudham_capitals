@@ -219,21 +219,7 @@ function OnLoadFunctions(req_id, cus_id) {
                                         type: 'post',
                                         cache: false,
                                         success: function (html) {
-                                            $('#printcollection').html(html)
-                                            // Get the content of the div element
-                                            // var content = $("#printcollection").html();
-
-                                            // // Create a new window
-                                            // var w = window.open();
-
-                                            // // Write the content to the new window
-                                            // $(w.document.body).html(content);
-
-                                            // // Print the new window
-                                            // w.print();
-
-                                            // // Close the new window
-                                            // w.close();
+                                            $('#printcollection').html(html);
                                         }
                                     })
                                 }
@@ -375,14 +361,14 @@ function validations() {
 }
 
 //Due Chart List
-function dueChartList(nocreq_id, cus_id) {
+function dueChartList(nocreq_id, cus_id, callback) {
+    $('#dueChartTableDiv').empty()
     $.ajax({
         url: 'collectionFile/getDueChartList.php',
         data: { 'req_id': nocreq_id, 'cus_id': cus_id, 'closed': 'true' },
         type: 'post',
         cache: false,
         success: function (response) {
-            $('#dueChartTableDiv').empty()
             $('#dueChartTableDiv').html(response)
         }
     }).then(function () {
@@ -390,8 +376,11 @@ function dueChartList(nocreq_id, cus_id) {
         $.post('collectionFile/getDueMethodName.php', { "req_id": nocreq_id }, function (response) {
             $('#dueChartTitle').text(`Due Chart ( Adhaar Number : ${response.cus_id} | Cus ID : ${response.autogen_cus_id}  | Cus Name : ${response.cus_name}  | Loan ID : ${response.loan_id}  | Loan Category : ${response.loan_category} )`);
         }, 'json');
+
+        callback();
     })
 }
+
 //Penalty Chart List
 function penaltyChartList(noc_req_id, cus_id) {
     $.ajax({

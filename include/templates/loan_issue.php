@@ -28,13 +28,13 @@ $getBankDetails = $userObj->getBankDetails($mysqli);
 $getRequestData = $userObj->getRequestForVerification($mysqli, $idupd);
 if (sizeof($getRequestData) > 0) {
 	for ($i = 0; $i < sizeof($getRequestData); $i++) {
-		$req_id						= $getRequestData['req_id'];
-		$cus_id					= $getRequestData['cus_id'];
-		$cus_name					= $getRequestData['cus_name'];
-		$sub_category					= $getRequestData['sub_category'];
-		$tot_value					= $getRequestData['tot_value'];
-		$ad_amt					= $getRequestData['ad_amt'];
-		$loan_amt					= $getRequestData['loan_amt'];
+		$req_id			= $getRequestData['req_id'];
+		$cus_id			= $getRequestData['cus_id'];
+		$cus_name		= $getRequestData['cus_name'];
+		$sub_category	= $getRequestData['sub_category'];
+		$tot_value		= $getRequestData['tot_value'];
+		$ad_amt			= $getRequestData['ad_amt'];
+		$loan_amt		= $getRequestData['loan_amt'];
 	}
 }
 

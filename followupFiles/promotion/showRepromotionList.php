@@ -12,7 +12,8 @@ $accessType = $Obj->accessType;
 
 $column = array(
     'cp.cus_reg_id',                  
-    'cp.cus_id',              
+    'cp.cus_id',    
+    'cp.autogen_cus_id',          
     'cp.customer_name',            
     'al.area_name',           
     'sl.sub_area_name',       
@@ -32,7 +33,7 @@ $column = array(
 
 $search = '';
 if (isset($_POST['search']) && $_POST['search'] != "") {
-    $search = " and (cp.cus_id LIKE '%" . $_POST['search'] . "%' or cp.customer_name LIKE '%" . $_POST['search'] . "%' or al.area_name LIKE '%" . $_POST['search'] . "%' or sl.sub_area_name LIKE '%" . $_POST['search'] . "%' or bc.branch_name LIKE '%" . $_POST['search'] . "%' or agm.group_name LIKE '%" . $_POST['search'] . "%' or alm.line_name LIKE '%" . $_POST['search'] . "%' or cp.mobile1 LIKE '%" . $_POST['search'] . "%' or np.status LIKE '%" . $_POST['search'] . "%' ) ";
+    $search = " and (cp.cus_id LIKE '%" . $_POST['search'] . "%' OR cp.autogen_cus_id LIKE '%" . $_POST['search'] . "%' OR cp.customer_name LIKE '%" . $_POST['search'] . "%' OR al.area_name LIKE '%" . $_POST['search'] . "%' OR sl.sub_area_name LIKE '%" . $_POST['search'] . "%' OR bc.branch_name LIKE '%" . $_POST['search'] . "%' OR agm.group_name LIKE '%" . $_POST['search'] . "%' OR alm.line_name LIKE '%" . $_POST['search'] . "%' OR cp.mobile1 LIKE '%" . $_POST['search'] . "%' OR np.status LIKE '%" . $_POST['search'] . "%' ) ";
 }
 
 $order = '';
@@ -42,7 +43,7 @@ if (isset($_POST['order'])) {
 $areaColumn = ($accessType == 3) 
     ? "cp.area" 
     : "cp.sub_area";
-    $qry = "SELECT req.req_id, req.cus_data, req.cus_id, cp.customer_name, al.area_name, sl.sub_area_name, bc.branch_name, agm.group_name, alm.line_name, cp.mobile1, req.cus_status AS consider_level, req.updated_date, np.status AS followup_sts, np.follow_date 
+    $qry = "SELECT req.req_id, req.cus_data, req.cus_id, cp.autogen_cus_id, cp.customer_name, al.area_name, sl.sub_area_name, bc.branch_name, agm.group_name, alm.line_name, cp.mobile1, req.cus_status AS consider_level, req.updated_date, np.status AS followup_sts, np.follow_date 
     FROM request_creation req 
     LEFT JOIN customer_register cp ON req.cus_id = cp.cus_id 
     LEFT JOIN (
@@ -97,6 +98,7 @@ while ($row = $sql->fetch()) {
     $sub_array = array();
     $sub_array[] = $sno;
     $sub_array[] = $row['cus_id'];
+    $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = $row['customer_name'];
     $sub_array[] = $row['area_name'];
     $sub_array[] = $row['sub_area_name'];

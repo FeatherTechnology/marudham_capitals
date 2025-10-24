@@ -8,16 +8,18 @@ $cus_id = $_POST['cus_id'];
 
 $qry = $connect->query("
     SELECT 
+    cr.autogen_cus_id,
     cp.cus_name,
     req.father_name,
     fam.famname,
     alc.area_name,
     ii.loan_id,
-    (select lcc.loan_category_creation_name from acknowlegement_loan_calculation lc JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id where lc.req_id = $req_id) as loan_cat_name,
-    (select loan_amt_cal from acknowlegement_loan_calculation where req_id = $req_id) as loan_amt,
+    (select lcc.loan_category_creation_name FROM acknowlegement_loan_calculation lc JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id where lc.req_id = $req_id) as loan_cat_name,
+    (select loan_amt_cal FROM acknowlegement_loan_calculation where req_id = $req_id) as loan_amt,
     cs.created_date as closed_date
 
-    from acknowlegement_customer_profile cp 
+    FROM acknowlegement_customer_profile cp 
+    JOIN customer_register cr ON cp.cus_id = cr.cus_id
     JOIN request_creation req ON cp.req_id = req.req_id
     LEFT JOIN verification_family_info fam ON cp.req_id = fam.req_id and fam.relationship = 'Father'
     JOIN area_list_creation alc ON cp.area_confirm_area = alc.area_id
@@ -27,6 +29,7 @@ $qry = $connect->query("
     where cp.req_id = $req_id");
 
 $row = $qry->fetch();
+$autogen_cus_id = $row['autogen_cus_id'];
 $cus_name = $row['cus_name'];
 $father_name = $row['famname'] ?? $row['father_name'];
 $area = $row['area_name'];
@@ -73,7 +76,8 @@ function moneyFormatIndia($num) {
         </div>
         <div class="body" style="margin-bottom: 20px;">
             <p>To</p>
-            <p>Customer ID: <?php echo $cus_id; ?></p>
+            <p>Adhaar Number: <?php echo $cus_id; ?></p>
+            <p>Customer ID: <?php echo $autogen_cus_id; ?></p>
             <p>Customer Name:<?php echo $cus_name; ?> </p>
             <p>S/o <?php echo $father_name; ?>,</p>
             <p><?php echo $area; ?></p>

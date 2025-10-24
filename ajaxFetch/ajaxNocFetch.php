@@ -32,6 +32,7 @@ if ($userid != 1) {
 $column = array(
     'cp.id',
     'cp.cus_id',
+    'cr.autogen_cus_id',
     'cp.cus_name',
     'ac.area_name',
     'sa.sub_area_name',
@@ -42,8 +43,9 @@ $column = array(
 );
 
 if ($userid == 1) {
-    $query = 'SELECT cp.cus_id as cp_cus_id,cp.cus_name,ac.area_name, sa.sub_area_name, al.line_name,bc.branch_name,cp.mobile1, ii.cus_id as ii_cus_id, ii.req_id, 0 as response 
+    $query = 'SELECT cp.cus_id as cp_cus_id, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, al.line_name, bc.branch_name, cp.mobile1, ii.cus_id as ii_cus_id, ii.req_id, 0 as response 
     FROM acknowlegement_customer_profile cp 
+    JOIN customer_register cr ON cp.cus_id = cr.cus_id
     JOIN in_issue ii ON cp.cus_id = ii.cus_id
     JOIN area_list_creation ac ON cp.area_confirm_area = ac.area_id
     JOIN sub_area_list_creation sa ON cp.area_confirm_subarea = sa.sub_area_id
@@ -52,6 +54,7 @@ if ($userid == 1) {
     where ii.status = 0 and ii.cus_status = 21 GROUP BY ii.cus_id '; // Only Issued and all lines not relying on sub area
 } else {
     $query = " SELECT cp.cus_id AS cp_cus_id,
+    cr.autogen_cus_id,
     cp.cus_name,
     ac.area_name,
     sa.sub_area_name,
@@ -67,6 +70,7 @@ if ($userid == 1) {
     COALESCE(gi_count, 0) +
     COALESCE(di_count, 0) AS response
     FROM acknowlegement_customer_profile cp
+    JOIN customer_register cr ON cp.cus_id = cr.cus_id
     JOIN in_issue ii ON cp.cus_id = ii.cus_id
     JOIN area_list_creation ac ON cp.area_confirm_area = ac.area_id
     JOIN sub_area_list_creation sa ON cp.area_confirm_subarea = sa.sub_area_id
@@ -140,6 +144,7 @@ if ($userid == 1) {
 if (isset($_POST['search']) && $_POST['search'] != "") {
 
     $search = " AND (cp.cus_id LIKE '%" . $_POST['search'] . "%'
+            OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%'
             OR cp.cus_name LIKE '%" . $_POST['search'] . "%'
             OR ac.area_name LIKE '%" . $_POST['search'] . "%'
             OR sa.sub_area_name LIKE '%" . $_POST['search'] . "%'
@@ -186,6 +191,7 @@ foreach ($result as $row) {
     $sub_array[] = $sno;
 
     $sub_array[] = $row['cp_cus_id'];
+    $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = $row['cus_name'];
 
     $sub_array[] = $row['area_name'];

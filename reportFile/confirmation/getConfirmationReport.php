@@ -57,6 +57,7 @@ $column = array(
     'ii.loan_id',
     'ii.updated_date',
     'cf.cus_id',
+    'cr.autogen_cus_id',
     'cp.cus_name',
     'cf.mobile',
     'cf.person_type',
@@ -76,6 +77,7 @@ $query = "SELECT
     ii.loan_id,
     ii.updated_date AS loan_date,
     cf.cus_id,
+    cr.autogen_cus_id,
     cp.cus_name,
     cf.mobile,
     cf.person_type,
@@ -98,6 +100,8 @@ JOIN
 JOIN 
     in_issue ii ON ii.req_id = cf.req_id
 JOIN 
+    customer_register cr ON ii.cus_id = cr.cus_id
+JOIN 
     area_list_creation al ON cp.area_confirm_area = al.area_id
 JOIN 
     sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
@@ -111,6 +115,7 @@ if (isset($_POST['search'])) {
         $query .= " and (alm.line_name LIKE '%" . $_POST['search'] . "%' OR
             ii.loan_id LIKE '%" . $_POST['search'] . "%' OR
             cf.cus_id LIKE '%" . $_POST['search'] . "%' OR
+            cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%' OR
             cp.cus_name LIKE '%" . $_POST['search'] . "%' OR
             cf.mobile LIKE '%" . $_POST['search'] . "%' OR
             cf.status LIKE '%" . $_POST['search'] . "%' OR
@@ -175,6 +180,7 @@ foreach ($result as $row) {
     $sub_array[] = $row['loan_id'];
     $sub_array[] = date('d-m-Y', strtotime($row['loan_date']));
     $sub_array[] = $row['cus_id'];
+    $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = $row['cus_name'];
     $sub_array[] = $row['mobile'];
     $sub_array[] = $per_type_arr[$row['person_type']];

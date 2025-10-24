@@ -28,6 +28,7 @@
                                     <th>Line</th>
                                     <th>Loan ID</th>
                                     <th>Loan Date</th>
+                                    <th>Adhaar Number</th>
                                     <th>Cust. ID</th>
                                     <th>Cust. Name</th>
                                     <th>Mobile</th>
