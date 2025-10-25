@@ -47,6 +47,7 @@ $column = [
     'ii.updated_date',
     'lc.maturity_month',
     'cp.cus_id',
+    'cr.autogen_cus_id',
     'cp.cus_name',
     'al.area_name',
     'sal.sub_area_name',
@@ -90,6 +91,7 @@ $query = "SELECT
             ii.updated_date AS loan_date,
             lc.maturity_month,
             cp.cus_id,
+            cr.autogen_cus_id,
             cp.req_id,
             cp.cus_name,
             al.area_name,
@@ -120,6 +122,8 @@ $query = "SELECT
         JOIN 
             acknowlegement_customer_profile cp ON lc.req_id = cp.req_id
         JOIN 
+            customer_register cr ON cp.cus_id = cr.cus_id
+        JOIN 
             acknowlegement_documentation ad ON lc.req_id = ad.req_id
         JOIN 
             in_issue ii ON lc.req_id = ii.req_id
@@ -140,30 +144,30 @@ $query = "SELECT
         LEFT JOIN 
             agent_creation ac ON iv.agent_id = ac.ag_id
         LEFT JOIN (
-    SELECT 
-        c.req_id, 
-        SUM(c.int_amt_track) AS int_amt_track, 
-        SUM(c.princ_amt_track) AS princ_amt_track, 
-        SUM(c.penalty_track) AS penalty_track, 
-        SUM(c.coll_charge_track) AS fine_track,
-        SUM(c.penalty_waiver) AS penalty_waiver,
-        SUM(c.coll_charge_waiver) AS fine_waiver,
-        COALESCE(p.total_penalty, 0) AS penalty,
-        COALESCE(ch.total_fine, 0) AS fine
+            SELECT 
+                c.req_id, 
+                SUM(c.int_amt_track) AS int_amt_track, 
+                SUM(c.princ_amt_track) AS princ_amt_track, 
+                SUM(c.penalty_track) AS penalty_track, 
+                SUM(c.coll_charge_track) AS fine_track,
+                SUM(c.penalty_waiver) AS penalty_waiver,
+                SUM(c.coll_charge_waiver) AS fine_waiver,
+                COALESCE(p.total_penalty, 0) AS penalty,
+                COALESCE(ch.total_fine, 0) AS fine
 
-    FROM  collection c
-    LEFT JOIN (
-        SELECT req_id, SUM(penalty) AS total_penalty
-        FROM   penalty_charges 
-        WHERE DATE(created_date) <= '$to_date' GROUP BY req_id) p ON p.req_id = c.req_id
-    LEFT JOIN (
-        SELECT req_id, SUM(coll_charge) AS total_fine
-        FROM collection_charges 
-        WHERE DATE(created_date) <= '$to_date'
-        GROUP BY req_id ) ch ON ch.req_id = c.req_id
-    $where 
-    GROUP BY c.req_id ) c ON c.req_id = iv.req_id
-    WHERE lc.req_id IN ($req_id_list) AND lc.due_type = 'Interest' ";
+            FROM  collection c
+            LEFT JOIN (
+                SELECT req_id, SUM(penalty) AS total_penalty
+                FROM   penalty_charges 
+                WHERE DATE(created_date) <= '$to_date' GROUP BY req_id) p ON p.req_id = c.req_id
+            LEFT JOIN (
+                SELECT req_id, SUM(coll_charge) AS total_fine
+                FROM collection_charges 
+                WHERE DATE(created_date) <= '$to_date'
+                GROUP BY req_id ) ch ON ch.req_id = c.req_id
+            $where 
+            GROUP BY c.req_id ) c ON c.req_id = iv.req_id
+        WHERE lc.req_id IN ($req_id_list) AND lc.due_type = 'Interest' ";
 
 if (isset($_POST['loan_cat'])) {
     $loan_cat_str = "'" . implode("','", $_POST['loan_cat']) . "'";
@@ -179,6 +183,7 @@ if (isset($_POST['search']) && $_POST['search'] != "") {
         ii.updated_date LIKE '%$search%' OR
         lc.maturity_month LIKE '%$search%' OR
         cp.cus_id LIKE '%$search%' OR
+        cr.autogen_cus_id LIKE '%$search%' OR
         cp.cus_name LIKE '%$search%' OR
         al.area_name LIKE '%$search%' OR
         sal.sub_area_name LIKE '%$search%'
@@ -265,6 +270,7 @@ foreach ($result as $row) {
     $sub_array[] = date('d-m-Y', strtotime($row['loan_date']));
     $sub_array[] = date('d-m-Y', strtotime($row['maturity_month']));
     $sub_array[] = $row['cus_id'];
+    $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = $row['cus_name'];
     $sub_array[] = $row['area_name'];
     $sub_array[] = $row['sub_area_name'];

@@ -26,9 +26,11 @@ $(document).ready(function () {
             if (idupd == undefined) {
                 // if page loaded for update, then no need to customer details
                 getCustomerDetails(cus_id);
+                getAutogenCusID(cus_id);
             } else if (cus_id_upd != undefined && cus_id_upd != cus_id) {
                 // if user removed and entered the same customer id while update, then dont refresh contents, have same
                 getCustomerDetails(cus_id);
+                getAutogenCusID(cus_id);
             }
 
         }
@@ -299,6 +301,7 @@ $(function () {//For Update
             $('.due_amt').hide();
         }
 
+        getAutogenCusID(cus_id);
     } else {
         autocallFunctions();
     }
@@ -447,6 +450,20 @@ function getRequestCode() {
         success: function (response) {
             var req_code = response;
             $('#req_code').val(req_code);
+        }
+    })
+}
+
+//Get Customer ID 
+function getAutogenCusID(adhaar_number) {
+    $.ajax({
+        url: 'requestFile/getAutogenCusId.php',
+        type: "post",
+        dataType: "json",
+        data: {adhaar_number},
+        cache: false,
+        success: function (response) {
+            $('#autogen_cus_id').val(response);
         }
     })
 }

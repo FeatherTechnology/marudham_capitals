@@ -18,6 +18,7 @@ $columns = [
     'rc.req_id',
     'rc.updated_date',
     'rc.cus_id',
+    'cr.autogen_cus_id',
     'rc.cus_name',
     'alc.area_name',
     'salc.sub_area_name',
@@ -56,6 +57,7 @@ if ($userid != 1) {
 $searchQuery = "";
 if ($searchValue != '') {
     $searchQuery = " AND (rc.cus_id LIKE '%" . $searchValue . "%' 
+                    OR cr.autogen_cus_id LIKE '%" . $search . "%'
                     OR rc.cus_name LIKE '%" . $searchValue . "%' 
                     OR alc.area_name LIKE '%" . $searchValue . "%'
                     OR salc.sub_area_name LIKE '%" . $searchValue . "%'
@@ -69,6 +71,7 @@ $orderQuery = " ORDER BY " . $columns[$orderColumnIndex] . " " . $orderDir;
 
 $sql = "SELECT 
     rc.*,
+    cr.autogen_cus_id,
     alc.area_name,
     salc.sub_area_name,
     lcc.loan_category_creation_name,
@@ -78,6 +81,8 @@ $sql = "SELECT
     alm.line_name
 FROM 
     request_creation rc
+JOIN 
+    customer_register cr ON rc.cus_id = cr.cus_id
 JOIN 
     acknowlegement_customer_profile acp ON rc.req_id = acp.req_id
 LEFT JOIN 
@@ -137,6 +142,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
             $sno++,
             date('d-m-Y', strtotime($row['updated_date'])),
             $row['cus_id'],
+            $row['autogen_cus_id'],
             $row['cus_name'],
             $row['area_name'],
             $row['sub_area_name'],

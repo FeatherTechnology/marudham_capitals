@@ -61,19 +61,26 @@ $column = array(
     'ii.updated_date',
     'lc.maturity_month',
     'ii.cus_id',
+    'cr.autogen_cus_id',
     'req.cus_name',
     'al.area_name',
     'sal.sub_area_name',
+    'lcc.loan_category_creation_name',
+    'lc.sub_category',
+    'ac.ag_name',
+    'u.role',
+    'u.fullname',
+    'lc.due_amt_cal',
+    'ii.req_id',
+    'cus_status',
+    'cus_status',
     'ii.req_id',
     'ii.req_id',
     'ii.req_id',
     'ii.req_id',
     'ii.req_id',
     'ii.req_id',
-    'ii.req_id',
-    'ii.req_id',
-    'ii.req_id'
-    
+    'ii.req_id'    
 );
 
 $query = "SELECT
@@ -82,10 +89,14 @@ $query = "SELECT
     ii.loan_id,
     ii.updated_date AS loan_date,
     ii.cus_id,
+    cr.autogen_cus_id,
     al.area_name,
     sal.sub_area_name,
     lcc.loan_category_creation_name AS loan_cat_name,
     lc.sub_category,
+    ac.ag_name,
+    u.role,
+    u.fullname,
     lc.due_amt_cal,
     lc.tot_amt_cal,
     lc.due_period,
@@ -94,17 +105,16 @@ $query = "SELECT
     lc.due_method_calc,
     lc.maturity_month as maturity_date,
     lc.due_start_from,
-    ac.ag_name,
-    u.role,
-    u.fullname,
     cls.closed_sts,
     cls.consider_level,
     req.cus_name,
     req.cus_status,
-     ack.updated_date,
+    ack.updated_date,
     IFNULL(col_sum.total_due_amt_tract, 0) AS total_due_amt
 FROM
     in_issue ii
+JOIN 
+    customer_register cr ON ii.cus_id = cr.cus_id
 JOIN acknowlegement_customer_profile cp ON
     ii.req_id = cp.req_id
 JOIN area_list_creation al ON
@@ -158,6 +168,7 @@ if (isset($_POST['search'])) {
                     OR ii.updated_date LIKE '%" . $_POST['search'] . "%'
                     OR lc.maturity_month LIKE '%" . $_POST['search'] . "%'
                     OR ii.cus_id LIKE '%" . $_POST['search'] . "%'
+                    OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%'
                     OR req.cus_name LIKE '%" . $_POST['search'] . "%'
                     OR al.area_name LIKE '%" . $_POST['search'] . "%'
                     OR sal.sub_area_name LIKE '%" . $_POST['search'] . "%'
@@ -234,6 +245,7 @@ foreach ($result as $row) {
     $sub_array[] = date('d-m-Y', strtotime($row['loan_date']));
     $sub_array[] = date('d-m-Y', strtotime($row['maturity_date']));
     $sub_array[] = $row['cus_id'];
+    $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = $row['cus_name'];
     $sub_array[] = $row['area_name'];
     $sub_array[] = $row['sub_area_name'];
@@ -351,8 +363,6 @@ function moneyFormatIndia($num)
     $thecash = $thecash == 0 ? "" : $thecash;
     return $thecash;
 }
-
-
 
 // Close the database connection
 $connect = null;

@@ -26,12 +26,12 @@ $(document).ready(function () {
             $('.existing_card, .filter_card').show();
              $('.event_card').hide()
              $('.add_event_card').hide()
-            showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list', '15');
+            showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list', '16');
         } else if (typevalue == 'Repromotion') {
              $('.event_card').hide()
              $('.add_event_card').hide()
             $('.repromotion_card, .filter_card').show()
-            showPromotionList('followupFiles/promotion/showRepromotionList.php', 'repromotion_list', '16');
+            showPromotionList('followupFiles/promotion/showRepromotionList.php', 'repromotion_list', '17');
         }else if (typevalue == 'Events') {
             $('.event_card').show()
             $('.add_event_card').hide()

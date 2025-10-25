@@ -27,6 +27,7 @@ $per_type_arr = [1 => 'Customer', 2 => 'Guarantor', 3 => 'Family Member'];
 $column = array(
     'c.id',
     'c.cus_id',
+    'cr.autogen_cus_id',
     'c.created_date',
     'c.created_date',
     'alc.area_name',
@@ -45,6 +46,7 @@ $column = array(
 
 $query = "SELECT 
     c.cus_id,
+    cr.autogen_cus_id,
     c.created_date,
     alc.area_name,
     c.ftype,
@@ -65,6 +67,8 @@ LEFT JOIN
 JOIN 
     acknowlegement_customer_profile cp ON c.req_id = cp.req_id
 JOIN 
+    customer_register cr ON cp.cus_id = cr.cus_id
+JOIN 
     area_list_creation alc ON cp.area_confirm_area = alc.area_id   
 WHERE 1
     $where";
@@ -73,6 +77,7 @@ if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {
         $query .= " and (c.created_date LIKE '%" . $_POST['search'] . "%' OR
             c.cus_id LIKE '%" . $_POST['search'] . "%' OR
+            cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%' OR
             alc.area_name LIKE '%" . $_POST['search'] . "%' OR
             c.ftype LIKE '%" . $_POST['search'] . "%' OR
             c.fstatus LIKE '%" . $_POST['search'] . "%' OR
@@ -114,6 +119,7 @@ foreach ($result as $row) {
     $sub_array = array();
     $sub_array[] = $sno;
     $sub_array[] = $row['cus_id'];
+    $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = date('d-m-Y', strtotime($row['created_date']));
     $sub_array[] = date('h:i:s A', strtotime($row['created_date']));
     $sub_array[] = $row['area_name'];

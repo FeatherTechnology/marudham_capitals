@@ -12,8 +12,6 @@
 </div><br><br>
 <!-- Page header end -->
 
-
-
 <!-- Main container start -->
 <div class="main-container">
 	<!--form start-->
@@ -35,8 +33,14 @@
 						<div class="row">
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<div class="form-group">
-									<label for="cus_id">Customer ID</label>
-									<input type="text" class="form-control" id="cus_id" name="cus_id" placeholder="Enter Customer ID" maxlength="14">
+									<label for="cus_id">Aadhaar Number</label>
+									<input type="text" class="form-control" id="cus_id" name="cus_id" placeholder="Enter Aadhaar Number" maxlength="14">
+								</div>
+							</div>
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+								<div class="form-group">
+									<label for="autogen_cus_id">Customer ID</label>
+									<input type="number" class="form-control" id="autogen_cus_id" name="autogen_cus_id" placeholder="Enter Customer ID">
 								</div>
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
@@ -59,7 +63,6 @@
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" style="text-align:center">
 								<div class="form-group">
-									<!-- <input type="button" class="" id="search_cus" name="search_cus" value="Search" style="float: left;"> -->
 									<button class="" id='search_cus' name='search_cus' style="float: left;" onclick="event.preventDefault();">Search&nbsp;<i class="fa fa-search"></i></button>
 								</div>
 							</div>
@@ -84,6 +87,7 @@
 												<thead>
 													<tr>
 														<th>S.No</th>
+														<th>Aadhaar Number</th>
 														<th>Customer ID</th>
 														<th>Customer Name</th>
 														<th>Area</th>
@@ -98,7 +102,7 @@
 												</thead>
 												<tbody>
 													<tr>
-														<td colspan='11'>No Records available</td>
+														<td colspan='12'>No Records available</td>
 													</tr>
 												</tbody>
 											</table>

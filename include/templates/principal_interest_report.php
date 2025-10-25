@@ -28,6 +28,7 @@
                                     <th>Line</th>
                                     <th>Loan ID</th>
                                     <th>Loan Date</th>
+                                    <th>Aadhaar Number</th>
                                     <th>Cust. ID</th>
                                     <th>Cust. Name</th>
                                     <th>Area</th>
@@ -48,7 +49,7 @@
                                 <tbody></tbody>
                                 <tfoot>
                                     <tr>
-                                        <td colspan="11"></td>
+                                        <td colspan="12"></td>
                                         <td></td>
                                         <td></td>
                                         <td></td>

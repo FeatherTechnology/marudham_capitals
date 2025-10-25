@@ -28,6 +28,7 @@
                             <table id="commitment_report_table" class="table custom-table">
                                 <thead>
                                     <th>S.No</th>
+                                    <th>Aadhaar Number</th>
                                     <th>Cust. ID</th>
                                     <th>Created Date</th>
                                     <th>Time</th>

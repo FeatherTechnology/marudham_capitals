@@ -50,6 +50,7 @@ $column = array(
     'ii.loan_id',
     'ad.doc_id',
     'ii.cus_id',
+    'cr.autogen_cus_id',
     'cp.cus_name',
     'fam.famname',
     'fam.relationship',
@@ -62,6 +63,9 @@ $column = array(
     'ac.ag_name',
     'iv.responsible',
     'ii.updated_date',
+    'li.payment_type',
+    'li.bank_id',
+    'li.created_date',
     'lc.loan_amt_cal',
     'lc.int_amt_cal',
     'lc.doc_charge_cal',
@@ -78,6 +82,7 @@ $query = "SELECT
         ii.loan_id,
         ad.doc_id,
         cp.cus_id,
+        cr.autogen_cus_id,
         cp.cus_name,
         fam.famname,
         fam.relationship,
@@ -106,6 +111,7 @@ $query = "SELECT
         vfi_received_by.relationship as rel_name
 
         FROM in_issue ii
+        JOIN customer_register cr ON ii.cus_id = cr.cus_id
         LEFT JOIN acknowlegement_customer_profile cp ON ii.req_id = cp.req_id
         LEFT JOIN acknowlegement_documentation ad ON ii.req_id = ad.req_id
         LEFT JOIN acknowlegement_loan_calculation lc ON ii.req_id = lc.req_id
@@ -131,6 +137,7 @@ if (isset($_POST['search'])) {
         $query .= " and (ii.loan_id LIKE '" . $_POST['search'] . "%' 
             OR ad.doc_id LIKE '%" . $_POST['search'] . "%'
             OR ii.cus_id LIKE '%" . $_POST['search'] . "%'
+            OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%'
             OR cp.cus_name LIKE '%" . $_POST['search'] . "%' 
             OR fam.famname LIKE '%" . $_POST['search'] . "%' 
             OR fam.relationship LIKE '%" . $_POST['search'] . "%' 
@@ -189,6 +196,7 @@ foreach ($result as $row) {
     $sub_array[] = $row['loan_id'];
     $sub_array[] = $row['doc_id'];
     $sub_array[] = $row['cus_id'];
+    $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = $row['cus_name'];
     $sub_array[] = $row['famname'];
     $sub_array[] = $row['relationship'];

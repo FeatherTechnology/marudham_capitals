@@ -63,6 +63,7 @@ $column = array(
     'ii.loan_id',
     'ii.updated_date',
     'coll.cus_id',
+    'cr.autogen_cus_id',
     'coll.cus_name',
     'al.area_name',
     'sal.sub_area_name',
@@ -89,6 +90,7 @@ $query = "SELECT
             ii.loan_id,
             ii.updated_date AS loan_date,
             coll.cus_id,
+            cr.autogen_cus_id,
             coll.req_id,
             coll.cus_name,
             coll.coll_mode,
@@ -118,6 +120,7 @@ $query = "SELECT
             cls.consider_level
 
         FROM collection coll
+        JOIN customer_register cr ON coll.cus_id = cr.cus_id
         JOIN acknowlegement_customer_profile cp ON coll.req_id = cp.req_id
         JOIN in_issue ii ON coll.req_id = ii.req_id
         JOIN area_list_creation al ON cp.area_confirm_area = al.area_id
@@ -140,6 +143,7 @@ if (isset($_POST['search'])) {
                     OR alm.line_name LIKE '%" . $_POST['search'] . "%'
                     OR ii.updated_date LIKE '%" . $_POST['search'] . "%'
                     OR coll.cus_id LIKE '%" . $_POST['search'] . "%'
+                    OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%'
                     OR coll.cus_name LIKE '%" . $_POST['search'] . "%'
                     OR al.area_name LIKE '%" . $_POST['search'] . "%'
                     OR sal.sub_area_name LIKE '%" . $_POST['search'] . "%'
@@ -190,6 +194,7 @@ foreach ($result as $row) {
     $sub_array[] = $row['loan_id'];
     $sub_array[] = date('d-m-Y', strtotime($row['loan_date']));
     $sub_array[] = $row['cus_id'];
+    $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = $row['cus_name'];
     $sub_array[] = $row['area_name'];
     $sub_array[] = $row['sub_area_name'];
@@ -284,8 +289,6 @@ function moneyFormatIndia($num)
     $thecash = $thecash == 0 ? "" : $thecash;
     return $thecash;
 }
-
-
 
 // Close the database connection
 $connect = null;

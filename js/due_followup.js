@@ -189,9 +189,9 @@ function OnLoadFunctions(req_id, cus_id) {
 
                 $('.due-chart').click(function () {
                     var req_id = $(this).attr('value');
-                    dueChartList(req_id, cus_id); // To show Due Chart List.
-                    setTimeout(() => {
-                        $('.print_due_coll').click(function () {
+                    dueChartList(req_id, cus_id, function () {
+                        $(document).off("click", ".print_due_coll");
+                        $(document).on("click", ".print_due_coll", function () {
                             var id = $(this).attr('value');
                             Swal.fire({
                                 title: 'Print',
@@ -213,16 +213,15 @@ function OnLoadFunctions(req_id, cus_id) {
                                         type: 'post',
                                         cache: false,
                                         success: function (html) {
-                                            $('#printcollection').html(html)
-                                            // Get the content of the div element
-                                            var content = $("#printcollection").html();
+                                            $('#printcollection').html(html);
                                         }
                                     })
                                 }
                             })
                         })
-                    }, 1000)
+                    })
                 })
+
                 $('.penalty-chart').click(function () {
                     var req_id = $(this).attr('value');
                     $.ajax({
@@ -264,25 +263,26 @@ function OnLoadFunctions(req_id, cus_id) {
 }//Auto Load function END
 
 //Due Chart List
-function dueChartList(req_id, cus_id) {
-    // var req_id = $('#idupd').val()
-    // const cus_id = $('#cusidupd').val()
+function dueChartList(req_id, cus_id, callback) {
+    $('#dueChartTableDiv').empty()
     $.ajax({
         url: 'collectionFile/getDueChartList.php',
         data: { 'req_id': req_id, 'cus_id': cus_id },
         type: 'post',
         cache: false,
         success: function (response) {
-            $('#dueChartTableDiv').empty()
             $('#dueChartTableDiv').html(response)
         }
     }).then(function () {
 
         $.post('collectionFile/getDueMethodName.php', { req_id }, function (response) {
-            $('#dueChartTitle').text('Due Chart ( Cus ID : '+ response['cus_id'] + '  | Cus Name : ' + response['cus_name'] + '  | Loan ID : ' + response['loan_id'] + '  | Loan Category : ' + response['loan_category'] + ' )');
+            $('#dueChartTitle').text(`Due Chart ( Aadhaar Number : ${response.cus_id} | Cus ID : ${response.autogen_cus_id}  | Cus Name : ${response.cus_name}  | Loan ID : ${response.loan_id}  | Loan Category : ${response.loan_category} )`);
         }, 'json');
+
+        callback();
     })
 }
+
 //Penalty Chart List
 function penaltyChartList(req_id, cus_id) {
     $.ajax({

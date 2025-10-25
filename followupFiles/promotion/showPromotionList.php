@@ -12,6 +12,7 @@ $accessType = $Obj->accessType;
 $column = array(
     'cp.id',                  
     'cp.cus_id',              
+    'cr.autogen_cus_id',              
     'cp.cus_name',            
     'al.area_name',           
     'sl.sub_area_name',       
@@ -30,7 +31,7 @@ $column = array(
 
 $search = '';
 if (isset($_POST['search']) && $_POST['search'] != "") {
-    $search = " and (cp.cus_id LIKE '%" . $_POST['search'] . "%' or cp.cus_name LIKE '%" . $_POST['search'] . "%' or al.area_name LIKE '%" . $_POST['search'] . "%'or sl.sub_area_name LIKE '%" . $_POST['search'] . "%' or bc.branch_name LIKE '%" . $_POST['search'] . "%' or agm.group_name LIKE '%" . $_POST['search'] . "%' or alm.line_name LIKE '%" . $_POST['search'] . "%' or cp.mobile1 LIKE '%" . $_POST['search'] . "%'  or np.status LIKE '%" . $_POST['search'] . "%' ) ";
+    $search = " and (cp.cus_id LIKE '%" . $_POST['search'] . "%' OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%' OR cp.cus_name LIKE '%" . $_POST['search'] . "%' OR al.area_name LIKE '%" . $_POST['search'] . "%'OR sl.sub_area_name LIKE '%" . $_POST['search'] . "%' OR bc.branch_name LIKE '%" . $_POST['search'] . "%' OR agm.group_name LIKE '%" . $_POST['search'] . "%' OR alm.line_name LIKE '%" . $_POST['search'] . "%' OR cp.mobile1 LIKE '%" . $_POST['search'] . "%'  OR np.status LIKE '%" . $_POST['search'] . "%' ) ";
 }
 
 $order = '';
@@ -42,8 +43,9 @@ $areaColumn = ($accessType == 3)
     : "cp.area_confirm_subarea";
     //only closed customers who dont have any loans in current.
     // Simplified main query to fetch closed customers without loans
-    $qry = "SELECT cp.req_id, cp.cus_id, cp.cus_name, al.area_name, sl.sub_area_name, bc.branch_name,agm.group_name, alm.line_name, cp.mobile1, cs.consider_level, cs.created_date, np.status AS followup_sts, np.follow_date 
+    $qry = "SELECT cp.req_id, cp.cus_id, cr.autogen_cus_id, cp.cus_name, al.area_name, sl.sub_area_name, bc.branch_name, agm.group_name, alm.line_name, cp.mobile1, cs.consider_level, cs.created_date, np.status AS followup_sts, np.follow_date 
         FROM acknowlegement_customer_profile cp
+        JOIN customer_register cr ON cp.cus_id = cr.cus_id
         JOIN (
             SELECT req_id, cus_id, consider_level, MAX(created_date) AS created_date 
             FROM closed_status 
@@ -92,6 +94,7 @@ $areaColumn = ($accessType == 3)
         $sub_array = array();
         $sub_array[] = $sno;
         $sub_array[] = $row['cus_id'];
+        $sub_array[] = $row['autogen_cus_id'];
         $sub_array[] = $row['cus_name'];
         $sub_array[] = $row['area_name'];
         $sub_array[] = $row['sub_area_name'];

@@ -1,6 +1,5 @@
 <link rel="stylesheet" type="text/css" href="css/promotion_activity.css" />
 <?php
-
 if(isset($_SESSION['userid'])){
     $userid = $_SESSION['userid'];
 }
@@ -20,27 +19,17 @@ $cusidupd=$_GET['cusidupd'];
 $cus_sts = $_GET['cussts'];  
 $cummDate = $_GET['cummDate'];  
 }
+
 if($idupd>0)
 {
 	$getLoanList = $userObj->getLoanList($mysqli,$idupd); 
-	// print_r($getLoanList);
 	if (sizeof($getLoanList)>0) {
 			$cus_id						= $getLoanList['cus_id'];
 			$cus_name					= $getLoanList['cus_name'];
-			$area_id					= $getLoanList['area_confirm_area'];
 			$area_name					= $getLoanList['area_name'];
-			$sub_area_id				= $getLoanList['area_confirm_subarea'];
 			$sub_area_name				= $getLoanList['sub_area_name'];
-			$branch_id					= $getLoanList['branch_id'];
-			$branch_name				= $getLoanList['branch_name'];
-			$line_id					= $getLoanList['line_id'];
-			$line_name					= $getLoanList['area_line'];
-			$mobile1					= $getLoanList['mobile1'];
-			$cus_pic					= $getLoanList['cus_pic'];
 	}
 }
-
-
 ?>
 
 
@@ -63,8 +52,6 @@ if($idupd>0)
 	<button class="btn btn-primary" id='close_collection_card' style="display: none;">&times;&nbsp;&nbsp;Cancel</button>
 </div><br><br>
 <!-- Page header end -->
-
-
 
 <!-- Main container start -->
 <div class="main-container">

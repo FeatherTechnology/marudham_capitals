@@ -187,7 +187,7 @@ $(document).ready(function () {
           "'> " +
           cus_name +
           " - Customer </option>"
-        ); //Current Customer Adhaar
+        ); //Current Customer Aadhaar
         let len = response.length;
         for (let i = 0; i < len; i++) {
           let aadhar = response[i]["aadhar"];

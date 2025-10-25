@@ -12,9 +12,7 @@ $(document).ready(function () {
     });
 
     //Loan Report Table
-    // var loan_issue_report_table = ;
     $('#reset_btn').click(function () {
-        // loan_issue_report_table.ajax.reload();
         loanIssueReportTable();
     })
 });
@@ -63,7 +61,7 @@ function loanIssueReportTable(){
             };
 
             // Array of column indices to sum
-            var columnsToSum = [19, 20, 21, 22, 23, 24, 25, 26];
+            var columnsToSum = [20, 21, 22, 23, 24, 25, 26, 27];
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {
                 // Total over all pages for the current column

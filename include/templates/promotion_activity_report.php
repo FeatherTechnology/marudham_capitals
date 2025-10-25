@@ -13,7 +13,6 @@
 
         <div class="row gutters" id="closed_card">
             <div class="toggle-container col-12">
-                <!-- <input type="date" id='from_date' name='from_date' class="toggle-button" value=''> -->
                 <input type="date" id='selected_date' name='selected_date' class="toggle-button" value=''>
                 <select type="text" class="toggle-button" id='by_user' name='by_user'>
                     <option value=''>Select User</option>
@@ -28,6 +27,7 @@
                             <table id="promotion_activity_report_table" class="table custom-table">
                                 <thead>
                                     <th>S.No</th>
+                                    <th>Aadhaar Number</th>
                                     <th>Cust. ID</th>
                                     <th>Customer Name</th>
                                     <th>Created Date</th>
