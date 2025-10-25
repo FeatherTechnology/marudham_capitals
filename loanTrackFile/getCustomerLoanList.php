@@ -11,7 +11,7 @@ if (isset($_POST['cus_id'])) {
 
 $records = array();
 
-$result = $connect->query("SELECT req.req_id,req.prompt_remark,req.cus_status,
+$result = $connect->query("SELECT req.req_id,req.prompt_remark,req.cus_status,ii.loan_id,
     CASE WHEN req.cus_status >= 14 THEN ii.updated_date ELSE req.dor END AS `updated_date`,
     CASE WHEN req.cus_status >= 14 THEN ii.loan_id ELSE req.req_code END AS `code`,
     CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.loan_category WHEN req.cus_status IN (3,13,14,15,16,17,20,21) THEN alc.loan_category ELSE req.loan_category END AS loan_category,
@@ -31,6 +31,7 @@ if ($result->rowCount() > 0) {
 
         $records[$i]['updated_date'] = date('d-m-Y', strtotime($row['updated_date']));
         $records[$i]['code'] = $row['code'];
+        $records[$i]['loan_id'] = $row['loan_id'];
 
         $req_id = $row['req_id'];
         $records[$i]['req_id'] = $row['req_id'];
@@ -83,7 +84,7 @@ if ($result->rowCount() > 0) {
                 <td><?php echo $records[$i]['sub_category']; ?></td>
                 <td><?php echo moneyFormatIndia($records[$i]['loan_amt']); ?></td>
                 <td><?php echo $records[$i]['chart_action']; ?></td>
-                <td><button class="btn btn-primary track-btn" data-req_id='<?php echo $records[$i]['req_id']; ?>' onclick="event.preventDefault()">Track</button></td>
+                <td><button class="btn btn-primary track-btn" data-req_id='<?php echo $records[$i]['req_id']; ?>'data-loan_id='<?php echo $records[$i]['loan_id']; ?>' onclick="event.preventDefault()">Track</button></td>
             </tr>
         <?php } ?>
     </tbody>

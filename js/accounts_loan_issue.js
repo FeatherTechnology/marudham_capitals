@@ -43,7 +43,23 @@ $(document).ready(function () {
     })
 
     $('#refresh_cal').click(function () {
-
+        var intrest_rate = $("#int_rate").val();
+        var doc_charge = $("#doc_charge").val();
+        var proc_fee = $("#proc_fee").val();
+        var due_period = $("#due_period").val();
+        var profit_method = $("#profit_method").val();
+        if( intrest_rate == ""|| doc_charge == "" || proc_fee == "" || due_period == "" || profit_method == ""){
+            event.preventDefault();
+            Swal.fire({
+                        timerProgressBar: true,
+                        timer: 2000,
+                        title: 'Please Fill out Loan Info!',
+                        icon: 'error',
+                        showConfirmButton: true,
+                        confirmButtonColor: '#009688'
+                    });
+            return;
+        }
         var profit_method = $('#profit_method').val(); // if profit method changes, due type is EMI
         if (profit_method == "after_intrest" && due_type == "EMI") {
             getLoanAfterInterest();

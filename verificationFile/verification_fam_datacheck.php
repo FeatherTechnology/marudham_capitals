@@ -7,7 +7,7 @@ include '../ajaxconfig.php';
     <thead>
         <tr>
             <th width='100'>S.No</th>
-            <th> Customer ID </th>
+            <th> Aadhar Number </th>
             <th> Name</th>
             <th> Relationship </th>
             <th width='300'> Under Customer Name </th>

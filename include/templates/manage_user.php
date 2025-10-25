@@ -1063,8 +1063,8 @@ if($idupd>0)
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($due_followup==0){ echo'checked'; }} ?> tabindex="65" class="followup-checkbox" id="due_followup" name="due_followup" disabled>&nbsp;&nbsp;
-                                <label class="custom-control-label" for="due_followup">Due Followup</label>&nbsp;&nbsp;
-								<span class='text-danger dueFollowupCheck' style="display:none">Please Select Due Followup </span> 
+                                <label class="custom-control-label" for="due_followup">Followup</label>&nbsp;&nbsp;
+								<span class='text-danger dueFollowupCheck' style="display:none">Please Select Followup </span> 
                             </div>
                         </div>
 					</div>
