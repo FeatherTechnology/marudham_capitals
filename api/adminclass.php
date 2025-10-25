@@ -1563,9 +1563,9 @@ class admin
 		if (isset($_POST['branch2'])) {
 			$branch_id = $_POST['branch2'];
 		}
-		if (isset($_POST['customer_status'])) {
-			$customer_status = $_POST['customer_status'];
-		}
+		// if (isset($_POST['customer_status'])) {
+		// 	$customer_status = $_POST['customer_status'];
+		// }
 		// if (isset($_POST['loan_cat'])) {
 		// 	$loan_cat = $_POST['loan_cat'];
 		// }
@@ -1585,7 +1585,7 @@ class admin
 		if (isset($_POST['loan_count'])) {
 			$loan_count = $_POST['loan_count'];
 		}
-		$insertQry = "INSERT INTO area_duefollowup_mapping(duefollowup_name, customer_status, area_id, cus_count, loan_count, company_id, branch_id, insert_login_id, created_date) VALUES('" . strip_tags($duefollowup_name) . "', '" . strip_tags($customer_status) . "', '" . strip_tags($area_id) . "', '" . strip_tags($cus_count) . "', '" . strip_tags($loan_count) . "', '" . strip_tags($company_id) . "','" . strip_tags($branch_id) . "', '" . strip_tags($userid) . "', CURRENT_TIMESTAMP() )";
+		$insertQry = "INSERT INTO area_duefollowup_mapping(duefollowup_name, area_id, cus_count, loan_count, company_id, branch_id, insert_login_id, created_date) VALUES('" . strip_tags($duefollowup_name) . "', '" . strip_tags($area_id) . "', '" . strip_tags($cus_count) . "', '" . strip_tags($loan_count) . "', '" . strip_tags($company_id) . "','" . strip_tags($branch_id) . "', '" . strip_tags($userid) . "', CURRENT_TIMESTAMP() )";
 		$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
 	}
 	// Add Area Mapping for Group
@@ -1668,9 +1668,9 @@ class admin
 		// if (isset($_POST['loan_cat'])) {
 		// 	$loan_cat = $_POST['loan_cat'];
 		// }
-		if (isset($_POST['customer_status'])) {
-			$customer_status = $_POST['customer_status'];
-		}
+		// if (isset($_POST['customer_status'])) {
+		// 	$customer_status = $_POST['customer_status'];
+		// }
 		if (isset($_POST['area2'])) {
 			$area_id = $_POST['area2'];
 		}
@@ -1684,7 +1684,7 @@ class admin
 		if (isset($_POST['loan_count'])) {
 			$loan_count = $_POST['loan_count'];
 		}
-		$updateQry = "UPDATE area_duefollowup_mapping set duefollowup_name='" . strip_tags($duefollowup_name) . "', customer_status ='" . strip_tags($customer_status) . "', area_id='" . strip_tags($area_id) . "', cus_count='" . strip_tags($cus_count) . "', loan_count='" . strip_tags($loan_count) . "', company_id='" . strip_tags($company_id) . "', branch_id= '" . strip_tags($branch_id) . "', update_login_id='" . strip_tags($userid) . "', updated_date = current_timestamp(), status=0 WHERE map_id = '" . $id . "' ";
+		$updateQry = "UPDATE area_duefollowup_mapping set duefollowup_name='" . strip_tags($duefollowup_name) . "', area_id='" . strip_tags($area_id) . "', cus_count='" . strip_tags($cus_count) . "', loan_count='" . strip_tags($loan_count) . "', company_id='" . strip_tags($company_id) . "', branch_id= '" . strip_tags($branch_id) . "', update_login_id='" . strip_tags($userid) . "', updated_date = current_timestamp(), status=0 WHERE map_id = '" . $id . "' ";
 		$result = $mysqli->query($updateQry) or die("Error " . $mysqli->error);
 	}
 	// Update Area Mapping Group
