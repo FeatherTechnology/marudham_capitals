@@ -20,7 +20,7 @@
 							<tr>
 								<th width="5%">S.No.</th>
 								<th>Date</th>
-								<th>Adhaar Number</th>
+								<th>Aadhaar Number</th>
 								<th>Customer ID</th>
 								<th>Customer Name</th>
 								<th>Branch</th>

@@ -85,7 +85,7 @@ foreach ($result as $row) {
     $sub_array[] = $sno;
 
     $sub_array[] = date('d-m-Y', strtotime($row['created_date'])); //Date column
-    $sub_array[] = $row['cus_id']; //Adhaar number column
+    $sub_array[] = $row['cus_id']; //Aadhaar number column
     $sub_array[] = $row['autogen_cus_id']; //cus id column
     $cus_name = $row['customer_name']; //cus name column
     $sub_array[] = $cus_name; //cus name column

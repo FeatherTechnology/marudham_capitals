@@ -94,7 +94,7 @@ $coll_modes = ['1' => 'Cash', '2' => 'Cheque', '3' => 'ECS', '4' => 'IMPS/NEFT/R
             <div>Time :</div>
             <div>Line :</div>
             <div>Area :</div>
-            <div>Adhaar Number :</div>
+            <div>Aadhaar Number :</div>
             <div>Customer ID :</div>
             <b>
                 <div>Customer Name :</div>

@@ -1382,7 +1382,7 @@ function aadharList() {   // To show Aadhar No for Data Checking.
         success: function (response) {
             $("#check_aadhar").empty();
             $('#check_aadhar').append("<option value=''> Select Aadhar Number</option>")
-            $('#check_aadhar').append("<option value='" + cus_id + "'> " + cus_name + " - Customer </option>");//Current Customer Adhaar
+            $('#check_aadhar').append("<option value='" + cus_id + "'> " + cus_name + " - Customer </option>");//Current Customer Aadhaar
             let len = response.length;
             for (let i = 0; i < len; i++) {
                 let aadhar = response[i]['aadhar'];

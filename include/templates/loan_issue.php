@@ -302,7 +302,7 @@ if (sizeof($getLoanCalculation) > 0) {
 									<div class="row">
 										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
 											<div class="form-group">
-												<label for="cus_id">Adhaar Number</label>
+												<label for="cus_id">Aadhaar Number</label>
 												<input type="text" class="form-control" id="cus_id" name="cus_id" value='<?php if (isset($cp_cus_id)) {echo $cp_cus_id;} ?>' readonly tabindex='1'>
 											</div>
 										</div>

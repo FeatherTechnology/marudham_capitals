@@ -278,10 +278,10 @@ if (sizeof($getCustomerReg) > 0) {
 									<div class="row">
 										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
 											<div class="form-group">
-												<label for="cus_id">Adhaar Number</label><span class="required">&nbsp;*</span>
+												<label for="cus_id">Aadhaar Number</label><span class="required">&nbsp;*</span>
 												<input type="text" class="form-control" id="cus_id" name="cus_id" value='<?php if (isset($cus_id)) {
 																																echo $cus_id;
-																															} ?>' tabindex='1' data-type="adhaar-number" maxlength="14" placeholder="Enter Adhaar Number" readonly>
+																															} ?>' tabindex='1' data-type="adhaar-number" maxlength="14" placeholder="Enter Aadhaar Number" readonly>
 												<span class="text-danger" style='display:none' id='cusidCheck'>Please Enter Customer ID</span>
 											</div>
 										</div>
@@ -1137,7 +1137,7 @@ if (sizeof($getCustomerReg) > 0) {
 
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<div class="form-group">
-									<label for="cus_id_doc">Adhaar Number</label> <span class="required">* </span>
+									<label for="cus_id_doc">Aadhaar Number</label> <span class="required">* </span>
 									<input type="text" class="form-control" id="cus_id_doc" name="cus_id_doc" value='<?php if (isset($cus_id)) echo $cus_id; ?>' readonly tabindex="65">
 								</div>
 							</div>

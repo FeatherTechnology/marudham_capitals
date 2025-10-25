@@ -21,7 +21,7 @@
 							<table id="cust_profile_report_table" class="table custom-table">
 								<thead>
 									<th>S.No</th>
-									<th>Adhaar Number</th>
+									<th>Aadhaar Number</th>
 									<th>Cust. ID</th>
 									<th>Cust. Name</th>
 									<th>Guarantor Name</th>

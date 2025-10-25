@@ -98,7 +98,7 @@ if (sizeof($getUser) > 0) {
 						<table class="table custom-table" id='expromotion_list' data-id="existing" style="width: 100%;">
 							<thead>
 								<th width='20'>S.No</th>
-								<th>Adhaar Number</th>
+								<th>Aadhaar Number</th>
 								<th>Customer ID</th>
 								<th>Customer Name</th>
 								<th>Area</th>
@@ -169,8 +169,8 @@ if (sizeof($getUser) > 0) {
 						<div class="row">
 							<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
 								<div class="form-group">
-									<label for="cus_id_search">Adhaar Number</label><span class="required">&nbsp;*</span>
-									<input type="text" class="form-control" id="cus_id_search" name="cus_id_search" value='' placeholder='Enter Adhaar Number' onKeyPress="if(this.value.length==14) return false;">
+									<label for="cus_id_search">Aadhaar Number</label><span class="required">&nbsp;*</span>
+									<input type="text" class="form-control" id="cus_id_search" name="cus_id_search" value='' placeholder='Enter Aadhaar Number' onKeyPress="if(this.value.length==14) return false;">
 									<span class="searchDetailsCheck text-danger" style="display: none;">Please enter any of these fields!</span>
 								</div>
 							</div>
@@ -224,7 +224,7 @@ if (sizeof($getUser) > 0) {
 						<table class="table custom-table" id='repromotion_list' data-id="repromotion" style="width:100%">
 							<thead>
 								<th width='20'>S.No</th>
-								<th>Adhaar Number</th>
+								<th>Aadhaar Number</th>
 								<th>Customer ID</th>
 								<th>Customer Name</th>
 								<th>Area</th>
@@ -362,9 +362,9 @@ if (sizeof($getUser) > 0) {
 					<div class="col-12">
 						<div class="row">
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-								<label for="cus_id">Adhaar Number</label><span class="required">&nbsp;*</span>
-								<input type="text" name="cus_id" id="cus_id" class='form-control' placeholder="Enter Adhaar Number" tabindex="1" onKeyPress="if(this.value.length==14) return false;">
-								<span class="text-danger" id='cus_idCheck' style="display: none;">Please Enter Adhaar Number</span>
+								<label for="cus_id">Aadhaar Number</label><span class="required">&nbsp;*</span>
+								<input type="text" name="cus_id" id="cus_id" class='form-control' placeholder="Enter Aadhaar Number" tabindex="1" onKeyPress="if(this.value.length==14) return false;">
+								<span class="text-danger" id='cus_idCheck' style="display: none;">Please Enter Aadhaar Number</span>
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<label for="cus_name">Customer Name</label><span class="required">&nbsp;*</span>

@@ -374,7 +374,7 @@ function dueChartList(nocreq_id, cus_id, callback) {
     }).then(function () {
 
         $.post('collectionFile/getDueMethodName.php', { "req_id": nocreq_id }, function (response) {
-            $('#dueChartTitle').text(`Due Chart ( Adhaar Number : ${response.cus_id} | Cus ID : ${response.autogen_cus_id}  | Cus Name : ${response.cus_name}  | Loan ID : ${response.loan_id}  | Loan Category : ${response.loan_category} )`);
+            $('#dueChartTitle').text(`Due Chart ( Aadhaar Number : ${response.cus_id} | Cus ID : ${response.autogen_cus_id}  | Cus Name : ${response.cus_name}  | Loan ID : ${response.loan_id}  | Loan Category : ${response.loan_category} )`);
         }, 'json');
 
         callback();

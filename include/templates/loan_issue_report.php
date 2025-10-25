@@ -27,7 +27,7 @@
 									<th>S.No</th>
 									<th>Loan ID</th>
 									<th>Doc ID</th>
-									<th>Adhaar Number</th>
+									<th>Aadhaar Number</th>
 									<th>Cust. ID</th>
 									<th>Cust. Name</th>
 									<th>Guarantor Name</th>

@@ -508,9 +508,9 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 
 										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
 											<div class="form-group">
-												<label for="cus_id">Adhaar Number</label><span class="required">&nbsp;*</span>
-												<input type="text" class="form-control" id="cus_id" name="cus_id" tabindex='9' data-type="adhaar-number" maxlength="14" placeholder="Enter Adhaar Number" value='<?php if (isset($cus_id)) { echo $cus_id; } ?>' readonly>
-												<span class="text-danger" style='display:none' id='cusidCheck'>Please Enter Adhaar Number</span>
+												<label for="cus_id">Aadhaar Number</label><span class="required">&nbsp;*</span>
+												<input type="text" class="form-control" id="cus_id" name="cus_id" tabindex='9' data-type="adhaar-number" maxlength="14" placeholder="Enter Aadhaar Number" value='<?php if (isset($cus_id)) { echo $cus_id; } ?>' readonly>
+												<span class="text-danger" style='display:none' id='cusidCheck'>Please Enter Aadhaar Number</span>
 											</div>
 										</div>
 
@@ -1376,7 +1376,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
-										<label for="cus_id_doc">Adhaar Number</label> <span class="required">* </span>
+										<label for="cus_id_doc">Aadhaar Number</label> <span class="required">* </span>
 										<input type="text" class="form-control" id="cus_id_doc" name="cus_id_doc" value='<?php if (isset($doc_cus_id)) echo $doc_cus_id; ?>' readonly tabindex="67">
 									</div>
 								</div>

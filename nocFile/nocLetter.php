@@ -76,7 +76,7 @@ function moneyFormatIndia($num) {
         </div>
         <div class="body" style="margin-bottom: 20px;">
             <p>To</p>
-            <p>Adhaar Number: <?php echo $cus_id; ?></p>
+            <p>Aadhaar Number: <?php echo $cus_id; ?></p>
             <p>Customer ID: <?php echo $autogen_cus_id; ?></p>
             <p>Customer Name:<?php echo $cus_name; ?> </p>
             <p>S/o <?php echo $father_name; ?>,</p>

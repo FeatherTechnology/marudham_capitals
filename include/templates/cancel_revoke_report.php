@@ -38,7 +38,7 @@
                                     <th>S.No</th>
                                     <th>Req. ID</th>
                                     <th>Req. Date</th>
-                                    <th>Adhaar Number</th>
+                                    <th>Aadhaar Number</th>
                                     <th>Cust. ID</th>
                                     <th>Cust. Name</th>
                                     <th>Area</th>

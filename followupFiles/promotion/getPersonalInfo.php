@@ -36,7 +36,7 @@ $row = $sql->fetch();
 <div class="col-xl-8 col-lg-10 col-md-12 col-sm-12">
     <div class="row">
         <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12">
-            <label for="info_cus_id">Adhaar Number</label>
+            <label for="info_cus_id">Aadhaar Number</label>
             <input type="text" name="info_cus_id" id="info_cus_id" class='form-control' tabindex="1" readonly value="<?php echo $row['cus_id']; ?>">
         </div>
         <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12">

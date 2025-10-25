@@ -73,7 +73,7 @@
 						<thead>
 							<tr>
 								<th width="50">S.No.</th>
-								<th>Adhaar Number</th>
+								<th>Aadhaar Number</th>
 								<th>Customer ID</th>
 								<th>Customer Name</th>
 								<th>Area</th>

@@ -28,7 +28,7 @@
 									<th>Loan ID</th>
 									<th>Loan Date</th>
 									<th>Maturity Date</th>
-									<th>Adhaar Number</th>
+									<th>Aadhaar Number</th>
 									<th>Cust. ID</th>
 									<th>Cust. Name</th>
 									<th>Area</th>

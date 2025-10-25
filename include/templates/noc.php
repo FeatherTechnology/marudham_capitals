@@ -109,7 +109,7 @@ if (sizeof($documentationInfo) > 0) {
 									<div class="row">
 										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
 											<div class="form-group">
-												<label for="cus_id">Adhaar Number</label><span class="required">&nbsp;*</span>
+												<label for="cus_id">Aadhaar Number</label><span class="required">&nbsp;*</span>
 												<input type="text" class="form-control" id="cus_id" name="cus_id" value='<?php if (isset($cus_id)) {
 																																echo $cus_id;
 																															} ?>' readonly tabindex='1'>

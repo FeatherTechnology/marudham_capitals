@@ -27,7 +27,7 @@
                             <table id="promotion_activity_report_table" class="table custom-table">
                                 <thead>
                                     <th>S.No</th>
-                                    <th>Adhaar Number</th>
+                                    <th>Aadhaar Number</th>
                                     <th>Cust. ID</th>
                                     <th>Customer Name</th>
                                     <th>Created Date</th>

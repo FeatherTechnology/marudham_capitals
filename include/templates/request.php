@@ -353,10 +353,10 @@ if ($idupd > 0) {
 						<div class="row">
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-6">
 								<div class="form-group">
-									<label for="cus_id">Adhaar Number</label><span class="required">&nbsp;*</span>
+									<label for="cus_id">Aadhaar Number</label><span class="required">&nbsp;*</span>
 									<input type="text" class="form-control" id="cus_id" name="cus_id" value='<?php if (isset($cus_id)) {
 																													echo $cus_id;
-																												} ?>' tabindex='9' data-type="adhaar-number" maxlength="14" placeholder="Enter Adhaar Number">
+																												} ?>' tabindex='9' data-type="adhaar-number" maxlength="14" placeholder="Enter Aadhaar Number">
 									<span class="text-danger" style='display:none' id='cusidCheck'>Please Enter Customer ID</span>
 								</div>
 							</div>

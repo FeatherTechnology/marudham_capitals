@@ -6,14 +6,14 @@ $(document).ready(function () {
     });
 
     $('#search').click(function () {
-        let cus_id = $('#cus_id').val(); let cus_name = $('#cus_name').val(); let area = $('#cus_area').val();
+        let cus_id = $('#cus_id').val(); let autogen_cus_id = $('#autogen_cus_id').val(); let cus_name = $('#cus_name').val(); let area = $('#cus_area').val();
         let sub_area = $('#cus_sub_area').val(); let mobile = $('#mobile').val(); let fingerprint_person_id = $('#fingerprint_person_id').val();
         cus_id = cus_id.replace(/\s+/g, '');//removes spaces in adhar number
         if (validate()) {
             $.ajax({
                 url: 'searchModule/search_customer.php',
                 type: 'POST',
-                data: { cus_id, cus_name, area, sub_area, mobile, fingerprint_person_id },
+                data: { cus_id, autogen_cus_id, cus_name, area, sub_area, mobile, fingerprint_person_id },
                 dataType: 'json',
                 success: function (data) {
                     let appendData;
@@ -22,6 +22,7 @@ $(document).ready(function () {
                         $.each(data.customer_data, function (key, val) {
                             appendData += `<tr><td>${val.sno}</td>
                                 <td>${val.cus_id}</td>
+                                <td>${val.autogen_cus_id}</td>
                                 <td>${val.cus_name}</td>
                                 <td>${val.area}</td>
                                 <td>${val.sub_area}</td>
@@ -48,6 +49,7 @@ $(document).ready(function () {
                                 <td>${val.mobile}</td>
                                 <td>${val.under_cus}</td>
                                 <td>${val.under_cus_id}</td>
+                                <td>${val.under_autogen_cus_id}</td>
                                 </tr>`;
                         })
                     } else {
@@ -181,9 +183,9 @@ $(document).ready(function () {
 
 function validate() {
     let response = true;
-    let cus_id = $('#cus_id').val(); let cus_name = $('#cus_name').val(); let area = $('#cus_area').val(); let sub_area = $('#cus_sub_area').val(); let mobile = $('#mobile').val(); let fingerprint_person_id = $('#fingerprint_person_id').val();
+    let cus_id = $('#cus_id').val(); let autogen_cus_id = $('#autogen_cus_id').val(); let cus_name = $('#cus_name').val(); let area = $('#cus_area').val(); let sub_area = $('#cus_sub_area').val(); let mobile = $('#mobile').val(); let fingerprint_person_id = $('#fingerprint_person_id').val();
 
-    if (cus_id == '' && cus_name == '' && area == '' && sub_area == '' && mobile == '' && fingerprint_person_id == '') {
+    if (cus_id == '' && autogen_cus_id == '' && cus_name == '' && area == '' && sub_area == '' && mobile == '' && fingerprint_person_id == '') {
         response = false;
         event.preventDefault();
         alert('Please fill any one field to search!')
@@ -487,7 +489,7 @@ function dueChartList(req_id, cus_id, callback) {
     }).then(function () {
 
         $.post('collectionFile/getDueMethodName.php', { req_id }, function (response) {
-            $('#dueChartTitle').text('Due Chart ( Cus ID : '+ response['cus_id'] + '  | Cus Name : ' + response['cus_name'] + '  | Loan ID : ' + response['loan_id'] + '  | Loan Category : ' + response['loan_category'] + ' )');
+            $('#dueChartTitle').text(`Due Chart ( Aadhaar Number : ${response.cus_id} | Cus ID : ${response.autogen_cus_id}  | Cus Name : ${response.cus_name}  | Loan ID : ${response.loan_id}  | Loan Category : ${response.loan_category} )`);
         }, 'json');
     })
 }
