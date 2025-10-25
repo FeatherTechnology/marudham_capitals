@@ -143,7 +143,7 @@
 			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 loanlist_card" style="display: none;">
 				<div class="card">
 					<div class="card-header">
-						<div class="card-title">Loan Track</div>
+						<div class="card-title" id="loan_track_title">Loan Track</div>
 					</div>
 					<div class="card-body">
 						<div class="row ">

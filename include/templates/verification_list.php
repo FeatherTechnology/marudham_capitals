@@ -81,7 +81,7 @@
 								<th>Agent Name</th>
 								<th>Responsible</th>
 								<th>Customer Data</th>
-								<th>Customer Type</th>
+								<th>Existing Type</th>
 								<th>Customer Status</th>
 								<th>Action</th>
 							</tr>

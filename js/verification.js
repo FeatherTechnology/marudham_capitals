@@ -55,7 +55,7 @@ $(document).ready(function () {
   $("#category").on("change", function () {
     let category = $("#category").val();
     $("#check_name, #check_mobileno, #check_aadhar").empty();
-    $("#cus_check, #fam_check, #group_check").empty();
+    $("#cus_check, #fam_check").empty();
 
     if (category == 0) {
       $("#nameCheck").show();
@@ -211,7 +211,7 @@ $(document).ready(function () {
     let name = $(this).val();
     let category = $("#category").val();
     let req_id = $("#req_id").val();
-    $("#cus_check, #fam_check, #group_check").empty();
+    $("#cus_check, #fam_check").empty();
 
     if (name != "") {
       $.ajax({
@@ -236,16 +236,16 @@ $(document).ready(function () {
         },
       });
 
-      $.ajax({
-        url: "verificationFile/verification_group_datacheck.php",
-        type: "POST",
-        data: { name: name, req_id: req_id, category: category },
-        cache: false,
-        success: function (html) {
-          $("#group_check").empty();
-          $("#group_check").html(html);
-        },
-      });
+      // $.ajax({
+      //   url: "verificationFile/verification_group_datacheck.php",
+      //   type: "POST",
+      //   data: { name: name, req_id: req_id, category: category },
+      //   cache: false,
+      //   success: function (html) {
+      //     $("#group_check").empty();
+      //     $("#group_check").html(html);
+      //   },
+      // });
     }
   });
 
@@ -1117,6 +1117,11 @@ $(document).ready(function () {
         let value = $(this).val();
         $(this).val(formatIndianNumber(value));
     });
+  $(document).on("click", "#hide_document_history", function () {
+    $("#docHistoryDiv").empty();
+    $("#show_document_history").show();
+    $("#hide_document_history").hide();
+  })
   ///Hide AND Show doc Card END
 }); ////////Document Ready End
 
@@ -4695,6 +4700,8 @@ function docHistoryTable() {
 }
 
 function getDocumentHistory() {
+  $("#show_document_history").hide();
+   $("#hide_document_history").show();
   let cus_id = $("#cus_id_load").val();
   let req_id = $("#req_id").val();
   let cus_type = $("#cus_type").val();
@@ -4960,6 +4967,24 @@ $("#loan_category").change(function () {
 });
 
 $("#refresh_cal").click(function () {
+    var intrest_rate = $("#int_rate").val();
+    var doc_charge = $("#doc_charge").val();
+    var proc_fee = $("#proc_fee").val();
+    var due_period = $("#due_period").val();
+    var profit_method = $("#profit_method").val();
+    if( intrest_rate == ""|| doc_charge == "" || proc_fee == "" || due_period == "" || profit_method == ""){
+        event.preventDefault();
+        Swal.fire({
+                timerProgressBar: true,
+                timer: 2000,
+                title: 'Please Fill out Loan Info!',
+                icon: 'error',
+                showConfirmButton: true,
+                confirmButtonColor: '#009688'
+                });
+        return;
+    }
+
   $(".int-diff").text("*");
   $(".due-diff").text("*");
 
@@ -5774,9 +5799,7 @@ function profitCalAjax(profit_type, sub_cat, loan_cat) {
             }
             var selected = "";
             if (
-              profit_method_upd != "" &&
-              profit_method_upd != undefined &&
-              profit_method_upd == profit_method[i]
+              (profit_method_upd == profit_method[i] || profit_method[i] == "after_intrest")
             ) {
               selected = "selected";
             }
@@ -7038,67 +7061,72 @@ function loan_calc_validation() {
 return validation;
 }
 function fingerprintTable() {//To Get family member's name are required for scanning fingerprint
-  var cus_name = $('#cus_name').val();
-  var cus_id = $('#cus_id').val();
-  $.ajax({
-    url: 'verificationFile/getNamesForFingerprint.php',
-    data: { 'cus_name': cus_name, 'cus_id': cus_id },
-    type: 'post',
-    cache: false,
-    success: function (html) {
-      $('.fingerprintTable').empty()
-      $('.fingerprintTable').html(html)
-
-      $('.scanBtn').click(function () {
-        var hand = $(this).prev().val();
-        if (hand == '') { //prevent if hand is not selected
-          $(this).prev().css('border-color', 'red');
-        } else {
-          $(this).prev().css('border-color', '#009688')
-
-          showOverlay();//loader start
-
-          $(this).attr('disabled', true);
-
-          setTimeout(() => {
-            var quality = 60; //(1 to 100) (recommended minimum 55)
-            var timeout = 10; // seconds (minimum=10(recommended), maximum=60, unlimited=0)
-            var res = CaptureFinger(quality, timeout);
-            console.log("~ file: acknowledgement_creation.js:934 ~ setTimeout ~ (res.data.ErrorCode:", res.data.ErrorCode);
-            if (res.httpStaus) {
-              if (res.data.ErrorCode == "0") {
-                $(this).next().val(res.data.AnsiTemplate); // Take ansi template that is the unique id which is passed by sensor
-
-              }//Error codes and alerts below
-              else if (res.data.ErrorCode == -1307) {
-                alert('Connect Your Device');
-                $(this).removeAttr('disabled');
-              } else if (res.data.ErrorCode == -1140 || res.data.ErrorCode == 700) {
-                alert('Timeout');
-                $(this).removeAttr('disabled');
-              } else if (res.data.ErrorCode == 720) {
-                alert('Reconnect Device');
-                $(this).removeAttr('disabled');
-              } else if (res.data.ErrorCode == 730) {
-                alert('Capture Finger Again');
-                $(this).removeAttr('disabled');
-              } else {
-                alert('Error Code:' + res.data.ErrorCode);
-                $(this).removeAttr('disabled');
-              }
-            }
-            else {
-              alert(res.err);
-            }
-            // Hide the loading animation and remove blur effect from the body
-            hideOverlay();//loader stop
-
-          }, 700)
+    var cus_name = $('#cus_name').val();
+    var cus_id = $('#cus_id').val();
+    $.ajax({
+        url: 'verificationFile/getNamesForFingerprint.php',
+        data: { 'cus_name': cus_name, 'cus_id': cus_id },
+        type: 'post',
+        cache: false,
+        success: function (html) {
+            $('.fingerprintTable').empty()
+            $('.fingerprintTable').html(html)
+            $('.scanBtn').click(function () {
+                var hand = $(this).prev().val();
+                var name = $(this).parent().prev().find('input[id="name_print"]').val();
+                var adhar = $(this).parent().prev().prev().find('input[id="adhar_print"]').val();
+                if (hand == '') { //prevent if hand is not selected
+                    $(this).prev().css('border-color', 'red');
+                } else {
+                    $(this).prev().css('border-color', '#009688')
+                    showOverlay();//loader start
+                    $(this).attr('disabled', true);
+                    setTimeout(() => {
+                        var quality = 60; //(1 to 100) (recommended minimum 55)
+                        var timeout = 10; // seconds (minimum=10(recommended), maximum=60, unlimited=0)
+                        var res = CaptureFinger(quality, timeout);
+                        console.log(":rocket: ~ file: acknowledgement_creation.js:934 ~ setTimeout ~ (res.data.ErrorCode:", res.data.ErrorCode);
+                        if (res.httpStaus) {
+                            if (res.data.ErrorCode == "0") {
+                                let fdata = res.data.AnsiTemplate;
+                                $(this).next().val(fdata); // Take ansi template that is the unique id which is passed by sensor
+                                storeFingerprints(fdata, hand, adhar, name);//stores the current finger data in database
+                            }//Error codes and alerts below
+                            else if (res.data.ErrorCode == -1307) {
+                                alert('Connect Your Device');
+                                $(this).removeAttr('disabled');
+                            } else if (res.data.ErrorCode == -1140 || res.data.ErrorCode == 700) {
+                                alert('Timeout');
+                                $(this).removeAttr('disabled');
+                            } else if (res.data.ErrorCode == 720) {
+                                alert('Reconnect Device');
+                                $(this).removeAttr('disabled');
+                            } else if (res.data.ErrorCode == 730) {
+                                alert('Capture Finger Again');
+                                $(this).removeAttr('disabled');
+                            } else {
+                                alert('Error Code:' + res.data.ErrorCode);
+                                $(this).removeAttr('disabled');
+                            }
+                        }
+                        else {
+                            alert(res.err);
+                        }
+                        // Hide the loading animation and remove blur effect from the body
+                        hideOverlay();//loader stop
+                    }, 700)
+                }
+            })
         }
-      })
-    }
-  })
-
-
+    })
+}
+function storeFingerprints(fdata, hand, cus_id, cus_name) {//stores the current finger data in database
+  $.post('updateFile/storeFingerprints.php', { 'fdata': fdata, 'hand': hand, 'cus_id': cus_id, 'cus_name': cus_name }, function (response) {
+      if (response.includes('Successfully')) {
+          Swal.fire({
+              title: response, icon: 'success', confirmButtonColor: '#009688'
+          })
+      }
+  }, 'json')
 }
 //////////////////////////////////////////////////////////////////// Loan Calculation Functions End ///////////////////////////////////////////////////////////////////////////////

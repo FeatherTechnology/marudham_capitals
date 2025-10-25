@@ -23,7 +23,7 @@ if (isset($_POST['submit_loanIssue']) && $_POST['submit_loanIssue'] != '') {
 <?php
 }
 
-$getBankDetails = $userObj->getBankDetails($mysqli);
+// $getBankDetails = $userObj->getBankDetails($mysqli);
 
 $getRequestData = $userObj->getRequestForVerification($mysqli, $idupd);
 if (sizeof($getRequestData) > 0) {
@@ -799,25 +799,22 @@ if (sizeof($getLoanCalculation) > 0) {
 												<span class="text-danger" style="display: none;" id="pay_type"> Please Select Payment Type </span>
 											</div>
 										</div>
-										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" id="bankDiv" style="display:none">
+										<!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" id="bankDiv" style="display:none">
 											<div class="form-group">
 												<label for="bank_id">Bank Name </label>&nbsp;<span class="text-danger">*</span>
 												<select type="text" class="form-control" id="bank_id" name="bank_id" tabindex="47">
 													<option value=""> Select Bank Name</option>
-													<?php if (sizeof($getBankDetails) > 0) {
-														for ($i = 0; $i < sizeof($getBankDetails); $i++) {
-															$bank_id = $getBankDetails[$i]['id'];
-															$bank_name = $getBankDetails[$i]['short_name'] . ' - ' . substr($getBankDetails[$i]['acc_no'], -5);
+													<?php # if (sizeof($getBankDetails) > 0) { for ($i = 0; $i < sizeof($getBankDetails); $i++) {
+															#$bank_id = $getBankDetails[$i]['id']; $bank_name = $getBankDetails[$i]['short_name'] . ' - ' . substr($getBankDetails[$i]['acc_no'], -5);
 													?>
-															<option value="<?php echo $bank_id; ?>">
-																<?php echo $bank_name; ?>
+															<option value="<?php #echo $bank_id; ?>">
+																<?php #echo $bank_name; ?>
 															</option>
-													<?php }
-													} ?>
+													<?php # } } ?>
 												</select>
 												<span class="text-danger" style="display: none;" id="bank_idCheck"> Please Select Bank Name </span>
 											</div>
-										</div>
+										</div> -->
 									</div>
 
 									<div class="row">

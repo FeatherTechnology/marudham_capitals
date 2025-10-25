@@ -828,7 +828,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 							</div>
 							<div id="cus_check"></div></br>
 							<div id="fam_check"></div></br>
-							<div id="group_check"></div>
+							<!-- <div id="group_check"></div> -->
 						</div>
 					</div>
 					<!-- Data Checking END -->
@@ -1459,7 +1459,8 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 					<!-- Document History START -->
 					<div class="card">
 						<div class="card-header"> Documents History
-							<button type="button" class="btn btn-primary" name="show_document_history" id="show_document_history" style="padding: 5px 35px;  float: right;" tabindex="76" onclick="getDocumentHistory()">Show Document History</button>
+							<button type="button" class="btn btn-primary" name="show_document_history" id="show_document_history" style="padding: 5px 35px;  float: right; " tabindex="9" onclick="getDocumentHistory()">Show Document History</button>
+							<button type="button" class="btn btn-primary" name="hide_document_history" id="hide_document_history" style="padding: 5px 35px;  float: right; display: none;" tabindex="10" >Hide Document History</button>
 						</div>
 						<div class="card-body">
 							<div class="row">
@@ -3917,3 +3918,4 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 		</div>
 	</div>
 </div>
+<?php require_once __DIR__ . "/../common/fingerprintlibrary.php"; ?>

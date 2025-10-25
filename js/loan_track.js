@@ -51,7 +51,7 @@ $(document).ready(function () {
     })
 
     $('#close_btn').click(function () {
-        $('.loanlist_card, #close_btn').hide(); $('#loanTrackDiv table tbody').empty()
+        $('.loanlist_card, #close_btn').hide(); $('#loanTrackDiv table tbody').empty();$('#loan_track_title').text('Loan Track');
         $('#customer_list_card, #search_card').show();
     })
 })
@@ -236,8 +236,11 @@ function customerStatusOnClickEvents() {
     $('.track-btn').off('click');
     $(document).on('click', '.track-btn', function () {
         let req_id = $(this).attr('data-req_id');
+        let loan_id = $(this).attr('data-loan_id');
+        $('#loan_track_title').text('Loan Track');
         $.post('loanTrackFile/getTrackDetails.php', { 'req_id': req_id }, function (response) {
             $('#loanTrackDiv').empty().html(response);
+            $('#loan_track_title').append(' - Loan Id : ' + loan_id);
         })
     });
 

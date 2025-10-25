@@ -14,28 +14,14 @@ $(document).ready(function () {
             $('.area_status').hide(); $('.sub_area_status').show();
             dT2();
         }
-    })
+    });
+}); // document ready end
 
-    // $('#filter').keyup(function(){
-    //     // Retrieve the input field text and reset the count to zero
-    //     var filter = $(this).val(), count = 0;
-    //     // Loop through the comment list
-    //     $("table tbody tr").each(function(){
-    //         // If the list item does not contain the text phrase fade it out
-    //         if ($(this).text().search(new RegExp(filter, "i")) < 0) {
-    //             $(this).fadeOut();
-    //         // Show the list item if the phrase matches and increase the count by 1
-    //         } else {
-    //             $(this).show();
-    //             count++;
-    //         }
-    //     })
-    // })
-
-});//document ready end
 function dT1() {
-    var table = $('#sub_area_status_table').DataTable();
-    table.destroy();
+    if ($.fn.DataTable.isDataTable('#area_status_table')) {
+        $('#area_status_table').DataTable().clear().destroy();
+    }
+
     $('#area_status_table').DataTable({
         "order": [[0, "desc"]],
         'processing': true,
@@ -72,8 +58,9 @@ function dT1() {
     });
 }
 function dT2() {
-    var table = $('#area_status_table').DataTable();
-    table.destroy();
+    if ($.fn.DataTable.isDataTable('#sub_area_status_table')) {
+        $('#sub_area_status_table').DataTable().clear().destroy();
+    }
 
     $('#sub_area_status_table').DataTable({
         "order": [[0, "desc"]],
@@ -84,7 +71,7 @@ function dT2() {
         'ajax': {
             'url': 'ajaxFetch/ajaxGetSubAreaFetch.php',
             'data': function (data) {
-                var search = $('#search').val(); console.log(search);
+                var search = $('#search').val();
                 data.search = search;
             }
         },
@@ -125,7 +112,6 @@ function enable(area_id) {
                 cache: false,
                 success: function (response) {
                     if (response.includes('Successfully')) {
-                        dT2();
                         dT1();
                         $('#area_enable').show();
                         setTimeout(function () {
@@ -145,7 +131,6 @@ function enable(area_id) {
                 cache: false,
                 success: function (response) {
                     if (response.includes('Successfully')) {
-                        dT1();
                         dT2();
                         $('#sub_area_enable').show();
                         setTimeout(function () {
@@ -172,8 +157,7 @@ function disable(area_id) {
                 cache: false,
                 success: function (response) {
                     if (response.includes('Successfully')) {
-                        dT2();
-                        dT1();
+                        dT1(); 
                         $('#area_disable').show();
                         setTimeout(function () {
                             $('#area_disable').fadeOut('fast');
@@ -192,7 +176,6 @@ function disable(area_id) {
                 cache: false,
                 success: function (response) {
                     if (response.includes('Successfully')) {
-                        dT1();
                         dT2();
                         $('#sub_area_disable').show();
                         setTimeout(function () {

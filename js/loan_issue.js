@@ -19,7 +19,7 @@ $(document).ready(function () {
             $('.transaction').hide();
             $('.balance').hide();
 
-            $('#bankDiv').hide();//show bank id
+            // $('#bankDiv').hide();//show bank id
 
             $('.paymentType').show();
 
@@ -29,7 +29,7 @@ $(document).ready(function () {
             $('.cash_issue').hide();
             $('.checque').hide();
             $('.transaction').hide();
-            $('#bankDiv').hide();//hide bank id
+            // $('#bankDiv').hide();//hide bank id
             $('.paymentType').show();
             $('.balance').hide();
 
@@ -37,13 +37,13 @@ $(document).ready(function () {
             $('.cash_issue').hide();
             $('.checque').hide();
             $('.transaction').hide();
-            $('#bankDiv').hide();//hide bank id
+            // $('#bankDiv').hide();//hide bank id
             $('.paymentType').hide();
             $('.balance').hide();
         }
         $('#bankInfo').hide(); // Cash Acknowledgement.
         $('#cash').val('');
-        $('#bank_id').val('');
+        // $('#bank_id').val('');
         $('#chequeno').val('');
         $('#chequeValue').val('');
         $('#chequeRemark').val('');
@@ -58,7 +58,7 @@ $(document).ready(function () {
     // Payment Type
     $('#payment_type').change(function () {
         $('#cash').val('');
-        $('#bank_id').val('');
+        // $('#bank_id').val('');
         $('#chequeno').val('');
         $('#chequeValue').val('');
         $('#chequeRemark').val('');
@@ -75,7 +75,7 @@ $(document).ready(function () {
                 $('#cash').val('');
                 $('#cash').attr('readonly', false);
                 $('#balance').val('');
-                $('#bankDiv').hide();//hide bank id
+                // $('#bankDiv').hide();//hide bank id
                 $('#bankInfo').hide();//hide bank id
                 $('.checque').hide();
                 $('.transaction').hide();
@@ -90,7 +90,7 @@ $(document).ready(function () {
             } else if (type == '1') {
                 $('.balance').hide();
                 $('.cash_issue').hide();
-                $('#bankDiv').show();//show bank id
+                // $('#bankDiv').show();//show bank id
                 $('.checque').hide();
                 $('#chequeValue').val('');
                 $('#chequeValue').attr('readonly', true);
@@ -103,7 +103,7 @@ $(document).ready(function () {
             } else if (type == '2') {
                 $('.balance').hide();
                 $('.cash_issue').hide();
-                $('#bankDiv').show();//show bank id
+                // $('#bankDiv').show();//show bank id
                 $('.checque').hide();
                 $('.transaction').hide();
                 $('#transaction_value').val('');
@@ -115,7 +115,7 @@ $(document).ready(function () {
             } else {
                 $('.balance').hide();
                 $('.cash_issue').hide();
-                $('#bankDiv').hide();//hide bank id
+                // $('#bankDiv').hide();//hide bank id
                 $('.checque').hide();
                 $('.transaction').hide();
                 $('#balance').val('');
@@ -130,7 +130,7 @@ $(document).ready(function () {
                 $('#cash').val(formatIndianNumber(String(netcash)));
                 $('#cash').attr('readonly', true);
                 $('#balance').val('0');
-                $('#bankDiv').hide();//hide bank id
+                // $('#bankDiv').hide();//hide bank id
                 $('.checque').hide();
                 $('.transaction').hide();
                 $('#bankInfo').hide();
@@ -144,7 +144,7 @@ $(document).ready(function () {
 
             } else if (type == '1') {
                 $('.cash_issue').hide();
-                $('#bankDiv').show();//show bank id
+                // $('#bankDiv').show();//show bank id
                 $('.checque').hide();
                 $('#chequeValue').val(netcash);
                 $('#chequeValue').attr('readonly', true);
@@ -156,7 +156,7 @@ $(document).ready(function () {
 
             } else if (type == '2') {
                 $('.cash_issue').hide();
-                $('#bankDiv').show();//show bank id
+                // $('#bankDiv').show();//show bank id
                 $('.checque').hide();
                 $('.transaction').hide();
                 $('#transaction_value').val(netcash);
@@ -168,7 +168,7 @@ $(document).ready(function () {
 
             } else {
                 $('.cash_issue').hide();
-                $('#bankDiv').hide();//hide bank id
+                // $('#bankDiv').hide();//hide bank id
                 $('.checque').hide();
                 $('.transaction').hide();
                 $('#balance').val('');
@@ -368,6 +368,23 @@ $(document).ready(function () {
     })
 
     $('#refresh_cal').click(function () {
+    var intrest_rate = $("#int_rate").val();
+    var doc_charge = $("#doc_charge").val();
+    var proc_fee = $("#proc_fee").val();
+    var due_period = $("#due_period").val();
+    var profit_method = $("#profit_method").val();
+    if( intrest_rate == ""|| doc_charge == "" || proc_fee == "" || due_period == "" || profit_method == ""){
+        event.preventDefault();
+        Swal.fire({
+                timerProgressBar: true,
+                timer: 2000,
+                title: 'Please Fill out Loan Info!',
+                icon: 'error',
+                showConfirmButton: true,
+                confirmButtonColor: '#009688'
+                });
+        return;
+    }
 
         var profit_method = $('#profit_method').val(); // if profit method changes, due type is EMI
         var due_type = $('#due_type').val();
@@ -655,7 +672,7 @@ $(function () {
     profitCalculationInfo();
     cashAckName(); // To show Cash Acknowledgement Name.
     $('input').not('#int_rate, #due_period, #doc_charge, #proc_fee,#due_start_from,#chequeno,#chequeRemark,#transaction_id,#transaction_remark, #bank_name, #branch_name, #account_holder_name, #account_number, #Ifsc_code, #bank_upload').attr('readonly', true);
-    $('select').not('#issued_mode, #cash_guarentor_name,#bank_id,#payment_type,#collection_method').attr('disabled', true);
+    $('select').not('#issued_mode, #cash_guarentor_name,#payment_type,#collection_method').attr('disabled', true);
     checkBalance(); // To check in DB.
     setTimeout(() => {
         getCustomerLoanCounts();// To Get loan existing type
@@ -1701,7 +1718,8 @@ function checkBalance() {
 function loanIssueSumitValidation() {
     var issueMode = $('#issued_mode').val(); var paymenType = $('#payment_type').val(); var cash = $('#cash').val(); var guarentorName = $('#cash_guarentor_name').val();
     // var fingerMatch = $('#fingerValidation').val();
-    var ag_id = $('#agent_id').val(); var bank_id = $('#bank_id').val();
+    var ag_id = $('#agent_id').val(); 
+    // var bank_id = $('#bank_id').val();
     var validation = true ;
     //Check Issue Mode
     if (issueMode == '') {
@@ -1733,13 +1751,13 @@ function loanIssueSumitValidation() {
     }
 
     if (paymenType == '1' || paymenType == '2') {
-        if (bank_id == '') {
-            event.preventDefault();
-            $('#bank_idCheck').show();
-            validation = false ;
-        } else {
-            $('#bank_idCheck').hide();
-        }
+        // if (bank_id == '') {
+        //     event.preventDefault();
+        //     $('#bank_idCheck').show();
+        //     validation = false ;
+        // } else {
+        //     $('#bank_idCheck').hide();
+        // }
 
         if (!isAnyCheckboxChecked()) {
             event.preventDefault(); // Prevent form submission if no checkbox is checked
