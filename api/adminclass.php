@@ -4195,7 +4195,7 @@ class admin
 			$reqToverify['cus_status'] = $row['cus_status'];
 			$reqToverify['issue_mode'] = $row['issue_mode'];
 			$reqToverify['payment_type'] = $row['payment_type'];
-			$reqToverify['bank_id'] = $row['bank_id'];
+			// $reqToverify['bank_id'] = $row['bank_id'];
 
 
 			$areaQry = $mysqli->query("SELECT area_name from area_list_creation where area_id = '" . $row['area'] . "' ");
@@ -5932,7 +5932,7 @@ class admin
 		$issued_mode        = sanitize($mysqli, $_POST['issued_mode'] ?? '');
 		$payment_type       = sanitize($mysqli, $_POST['payment_type'] ?? '');
 		$cash               = sanitize($mysqli, preg_replace('/[,\s]+/', '', $_POST['cash'] ?? ''));
-		$bank_id            = sanitize($mysqli, $_POST['bank_id'] ?? '');
+		// $bank_id            = sanitize($mysqli, $_POST['bank_id'] ?? '');
 		$chequeno           = sanitize($mysqli, $_POST['chequeno'] ?? '');
 		$chequeValue        = sanitize($mysqli, preg_replace('/[,\s]+/', '', $_POST['chequeValue'] ?? ''));
 		$chequeRemark       = sanitize($mysqli, $_POST['chequeRemark'] ?? '');
@@ -5953,14 +5953,14 @@ class admin
 			$mysqli->autocommit(FALSE);
 
 			if ($payment_type == 0) {
-				$insertQry = "INSERT INTO `loan_issue`( `req_id`, `cus_id`, `issued_to`, `agent_id`, `issued_mode`, `payment_type`, `cash`,`bank_id`, `cheque_no`, `cheque_value`, `cheque_remark`, `transaction_id`, `transaction_value`, `transaction_remark`, `balance_amount`,`loan_amt`, `net_cash`,`cash_guarentor_name`,`relationship`, `status`, `insert_login_id`,`created_date`)  VALUES('$req_id', '$cus_id', '$issue_to', '$agent_id', '$issued_mode',  '$payment_type',  '$cash', '$bank_id',  '$chequeno', '$chequeValue', '$chequeRemark', '$transaction_id', '$transaction_value',  '$transaction_remark',  '$balance',  '$loan_amt_cal', '$net_cash_cal', '$cash_guarentor_name', '$relationship', '0', '$userid', now() )";
+				$insertQry = "INSERT INTO `loan_issue`( `req_id`, `cus_id`, `issued_to`, `agent_id`, `issued_mode`, `payment_type`, `cash`,`cheque_no`, `cheque_value`, `cheque_remark`, `transaction_id`, `transaction_value`, `transaction_remark`, `balance_amount`,`loan_amt`, `net_cash`,`cash_guarentor_name`,`relationship`, `status`, `insert_login_id`,`created_date`)  VALUES('$req_id', '$cus_id', '$issue_to', '$agent_id', '$issued_mode',  '$payment_type',  '$cash',   '$chequeno', '$chequeValue', '$chequeRemark', '$transaction_id', '$transaction_value',  '$transaction_remark',  '$balance',  '$loan_amt_cal', '$net_cash_cal', '$cash_guarentor_name', '$relationship', '0', '$userid', now() )";
 
 				if (!$mysqli->query($insertQry)) {
 					throw new Exception("Insert loan_issue failed: " . $mysqli->error);
 				}
 			} else {
 
-				$updateQry = "UPDATE in_verification SET issue_by  = 2, issue_mode = '$issued_mode', payment_type = '$payment_type', bank_id = '$bank_id', update_login_id = $userid, updated_date = current_timestamp() WHERE req_id = $req_id ";
+				$updateQry = "UPDATE in_verification SET issue_by  = 2, issue_mode = '$issued_mode', payment_type = '$payment_type', update_login_id = $userid, updated_date = current_timestamp() WHERE req_id = $req_id ";
 
 				if (!$mysqli->query($updateQry)) {
 					throw new Exception("Update in_verification failed: " . $mysqli->error);

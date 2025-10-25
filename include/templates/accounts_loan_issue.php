@@ -62,7 +62,7 @@ if (sizeof($getRequestData) > 0) {
         $cus_status                    = $getRequestData['cus_status'];
         $issue_mode                    = $getRequestData['issue_mode'];
         $payment_type                    = $getRequestData['payment_type'];
-        $selected_bank_id                    = $getRequestData['bank_id'];
+        // $selected_bank_id                    = $getRequestData['bank_id'];
     }
 }
 
@@ -902,10 +902,10 @@ if (sizeof($getLoanCalculation) > 0) {
                                                             $bank_id = $getBankDetails[$i]['id'];
                                                             $bank_name = $getBankDetails[$i]['short_name'] . ' - ' . substr($getBankDetails[$i]['acc_no'], -5);
 
-                                                            // Check if this is the selected bank ID
-                                                            $selected = ($bank_id == $selected_bank_id) ? 'selected' : '';
+                                                            // // Check if this is the selected bank ID
+                                                            // $selected = ($bank_id == $selected_bank_id) ? 'selected' : '';
                                                     ?>
-                                                            <option value="<?php echo $bank_id; ?>" <?php echo $selected; ?>>
+                                                            <option value="<?php echo $bank_id; ?>">
                                                                 <?php echo $bank_name; ?>
                                                             </option>
                                                     <?php

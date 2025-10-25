@@ -706,6 +706,38 @@ if (sizeof($getUser) > 0) {
 						</div>
 					</li>
 				<?php  } ?>
+				<?php if ($followupmodule == 0) { ?>
+					<li class="sidebar-dropdown ">
+						<a href="javascript:void(0)">
+							<i class='icon-cycle'></i>
+							<span class="menu-text">Follow Up</span>
+						</a>
+						<div class="sidebar-submenu" <?php if ($current_module == 'followup') echo 'style="display:block" '; ?>>
+							<ul>
+								<?php if ($promotion_activity == 0) { ?>
+									<li>
+										<a href="promotion_activity"><i class='icon-change_history'></i>Promotion Activity</a>
+									</li>
+								<?php  } ?>
+								<?php if ($loan_followup == 0) { ?>
+									<li>
+										<a href="loan_followup"><i class='icon-chat_bubble_outline'></i>Loan Follow Up</a>
+									</li>
+								<?php  } ?>
+								<?php if ($confirmation_followup == 0) { ?>
+									<li>
+										<a href="confirmation_followup"><i class='icon-laptop'></i>Confirmation Follow Up</a>
+									</li>
+								<?php  } ?>
+								<?php if ($due_followup == 0) { ?>
+									<li>
+										<a href="edit_due_followup"><i class='icon-confirmation_number'></i>Follow Up</a>
+									</li>
+								<?php  } ?>
+							</ul>
+						</div>
+					</li>
+				<?php  } ?>
 				<?php if ($doctrackmodule == 0) { ?>
 					<!-- <li class="sidebar-dropdown ">
                         <a href="javascript:void(0)">
@@ -811,32 +843,17 @@ if (sizeof($getUser) > 0) {
 						</div>
 					</li>
 				<?php  } ?>
-				<?php if ($followupmodule == 0) { ?>
-					<li class="sidebar-dropdown ">
+				<?php if ($loan_track_module == 0) { ?>
+					<li class="sidebar-dropdown">
 						<a href="javascript:void(0)">
-							<i class='icon-cycle'></i>
-							<span class="menu-text">Follow Up</span>
+							<i class='icon-target'></i>
+							<span class="menu-text">Loan Track</span>
 						</a>
-						<div class="sidebar-submenu" <?php if ($current_module == 'followup') echo 'style="display:block" '; ?>>
+						<div class="sidebar-submenu" <?php if ($current_module == 'loan_track') echo 'style="display:block" '; ?>>
 							<ul>
-								<?php if ($promotion_activity == 0) { ?>
+								<?php if ($loan_track == 0) { ?>
 									<li>
-										<a href="promotion_activity"><i class='icon-change_history'></i>Promotion Activity</a>
-									</li>
-								<?php  } ?>
-								<?php if ($loan_followup == 0) { ?>
-									<li>
-										<a href="loan_followup"><i class='icon-chat_bubble_outline'></i>Loan Follow Up</a>
-									</li>
-								<?php  } ?>
-								<?php if ($confirmation_followup == 0) { ?>
-									<li>
-										<a href="confirmation_followup"><i class='icon-laptop'></i>Confirmation Follow Up</a>
-									</li>
-								<?php  } ?>
-								<?php if ($due_followup == 0) { ?>
-									<li>
-										<a href="edit_due_followup"><i class='icon-confirmation_number'></i>Due Follow Up</a>
+										<a href="loan_track"><i class='icon-target'></i>Loan Track</a>
 									</li>
 								<?php  } ?>
 							</ul>
@@ -1036,23 +1053,7 @@ if (sizeof($getUser) > 0) {
 						</div>
 					</li>
 				<?php  } ?> -->
-				<?php if ($loan_track_module == 0) { ?>
-					<li class="sidebar-dropdown">
-						<a href="javascript:void(0)">
-							<i class='icon-target'></i>
-							<span class="menu-text">Loan Track</span>
-						</a>
-						<div class="sidebar-submenu" <?php if ($current_module == 'loan_track') echo 'style="display:block" '; ?>>
-							<ul>
-								<?php if ($loan_track == 0) { ?>
-									<li>
-										<a href="loan_track"><i class='icon-target'></i>Loan Track</a>
-									</li>
-								<?php  } ?>
-							</ul>
-						</div>
-					</li>
-				<?php  } if ($sms_module == 0) { ?>
+				<?php  if ($sms_module == 0) { ?>
 				<li class="sidebar-dropdown">
 					<a href="javascript:void(0)">
 						<i class='icon-mail'></i>
