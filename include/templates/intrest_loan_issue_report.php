@@ -27,6 +27,7 @@
 									<th>S.No</th>
 									<th>Loan ID</th>
 									<th>Doc ID</th>
+									<th>Aadhaar Number</th>
 									<th>Cust. ID</th>
 									<th>Cust. Name</th>
 									<th>Guarantor Name</th>
@@ -57,7 +58,7 @@
 								<tbody></tbody>
 								<tfoot>
 									<tr>
-										<td colspan="19"></td>
+										<td colspan="20"></td>
 										<td></td>
 										<td></td>
 										<td></td>

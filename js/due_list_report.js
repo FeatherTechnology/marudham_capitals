@@ -26,7 +26,7 @@ function requestReportTable(){
         dom: 'lBfrtip',
         buttons: [{
             extend: 'excel',
-            title: "Request Report List"
+            title: "Due List Report"
         },
         {
             extend: 'colvis',

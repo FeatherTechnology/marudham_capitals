@@ -57,6 +57,7 @@ $column = [
     'ii.updated_date',
     'lc.maturity_month',
     'cp.cus_id',
+    'cr.autogen_cus_id',
     'cp.cus_name',
     'al.area_name',
     'sal.sub_area_name',
@@ -99,6 +100,7 @@ $query = " SELECT
             ii.updated_date AS loan_date,
             lc.maturity_month,
             cp.cus_id,
+            cr.autogen_cus_id,
             cp.req_id,
             cp.cus_name,
             al.area_name,
@@ -130,6 +132,8 @@ $query = " SELECT
             lc.maturity_month AS maturity_date
         FROM 
             acknowlegement_loan_calculation lc
+        JOIN 
+            customer_register cr ON lc.cus_id_loan = cr.cus_id
         JOIN 
             acknowlegement_customer_profile cp ON lc.req_id = cp.req_id
         JOIN 
@@ -191,6 +195,7 @@ if (isset($_POST['search']) && $_POST['search'] != "") {
         ii.updated_date LIKE '%$search%' OR
         lc.maturity_month LIKE '%$search%' OR
         cp.cus_id LIKE '%$search%' OR
+        cr.autogen_cus_id LIKE '%$search%' OR
         cp.cus_name LIKE '%$search%' OR
         al.area_name LIKE '%$search%' OR
         sal.sub_area_name LIKE '%$search%'
@@ -287,6 +292,7 @@ foreach ($result as $row) {
     $sub_array[] = date('d-m-Y', strtotime($row['loan_date']));
     $sub_array[] = date('d-m-Y', strtotime($row['maturity_month']));
     $sub_array[] = $row['cus_id'];
+    $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = $row['cus_name'];
     $sub_array[] = $row['area_name'];
     $sub_array[] = $row['sub_area_name'];

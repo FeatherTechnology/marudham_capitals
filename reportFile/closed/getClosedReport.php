@@ -66,6 +66,7 @@ $column = array(
     'ad.doc_id',
     'ii.updated_date',
     'cp.cus_id',
+    'cr.autogen_cus_id',
     'cp.cus_name',
     'al.area_name',
     'sal.sub_area_name',
@@ -87,6 +88,7 @@ $query = "SELECT
     ii.updated_date AS loan_date,
     cp.req_id,
     cp.cus_id,
+    cr.autogen_cus_id,
     cp.cus_name,
     al.area_name,
     sal.sub_area_name,
@@ -101,6 +103,8 @@ $query = "SELECT
     coll_most_frequent.coll_location
 FROM 
     in_issue ii
+JOIN 
+    customer_register cr ON ii.cus_id = cr.cus_id
 JOIN 
     acknowlegement_customer_profile cp ON ii.req_id = cp.req_id
 JOIN 
@@ -148,6 +152,7 @@ if (isset($_POST['search'])) {
             ad.doc_id LIKE '%" . $_POST['search'] . "%' OR
             ii.updated_date LIKE '%" . $_POST['search'] . "%' OR
             cp.cus_id LIKE '%" . $_POST['search'] . "%' OR
+            cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%' OR
             cp.cus_name LIKE '%" . $_POST['search'] . "%' OR
             al.area_name LIKE '%" . $_POST['search'] . "%' OR
             sal.sub_area_name LIKE '%" . $_POST['search'] . "%' OR
@@ -192,6 +197,7 @@ foreach ($result as $row) {
     $sub_array[] = $row['doc_id'];
     $sub_array[] = date('d-m-Y', strtotime($row['loan_date']));
     $sub_array[] = $row['cus_id'];
+    $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = $row['cus_name'];
     $sub_array[] = $row['area_name'];
     $sub_array[] = $row['sub_area_name'];

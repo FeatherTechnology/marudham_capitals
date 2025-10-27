@@ -14,7 +14,6 @@ $(document).ready(function () {
     $('#sel_screen option').hide();
     $('#sel_screen option[value=""]').show(); // Show the 'Select Screen' option
 
-
     $('#type').change(function () {
         let type = $(this).val();
         
@@ -46,8 +45,8 @@ $(document).ready(function () {
         }
     });
 
-
 });
+
 //alert message
 function swalError(title, text) {
 	Swal.fire({
@@ -108,7 +107,7 @@ function cancelRevokeTable(){
             };
 
             // Array of column indices to sum
-            var columnsToSum = [9];
+            var columnsToSum = [10];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {

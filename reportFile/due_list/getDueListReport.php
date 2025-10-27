@@ -64,6 +64,7 @@ $column = array(
     'lc.due_start_from',
     'lc.maturity_date',
     'lc.cus_id_loan',
+    'cr.autogen_cus_id',
     'lc.cus_name_loan',
     'cp.mobile1',
     'al.area_name',
@@ -115,6 +116,7 @@ $query = "SELECT
     ii.updated_date AS loan_date,
     lc.maturity_month AS maturity_date,
     lc.cus_id_loan,
+    cr.autogen_cus_id,
     lc.cus_name_loan,
     lc.loan_amt,
     lc.due_amt_cal,
@@ -148,6 +150,8 @@ $query = "SELECT
     IFNULL(NULLIF(c.coll_id, ''), 0) AS coll_id
 FROM
     acknowlegement_loan_calculation lc
+JOIN 
+    customer_register cr ON lc.cus_id_loan = cr.cus_id
 JOIN 
     acknowlegement_customer_profile cp ON lc.req_id = cp.req_id
 LEFT JOIN 
@@ -199,6 +203,7 @@ if (isset($_POST['search'])) {
                         OR lc.due_start_from LIKE '%" . $_POST['search'] . "%'
                         OR lc.maturity_month LIKE '%" . $_POST['search'] . "%'
                         OR lc.cus_id_loan LIKE '%" . $_POST['search'] . "%'
+                        OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%'
                         OR lc.cus_name_loan LIKE '%" . $_POST['search'] . "%'
                         OR cp.mobile1 LIKE '%" . $_POST['search'] . "%'
                         OR al.area_name LIKE '%" . $_POST['search'] . "%'
@@ -281,6 +286,7 @@ foreach ($result as $row) {
     $sub_array[] = date('d-m-Y', strtotime($row['due_start_from']));
     $sub_array[] = date('d-m-Y', strtotime($row['maturity_date']));
     $sub_array[] = $row['cus_id_loan'];
+    $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = $row['cus_name_loan'];
     $sub_array[] = $row['mobile1'];
     $sub_array[] = $row['area_name'];

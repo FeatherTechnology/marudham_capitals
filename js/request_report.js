@@ -12,12 +12,9 @@ $(document).ready(function () {
     });
 
     //Request Report Table
-    // var request_report_table = 
     $('#reset_btn').click(function () {
-        // request_report_table.ajax.reload();
         requestReportTable();
-    })
-
+    });
 });
 
 function requestReportTable(){
@@ -68,7 +65,7 @@ function requestReportTable(){
             };
 
             // Array of column indices to sum
-            var columnsToSum = [9];
+            var columnsToSum = [10];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {

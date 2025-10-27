@@ -244,7 +244,7 @@ if (isset($_GET['type'])) {
 										<div class="form-group">
 											<label for="disabledInput">Area</label>&nbsp;<span class="text-danger">*</span>
 											<input type="hidden" id="area" name="area" value="">
-											<select type="text" class="form-control" id="area_dummy" name="area_dummy" multiple tabindex='4'>
+											<select class="form-control" id="area_dummy" name="area_dummy" multiple tabindex='4'>
 												<option value="">Select Area</option>
 											</select>
 										</div>
@@ -253,7 +253,7 @@ if (isset($_GET['type'])) {
 										<div class="form-group">
 											<label for="disabledInput">Sub Area</label>&nbsp;<span class="text-danger">*</span>
 											<input type="hidden" id="sub_area" name="sub_area" value="">
-											<select type="text" class="form-control" id="sub_area_dummy" name="sub_area_dummy" multiple tabindex='5'>
+											<select class="form-control" id="sub_area_dummy" name="sub_area_dummy" multiple tabindex='5'>
 
 											</select>
 										</div>
@@ -320,7 +320,7 @@ if (isset($_GET['type'])) {
 										<div class="form-group">
 											<label for="disabledInput">Area</label>&nbsp;<span class="text-danger">*</span>
 											<input type="hidden" id="area1" name="area1" value="">
-											<select tabindex="3" type="text" class="form-control" id="area_dummy1" name="area_dummy1" multiple>
+											<select tabindex="3"  class="form-control" id="area_dummy1" name="area_dummy1" multiple>
 												<option value="">Select Area</option>
 												<?php if (sizeof($areaList) > 0) {
 													for ($j = 0; $j < count($areaList); $j++) { ?>
@@ -339,7 +339,7 @@ if (isset($_GET['type'])) {
 										<div class="form-group">
 											<label for="disabledInput">Sub Area</label>&nbsp;<span class="text-danger">*</span>
 											<input type="hidden" id="sub_area1" name="sub_area1" value="">
-											<select tabindex="4" type="text" class="form-control" id="sub_area_dummy1" name="sub_area_dummy1" multiple>
+											<select tabindex="4" class="form-control" id="sub_area_dummy1" name="sub_area_dummy1" multiple>
 
 											</select>
 										</div>
@@ -423,19 +423,19 @@ if (isset($_GET['type'])) {
 											<span class="text-danger" style='display:none' id='dueLineCheck'>Please select Line</span>
 										</div>
 									</div> -->
-									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+									<!-- <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<label for="sub_status_mapping">Customer Status</label><span class="required">&nbsp;*</span>
 										<input type="hidden" name="customer_status" id="customer_status" value="">
 										<select class="form-control" id="sub_status_mapping" name="sub_status_mapping" multiple>
 											<option value="">Select Customer Status</option>
 										</select>
 										<span class='text-danger subStatusCheck' style="display:none">Please Select Customer Status</span>
-									</div>
+									</div> -->
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
 											<label for="area_dummy2">Area</label>&nbsp;<span class="text-danger">*</span>
 											<input type="hidden" id="area2" name="area2" value="">
-											<select type="text" class="form-control" id="area_dummy2" name="area_dummy2" multiple tabindex='5'>
+											<select class="form-control" id="area_dummy2" name="area_dummy2" multiple tabindex='5'>
 												<option value="">Select Area</option>
 											</select>
 											<span class="text-danger" style='display:none' id='dueAreaCheck'>Please select Area</span>

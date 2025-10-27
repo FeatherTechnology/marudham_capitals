@@ -31,8 +31,14 @@
 								<div class="row">
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
-											<label for="cus_id">Adhaar ID</label>
-											<input type="text" class="form-control" id="cus_id" name="cus_id" placeholder="Enter Adhaar ID" maxlength="14">
+											<label for="cus_id">Aadhaar Number</label>
+											<input type="text" class="form-control" id="cus_id" name="cus_id" placeholder="Enter Aadhaar Number" maxlength="14">
+										</div>
+									</div>
+									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+										<div class="form-group">
+											<label for="autogen_cus_id">Customer ID</label>
+											<input type="number" class="form-control" id="autogen_cus_id" name="autogen_cus_id" placeholder="Enter Customer ID">
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
@@ -59,6 +65,7 @@
 											<input type="text" class="form-control" id="mobile" name="mobile" placeholder="Enter Mobile Number" maxlength="10">
 										</div>
 									</div>
+									<div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12"></div>
 									<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12">
 										<div class="form-group">
 											<button type="button" class='form-control btn btn-success scanBtn' style='background-color:#009688; margin-top: 17px; height: 35px;' onclick="event.preventDefault()" title='Put Your Thumb'><i class="material-icons" id="icon-flipped">&#xe90d;</i>&nbsp;Scan</button>
@@ -98,6 +105,7 @@
 									<thead>
 										<tr>
 											<th>S.No</th>
+											<th>Aadhaar Number</th>
 											<th>Customer ID</th>
 											<th>Customer Name</th>
 											<th>Area</th>
@@ -125,9 +133,10 @@
 											<th>S.No</th>
 											<th>Name</th>
 											<th>Relationship</th>
-											<th>Adhaar</th>
+											<th>Aadhaar</th>
 											<th>Mobile</th>
 											<th>Under Customer</th>
+											<th>Under Aadhaar Number</th>
 											<th>Under Customer ID</th>
 										</tr>
 									</thead>
@@ -164,14 +173,15 @@
 		</div>
 	</div>
 </div>
+
 <!-- Modal for Personal Info   -->
-<div class="modal fade" id="personalInfoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="personalInfoModal" tabindex="-1" role="dialog">
 	<div class="modal-dialog modal-lg " role="document" style="height: 90vh;width:300vh;">
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
 				<h5 class="modal-title" id="exampleModalLongTitle">Personal Info</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
+				<button type="button" class="close" data-dismiss="modal">
+					<span>&times;</span>
 				</button>
 			</div>
 			<div class="modal-body">
@@ -179,11 +189,12 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button class="btn btn-secondary" data-dismiss="modal" tabindex="7">Close</button>
+				<button class="btn btn-secondary" data-dismiss="modal" tabindex="1">Close</button>
 			</div>
 		</div>
 	</div>
 </div>
+
 <!-- Modal for Due Chart -->
 <div class="modal fade DueChart" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">

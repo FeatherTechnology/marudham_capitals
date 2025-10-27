@@ -85,6 +85,7 @@ $residentialTypeObj = [
 $column = array(
     'cp.id',
     'cp.cus_id',
+    'reg.autogen_cus_id',
     'cp.cus_name',
     'fam.famname',
     'fam.relationship',
@@ -105,25 +106,26 @@ $column = array(
 );
 
 $query = "SELECT 
-            cp.cus_id,cp.cus_name,
-            cp.mobile1,
-            alm.line_name,
-            agm.group_name,
-            cp.occupation_type,
-            cp.occupation_details,
-            cp.residential_type,
-            cp.residential_details,
-            cp.blood_group,
+            cp.cus_id,
+            reg.autogen_cus_id,
+            cp.cus_name,
             fam.famname,
             fam.relationship,
             al.area_name,
             sal.sub_area_name,
+            cp.mobile1,
             reg.loan_limit,
+            alm.line_name,
+            agm.group_name,
             reg.how_to_know,
+            cp.occupation_type,
+            cp.occupation_details,
+            cp.residential_type,
+            cp.residential_details,
             reg.travel_with_company,
             reg.blood_group as reg_blood,
+            cp.blood_group,
             req.cus_status
-
             FROM customer_profile cp
             JOIN verification_family_info fam ON cp.guarentor_name = fam.id
             JOIN area_list_creation al ON cp.area_confirm_area = al.area_id
@@ -132,11 +134,11 @@ $query = "SELECT
             JOIN area_group_mapping agm ON FIND_IN_SET(al.area_id, agm.area_id)
             JOIN customer_register reg ON cp.cus_id = reg.cus_id
             JOIN request_creation req ON cp.req_id = req.req_id
-
             $user_based ";
 
 if ($_POST['search'] != "") {
     $query .= " and (cp.id LIKE '%" . $_POST['search'] . "%' OR
+            reg.autogen_cus_id LIKE '%" . $_POST['search'] . "%' OR
             cp.cus_id LIKE '%" . $_POST['search'] . "%' OR
             cp.cus_name LIKE '%" . $_POST['search'] . "%' OR
             cp.mobile1 LIKE '%" . $_POST['search'] . "%' OR
@@ -177,6 +179,7 @@ foreach ($result as $row) {
     $sub_array   = array();
     $sub_array[] = $sno;
     $sub_array[] = $row['cus_id'];
+    $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = $row['cus_name'];
     $sub_array[] = $row['famname'];
     $sub_array[] = $row['relationship'];

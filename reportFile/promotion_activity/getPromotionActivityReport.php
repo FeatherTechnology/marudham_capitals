@@ -23,6 +23,7 @@ $role_arr = [1 => 'Director', 2 => 'Agent', 3 => 'Staff'];
 $column = array(
     'np.id',
     'np.cus_id',
+    'cp.autogen_cus_id',
     'COALESCE(cp.customer_name, ncp.cus_name)',
     'np.id',
     'np.id',
@@ -41,20 +42,29 @@ $column = array(
 );
 
 $query = "SELECT 
-    np.cus_id, np.created_date, np.status, np.remark, u.role,
+    np.cus_id, 
+    cp.autogen_cus_id,
+    np.created_date, 
+    np.status, 
+    np.remark, 
+    u.role,
     u.fullname,
     COALESCE(cp.customer_name, ncp.cus_name) AS customer_name,
     COALESCE(cp.mobile1, ncp.mobile) AS mobile1,
     COALESCE(al.area_name, ncp.area) AS area_name,
     COALESCE(sl.sub_area_name, ncp.sub_area) AS sub_area_name,
-    bc.branch_name, agm.group_name, alm.line_name, np.follow_date, rc.cus_status
+    bc.branch_name, 
+    agm.group_name, 
+    alm.line_name, 
+    np.follow_date, 
+    rc.cus_status
 FROM 
     new_promotion np
 LEFT JOIN 
     user u ON u.user_id = np.insert_login_id
-left JOIN 
+LEFT JOIN 
     customer_register cp ON np.cus_id = cp.cus_id
-left JOIN 
+LEFT JOIN 
     new_cus_promo ncp ON np.cus_id = ncp.cus_id
 LEFT JOIN area_list_creation al ON al.area_id = COALESCE(cp.area, ncp.area)
 
@@ -73,7 +83,8 @@ if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {
         $query .= " and (np.created_date LIKE '%" . $_POST['search'] . "%' OR
             np.cus_id LIKE '%" . $_POST['search'] . "%' OR
-           COALESCE(cp.customer_name, ncp.cus_name) LIKE '%" . $_POST['search'] . "%' OR
+            cp.autogen_cus_id LIKE '%" . $_POST['search'] . "%' OR
+            COALESCE(cp.customer_name, ncp.cus_name) LIKE '%" . $_POST['search'] . "%' OR
             COALESCE(al.area_name, ncp.area) LIKE '%" . $_POST['search'] . "%' OR
             COALESCE(sl.sub_area_name, ncp.sub_area) LIKE '%" . $_POST['search'] . "%' OR
             bc.branch_name LIKE '%" . $_POST['search'] . "%' OR
@@ -115,6 +126,7 @@ foreach ($result as $row) {
     $sub_array = array();
     $sub_array[] = $sno;
     $sub_array[] = $row['cus_id'];
+    $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = $row['customer_name'];
     $sub_array[] = date('d-m-Y', strtotime($row['created_date']));
     $sub_array[] = date('h:i:s A', strtotime($row['created_date']));
