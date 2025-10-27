@@ -282,7 +282,7 @@ if (sizeof($getCustomerReg) > 0) {
 												<input type="text" class="form-control" id="cus_id" name="cus_id" value='<?php if (isset($cus_id)) {
 																																echo $cus_id;
 																															} ?>' tabindex='1' data-type="adhaar-number" maxlength="14" placeholder="Enter Aadhaar Number" readonly>
-												<span class="text-danger" style='display:none' id='cusidCheck'>Please Enter Customer ID</span>
+												<span class="text-danger" style='display:none' id='cusidCheck'>Please Enter Aadhaar Number</span>
 											</div>
 										</div>
 										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">

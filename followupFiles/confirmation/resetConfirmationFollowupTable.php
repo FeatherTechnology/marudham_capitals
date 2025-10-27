@@ -114,8 +114,10 @@ $status_arr = [1 => 'Completed', 2 => 'Unavailable', 3 => 'Reconfirmation'];
 while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
     $req_id = $row['req_id'];
     $qry = $connect->query("SELECT remove_status, status FROM confirmation_followup WHERE req_id = '" . $req_id . "' ORDER BY created_date DESC limit 1");
-    $rst = $qry->fetch()['remove_status'] ?? null;
-    if ($qry -> rowCount() == 0 || $rst != 1) { // show below contents only if confirmation of the request id is not removed from table already
+    $rst = $qry->fetch(PDO::FETCH_ASSOC);
+    $remove_status = $rst['remove_status'] ?? null;
+    $status = $rst['status'] ?? null;
+    if ($qry -> rowCount() == 0 || $remove_status != 1) { // show below contents only if confirmation of the request id is not removed from table already
 
         $action = "<div class='dropdown'><button class='btn btn-outline-secondary' onclick='event.preventDefault();'><i class='fa'>&#xf107;</i></button><div class='dropdown-content'>
                         <a class='conf-chart' data-cusid='" . $row['cus_id'] . "' data-reqid='" . $row['req_id'] . "' data-toggle='modal' data-target='#confChartModal'><span>Confirmation Chart</span></a>

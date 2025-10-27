@@ -17,8 +17,8 @@ if (isset($_SESSION["request_list_access"])) {
 $column = array(
     'rc.req_id',
     'rc.dor',
-    'cr.autogen_cus_id',
     'rc.cus_id',
+    'cr.autogen_cus_id',
     'rc.cus_name',
     'bc.branch_name',
     'ag.group_name',
@@ -66,8 +66,8 @@ if ($userid == 1 or $request_list_access == 0) { //if request_list_access is gra
 if (isset($_POST['search']) && $_POST['search'] != "") {
 
     $query .= "AND ( rc.dor LIKE '%" . $_POST['search'] . "%'
-            OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%'
             OR rc.cus_id LIKE '%" . $_POST['search'] . "%'
+            OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%'
             OR rc.cus_name LIKE '%" . $_POST['search'] . "%'
             OR bc.branch_name LIKE '%" . $_POST['search'] . "%'
             OR ag.group_name LIKE '%" . $_POST['search'] . "%'
