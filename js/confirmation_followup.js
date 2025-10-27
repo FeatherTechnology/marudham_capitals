@@ -112,7 +112,6 @@ function submitConfirmation() {
                 swarlSuccessAlert(response, function(){
                     $('.closeModal').trigger('click');
                 });
-                resetModalContents();
             }
         }
     })
@@ -157,6 +156,8 @@ function resetModalContents() {
     $('#addConfimation').find('.modal-body input,select').not('#conf_date').val('');
     $('#conf_person_name1, .unav-div, .reconf-div').hide();
     $('#conf_person_name').show();
+
+    location.reload();
 }
 
 

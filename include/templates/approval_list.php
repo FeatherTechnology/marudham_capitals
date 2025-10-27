@@ -5,11 +5,7 @@
 		Marudham Capitals - Approval List
 	</div>
 </div><br>
-<!-- <div class="text-right" style="margin-right: 25px;">
-    <a href="verification">
-        <button type="button" class="btn btn-primary"><span class="icon-add"></span>&nbsp; Add verification</button>
-    </a>
-</div><br><br> -->
+
 <!-- Page header end -->
 <input type="hidden" id="pending_sts">
 <input type="hidden" id="od_sts">
