@@ -374,7 +374,7 @@ if (isset($_GET['type'])) {
 				<!-- ************************************************************** Due Followup Mapping *************************************************************************************** -->
 				<div class="card duefollowup_mapping" <?php if (isset($type) and $type != 'duefollowup') { ?> style="display:none" <?php } ?>>
 					<div class="card-header">
-						<div class="card-title">General Info (Due Followup)</div>
+						<div class="card-title">General Info (Followup)</div>
 					</div>
 					<div class="card-body">
 						<div class="row ">
@@ -383,8 +383,8 @@ if (isset($_GET['type'])) {
 								<div class="row">
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
-											<label for="duefollowup_name">Due Followup Name</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" name="duefollowup_name" id="duefollowup_name" value="<?php if (isset($duefollowup_name)) echo $duefollowup_name; ?>" placeholder="Enter Due Followup Name" class="form-control" tabindex="1">
+											<label for="duefollowup_name">Followup Name</label>&nbsp;<span class="text-danger">*</span>
+											<input type="text" name="duefollowup_name" id="duefollowup_name" value="<?php if (isset($duefollowup_name)) echo $duefollowup_name; ?>" placeholder="Enter Followup Name" class="form-control" tabindex="1">
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">

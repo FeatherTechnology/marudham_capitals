@@ -518,12 +518,12 @@ if($idupd>0)
                                     </div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 due_followupline_div">
                                         <div class="form-group">
-                                            <label for="due_follup_lines">Due Followup lines</label>&nbsp;<span class="text-danger">*</span>
-								            <input type='hidden' id='due_follup_line_id' name='due_follup_line_id' value='<?php if(isset($due_followup_lines)) echo $due_followup_lines; ?>'>
-                                            <select class='form-control' id='due_follup_lines' name='due_follup_lines' multiple tabindex="11">
-								        	    <option value="">Select Due Followup Lines</option>
-								            </select>
-								            <span class='text-danger duefollowupCheck' style="display:none">Please Select Due Followup Lines</span>
+                                            <label class="due_follup_lines" for="due_follup_lines">Followup lines</label>&nbsp;<span class="text-danger">*</span>
+											<input type='hidden' id='due_follup_line_id' name='due_follup_line_id' value='<?php if(isset($due_followup_lines)) echo 	$due_followup_lines; ?>'>
+                                            <select tabindex="13" class='form-control' id='due_follup_lines' name='due_follup_lines' multiple>
+												<option value="">Select Followup Lines</option>
+											</select>
+											<span class='text-danger duefollowupCheck' style="display:none">Please Select Followup Lines</span>
                                         </div>
                                     </div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
@@ -533,7 +533,7 @@ if($idupd>0)
 												<option value="">Select Promotion Mapping Activity</option>
 												<option value="1" <?php if($promotion_activity_mapping_access == '1') echo 'selected';?> >Group</option>
 												<option value="2" <?php if($promotion_activity_mapping_access == '2') echo 'selected';?> >Line</option>
-												<option value="3" <?php if($promotion_activity_mapping_access == '3') echo 'selected';?> >Due Followup</option>
+												<option value="3" <?php if($promotion_activity_mapping_access == '3') echo 'selected';?> >Followup</option>
 											</select>
 											<br>
 											<span class="text-danger" style='display:none' id='proMapCheck'>Please select Promotion Activity Mapping Access</span>
@@ -1063,8 +1063,8 @@ if($idupd>0)
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($due_followup==0){ echo'checked'; }} ?> tabindex="65" class="followup-checkbox" id="due_followup" name="due_followup" disabled>&nbsp;&nbsp;
-                                <label class="custom-control-label" for="due_followup">Followup</label>&nbsp;&nbsp;
-								<span class='text-danger dueFollowupCheck' style="display:none">Please Select Followup </span> 
+                                <label class="custom-control-label" for="due_followup"> Due Followup</label>&nbsp;&nbsp;
+								<span class='text-danger dueFollowupCheck' style="display:none">Please Select Due Followup </span> 
                             </div>
                         </div>
 					</div>

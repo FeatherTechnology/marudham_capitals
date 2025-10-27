@@ -35,8 +35,8 @@ include '../ajaxconfig.php';
             }
         }
 
-        $cusInfo = $connect->query("SELECT a.`famname`,a.`relationship`,a.`relation_aadhar`,b.`cus_id`,b.`customer_name` FROM `verification_family_info` a left join `customer_register` b 
-        on a.req_id = b.req_ref_id  WHERE a.`req_id` != '$req_id' && a.$category = '$name' order by a.id desc");
+        $cusInfo = $connect->query("SELECT a.`famname`,a.`relationship`,a.`relation_aadhar`,rc.`cus_id`,rc.`cus_name` FROM `verification_family_info` a left join `request_creation` rc 
+        on a.req_id = rc.req_id  WHERE a.`req_id` != '$req_id' && a.$category = '$name' order by a.id desc");
 
         $i = 1;
         while ($cus = $cusInfo->fetch()) {
@@ -46,7 +46,7 @@ include '../ajaxconfig.php';
                 <td> <?php echo $cus['relation_aadhar']; ?></td>
                 <td> <?php echo $cus['famname']; ?></td>
                 <td> <?php echo $cus['relationship']; ?></td>
-                <td> <?php echo $cus['customer_name']; ?></td>
+                <td> <?php echo $cus['cus_name']; ?></td>
                 <td> <?php echo $cus['cus_id']; ?></td>
             </tr>
         <?php
