@@ -10,7 +10,7 @@ function requestReportTable(){
     $('#due_list_report_table').DataTable().destroy();
     $('#due_list_report_table').DataTable({
         "order": [
-            [0, "desc"]
+            [0, "asc"]
         ],
         'processing': true,
         'serverSide': true,

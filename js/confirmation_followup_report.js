@@ -21,7 +21,7 @@ function confirmationFollowUpReportTable(){
     $('#confirmation_followup_report_table').DataTable().destroy();
     $('#confirmation_followup_report_table').DataTable({
         "order": [
-            [0, "desc"]
+            [0, "asc"]
         ],
         'processing': true,
         'serverSide': true,
@@ -38,7 +38,7 @@ function confirmationFollowUpReportTable(){
         dom: 'lBfrtip',
         buttons: [{
             extend: 'excel',
-            title: "Closed Report List"
+            title: "Confirmation Report List"
         },
         {
             extend: 'colvis',

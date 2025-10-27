@@ -85,7 +85,7 @@ function contraReportTable() {
     $('#contra_table').DataTable().destroy();
     $('#contra_table').DataTable({
         "order": [
-            [0, "desc"]
+            [0, "asc"]
         ],
         'processing': true,
         'serverSide': true,
@@ -152,7 +152,7 @@ function exchangeReportTable() {
     $('#exchange_report_table').DataTable().destroy();
     $('#exchange_report_table').DataTable({
         "order": [
-            [0, "desc"]
+            [0, "asc"]
         ],
         'processing': true,
         'serverSide': true,
@@ -218,7 +218,7 @@ function otherIncomeReportTable() {
     $('#other_income_table').DataTable().destroy();
     $('#other_income_table').DataTable({
         "order": [
-            [0, "desc"]
+            [0, "asc"]
         ],
         'processing': true,
         'serverSide': true,
@@ -284,7 +284,7 @@ function expensesReportTable() {
     $('#expenses_report_table').DataTable().destroy();
     $('#expenses_report_table').DataTable({
         "order": [
-            [0, "desc"]
+            [0, "asc"]
         ],
         'processing': true,
         'serverSide': true,
@@ -350,7 +350,7 @@ function investmentReportTable() {
     $('#investment_report_table').DataTable().destroy();
     $('#investment_report_table').DataTable({
         "order": [
-            [0, "desc"]
+            [0, "asc"]
         ],
         'processing': true,
         'serverSide': true,
@@ -416,7 +416,7 @@ function depositReportTable() {
     $('#deposit_report_table').DataTable().destroy();
     $('#deposit_report_table').DataTable({
         "order": [
-            [0, "desc"]
+            [0, "asc"]
         ],
         'processing': true,
         'serverSide': true,
@@ -482,7 +482,7 @@ function elReportTable() {
     $('#el_report_table').DataTable().destroy();
     $('#el_report_table').DataTable({
         "order": [
-            [0, "desc"]
+            [0, "asc"]
         ],
         'processing': true,
         'serverSide': true,
@@ -549,7 +549,7 @@ function excessFundReportTable() {
     $('#excess_report_table').DataTable().destroy();
     $('#excess_report_table').DataTable({
         "order": [
-            [0, "desc"]
+            [0, "asc"]
         ],
         'processing': true,
         'serverSide': true,

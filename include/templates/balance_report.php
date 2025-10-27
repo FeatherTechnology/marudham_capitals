@@ -44,7 +44,9 @@
 							<table id="balance_report_table" class="table custom-table">
 								<thead>
 									<th>S.No</th>
+									<th>Group</th>
 									<th>Line</th>
+									<th>Followup</th>
 									<th>Loan ID</th>
 									<th>Doc ID</th>
 									<th>Loan Date</th>
@@ -80,6 +82,8 @@
 										<td></td>
 										<td></td>
 										<td></td>
+										<td></td>
+										<td></td>
 										<td colspan="2"></td>
 									</tr>
 								</tfoot>
@@ -91,7 +95,9 @@
 							<table id="princ_intrst_table" class="table custom-table">
 								<thead>
 									<th>S.No</th>
+									<th>Group</th>
 									<th>Line</th>
+									<th>Followup</th>
 									<th>Loan ID</th>
 									<th>Doc ID</th>
 									<th>Loan Date</th>
@@ -120,7 +126,7 @@
 								<tbody></tbody>
 								<tfoot>
 									<tr>
-										<td colspan="14"></td>
+										<td colspan="16"></td>
 										<td></td>
 										<td></td>
 										<td></td>
