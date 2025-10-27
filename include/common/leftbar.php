@@ -731,7 +731,7 @@ if (sizeof($getUser) > 0) {
 								<?php  } ?>
 								<?php if ($due_followup == 0) { ?>
 									<li>
-										<a href="edit_due_followup"><i class='icon-confirmation_number'></i>Follow Up</a>
+										<a href="edit_due_followup"><i class='icon-confirmation_number'></i>Due Follow Up</a>
 									</li>
 								<?php  } ?>
 							</ul>

@@ -1122,6 +1122,11 @@ $(document).ready(function () {
     $("#show_document_history").show();
     $("#hide_document_history").hide();
   })
+  $(document).on("click", "#hide_loan_history", function () {
+    $("#loanHistoryDiv").empty();
+    $("#show_loan_history").show();
+    $("#hide_loan_history").hide();
+  })
   ///Hide AND Show doc Card END
 }); ////////Document Ready End
 
@@ -5452,6 +5457,8 @@ function getLoaninfo(sub_cat_id) {
 
 //loan history table contents get from closed file loan lists
 function getLoanHistory() {
+  $("#show_loan_history").hide();
+    $("#hide_loan_history").show();
   let cus_id = $("#cus_id_load").val();
   let req_id = $("#req_id").val();
   let cus_type = $("#cus_type").val();
@@ -6219,10 +6226,10 @@ function schemeCalAjax(scheme_id) {
 //To Get Loan Calculation for After Interest
 function getLoanAfterInterest() {
 var loan_amt = $("#loan_amt").val().replace(/[, ]+/g, '');
-var int_rate = $("#int_rate").val().replace(/[, ]+/g, '');
-var due_period = $("#due_period").val().replace(/[, ]+/g, '');
-var doc_charge = $("#doc_charge").val().replace(/[, ]+/g, '');
-var proc_fee = $("#proc_fee").val().replace(/[, ]+/g, '');
+var int_rate = $("#int_rate").val();
+var due_period = $("#due_period").val();
+var doc_charge = $("#doc_charge").val();
+var proc_fee = $("#proc_fee").val();
 
 
   $("#loan_amt_cal").val(formatIndianNumber(String(loan_amt))); //get loan amt from loan info card
@@ -6267,7 +6274,7 @@ var proc_fee = $("#proc_fee").val().replace(/[, ]+/g, '');
   $(".int-diff").text(
     "* (Difference: +" + parseInt(roundedInterest - interest_rate) + ")"
   ); //To show the difference amount from old to new
-  $("#int_amt_cal").val(parseInt(formatIndianNumber(String(roundedInterest))));
+  $("#int_amt_cal").val(formatIndianNumber(String(roundedInterest)));
 
   var new_princ = parseInt(new_tot) - parseInt(roundedInterest);
   // $('.princ-diff').text('* (Difference: +' + parseInt(loan_amt - new_princ) + ')'); //To show the difference amount from old to new
@@ -6315,10 +6322,10 @@ var proc_fee = $("#proc_fee").val().replace(/[, ]+/g, '');
 //To Get Loan Calculation for Pre Interest
 function getLoanPreInterest() {
     var loan_amt   = $("#loan_amt").val().replace(/[, ]+/g, '');
-    var int_rate   = $("#int_rate").val().replace(/[, ]+/g, '');
-    var due_period = $("#due_period").val().replace(/[, ]+/g, '');
-    var doc_charge = $("#doc_charge").val().replace(/[, ]+/g, '');
-    var proc_fee   = $("#proc_fee").val().replace(/[, ]+/g, '');
+    var int_rate   = $("#int_rate").val;
+    var due_period = $("#due_period").val();
+    var doc_charge = $("#doc_charge").val();
+    var proc_fee   = $("#proc_fee").val();
 
   $("#loan_amt_cal").val(formatIndianNumber(String(loan_amt))); //get loan amt from loan info card
 
@@ -6405,9 +6412,9 @@ function getLoanPreInterest() {
 //To Get Loan Calculation for Interest due type
 function getLoanInterest() {
    var loan_amt = $("#loan_amt").val().replace(/[, ]+/g, '');
-   var int_rate = $("#int_rate").val().replace(/[, ]+/g, '');
-   var doc_charge = $("#doc_charge").val().replace(/[, ]+/g, '');
-   var proc_fee = $("#proc_fee").val().replace(/[, ]+/g, '');
+   var int_rate = $("#int_rate").val();
+   var doc_charge = $("#doc_charge").val();
+   var proc_fee = $("#proc_fee").val();
    var calc_method = $("#calc_method").val();
 
    $("#loan_amt_cal").val(formatIndianNumber(String(loan_amt)));
@@ -6465,10 +6472,10 @@ function getLoanInterest() {
 //To Get Loan Calculation for Monthly Scheme method
 function getSchemePreIntreset() {
     var loan_amt   = $("#loan_amt").val().replace(/[, ]+/g, '');
-    var int_rate   = $("#int_rate").val().replace(/[, ]+/g, '');
-    var due_period = $("#due_period").val().replace(/[, ]+/g, '');
-    var doc_charge = $("#doc_charge").val().replace(/[, ]+/g, '');
-    var proc_fee   = $("#proc_fee").val().replace(/[, ]+/g, '');
+    var int_rate   = $("#int_rate").val();
+    var due_period = $("#due_period").val();
+    var doc_charge = $("#doc_charge").val();
+    var proc_fee   = $("#proc_fee").val();
 
 
   $("#loan_amt_cal").val(formatIndianNumber(String(loan_amt))); //get loan amt from loan info card
@@ -6643,10 +6650,10 @@ function getSchemePreIntreset() {
 //To Get Loan Calculation for Weekly Scheme method
 function getSchemeAfterIntreset() {
   var loan_amt = $("#loan_amt").val().replace(/[, ]+/g, '');
-  var int_rate = $("#int_rate").val().replace(/[, ]+/g, '');
-  var due_period = $("#due_period").val().replace(/[, ]+/g, '');
-  var doc_charge = $("#doc_charge").val().replace(/[, ]+/g, '');
-  var proc_fee = $("#proc_fee").val().replace(/[, ]+/g, '');
+  var int_rate = $("#int_rate").val();
+  var due_period = $("#due_period").val();
+  var doc_charge = $("#doc_charge").val();
+  var proc_fee = $("#proc_fee").val();
 
   $("#loan_amt_cal").val(formatIndianNumber(String(loan_amt)));  //get loan amt from loan info card
   $("#principal_amt_cal").val(parseInt(loan_amt).toFixed(0)); // principal amt as same as loan amt for after interest
