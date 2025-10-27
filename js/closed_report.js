@@ -21,7 +21,7 @@ function closedReportTable(){
     $('#closed_report_table').DataTable().destroy();
     $('#closed_report_table').DataTable({
         "order": [
-            [0, "desc"]
+            [0, "asc"]
         ],
         'processing': true,
         'serverSide': true,
@@ -61,7 +61,7 @@ function closedReportTable(){
             };
 
             // Array of column indices to sum
-            var columnsToSum = [13];
+            var columnsToSum = [14];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {

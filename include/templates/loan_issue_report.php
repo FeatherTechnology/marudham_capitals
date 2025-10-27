@@ -34,7 +34,9 @@
 									<th>Relationship</th>
 									<th>Area</th>
 									<th>Sub Area</th>
+									<th>Group</th>
 									<th>Line</th>
+									<th>Followup</th>
 									<th>Branch</th>
 									<th>Loan Category</th>
 									<th>Sub Category</th>
@@ -62,6 +64,8 @@
 								<tfoot>
 									<tr>
 										<td colspan="20"></td>
+										<td></td>
+										<td></td>
 										<td></td>
 										<td></td>
 										<td></td>

@@ -21,7 +21,7 @@ function collectionReportTable(){
     $('#collection_report_table').DataTable().destroy();
     $('#collection_report_table').DataTable({
         "order": [
-            [0, "desc"]
+            [0, "asc"]
         ],
         'processing': true,
         'serverSide': true,
@@ -61,7 +61,7 @@ function collectionReportTable(){
             };
 
             // Array of column indices to sum
-            var columnsToSum = [19, 20, 21, 22, 23];
+            var columnsToSum = [21, 22, 23, 24, 25];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {

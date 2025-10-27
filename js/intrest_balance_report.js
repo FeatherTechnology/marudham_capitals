@@ -15,14 +15,14 @@ $(document).ready(function () {
         if(reportType =='1'){//Balance
             url = 'reportFile/intrest_loan_report/getIntrestBalanceReport.php';
             tid = 'balance_report_table';
-            colArr = [14, 15, 17, 19, 20];
+            colArr = [16, 17, 19, 21, 22];
             $('#balance_table_div').show();
             $('#princ_intrst_table_div').hide();
 
         }else if(reportType =='2'){ //Priciple / Interest
             url = 'reportFile/intrest_loan_report/getIntrestBalPrincipalinterest.php';
             tid = 'princ_intrst_table';
-            colArr = [14, 16, 17, 18, 19, 20];
+            colArr = [16, 18, 19, 20, 21, 22];
             $('#balance_table_div').hide();
             $('#princ_intrst_table_div').show();
 
@@ -43,7 +43,7 @@ function balanceReportTable(url, tid, columnsToSum){
     $('#'+tid).DataTable().destroy();
     $('#'+tid).DataTable({
         "order": [
-            [0, "desc"]
+            [0, "asc"]
         ],
         'processing': true,
         'serverSide': true,

@@ -42,7 +42,7 @@ if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'
     $where  = "(date(coll.coll_date) >= '" . $from_date . "') and (date(coll.coll_date) <= '" . $to_date . "') ";
 }
 
-    $where  .= $user_based;
+$where  .= $user_based;
 
 $statusObj = [
     '14' => 'Current',
@@ -58,8 +58,10 @@ $coll_arr = [1 => 'Cash', 2 => 'Cheque', 3 => 'ECS', 4 => 'IMPS/NEFT/RTGS', 5 =>
 $coll_method = [1 => 'By Self', 2 => 'On Spot'];
 
 $column = array(
-    'cp.id',
+    'coll.coll_id',
+    'ag.group_name',
     'alm.line_name',
+    'adm.duefollowup_name',
     'ii.loan_id',
     'ii.updated_date',
     'coll.cus_id',
@@ -86,7 +88,9 @@ $column = array(
 );
 
 $query = "SELECT 
+ag.group_name,
             alm.line_name AS line,
+            adm.duefollowup_name,
             ii.loan_id,
             ii.updated_date AS loan_date,
             coll.cus_id,
@@ -126,6 +130,8 @@ $query = "SELECT
         JOIN area_list_creation al ON cp.area_confirm_area = al.area_id
         JOIN sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
         JOIN area_line_mapping alm ON FIND_IN_SET(sal.sub_area_id, alm.sub_area_id)
+         JOIN area_group_mapping ag ON FIND_IN_SET(sal.sub_area_id, ag.sub_area_id)
+         JOIN area_duefollowup_mapping adm ON FIND_IN_SET(al.area_id, adm.area_id)
         JOIN acknowlegement_loan_calculation lc ON coll.req_id = lc.req_id
         JOIN in_verification iv ON coll.req_id = iv.req_id
         LEFT JOIN bank_creation b ON coll.bank_id = b.id
@@ -140,7 +146,9 @@ $query = "SELECT
 if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {
         $query .= " and (ii.loan_id LIKE '%" . $_POST['search'] . "%'
+                OR ag.group_name LIKE '%" . $_POST['search'] . "%' 
                     OR alm.line_name LIKE '%" . $_POST['search'] . "%'
+                     OR adm.duefollowup_name LIKE '%" . $_POST['search'] . "%'
                     OR ii.updated_date LIKE '%" . $_POST['search'] . "%'
                     OR coll.cus_id LIKE '%" . $_POST['search'] . "%'
                     OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%'
@@ -161,11 +169,10 @@ if (isset($_POST['search'])) {
 
 $query .= " GROUP BY coll.coll_id ";
 
-
 if (isset($_POST['order'])) {
-    $query .= " ORDER BY " . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'];
+    $query .= " ORDER BY " . $column[$_POST['order']['0']['column']] . " " . $_POST['order']['0']['dir'];
 } else {
-    $query .= ' ';
+    $query .= " ";
 }
 
 $query1 = "";
@@ -190,7 +197,9 @@ $sno = 1;
 foreach ($result as $row) {
     $sub_array   = array();
     $sub_array[] = $sno;
+    $sub_array[] = $row['group_name'];
     $sub_array[] = $row['line'];
+    $sub_array[] = $row['duefollowup_name'];
     $sub_array[] = $row['loan_id'];
     $sub_array[] = date('d-m-Y', strtotime($row['loan_date']));
     $sub_array[] = $row['cus_id'];
@@ -213,7 +222,7 @@ foreach ($result as $row) {
         $sub_array[] = '';
         $sub_array[] = '';
     }
-     $sub_array[] = moneyFormatIndia(intVal($row['due_amt_track']));
+    $sub_array[] = moneyFormatIndia(intVal($row['due_amt_track']));
     $sub_array[] = moneyFormatIndia(intval($row['penalty_track']));
     $sub_array[] = moneyFormatIndia(intval($row['coll_charge_track']));
     $sub_array[] = moneyFormatIndia(intval($row['total_paid_track']));

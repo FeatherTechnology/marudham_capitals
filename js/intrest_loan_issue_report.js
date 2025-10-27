@@ -21,7 +21,7 @@ function loanIssueReportTable(){
     $('#interest_loan_issue_report_table').DataTable().destroy();
     $('#interest_loan_issue_report_table').DataTable({
         "order": [
-            [0, "desc"]
+            [0, "asc"]
         ],
         'processing': true,
         'serverSide': true,
@@ -61,7 +61,7 @@ function loanIssueReportTable(){
             };
 
             // Array of column indices to sum
-            var columnsToSum = [20, 21, 22, 23, 24];
+             var columnsToSum = [22, 23, 24, 25, 26];
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {
                 // Total over all pages for the current column

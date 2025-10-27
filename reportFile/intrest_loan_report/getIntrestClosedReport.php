@@ -60,7 +60,8 @@ $closed_lvl_arr = [
 ];
 
 $column = array(
-    'ii.id',
+    'cs.id',
+    'ag.group_name',
     'alm.line_name',
     'ii.loan_id',
     'ad.doc_id',
@@ -82,6 +83,7 @@ $column = array(
 );
 
 $query = "SELECT 
+ag.group_name,
     alm.line_name AS line,
     ii.loan_id,
     ad.doc_id,
@@ -117,6 +119,7 @@ JOIN
     sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
 JOIN
     area_line_mapping alm ON FIND_IN_SET(al.area_id, alm.area_id)
+JOIN area_group_mapping ag ON FIND_IN_SET(sal.sub_area_id, ag.sub_area_id)
 LEFT JOIN 
     loan_category_creation lcc ON lcc.loan_category_creation_id = lc.loan_category
 LEFT JOIN 
@@ -148,6 +151,7 @@ WHERE
 if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {
         $query .= " and (alm.line_name LIKE '%" . $_POST['search'] . "%' OR
+         ag.group_name LIKE '%" . $_POST['search'] . "%'  OR
             ii.loan_id LIKE '%" . $_POST['search'] . "%' OR
             ad.doc_id LIKE '%" . $_POST['search'] . "%' OR
             ii.updated_date LIKE '%" . $_POST['search'] . "%' OR
@@ -192,6 +196,7 @@ $sno = 1;
 foreach ($result as $row) {
     $sub_array   = array();
     $sub_array[] = $sno;
+    $sub_array[] = $row['group_name'];
     $sub_array[] = $row['line'];
     $sub_array[] = $row['loan_id'];
     $sub_array[] = $row['doc_id'];
