@@ -60,7 +60,7 @@ $(document).ready(function () {
       parseInt(int_amt_track) +
       parseInt(penalty_track) +
       parseInt(coll_charge_track);
-    $("#total_paid_track").val(formatIndianNumber(String(total_paid_track)));
+    $("#total_paid_track").val(formatIndianNumber(total_paid_track));
   });
 
   $("#pre_close_waiver , #penalty_waiver , #coll_charge_waiver , #principal_waiver , #interest_waiver").on('input', function () {
@@ -82,7 +82,7 @@ $(document).ready(function () {
         parseInt(coll_charge_waiver) +
         parseInt(principal_waiver) +
         parseInt(interest_waiver);
-      $("#total_waiver").val(formatIndianNumber(String(total_waiver)));
+      $("#total_waiver").val(formatIndianNumber(total_waiver));
     }
   );
 
