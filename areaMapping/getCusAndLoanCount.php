@@ -5,13 +5,12 @@ $countListArr = array();
 
 if (
     isset($_POST['areaid']) && !empty($_POST['areaid']) &&
-    isset($_POST['loanCatId']) && !empty($_POST['loanCatId']) &&
     isset($_POST['subStatus']) && !empty($_POST['subStatus'])
 ) {
     $areaid = $_POST['areaid'];
-    $loanCatId = $_POST['loanCatId'];
+    // $loanCatId = $_POST['loanCatId'];
     $subStatus = $_POST['subStatus'];
-    $mapId = $_POST['mapId'];
+    // $mapId = $_POST['mapId'];
 
     $to_date = date('Y-m-d');
     $toDate_month_start = date('Y-m-01', strtotime($to_date));
@@ -70,17 +69,16 @@ if (
     }
     $coll_DueNilReqIdStr = !empty($coll_DueNilReqIds) ? implode(',', $coll_DueNilReqIds) : 0;
 
-    //  Query 1: Loan Count
+    //  Query 1: Loan Count  
+    // JOIN acknowlegement_loan_calculation alc ON ii.req_id = alc.req_id , AND alc.loan_category = $loanCatId, AND alm.map_id IN ($mapId)
     $stmt = $connect->query("SELECT COUNT(ii.loan_id) AS loanCount
         FROM in_issue ii 
         JOIN acknowlegement_customer_profile acp ON ii.req_id = acp.req_id 
-        JOIN acknowlegement_loan_calculation alc ON ii.req_id = alc.req_id 
         JOIN customer_status cs ON ii.req_id = cs.req_id 
         JOIN area_list_creation al ON acp.area_confirm_area = al.area_id 
         JOIN area_line_mapping alm ON FIND_IN_SET(al.area_id, alm.area_id) 
         LEFT JOIN closing_customer cc ON ii.req_id = cc.req_id
         WHERE acp.area_confirm_area IN ($areaid) 
-        AND alc.loan_category = $loanCatId
         AND (
             FIND_IN_SET(cs.sub_status, '$subStatus')
             OR (
@@ -93,25 +91,22 @@ if (
         AND ii.req_id NOT IN ($pendingReqIdStr)
         AND ii.req_id NOT IN ($coll_DueNilReqIdStr)
         AND DATE(ii.updated_date) < '$toDate_month_start'
-        AND alm.map_id IN ($mapId)
     ");
 
     $row1 = $stmt->fetch(PDO::FETCH_ASSOC);
     $countListArr['loan_count'] = $row1['loanCount'];
 
 
-    //  * Query 2: Customer Count
-
+    //  * Query 2: Customer Count   
+    // JOIN acknowlegement_loan_calculation alc ON ii.req_id = alc.req_id , AND alc.loan_category = $loanCatId,  AND alm.map_id IN ($mapId)
     $stmt1 = $connect->query("SELECT COUNT(DISTINCT ii.cus_id) AS cusCount 
         FROM in_issue ii 
         JOIN acknowlegement_customer_profile acp ON ii.req_id = acp.req_id 
-        JOIN acknowlegement_loan_calculation alc ON ii.req_id = alc.req_id 
         JOIN customer_status cs ON ii.req_id = cs.req_id 
         JOIN area_list_creation al ON acp.area_confirm_area = al.area_id 
         JOIN area_line_mapping alm ON FIND_IN_SET(al.area_id, alm.area_id) 
         LEFT JOIN closing_customer cc ON ii.req_id = cc.req_id
         WHERE acp.area_confirm_area IN ($areaid) 
-        AND alc.loan_category = $loanCatId
         AND (
             FIND_IN_SET(cs.sub_status, '$subStatus')
             OR (
@@ -125,7 +120,6 @@ if (
         AND ii.req_id NOT IN ($pendingReqIdStr)
         AND ii.req_id NOT IN ($coll_DueNilReqIdStr)
         AND DATE(ii.updated_date) < '$toDate_month_start'
-        AND alm.map_id IN ($mapId)
     ");
 
     $row2 = $stmt1->fetch(PDO::FETCH_ASSOC);

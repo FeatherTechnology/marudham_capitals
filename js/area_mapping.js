@@ -43,13 +43,13 @@ const intance1 = new Choices('#sub_area_dummy1', {
 //     allowHTML: true,
 //     shouldSort: false
 // });
-const dueLine = new Choices('#due_line', {
-    removeItemButton: true,
-    noChoicesText: null,
-    placeholder: true,
-    placeholderValue: 'Select Line Name',
-    allowHTML: true
-});
+// const dueLine = new Choices('#due_line', {
+//     removeItemButton: true,
+//     noChoicesText: null,
+//     placeholder: true,
+//     placeholderValue: 'Select Line Name',
+//     allowHTML: true
+// });
 
 const subStatusMultiselect = new Choices('#sub_status_mapping', {
     removeItemButton: true,
@@ -228,12 +228,12 @@ $(document).ready(function () {
         let branchId = $(this).val();
 
         if(branchId){
-            getLineNameDropdown(branchId);
-
+            // getLineNameDropdown(branchId);
+            getArea2()
         }else{
             areaMultiselect2.clearStore();
             // intance2.clearStore();
-            dueLine.clearStore();
+            // dueLine.clearStore();
             $('#cus_count, #loan_count').val('');
             
         }
@@ -268,28 +268,28 @@ $(document).ready(function () {
 
     // });
     
-    $('#due_line').change(function () {
-        // Get values from multiselect and sort
-        const lineList = dueLine.getValue();
-        const lineSortedStr = lineList
-            .map(item => item.value)
-            .sort((a, b) => a - b)
-            .join(',');
+    // $('#due_line').change(function () {
+    //     // Get values from multiselect and sort
+    //     const lineList = dueLine.getValue();
+    //     const lineSortedStr = lineList
+    //         .map(item => item.value)
+    //         .sort((a, b) => a - b)
+    //         .join(',');
     
-        $('#dueline').val(lineSortedStr);
+    //     $('#dueline').val(lineSortedStr);
     
-        if(lineSortedStr){
-            getArea2(lineSortedStr);
-        }
-    });
+    //     if(lineSortedStr){
+    //         getArea2(lineSortedStr);
+    //     }
+    // });
     
-    $('#loan_cat1').change(function () {
+    // $('#loan_cat1').change(function () {
        
-        const loanList = $('#loan_cat1').val();
-        $('#loan_cat').val(loanList);
+    //     const loanList = $('#loan_cat1').val();
+    //     $('#loan_cat').val(loanList);
 
-        getCusLoanCount();
-    });
+    //     getCusLoanCount();
+    // });
 
     $('#sub_status_mapping').change(function(){
         getSubStatusValues();
@@ -302,15 +302,15 @@ $(document).ready(function () {
     })
     //on submit add sub area list to hidden input
     $('#submit_area_mapping_duefollowup').click(function () {
-        var loanCategory = $('#loan_cat1').val();
-        var due_line = dueLine.getValue();
+        // var loanCategory = $('#loan_cat1').val();
+        // var due_line = dueLine.getValue();
         var area_list = areaMultiselect2.getValue();
         // var sub_area_list = intance2.getValue();
         var subStatus = subStatusMultiselect.getValue();
 
         //Validation
         var duefollowup_name = $('#duefollowup_name').val(); var company_name = $('#company_name2').val(); var branch = $('#branch2').val(); var cuscnt = $('#cus_count').val(); var loancnt = $('#loan_count').val();
-        if (duefollowup_name == '' || company_name == '' || branch == '' || loanCategory == '' || due_line.length == 0 || subStatus.length == 0 || area_list.length == 0 || cuscnt == '' || loancnt == '' ) {
+        if (duefollowup_name == '' || company_name == '' || branch == '' || subStatus.length == 0 || area_list.length == 0 || cuscnt == '' || loancnt == '' ) {
             Swal.fire({
                 timerProgressBar: true,
                 title: 'Please Fill out Mandatory fields!',
@@ -321,8 +321,8 @@ $(document).ready(function () {
         }
 
         // Line multi-select
-        const dueLineStr = getSortedCommaSeparatedValues(dueLine);
-        $('#dueline').val(dueLineStr);
+        // const dueLineStr = getSortedCommaSeparatedValues(dueLine);
+        // $('#dueline').val(dueLineStr);
 
         // Area multi-select
         const areaStr = getSortedCommaSeparatedValues(areaMultiselect2);
@@ -332,7 +332,7 @@ $(document).ready(function () {
         // const subAreaStr = getSortedCommaSeparatedValues(intance2);
         // $('#sub_area2').val(subAreaStr);        
 
-        $('#loan_cat').val(loanCategory);
+        // $('#loan_cat').val(loanCategory);
 
         // Sub Status multi-select
         getSubStatusValues();
@@ -360,14 +360,14 @@ $(function () {
 
         async function initform(){
             await getBranchDropdown2();
-            await getLoanCatDropdown();
+            // await getLoanCatDropdown();
             await getSubStsMapping();
             let upd = $('#id').val();
             if(upd > 0){
-                let branchid = $('#branch_id_upd2').val();
-                let lineid = $('#due_line_name').val();
-                await getLineNameDropdown(branchid);
-                await getArea2(lineid);
+                // let branchid = $('#branch_id_upd2').val();
+                // let lineid = $('#due_line_name').val();
+                // await getLineNameDropdown(branchid);
+                await getArea2();
                 // let area = $('#area_id2_upd').val();
                 // await getAreaBasedSubArea2(area);
             }
@@ -456,18 +456,17 @@ function getArea1() {
     });
 }
 //Get Area 
-function getArea2(lineid) {
+function getArea2() {
     return new Promise((resolve, reject) => {
         var area_id_upd = $('#area_id2_upd').val();
         var areaid = $('#area2').val();
         var branchid = $('#branch2').val();
         var values = area_id_upd.split(',');
-        var map = 'duefollowup';
-        var loanCat = $('#loan_cat1').val();
+        // var loanCat = $('#loan_cat1').val();
         $.ajax({
             url: 'areaMapping/ajaxGetMappedArea.php',
             type: 'post',
-            data: { 'map': map, 'lineid': lineid, 'loanCatId': loanCat, 'branchid': branchid },
+            data: { 'branchid': branchid },
             dataType: 'json',
             success: function (response) {
                 areaMultiselect2.clearStore();
@@ -763,33 +762,33 @@ function getBranchDropdown2() {
     });
 }
 
-function getLineNameDropdown(branchid){
-    return new Promise((resolve, reject) => {
-        $.post('areaMapping/getLineName.php',{branchid}, function(response){
-            dueLine.clearStore();
-            let line = $('#due_line_name').val().split(',');
-            $.each(response, function(index, val){
-                let selected ='';
-                if (line != '' && line.includes(val.map_id.toString())) {
-                    selected = 'selected';
-                }
-                let item = [
-                    {
-                        value: val.map_id,
-                        label: val.line_name,
-                        selected: selected,
-                    }
-                ];
-                dueLine.setChoices(item);
-                dueLine.init();
-            });
+// function getLineNameDropdown(branchid){
+//     return new Promise((resolve, reject) => {
+//         $.post('areaMapping/getLineName.php',{branchid}, function(response){
+//             dueLine.clearStore();
+//             let line = $('#due_line_name').val().split(',');
+//             $.each(response, function(index, val){
+//                 let selected ='';
+//                 if (line != '' && line.includes(val.map_id.toString())) {
+//                     selected = 'selected';
+//                 }
+//                 let item = [
+//                     {
+//                         value: val.map_id,
+//                         label: val.line_name,
+//                         selected: selected,
+//                     }
+//                 ];
+//                 dueLine.setChoices(item);
+//                 dueLine.init();
+//             });
 
-            resolve(); // Resolve once dropdown is populated
-        }, 'json').fail(function(xhr, status, error) {
-            reject(error); // Reject if there's an error
-        });
-    });
-}
+//             resolve(); // Resolve once dropdown is populated
+//         }, 'json').fail(function(xhr, status, error) {
+//             reject(error); // Reject if there's an error
+//         });
+//     });
+// }
 
 function getCusLoanCount(){
     const areaid = areaMultiselect2.getValue()
@@ -798,20 +797,20 @@ function getCusLoanCount(){
         .sort((a, b) => a - b)
         .join(',');
 
-    var loanCatId = $('#loan_cat1').val();
+    // var loanCatId = $('#loan_cat1').val();
 
     const subStatus = subStatusMultiselect.getValue()
         .map(item => item.value)
         .sort((a, b) => a.localeCompare(b))
         .join(',');
 
-        const lineList = dueLine.getValue();
-        const mapId = lineList
-            .map(item => item.value)
-            .sort((a, b) => a - b)
-            .join(',');
+        // const lineList = dueLine.getValue();
+        // const mapId = lineList
+        //     .map(item => item.value)
+        //     .sort((a, b) => a - b)
+        //     .join(',');
 
-    $.post('areaMapping/getCusAndLoanCount.php',{areaid, loanCatId, subStatus, mapId}, function(response){
+    $.post('areaMapping/getCusAndLoanCount.php',{areaid, subStatus}, function(response){
         let cusCnt = (response.cus_count) ? response.cus_count : 0;
         let loanCnt = (response.loan_count) ? response.loan_count : 0;
         $('#cus_count').val(cusCnt);
@@ -827,36 +826,41 @@ function getSortedCommaSeparatedValues(multiselectInstance) {
 }
 
 //get Loan category Dropdown
-function getLoanCatDropdown() {
-    return new Promise((resolve, reject) => {
-        var loan_cat_upd = $('#loan_cat_upd').val().split(',');
-        $.ajax({
-            url: 'manageUser/getLoanCatDropdown.php',
-            data: {},
-            dataType: 'json',
-            type: 'post',
-            cache: false,
-            success: function (response) {
-                $('#loan_cat1').empty();
-                $('#loan_cat1').append('<option value="">Select Loan category</option>');
-                for (var i = 0; i < response.length; i++) {
-                    var selected = '';
-                    if (loan_cat_upd != '' && loan_cat_upd == response[i]['loan_cat_id']) {
-                        selected = "selected";
-                    }
-                    $('#loan_cat1').append("<option value = '" + response[i]['loan_cat_id'] + "' " + selected + " > " + response[i]['loan_cat_name'] + " </option>");
-                }
-                // Sort loan_cat1 dropdown
-                sortDropdownAlphabetically("#loan_cat1");
+// function getLoanCatDropdown() {
+//     return new Promise((resolve, reject) => {
+//         var loan_cat_upd = $('#loan_cat_upd').val().split(',');
+//         $.ajax({
+//             url: 'manageUser/getLoanCatDropdown.php',
+//             data: {},
+//             dataType: 'json',
+//             type: 'post',
+//             cache: false,
+//             success: function (response) {
+//                 $('#loan_cat1').empty();
+//                 $('#loan_cat1').append('<option value="">Select Loan category</option>');
+//                 for (var i = 0; i < response.length; i++) {
+//                     var selected = '';
+//                     if (loan_cat_upd != '' && loan_cat_upd == response[i]['loan_cat_id']) {
+//                         selected = "selected";
+//                     }
+//                     $('#loan_cat1').append("<option value = '" + response[i]['loan_cat_id'] + "' " + selected + " > " + response[i]['loan_cat_name'] + " </option>");
+//                 }
+//                 {//To Order Alphabetically
+//                     var firstOption = $("#loan_cat1 option:first-child");
+//                     $("#loan_cat1").html($("#loan_cat1 option:not(:first-child)").sort(function (a, b) {
+//                         return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
+//                     }));
+//                     $("#loan_cat1").prepend(firstOption);
+//                 }
 
-                resolve();
-            },
-            error: function (xhr, status, error) {
-                reject(error); 
-            }
-        });
-    });
-}
+//                 resolve();
+//             },
+//             error: function (xhr, status, error) {
+//                 reject(error); 
+//             }
+//         });
+//     });
+// }
 
 function selectAllAreas(selectedList, choicesInstance) {
     const selectedValues = selectedList.map(item => item.value);
