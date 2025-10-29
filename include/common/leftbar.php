@@ -974,9 +974,9 @@ if (sizeof($getUser) > 0) {
 									</li>
 								<?php  } ?>                 
 								<?php if ($uncleared_report == 0) { ?>
-									<li>
+									<!-- <li>
 										<a href="user_tracking_report"><i class='icon-area-graph'></i>User Tracking Report</a>
-									</li>
+									</li> -->
 								<?php  } ?>                 
 							</ul>
 						</div>

@@ -3184,15 +3184,20 @@ function profitCalAjax(profit_type, sub_cat, loan_cat) {
                         $('#profit_method').append(`<option value='` + profit_method[i] + `' ` + selected + `>` + valuee + `</option>`);
                     }
                     $('#calc_method').val('');
+
                     //To set min and maximum 
                     $('.min-max-int').text('* (' + response['intrest_rate_min'] + '% - ' + response['intrest_rate_max'] + '%) ');
-                    $('#int_rate').attr('onChange', `if( parseFloat($(this).val()) > '` + response['intrest_rate_max'] + `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
-                                        if( parseFloat($(this).val()) < '`+ response['intrest_rate_min'] + `' && parseFloat($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `); //To check value between rage
+
+                    $('#int_rate').attr('onChange', `let val = parseFloat($(this).val());let min = ${parseFloat(response["intrest_rate_min"])};let max = ${parseFloat(response["intrest_rate_max"])}; if (!isNaN(val)) { if (val > max) {alert("Enter Lesser Value"); $(this).val(""); } else if (val < min) { alert("Enter Higher Value"); $(this).val(""); } }else{ alert("Please enter a valid numeric value"); $(this).val("");}`); //To check value between rage
+
                     $('#int_rate').val(int_rate_upd);
+
                     $('.min-max-due').text('* (' + response['due_period_min'] + ' - ' + response['due_period_max'] + ') ');
-                    $('#due_period').attr('onChange', `if( parseInt($(this).val()) > '` + response['due_period_max'] + `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
-                                        if( parseInt($(this).val()) < '`+ response['due_period_min'] + `' && parseInt($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `); //To check value between rage
+
+                    $('#due_period').attr('onChange', `let val = parseFloat($(this).val());let min = ${parseFloat(response["due_period_min"])};let max = ${parseFloat(response["due_period_max"])}; if (!isNaN(val)) { if(val > max){ alert("Enter Lesser Value"); $(this).val(""); } else if(val < min){ alert("Enter Higher Value"); $(this).val(""); } }else{ alert("Please enter a valid numeric value"); $(this).val("");}`); //To check value between rage
+
                     $('#due_period').val(due_period_upd);
+
                     if (response['doc_charge_type'] == 'amt') {
                         type = '₹';
                         $('.min-max-doc').text('* (' + type + response['document_charge_min'] + ' - ' + type + response['document_charge_max'] + ') '); // Set min-max values with ₹ symbol before the numbers
@@ -3202,21 +3207,11 @@ function profitCalAjax(profit_type, sub_cat, loan_cat) {
                     }
 
                     // Setting onChange event to ensure the value is within the specified range
-                    $('#doc_charge').attr('onChange', `if( parseInt($(this).val()) > '` + response['document_charge_max'] + `' ){
-                            alert("Enter Lesser Value");
-                            $(this).val("");
-                        } else if( parseInt($(this).val()) < '`+ response['document_charge_min'] + `' && parseInt($(this).val()) != '' ){
-                            alert("Enter Higher Value");
-                            $(this).val("");
-                        }`);
+                    $('#doc_charge').attr('onChange', `let val = parseFloat($(this).val());let min = ${parseFloat(response["document_charge_min"])};let max = ${parseFloat(response["document_charge_max"])}; if (!isNaN(val)) { if(val > max){ alert("Enter Lesser Value"); $(this).val(""); } else if(val < min){ alert("Enter Higher Value"); $(this).val(""); } }else{ alert("Please enter a valid numeric value"); $(this).val("");}`);
 
                     // Set the value for the doc_charge field
                     $('#doc_charge').val(doc_charge_upd);
 
-                    // $('.min-max-doc').text('* (' + response['document_charge_min'] + '% - ' + response['document_charge_max'] + '%) ');
-                    // $('#doc_charge').attr('onChange', `if( parseFloat($(this).val()) > '` + response['document_charge_max'] + `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
-                    //                     if( parseFloat($(this).val()) < '`+ response['document_charge_min'] + `' && parseFloat($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `); //To check value between rage
-                    // $('#doc_charge').val(doc_charge_upd);
                     if (response['proc_fee_type'] == 'amt') {
                         type = '₹';
                         $('.min-max-proc').text('* (' + type + response['processing_fee_min'] + ' - ' + type + response['processing_fee_max'] + ') '); // Set min-max values with ₹ symbol before the numbers
@@ -3226,21 +3221,10 @@ function profitCalAjax(profit_type, sub_cat, loan_cat) {
                     }
 
                     // Setting onChange event to ensure the value is within the specified range
-                    $('#proc_fee').attr('onChange', `if( parseInt($(this).val()) > '` + response['processing_fee_max'] + `' ){
-                            alert("Enter Lesser Value");
-                            $(this).val("");
-                        } else if( parseInt($(this).val()) < '`+ response['processing_fee_min'] + `' && parseInt($(this).val()) != '' ){
-                            alert("Enter Higher Value");
-                            $(this).val("");
-                        }`);
+                    $('#proc_fee').attr('onChange', `let val = parseFloat($(this).val());let min = ${parseFloat(response["processing_fee_min"])};let max = ${parseFloat(response["processing_fee_max"])}; if (!isNaN(val)) { if(val > max){ alert("Enter Lesser Value"); $(this).val(""); } else if(val < min){ alert("Enter Higher Value"); $(this).val(""); } }else{ alert("Please enter a valid numeric value"); $(this).val("");}`);
 
-                    // Set the value for the doc_charge field
+                    // Set the value for the proc_fee field
                     $('#proc_fee').val(proc_fee_upd);
-
-                    // $('.min-max-proc').text('* (' + response['processing_fee_min'] + '% - ' + response['processing_fee_max'] + '%) ');
-                    // $('#proc_fee').attr('onChange', `if( parseFloat($(this).val()) > '` + response['processing_fee_max'] + `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
-                    //                     if( parseFloat($(this).val()) < '`+ response['processing_fee_min'] + `' && parseInt($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `); //To check value between rage
-                    // $('#proc_fee').val(proc_fee_upd);
 
                 } else if (response["due_type"] == "intrest") {
                     $(".emi-calculation").hide();
@@ -3257,46 +3241,38 @@ function profitCalAjax(profit_type, sub_cat, loan_cat) {
 
                     //To set min and maximum
                     $(".min-max-int").text("* (" + response["intrest_rate_min"] + "% - " + response["intrest_rate_max"] + "%) ");
-                    $("#int_rate").attr("onChange", `if( parseFloat($(this).val()) > '` + response["intrest_rate_max"] + `' ){ alert("Enter Lesser Value"); $(this).val(""); }
-                    elseif( parseFloat($(this).val()) < '` + response["intrest_rate_min"] + `' && parseFloat($(this).val()) != '' ){ alert("Enter Higher Value"); 
-                    $(this).val(""); } `); //To check value between rage
+
+                    $("#int_rate").attr("onChange", `let val = parseFloat($(this).val());let min = ${parseFloat(response["intrest_rate_min"])};let max = ${parseFloat(response["intrest_rate_max"])}; if (!isNaN(val)) { if (val > max) {alert("Enter Lesser Value"); $(this).val(""); } else if (val < min) { alert("Enter Higher Value"); $(this).val(""); } }else{ alert("Please enter a valid numeric value"); $(this).val("");}`); //To check value between rage
+
                     $("#int_rate").val(int_rate_upd);
 
                     $(".min-max-due").text("* (" + response["due_period_min"] + " - " + response["due_period_max"] + ") ");
 
-                    $("#due_period").attr("onChange", `if( parseInt($(this).val()) > '` + response["due_period_max"] + `' ){ alert("Enter Lesser Value"); $(this).val(""); }
-                    elseif( parseInt($(this).val()) < '` + response["due_period_min"] + `' && parseInt($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `); //To check value between rage
+                    $("#due_period").attr("onChange", `let val = parseFloat($(this).val());let min = ${parseFloat(response["due_period_min"])};let max = ${parseFloat(response["due_period_max"])}; if (!isNaN(val)) { if(val > max){ alert("Enter Lesser Value"); $(this).val(""); } else if(val < min){ alert("Enter Higher Value"); $(this).val(""); } }else{ alert("Please enter a valid numeric value"); $(this).val("");}`); //To check value between rage
 
                     $("#due_period").val(due_period_upd);
 
                     if (response["doc_charge_type"] == "amt") {
                         type = "₹";
+                        $(".min-max-doc").text("* (" + type + response["document_charge_min"] + " - " + type + response["document_charge_max"] + ") "); // Set min-max values with ₹ symbol before the numbers
                     } else if (response["doc_charge_type"] == "percentage") {
                         type = "%";
-                    } //Setting symbols
-                    $(".min-max-doc").text("* (" + response["document_charge_min"] + " " + type + " - " + response["document_charge_max"] + " " + type + ") "); //setting min max values in span
+                        $(".min-max-doc").text("* (" + response["document_charge_min"] + type + " - " + response["document_charge_max"] + type + ") "); // Set min-max values with % symbol after the numbers
+                    } 
 
-                    $("#doc_charge").attr("onChange", `if( parseInt($(this).val()) > '` + response["document_charge_max"] + `' ){ alert("Enter Lesser Value"); $(this).val(""); } elseif( parseInt($(this).val()) < '` + response["document_charge_min"] + `' && parseInt($(this).val()) != '' ){ alert("Enter Higher Value");
-                    $(this).val(""); } `); //To check value between rage
+                    $("#doc_charge").attr("onChange", `let val = parseFloat($(this).val());let min = ${parseFloat(response["document_charge_min"])};let max = ${parseFloat(response["document_charge_max"])}; if (!isNaN(val)) { if(val > max){ alert("Enter Lesser Value"); $(this).val(""); } else if(val < min){ alert("Enter Higher Value"); $(this).val(""); } }else{ alert("Please enter a valid numeric value"); $(this).val("");}`); //To check value between rage
 
                     $("#doc_charge").val(doc_charge_upd);
 
-                    // $('.min-max-doc').text('* (' + response['document_charge_min'] + '% - ' + response['document_charge_max'] + '%) ');
-                    // $('#doc_charge').attr('onChange', `if( parseFloat($(this).val()) > '` + response['document_charge_max'] + `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
-                    //                     if( parseFloat($(this).val()) < '`+ response['document_charge_min'] + `' && parseFloat($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `); //To check value between rage
-                    // $('#doc_charge').val(doc_charge_upd);
-
                     if (response["proc_fee_type"] == "amt") {
                         type = "₹";  // Set ₹ symbol before the numbers
+                        $(".min-max-proc").text("* (" + type + response["processing_fee_min"] + " - " + type + response["processing_fee_max"] + ") "); // Set min-max values with ₹ symbol before the numbers
                     } else if (response["proc_fee_type"] == "percentage") {
                         type = "%"; // Set % symbol after the numbers
+                        $(".min-max-proc").text("* (" + response["processing_fee_min"] + type + " - " + response["processing_fee_max"] + type + ") "); // Set min-max values with % symbol after the numbers
                     }
 
-                    $(".min-max-proc").text("* (" + response["processing_fee_min"] + " " + type + " - " + response["processing_fee_max"] + " " + type + ") "); //setting min max values in span
-
-                    $("#proc_fee").attr("onChange", `if( parseFloat($(this).val()) > '` + response["processing_fee_max"] + `' ){ alert("Enter Lesser Value"); $(this).val(""); }
-                    elseif( parseFloat($(this).val()) < '` + response["processing_fee_min"] + `' && parseFloat($(this).val()) != '' ){ alert("Enter Higher Value");
-                    $(this).val(""); } `); //To check value between rage
+                    $("#proc_fee").attr("onChange", `let val = parseFloat($(this).val());let min = ${parseFloat(response["processing_fee_min"])};let max = ${parseFloat(response["processing_fee_max"])}; if (!isNaN(val)) { if(val > max){ alert("Enter Lesser Value"); $(this).val(""); } else if(val < min){ alert("Enter Higher Value"); $(this).val(""); } }else{ alert("Please enter a valid numeric value"); $(this).val("");}`); //To check value between rage
 
                     $("#proc_fee").val(proc_fee_upd);
                 }
@@ -3312,6 +3288,7 @@ function profitCalAjax(profit_type, sub_cat, loan_cat) {
         $('.scheme-calculation').hide();
     }
 }
+
 //
 function schemeAjax(due_method, sub_cat) {
     var scheme_upd = $('#scheme_upd').val();
@@ -3366,21 +3343,29 @@ function schemeCalAjax(scheme_id) {
                 // $('#int_rate').val(response['intrest_rate']); $('#int_rate').attr('readonly', true); // setting readonly due to fixed interest
 
                 $('#due_period').val(response['due_period']); $('#due_period').attr('readonly', true); // setting readonly due to fixed due period
+
                 if (response['intreset_type'] == 'amt') { type = '₹' } else if (response['intreset_type'] == 'percentage') { type = '%'; } //Setting symbols
+
                 $('.min-max-int').text('* (' + response['intreset_min'] + ' ' + type + ' - ' + response['intreset_max'] + ' ' + type + ') '); //setting min max values in span
-                $('#int_rate').attr('onChange', `if( parseInt($(this).val()) > '` + response['intreset_max'] + `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
-                                        if( parseInt($(this).val()) < '`+ response['intreset_min'] + `' && parseInt($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `); //To check value between rage
+
+                $('#int_rate').attr('onChange', `let val = parseFloat($(this).val());let min = ${parseFloat(response["intreset_min"])};let max = ${parseFloat(response["intreset_max"])}; if (!isNaN(val)) { if (val > max) {alert("Enter Lesser Value"); $(this).val(""); } else if (val < min) { alert("Enter Higher Value"); $(this).val(""); } }else{ alert("Please enter a valid numeric value"); $(this).val("");}`); //To check value between rage          
+
                 $('#int_rate').val(int_rate_upd);
+
                 if (response['doc_charge_type'] == 'amt') { type = '₹' } else if (response['doc_charge_type'] == 'percentage') { type = '%'; } //Setting symbols
+
                 $('.min-max-doc').text('* (' + response['doc_charge_min'] + ' ' + type + ' - ' + response['doc_charge_max'] + ' ' + type + ') '); //setting min max values in span
-                $('#doc_charge').attr('onChange', `if( parseInt($(this).val()) > '` + response['doc_charge_max'] + `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
-                                        if( parseInt($(this).val()) < '`+ response['doc_charge_min'] + `' && parseInt($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `); //To check value between rage
+
+                $('#doc_charge').attr('onChange', `let val = parseFloat($(this).val());let min = ${parseFloat(response["doc_charge_min"])};let max = ${parseFloat(response["doc_charge_max"])}; if (!isNaN(val)) { if(val > max){ alert("Enter Lesser Value"); $(this).val(""); } else if(val < min){ alert("Enter Higher Value"); $(this).val(""); } }else{ alert("Please enter a valid numeric value"); $(this).val("");}`); //To check value between rage
+
                 $('#doc_charge').val(doc_charge_upd);
 
                 if (response['proc_fee_type'] == 'amt') { type = '₹' } else if (response['proc_fee_type'] == 'percentage') { type = '%'; }//Setting symbols
+
                 $('.min-max-proc').text('* (' + response['proc_fee_min'] + ' ' + type + ' - ' + response['proc_fee_max'] + ' ' + type + ') ');//setting min max values in span
-                $('#proc_fee').attr('onChange', `if( parseInt($(this).val()) > '` + response['proc_fee_max'] + `' ){ alert("Enter Lesser Value"); $(this).val(""); }else
-                                    if( parseInt($(this).val()) < '`+ response['proc_fee_min'] + `' && parseInt($(this).val()) != '' ){ alert("Enter Higher Value"); $(this).val(""); } `); //To check value between rage
+
+                $('#proc_fee').attr('onChange', `let val = parseFloat($(this).val());let min = ${parseFloat(response["proc_fee_min"])};let max = ${parseFloat(response["proc_fee_max"])}; if (!isNaN(val)) { if(val > max){ alert("Enter Lesser Value"); $(this).val(""); } else if(val < min){ alert("Enter Higher Value"); $(this).val(""); } }else{ alert("Please enter a valid numeric value"); $(this).val("");}`); //To check value between rage
+
                 $('#proc_fee').val(proc_fee_upd);
             }
         })
@@ -3405,18 +3390,10 @@ function getLoanAfterInterest() {
     var proc_fee   = $('#proc_fee').val();
 
 
-    $('#loan_amt_cal').val(formatIndianNumber(String(loan_amt))); //get loan amt from loan info card
-    $('#principal_amt_cal').val(parseInt(loan_amt).toFixed(0)); // principal amt as same as loan amt for after interest
+    $('#loan_amt_cal').val(formatIndianNumber(loan_amt)); //get loan amt from loan info card
+    // principal amt as same as loan amt for after interest
 
     var interest_rate = (parseInt(loan_amt) * (parseFloat(int_rate) / 100) * parseInt(due_period)).toFixed(0); //Calculate interest rate 
-
-    // var roundedInterest = Math.ceil(interest_rate / 5) * 5; //to increase interest rate to nearest multiple of 5
-    // if (roundedInterest < interest_rate) {
-    //     roundedInterest += 5;
-    // }
-
-    // $('.int-diff').text('* (Difference: +' + parseInt(roundedInterest - interest_rate) + ')'); //To show the difference amount
-    $('#int_amt_cal').val(parseInt(interest_rate));
 
     var tot_amt = parseInt(loan_amt) + parseFloat(interest_rate); //Calculate total amount from principal/loan amt and interest rate
     $('#tot_amt_cal').val(parseInt(tot_amt).toFixed(0));
@@ -3427,11 +3404,11 @@ function getLoanAfterInterest() {
         roundDue += 5;
     }
     $('.due-diff').text('* (Difference: +' + parseInt(roundDue - due_amt) + ')'); //To show the difference amount
-    $('#due_amt_cal').val(formatIndianNumber(String(roundDue)));
+    $('#due_amt_cal').val(formatIndianNumber(roundDue));
 
     ////////////////////recalculation of total, principal, interest///////////////////
     var new_tot = parseInt(roundDue) * due_period;
-    $('#tot_amt_cal').val(formatIndianNumber(String(new_tot)))
+    $('#tot_amt_cal').val(formatIndianNumber(new_tot))
 
     //to get new interest rate using round due amt 
     let new_int = (roundDue * due_period) - loan_amt;
@@ -3441,11 +3418,11 @@ function getLoanAfterInterest() {
     }
 
     $('.int-diff').text('* (Difference: +' + parseInt(roundedInterest - interest_rate) + ')'); //To show the difference amount from old to new
-    $('#int_amt_cal').val(formatIndianNumber(String(roundedInterest)));
+    $('#int_amt_cal').val(formatIndianNumber(roundedInterest));
 
     var new_princ = parseInt(new_tot) - parseInt(roundedInterest);
     // $('.princ-diff').text('* (Difference: +' + parseInt(loan_amt - new_princ) + ')'); //To show the difference amount from old to new
-    $('#principal_amt_cal').val(formatIndianNumber(String(new_princ)));
+    $('#principal_amt_cal').val(formatIndianNumber(new_princ));
 
     //////////////////////////////////////////////////////////////////////////////////
 
@@ -3460,7 +3437,7 @@ function getLoanAfterInterest() {
         roundeddoccharge += 5;
     }
     $('.doc-diff').text('* (Difference: +' + parseInt(roundeddoccharge - doc_charge) + ')'); //To show the difference amount from old to new
-    $('#doc_charge_cal').val(formatIndianNumber(String(roundeddoccharge)));
+    $('#doc_charge_cal').val(formatIndianNumber(roundeddoccharge));
 
     var proc_type = $('.min-max-proc').text(); //Scheme may have Processing fee in rupees or percentage . so getting symbol from span
     if (proc_type.includes('₹')) {
@@ -3473,10 +3450,10 @@ function getLoanAfterInterest() {
         roundeprocfee += 5;
     }
     $('.proc-diff').text('* (Difference: +' + parseInt(roundeprocfee - proc_fee) + ')'); //To show the difference amount from old to new
-    $('#proc_fee_cal').val(formatIndianNumber(String(roundeprocfee)));
+    $('#proc_fee_cal').val(formatIndianNumber(roundeprocfee));
 
     var net_cash = parseInt(loan_amt) - parseFloat(roundeddoccharge) - parseFloat(roundeprocfee); //Net cash will be calculated by subracting other charges
-    $('#net_cash_cal').val(formatIndianNumber(String(net_cash)));
+    $('#net_cash_cal').val(formatIndianNumber(net_cash));
 }
 
 //To Get Loan Calculation for Pre Interest
@@ -3487,17 +3464,13 @@ function getLoanPreInterest() {
     var doc_charge = $('#doc_charge').val();
     var proc_fee   = $('#proc_fee').val();
 
-    $('#loan_amt_cal').val(formatIndianNumber(String(loan_amt))); //get loan amt from loan info card
-
+    $('#loan_amt_cal').val(formatIndianNumber(loan_amt)); //get loan amt from loan info card
 
     var int_amt = (parseInt(loan_amt) * (parseFloat(int_rate) / 100) * parseInt(due_period)).toFixed(0); //Calculate interest rate 
-    // $('#int_amt_cal').val(parseInt(int_amt));
 
     var princ_amt = parseInt(loan_amt) - parseInt(int_amt); // Calculate principal amt by subracting interest amt from loan amt
-    // $('#principal_amt_cal').val(parseInt(princ_amt).toFixed(0)); 
 
     var tot_amt = parseInt(princ_amt) + parseFloat(int_amt); //Calculate total amount from principal/loan amt and interest rate
-    // $('#tot_amt_cal').val(parseInt(tot_amt).toFixed(0));
 
     var due_amt = parseInt(tot_amt) / parseInt(due_period);//To calculate due amt by dividing total amount and due period given on loan info
     var roundDue = Math.ceil(due_amt / 5) * 5; //to increase Due Amt to nearest multiple of 5
@@ -3505,12 +3478,11 @@ function getLoanPreInterest() {
         roundDue += 5;
     }
     $('.due-diff').text('* (Difference: +' + parseInt(roundDue - due_amt) + ')'); //To show the difference amount
-    $('#due_amt_cal').val(formatIndianNumber(String(roundDue)));
+    $('#due_amt_cal').val(formatIndianNumber(roundDue));
 
     ////////////////////recalculation of total, principal, interest///////////////////
-
     var new_tot = parseInt(roundDue) * due_period;
-    $('#tot_amt_cal').val(formatIndianNumber(String(new_tot)));
+    $('#tot_amt_cal').val(formatIndianNumber(new_tot));
 
     //to get new interest rate using round due amt 
     let new_int = (roundDue * due_period) - princ_amt;
@@ -3521,11 +3493,11 @@ function getLoanPreInterest() {
     }
 
     $('.int-diff').text('* (Difference: +' + parseInt(roundedInterest - int_amt) + ')'); //To show the difference amount
-    $('#int_amt_cal').val(formatIndianNumber(String(roundedInterest)));
+    $('#int_amt_cal').val(formatIndianNumber(roundedInterest));
 
     var new_princ = parseInt(new_tot) - parseInt(roundedInterest);
     // $('.princ-diff').text('* (Difference: +' + parseInt(princ_amt - new_princ) + ')'); //To show the difference amount from old to new
-    $('#principal_amt_cal').val(formatIndianNumber(String(new_princ)));
+    $('#principal_amt_cal').val(formatIndianNumber(new_princ));
 
     //////////////////////////////////////////////////////////////////////////////////
 
@@ -3540,7 +3512,7 @@ function getLoanPreInterest() {
         roundeddoccharge += 5;
     }
     $('.doc-diff').text('* (Difference: +' + parseInt(roundeddoccharge - doc_charge) + ')'); //To show the difference amount from old to new
-    $('#doc_charge_cal').val(formatIndianNumber(String(roundeddoccharge)));
+    $('#doc_charge_cal').val(formatIndianNumber(roundeddoccharge));
 
     var proc_type = $('.min-max-proc').text(); //Scheme may have Processing fee in rupees or percentage . so getting symbol from span
     if (proc_type.includes('₹')) {
@@ -3553,10 +3525,10 @@ function getLoanPreInterest() {
         roundeprocfee += 5;
     }
     $('.proc-diff').text('* (Difference: +' + parseInt(roundeprocfee - proc_fee) + ')'); //To show the difference amount from old to new
-    $('#proc_fee_cal').val(formatIndianNumber(String(roundeprocfee)));
+    $('#proc_fee_cal').val(formatIndianNumber(roundeprocfee));
 
     var net_cash = parseInt(princ_amt) - parseInt(doc_charge) - parseInt(proc_fee); //Net cash will be calculated by subracting other charges
-    $('#net_cash_cal').val(formatIndianNumber(String(net_cash)));
+    $('#net_cash_cal').val(formatIndianNumber(net_cash));
 }
 
 //To Get Loan Calculation for Interest due type
@@ -3568,7 +3540,7 @@ function getLoanInterest() {
 
     var calc_method = $("#calc_method").val();
 
-    $("#loan_amt_cal").val(formatIndianNumber(String(loan_amt)));
+    $("#loan_amt_cal").val(formatIndianNumber(loan_amt));
 
     let int_amt;
 
@@ -3584,7 +3556,7 @@ function getLoanInterest() {
     }
 
     $(".int-diff").text("* (Difference: +" + parseInt(roundedInterest - int_amt) + ")");
-    $("#int_amt_cal").val(formatIndianNumber(String(roundedInterest)));
+    $("#int_amt_cal").val(formatIndianNumber(roundedInterest));
 
     var doc_type = $(".min-max-doc").text();
     if (doc_type.includes("₹")) {
@@ -3599,7 +3571,7 @@ function getLoanInterest() {
     }
 
     $(".doc-diff").text("* (Difference: +" + parseInt(roundeddoccharge - doc_charge) + ")");
-    $("#doc_charge_cal").val(formatIndianNumber(String(roundeddoccharge)));
+    $("#doc_charge_cal").val(formatIndianNumber(roundeddoccharge));
 
     var proc_type = $(".min-max-proc").text();
     if (proc_type.includes("₹")) {
@@ -3614,10 +3586,10 @@ function getLoanInterest() {
     }
 
     $(".proc-diff").text("* (Difference: +" + parseInt(roundeprocfee - proc_fee) + ")");
-    $("#proc_fee_cal").val(formatIndianNumber(String(roundeprocfee)));
+    $("#proc_fee_cal").val(formatIndianNumber(roundeprocfee));
 
     var net_cash = parseInt(loan_amt) - parseInt(doc_charge) - parseInt(proc_fee);
-    $("#net_cash_cal").val(formatIndianNumber(String(net_cash)));
+    $("#net_cash_cal").val(formatIndianNumber(net_cash));
 }
 
 function getSchemeAfterIntreset() {
@@ -3627,23 +3599,16 @@ function getSchemeAfterIntreset() {
     var doc_charge = $('#doc_charge').val();
     var proc_fee   = $('#proc_fee').val();
 
-    $('#loan_amt_cal').val(formatIndianNumber(String(loan_amt))); //get loan amt from loan info card
-    $('#principal_amt_cal').val(parseInt(loan_amt).toFixed(0)); // principal amt as same as loan amt for after interest
+    $('#loan_amt_cal').val(formatIndianNumber(loan_amt)); //get loan amt from loan info card
+    // principal amt as same as loan amt for after interest
     var intreset_type = $('.min-max-int').text(); //Scheme may have document charge in rupees or percentage . so getting symbol from span
     if (intreset_type.includes('₹')) {
         var int_amt = parseInt(int_rate); //Get document charge from loan info and directly show the document charge provided because of it is in rupees
     } else if (intreset_type.includes('%')) {
         var int_amt = (parseInt(loan_amt) * (parseFloat(int_rate) / 100)).toFixed(0); //Calculate interest rate 
     }
-    // var roundedInterest = Math.ceil(int_amt / 5) * 5;
-    // if (roundedInterest < int_amt) {
-    //     roundedInterest += 5;
-    // }
-    // $('.int-diff').text('* (Difference: +' + parseInt(roundedInterest - int_amt) + ')'); //To show the difference amount
-    // $('#int_amt_cal').val(parseInt(int_amt));
-
+    
     var tot_amt = parseInt(loan_amt) + parseFloat(int_amt); //Calculate total amount from principal/loan amt and interest rate
-    $('#tot_amt_cal').val(parseInt(tot_amt).toFixed(0));
 
     var due_amt = parseInt(tot_amt) / parseInt(due_period);//To calculate due amt by dividing total amount and due period given on loan info
     var roundDue = Math.ceil(due_amt / 5) * 5; //to increase Due Amt to nearest multiple of 5
@@ -3651,12 +3616,11 @@ function getSchemeAfterIntreset() {
         roundDue += 5;
     }
     $('.due-diff').text('* (Difference: +' + parseInt(roundDue - due_amt) + ')'); //To show the difference amount
-    $('#due_amt_cal').val(formatIndianNumber(String(roundDue)));
+    $('#due_amt_cal').val(formatIndianNumber(roundDue));
 
     ////////////////////recalculation of total, principal, interest///////////////////
-
     var new_tot = parseInt(roundDue) * due_period;
-    $('#tot_amt_cal').val(formatIndianNumber(String(new_tot)))
+    $('#tot_amt_cal').val(formatIndianNumber(new_tot))
 
     //to get new interest rate using round due amt 
     let new_int = (roundDue * due_period) - loan_amt;
@@ -3667,11 +3631,11 @@ function getSchemeAfterIntreset() {
     }
 
     $('.int-diff').text('* (Difference: +' + parseInt(roundedInterest - int_amt) + ')'); //To show the difference amount
-    $('#int_amt_cal').val(formatIndianNumber(String(roundedInterest)));
+    $('#int_amt_cal').val(formatIndianNumber(roundedInterest));
 
     var new_princ = parseInt(new_tot) - parseInt(roundedInterest);
     // $('.princ-diff').text('* (Difference: +' + parseInt(princ_amt - new_princ) + ')'); //To show the difference amount from old to new
-    $('#principal_amt_cal').val(formatIndianNumber(String(new_princ)));
+    $('#principal_amt_cal').val(formatIndianNumber(new_princ));
 
     //////////////////////////////////////////////////////////////////////////////////
 
@@ -3686,7 +3650,7 @@ function getSchemeAfterIntreset() {
         roundeddoccharge += 5;
     }
     $('.doc-diff').text('* (Difference: +' + parseInt(roundeddoccharge - doc_charge) + ')'); //To show the difference amount from old to new
-    $('#doc_charge_cal').val(formatIndianNumber(String(roundeddoccharge)));
+    $('#doc_charge_cal').val(formatIndianNumber(roundeddoccharge));
 
     var proc_type = $('.min-max-proc').text();//Scheme may have Processing fee in rupees or percentage . so getting symbol from span
     if (proc_type.includes('₹')) {
@@ -3699,11 +3663,12 @@ function getSchemeAfterIntreset() {
         roundeprocfee += 5;
     }
     $('.proc-diff').text('* (Difference: +' + parseInt(roundeprocfee - proc_fee) + ')'); //To show the difference amount from old to new
-    $('#proc_fee_cal').val(formatIndianNumber(String(roundeprocfee)));
+    $('#proc_fee_cal').val(formatIndianNumber(roundeprocfee));
 
     var net_cash = parseInt(loan_amt) - parseFloat(roundeddoccharge) - parseFloat(roundeprocfee); //Net cash will be calculated by subracting other charges
-    $('#net_cash_cal').val(formatIndianNumber(String(net_cash)));
+    $('#net_cash_cal').val(formatIndianNumber(net_cash));
 }
+
 function getSchemePreIntreset() {
     var loan_amt   = $('#loan_amt').val().replace(/[, ]+/g, '');
     var int_rate   = $('#int_rate').val();
@@ -3711,7 +3676,7 @@ function getSchemePreIntreset() {
     var doc_charge = $('#doc_charge').val();
     var proc_fee   = $('#proc_fee').val();
 
-    $('#loan_amt_cal').val(formatIndianNumber(String(loan_amt))); //get loan amt from loan info card
+    $('#loan_amt_cal').val(formatIndianNumber(loan_amt)); //get loan amt from loan info card
 
     var intreset_type = $('.min-max-int').text(); //Scheme may have document charge in rupees or percentage . so getting symbol from span
     if (intreset_type.includes('₹')) {
@@ -3719,13 +3684,10 @@ function getSchemePreIntreset() {
     } else if (intreset_type.includes('%')) {
         var int_amt = (parseInt(loan_amt) * (parseFloat(int_rate) / 100)).toFixed(0); //Calculate interest rate 
     }
-    // $('#int_amt_cal').val(parseInt(int_amt));
 
     var princ_amt = parseInt(loan_amt) - parseInt(int_amt); // Calculate principal amt by subracting interest amt from loan amt
-    // $('#principal_amt_cal').val(princ_amt); 
 
     var tot_amt = parseInt(princ_amt) + parseFloat(int_amt); //Calculate total amount from principal/loan amt and interest rate
-    // $('#tot_amt_cal').val(parseInt(tot_amt).toFixed(0));
 
     var due_amt = parseInt(tot_amt) / parseInt(due_period);//To calculate due amt by dividing total amount and due period given on loan info
     var roundDue = Math.ceil(due_amt / 5) * 5; //to increase Due Amt to nearest multiple of 5
@@ -3733,12 +3695,11 @@ function getSchemePreIntreset() {
         roundDue += 5;
     }
     $('.due-diff').text('* (Difference: +' + parseInt(roundDue - due_amt) + ')'); //To show the difference amount
-    $('#due_amt_cal').val(formatIndianNumber(String(roundDue)));
+    $('#due_amt_cal').val(formatIndianNumber(roundDue));
 
     ////////////////////recalculation of total, principal, interest///////////////////
-
     var new_tot = parseInt(roundDue) * due_period;
-    $('#tot_amt_cal').val(formatIndianNumber(String(new_tot)))
+    $('#tot_amt_cal').val(formatIndianNumber(new_tot))
 
     //to get new interest rate using round due amt 
     let new_int = (roundDue * due_period) - princ_amt;
@@ -3749,11 +3710,11 @@ function getSchemePreIntreset() {
     }
 
     $('.int-diff').text('* (Difference: +' + parseInt(roundedInterest - int_amt) + ')'); //To show the difference amount
-    $('#int_amt_cal').val(formatIndianNumber(String(roundedInterest)));
+    $('#int_amt_cal').val(formatIndianNumber(roundedInterest));
 
     var new_princ = parseInt(new_tot) - parseInt(roundedInterest);
     // $('.princ-diff').text('* (Difference: ' + parseInt(new_princ - princ_amt) + ')'); //To show the difference amount from old to new
-    $('#principal_amt_cal').val(formatIndianNumber(String(new_princ)));
+    $('#principal_amt_cal').val(formatIndianNumber(new_princ));
 
     //////////////////////////////////////////////////////////////////////////////////
 
@@ -3768,7 +3729,7 @@ function getSchemePreIntreset() {
         roundeddoccharge += 5;
     }
     $('.doc-diff').text('* (Difference: +' + parseInt(roundeddoccharge - doc_charge) + ')'); //To show the difference amount from old to new
-    $('#doc_charge_cal').val(formatIndianNumber(String(roundeddoccharge)));
+    $('#doc_charge_cal').val(formatIndianNumber(roundeddoccharge));
 
     var proc_type = $('.min-max-proc').text(); //Scheme may have Processing fee in rupees or percentage . so getting symbol from span
     if (proc_type.includes('₹')) {
@@ -3781,11 +3742,12 @@ function getSchemePreIntreset() {
         roundeprocfee += 5;
     }
     $('.proc-diff').text('* (Difference: +' + parseInt(roundeprocfee - proc_fee) + ')'); //To show the difference amount from old to new
-    $('#proc_fee_cal').val(formatIndianNumber(String(roundeprocfee)));
+    $('#proc_fee_cal').val(formatIndianNumber(roundeprocfee));
 
     var net_cash = parseInt(princ_amt) - parseFloat(roundeddoccharge) - parseFloat(roundeprocfee); //Net cash will be calculated by subracting other charges
-    $('#net_cash_cal').val(formatIndianNumber(String(net_cash)));
+    $('#net_cash_cal').val(formatIndianNumber(net_cash));
 }
+
 //To Get Loan Calculation for Monthly Scheme method
 // function getLoanMonthly() {
 //     var loan_amt = $('#loan_amt').val();
@@ -4000,15 +3962,14 @@ function getSchemePreIntreset() {
 //     $('#net_cash_cal').val(parseInt(net_cash).toFixed(0));
 // }
 
-
 function performLoanCalculation(callback) {
     var intrest_rate = $("#int_rate").val();
     var doc_charge = $("#doc_charge").val();
     var proc_fee = $("#proc_fee").val();
     var due_period = $("#due_period").val();
     var profit_method = $("#profit_method").val();
-    if( intrest_rate == ""|| doc_charge == "" || proc_fee == "" || due_period == "" || profit_method == ""){
-        event.preventDefault();
+
+    if( intrest_rate == "" || doc_charge == "" || proc_fee == "" || due_period == "" || profit_method == ""){
         Swal.fire({
                 timerProgressBar: true,
                 timer: 2000,
@@ -4024,22 +3985,24 @@ function performLoanCalculation(callback) {
 
     if (profit_method == "after_intrest" && due_type == "EMI") {
         getLoanAfterInterest();
-        changeInttoBen();
+    
     } else if (profit_method == 'pre_intrest') {
         getLoanPreInterest();
-        changeInttoBen();
+       
     }
 
     if (due_type == 'Interest') {
         getLoanInterest();
-        changeInttoBen();
+        
     }
 
     var scheme_profit_method = $('#scheme_profit_method').val(); // if profit method changes, due type is EMI
     if (scheme_profit_method == 'after_intrest') {
-        getSchemeAfterIntreset(); changeInttoBen();
+        getSchemeAfterIntreset(); 
+        
     } else if (scheme_profit_method == 'pre_intrest') {
-        getSchemePreIntreset(); changeInttoBen();
+        getSchemePreIntreset(); 
+        
     }
 
     // var due_method_scheme = $('#due_method_scheme').val();
@@ -4051,6 +4014,8 @@ function performLoanCalculation(callback) {
     //     getLoanDaily(); changeInttoBen()
     // }
 
+    changeInttoBen();
+    
     function changeInttoBen() {
         let due_type = document.getElementById("due_type");
         let int_label = document.querySelector("#int_amt_cal");
