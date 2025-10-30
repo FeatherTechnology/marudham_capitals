@@ -994,15 +994,16 @@ function validations() {
   let trans_id = $("#trans_id").val();
   let trans_date = $("#trans_date").val();
   let collection_loc = $("#collection_loc").val();
-  let total_paid_track = $("#total_paid_track").val();
-  let total_waiver = $("#total_waiver").val();
-  let retVal = true;
 
   $("#due_amt_track").trigger("input"); 
   $("#penalty_track").trigger("input"); 
   $("#coll_charge_track").trigger("input"); 
   $("#penalty_waiver").trigger("input"); 
   $("#coll_charge_waiver").trigger("input"); 
+  
+  let total_paid_track = $("#total_paid_track").val();
+  let total_waiver = $("#total_waiver").val();
+  let retVal = true;
 
   if(tot_amt == ""){
     $("#collectionInfoCheck").show();

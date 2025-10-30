@@ -2081,4 +2081,15 @@
         return num;
     }
 
+    //to validate input and enter only number/ moneyformat works only text type so validating here instead of number type
+    function validateInputNumber(e){
+        let val = $(e).val();
+
+        // Remove all non-digit characters
+        val = val.replace(/[^0-9]/g, '');
+
+        // Update the field with only numeric value
+        $(e).val(val);
+    }
+
 </script>
