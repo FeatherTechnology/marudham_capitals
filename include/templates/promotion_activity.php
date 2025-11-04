@@ -122,6 +122,34 @@ if (sizeof($getUser) > 0) {
 			</div>
 		</div>
 
+		<!-- Customer Status START -->
+		<div class="row gutters customer-status-card" style="display:none">
+			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+				<div class="card">
+					<div class="card-header"> Customer Status </div>
+					<div class="card-body">
+						<div class="table-responsive">
+							<table class="table custom-table" id="cusHistoryTable">
+								<thead>
+									<tr>
+										<th width="25">S. No</th>
+										<th>Date</th>
+										<th>Loan Category</th>
+										<th>Sub Category</th>
+										<th>Amount</th>
+										<th>Status</th>
+										<th>Sub Status</th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Customer Status END -->
+
 		<!-- Loan History START -->
 		<div class="row gutters loan-history-card" style="display:none">
 			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
