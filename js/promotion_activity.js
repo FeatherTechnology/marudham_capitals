@@ -859,7 +859,14 @@ function showPromotionList(url, tableid, colNo) {
         dom: 'lBfrtip',
         buttons: [{
             extend: 'excel',
-            title: "Promotion List"
+            title: "Promotion List",
+            action: function (e, dt, button, config) {
+                var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                var dynamic = curDateJs(tableid); // or any base
+                config.title = dynamic;      // for versions that use title as filename
+                config.filename = dynamic;   // for html5 filename
+                defaultAction.call(this, e, dt, button, config);
+            }
         },
         {
             extend: 'colvis',
@@ -1164,9 +1171,20 @@ function eventsTable() {
             "iDisplayLength": 10,
             "lengthMenu": [[10, 25, 50, -1],[10, 25, 50, "All"]],
             dom: 'lBfrtip',
-            buttons: [
-                { extend: 'excel' },
-                { extend: 'colvis', collectionLayout: 'fixed four-column' }
+            buttons: [{ 
+                    extend: 'excel', 
+                    action: function (e, dt, button, config) {
+                        var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                        var dynamic = curDateJs('Event_list'); // or any base
+                        config.title = dynamic;      // for versions that use title as filename
+                        config.filename = dynamic;   // for html5 filename
+                        defaultAction.call(this, e, dt, button, config);
+                    } 
+                },
+                { 
+                    extend: 'colvis', 
+                    collectionLayout: 'fixed four-column' 
+                }
             ]
         });
     });
