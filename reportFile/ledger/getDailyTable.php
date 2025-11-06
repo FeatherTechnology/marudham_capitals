@@ -69,7 +69,7 @@ $qry = $connect->query("
         JOIN sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
         JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
     WHERE 
-        (ii.cus_status >= 14 && ii.cus_status < 20) AND lc.due_type = 'EMI' AND lc.due_method_scheme = 3 $user_based");
+        (ii.cus_status >= 14 && ii.cus_status < 20) AND lc.due_type != 'Interest' AND lc.due_method_scheme = 3 $user_based");
 
 
 $rows = array();
@@ -168,7 +168,7 @@ while ($row = $qry->fetch()) {
 <script type='text/javascript'>
     $(function() {
         $('#daily_table').DataTable({
-            "title": "Daily Ledger",
+            "title": "Daily Ledger Report",
             'processing': true,
             'iDisplayLength': 10,
             "lengthMenu": [
@@ -178,6 +178,13 @@ while ($row = $qry->fetch()) {
             dom: 'lBfrtip',
             buttons: [{
                     extend: 'excel',
+                    action: function (e, dt, button, config) {
+                        var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                        var dynamic = curDateJs('Daily_Ledger_report'); // or any base
+                        config.title = dynamic;      // for versions that use title as filename
+                        config.filename = dynamic;   // for html5 filename
+                        defaultAction.call(this, e, dt, button, config);
+                    }
                 },
                 {
                     extend: 'colvis',

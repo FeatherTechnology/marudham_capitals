@@ -72,9 +72,21 @@ function dueFollowUpCustomerCountReportTable() {
                 data: data,
                 columns: columns,
                 dom: 'lBfrtip',
-                buttons: [
-                    { extend: 'excel', title: "Due Follow-up Customer Count Report" },
-                    { extend: 'colvis', collectionLayout: 'fixed four-column' }
+                buttons: [{ 
+                        extend: 'excel', 
+                        title: "Due Follow-up Customer Count Report",
+                        action: function (e, dt, button, config) {
+                            var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                            var dynamic = curDateJs('Due_Followup_Customer_Count_Report'); // or any base
+                            config.title = dynamic;      // for versions that use title as filename
+                            config.filename = dynamic;   // for html5 filename
+                            defaultAction.call(this, e, dt, button, config);
+                        }
+                    },
+                    { 
+                        extend: 'colvis', 
+                        collectionLayout: 'fixed four-column' 
+                    }
                 ],
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
                 drawCallback: function () {

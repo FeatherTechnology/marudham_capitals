@@ -83,7 +83,7 @@ $connect = null;
 <script type='text/javascript'>
     $(function() {
         $('#HexpenseTable').DataTable({
-            "title":"Collection List",
+            "title":"Hand Expenses List",
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -101,6 +101,13 @@ $connect = null;
             dom: 'lBfrtip',
             buttons: [{
                     extend: 'excel',
+                    action: function (e, dt, button, config) {
+                        var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                        var dynamic = curDateJs('Hand_Expenses_List'); // or any base
+                        config.title = dynamic;      // for versions that use title as filename
+                        config.filename = dynamic;   // for html5 filename
+                        defaultAction.call(this, e, dt, button, config);
+                    }
                 },
                 {
                     extend: 'colvis',

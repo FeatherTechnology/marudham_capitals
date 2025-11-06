@@ -191,6 +191,13 @@ $tot_amt = $total_collection_amt - $total_rec_amt;
             dom: 'lBfrtip',
             buttons: [{
                     extend: 'excel',
+                    action: function (e, dt, button, config) {
+                        var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                        var dynamic = curDateJs('CT_Coll_Amount_Received_List'); // or any base
+                        config.title = dynamic;      // for versions that use title as filename
+                        config.filename = dynamic;   // for html5 filename
+                        defaultAction.call(this, e, dt, button, config);
+                    }
                 },
                 {
                     extend: 'colvis',

@@ -308,9 +308,21 @@ function currentReportCount(search_date, type, line, selected_user, group_map, d
                 data: data,
                 columns: columns,
                 dom: 'lBfrtip',
-                buttons: [
-                    { extend: 'excel', title: "Current Customer Count Report" },
-                    { extend: 'colvis', collectionLayout: 'fixed four-column' }
+                buttons: [{ 
+                        extend: 'excel', 
+                        title: "Current Customer Count Report",
+                        action: function (e, dt, button, config) {
+                            var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                            var dynamic = curDateJs('Current_Customer_Count_Report'); // or any base
+                            config.title = dynamic;      // for versions that use title as filename
+                            config.filename = dynamic;   // for html5 filename
+                            defaultAction.call(this, e, dt, button, config);
+                        } 
+                    },
+                    { 
+                        extend: 'colvis', 
+                        collectionLayout: 'fixed four-column' 
+                    }
                 ],
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
                 drawCallback: function () {
@@ -386,9 +398,21 @@ function pendingReportCount(search_date, type, line, selected_user, group_map, d
                 data: data,
                 columns: columns,
                 dom: 'lBfrtip',
-                buttons: [
-                    { extend: 'excel', title: "Pending Customer Count Report" },
-                    { extend: 'colvis', collectionLayout: 'fixed four-column' }
+                buttons: [{ 
+                        extend: 'excel', 
+                        title: "Pending Customer Count Report",
+                        action: function (e, dt, button, config) {
+                            var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                            var dynamic = curDateJs('Pending_Customer_Count_Report'); // or any base
+                            config.title = dynamic;      // for versions that use title as filename
+                            config.filename = dynamic;   // for html5 filename
+                            defaultAction.call(this, e, dt, button, config);
+                        } 
+                    },
+                    { 
+                        extend: 'colvis', 
+                        collectionLayout: 'fixed four-column' 
+                    }
                 ],
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
                 drawCallback: function () {
@@ -463,8 +487,21 @@ function odReportCount(search_date, type, line, selected_user, group_map, due_fo
                 columns: columns,
                 dom: 'lBfrtip',
                 buttons: [
-                    { extend: 'excel', title: "OD Customer Count Report" },
-                    { extend: 'colvis', collectionLayout: 'fixed four-column' }
+                    { 
+                        extend: 'excel', 
+                        title: "OD Customer Count Report",
+                        action: function (e, dt, button, config) {
+                            var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                            var dynamic = curDateJs('OD_Customer_Count_Report'); // or any base
+                            config.title = dynamic;      // for versions that use title as filename
+                            config.filename = dynamic;   // for html5 filename
+                            defaultAction.call(this, e, dt, button, config);
+                        } 
+                    },
+                    { 
+                        extend: 'colvis', 
+                        collectionLayout: 'fixed four-column' 
+                    }
                 ],
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
                 drawCallback: function () {

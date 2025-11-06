@@ -64,7 +64,14 @@ function commitmentReportTable() {
         dom: 'lBfrtip',
         buttons: [{
             extend: 'excel',
-            title: "Closed Report List"
+            title: "Promotion Activity Report List",
+            action: function (e, dt, button, config) {
+                var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                var dynamic = curDateJs('Promotion_Activity_Report'); // or any base
+                config.title = dynamic;      // for versions that use title as filename
+                config.filename = dynamic;   // for html5 filename
+                defaultAction.call(this, e, dt, button, config);
+            }
         },
         {
             extend: 'colvis',

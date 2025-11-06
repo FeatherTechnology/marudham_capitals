@@ -15,7 +15,7 @@ $(document).ready(function () {
         $(this).addClass("active");
 
         var typevalue = this.value;
-        $('.existing_card, .new_card, .new_promo_card, .loan-history-card, .doc-history-card, #close_history_card, .repromotion_card, .filter_card').hide();
+        $('.existing_card, .new_card, .new_promo_card, .customer-status-card, .loan-history-card, .doc-history-card, #close_history_card, .repromotion_card, .filter_card').hide();
         // $('#follow_up_sts, #date_type, #follow_up_fromdate, #follow_up_todate').val('');
         if (typevalue == 'New') {
             $('.new_card, .new_promo_card').show()
@@ -881,7 +881,7 @@ function showPromotionList(url, tableid, colNo) {
              let searchInput = $('#' + tableid + '_filter input');
             searchInput.attr('id', tableid + '_search').addClass('custo-search');
             searchFunction(tableid);
-           paginationFunction(tableid);
+            paginationFunction(tableid);
             intNotintOnclick();
             promoChartOnclick();
             promotionListOnclick();

@@ -80,7 +80,14 @@ function cancelRevokeTable(){
         dom: 'lBfrtip',
         buttons: [{
             extend: 'excel',
-            title: "Cancel / Revoke Report List"
+            title: "Cancel / Revoke Report List",
+            action: function (e, dt, button, config) {
+                var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                var dynamic = curDateJs('Cancel_Revoke_Report'); // or any base
+                config.title = dynamic;      // for versions that use title as filename
+                config.filename = dynamic;   // for html5 filename
+                defaultAction.call(this, e, dt, button, config);
+            }
         },
         {
             extend: 'colvis',

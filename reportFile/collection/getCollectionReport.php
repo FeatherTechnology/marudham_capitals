@@ -130,8 +130,8 @@ ag.group_name,
         JOIN area_list_creation al ON cp.area_confirm_area = al.area_id
         JOIN sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
         JOIN area_line_mapping alm ON FIND_IN_SET(sal.sub_area_id, alm.sub_area_id)
-         JOIN area_group_mapping ag ON FIND_IN_SET(sal.sub_area_id, ag.sub_area_id)
-         JOIN area_duefollowup_mapping adm ON FIND_IN_SET(al.area_id, adm.area_id)
+        JOIN area_group_mapping ag ON FIND_IN_SET(sal.sub_area_id, ag.sub_area_id)
+        JOIN area_duefollowup_mapping adm ON FIND_IN_SET(al.area_id, adm.area_id)
         JOIN acknowlegement_loan_calculation lc ON coll.req_id = lc.req_id
         JOIN in_verification iv ON coll.req_id = iv.req_id
         LEFT JOIN bank_creation b ON coll.bank_id = b.id
@@ -140,7 +140,7 @@ ag.group_name,
         LEFT JOIN agent_creation ac ON iv.agent_id = ac.ag_id
         LEFT JOIN closed_status cls ON iv.req_id = cls.req_id
 
-        WHERE iv.cus_status >= 14 AND lc.due_type = 'EMI'
+        WHERE iv.cus_status >= 14 AND lc.due_type != 'Interest'
         AND $where ";
 
 if (isset($_POST['search'])) {

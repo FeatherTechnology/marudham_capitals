@@ -26,7 +26,14 @@ function requestReportTable(){
         dom: 'lBfrtip',
         buttons: [{
             extend: 'excel',
-            title: "Due List Report"
+            title: "Due List Report",
+            action: function (e, dt, button, config) {
+                var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                var dynamic = curDateJs('Due_List_Report'); // or any base
+                config.title = dynamic;      // for versions that use title as filename
+                config.filename = dynamic;   // for html5 filename
+                defaultAction.call(this, e, dt, button, config);
+            }
         },
         {
             extend: 'colvis',

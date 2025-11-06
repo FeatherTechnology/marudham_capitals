@@ -4991,11 +4991,12 @@ function validateBankCash(amt) {
         var bank_closing_label = label.text().replace(/,/g, '');
         var bank_closing = parseInt(bank_closing_label) || 0;
 
-        var untrkdLabel = $('#untrkd' + cash_type);
-        var bank_closing_untrkd_label = untrkdLabel.text().replace(/\D/g, '');
-        var untrkd_label = parseInt(bank_closing_untrkd_label) || 0;
+        //untrkd_label removed from adding bank_closing because bank closing getting negative value, reason is validating by adding both but showing seperate bank and untrack.  
+        // var untrkdLabel = $('#untrkd' + cash_type);
+        // var bank_closing_untrkd_label = untrkdLabel.text().replace(/\D/g, '');
+        // var untrkd_label = parseInt(bank_closing_untrkd_label) || 0;
 
-        let bankClosing = bank_closing + untrkd_label; 
+        let bankClosing = bank_closing; 
 
         if (entered_amt > bankClosing) {
             alert('Enter Lesser Amount !');

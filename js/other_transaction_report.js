@@ -102,7 +102,14 @@ function contraReportTable() {
         dom: 'lBfrtip',
         buttons: [{
             extend: 'excel',
-            title: "Contra Report List"
+            title: "Contra Report List",
+            action: function (e, dt, button, config) {
+                var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                var dynamic = curDateJs('Contra_Report'); // or any base
+                config.title = dynamic;      // for versions that use title as filename
+                config.filename = dynamic;   // for html5 filename
+                defaultAction.call(this, e, dt, button, config);
+            }
         },
         {
             extend: 'colvis',
@@ -169,7 +176,14 @@ function exchangeReportTable() {
         dom: 'lBfrtip',
         buttons: [{
             extend: 'excel',
-            title: "Exchange Report List"
+            title: "Exchange Report List",
+            action: function (e, dt, button, config) {
+                var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                var dynamic = curDateJs('Exchange_Report'); // or any base
+                config.title = dynamic;      // for versions that use title as filename
+                config.filename = dynamic;   // for html5 filename
+                defaultAction.call(this, e, dt, button, config);
+            }
         },
         {
             extend: 'colvis',
@@ -235,7 +249,14 @@ function otherIncomeReportTable() {
         dom: 'lBfrtip',
         buttons: [{
             extend: 'excel',
-            title: "Other Income Report List"
+            title: "Other Income Report List",
+            action: function (e, dt, button, config) {
+                var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                var dynamic = curDateJs('Other_Income_Report'); // or any base
+                config.title = dynamic;      // for versions that use title as filename
+                config.filename = dynamic;   // for html5 filename
+                defaultAction.call(this, e, dt, button, config);
+            }
         },
         {
             extend: 'colvis',
@@ -301,7 +322,14 @@ function expensesReportTable() {
         dom: 'lBfrtip',
         buttons: [{
             extend: 'excel',
-            title: "Expenses Report List"
+            title: "Expenses Report List",
+            action: function (e, dt, button, config) {
+                var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                var dynamic = curDateJs('Expenses_Report'); // or any base
+                config.title = dynamic;      // for versions that use title as filename
+                config.filename = dynamic;   // for html5 filename
+                defaultAction.call(this, e, dt, button, config);
+            }
         },
         {
             extend: 'colvis',
@@ -367,7 +395,14 @@ function investmentReportTable() {
         dom: 'lBfrtip',
         buttons: [{
             extend: 'excel',
-            title: "Investment Report List"
+            title: "Investment Report List",
+            action: function (e, dt, button, config) {
+                var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                var dynamic = curDateJs('Investment_Report'); // or any base
+                config.title = dynamic;      // for versions that use title as filename
+                config.filename = dynamic;   // for html5 filename
+                defaultAction.call(this, e, dt, button, config);
+            }
         },
         {
             extend: 'colvis',
@@ -433,7 +468,14 @@ function depositReportTable() {
         dom: 'lBfrtip',
         buttons: [{
             extend: 'excel',
-            title: "Deposit Report List"
+            title: "Deposit Report List",
+            action: function (e, dt, button, config) {
+                var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                var dynamic = curDateJs('Deposit_Report'); // or any base
+                config.title = dynamic;      // for versions that use title as filename
+                config.filename = dynamic;   // for html5 filename
+                defaultAction.call(this, e, dt, button, config);
+            }
         },
         {
             extend: 'colvis',
@@ -499,7 +541,14 @@ function elReportTable() {
         dom: 'lBfrtip',
         buttons: [{
             extend: 'excel',
-            title: "EL Report List"
+            title: "EL Report List",
+            action: function (e, dt, button, config) {
+                var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                var dynamic = curDateJs('EL_Report'); // or any base
+                config.title = dynamic;      // for versions that use title as filename
+                config.filename = dynamic;   // for html5 filename
+                defaultAction.call(this, e, dt, button, config);
+            }
         },
         {
             extend: 'colvis',
@@ -566,7 +615,14 @@ function excessFundReportTable() {
         dom: 'lBfrtip',
         buttons: [{
             extend: 'excel',
-            title: "Excess Fund Report List"
+            title: "Excess Fund Report List",
+            action: function (e, dt, button, config) {
+                var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                var dynamic = curDateJs('Excess_Fund_Report'); // or any base
+                config.title = dynamic;      // for versions that use title as filename
+                config.filename = dynamic;   // for html5 filename
+                defaultAction.call(this, e, dt, button, config);
+            }
         },
         {
             extend: 'colvis',

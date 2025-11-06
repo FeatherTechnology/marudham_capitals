@@ -60,7 +60,14 @@ function balanceReportTable(url, tid, columnsToSum){
         dom: 'lBfrtip',
         buttons: [{
             extend: 'excel',
-            title: "Balance Report List"
+            title: "Balance Report List",
+            action: function (e, dt, button, config) {
+                var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                var dynamic = curDateJs('Balance_Report'); // or any base
+                config.title = dynamic;      // for versions that use title as filename
+                config.filename = dynamic;   // for html5 filename
+                defaultAction.call(this, e, dt, button, config);
+            }
         },
         {
             extend: 'colvis',
