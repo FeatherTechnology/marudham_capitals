@@ -15,8 +15,8 @@ class ClosedDashboardClass
         $sub_area_list = $_POST['sub_area_list'];
 
         $tot_in_cl = "SELECT COUNT(*) as tot_in_cl FROM request_creation req JOIN acknowlegement_customer_profile cp ON cp.req_id = req.req_id WHERE req.cus_status >= 20 ";
-        $month_in_cl = "SELECT COUNT(*) as month_in_cl FROM request_creation req JOIN acknowlegement_customer_profile cp ON cp.req_id = req.req_id WHERE req.cus_status = 20 and month(req.updated_date) = month('$month') and year(req.updated_date) = year('$month') ";
-        $month_cl_status = "SELECT COUNT(*) as month_cl_status FROM request_creation req JOIN acknowlegement_customer_profile cp ON cp.req_id = req.req_id JOIN closed_status cls ON cls.req_id = req.req_id WHERE req.cus_status >= 20 and month(cls.created_date) = month('$month') and year(cls.created_date) = year('$month') ";
+        $month_in_cl = "SELECT COUNT(*) as month_in_cl FROM request_creation req JOIN acknowlegement_customer_profile cp ON cp.req_id = req.req_id JOIN closing_customer cc ON cc.req_id = req.req_id WHERE month(cc.closing_date) = month('$month') and year(cc.closing_date) = year('$month') ";
+        $month_cl_status = "SELECT COUNT(*) as month_cl_status FROM closed_status cls JOIN acknowlegement_customer_profile cp ON cp.req_id = cls.req_id WHERE cls.cus_sts = 21 and month(cls.created_date) = month('$month') and year(cls.created_date) = year('$month') ";
         $month_cl_bal = "SELECT COUNT(*) as month_cl_bal FROM request_creation req JOIN acknowlegement_customer_profile cp ON cp.req_id = req.req_id WHERE req.cus_status = 20 and month(req.updated_date) = month('$month') and year(req.updated_date) = year('$month') ";
         $today_in_cl = "SELECT COUNT(*) as today_in_cl FROM request_creation req JOIN acknowlegement_customer_profile cp ON cp.req_id = req.req_id WHERE req.cus_status = 20 and date(req.updated_date) = date('$month') ";
         $today_cl_status = "SELECT COUNT(*) as today_cl_status FROM request_creation req JOIN acknowlegement_customer_profile cp ON cp.req_id = req.req_id JOIN closed_status cls ON cls.req_id = req.req_id WHERE req.cus_status >= 20 and date(cls.created_date) = date('$month') ";
@@ -48,7 +48,6 @@ class ClosedDashboardClass
         $gold .= " AND ( CASE WHEN cp.area_confirm_subarea IS NOT NULL THEN cp.area_confirm_subarea IN ($sub_area_list) ELSE TRUE END ) ";
         $platinum .= " AND ( CASE WHEN cp.area_confirm_subarea IS NOT NULL THEN cp.area_confirm_subarea IN ($sub_area_list) ELSE TRUE END ) ";
         $diamond .= " AND ( CASE WHEN cp.area_confirm_subarea IS NOT NULL THEN cp.area_confirm_subarea IN ($sub_area_list) ELSE TRUE END ) ";
-
         $tot_in_clQry = $connect->query($tot_in_cl);
         $month_in_clQry = $connect->query($month_in_cl);
         $month_cl_statusQry = $connect->query($month_cl_status);

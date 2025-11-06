@@ -51,7 +51,7 @@ if ($userid == 1) {
     JOIN sub_area_list_creation sa ON cp.area_confirm_subarea = sa.sub_area_id
     JOIN area_line_mapping al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
     JOIN branch_creation bc ON al.branch_id = bc.branch_id
-    where ii.status = 0 and ii.cus_status = 21 GROUP BY ii.cus_id '; // Only Issued and all lines not relying on sub area
+    where ii.status = 0 and ii.cus_status IN (21,22) GROUP BY ii.cus_id '; // Only Issued and all lines not relying on sub area
 } else {
     $query = " SELECT cp.cus_id AS cp_cus_id,
     cr.autogen_cus_id,
@@ -80,21 +80,21 @@ if ($userid == 1) {
         SELECT ii.cus_id, COUNT(sd.id) AS sd_count
         FROM signed_doc_info sd
         JOIN in_issue ii ON ii.req_id = sd.req_id
-        WHERE ii.cus_status = 21 AND sd.noc_given != '1'
+        WHERE ii.cus_status IN (21,22) AND sd.noc_given != '1'
         GROUP BY ii.cus_id
     ) AS sd_table ON ii.cus_id = sd_table.cus_id
     LEFT JOIN (
         SELECT ii.cus_id, COUNT(cnl.id) AS cnl_count
         FROM cheque_no_list cnl
         JOIN in_issue ii ON ii.req_id = cnl.req_id
-        WHERE ii.cus_status = 21 AND cnl.noc_given != '1'
+        WHERE ii.cus_status IN (21,22) AND cnl.noc_given != '1'
         GROUP BY ii.cus_id
     ) AS cnl_table ON ii.cus_id = cnl_table.cus_id
     LEFT JOIN (
         SELECT ii.cus_id, COUNT(ackd.id) AS ackd_count
         FROM acknowlegement_documentation ackd
         JOIN in_issue ii ON ii.req_id = ackd.req_id
-        WHERE ii.cus_status = 21
+        WHERE ii.cus_status IN (21,22)
             AND ackd.mortgage_process = 0
             AND (ackd.mortgage_process_noc != '1' 
                 OR (ackd.mortgage_document = 0 
@@ -106,7 +106,7 @@ if ($userid == 1) {
         SELECT ii.cus_id, COUNT(ackd.id) AS ackd_endorse_count
         FROM acknowlegement_documentation ackd
         JOIN in_issue ii ON ii.req_id = ackd.req_id
-        WHERE ii.cus_status = 21
+        WHERE ii.cus_status IN (21,22)
             AND ackd.endorsement_process = 0
             AND (ackd.endorsement_process_noc != '1'
                 OR (ackd.en_RC = 0 AND ackd.en_RC_noc != '1')
@@ -117,28 +117,29 @@ if ($userid == 1) {
         SELECT ii.cus_id, COUNT(gi.id) AS gi_count
         FROM gold_info gi
         JOIN in_issue ii ON ii.req_id = gi.req_id
-        WHERE ii.cus_status = 21 AND gi.noc_given != '1'
+        WHERE ii.cus_status IN (21,22) AND gi.noc_given != '1'
         GROUP BY ii.cus_id
     ) AS gi_table ON ii.cus_id = gi_table.cus_id
     LEFT JOIN (
         SELECT ii.cus_id, COUNT(di.id) AS di_count
         FROM document_info di
         JOIN in_issue ii ON ii.req_id = di.req_id
-        WHERE ii.cus_status = 21 AND di.doc_info_upload_noc != '1'
+        WHERE ii.cus_status IN (21,22) AND di.doc_info_upload_noc != '1'
         GROUP BY ii.cus_id
     ) AS di_table ON ii.cus_id = di_table.cus_id
     WHERE ii.status = 0
-        AND ii.cus_status = 21
+        AND ii.cus_status IN (21,22)
         AND cp.area_confirm_subarea IN ($sub_area_list) ";
 
     $forcount = "SELECT cp.cus_id 
         FROM acknowlegement_customer_profile cp 
         JOIN in_issue ii ON cp.cus_id = ii.cus_id
+        JOIN customer_register cr ON cp.cus_id = cr.cus_id
         JOIN area_list_creation ac ON cp.area_confirm_area = ac.area_id
         JOIN sub_area_list_creation sa ON cp.area_confirm_subarea = sa.sub_area_id
         JOIN area_line_mapping al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
         JOIN branch_creation bc ON al.branch_id = bc.branch_id
-        where ii.status = 0 and ii.cus_status = 21 and cp.area_confirm_subarea IN ($sub_area_list) ";
+        where ii.status = 0 and ii.cus_status IN(21,22) and cp.area_confirm_subarea IN ($sub_area_list) ";
 }
 
 if (isset($_POST['search']) && $_POST['search'] != "") {

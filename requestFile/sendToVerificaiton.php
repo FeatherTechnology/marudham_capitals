@@ -25,6 +25,7 @@ $selectIC = $connect->query("INSERT INTO in_verification (`req_id`,`user_type`, 
         `sub_category`, `tot_value`, `ad_amt`, `ad_perc`, `loan_amt`, `poss_type`, `due_amt`, `due_period`, `cus_status`,`prompt_remark`, `status`, `insert_login_id`, 
         `update_login_id`, `delete_login_id`, `created_date`, `updated_date` )
         SELECT * from request_creation where req_id = '" . $req_id . "' ");
+$qry = $connect->query("UPDATE in_verification set created_date = current_timestamp where `req_id` = '$req_id' ");
 
 $response = 'Moved to Verification';
 
