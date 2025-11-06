@@ -46,41 +46,48 @@ $column = array(
 );
 
 if ($userid == 1) {
-    $query = "SELECT cp.cus_id AS cp_cus_id, cr.autogen_cus_id, cp.cus_name, alc.area_name, salc.sub_area_name, alm.line_name AS area_line, cp.mobile1, ii.cus_id AS ii_cus_id, ii.req_id 
-    FROM acknowlegement_customer_profile cp 
-    JOIN customer_register cr ON cp.cus_id = cr.cus_id
-    JOIN in_issue ii ON cp.cus_id = ii.cus_id 
-    JOIN customer_status cs ON cp.req_id = cs.req_id 
-    JOIN area_list_creation alc ON cp.area_confirm_area = alc.area_id
-    JOIN sub_area_list_creation salc ON cp.area_confirm_subarea = salc.sub_area_id
-    JOIN area_line_mapping alm ON FIND_IN_SET(salc.sub_area_id, alm.sub_area_id)
-    WHERE ii.status = 0 AND (ii.cus_status >= 14 AND ii.cus_status <= 17)"; // Only Issued and all lines not relying on sub area// 14 and 17 means collection entries, 17 removed from issue list
+    $query = "SELECT  cp.cus_id AS cp_cus_id, cr.autogen_cus_id,cp.cus_name,alc.area_name,salc.sub_area_name,alm.line_name AS area_line,cp.mobile1,ii.cus_id AS ii_cus_id,
+ii.req_id
+FROM in_issue AS ii
+INNER JOIN acknowlegement_customer_profile AS cp ON ii.cus_id = cp.cus_id
+INNER JOIN customer_register AS cr ON cr.cus_id = cp.cus_id
+INNER JOIN customer_status AS cs ON cs.req_id = cp.req_id
+INNER JOIN area_list_creation AS alc ON alc.area_id = cp.area_confirm_area
+INNER JOIN sub_area_list_creation AS salc ON salc.sub_area_id = cp.area_confirm_subarea
+INNER JOIN area_line_mapping AS alm ON FIND_IN_SET(salc.sub_area_id, alm.sub_area_id)
+WHERE ii.status = 0 AND ii.cus_status BETWEEN 14 AND 17"; // Only Issued and all lines not relying on sub area// 14 and 17 means collection entries, 17 removed from issue list
 
 } else {
 
     if ($role != '2') {
         //show only issued customers within the same lines of user. // 14 and 17 means collection entries, 17 removed from issue list
-        $query = "SELECT cp.cus_id AS cp_cus_id, cr.autogen_cus_id, cp.cus_name, alc.area_name, salc.sub_area_name, alm.line_name AS area_line, cp.mobile1, ii.cus_id AS ii_cus_id, ii.req_id 
-        FROM acknowlegement_customer_profile cp 
-        JOIN customer_register cr ON cp.cus_id = cr.cus_id
-        JOIN in_issue ii ON cp.cus_id = ii.cus_id 
-        JOIN customer_status cs ON cp.req_id = cs.req_id 
-        JOIN area_list_creation alc ON cp.area_confirm_area = alc.area_id
-        JOIN sub_area_list_creation salc ON cp.area_confirm_subarea = salc.sub_area_id
-        JOIN area_line_mapping alm ON FIND_IN_SET(salc.sub_area_id, alm.sub_area_id)
-        left JOIN request_creation rc ON ii.req_id = rc.req_id 
-        WHERE ii.status = 0 AND (ii.cus_status >= 14 AND ii.cus_status <= 17) AND cp.area_confirm_subarea IN ($sub_area_list) ";
+        $query = "SELECT cp.cus_id AS cp_cus_id,cr.autogen_cus_id,cp.cus_name,alc.area_name,salc.sub_area_name,alm.line_name AS area_line,cp.mobile1,ii.cus_id AS ii_cus_id,ii.req_id
+FROM in_issue AS ii
+INNER JOIN acknowlegement_customer_profile AS cp ON ii.cus_id = cp.cus_id
+INNER JOIN customer_register AS cr ON cr.cus_id = cp.cus_id
+INNER JOIN customer_status AS cs ON cs.req_id = cp.req_id
+INNER JOIN area_list_creation AS alc ON alc.area_id = cp.area_confirm_area
+INNER JOIN sub_area_list_creation AS salc ON salc.sub_area_id = cp.area_confirm_subarea
+INNER JOIN area_line_mapping AS alm ON FIND_IN_SET(salc.sub_area_id, alm.sub_area_id)
+WHERE ii.status = 0 AND ii.cus_status BETWEEN 14 AND 17 AND cp.area_confirm_subarea IN ($sub_area_list) ";
     } else { // if agent then check the possibilities
-        $query = "SELECT cp.cus_id AS cp_cus_id, cr.autogen_cus_id, cp.cus_name, alc.area_name, salc.sub_area_name, alm.line_name AS area_line, cp.mobile1, ii.cus_id AS ii_cus_id, ii.req_id 
-        FROM acknowlegement_customer_profile cp
-        JOIN customer_register cr ON cp.cus_id = cr.cus_id 
-        JOIN in_issue ii ON cp.cus_id = ii.cus_id 
-        JOIN request_creation rc ON ii.req_id = rc.req_id 
-        JOIN customer_status cs ON cp.req_id = cs.req_id 
-        JOIN area_list_creation alc ON cp.area_confirm_area = alc.area_id
-        JOIN sub_area_list_creation salc ON cp.area_confirm_subarea = salc.sub_area_id
-        JOIN area_line_mapping alm ON FIND_IN_SET(salc.sub_area_id, alm.sub_area_id)
-        WHERE ii.status = 0 AND (ii.cus_status >= 14 AND ii.cus_status <= 17) AND (rc.user_type = 'Agent' OR (rc.agent_id != '' OR rc.agent_id != null)  OR rc.insert_login_id = '$userid' ) AND cp.area_confirm_subarea IN ($sub_area_list) and rc.agent_id = $ag_id "; // 14 and 17 means collection entries, 17 removed from issue list
+        $query = "SELECT cp.cus_id AS cp_cus_id,cr.autogen_cus_id,cp.cus_name,alc.area_name,salc.sub_area_name,alm.line_name AS area_line,cp.mobile1,ii.cus_id AS ii_cus_id,
+ii.req_id
+FROM in_issue AS ii
+INNER JOIN acknowlegement_customer_profile AS cp ON ii.cus_id = cp.cus_id
+INNER JOIN customer_register AS cr ON cr.cus_id = cp.cus_id
+INNER JOIN request_creation AS rc ON rc.req_id = ii.req_id
+INNER JOIN customer_status AS cs ON cs.req_id = cp.req_id
+INNER JOIN area_list_creation AS alc ON alc.area_id = cp.area_confirm_area
+INNER JOIN sub_area_list_creation AS salc ON salc.sub_area_id = cp.area_confirm_subarea
+INNER JOIN area_line_mapping AS alm ON FIND_IN_SET(salc.sub_area_id, alm.sub_area_id)
+WHERE ii.status = 0 AND ii.cus_status BETWEEN 14 AND 17 AND cp.area_confirm_subarea IN ($sub_area_list) AND (
+         rc.user_type = 'Agent'
+         OR (rc.agent_id IS NOT NULL AND rc.agent_id != '')
+         OR rc.insert_login_id = '$userid'
+    )
+    AND rc.agent_id = $ag_id
+"; // 14 and 17 means collection entries, 17 removed from issue list
 
     }
 }

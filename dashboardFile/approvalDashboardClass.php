@@ -13,25 +13,26 @@ class approvalClass
         $today = date('Y-m-d');
         $month = (isset($_POST['month']) && $_POST['month'] != '') ? date('Y-m-01', strtotime($_POST['month'])) : date('Y-m-01');
         $sub_area_list = $_POST['sub_area_list'];
+        $loan_category = $_POST['loan_category'];
 
-        $tot_in_app = "SELECT COUNT(*) as tot_in_app FROM request_creation where ( cus_status >= 2 and cus_status NOT IN(4, 5, 8, 9, 10, 11, 12) ) and month(updated_date) = month('$month') and year(updated_date) = year('$month')";
+        $tot_in_app = "SELECT COUNT(*) as tot_in_app FROM request_creation req JOIN in_approval ia ON ia.req_id = req.req_id where (req.cus_status >= 2 and req.cus_status NOT IN(4, 5, 8, 7,9, 10, 11, 12) ) and month(ia.created_date) = month('$month') and year(ia.created_date) = year('$month')";
         $today_in_app = "SELECT COUNT(*) as today_in_app FROM request_creation where cus_status = 2 and date(updated_date) = '$today' ";
-        $tot_issue = "SELECT COUNT(*) as tot_issue FROM request_creation req JOIN customer_profile cp ON cp.req_id = req.req_id WHERE req.cus_status >= 14 and month(req.updated_date) = month('$month') and year(req.updated_date) = year('$month')";
-        $today_issue = "SELECT COUNT(*) as today_issue FROM request_creation req JOIN customer_profile cp ON cp.req_id = req.req_id WHERE req.cus_status >= 14 and date(req.updated_date) = '$today' ";
+        $tot_issue = "SELECT COUNT(*) as tot_issue FROM request_creation req JOIN customer_profile cp ON cp.req_id = req.req_id JOIN in_issue ii ON req.req_id = ii.req_id WHERE ii.cus_status >= 14 AND month(ii.updated_date) = month('$month') and year(ii.updated_date) = year('$month')";
+        $today_issue = "SELECT COUNT(*) as today_issue FROM request_creation req JOIN customer_profile cp ON cp.req_id = req.req_id JOIN in_issue ii ON req.req_id = ii.req_id WHERE ii.cus_status >= 14 AND date(ii.updated_date) = '$today'  ";
         $tot_app_bal = "SELECT COUNT(*) as tot_app_bal FROM request_creation where (cus_status < 14 and cus_status >= 2 and cus_status NOT IN(4, 5, 6, 7, 8, 9, 10, 11, 12) ) and month(updated_date) = month('$month') and year(updated_date) = year('$month')";
         $today_app_bal = "SELECT COUNT(*) as today_app_bal FROM request_creation where cus_status = 2 and date(updated_date) = '$today' ";
         $tot_cancel = "SELECT COUNT(*) as tot_cancel from request_creation where cus_status = 6 and month(updated_date) = month('$month') and year(updated_date) = year('$month')";
         $today_cancel = "SELECT COUNT(*) as today_cancel from request_creation where cus_status = 6 and date(updated_date) = '$today' ";
-        $tot_new = "SELECT COUNT(*) as tot_new from request_creation where (cus_status < 14 and cus_status >= 2 and cus_status NOT IN(4, 5, 6, 7, 8, 9, 10, 11, 12) ) and cus_data = 'New' and month(updated_date) = month('$month') and year(updated_date) = year('$month')";
+        $tot_new = "SELECT COUNT(*) as tot_new from request_creation req JOIN in_approval ia ON ia.req_id = req.req_id where (req.cus_status >= 2 and req.cus_status NOT IN(4, 5, 8, 7,9, 10, 11, 12) ) and req.cus_data = 'New' and month(ia.created_date) = month('$month') and year(ia.created_date) = year('$month')";
         $today_new = "SELECT COUNT(*) as today_new from request_creation where cus_status = 2 and cus_data = 'New' and date(updated_date) = '$today' ";
-        $tot_existing = "SELECT COUNT(*) as tot_existing from request_creation where (cus_status < 14 and cus_status >= 2 and cus_status NOT IN(4, 5, 6, 7, 8, 9, 10, 11, 12) ) and cus_data = 'Existing' and month(updated_date) = month('$month') and year(updated_date) = year('$month')";
+        $tot_existing = "SELECT COUNT(*) as tot_existing from request_creation req JOIN in_approval ia ON ia.req_id = req.req_id where (req.cus_status >= 2 and req.cus_status NOT IN(4, 5, 8, 7,9, 10, 11, 12) ) and req.cus_data = 'Existing'and month(ia.created_date) = month('$month') and year(ia.created_date) = year('$month')";
         $today_existing = "SELECT COUNT(*) as today_existing from request_creation where cus_status = 2 and cus_data = 'Existing' and date(updated_date) = '$today' ";
 
         if (empty($sub_area_list)) {
             $sub_area_list = $this->getUserGroupBasedSubArea($connect, $this->user_id);
         }
 
-        $tot_in_app .= " AND sub_area IN ($sub_area_list) ";
+        $tot_in_app .= " AND req.sub_area IN ($sub_area_list) ";
         $today_in_app .= " AND sub_area IN ($sub_area_list) ";
         $tot_issue .= " AND ( CASE WHEN cp.area_confirm_subarea IS NOT NULL THEN cp.area_confirm_subarea IN ($sub_area_list) ELSE TRUE END )";
         $today_issue .= " AND ( CASE WHEN cp.area_confirm_subarea IS NOT NULL THEN cp.area_confirm_subarea IN ($sub_area_list) ELSE TRUE END )";
@@ -39,12 +40,25 @@ class approvalClass
         $today_app_bal .= " AND sub_area IN ($sub_area_list) ";
         $tot_cancel .= " AND sub_area IN ($sub_area_list) ";
         $today_cancel .= " AND sub_area IN ($sub_area_list) ";
-        $tot_new .= " AND sub_area IN ($sub_area_list) ";
+        $tot_new .= " AND req.sub_area IN ($sub_area_list) ";
         $today_new .= " AND sub_area IN ($sub_area_list) ";
-        $tot_existing .= " AND sub_area IN ($sub_area_list) ";
+        $tot_existing .= " AND req.sub_area IN ($sub_area_list) ";
         $today_existing .= " AND sub_area IN ($sub_area_list) ";
 
-
+        if (!empty($loan_category) && $loan_category != 0) {
+            $tot_in_app .= " AND req.loan_category = '$loan_category' ";
+            $today_in_app .= "AND loan_category = '$loan_category' ";
+            $tot_issue .= " AND req.loan_category = '$loan_category'";
+            $today_issue .= " AND req.loan_category = '$loan_category'";
+            $tot_app_bal .= " AND  loan_category = '$loan_category' ";
+            $today_app_bal .= " AND loan_category = '$loan_category' ";
+            $tot_cancel .= " AND loan_category = '$loan_category' ";
+            $today_cancel .= " AND loan_category = '$loan_category' ";
+            $tot_new .= " AND req.loan_category = '$loan_category' ";
+            $today_new .= " AND loan_category = '$loan_category' ";
+            $tot_existing .= " AND req.loan_category = '$loan_category' ";
+            $today_existing .= " AND loan_category = '$loan_category' ";
+        }
         $tot_in_appQry = $connect->query($tot_in_app);
         $today_in_appQry = $connect->query($today_in_app);
         $tot_issueQry = $connect->query($tot_issue);

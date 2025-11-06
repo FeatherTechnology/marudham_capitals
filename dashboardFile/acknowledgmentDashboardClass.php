@@ -13,18 +13,19 @@ class acknowledgmentClass
         $today = date('Y-m-d');
         $month = (isset($_POST['month']) && $_POST['month'] != '') ? date('Y-m-01', strtotime($_POST['month'])) : date('Y-m-01');
         $sub_area_list = $_POST['sub_area_list'];
+        $loan_category = $_POST['loan_category'];
 
-        $tot_in_ack = "SELECT COUNT(*) as tot_in_ack FROM request_creation where ( cus_status >= 3 and cus_status NOT IN(4, 5, 6, 8, 9, 10, 11, 12) ) and month(updated_date) = month('$month') and year(updated_date) = year('$month')";
+        $tot_in_ack = "SELECT COUNT(*) as tot_in_ack FROM request_creation req JOIN in_acknowledgement ia ON ia.req_id = req.req_id where ( req.cus_status >= 3 and req.cus_status NOT IN(4, 5, 6, 8, 9, 10, 11, 12) ) and month(ia.inserted_date) = month('$month') and year(ia.inserted_date) = year('$month')";
         $today_in_ack = "SELECT COUNT(*) as today_in_ack FROM request_creation where cus_status = 3 and date(updated_date) = '$today' ";
-        $tot_issue = "SELECT COUNT(*) as tot_issue FROM request_creation req JOIN acknowlegement_customer_profile cp ON cp.req_id = req.req_id WHERE req.cus_status >= 14 and month(req.updated_date) = month('$month') and year(req.updated_date) = year('$month')";
-        $today_issue = "SELECT COUNT(*) as today_issue FROM request_creation req JOIN acknowlegement_customer_profile cp ON cp.req_id = req.req_id WHERE req.cus_status >= 14 and date(req.updated_date) = '$today' ";
+        $tot_issue = "SELECT COUNT(*) as tot_issue FROM request_creation req JOIN customer_profile cp ON cp.req_id = req.req_id JOIN in_issue ii ON req.req_id = ii.req_id WHERE ii.cus_status >= 14 AND month(ii.updated_date) = month('$month') and year(ii.updated_date) = year('$month')";
+        $today_issue = "SELECT COUNT(*) as today_issue FROM request_creation req JOIN customer_profile cp ON cp.req_id = req.req_id JOIN in_issue ii ON req.req_id = ii.req_id WHERE ii.cus_status >= 14 AND date(ii.updated_date) = '$today' ";
         $tot_ack_bal = "SELECT COUNT(*) as tot_ack_bal FROM request_creation where (cus_status < 14 and cus_status >= 3 and cus_status NOT IN(4, 5, 6, 7, 8, 9, 10, 11, 12) ) and month(updated_date) = month('$month') and year(updated_date) = year('$month')";
         $today_ack_bal = "SELECT COUNT(*) as today_ack_bal FROM request_creation where cus_status = 3 and date(updated_date) = '$today' ";
         $tot_cancel = "SELECT COUNT(*) as tot_cancel from request_creation where cus_status = 7 and month(updated_date) = month('$month') and year(updated_date) = year('$month')";
         $today_cancel = "SELECT COUNT(*) as today_cancel from request_creation where cus_status = 7 and date(updated_date) = '$today' ";
-        $tot_new = "SELECT COUNT(*) as tot_new from request_creation where (cus_status < 14 and cus_status >= 3 and cus_status NOT IN(4, 5, 6, 7, 8, 9, 10, 11, 12) ) and cus_data = 'New' and month(updated_date) = month('$month') and year(updated_date) = year('$month')";
-        $today_new = "SELECT COUNT(*) as today_new from request_creation where cus_status = 3 and cus_data = 'New' and date(updated_date) = '$today' ";
-        $tot_existing = "SELECT COUNT(*) as tot_existing from request_creation where (cus_status < 14 and cus_status >= 3 and cus_status NOT IN(4, 5, 6, 7, 8, 9, 10, 11, 12) ) and cus_data = 'Existing' and month(updated_date) = month('$month') and year(updated_date) = year('$month')";
+        $tot_new = "SELECT COUNT(*) as tot_new from request_creation req  JOIN in_acknowledgement ia ON ia.req_id = req.req_id where (req.cus_status >= 3 and req.cus_status NOT IN(4, 5, 6, 8, 9, 10, 11, 12) ) and req.cus_data = 'New' and  month(ia.inserted_date) = month('$month') and year(ia.inserted_date) = year('$month') ";
+        $today_new = "SELECT COUNT(*) as today_new from request_creation  where cus_status = 3 and cus_data = 'New' and date(updated_date) = '$today' ";
+        $tot_existing = "SELECT COUNT(*) as tot_existing from request_creation req  JOIN in_acknowledgement ia ON ia.req_id = req.req_id where (req.cus_status >= 3 and req.cus_status NOT IN(4, 5, 6, 8, 9, 10, 11, 12) ) and req.cus_data = 'Existing' and  month(ia.inserted_date) = month('$month') and year(ia.inserted_date) = year('$month')";
         $today_existing = "SELECT COUNT(*) as today_existing from request_creation where cus_status = 3 and cus_data = 'Existing' and date(updated_date) = '$today' ";
 
         if (empty($sub_area_list)) {
@@ -39,11 +40,24 @@ class acknowledgmentClass
         $today_ack_bal .= " AND sub_area IN ($sub_area_list) ";
         $tot_cancel .= " AND sub_area IN ($sub_area_list) ";
         $today_cancel .= " AND sub_area IN ($sub_area_list) ";
-        $tot_new .= " AND sub_area IN ($sub_area_list) ";
+        $tot_new .= " AND req.sub_area IN ($sub_area_list) ";
         $today_new .= " AND sub_area IN ($sub_area_list) ";
-        $tot_existing .= " AND sub_area IN ($sub_area_list) ";
+        $tot_existing .= " AND req.sub_area IN ($sub_area_list) ";
         $today_existing .= " AND sub_area IN ($sub_area_list) ";
-
+        if (!empty($loan_category) && $loan_category != 0) {
+            $tot_in_ack .= " AND req.loan_category = '$loan_category' ";
+            $today_in_ack .= " AND loan_category = '$loan_category' ";
+            $tot_issue .= " AND req.loan_category = '$loan_category'";
+            $today_issue .= "  AND req.loan_category = '$loan_category' ";
+            $tot_ack_bal .= "  AND loan_category = '$loan_category' ";
+            $today_ack_bal .= "  AND loan_category = '$loan_category' ";
+            $tot_cancel .= "  AND loan_category = '$loan_category' ";
+            $today_cancel .= "  AND loan_category = '$loan_category' ";
+            $tot_new .= "  AND req.loan_category = '$loan_category' ";
+            $today_new .= "  AND loan_category = '$loan_category' ";
+            $tot_existing .= "  AND req.loan_category = '$loan_category' ";
+            $today_existing .= "  AND loan_category = '$loan_category' ";
+        }
 
         $tot_in_ackQry = $connect->query($tot_in_ack);
         $today_in_ackQry = $connect->query($today_in_ack);

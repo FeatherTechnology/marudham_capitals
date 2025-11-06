@@ -15,20 +15,21 @@ class RequestClass
         $today = date('Y-m-d');
         $month = (isset($_POST['month']) && $_POST['month'] != '') ? date('Y-m-01', strtotime($_POST['month'])) : date('Y-m-01');
         $sub_area_list = $_POST['sub_area_list'];
+        $loan_category = $_POST['loan_category'];
 
         //all the above queries without $connect->query(). just query as string like $req_query = "SELECT count(*) as tot_req FROM request_creation WHERE insert_login_id = '$this->user_id' "
         $req_query = "SELECT count(*) as tot_req FROM request_creation WHERE 1 and month(created_date) = month('$month') and year(created_date) = year('$month')";
-        $issue_query = "SELECT count(*) as tot_issue FROM request_creation WHERE cus_status >= 14 and month(created_date) = month('$month') and year(created_date) = year('$month')";
+        $issue_query = "SELECT count(*) as tot_issue FROM request_creation req JOIN in_issue ii ON req.req_id = ii.req_id WHERE ii.cus_status >= 14 AND month(ii.updated_date) = month('$month') and year(ii.updated_date) = year('$month')";
         $balance_query = "SELECT count(*) as tot_balance FROM request_creation WHERE (cus_status < 14 and cus_status NOT IN(4, 5, 6, 7, 8, 9) ) and month(created_date) = month('$month') and year(created_date) = year('$month')";
-        $cancel_query = "SELECT count(*) as tot_cancel FROM request_creation WHERE cus_status = 4 and month(created_date) = month('$month') and year(created_date) = year('$month')";
-        $revoke_query = "SELECT count(*) as tot_revoke FROM request_creation WHERE cus_status = 8 and month(created_date) = month('$month') and year(created_date) = year('$month')";
+        $cancel_query = "SELECT count(*) as tot_cancel FROM request_creation WHERE cus_status = 4 and month(updated_date) = month('$month') and year(updated_date) = year('$month')";
+        $revoke_query = "SELECT count(*) as tot_revoke FROM request_creation WHERE cus_status = 8 and month(updated_date) = month('$month') and year(updated_date) = year('$month')";
         $new_query = "SELECT count(*) as tot_new FROM request_creation WHERE cus_data = 'New' and month(created_date) = month('$month') and year(created_date) = year('$month')";
         $existing_query = "SELECT count(*) as tot_existing FROM request_creation WHERE cus_data = 'Existing' and month(created_date) = month('$month') and year(created_date) = year('$month')";
         $today_req_query = "SELECT count(*) as today_req FROM request_creation WHERE date(created_date) = '$today' ";
-        $today_issue_query = "SELECT count(*) as today_issue FROM request_creation WHERE cus_status >= 14 AND date(created_date) = '$today' ";
+        $today_issue_query = "SELECT count(*) as today_issue  FROM request_creation req JOIN in_issue ii ON req.req_id = ii.req_id WHERE ii.cus_status >= 14 AND date(ii.updated_date) = '$today' ";
         $today_balance_query = "SELECT count(*) as today_balance FROM request_creation WHERE (cus_status < 14 and cus_status NOT IN(4, 5, 6, 7, 8, 9)) AND date(created_date) = '$today'";
-        $today_cancel_query = "SELECT count(*) as today_cancel FROM request_creation WHERE cus_status = 4 AND date(created_date) = '$today' ";
-        $today_revoke_query = "SELECT count(*) as today_revoke FROM request_creation WHERE cus_status = 8 AND date(created_date) = '$today' ";
+        $today_cancel_query = "SELECT count(*) as today_cancel FROM request_creation WHERE cus_status = 4 AND date(updated_date) = '$today' ";
+        $today_revoke_query = "SELECT count(*) as today_revoke FROM request_creation WHERE cus_status = 8 AND date(updated_date) = '$today' ";
         $today_new_query = "SELECT count(*) as today_new FROM request_creation WHERE cus_data = 'New' AND date(created_date) = '$today' ";
         $today_existing_query = "SELECT count(*) as today_existing FROM request_creation WHERE cus_data = 'Existing' AND date(created_date) = '$today' ";
 
@@ -37,35 +38,52 @@ class RequestClass
         if (!empty($sub_area_list)) {
             //if the sub area list is empty then no need to add it to the query
             $req_query .= " AND sub_area IN ($sub_area_list) ";
-            $issue_query .= " AND sub_area IN ($sub_area_list) ";
+            $issue_query .= " AND req.sub_area IN ($sub_area_list) ";
             $balance_query .= " AND sub_area IN ($sub_area_list) ";
             $cancel_query .= " AND sub_area IN ($sub_area_list) ";
             $revoke_query .= " AND sub_area IN ($sub_area_list) ";
             $new_query .= " AND sub_area IN ($sub_area_list) ";
             $existing_query .= " AND sub_area IN ($sub_area_list) ";
             $today_req_query .= " AND sub_area IN ($sub_area_list) ";
-            $today_issue_query .= " AND sub_area IN ($sub_area_list) ";
+            $today_issue_query .= " AND req.sub_area IN ($sub_area_list) ";
             $today_balance_query .= " AND sub_area IN ($sub_area_list) ";
             $today_cancel_query .= " AND sub_area IN ($sub_area_list) ";
             $today_revoke_query .= " AND sub_area IN ($sub_area_list) ";
             $today_new_query .= " AND sub_area IN ($sub_area_list) ";
             $today_existing_query .= " AND sub_area IN ($sub_area_list) ";
         } else {
-            //add insert_login_id = '$this->user_id' in where clause to the above queries
+            // add insert_login_id = '$this->user_id' in where clause to the above queries
             $req_query .= " AND insert_login_id = '$this->user_id' ";
-            $issue_query .= " AND insert_login_id = '$this->user_id' ";
+            $issue_query .= " AND req.insert_login_id = '$this->user_id' ";
             $balance_query .= " AND insert_login_id = '$this->user_id' ";
             $cancel_query .= " AND insert_login_id = '$this->user_id' ";
             $revoke_query .= " AND insert_login_id = '$this->user_id' ";
             $new_query .= " AND insert_login_id = '$this->user_id' ";
             $existing_query .= " AND insert_login_id = '$this->user_id' ";
             $today_req_query .= " AND insert_login_id = '$this->user_id' ";
-            $today_issue_query .= " AND insert_login_id = '$this->user_id' ";
+            $today_issue_query .= " AND req.insert_login_id = '$this->user_id' ";
             $today_balance_query .= " AND insert_login_id = '$this->user_id' ";
             $today_cancel_query .= " AND insert_login_id = '$this->user_id' ";
             $today_revoke_query .= " AND insert_login_id = '$this->user_id' ";
             $today_new_query .= " AND insert_login_id = '$this->user_id' ";
             $today_existing_query .= " AND insert_login_id = '$this->user_id' ";
+        }
+        if (!empty($loan_category) && $loan_category != 0) {
+            //add loan_category = '$loan_category'  in where clause to the above queries
+            $req_query .= " AND loan_category = '$loan_category' ";
+            $issue_query .= " AND req.loan_category = '$loan_category' ";
+            $balance_query .= "AND loan_category = '$loan_category' ";
+            $cancel_query .= " AND loan_category = '$loan_category' ";
+            $revoke_query .= " AND loan_category = '$loan_category' ";
+            $new_query .= " AND loan_category = '$loan_category' ";
+            $existing_query .= " AND loan_category = '$loan_category' ";
+            $today_req_query .= " AND loan_category = '$loan_category' ";
+            $today_issue_query .= " AND req.loan_category = '$loan_category' ";
+            $today_balance_query .= " AND loan_category = '$loan_category' ";
+            $today_cancel_query .= " AND loan_category = '$loan_category' ";
+            $today_revoke_query .= " AND loan_category = '$loan_category' ";
+            $today_new_query .= " AND loan_category = '$loan_category' ";
+            $today_existing_query .= " AND loan_category = '$loan_category' ";
         }
         //now run the above queries and store it like before in reponse variable
         $qry = $connect->query($req_query);
