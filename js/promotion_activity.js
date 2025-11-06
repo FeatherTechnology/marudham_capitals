@@ -15,7 +15,7 @@ $(document).ready(function () {
         $(this).addClass("active");
 
         var typevalue = this.value;
-        $('.existing_card, .new_card, .new_promo_card, .loan-history-card, .doc-history-card, #close_history_card, .repromotion_card, .filter_card').hide();
+        $('.existing_card, .new_card, .new_promo_card, .customer-status-card, .loan-history-card, .doc-history-card, #close_history_card, .repromotion_card, .filter_card').hide();
         // $('#follow_up_sts, #date_type, #follow_up_fromdate, #follow_up_todate').val('');
         if (typevalue == 'New') {
             $('.new_card, .new_promo_card').show()
@@ -859,7 +859,14 @@ function showPromotionList(url, tableid, colNo) {
         dom: 'lBfrtip',
         buttons: [{
             extend: 'excel',
-            title: "Promotion List"
+            title: "Promotion List",
+            action: function (e, dt, button, config) {
+                var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                var dynamic = curDateJs(tableid); // or any base
+                config.title = dynamic;      // for versions that use title as filename
+                config.filename = dynamic;   // for html5 filename
+                defaultAction.call(this, e, dt, button, config);
+            }
         },
         {
             extend: 'colvis',
@@ -874,7 +881,7 @@ function showPromotionList(url, tableid, colNo) {
              let searchInput = $('#' + tableid + '_filter input');
             searchInput.attr('id', tableid + '_search').addClass('custo-search');
             searchFunction(tableid);
-           paginationFunction(tableid);
+            paginationFunction(tableid);
             intNotintOnclick();
             promoChartOnclick();
             promotionListOnclick();
@@ -1164,9 +1171,20 @@ function eventsTable() {
             "iDisplayLength": 10,
             "lengthMenu": [[10, 25, 50, -1],[10, 25, 50, "All"]],
             dom: 'lBfrtip',
-            buttons: [
-                { extend: 'excel' },
-                { extend: 'colvis', collectionLayout: 'fixed four-column' }
+            buttons: [{ 
+                    extend: 'excel', 
+                    action: function (e, dt, button, config) {
+                        var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                        var dynamic = curDateJs('Event_list'); // or any base
+                        config.title = dynamic;      // for versions that use title as filename
+                        config.filename = dynamic;   // for html5 filename
+                        defaultAction.call(this, e, dt, button, config);
+                    } 
+                },
+                { 
+                    extend: 'colvis', 
+                    collectionLayout: 'fixed four-column' 
+                }
             ]
         });
     });

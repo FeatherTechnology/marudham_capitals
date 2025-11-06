@@ -2693,8 +2693,7 @@ function getDocumentHistory() {
         type: 'post',
         cache: false,
         success: function (response) {
-            if(response.DESCRIPTION != null ){//check json response is not empty
-
+            if (response.length != 0) {//check json response is not empty
 
             for (var i = 0; i < response['pending_customer'].length; i++) {
                 pending_arr[i] = response['pending_customer'][i]
@@ -2885,6 +2884,13 @@ function resetSignedDocList(req_id, cus_id) {
             dom: 'lBfrtip',
             buttons: [{
                 extend: 'excel',
+                action: function (e, dt, button, config) {
+                    var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                    var dynamic = curDateJs('Signed_Doc_info'); // or any base
+                    config.title = dynamic;      // for versions that use title as filename
+                    config.filename = dynamic;   // for html5 filename
+                    defaultAction.call(this, e, dt, button, config);
+                }
             },
             {
                 extend: 'colvis',
@@ -2943,6 +2949,13 @@ function resetChequeList(req_id, cus_id) {
             dom: 'lBfrtip',
             buttons: [{
                 extend: 'excel',
+                action: function (e, dt, button, config) {
+                    var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                    var dynamic = curDateJs('Cheque_info'); // or any base
+                    config.title = dynamic;      // for versions that use title as filename
+                    config.filename = dynamic;   // for html5 filename
+                    defaultAction.call(this, e, dt, button, config);
+                }
             },
             {
                 extend: 'colvis',
@@ -2998,6 +3011,13 @@ function resetGoldList(req_id, cus_id) {
             dom: 'lBfrtip',
             buttons: [{
                 extend: 'excel',
+                action: function (e, dt, button, config) {
+                    var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                    var dynamic = curDateJs('Gold_info'); // or any base
+                    config.title = dynamic;      // for versions that use title as filename
+                    config.filename = dynamic;   // for html5 filename
+                    defaultAction.call(this, e, dt, button, config);
+                }
             },
             {
                 extend: 'colvis',
@@ -3055,6 +3075,13 @@ function resetDocmentList(req_id, cus_id) {
             dom: 'lBfrtip',
             buttons: [{
                 extend: 'excel',
+                action: function (e, dt, button, config) {
+                    var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                    var dynamic = curDateJs('Document_info'); // or any base
+                    config.title = dynamic;      // for versions that use title as filename
+                    config.filename = dynamic;   // for html5 filename
+                    defaultAction.call(this, e, dt, button, config);
+                }
             },
             {
                 extend: 'colvis',

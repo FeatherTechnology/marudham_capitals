@@ -73,7 +73,7 @@ $qry = $connect->query("
         JOIN sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
         JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
     WHERE 
-        (ii.cus_status >= 14 && ii.cus_status < 20) AND lc.due_type = 'EMI'
+        (ii.cus_status >= 14 && ii.cus_status < 20) AND lc.due_type != 'Interest'
         AND (lc.due_method_scheme = 1 or lc.due_method_scheme = null or lc.due_method_scheme = '' )
         and (month(lc.due_start_from) = month('$monthly_date') and year(lc.due_start_from) = year('$monthly_date') ) $user_based");
 
@@ -210,7 +210,7 @@ $months = generateMonths($startDate, $endDate);
 <script type='text/javascript'>
     $(function() {
         $('#monthly_table').DataTable({
-            "title": "Monthly Ledger",
+            "title": "Monthly Ledger Report",
             'processing': true,
             'iDisplayLength': 10,
             "lengthMenu": [
@@ -220,6 +220,13 @@ $months = generateMonths($startDate, $endDate);
             dom: 'lBfrtip',
             buttons: [{
                     extend: 'excel',
+                    action: function (e, dt, button, config) {
+                        var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                        var dynamic = curDateJs('Monthly_Ledger_report'); // or any base
+                        config.title = dynamic;      // for versions that use title as filename
+                        config.filename = dynamic;   // for html5 filename
+                        defaultAction.call(this, e, dt, button, config);
+                    }
                 },
                 {
                     extend: 'colvis',

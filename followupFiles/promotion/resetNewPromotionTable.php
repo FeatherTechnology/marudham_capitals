@@ -133,9 +133,20 @@ if ($role_type == 7 || $role_type == 3) {
             [10, 25, 50, "All"]
         ],
         dom: 'lBfrtip',
-        buttons: [
-            { extend: 'excel' },
-            { extend: 'colvis', collectionLayout: 'fixed four-column' }
+        buttons: [{ 
+                extend: 'excel',
+                action: function (e, dt, button, config) {
+                    var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                    var dynamic = curDateJs('New_Promotion'); // or any base
+                    config.title = dynamic;      // for versions that use title as filename
+                    config.filename = dynamic;   // for html5 filename
+                    defaultAction.call(this, e, dt, button, config);
+                }
+            },
+            { 
+                extend: 'colvis', 
+                collectionLayout: 'fixed four-column' 
+            }
         ],
         'drawCallback': function() {
             searchFunction('new_promo_table');

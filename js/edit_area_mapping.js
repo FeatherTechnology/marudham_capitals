@@ -51,7 +51,14 @@ function dT1() {
         buttons: [
             {
                 extend: 'excel',
-                title: "Line List"
+                title: "Line List",
+                action: function (e, dt, button, config) {
+                    var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                    var dynamic = curDateJs('Line_List'); // or any base
+                    config.title = dynamic;      // for versions that use title as filename
+                    config.filename = dynamic;   // for html5 filename
+                    defaultAction.call(this, e, dt, button, config);
+                }
             },
             {
                 extend: 'colvis',
@@ -91,7 +98,14 @@ function dT2(){
         buttons: [
             {
                 extend: 'excel',
-                title: "Group List"
+                title: "Group List",
+                action: function (e, dt, button, config) {
+                    var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                    var dynamic = curDateJs('Group_List'); // or any base
+                    config.title = dynamic;      // for versions that use title as filename
+                    config.filename = dynamic;   // for html5 filename
+                    defaultAction.call(this, e, dt, button, config);
+                }
             },
             {
                 extend: 'colvis',
@@ -131,7 +145,14 @@ function dT3() {
         buttons: [
             {
                 extend: 'excel',
-                title: "Group List"
+                title: "Due Followup List",
+                action: function (e, dt, button, config) {
+                    var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                    var dynamic = curDateJs('Due_followup_List'); // or any base
+                    config.title = dynamic;      // for versions that use title as filename
+                    config.filename = dynamic;   // for html5 filename
+                    defaultAction.call(this, e, dt, button, config);
+                }
             },
             {
                 extend: 'colvis',

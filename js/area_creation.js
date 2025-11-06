@@ -630,6 +630,13 @@ function getAreaBasedSubArea(area) {
             dom: 'lBfrtip',
             buttons: [{
                 extend: 'excel',
+                action: function (e, dt, button, config) {
+                    var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                    var dynamic = curDateJs('Area_table'); // or any base
+                    config.title = dynamic;      // for versions that use title as filename
+                    config.filename = dynamic;   // for html5 filename
+                    defaultAction.call(this, e, dt, button, config);
+                }
             },
             {
                 extend: 'colvis',
@@ -783,6 +790,13 @@ function getAreaBasedSubArea(area) {
             dom: 'lBfrtip',
             buttons: [{
                 extend: 'excel',
+                action: function (e, dt, button, config) {
+                    var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                    var dynamic = curDateJs('SubArea_table'); // or any base
+                    config.title = dynamic;      // for versions that use title as filename
+                    config.filename = dynamic;   // for html5 filename
+                    defaultAction.call(this, e, dt, button, config);
+                }
             },
             {
                 extend: 'colvis',

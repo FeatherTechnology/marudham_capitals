@@ -73,7 +73,7 @@ $qry = $connect->query("
         JOIN sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
         JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
     WHERE 
-        (ii.cus_status >= 14 && ii.cus_status < 20) AND lc.due_type = 'EMI' AND lc.due_method_scheme = 2 and date(lc.due_start_from) = '$weekly_date' $user_based ");
+        (ii.cus_status >= 14 && ii.cus_status < 20) AND lc.due_type != 'Interest' AND lc.due_method_scheme = 2 and date(lc.due_start_from) = '$weekly_date' $user_based ");
 
 $rows = array();
 while ($row = $qry->fetch()) {
@@ -211,7 +211,7 @@ $weeks = generateWeeks($startDate, $endDate);
 <script type='text/javascript'>
     $(function() {
         $('#weekly_table').DataTable({
-            "title": "Daily Ledger",
+            "title": "Weekly Ledger Report",
             'processing': true,
             'iDisplayLength': 10,
             "lengthMenu": [
@@ -221,6 +221,13 @@ $weeks = generateWeeks($startDate, $endDate);
             dom: 'lBfrtip',
             buttons: [{
                     extend: 'excel',
+                    action: function (e, dt, button, config) {
+                        var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                        var dynamic = curDateJs('Weekly_Ledger_report'); // or any base
+                        config.title = dynamic;      // for versions that use title as filename
+                        config.filename = dynamic;   // for html5 filename
+                        defaultAction.call(this, e, dt, button, config);
+                    }
                 },
                 {
                     extend: 'colvis',

@@ -185,7 +185,7 @@ $query = " SELECT
         GROUP BY req_id ) ch ON ch.req_id = c.req_id    
     $where
     GROUP BY c.req_id ) c ON c.req_id = iv.req_id
-        WHERE lc.req_id IN ($req_id_list) AND lc.due_type = 'EMI' ";
+        WHERE lc.req_id IN ($req_id_list) AND lc.due_type != 'Interest' ";
 
 if(isset($_POST['loan_cat'])){
     $loan_cat_str = "'" . implode("','", $_POST['loan_cat']) . "'";

@@ -1701,6 +1701,9 @@ if ($opening_bal != '') {
 
 <script type='text/javascript'>
     $(function() {
+        const sheetType = { '' : "Balance_Sheet", '1' : "Contra_Balance_Sheet", '2' : "Exchange_Balance_Sheet", '3' : "Other_income_Balance_Sheet", '4' : "Expense_Balance_Sheet", '5' : "Inv/Dep/EL_Balance_Sheet", '6' : "Excess_Fund_Balance_Sheet", '7' : "Agent_Balance_Sheet" };
+        const sheetValue = <?php echo json_encode($sheet_type); ?>;
+
         $('#blncSheetTable').DataTable({
             'processing': true,
             'iDisplayLength': 5,
@@ -1711,6 +1714,13 @@ if ($opening_bal != '') {
             dom: 'lBfrtip',
             buttons: [{
                     extend: 'excel',
+                    action: function (e, dt, button, config) {
+                        var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                        var dynamic = curDateJs(sheetType[sheetValue]); // or any base
+                        config.title = dynamic;      // for versions that use title as filename
+                        config.filename = dynamic;   // for html5 filename
+                        defaultAction.call(this, e, dt, button, config);
+                    }
                 },
                 {
                     extend: 'colvis',
