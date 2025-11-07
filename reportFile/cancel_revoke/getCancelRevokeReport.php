@@ -39,7 +39,7 @@ $where = "1";
 if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'] != '' && $_POST['to_date'] != '') {
     $from_date = date('Y-m-d', strtotime($_POST['from_date']));
     $to_date = date('Y-m-d', strtotime($_POST['to_date']));
-    $where  = "(date(req.dor) >= '" . $from_date . "') and (date(req.dor) <= '" . $to_date . "') ";
+    $where  = "(date(req.updated_date) >= '" . $from_date . "') and (date(req.updated_date) <= '" . $to_date . "') ";
 }
 
 $where  .= $user_based;
@@ -48,6 +48,7 @@ $cus_status = "";
 $join_condition = "";
 $ag_join = "req.agent_id";
 $role_arr = [1 => 'Director', 2 => 'Agent', 3 => 'Staff'];
+
 // Check if type and sel_screen are selected by the user
 if (isset($_POST['type']) && isset($_POST['sel_screen'])) {
     $type = $_POST['type'];
@@ -132,21 +133,32 @@ $column = array(
     'req.loan_amt',
     'u.role',
     'u.fullname',
-    'req.req_id',
+    'ag.ag_name',
     'req.responsible',
     'req.cus_data',
-    'req.req_id',
+    'req.updated_date',
+    'req.cus_status',
     'req.prompt_remark'
 );
 $query = "SELECT 
-    req.*,
+    req.req_code,
+    req.dor,
+    req.cus_id,
     cr.autogen_cus_id,
+    req.cus_name,
     al.area_name,
     sal.sub_area_name,
     lcc.loan_category_creation_name,
-    ag.ag_name,
+    req.sub_category,
+    req.loan_amt,
     u.role,
-    u.fullname
+    u.fullname,
+    ag.ag_name,
+    req.responsible,
+    req.cus_data,
+    req.updated_date,
+    req.cus_status,
+    req.prompt_remark
 FROM 
     request_creation req 
 $join_condition
@@ -183,7 +195,6 @@ if (isset($_POST['search'])) {
                 req.cus_data LIKE '%" . $_POST['search'] . "%' ) ";
     }
 }
-
 
 if (isset($_POST['order'])) {
     $query .= " ORDER BY " . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'];
@@ -229,6 +240,7 @@ foreach ($result as $row) {
     $sub_array[] = $row['ag_name'];
     $sub_array[] = ($row['responsible'] == '0') ? 'Yes' : 'No';
     $sub_array[] = $row['cus_data'];
+    $sub_array[] = date('d-m-Y', strtotime($row['updated_date']));
     $sub_array[] = $statusLabels[$row['cus_status']];
     $sub_array[] = $row['prompt_remark'];
 

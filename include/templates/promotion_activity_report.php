@@ -4,8 +4,8 @@
     <div style="background-color:#009688; width:100%; padding:12px; color: #ffff; font-size: 20px; border-radius:5px;">
         Marudham Capitals - Promotion Activity Report
     </div>
-
 </div><br>
+
 <!-- Main container start -->
 <div class="main-container">
     <!--form start-->
