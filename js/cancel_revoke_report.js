@@ -16,7 +16,8 @@ $(document).ready(function () {
 
     $('#type').change(function () {
         let type = $(this).val();
-        
+        $('#sel_screen').val('');
+
         if(type == '1'){ // If Cancel is selected
             $('#sel_screen .all-options').show(); 
             $('#sel_screen .cancel-option').show(); 
@@ -26,7 +27,7 @@ $(document).ready(function () {
             $('#sel_screen .cancel-option').show(); 
         }
     });
-    // var cancel_revoke_table = 
+
     $('#reset_btn').click(function () {
         // Get the values of the input fields
         var from_date = $('#from_date').val();
@@ -40,7 +41,6 @@ $(document).ready(function () {
             swalError('Warning','Please select all required fields')
         } else {
             // If all fields are filled, reload the table
-            // cancel_revoke_table.ajax.reload();
             cancelRevokeTable();
         }
     });

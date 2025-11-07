@@ -177,90 +177,114 @@ if ($result->rowCount() > 0) {
 function getCollectionStatus($connect, $cus_id, $user_id, $req_id)
 {
 
-    $pending_sts = isset($_POST["pending_sts"]) ? explode(',', $_POST["pending_sts"]) : null;
-    $od_sts = isset($_POST["od_sts"]) ? explode(',', $_POST["od_sts"]) : null;
-    $due_nil_sts = isset($_POST["due_nil_sts"]) ? explode(',', $_POST["due_nil_sts"]) : null;
-    $bal_amt = isset($_POST["bal_amt"]) ? explode(',', $_POST["bal_amt"]) : null;
-    $closed_sts = isset($_POST["closed_sts"]) ? explode(',', $_POST["closed_sts"]) : null;
-    $consider_lvl_arr = [1 => 'Bronze', 2 => 'Silver', 3 => 'Gold', 4 => 'Platinum', 5 => 'Diamond'];
+$pending_sts = isset($_POST["pending_sts"]) && $_POST["pending_sts"] !== '' ? explode(',', $_POST["pending_sts"]) : [];
+$od_sts = isset($_POST["od_sts"]) && $_POST["od_sts"] !== '' ? explode(',', $_POST["od_sts"]) : [];
+$due_nil_sts = isset($_POST["due_nil_sts"]) && $_POST["due_nil_sts"] !== '' ? explode(',', $_POST["due_nil_sts"]) : [];
+$bal_amt = isset($_POST["bal_amt"]) && $_POST["bal_amt"] !== '' ? explode(',', $_POST["bal_amt"]) : [];
+$closed_sts = isset($_POST["closed_sts"]) && $_POST["closed_sts"] !== '' ? explode(',', $_POST["closed_sts"]) : [];
+$consider_lvl_arr = [1 => 'Bronze', 2 => 'Silver', 3 => 'Gold', 4 => 'Platinum', 5 => 'Diamond'];
 
-    $retVal = '';
+$boolMapper = function ($value) {
+    return in_array(strtolower(trim((string)$value)), ['1', 'true', 'yes'], true);
+};
 
-    $run = $connect->query("SELECT lc.due_start_from,lc.loan_category,lc.sub_category,lc.loan_amt_cal,lc.due_amt_cal,lc.net_cash_cal,lc.collection_method,ii.loan_id,ii.req_id,ii.updated_date,ii.cus_status,
-        rc.agent_id,lcc.loan_category_creation_name as loan_catrgory_name, us.collection_access
-        from acknowlegement_loan_calculation lc JOIN in_issue ii ON lc.req_id = ii.req_id JOIN request_creation rc ON ii.req_id = rc.req_id 
-        JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id JOIN user us ON us.user_id = $user_id
-        WHERE lc.cus_id_loan = $cus_id and (ii.cus_status >= 14 and ii.cus_status < 20)"); //Customer status greater than or equal to 14 because, after issued data only we need
+$pending_sts = array_map($boolMapper, $pending_sts);
+$od_sts = array_map($boolMapper, $od_sts);
+$due_nil_sts = array_map($boolMapper, $due_nil_sts);
+$closed_sts = array_map($boolMapper, $closed_sts);
+$bal_amt = array_map(function ($value) {
+    $value = trim($value);
+    return $value === '' ? 0 : (float)$value;
+}, $bal_amt);
 
-    $curdate = date('Y-m-d');
-    while ($row = $run->fetch()) {
-        $i = 1;
-        if (date('Y-m-d', strtotime($row['due_start_from'])) > date('Y-m-d', strtotime($curdate)) and $bal_amt[$i - 1] != 0) { //If the start date is on upcoming date then the sub status is current, until current date reach due_start_from date.
-            if ($row['cus_status'] == '15') {
-                $retVal = 'Error';
-            } elseif ($row['cus_status'] == '16') {
-                $retVal = 'Legal';
-            } else {
-                $retVal = 'Current';
-            }
+$retVal = 'Current';
+
+$run = $connect->query("SELECT lc.due_start_from,lc.loan_category,lc.sub_category,lc.loan_amt_cal,lc.due_amt_cal,lc.net_cash_cal,lc.collection_method,ii.loan_id,ii.req_id,ii.updated_date,ii.cus_status,
+    rc.agent_id,lcc.loan_category_creation_name as loan_catrgory_name, us.collection_access
+    from acknowlegement_loan_calculation lc JOIN in_issue ii ON lc.req_id = ii.req_id JOIN request_creation rc ON ii.req_id = rc.req_id 
+    JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id JOIN user us ON us.user_id = $user_id
+    WHERE lc.cus_id_loan = $cus_id and (ii.cus_status >= 14 and ii.cus_status < 20) ORDER BY CAST(ii.req_id AS UNSIGNED) ASC"); //Customer status greater than or equal to 14 because, after issued data only we need
+
+$curdate = date('Y-m-d');
+$index = 0;
+
+while ($row = $run->fetch()) {
+    $currentBal = $bal_amt[$index] ?? 0;
+
+    if ($row['req_id'] != $req_id) {
+        $index++;
+        continue;
+    }
+
+    $isPending = $pending_sts[$index] ?? false;
+    $isOd = $od_sts[$index] ?? false;
+    $isDueNil = $due_nil_sts[$index] ?? false;
+    $isClosed = $closed_sts[$index] ?? false;
+
+    if (date('Y-m-d', strtotime($row['due_start_from'])) > $curdate && $currentBal != 0) { //If the start date is on upcoming date then the sub status is current, until current date reach due_start_from date.
+        if ($row['cus_status'] == '15') {
+            $retVal = 'Error';
+        } elseif ($row['cus_status'] == '16') {
+            $retVal = 'Legal';
         } else {
-            if ($row['cus_status'] <= 20) {
-                if ($pending_sts[$i - 1] == 'true' && $od_sts[$i - 1] == 'false') {
-                    if ($row['cus_status'] == '15') {
-                        $retVal = 'Error';
-                    } elseif ($row['cus_status'] == '16') {
-                        $retVal = 'Legal';
-                    } else {
-                        $retVal = 'Pending';
-                    }
-                } else if ($od_sts[$i - 1] == 'true' && $due_nil_sts[$i - 1] == 'false') {
-                    if ($row['cus_status'] == '15') {
-                        $retVal = 'Error';
-                    } elseif ($row['cus_status'] == '16') {
-                        $retVal = 'Legal';
-                    } else {
-                        $retVal = 'OD';
-                    }
-                } elseif ($due_nil_sts[$i - 1] == 'true') {
-                    if ($row['cus_status'] == '15') {
-                        $retVal = 'Error';
-                    } elseif ($row['cus_status'] == '16') {
-                        $retVal = 'Legal';
-                    } else {
-                        $retVal = 'Due Nil';
-                    }
-                } elseif ($pending_sts[$i - 1] == 'false') {
-                    if ($row['cus_status'] == '15') {
-                        $retVal = 'Error';
-                    } elseif ($row['cus_status'] == '16') {
-                        $retVal = 'Legal';
-                    } else {
-                        if ($closed_sts[$i - 1] == 'true') {
-                            $retVal = "Closed";
-                        } else {
-                            $retVal = 'Current';
-                        }
-                    }
+            $retVal = 'Current';
+        }
+    } else {
+        if ($row['cus_status'] <= 20) {
+            if ($isPending && !$isOd) {
+                if ($row['cus_status'] == '15') {
+                    $retVal = 'Error';
+                } elseif ($row['cus_status'] == '16') {
+                    $retVal = 'Legal';
+                } else {
+                    $retVal = 'Pending';
                 }
-            } else if ($row['cus_status'] > 20) { // if status is closed(21) or more than that(22), then show closed status
-                $closedSts = $connect->query("SELECT * FROM `closed_status` WHERE `req_id` ='" . strip_tags($req_id) . "' ");
-                $closedStsrow = $closedSts->fetch();
-                $rclosed = $closedStsrow['closed_sts'];
-                $consider_lvl = $closedStsrow['consider_level'];
-                if ($rclosed == '1') {
-                    $retVal = 'Consider - ' . $consider_lvl_arr[$consider_lvl];
+            } else if ($isOd && !$isDueNil) {
+                if ($row['cus_status'] == '15') {
+                    $retVal = 'Error';
+                } elseif ($row['cus_status'] == '16') {
+                    $retVal = 'Legal';
+                } else {
+                    $retVal = 'OD';
                 }
-                if ($rclosed == '2') {
-                    $retVal = 'Waiting List';
+            } elseif ($isDueNil) {
+                if ($row['cus_status'] == '15') {
+                    $retVal = 'Error';
+                } elseif ($row['cus_status'] == '16') {
+                    $retVal = 'Legal';
+                } else {
+                    $retVal = 'Due Nil';
                 }
-                if ($rclosed == '3') {
-                    $retVal = 'Block List';
+            } elseif (!$isPending) {
+                if ($row['cus_status'] == '15') {
+                    $retVal = 'Error';
+                } elseif ($row['cus_status'] == '16') {
+                    $retVal = 'Legal';
+                } else {
+                    $retVal = $isClosed ? 'Closed' : 'Current';
                 }
+            }
+        } else if ($row['cus_status'] > 20) { // if status is closed(21) or more than that(22), then show closed status
+            $closedSts = $connect->query("SELECT * FROM `closed_status` WHERE `req_id` ='" . strip_tags($req_id) . "' ");
+            $closedStsrow = $closedSts->fetch();
+            $rclosed = $closedStsrow['closed_sts'];
+            $consider_lvl = $closedStsrow['consider_level'];
+            if ($rclosed == '1') {
+                $retVal = 'Consider - ' . $consider_lvl_arr[$consider_lvl];
+            }
+            if ($rclosed == '2') {
+                $retVal = 'Waiting List';
+            }
+            if ($rclosed == '3') {
+                $retVal = 'Block List';
             }
         }
-        $i++;
     }
-    return $retVal;
+
+    break;
+}
+
+return $retVal;
 }
 
 function getDocumentStatus($connect, $req_id)

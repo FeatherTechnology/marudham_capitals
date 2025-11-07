@@ -18,15 +18,13 @@ if (!empty($id_list)) {
     $where .= " AND np.insert_login_id IN ($id_list) ";
 }
 
-$role_arr = [1 => 'Director', 2 => 'Agent', 3 => 'Staff'];
-
 $column = array(
     'np.id',
     'np.cus_id',
     'cp.autogen_cus_id',
     'COALESCE(cp.customer_name, ncp.cus_name)',
-    'np.id',
-    'np.id',
+    'np.created_date',
+    'np.created_date',
     'COALESCE(cp.mobile1, ncp.mobile)',
     'COALESCE(al.area_name, ncp.area)',
     'COALESCE(sl.sub_area_name, ncp.sub_area)',
@@ -57,7 +55,7 @@ $query = "SELECT
     agm.group_name, 
     alm.line_name, 
     np.follow_date, 
-    rc.cus_status
+    np.orgin_table
 FROM 
     new_promotion np
 LEFT JOIN 
@@ -66,17 +64,17 @@ LEFT JOIN
     customer_register cp ON np.cus_id = cp.cus_id
 LEFT JOIN 
     new_cus_promo ncp ON np.cus_id = ncp.cus_id
-LEFT JOIN area_list_creation al ON al.area_id = COALESCE(cp.area, ncp.area)
+LEFT JOIN 
+    area_list_creation al ON al.area_id = COALESCE(cp.area, ncp.area)
+LEFT JOIN 
+    sub_area_list_creation sl ON   sl.sub_area_id = COALESCE(cp.sub_area, ncp.sub_area) 
+LEFT JOIN 
+    area_group_mapping agm ON FIND_IN_SET(sl.sub_area_id, agm.sub_area_id) 
+LEFT JOIN 
+    area_line_mapping alm ON FIND_IN_SET(sl.sub_area_id, alm.sub_area_id) 
+LEFT JOIN 
+    branch_creation bc ON agm.branch_id = bc.branch_id  
 
-LEFT JOIN sub_area_list_creation sl ON   sl.sub_area_id = COALESCE(cp.sub_area, ncp.sub_area) 
-
-LEFT JOIN area_group_mapping agm ON FIND_IN_SET(sl.sub_area_id, agm.sub_area_id) 
-
-LEFT JOIN area_line_mapping alm ON FIND_IN_SET(sl.sub_area_id, alm.sub_area_id) 
-
-LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id  
-
-LEFT JOIN request_creation rc ON rc.req_id = cp.req_ref_id  
 WHERE 1 $where";
 
 if (isset($_POST['search'])) {
@@ -122,6 +120,9 @@ $result = $statement->fetchAll();
 
 $data = array();
 $sno = 1;
+$role_arr = [1 => 'Director', 2 => 'Agent', 3 => 'Staff'];
+$originName = [1 => 'Existing', 2 => 'New Promotion', 3 => 'Repromotion']; 
+
 foreach ($result as $row) {
     $sub_array = array();
     $sub_array[] = $sno;
@@ -141,18 +142,8 @@ foreach ($result as $row) {
     $sub_array[] = date('d-m-Y', strtotime($row['follow_date']));
     $sub_array[] = isset($role_arr[$row['role']]) ? $role_arr[$row['role']] : '';
     $sub_array[] = $row['fullname'];
+    $sub_array[] = isset($originName[$row['orgin_table']]) ? $originName[$row['orgin_table']] : '';
 
-    if (!empty($row['cus_status'])) {
-        if (is_numeric($row['cus_status']) && $row['cus_status'] >= 4 && $row['cus_status'] <= 9) {
-            $status = 'Repromotion';
-        } elseif (is_numeric($row['cus_status']) && $row['cus_status'] >= 20) {
-            $status = 'Existing';
-        }
-    } else {
-        $status = 'New Promotion';
-    }
-
-    $sub_array[] = $status; 
     $data[] = $sub_array;
     $sno++;
 }
