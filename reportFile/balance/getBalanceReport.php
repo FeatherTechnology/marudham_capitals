@@ -98,7 +98,7 @@ $req_id_list = implode(',', $req_id_list);
 $query = " SELECT 
             ag.group_name,
             alm.line_name AS line,
-             adm.duefollowup_name,
+            adm.duefollowup_name,
             ii.loan_id,
             ad.doc_id,
             ii.updated_date AS loan_date,
@@ -218,11 +218,12 @@ if ($orderColumn !== null) {
 $statement = $connect->prepare($query);
 $statement->execute();
 $number_filter_row = $statement->rowCount();
-
+if (!isset($_POST['download'])) {
 $start = $_POST['start'] ?? 0;
 $length = $_POST['length'] ?? -1;
 if ($length != -1) {
     $query .= " LIMIT $start, $length";
+}
 }
 
 $statement = $connect->prepare($query);
@@ -359,7 +360,7 @@ function count_all_data($connect)
 }
 
 $output = [
-    'draw' => intval($_POST['draw']),
+    'draw' => isset($_POST['draw']) ? intval($_POST['draw']) : 0, // ✅ safe for both table & download
     'recordsTotal' => count_all_data($connect),
     'recordsFiltered' => $number_filter_row,
     'data' => $data,

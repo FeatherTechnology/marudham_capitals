@@ -15,6 +15,54 @@ $(document).ready(function () {
     $('#reset_btn').click(function () {
         loanIssueReportTable();
     })
+     $('#download_btn').click(function () {
+        const from_date = $('#from_date').val();
+        const to_date = $('#to_date').val();
+        const tableId = "loan_issue_report_table"; // your table id
+        const reportName = "Loan_Issue_Report";
+        if (!from_date || !from_date) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Missing Dates',
+                text: 'Please select both From and To dates before downloading.',
+                confirmButtonColor: '#009688'
+            });
+            return;
+        }
+        $.ajax({
+            url: 'reportFile/loan_issue/getLoanIssueReport.php',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                from_date: from_date,
+                to_date: to_date,
+                download: 1
+            },
+            success: function (response) {
+                // ✅ If response is valid
+                if (response && response.data && response.data.length > 0) {
+                    exportToExcel(tableId, response.data, reportName);
+                } else {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'No Data Found',
+                        text: 'No records found for the selected date range.',
+                        confirmButtonColor: '#009688'
+                    });
+                }
+            },
+            error: function (xhr) {
+                console.error("AJAX Error:", xhr.responseText);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Response format error',
+                    text: 'The server returned invalid data. Please check PHP output.',
+                    confirmButtonColor: '#d33'
+                });
+            }
+        });
+    });
+
 });
 
 function loanIssueReportTable(){

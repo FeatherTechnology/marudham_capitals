@@ -2297,5 +2297,27 @@
         // Update the field with only numeric value
         $(e).val(val);
     }
+    // To download Excel file
+    function exportToExcel(tableId, data, reportName) {
+    // ✅ Get table headers dynamically from the given table ID
+    const table = document.getElementById(tableId);
+
+    const headers = Array.from(table.querySelectorAll("thead th"))
+        .map(th => th.textContent.trim());
+
+    // ✅ Combine headers + data
+    const wsData = [headers, ...data];
+
+    // ✅ Create worksheet & workbook
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, reportName || "Sheet1");
+
+    // ✅ Generate dynamic filename
+    const fileName = curDateJs(reportName || 'Report') + '.xlsx';
+
+    // ✅ Save file
+    XLSX.writeFile(wb, fileName);
+}
 
 </script>

@@ -176,10 +176,11 @@ if (isset($_POST['order'])) {
 }
 
 $query1 = "";
-if ($_POST['length'] != -1) {
-    $query1 = " LIMIT " . $_POST['start'] . ", " . $_POST['length'];
+if (!isset($_POST['download'])) {
+    if ($_POST['length'] != -1) {
+        $query1 = " LIMIT " . $_POST['start'] . ", " . $_POST['length'];
+    }
 }
-
 $statement = $connect->prepare($query);
 
 $statement->execute();
@@ -260,7 +261,7 @@ function count_all_data($connect)
 }
 
 $output = array(
-    'draw' => intval($_POST['draw']),
+    'draw' => isset($_POST['draw']) ? intval($_POST['draw']) : 0, // ✅ safe for both table & download
     'recordsTotal' => count_all_data($connect),
     'recordsFiltered' => $number_filter_row,
     'data' => $data
