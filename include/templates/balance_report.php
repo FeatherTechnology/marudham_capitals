@@ -1,5 +1,5 @@
 <style>
-	#report_type{
+	#report_type {
 		width: 200px;
 		height: 43px;
 		margin-bottom: 25px;
@@ -22,8 +22,8 @@
 			<div class="toggle-container col-12">
 
 				<input type="date" id='to_date' name='to_date' class="toggle-button" value='' style="margin-bottom: 25px;">
-				
-				<select type="text" class="form-control" id="loan_category" name="loan_category" multiple >
+
+				<select type="text" class="form-control" id="loan_category" name="loan_category" multiple>
 					<option value="">Select Loan Category</option>
 				</select>
 
@@ -34,6 +34,9 @@
 				</select>
 
 				<input type="button" id='reset_btn' name='reset_btn' class="toggle-button" style="background-color: #009688;color:white; margin-bottom:25px" value='Reload'>
+			     <?php if (DACC != 1) { ?><input type="button" id="download_btn" name="download_btn" class="toggle-button" style="background-color: #009688; color:white; margin-bottom:25px" value="Download">
+					<?php } ?>
+				
 			</div>
 			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 				<div class="card">
@@ -142,7 +145,7 @@
 								</tfoot>
 							</table>
 						</div>
-						
+
 					</div>
 				</div>
 			</div>
