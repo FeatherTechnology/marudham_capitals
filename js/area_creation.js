@@ -647,8 +647,14 @@ function getAreaBasedSubArea(area) {
     });
 
     function closeModal() {
-        location.reload(); 
-    }
+        var id = $("#id").val();
+        var taluk = $("#taluk").val();
+        if (id !== '') {
+            location.reload();
+        }else{
+            getTalukBasedArea(taluk); 
+        }
+    } 
 }
 
 // ************************************************************************************************************************************************

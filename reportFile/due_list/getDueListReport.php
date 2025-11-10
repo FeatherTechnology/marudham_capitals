@@ -99,7 +99,7 @@ $qry = " SELECT req.req_id FROM request_creation req JOIN acknowlegement_custome
     FROM collection
     GROUP BY req_id
 ) coll ON req.req_id = coll.req_id
-        JOIN loan_issue li ON req.req_id = li.req_id  AND DATE(li.created_date) <= DATE('$to_date')  AND balance_amount = '0'
+        JOIN loan_issue li ON req.req_id = li.req_id  AND DATE(li.created_date) < DATE('$to_date')  AND balance_amount = '0'
         WHERE req.cus_status BETWEEN 14 AND 18  AND ( cs.sub_status != 'Due Nil' OR (cs.sub_status = 'Due Nil' AND  coll.last_collection_date > '$to_date') )
 
         UNION 
