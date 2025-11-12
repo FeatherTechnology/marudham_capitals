@@ -111,8 +111,6 @@ if (sizeof($getCustomerReg) > 0) {
 </div><br><br>
 <!-- Page header end -->
 
-
-
 <!-- Main container start -->
 <div class="main-container">
 	<!--form start-->
@@ -123,18 +121,13 @@ if (sizeof($getCustomerReg) > 0) {
 		<input type="hidden" name="idupd" id="idupd" value="<?php if (isset($idupd)) {
 																echo $idupd;
 															} ?>" />
-		<input type="hidden" name="req_id" id="req_id" value="<?php if (isset($req_id)) {
-																	echo $req_id;
-																} ?>" />
+		<input type="hidden" name="req_id" id="req_id" value="" />
 		<input type="hidden" name="cusidupd" id="cusidupd" value="<?php if (isset($cusidupd)) {
 																		echo $cusidupd;
 																	} ?>" />
 		<input type="hidden" name="cuspicupd" id="cuspicupd" value="<?php if (isset($cus_pic)) {
 																		echo $cus_pic;
 																	} ?>" />
-		<input type="hidden" name="collection_access" id="collection_access" value="<?php if (isset($collection_access)) {
-																						echo $collection_access;
-																					} ?>" />
 		<input type="hidden" name="pending_sts" id="pending_sts" value="" />
 		<input type="hidden" name="od_sts" id="od_sts" value="" />
 		<input type="hidden" name="due_nil_sts" id="due_nil_sts" value="" />
@@ -291,113 +284,14 @@ if (sizeof($getCustomerReg) > 0) {
 				<!-- Loan List End -->
 
 				<!-- Collection window Start -->
-				<!-- <div class="card collection_card">
-					<div class="card-header">
-						<div class="card-title">Personal Info</div>
-					</div>
-					<div class="card-body">
-						<div class="row ">
-							<div class="col-md-12 ">
-								<div class="row">
-									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
-										<div class="form-group">
-											<label for="cus_id">Customer ID</label>
-											<input type="text" class="form-control" id="cus_id" name="cus_id" value='<?php if (isset($cus_id)) {
-																															echo $cus_id;
-																														} ?>' readonly>
-										</div>
-									</div>
+				<input type="hidden" name="loan_category_id" id="loan_category_id" value="">
 
-									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
-										<div class="form-group">
-											<label for="cus_name">Customer Name</label>
-											<input type="text" class="form-control" id="cus_name" name="cus_name" value='<?php if (isset($cus_name)) {
-																																echo $cus_name;
-																															} ?>' readonly >
-										</div>
-									</div>
-
-									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
-										<div class="form-group">
-											<label for="branch"> Branch </label>
-											<input type="hidden" class="form-control" name="branch_id" id="branch_id" value="<?php if (isset($branch_id)) {
-																																	echo $branch_id;
-																																} ?>">
-											<input type="text" class="form-control" name="branch_name" id="branch_name" value="<?php if (isset($branch_name)) {
-																																	echo $branch_name;
-																																} ?>" readonly>
-										</div>
-									</div>
-									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-										<div class="form-group">
-											<label for="area"> Area </label>
-											<input  type="hidden" class="form-control" id="area_id" name="area_id" value="<?php if (isset($area_id)) echo $area_id; ?>" readonly>
-											<input  type="text" class="form-control" id="area_name" name="area_name" value="<?php if (isset($area_name)) echo $area_name; ?>" readonly>
-										</div>
-									</div>
-
-									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-										<div class="form-group">
-											<label for="sub_area"> Sub Area </label>
-											<input  type="hidden" class="form-control" id="sub_area_id" name="sub_area_id" value="<?php if (isset($sub_area_id)) echo $sub_area_id; ?>" readonly>
-											<input type="text" class="form-control" id="sub_area_name" name="sub_area_name" value='<?php if (isset($sub_area_name)) echo $sub_area_name; ?>' readonly>
-										</div>
-									</div>
-									
-									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
-										<div class="form-group">
-											<label for="line_name"> Line </label>
-											<input type="hidden" class="form-control" name="line_id" id="line_id" value="<?php if (isset($line_id)) {
-																																echo $line_id;
-																															} ?>">
-											<input type="text" class="form-control" name="line_name" id="line_name" value="<?php if (isset($line_name)) {
-																																echo $line_name;
-																															} ?>" readonly>
-										</div>
-									</div>
-									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
-										<div class="form-group">
-											<label for="loan_category"> Loan Category </label>-->
-				<input type="hidden" class="form-control" name="loan_category_id" id="loan_category_id" value="<?php if (isset($loan_category_id)) {
-																													echo $loan_category_id;
-																												} ?>">
-				<!--<input type="text" class="form-control" name="loan_category" id="loan_category" value="<?php if (isset($loan_category)) {
-																												echo $loan_category;
-																											} ?>" readonly>
-										</div>
-									</div>
-									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
-										<div class="form-group">
-											<label for="sub_category"> Sub Category </label>-->
-				<input type="hidden" class="form-control" name="sub_category_id" id="sub_category_id" value="<?php if (isset($sub_category_id)) {
-																													echo $sub_category_id;
-																												} ?>">
-				<!--<input type="text" class="form-control" name="sub_category" id="sub_category" value="<?php if (isset($sub_category)) {
-																												echo $sub_category;
-																											} ?>" readonly>
-										</div>
-									</div>
-									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
-										<div class="form-group">
-											<label for="status"> Status</label>-->
-				<input type="hidden" class="form-control" name="status" id="status" value="<?php if (isset($status)) {
-																								echo $status;
-																							} ?>" readonly>
-				<!--</div>
-									</div>
-									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
-										<div class="form-group">
-											<label for="sub_status"> Sub Status</label>-->
-				<input type="hidden" class="form-control" name="sub_status" id="sub_status" value="<?php if (isset($sub_status)) {
-																										echo $sub_status;
-																									} ?>" readonly>
-				<!--</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div> -->
+				<input type="hidden" name="sub_category_id" id="sub_category_id" value="">
+				
+				<input type="hidden" name="status" id="status" value="">
+				
+				<input type="hidden" name="sub_status" id="sub_status" value="">
+				
 				<!-- Request Info Start -->
 				<div class="card collection_card">
 					<div class="card-header">Request Info <span style="font-weight:bold" class=""></span></div>
@@ -457,6 +351,7 @@ if (sizeof($getCustomerReg) > 0) {
 					</div>
 				</div>
 				<!-- Request Info ENd-->
+				 
 				<!-- Collection Info -->
 				<div class="card collection_card" id="collection_info">
 					<div class="card-header">
@@ -713,7 +608,7 @@ if (sizeof($getCustomerReg) > 0) {
 				<!-- Collection window End -->
 
 				<!-- Submit Button Start -->
-				<div class="col-md-12 ">
+				<div class="col-md-12">
 					<div class="text-right">
 						<button type="submit" name="submit_collection" id="submit_collection" class="btn btn-primary" value="Submit" tabindex='44'><span class="icon-check"></span>&nbsp;Submit</button>
 					</div>
@@ -729,9 +624,6 @@ if (sizeof($getCustomerReg) > 0) {
 
 <!-- /////////////////////////////////////////////////////////////////// Due Chart Modal START ////////////////////////////////////////////////////////////////////// -->
 <div class="modal fade DueChart" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-	<input type="hidden" name="req_id" id="req_id" value="<?php if (isset($idupd)) {
-																echo $idupd;
-															} ?>">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
@@ -772,11 +664,9 @@ if (sizeof($getCustomerReg) > 0) {
 	</div>
 </div>
 <!-- /////////////////////////////////////////////////////////////////// Due Chart Modal END ////////////////////////////////////////////////////////////////////// -->
+
 <!-- /////////////////////////////////////////////////////////////////// Penalty Char Modal START ////////////////////////////////////////////////////////////////////// -->
 <div class="modal fade PenaltyChart" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-	<input type="hidden" name="req_id" id="req_id" value="<?php if (isset($idupd)) {
-																echo $idupd;
-															} ?>">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
@@ -811,11 +701,9 @@ if (sizeof($getCustomerReg) > 0) {
 	</div>
 </div>
 <!-- /////////////////////////////////////////////////////////////////// Penalty Chart Modal END ////////////////////////////////////////////////////////////////////// -->
+
 <!-- /////////////////////////////////////////////////////////////////// Fine Chart Modal START ////////////////////////////////////////////////////////////// -->
 <div class="modal fade collectionChargeChart" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-	<input type="hidden" name="req_id" id="req_id" value="<?php if (isset($idupd)) {
-																echo $idupd;
-															} ?>">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
@@ -851,6 +739,7 @@ if (sizeof($getCustomerReg) > 0) {
 	</div>
 </div>
 <!-- /////////////////////////////////////////////////////////////////// Fine Chart Modal END ////////////////////////////////////////////////////////////////////// -->
+
 <!-- /////////////////////////////////////////////////////////////////// Fine Add Modal START ////////////////////////////////////////////////////////////// -->
 <div class="modal fade collectionCharges" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
