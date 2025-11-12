@@ -321,9 +321,8 @@ $(function () {
   $("#close_collection_card").hide(); //Hide collection close button at the starting
   $("#submit_collection").hide(); //Hide Submit button at the starting, because submit is only for collection
 
-  var req_id = $("#idupd").val();
   const cus_id = $("#cusidupd").val();
-  OnLoadFunctions(req_id, cus_id);
+  OnLoadFunctions(cus_id);
 
   var cus_pic = $("#cuspicupd").val();
   $("#imgshow").attr("src", "uploads/request/customer/" + cus_pic);
@@ -350,7 +349,7 @@ function getresponsiblecolumn(ag_id) {
   });
 }
 
-function OnLoadFunctions(req_id, cus_id) {
+function OnLoadFunctions(cus_id) {
   //To get loan sub Status
   var pending_arr = [];
   var od_arr = [];
@@ -396,7 +395,6 @@ function OnLoadFunctions(req_id, cus_id) {
       //in this file, details gonna fetch by customer ID, Not by req id (Because we need all loans from customer)
       url: "collectionFile/getLoanList.php",
       data: {
-        req_id: req_id,
         cus_id: cus_id,
         pending_sts: pending_sts,
         od_sts: od_sts,
