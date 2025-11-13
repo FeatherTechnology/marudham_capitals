@@ -10,28 +10,28 @@ $Obj = new promotionListClass($connect);
 $sub_area_list = $Obj->sub_area_list;
 $accessType = $Obj->accessType;
 $column = array(
-    'cp.id',                  
-    'cp.cus_id',              
+    'cr.cus_reg_id',                  
+    'cr.cus_id',              
     'cr.autogen_cus_id',              
-    'cp.cus_name',            
+    'cr.customer_name',            
     'al.area_name',           
     'sl.sub_area_name',       
     'bc.branch_name',         
     'agm.group_name',                   
     'alm.line_name',           
-    'cp.mobile1',
-    'cp.id',
+    'cr.mobile1',
+    'cr.cus_reg_id',
     'cs.consider_level',
     'cs.created_date',
-    'cp.id',
-    'cp.id',
+    'cr.cus_reg_id',
+    'cr.cus_reg_id',
     'np.status',
     'np.follow_date'
 );
 
 $search = '';
 if (isset($_POST['search']) && $_POST['search'] != "") {
-    $search = " and (cp.cus_id LIKE '%" . $_POST['search'] . "%' OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%' OR cp.cus_name LIKE '%" . $_POST['search'] . "%' OR al.area_name LIKE '%" . $_POST['search'] . "%'OR sl.sub_area_name LIKE '%" . $_POST['search'] . "%' OR bc.branch_name LIKE '%" . $_POST['search'] . "%' OR agm.group_name LIKE '%" . $_POST['search'] . "%' OR alm.line_name LIKE '%" . $_POST['search'] . "%' OR cp.mobile1 LIKE '%" . $_POST['search'] . "%'  OR np.status LIKE '%" . $_POST['search'] . "%' ) ";
+    $search = " and (cr.cus_id LIKE '%" . $_POST['search'] . "%' OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%' OR cr.customer_name LIKE '%" . $_POST['search'] . "%' OR al.area_name LIKE '%" . $_POST['search'] . "%'OR sl.sub_area_name LIKE '%" . $_POST['search'] . "%' OR bc.branch_name LIKE '%" . $_POST['search'] . "%' OR agm.group_name LIKE '%" . $_POST['search'] . "%' OR alm.line_name LIKE '%" . $_POST['search'] . "%' OR cr.mobile1 LIKE '%" . $_POST['search'] . "%'  OR np.status LIKE '%" . $_POST['search'] . "%' ) ";
 }
 
 $order = '';
@@ -39,26 +39,25 @@ if (isset($_POST['order'])) {
     $order = ' ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
 }
 $areaColumn = ($accessType == 3) 
-    ? "cp.area_confirm_area" 
-    : "cp.area_confirm_subarea";
+    ? "cr.area_confirm_area" 
+    : "cr.area_confirm_subarea";
     //only closed customers who dont have any loans in current.
     // Simplified main query to fetch closed customers without loans
-    $qry = "SELECT cp.req_id, cp.cus_id, cr.autogen_cus_id, cp.cus_name, al.area_name, sl.sub_area_name, bc.branch_name, agm.group_name, alm.line_name, cp.mobile1, cs.consider_level, cs.created_date, np.status AS followup_sts, np.follow_date 
-        FROM acknowlegement_customer_profile cp
-        JOIN customer_register cr ON cp.cus_id = cr.cus_id
+    $qry = "SELECT cr.req_ref_id as req_id, cr.cus_id, cr.autogen_cus_id, cr.customer_name as cus_name, al.area_name, sl.sub_area_name, bc.branch_name, agm.group_name, alm.line_name, cr.mobile1, cs.consider_level, cs.created_date, np.status AS followup_sts, np.follow_date 
+        FROM  customer_register cr
         JOIN (
             SELECT req_id, cus_id, consider_level, MAX(created_date) AS created_date 
             FROM closed_status 
             WHERE closed_sts = 1 
             GROUP BY cus_id 
-        ) cs ON cs.cus_id = cp.cus_id 
-        LEFT JOIN area_list_creation al ON cp.area_confirm_area = al.area_id 
-        LEFT JOIN sub_area_list_creation sl ON cp.area_confirm_subarea = sl.sub_area_id 
+        ) cs ON cs.cus_id = cr.cus_id 
+        LEFT JOIN area_list_creation al ON cr.area_confirm_area = al.area_id 
+        LEFT JOIN sub_area_list_creation sl ON cr.area_confirm_subarea = sl.sub_area_id 
         LEFT JOIN area_group_mapping agm ON FIND_IN_SET(sl.sub_area_id, agm.sub_area_id) 
         LEFT JOIN area_line_mapping alm ON FIND_IN_SET(sl.sub_area_id, alm.sub_area_id) 
         LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
         LEFT JOIN new_promotion np ON np.cus_id = cs.cus_id AND np.created_date = (SELECT MAX(np1.created_date) FROM new_promotion np1 WHERE np1.cus_id = cs.cus_id)
-        WHERE $areaColumn IN ($sub_area_list) AND NOT EXISTS ( SELECT 1 FROM closed_status cs2 WHERE cs2.cus_id = cp.cus_id AND cs2.closed_sts IN (2,3)) AND NOT EXISTS ( SELECT 1 FROM request_creation r WHERE r.cus_id = cs.cus_id AND (r.cus_status IN (4,5,6,7,8,9))) ";
+        WHERE $areaColumn IN ($sub_area_list) AND NOT EXISTS ( SELECT 1 FROM closed_status cs2 WHERE cs2.cus_id = cr.cus_id AND cs2.closed_sts IN (2,3)) AND NOT EXISTS ( SELECT 1 FROM request_creation r WHERE r.cus_id = cs.cus_id AND (r.cus_status IN (4,5,6,7,8,9))) ";
 
     if($_POST['followUpSts']){
         $follow_up_sts = $_POST['followUpSts'];
@@ -74,7 +73,7 @@ $areaColumn = ($accessType == 3)
         $qry .= $qry_date;
     }    
 
-    $qry .= "$search GROUP BY cp.cus_id $order ";
+    $qry .= "$search GROUP BY cr.cus_id $order ";
     
     // Count query for filtering (use the same logic but without limit)
     $num_qry = $connect->query($qry);
@@ -122,7 +121,7 @@ $areaColumn = ($accessType == 3)
 
 function count_all_data($connect)
 {
-    $query = "SELECT cs.cus_id FROM closed_status cs JOIN acknowlegement_customer_profile cp ON cs.req_id = cp.req_id WHERE cs.closed_sts = 1";
+    $query = "SELECT cs.cus_id FROM closed_status cs WHERE cs.closed_sts = 1";
     $statement = $connect->prepare($query);
     $statement->execute();
     return $statement->rowCount();

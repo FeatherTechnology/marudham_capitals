@@ -7,10 +7,21 @@ $rows = []; // Initialize array
 
 if ($user_id != '') {
     // Step 1: Fetch role type and access details of the user
-    $userRes = $connect->query("SELECT role_type FROM user WHERE user_id = $user_id");
-    $userRow = $userRes->fetch(PDO::FETCH_ASSOC);
+    $userRes = $connect->query("SELECT line_id , group_id , due_followup_lines , promotion_activity_mapping_access, role_type FROM user WHERE user_id = $user_id");
+    $userRow = $userRes->fetch();
     $role_type = $userRow['role_type'];
+    $group_id = $userRow['group_id'];
+    $line_id = $userRow['line_id'];
+    $due_followup_lines = $userRow['due_followup_lines'];
+    $promotion_activity_mapping_access = $userRow['promotion_activity_mapping_access'];
 
+    if ($promotion_activity_mapping_access == 1) {
+        $condition = "ag.map_id IN ($group_id)";
+    } elseif ($promotion_activity_mapping_access == 2) {
+        $condition = "alm.map_id IN ($line_id)";
+    } elseif ($promotion_activity_mapping_access == 3) {
+        $condition = "adfm.map_id IN ($due_followup_lines)";
+    }
     // Step 2: Set up base query condition based on role_type
     if ($role_type == 7 || $role_type == 3) {
         $sql = $connect->query("
@@ -40,7 +51,10 @@ if ($user_id != '') {
         JOIN event_promotion ep ON ep.event_id = e.id
         JOIN event_areas ea ON ea.event_id = e.id
         JOIN area_list_creation al ON al.area_id = ea.event_area
-        WHERE e.insert_login_id = '$user_id'
+         JOIN area_line_mapping alm ON FIND_IN_SET(al.area_id, alm.area_id)
+        JOIN area_group_mapping ag ON FIND_IN_SET(al.area_id, ag.area_id)
+         JOIN area_duefollowup_mapping adfm ON FIND_IN_SET(al.area_id, adfm.area_id)
+        WHERE $condition
         GROUP BY e.id
         ORDER BY e.id DESC; 
     ");
