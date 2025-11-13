@@ -190,20 +190,28 @@ $(document).ready(function () {
         $(this).parent().parent().remove();
     });
 
-
-    $('#loanCategoryTableCheck').hide();
-    let loanCategoryTableError = true;
     function validateLoanCategoryTable() {
-        var currentrow = $("#moduleTable tr").last();
-        if (currentrow.find("#loan_category_ref_name").val() == '') {
-            $('#loanCategoryTableCheck').show();
-            loanCategoryTableError = false;
+        let loanCategoryTableError = true;
+
+        $("#moduleTable tbody tr").each(function() {
+            // get the first td text/value (trim spaces)
+            let firstTdText = $(this).find("td:first").text().trim();
+            let firstTdInputVal = $(this).find("td:first input").val()?.trim() || "";
+
+            // check if empty (either text cell or input cell)
+            if (firstTdText === "" && firstTdInputVal === "") {
+                $('#loanCategoryTableCheck').show();
+                loanCategoryTableError = false;
+                return false; // break out of .each()
+            }
+        });
+
+        if (loanCategoryTableError) {
+            $('#loanCategoryTableCheck').hide();
+            return true;
+        } else {
             event.preventDefault();
             return false;
-        } else {
-            $('#loanCategoryTableCheck').hide();
-            loanCategoryTableError = true;
-            return true;
         }
     }
 

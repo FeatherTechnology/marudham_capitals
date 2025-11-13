@@ -792,13 +792,21 @@ function getAgentGroupDropdown() {
     });
 }
 function validateAgentForm() {
-   var ag_name = $('#ag_name').val(); var ag_group = $('#ag_group').val(); var company_id = $('#company_id').val();/*var branch_id = $('#branch_id').val();*/var state = $('#state').val(); var district = $('#district1').val(); var taluk = $('#taluk1').val(); var place = $('#place').val(); var pincode = $('#pincode').val();
-        var name = $('#name').val(); var designation = $('#designation').val(); var mobile = $('#mobile').val(); var whatsapp = $('#whatsapp').val(); var loan_category = $('#loan_category').val();
-        var subCat = subCatMultiselect.getValue(); var loan_pay = $('input[name=loan_pay]:checked').val(); var responsible = $('input[name=responsible]:checked').val(); var coll_point = $('input[name=coll_point]:checked').val(); var bank_name = $('#bank_name').val();
-        var branch_name = $('#bank_branch_name').val(); var acc_no = $('#acc_no').val(); var ifsc = $('#ifsc').val(); var holder_name = $('#holder_name').val();
-        if (ag_name === '' || ag_group == '' || state === '' || district === '' || taluk === '' || place === '' || pincode === '' || name === '' ||
-            designation === '' || mobile === '' || whatsapp === '' || loan_category === '' || subCat.length == 0 || loan_pay == undefined || responsible == undefined ||
-            coll_point == undefined || bank_name === '' || branch_name === '' || acc_no === '' || ifsc === '' || holder_name === '') {
+   var ag_name = $('#ag_name').val(); var ag_group = $('#ag_group').val(); var state = $('#state').val(); var district = $('#district1').val(); var taluk = $('#taluk1').val(); var place = $('#place').val(); var pincode = $('#pincode').val(); var name = $('#name').val(); var designation = $('#designation').val(); var mobile = $('#mobile').val(); var whatsapp = $('#whatsapp').val(); var loan_category = $('#loan_category').val(); var subCat = subCatMultiselect.getValue(); var loan_pay = $('input[name=loan_pay]:checked').val(); var responsible = $('input[name=responsible]:checked').val(); var coll_point = $('input[name=coll_point]:checked').val(); var bank_name = $('#bank_name').val(); var branch_name = $('#bank_branch_name').val(); var acc_no = $('#acc_no').val(); var ifsc = $('#ifsc').val(); var holder_name = $('#holder_name').val(); let comInfo = true;
+
+        $("#moduleTable tbody tr").each(function () {
+            let nameVal = $(this).find('input[name="name[]"]').val()?.trim() || "";
+            let desigVal = $(this).find('input[name="designation[]"]').val()?.trim() || "";
+            let mobileVal = $(this).find('input[name="mobile[]"]').val()?.trim() || "";
+
+            // If any of the 4 required fields is empty, mark invalid
+            if (nameVal === "" || desigVal === "" || mobileVal === "") {
+                comInfo = false;
+                return false; // break loop
+            }
+        });
+
+        if (ag_name === '' || ag_group == '' || state === '' || district === '' || taluk === '' || place === '' || pincode === '' || name === '' || designation === '' || mobile === '' || whatsapp === '' || loan_category === '' || subCat.length == 0 || loan_pay == undefined || responsible == undefined || coll_point == undefined || bank_name === '' || branch_name === '' || acc_no === '' || ifsc === '' || holder_name === '' || comInfo === false) {
             Swal.fire({
                 timerProgressBar: true,
                 timer: 2000,

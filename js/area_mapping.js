@@ -613,7 +613,7 @@ function getBranchDropdown() {
         cache: false,
         success: function (response) {
             $('#branch').empty();
-            $('#branch').append('<option>Select Branch</option>');
+            $('#branch').append('<option value="">Select Branch</option>');
             for (var i = 0; i < response.length; i++) {
                 var selected = '';
                 if (branch_id_upd != '' && branch_id_upd == response[i]['branch_id']) {
@@ -640,7 +640,7 @@ function getBranchDropdown1() {
         success: function (response) {
 
             $('#branch1').empty();
-            $('#branch1').append('<option>Select Branch</option>');
+            $('#branch1').append('<option value="">Select Branch</option>');
             for (var i = 0; i < response.length; i++) {
                 var selected = '';
                 if (branch_id_upd != '' && branch_id_upd == response[i]['branch_id']) {
