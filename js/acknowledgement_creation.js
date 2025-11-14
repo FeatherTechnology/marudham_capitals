@@ -65,7 +65,7 @@ $(document).ready(function () {
     ///Documentation 
 
     //Signed Doc Validation Hide, // Signed Modal Doc Upload.
-    $('#docNameCheck').hide(); $('#signTypeCheck').hide(); $('#docCountCheck').hide(); $('#docupdCheck').hide();
+    $('#docNameCheck').hide(); $('#signTypeCheck').hide(); $('#docCountCheck').hide(); $('#docupdCheck').hide(); $("#signTyperRelationshipCheck").hide();
 
     $('#add_sign_doc').click(function () {
         $('#signDocUploads input').not('#signType_cus_name, #guar_name').prop('readonly', false);
@@ -78,7 +78,7 @@ $(document).ready(function () {
         $("#cus_name_div").hide();
         $('#guar_name_div').hide();
         $('#relation_doc').hide();
-
+        $('#signTyperRelationshipCheck').hide();
         if (type == "0") {
             // if customer , then show Customer name
             let req_id = $("#req_id").val();
@@ -199,9 +199,10 @@ $(document).ready(function () {
         let sign_type = $("#sign_type").val();
         let doc_Count = $("#doc_Count").val();
         let req_id = $('#doc_req_id').val();
+        let signType_relationship = $("#signType_relationship").val();
         // let signeddoc_upd = $('#signdoc_upd').val(); //upload mandatory is removed.
 
-        if (doc_name != "" && sign_type != "" && doc_Count != "" && req_id != "") {
+        if (doc_name != "" && sign_type != "" && doc_Count != "" && req_id != "" && ((sign_type == "2" || sign_type == "3") ? signType_relationship != "" : true)) {
             $.ajax({
                 type: 'POST',
                 url: 'verificationFile/documentation/sign_info_doc_upload.php',
@@ -228,7 +229,7 @@ $(document).ready(function () {
                 }
             });
 
-            $('#docNameCheck').hide(); $('#signTypeCheck').hide(); $('#docCountCheck').hide(); $('#docupdCheck').hide();
+            $('#docNameCheck').hide(); $('#signTypeCheck').hide(); $('#docCountCheck').hide(); $('#docupdCheck').hide(); $("#signTyperRelationshipCheck").hide();
 
         } else {
 
@@ -250,12 +251,19 @@ $(document).ready(function () {
             // } else {
             //     $('#docupdCheck').hide();
             // }
+            if (sign_type == '2' || sign_type == '3') {
+                if (signType_relationship == '') {
+                    $('#signTyperRelationshipCheck').show();
+                } else {
+                    $('#signTyperRelationshipCheck').hide();
+                }
+            }
 
         }
     });
 
     ///Cheque Modal Doc Upload
-    $('#chequebankCheck').hide(); $('#holdertypeCheck').hide(); $('#chequeCountCheck').hide(); $('#chequeupdCheck').hide();
+    $('#chequebankCheck').hide(); $('#holdertypeCheck').hide(); $('#chequeCountCheck').hide(); $('#chequeupdCheck').hide(); $("#holderNameCheck").hide();
 
     $('#add_Cheque').click(function () {
         $('#chequeUploads input').not('#holder_name, #cheque_relation').prop('readonly', false);
@@ -266,6 +274,7 @@ $(document).ready(function () {
         // Cheque info
         let type = $(this).val();
         let req_id = $("#req_id").val();
+        $("#holderNameCheck").hide();
 
         if (type == "0") {
             $("#holder_name").show();
@@ -375,7 +384,7 @@ $(document).ready(function () {
         formdata.append('chequeID', chequeID)
         formdata.append('cus_profile_id', cus_profile_id)
 
-        if (holder_type != "" && chequebank_name != "" && cheque_count != "" && req_id != "" && checkChequeNo == true) {
+        if (holder_type != "" && chequebank_name != "" && cheque_count != "" && req_id != "" && checkChequeNo == true && ((holder_type == "2") ? holder_relationship_name != "" : true)) {
             $.ajax({
                 type: 'POST',
                 url: 'verificationFile/documentation/cheque_upload.php',
@@ -401,7 +410,7 @@ $(document).ready(function () {
                     resetchequeInfo();
                 }
             });
-            $('#chequebankCheck').hide(); $('#holdertypeCheck').hide(); $('#chequeCountCheck').hide(); $('#chequeupdCheck').hide();
+            $('#chequebankCheck').hide(); $('#holdertypeCheck').hide(); $('#chequeCountCheck').hide(); $('#chequeupdCheck').hide(); $("#holderNameCheck").hide();
         } else {
 
             if (holder_type == "") {
@@ -427,7 +436,13 @@ $(document).ready(function () {
             } else {
                 $('#chequeNoCheck').hide();
             }
-
+            if (holder_type == '2') {
+                if (holder_relationship_name == "") {
+                    $("#holderNameCheck").show();
+                } else {
+                    $("#holderNameCheck").hide();
+                }
+            }
             // if (checkupd == 0) {
             //     $('#chequeupdCheck').show();
             // } else {
@@ -508,12 +523,12 @@ $(document).ready(function () {
 
     ////Mortgage Info  
     $('#mortgageprocessCheck').hide(); $('#propertyholdertypeCheck').hide(); $('#docpropertytypeCheck').hide(); $('#docpropertymeasureCheck').hide(); $('#docpropertylocCheck').hide(); $('#docpropertyvalueCheck').hide();
-    $('#mortgagenameCheck').hide(); $('#mortgagedsgnCheck').hide(); $('#mortgagenumCheck').hide(); $('#regofficeCheck').hide(); $('#mortgagevalueCheck').hide(); $('#mortgagedocCheck').hide(); $('#mortgagedocUpdCheck').hide();
+    $('#mortgagenameCheck').hide(); $('#mortgagedsgnCheck').hide(); $('#mortgagenumCheck').hide(); $('#regofficeCheck').hide(); $('#mortgagevalueCheck').hide(); $('#mortgagedocCheck').hide(); $('#mortgagedocUpdCheck').hide();$("#propertyholderNameCheck").hide();
 
     $('#mortgage_process').change(function () {
 
         let process = $(this).val();
-
+$("#propertyholderNameCheck").hide();
         if (process == '0') {
             $('#Mortgageprocess').show();
         } else {
@@ -534,13 +549,14 @@ $(document).ready(function () {
             $('#mortgage_value').val('');
             $('#mortgage_document').val('');
             $('#mortgage_document_upd').val('');
+            
         }
     })
 
     $('#Propertyholder_type').change(function () {
         let type = $(this).val();
         let req_id = $('#req_id').val();
-
+$("#propertyholderNameCheck").hide();
         if (type == '0') {
             $('#Propertyholder_name').show();
             $('#Propertyholder_relationship_name').val('');
@@ -644,11 +660,11 @@ $(document).ready(function () {
     // })
 
     //Endorsement Info
-    $('#endorsementprocessCheck').hide(); $('#ownertypeCheck').hide(); $('#vehicletypeCheck').hide(); $('#vehicleprocessCheck').hide(); $('#enCompanyCheck').hide(); $('#enModelCheck').hide(); $('#vehicle_reg_noCheck').hide(); $('#endorsementnameCheck').hide(); $('#enRCCheck').hide(); $('#enKeyCheck').hide(); $('#rcdocUpdCheck').hide();
+    $('#endorsementprocessCheck').hide(); $('#ownertypeCheck').hide(); $('#vehicletypeCheck').hide(); $('#vehicleprocessCheck').hide(); $('#enCompanyCheck').hide(); $('#enModelCheck').hide(); $('#vehicle_reg_noCheck').hide(); $('#endorsementnameCheck').hide(); $('#enRCCheck').hide(); $('#enKeyCheck').hide(); $('#rcdocUpdCheck').hide();$("#ownerNameCheck").hide();
     $('#endorsement_process').change(function () {
 
         let process = $(this).val();
-
+$("#ownerNameCheck").hide();
         if (process == '0') {
             $('#endorsementprocess').show();
         } else {
@@ -667,13 +683,14 @@ $(document).ready(function () {
             $('#en_RC').val('');
             $('#en_Key').val('');
             $('#RC_document_upd').val('');
+            
         }
     })
 
     $('#owner_type').change(function () {
         let type = $(this).val();
         let req_id = $('#req_id').val();
-
+        $("#ownerNameCheck").hide();
         if (type == '0') {
             $('#owner_name').show();
             $('#ownername_relationship_name').val('');
@@ -798,7 +815,7 @@ $(document).ready(function () {
     $('#document_holder').change(function () {
         let type = $(this).val();
         let req_id = $('#req_id').val();
-
+$("#docHolderNameCheck").hide();
         if (type == '0') {
             $('#docholder_name').show();
             $('#docholder_relationship_name').val('');
@@ -862,7 +879,7 @@ $(document).ready(function () {
         });
     });
 
-    $('#documentnameCheck').hide(); $('#documentdetailsCheck').hide(); $('#documentTypeCheck').hide(); $('#docholderCheck').hide();
+    $('#documentnameCheck').hide(); $('#documentdetailsCheck').hide(); $('#documentTypeCheck').hide(); $('#docholderCheck').hide();$("#docHolderNameCheck").hide();
 
     //To Show Relationship value on edit page.////
     let mortgage = $('#Propertyholder_type').val();
@@ -1834,6 +1851,7 @@ function resetsignInfo() {
             $("#doc_Count").val('');
             $("#signdoc_upd").val('');
             $("#signedID").val('');
+            $("#signTyperRelationshipCheck").hide();
 
         }
     });
@@ -2255,7 +2273,7 @@ $('#docInfoBtn').click(function () {
         formdata.append('document_info_upd[]', files[i])
     }
 
-    if (doc_name != '' && doc_details != '' && doc_type != '' && doc_holder != '' && relation != '') {
+    if (doc_name != '' && doc_details != '' && doc_type != '' && doc_holder != '' && relation != '' && ((doc_holder === "2") ? relation_name !== "" : true)) {
 
         $.ajax({
             url: 'verificationFile/documentation/doc_info_submit.php',
@@ -2290,8 +2308,44 @@ $('#docInfoBtn').click(function () {
                 resetdocInfo();
             }
         })
+           $("#documentnameCheck").hide();
+    $("#documentdetailsCheck").hide();
+    $("#documentTypeCheck").hide();
+    $("#docholderCheck").hide();
+    $("#docHolderNameCheck").hide();
     } else {
-        $('#documentnameCheck').show(); $('#documentdetailsCheck').show(); $('#documentTypeCheck').show(); $('#docholderCheck').show();
+      if (doc_name == "") {
+      $("#documentnameCheck").show();
+    } else {
+      $("#documentnameCheck").hide();
+    }
+
+    if (doc_details == "") {
+      $("#documentdetailsCheck").show();
+    } else {
+      $("#documentdetailsCheck").hide();
+    }
+
+    if (doc_type == "") {
+      $("#documentTypeCheck").show();
+    } else {
+      $("#documentTypeCheck").hide();
+    }
+
+    if (doc_holder == "") {
+      $("#docholderCheck").show();
+    } else {
+      $("#docholderCheck").hide();
+    }
+
+    if (doc_holder == '2') {
+      if (relation_name == "") {
+        $("#docHolderNameCheck").show();
+      } else {
+        $("#docHolderNameCheck").hide();
+      }
+    }
+  
     }
 })
 
@@ -2379,8 +2433,10 @@ function resetdocInfo() {
 
             $("#document_name").val('');
             $("#document_details").val('');
+             $('#docholder_relationship_name').val('');
             $("#document_type").val('');
             $("#document_holder").val('');
+            $("#doc_info_id").val('');
             $("#docholder_name").val('');
             $("#relation_name").val('');
             $("#doc_relation").val('');
@@ -2405,6 +2461,7 @@ function docinfoList() {
             $("#document_details").val('');
             $("#document_type").val('');
             $("#document_holder").val('');
+            $("#doc_info_id").val('');
             $("#docholder_name").val('');
             $("#docholder_relationship_name").val('');
             $("#doc_relation").val('');
@@ -2428,15 +2485,15 @@ function docinfoList() {
 
 //Documentation Submit Validation
 $('#submit_documentation').click(function () {
-    if(doc_submit_validation()){
-    let confirmAction = confirm("Are you sure you want to submit Documentation ?");
+    if (doc_submit_validation()) {
+        let confirmAction = confirm("Are you sure you want to submit Documentation ?");
         if (!confirmAction) {
             event.preventDefault(); // Stop form submission if canceled
             return false;
         }
-    }else{
-         event.preventDefault();
-         return false;
+    } else {
+        event.preventDefault();
+        return false;
     }
 });
 
@@ -2446,7 +2503,7 @@ function doc_submit_validation() {
     var endorsement_process = $('#endorsement_process').val(); var owner_type = $('#owner_type').val(); var vehicle_type = $('#vehicle_type').val(); var vehicle_process = $('#vehicle_process').val();
     var en_Company = $('#en_Company').val(); var en_Model = $('#en_Model').val();
 
-
+ var Propertyholder_relationship_name = $("#Propertyholder_relationship_name").val();
     var mortgage_document_upd = $('#mortgage_document_upd').val(); var mortgage_old_doc_upd = $('#mortgage_doc_upd').val();
     var RC_document_upd = $('#RC_document_upd').val(); var RC_old_document_upd = $('#rc_doc_upd').val();
 
@@ -2454,8 +2511,8 @@ function doc_submit_validation() {
 
     var vehicle_reg_no = $('#vehicle_reg_no').val();
     var endorsement_name = $('#endorsement_name').val(); var en_RC = $('#en_RC').val(); var en_Key = $('#en_Key').val();
-    var validation = true ;
-
+    var validation = true;
+  var ownername_relationship_name = $("#ownername_relationship_name").val();
     // var fingerprint = $('#fingerprint').val(); var submitted = $('#submitted').val();
 
     if (cus_id_doc == '') {
@@ -2468,13 +2525,13 @@ function doc_submit_validation() {
             confirmButtonColor: '#009688'
         });
         event.preventDefault();
-        validation = false ;
+        validation = false;
     }
 
     if (mortgage_process == '') {
         event.preventDefault();
         $('#mortgageprocessCheck').show();
-        validation = false ;
+        validation = false;
     } else {
         $('#mortgageprocessCheck').hide();
     }
@@ -2483,77 +2540,86 @@ function doc_submit_validation() {
         if (Propertyholder_type == '') {
             event.preventDefault();
             $('#propertyholdertypeCheck').show();
-            validation = false ;
+            validation = false;
         } else {
             $('#propertyholdertypeCheck').hide();
         }
         if (doc_property_pype == '') {
             event.preventDefault();
             $('#docpropertytypeCheck').show();
-            validation = false ;
+            validation = false;
         } else {
             $('#docpropertytypeCheck').hide();
         }
         if (doc_property_measurement == '') {
             event.preventDefault();
             $('#docpropertymeasureCheck').show();
-            validation = false ;
+            validation = false;
         } else {
             $('#docpropertymeasureCheck').hide();
         }
         if (doc_property_location == '') {
             event.preventDefault();
             $('#docpropertylocCheck').show();
-            validation = false ;
+            validation = false;
         } else {
             $('#docpropertylocCheck').hide();
         }
         if (doc_property_value == '') {
             event.preventDefault();
             $('#docpropertyvalueCheck').show();
-            validation = false ;
+            validation = false;
         } else {
             $('#docpropertyvalueCheck').hide();
         }
         if (mortgage_name == '') {
             event.preventDefault();
             $('#mortgagenameCheck').show();
-            validation = false ;
+            validation = false;
         } else {
             $('#mortgagenameCheck').hide();
         }
         if (mortgage_dsgn == '') {
             event.preventDefault();
             $('#mortgagedsgnCheck').show();
-            validation = false ;
+            validation = false;
         } else {
             $('#mortgagedsgnCheck').hide();
         }
         if (mortgage_nuumber == '') {
             event.preventDefault();
             $('#mortgagenumCheck').show();
-            validation = false ;
+            validation = false;
         } else {
             $('#mortgagenumCheck').hide();
         }
         if (reg_office == '') {
             event.preventDefault();
             $('#regofficeCheck').show();
-            validation = false ;
+            validation = false;
         } else {
             $('#regofficeCheck').hide();
         }
         if (mortgage_value == '') {
             event.preventDefault();
             $('#mortgagevalueCheck').show();
-            validation = false ;
+            validation = false;
         } else {
             $('#mortgagevalueCheck').hide();
         }
+           if (Propertyholder_type == '2') {
+      if (Propertyholder_relationship_name == "") {
+        event.preventDefault();
+        validation = false;
+        $("#propertyholderNameCheck").show();
+      } else {
+        $("#propertyholderNameCheck").hide();
+      }
+    }
         if (mortgage_document == '') {// check if document dropdown selected or not
             event.preventDefault();
             $('#mortgagedocCheck').show();
-            validation = false ;
+            validation = false;
         } else {//if selected then check if document dropdown is YES(0) then check for document uploaded now or already
             // if (mortgage_document == '0' && (mortgage_old_doc_upd == '' && mortgage_document_upd == '')) { //if yes, then check both document upload are not empty
             //     event.preventDefault();
@@ -2569,7 +2635,7 @@ function doc_submit_validation() {
     if (endorsement_process == '') {
         event.preventDefault();
         $('#endorsementprocessCheck').show();
-        validation = false ;
+        validation = false;
     } else {
         $('#endorsementprocessCheck').hide();
     }
@@ -2578,56 +2644,56 @@ function doc_submit_validation() {
         if (owner_type == '') {
             event.preventDefault();
             $('#ownertypeCheck').show();
-            validation = false ;
+            validation = false;
         } else {
             $('#ownertypeCheck').hide();
         }
         if (vehicle_type == '') {
             event.preventDefault();
             $('#vehicletypeCheck').show();
-            validation = false ;
+            validation = false;
         } else {
             $('#vehicletypeCheck').hide();
         }
         if (vehicle_process == '') {
             event.preventDefault();
             $('#vehicleprocessCheck').show();
-            validation = false ;
+            validation = false;
         } else {
             $('#vehicleprocessCheck').hide();
         }
         if (en_Company == '') {
             event.preventDefault();
             $('#enCompanyCheck').show();
-            validation = false ;
+            validation = false;
         } else {
             $('#enCompanyCheck').hide();
         }
         if (en_Model == '') {
             event.preventDefault();
             $('#enModelCheck').show();
-            validation = false ;
+            validation = false;
         } else {
             $('#enModelCheck').hide();
         }
         if (endorsement_name == '') {
             event.preventDefault();
             $('#endorsementnameCheck').show();
-            validation = false ;
+            validation = false;
         } else {
             $('#endorsementnameCheck').hide();
         }
         if (en_Key == '') {
             event.preventDefault();
             $('#enKeyCheck').show();
-            validation = false ;
+            validation = false;
         } else {
             $('#enKeyCheck').hide();
         }
         if (en_RC == '') { // check if document dropdown selected or not
             event.preventDefault();
             $('#enRCCheck').show();
-            validation = false ;
+            validation = false;
         } else { //if selected then check if document dropdown is YES(0) then check for document uploaded now or already
             // if (en_RC == '0' && (RC_old_document_upd == '' && RC_document_upd == '')) { //if yes, then check both document upload are not empty
             //     event.preventDefault();
@@ -2637,13 +2703,22 @@ function doc_submit_validation() {
             // }
             $('#enRCCheck').hide();
         }
+         if (owner_type == '2') {
+      if (ownername_relationship_name == "") {
+        event.preventDefault();
+        validation = false;
+        $("#ownerNameCheck").show();
+      } else {
+        $("#ownerNameCheck").hide();
+      }
+    }
     }
 
     //signed doc
     if (!storeDocInfo.signDocInfo) {
         event.preventDefault();
         $('#signed_infoCheck, #signed_doc_card').show();
-        validation = false ;
+        validation = false;
 
     } else {
         $('#signed_infoCheck').hide();
@@ -2658,7 +2733,7 @@ function doc_submit_validation() {
     //         $('.fingerSpan').hide();
     //     }
     // }
-      return validation;
+    return validation;
 
 }
 
@@ -2785,7 +2860,7 @@ $('#submit_loan_calculation').click(function (e) {
         const isValid = loan_calc_validation(submit_btn);
 
         if (isValid) {
-             let confirmAction = confirm("Are you sure you want to submit Loan Calculation?");
+            let confirmAction = confirm("Are you sure you want to submit Loan Calculation?");
             if (confirmAction) {
                 submitLoanCalculation(submit_btn); // Proceed
             } else {
@@ -3258,7 +3333,7 @@ function profitCalAjax(profit_type, sub_cat, loan_cat) {
                     } else if (response["doc_charge_type"] == "percentage") {
                         type = "%";
                         $(".min-max-doc").text("* (" + response["document_charge_min"] + type + " - " + response["document_charge_max"] + type + ") "); // Set min-max values with % symbol after the numbers
-                    } 
+                    }
 
                     $("#doc_charge").attr("onChange", `let val = parseFloat($(this).val());let min = ${parseFloat(response["document_charge_min"])};let max = ${parseFloat(response["document_charge_max"])}; if (!isNaN(val)) { if(val > max){ alert("Enter Lesser Value"); $(this).val(""); } else if(val < min){ alert("Enter Higher Value"); $(this).val(""); } }else{ alert("Please enter a valid numeric value"); $(this).val("");}`); //To check value between rage
 
@@ -3383,11 +3458,11 @@ function schemeCalAjax(scheme_id) {
 
 //To Get Loan Calculation for After Interest
 function getLoanAfterInterest() {
-    var loan_amt   = $('#loan_amt').val().replace(/[, ]+/g, '');
-    var int_rate   = $('#int_rate').val();
+    var loan_amt = $('#loan_amt').val().replace(/[, ]+/g, '');
+    var int_rate = $('#int_rate').val();
     var due_period = $('#due_period').val();
     var doc_charge = $('#doc_charge').val();
-    var proc_fee   = $('#proc_fee').val();
+    var proc_fee = $('#proc_fee').val();
 
 
     $('#loan_amt_cal').val(formatIndianNumber(loan_amt)); //get loan amt from loan info card
@@ -3458,11 +3533,11 @@ function getLoanAfterInterest() {
 
 //To Get Loan Calculation for Pre Interest
 function getLoanPreInterest() {
-    var loan_amt   = $('#loan_amt').val().replace(/[, ]+/g, '');
-    var int_rate   = $('#int_rate').val();
+    var loan_amt = $('#loan_amt').val().replace(/[, ]+/g, '');
+    var int_rate = $('#int_rate').val();
     var due_period = $('#due_period').val();
     var doc_charge = $('#doc_charge').val();
-    var proc_fee   = $('#proc_fee').val();
+    var proc_fee = $('#proc_fee').val();
 
     $('#loan_amt_cal').val(formatIndianNumber(loan_amt)); //get loan amt from loan info card
 
@@ -3533,10 +3608,10 @@ function getLoanPreInterest() {
 
 //To Get Loan Calculation for Interest due type
 function getLoanInterest() {
-    var loan_amt   = $("#loan_amt").val().replace(/[, ]+/g, '');
-    var int_rate   = $("#int_rate").val();
+    var loan_amt = $("#loan_amt").val().replace(/[, ]+/g, '');
+    var int_rate = $("#int_rate").val();
     var doc_charge = $("#doc_charge").val();
-    var proc_fee   = $("#proc_fee").val();
+    var proc_fee = $("#proc_fee").val();
 
     var calc_method = $("#calc_method").val();
 
@@ -3593,11 +3668,11 @@ function getLoanInterest() {
 }
 
 function getSchemeAfterIntreset() {
-    var loan_amt   = $('#loan_amt').val().replace(/[, ]+/g, '');
-    var int_rate   = $('#int_rate').val();
+    var loan_amt = $('#loan_amt').val().replace(/[, ]+/g, '');
+    var int_rate = $('#int_rate').val();
     var due_period = $('#due_period').val();
     var doc_charge = $('#doc_charge').val();
-    var proc_fee   = $('#proc_fee').val();
+    var proc_fee = $('#proc_fee').val();
 
     $('#loan_amt_cal').val(formatIndianNumber(loan_amt)); //get loan amt from loan info card
     // principal amt as same as loan amt for after interest
@@ -3607,7 +3682,7 @@ function getSchemeAfterIntreset() {
     } else if (intreset_type.includes('%')) {
         var int_amt = (parseInt(loan_amt) * (parseFloat(int_rate) / 100)).toFixed(0); //Calculate interest rate 
     }
-    
+
     var tot_amt = parseInt(loan_amt) + parseFloat(int_amt); //Calculate total amount from principal/loan amt and interest rate
 
     var due_amt = parseInt(tot_amt) / parseInt(due_period);//To calculate due amt by dividing total amount and due period given on loan info
@@ -3670,11 +3745,11 @@ function getSchemeAfterIntreset() {
 }
 
 function getSchemePreIntreset() {
-    var loan_amt   = $('#loan_amt').val().replace(/[, ]+/g, '');
-    var int_rate   = $('#int_rate').val();
+    var loan_amt = $('#loan_amt').val().replace(/[, ]+/g, '');
+    var int_rate = $('#int_rate').val();
     var due_period = $('#due_period').val();
     var doc_charge = $('#doc_charge').val();
-    var proc_fee   = $('#proc_fee').val();
+    var proc_fee = $('#proc_fee').val();
 
     $('#loan_amt_cal').val(formatIndianNumber(loan_amt)); //get loan amt from loan info card
 
@@ -3969,15 +4044,15 @@ function performLoanCalculation(callback) {
     var due_period = $("#due_period").val();
     var profit_method = $("#profit_method").val();
 
-    if( intrest_rate == "" || doc_charge == "" || proc_fee == "" || due_period == "" || profit_method == ""){
+    if (intrest_rate == "" || doc_charge == "" || proc_fee == "" || due_period == "" || profit_method == "") {
         Swal.fire({
-                timerProgressBar: true,
-                timer: 2000,
-                title: 'Please Fill out Loan Info!',
-                icon: 'error',
-                showConfirmButton: true,
-                confirmButtonColor: '#009688'
-                });
+            timerProgressBar: true,
+            timer: 2000,
+            title: 'Please Fill out Loan Info!',
+            icon: 'error',
+            showConfirmButton: true,
+            confirmButtonColor: '#009688'
+        });
         return;
     }
     var profit_method = $('#profit_method').val(); // if profit method changes, due type is EMI
@@ -3985,24 +4060,24 @@ function performLoanCalculation(callback) {
 
     if (profit_method == "after_intrest" && due_type == "EMI") {
         getLoanAfterInterest();
-    
+
     } else if (profit_method == 'pre_intrest') {
         getLoanPreInterest();
-       
+
     }
 
     if (due_type == 'Interest') {
         getLoanInterest();
-        
+
     }
 
     var scheme_profit_method = $('#scheme_profit_method').val(); // if profit method changes, due type is EMI
     if (scheme_profit_method == 'after_intrest') {
-        getSchemeAfterIntreset(); 
-        
+        getSchemeAfterIntreset();
+
     } else if (scheme_profit_method == 'pre_intrest') {
-        getSchemePreIntreset(); 
-        
+        getSchemePreIntreset();
+
     }
 
     // var due_method_scheme = $('#due_method_scheme').val();
@@ -4015,7 +4090,7 @@ function performLoanCalculation(callback) {
     // }
 
     changeInttoBen();
-    
+
     function changeInttoBen() {
         let due_type = document.getElementById("due_type");
         let int_label = document.querySelector("#int_amt_cal");

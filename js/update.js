@@ -215,7 +215,7 @@ $(document).ready(function () {
     $('#Propertyholder_type').change(function () {
         let type = $(this).val();
         let req_id = $('#req_id').val();
-
+$("#propertyholdernameCheck").hide();
         if (type == '0') {
             $('#Propertyholder_name').show();
             $('#Propertyholder_relationship_name').val('');
@@ -256,7 +256,7 @@ $(document).ready(function () {
             $('#Propertyholder_name').val('');
             $('#doc_property_relation').val('');
 
-            getFamilyList('Propertyholder_relationship_name','');
+            getFamilyList('Propertyholder_relationship_name', '');
 
         } else {
             $('#Propertyholder_name').show();
@@ -311,6 +311,7 @@ $(document).ready(function () {
 
     $('#mortgage_process').change(function () {
 
+        $("#propertyholdernameCheck").hide();
         let process = $(this).val();
 
         if (process == '0') {
@@ -341,7 +342,7 @@ $(document).ready(function () {
     $('#owner_type').change(function () {
         let type = $(this).val();
         let req_id = $('#req_id').val();
-
+$("#ownernameCheck").hide();
         if (type == '0') {
             $('#owner_name').show();
             $('#ownername_relationship_name').val('');
@@ -382,7 +383,7 @@ $(document).ready(function () {
             $('#owner_name').val('');
             $('#en_relation').val('');
 
-            getFamilyList('ownername_relationship_name','');
+            getFamilyList('ownername_relationship_name', '');
         } else {
             $('#owner_name').show();
             $('#ownername_relationship_name').hide();
@@ -431,7 +432,7 @@ $(document).ready(function () {
     })
 
     $('#endorsement_process').change(function () {
-
+        $("#ownernameCheck").hide();
         let process = $(this).val();
 
         if (process == '0') {
@@ -459,12 +460,12 @@ $(document).ready(function () {
 
     //////////////////////////////////////////// Documentation START //////////////////////////////////////////////
     ///Hide AND Show doc Card START
-    $('#choose_document').change(function() {
+    $('#choose_document').change(function () {
         let doc = $(this).val();
-    
+
         // Hide all sections initially
         $('.edit-document-card').hide();
-    
+
         // Show the selected document section
         switch (doc) {
             case '1': $('#signed_doc_card').show(); break;
@@ -475,20 +476,20 @@ $(document).ready(function () {
             case '6': $('#documents_info_card').show(); break;
             default: $('.edit-document-card').hide();
         }
-    
+
         // Check if previous data exists in storeDocInfo and show relevant sections
         if (storeDocInfo.signDocInfo) {
             $('#signed_doc_card').show();
-        } 
+        }
         if (storeDocInfo.chequeInfo) {
             $('#cheque_info_card').show();
-        } 
+        }
         if (storeDocInfo.mortgageInfo) {
             $('#mortgage_info_card').show();
-        } 
+        }
         if (storeDocInfo.endorseInfo) {
             $('#endorsement_info_card').show();
-        } 
+        }
         if (storeDocInfo.goldInfo) {
             $('#gold_info_card').show();
         }
@@ -506,7 +507,8 @@ $(document).ready(function () {
         $("#cus_name_div").hide();
         $("#guar_name_div").hide();
         $("#relation_doc").hide();
-        
+        $('#signTyperRelationshipCheck').hide();
+
         if (type == "0") {
             // if customer , then show Customer name
             let req_id = $("#req_id").val();
@@ -540,17 +542,17 @@ $(document).ready(function () {
             $("#signType_relationship").val('');
 
         }
-        
+
     });
     /* ********************************************** Sign doc END********************************************** */
 
     /* ********************************************** cheque START ********************************************** */
-    
+
     $("#holder_type").change(function () {
         // Cheque info
         let type = $(this).val();
         let req_id = $("#req_id").val();
-
+        $("#holderNameCheck").hide();
         if (type == "0") {
             $("#holder_name").show();
             $("#holder_relationship_name").hide();
@@ -562,8 +564,8 @@ $(document).ready(function () {
                 dataType: "json",
                 cache: false,
                 success: function (result) {
-                $("#holder_name").val(result["name"]);
-                $("#cheque_relation").val("NIL");
+                    $("#holder_name").val(result["name"]);
+                    $("#cheque_relation").val("NIL");
                 },
             });
         } else if (type == "1") {
@@ -577,8 +579,8 @@ $(document).ready(function () {
                 dataType: "json",
                 cache: false,
                 success: function (result) {
-                $("#holder_name").val(result["name"]);
-                $("#cheque_relation").val(result["relationship"]);
+                    $("#holder_name").val(result["name"]);
+                    $("#cheque_relation").val(result["relationship"]);
                 },
             });
         } else if (type == "2") {
@@ -598,95 +600,96 @@ $(document).ready(function () {
     $("#holder_relationship_name").change(function () {
         let fam_id = $(this).val();
         $.ajax({
-        url: "verificationFile/documentation/find_cheque_relation.php",
-        type: "POST",
-        data: { fam_id: fam_id },
-        dataType: "json",
-        success: function (response) {
-            $("#cheque_relation").val(response);
-        },
+            url: "verificationFile/documentation/find_cheque_relation.php",
+            type: "POST",
+            data: { fam_id: fam_id },
+            dataType: "json",
+            success: function (response) {
+                $("#cheque_relation").val(response);
+            },
         });
     });
 
     /* ********************************************** cheque END ********************************************** */
-    
+
     /* ********************************************** Document info START ********************************************** */
 
     $("#document_holder").change(function () {
         let type = $(this).val();
         let req_id = $("#req_id").val();
+        $("#docHolderNameCheck").hide();
 
         if (type == "0") {
-        //Customer
-        $("#docholder_name").show();
-        $("#docholder_relationship_name").val("");
-        $("#docholder_relationship_name").hide();
+            //Customer
+            $("#docholder_name").show();
+            $("#docholder_relationship_name").val("");
+            $("#docholder_relationship_name").hide();
 
-        $.ajax({
-            type: "POST",
-            url: "verificationFile/documentation/check_holder_name.php",
-            data: { type: type, reqId: req_id },
-            dataType: "json",
-            cache: false,
-            success: function (result) {
-            $("#docholder_name").val(result["name"]);
-            $("#doc_relation").val("NIL");
-            },
-        });
+            $.ajax({
+                type: "POST",
+                url: "verificationFile/documentation/check_holder_name.php",
+                data: { type: type, reqId: req_id },
+                dataType: "json",
+                cache: false,
+                success: function (result) {
+                    $("#docholder_name").val(result["name"]);
+                    $("#doc_relation").val("NIL");
+                },
+            });
         } else if (type == "1") {
-        //Guarentor
-        $("#docholder_name").show();
-        $("#docholder_relationship_name").val("");
-        $("#docholder_relationship_name").hide();
+            //Guarentor
+            $("#docholder_name").show();
+            $("#docholder_relationship_name").val("");
+            $("#docholder_relationship_name").hide();
 
-        $.ajax({
-            type: "POST",
-            url: "verificationFile/documentation/check_holder_name.php",
-            data: { type: type, reqId: req_id },
-            dataType: "json",
-            cache: false,
-            success: function (result) {
-            $("#docholder_name").val(result["name"]);
-            $("#doc_relation").val(result["relationship"]);
-            },
-        });
+            $.ajax({
+                type: "POST",
+                url: "verificationFile/documentation/check_holder_name.php",
+                data: { type: type, reqId: req_id },
+                dataType: "json",
+                cache: false,
+                success: function (result) {
+                    $("#docholder_name").val(result["name"]);
+                    $("#doc_relation").val(result["relationship"]);
+                },
+            });
         } else if (type == "2") {
-        //Family member
-        $("#docholder_name").hide();
-        $("#docholder_relationship_name").show();
-        $("#docholder_name").val("");
-        $("#doc_relation").val("");
+            //Family member
+            $("#docholder_name").hide();
+            $("#docholder_relationship_name").show();
+            $("#docholder_name").val("");
+            $("#doc_relation").val("");
 
-        docHolderName();
+            docHolderName();
         } else {
-        $("#docholder_name").show();
-        $("#docholder_relationship_name").hide();
-        $("#docholder_name").val("");
-        $("#doc_relation").val("");
+            $("#docholder_name").show();
+            $("#docholder_relationship_name").hide();
+            $("#docholder_name").val("");
+            $("#doc_relation").val("");
         }
     });
 
     $("#docholder_relationship_name").change(function () {
         let fam_id = $(this).val();
         $.ajax({
-        url: "verificationFile/documentation/find_cheque_relation.php",
-        type: "POST",
-        data: { fam_id: fam_id },
-        dataType: "json",
-        success: function (response) {
-            $("#doc_relation").val(response);
-        },
+            url: "verificationFile/documentation/find_cheque_relation.php",
+            type: "POST",
+            data: { fam_id: fam_id },
+            dataType: "json",
+            success: function (response) {
+                $("#doc_relation").val(response);
+            },
         });
     });
-    
- $("#loan_id").change(function () {
+
+    $("#loan_id").change(function () {
         let gurantor_id = $(this).find(':selected').attr('gurantor_id');
         let gu_pic = $(this).find(':selected').attr('gu_pic');
-        closeFamModal(gurantor_id,gu_pic)
-       
+        closeFamModal(gurantor_id, gu_pic)
+
     });
-    
-  $('#cus_monthly_income ,#cus_Commitment ,#cus_other_income ,#cus_support_income ,#cus_monDue_capacity , #cus_loan_limit').on('input', function () {
+
+    $('#cus_monthly_income ,#cus_Commitment ,#cus_other_income ,#cus_support_income ,#cus_monDue_capacity , #cus_loan_limit').on('input', function () {
         let value = $(this).val();
         $(this).val(formatIndianNumber(value));
     });
@@ -700,10 +703,10 @@ $(document).ready(function () {
 $(function () {
     //  $('.icon-chevron-down1').parent().next('div').slideUp(); //To collapse all card on load
     let selectedScreens = $('#selected_screens').val();
-    
+
     // Convert the string to an array
     let selectedArray = selectedScreens.split(',');
-    
+
     if (selectedArray.length === 1 && selectedArray.includes('1')) {
         callCustomerProfileFunctn();
 
@@ -712,12 +715,12 @@ $(function () {
 
     } else if (selectedArray.includes('1') && selectedArray.includes('2')) {
         callCustomerProfileFunctn(); getDocumentHistory();
-    
+
     }
-    
+
 }); //OnLoad function.
 
-function callCustomerProfileFunctn(){
+function callCustomerProfileFunctn() {
     getLoanID();
 
     resetPropertyinfoList() //Property Info List.
@@ -732,7 +735,7 @@ function callCustomerProfileFunctn(){
 
     var cus_id = $('#cus_id').val();
     var cus_name = $('#cus_name').val();
-    if (cus_name != '' && cus_id !='') {
+    if (cus_name != '' && cus_id != '') {
         getFingerPrintDetails(cus_id, cus_name);
     }
     var state_upd = $('#state_upd').val();
@@ -819,7 +822,7 @@ function callCustomerProfileFunctn(){
 
 }
 
-function callDocFunctn(){
+function callDocFunctn() {
     //Documentation
     getDocumentHistory();//for document history table
 }
@@ -974,7 +977,7 @@ function resetFamInfo() {
 }
 
 function resetFamDetails() {
- let cus_id = $('#cus_id').val();
+    let cus_id = $('#cus_id').val();
     let cus_name = $('#cus_name').val();
 
     $.ajax({
@@ -985,7 +988,7 @@ function resetFamDetails() {
         success: function (html) {
             $("#famList").empty();
             $("#famList").html(html);
-            getFingerPrintDetails(cus_id,cus_name);
+            getFingerPrintDetails(cus_id, cus_name);
         }
     });
 }
@@ -1068,46 +1071,46 @@ function getLoanID() {
 
     $.post('updateFile/get_loan_id.php', { "cus_id": $('#cus_id').val() }, function (data) {
 
-    $("#loan_id").empty().append("<option value=''>" + 'Select Loan ID' + "</option>");
-    let lastGuarantorID="";
-    let guarentor_photos="";
- if (data.length > 0) {
-    for (var i = 0; i < data.length; i++) {
-        let loanId = data[i]['loan_id'];
-        let guarentorID = data[i]['guarentor_name'];
-        let guarentor_photo = data[i]['guarentor_photo'] ? data[i]['guarentor_photo'] : "";
-        let isLast = i === data.length - 1;
-        let selected = isLast ? "selected" : "";
-        if (isLast) {
-                lastGuarantorID = guarentorID;
-                guarentor_photos = guarentor_photo;
+        $("#loan_id").empty().append("<option value=''>" + 'Select Loan ID' + "</option>");
+        let lastGuarantorID = "";
+        let guarentor_photos = "";
+        if (data.length > 0) {
+            for (var i = 0; i < data.length; i++) {
+                let loanId = data[i]['loan_id'];
+                let guarentorID = data[i]['guarentor_name'];
+                let guarentor_photo = data[i]['guarentor_photo'] ? data[i]['guarentor_photo'] : "";
+                let isLast = i === data.length - 1;
+                let selected = isLast ? "selected" : "";
+                if (isLast) {
+                    lastGuarantorID = guarentorID;
+                    guarentor_photos = guarentor_photo;
+                }
+                $("#loan_id").append("<option value='" + loanId + "' " + selected + " gurantor_id='" + guarentorID + "' gu_pic='" + guarentor_photo + "'>" + loanId + "</option>");
+                loanidResponse = "true";
             }
-        $("#loan_id").append("<option value='" + loanId + "' " + selected + " gurantor_id='" + guarentorID + "' gu_pic='" + guarentor_photo + "'>" + loanId + "</option>");
-        loanidResponse = "true";
-    }
-     if (lastGuarantorID !='') {
-            closeFamModal(lastGuarantorID,guarentor_photos);
+            if (lastGuarantorID != '') {
+                closeFamModal(lastGuarantorID, guarentor_photos);
+            }
+
+        }
+        else {
+            $("#guarentor_name").empty().append("<option value=''>" + 'Select Guarantor' + "</option>");
+            $("#guarentor_relationship").val('');
+            $("#guarentor_image").val(guarentor_photos);
+            getImage();
+            resetFamDetails();
+            loanidResponse = "false";
         }
 
-    }
-    else{
-        $("#guarentor_name").empty().append("<option value=''>" + 'Select Guarantor' + "</option>");
-        $("#guarentor_relationship").val('');
-        $("#guarentor_image").val(guarentor_photos);
-        getImage();
-        resetFamDetails();
-        loanidResponse = "false";
-    }
-
-}, 'json');
+    }, 'json');
 
 }
 
-function closeFamModal(lastGuarantorID,guarentor_photos) {
+function closeFamModal(lastGuarantorID, guarentor_photos) {
 
     $.post('verificationFile/verificationFam.php', { "cus_id": $('#cus_id').val() }, function (data) {
 
-        let guarentor_name_upd = lastGuarantorID ;
+        let guarentor_name_upd = lastGuarantorID;
         let optionSelected = '';
         $("#guarentor_name").empty().append("<option value=''>" + 'Select Guarantor' + "</option>");
         for (var i = 0; i < data.length - 1; i++) { // -1 because this ajax's response will contain customer value at the last of the response for verification person
@@ -1117,7 +1120,7 @@ function closeFamModal(lastGuarantorID,guarentor_photos) {
                 selected = 'selected';
                 optionSelected = true;
             }
-           
+
             $("#guarentor_name").append("<option value='" + fam_id + "' " + selected + ">" + fam_name + "</option>");
         }
         if (optionSelected) {
@@ -1336,7 +1339,7 @@ function resetPropertyinfoList() {
 
 $(document).on("click", "#bankInfoBtn", function () {
 
-   
+
     let req_id = $('#req_id').val();
     let cus_id = $('#cus_id').val();
     let bank_name = $("#bank_name").val();
@@ -1344,10 +1347,10 @@ $(document).on("click", "#bankInfoBtn", function () {
     let account_holder_name = $("#account_holder_name").val();
     let account_number = $("#account_number").val();
     let Ifsc_code = $("#Ifsc_code").val();
-    let bank_upload = $('#bank_upload')[0].files[0]; 
+    let bank_upload = $('#bank_upload')[0].files[0];
     let bank_upload_id = $('#bank_upload_id').val();
     let bankID = $("#bankID").val();
-    
+
     if (bank_name != "" && branch_name != "" && account_holder_name != "" && account_number != "" && Ifsc_code != "" && req_id != "") {
         // Using FormData to send file and other data
         let formData = new FormData();
@@ -1361,7 +1364,7 @@ $(document).on("click", "#bankInfoBtn", function () {
         formData.append('bankID', bankID);
         formData.append('reqId', req_id);
         formData.append('cus_id', cus_id);
-    
+
         $.ajax({
             url: 'verificationFile/verification_bank_submit.php',
             type: 'POST',
@@ -1369,7 +1372,7 @@ $(document).on("click", "#bankInfoBtn", function () {
             cache: false,
             contentType: false,  // Important: Do not process contentType
             processData: false,  // Important: Do not process data
-            success: function(response) {
+            success: function (response) {
 
                 var insresult = response.includes("Inserted");
                 var updresult = response.includes("Updated");
@@ -1689,14 +1692,14 @@ $("body").on("click", "#verification_kyc_edit", function () {
 
             if (result['proofOf'] == 1) { //Guarentor
                 let famId = $("#guarentor_name").val();
-                $.post('verificationFile/verification_guarantor.php', { "famid": famId}, function (response) {
+                $.post('verificationFile/verification_guarantor.php', { "famid": famId }, function (response) {
                     $('.name_div').show();
                     $('#proofofname').val(response['famname']);
                 }, 'json')
 
                 $("#fam_mem").val('');
                 $('.fam_mem_div').hide();
-                
+
             } else if (result['proofOf'] == 2) { //Family Members
                 getfamilyforKyc(result['fam_mem']);
                 // setTimeout(() => {
@@ -1704,16 +1707,16 @@ $("body").on("click", "#verification_kyc_edit", function () {
                 // }, 1000);
                 $('.fam_mem_div').show();
                 $('.name_div').hide();
-                
+
             } else { //Customer
                 $("#fam_mem").val('');
                 $('.fam_mem_div').hide();
                 $('.name_div').show();
                 let cus_name = $('#cus_name').val();
                 $('#proofofname').val(cus_name);
-                
+
             }
-      
+
             $("#proof_type").val(result['proofType']);
             $("#proof_number").val(result['proofNo']);
             $("#kyc_upload").val(result['upload']);
@@ -1780,19 +1783,19 @@ $('#proofof').change(function () {
     let cus_id = $('#cus_id').val();
     let proof = $('#proofof').val();
     let famId = document.querySelector("#guarentor_name").value;
-    
+
     if (proof == '0') {
         $.post('verificationFile/get_proof_of_name.php', { req_id, cus_id, proof }, function (response) {
             $('.name_div').show();
             $('#proofofname').val(response);
         }, 'json')
-        
+
     } else if (proof == '1') {
-        $.post('verificationFile/verification_guarantor.php', { "famid": famId}, function (response) {
+        $.post('verificationFile/verification_guarantor.php', { "famid": famId }, function (response) {
             $('.name_div').show();
             $('#proofofname').val(response['famname']);
         }, 'json')
-        
+
     } else {
         $('.name_div').hide()
     }
@@ -1816,22 +1819,22 @@ $('#proofof').change(function () {
 
             }
         });
-        
+
     } else if (proof == '2') { // if proof of is family members then show family members dropdown 
         getfamilyforKyc();
-        
+
     } else {
         $('.fam_mem_div').hide();
         $('#fam_mem').val('');
-        
+
     }
-    
+
 });
 
 function getfamilyforKyc(famMemEdit) {
     let req_id = $('#req_id').val();
     let cus_id = $('#cus_id').val();
-    
+
     $.ajax({
         url: 'verificationFile/verification_proof_fam.php',
         data: { "reqId": req_id, cus_id },
@@ -1843,12 +1846,12 @@ function getfamilyforKyc(famMemEdit) {
             $('#fam_mem').empty();
             $('#fam_mem').append(`<option value=""> Select Family Member </option>`);
             $.each(response, function (index, value) {
-                let selected ='';
-                if(famMemEdit == value.id){
+                let selected = '';
+                if (famMemEdit == value.id) {
                     selected = 'selected';
                 }
 
-                $('#fam_mem').append("<option value='" + value.id + "' "+ selected +">" + value.fam_mem + "</option>");
+                $('#fam_mem').append("<option value='" + value.id + "' " + selected + ">" + value.fam_mem + "</option>");
             });
         }
 
@@ -1858,7 +1861,7 @@ function getfamilyforKyc(famMemEdit) {
             $.ajax({
                 url: 'verificationFile/verification_proof_type.php',
                 type: 'POST',
-                data: { "reqId": req_id, "proof": proof, "fam_name": fam_name,"cus_id":cus_id},
+                data: { "reqId": req_id, "proof": proof, "fam_name": fam_name, "cus_id": cus_id },
                 dataType: 'json',
                 cache: false,
                 success: function (response) {
@@ -2361,14 +2364,14 @@ $('#guarentor_name').change(function () { //Select Guarantor Name relationship w
 
 ///Customer profile submit///
 $('#submit_update_cus_profile').click(function () {
-    if(validation()){
-    let confirmAction = confirm("Are you sure you want to submit Loan Issue ?");
+    if (validation()) {
+        let confirmAction = confirm("Are you sure you want to submit Loan Issue ?");
         if (!confirmAction) {
             event.preventDefault(); // Stop form submission if canceled
             return false;
         }
-    }else{
-        event.preventDefault(); 
+    } else {
+        event.preventDefault();
         return false;
     }
 
@@ -2382,10 +2385,10 @@ function validation() {
     var occupation_type = $('#occupation_type').val(); var occupation = $('#occupation').val(); var area_cnfrm = $('#area_cnfrm').val(); var cus_res_type = $('#cus_res_type').val();
     var cus_res_details = $('#cus_res_details').val(); var cus_res_address = $('#cus_res_address').val(); var cus_res_native = $('#cus_res_native').val();
     var cus_occ_type = $('#cus_occ_type').val(); var cus_occ_detail = $('#cus_occ_detail').val(); var cus_occ_income = $('#cus_occ_income').val(); var cus_occ_address = $('#cus_occ_address').val(); var cus_occ_dow = $('#cus_occ_dow').val(); var cus_occ_abt = $('#cus_occ_abt').val();
-    var area_state = $('#area_state').val(); var area_district = $('#area_district').val(); var area_taluk = $('#area_taluk').val(); 
+    var area_state = $('#area_state').val(); var area_district = $('#area_district').val(); var area_taluk = $('#area_taluk').val();
     var area_confirm = $('#area_confirm').val(); var area_sub_area = $('#area_sub_area').val();
     var cus_how_know = $('#cus_how_know').val(); var cus_monthly_income = $('#cus_monthly_income').val(); var cus_other_income = $('#cus_other_income').val(); var cus_support_income = $('#cus_support_income').val(); var cus_Commitment = $('#cus_Commitment').val(); var cus_monDue_capacity = $('#cus_monDue_capacity').val(); var cus_loan_limit = $('#cus_loan_limit').val(); var about_cus = $('#about_cus').val();
-    var guarentor_name = $('#guarentor_name').val(); var guarentor_image = $('#guarentor_image').val(); var guarentorpic = $('#guarentorpic').val(); var loan_id = $('#loan_id').val();var validation = true;
+    var guarentor_name = $('#guarentor_name').val(); var guarentor_image = $('#guarentor_image').val(); var guarentorpic = $('#guarentorpic').val(); var loan_id = $('#loan_id').val(); var validation = true;
 
     if (cus_id == '') {
         event.preventDefault();
@@ -2629,14 +2632,14 @@ function validation() {
             event.preventDefault();
             validation = false;
             $('#customerpicCheck').show();
-        }else{
+        } else {
             $('#customerpicCheck').hide();
         }
-    }else{
+    } else {
         $('#customerpicCheck').hide();
     }
 
-    if (loanidResponse === "true"){
+    if (loanidResponse === "true") {
         if (guarentor_name == '') {
             event.preventDefault();
             validation = false;
@@ -2656,9 +2659,9 @@ function validation() {
         if (loan_id == '') {
             event.preventDefault();
             validation = false;
-            $('#loan_idCheck').show();  
-        }else{
-            $('#loan_idCheck').hide();  
+            $('#loan_idCheck').show();
+        } else {
+            $('#loan_idCheck').hide();
         }
     }
     return validation;
@@ -2695,22 +2698,22 @@ function getDocumentHistory() {
         success: function (response) {
             if (response.length != 0) {//check json response is not empty
 
-            for (var i = 0; i < response['pending_customer'].length; i++) {
-                pending_arr[i] = response['pending_customer'][i]
-                od_arr[i] = response['od_customer'][i]
-                due_nil_arr[i] = response['due_nil_customer'][i]
-                closed_arr[i] = response['closed_customer'][i]
-                balAmnt[i] = response['balAmnt'][i]
-            }
-            var pending_sts = pending_arr.join(',');
-            $('#pending_sts').val(pending_sts);
-            var od_sts = od_arr.join(',');
-            $('#od_sts').val(od_sts);
-            var due_nil_sts = due_nil_arr.join(',');
-            $('#due_nil_sts').val(due_nil_sts);
-            var closed_sts = closed_arr.join(',');
-            $('#closed_sts').val(closed_sts);
-            balAmnt = balAmnt.join(',');
+                for (var i = 0; i < response['pending_customer'].length; i++) {
+                    pending_arr[i] = response['pending_customer'][i]
+                    od_arr[i] = response['od_customer'][i]
+                    due_nil_arr[i] = response['due_nil_customer'][i]
+                    closed_arr[i] = response['closed_customer'][i]
+                    balAmnt[i] = response['balAmnt'][i]
+                }
+                var pending_sts = pending_arr.join(',');
+                $('#pending_sts').val(pending_sts);
+                var od_sts = od_arr.join(',');
+                $('#od_sts').val(od_sts);
+                var due_nil_sts = due_nil_arr.join(',');
+                $('#due_nil_sts').val(due_nil_sts);
+                var closed_sts = closed_arr.join(',');
+                $('#closed_sts').val(closed_sts);
+                balAmnt = balAmnt.join(',');
             }
         }
     }).then(function () {
@@ -2731,7 +2734,7 @@ function getDocumentHistory() {
             }
         }).then(function () {
             $('.edit-doc').off('click');
-            $(document).on('click','.edit-doc', function () {
+            $(document).on('click', '.edit-doc', function () {
                 $('.dropdown').not($(this).parent()).children().css('border-color', '');// to set other dropdown buttons as normal
                 $(this).parent().prev().css('border-color', 'red');// showing selected loan's dropdown button highlighted
 
@@ -2861,10 +2864,10 @@ function resetSignedDocList(req_id, cus_id) {
             $("#signdoc_upd").val('');
 
             let hasRecords = ($('#signed_table').DataTable().rows().count() > 0);
-            if(hasRecords){
+            if (hasRecords) {
                 $('#signed_doc_card').show();
 
-            } else{
+            } else {
                 $('#signed_doc_card').hide();
 
             }
@@ -2924,12 +2927,12 @@ function resetChequeList(req_id, cus_id) {
             $("#cheque_count").val('');
             $("#cheque_upd").val('');
             $("#chequeID").val('');
-            
+
             let hasRecords = ($('#cheque_table').DataTable().rows().count() > 0);
-            if(hasRecords){
+            if (hasRecords) {
                 $('#cheque_info_card').show();
 
-            } else{
+            } else {
                 $('#cheque_info_card').hide();
 
             }
@@ -2986,12 +2989,12 @@ function resetGoldList(req_id, cus_id) {
             $("#gold_Weight").val('');
             $("#gold_Value").val('');
             $("#goldID").val('');
-             
+
             let hasRecords = ($('#gold_table').DataTable().rows().count() > 0);
-            if(hasRecords){
+            if (hasRecords) {
                 $('#gold_info_card').show();
 
-            } else{
+            } else {
                 $('#gold_info_card').hide();
 
             }
@@ -3047,19 +3050,20 @@ function resetDocmentList(req_id, cus_id) {
             $("#document_holder").val('');
             $("#docholder_name").val('');
             $("#docholder_relationship_name").val('');
+
             $("#doc_relation").val('');
             $("#document_info_upd").val('');
             $("#doc_info_id").val('');
-            
+
             let hasRecords = ($('#document_table').DataTable().rows().count() > 0);
-            if(hasRecords){
+            if (hasRecords) {
                 $('#documents_info_card').show();
 
-            } else{
+            } else {
                 $('#documents_info_card').hide();
 
             }
-            
+
             storeDocInfo.docInfo = hasRecords;
 
         }
@@ -3111,9 +3115,9 @@ function getFamilyList(id, hiddenValue) {
             for (var i = 0; i < len - 1; i++) {
                 var fam_name = response[i]['fam_name'];
                 var fam_id = response[i]['fam_id'];
-                let selected ='';
-                if(fam_id == hiddenValue){
-                    selected ='selected';
+                let selected = '';
+                if (fam_id == hiddenValue) {
+                    selected = 'selected';
                 }
 
                 $("#" + id).append(`<option value='${fam_id}' ${selected}>${fam_name}</option>`);
@@ -3153,8 +3157,8 @@ function setTempDocumentEvents() {
         $('#table_name_tempout, #table_name_tempin').val(doc_type);
 
 
-        getFamilyList('tempout_rel_name','');
-        getFamilyList('tempin_rel_name','');
+        getFamilyList('tempout_rel_name', '');
+        getFamilyList('tempin_rel_name', '');
     })
 
     $('.closetempout, .closetempin').off('click');
@@ -3372,12 +3376,12 @@ function getMortgageInfo(req_id) {
             }
 
             let mort = ($('#mortgage_process').val() == '0') ? true : false;
-            if(mort){
+            if (mort) {
                 $('#mortgage_info_card').show();
-        
-            } else{
+
+            } else {
                 $('#mortgage_info_card').hide();
-        
+
             }
 
             storeDocInfo.mortgageInfo = mort;
@@ -3446,12 +3450,12 @@ function getEndorsementInfo(req_id) {
             } else {
                 $('#end_process_div').hide();
             }
-            
+
             let endorse = ($('#endorsement_process').val() == '0') ? true : false;
-            if(endorse){
+            if (endorse) {
                 $('#endorsement_info_card').show();
 
-            } else{
+            } else {
                 $('#endorsement_info_card').hide();
 
             }
@@ -3533,7 +3537,7 @@ function updateMortEndorse(id, req_id) {
                             showConfirmButton: true,
                             confirmButtonColor: '#009688'
                         });
-               
+
                         var docUpdName = result.doc_upd_name;
                         if (id == 'update_mortgage') {
                             $('#mortgage_doc_upd').val(docUpdName);//hidden value.
@@ -3542,7 +3546,7 @@ function updateMortEndorse(id, req_id) {
                         } else if (id == 'update_endorsement') {
                             $('#rc_doc_upd').val(docUpdName);
                             $('#rc_doc_img').attr('href', `uploads/verification/endorsement_doc/${docUpdName}`).text(docUpdName);
-                            
+
                         }
 
                         getDocumentHistory();// to reset the current status of the document history
@@ -3675,7 +3679,7 @@ function getFingerPrintDetails(cus_id, cus_name) {
                     $(this).prev().css('border-color', 'red');
                 } else {
                     $(this).prev().css('border-color', '#009688')
- 
+
                     showOverlay();//loader start
 
                     $(this).attr('disabled', true);
@@ -3759,6 +3763,7 @@ function resetsignInfo(req_id, cus_id) {
             $("#signTypeCheck").hide();
             $("#docCountCheck").hide();
             $('#docupdCheck').hide();
+            $("#signTyperRelationshipCheck").hide();
         }
     }).then(function () {
         signInfoEditEvent();//call for event listener
@@ -3784,7 +3789,7 @@ function signInfoEditEvent() {
 
                 $("#signedID").val(result['id']);
                 $("#sign_type").val(result['sign_type']);
-                                   
+
                 if (result["sign_type"] == "0") {
                     //if Customer
                     $("#cus_name_div").show();
@@ -3807,7 +3812,7 @@ function signInfoEditEvent() {
 
                 if (result['sign_type'] == '3' || result["sign_type"] == "2") {
                     $('#relation_doc').show();
-                    getFamilyList('signType_relationship',result['signType_relationship']);// to set family data to select box
+                    getFamilyList('signType_relationship', result['signType_relationship']);// to set family data to select box
                     // $("#signType_relationship").val(result['signType_relationship']);
 
                 } else {
@@ -3847,7 +3852,7 @@ function submitSignedDoc(req_id, cus_id) {
     let doc_Count = $("#doc_Count").val();
     let signType_relationship = $("#signType_relationship").val();
 
-    if (sign_type != "" && doc_Count != "") {
+    if (sign_type != "" && doc_Count != "" && ((sign_type == "2" || sign_type == "3") ? signType_relationship != "" : true)) {
 
         for (var i = 0; i < files.length; i++) {
             formdata.append('signdoc_upd[]', files[i])
@@ -3883,6 +3888,10 @@ function submitSignedDoc(req_id, cus_id) {
                 resetsignInfo(req_id, cus_id);
             }
         });
+        $("#docNameCheck").hide();
+        $("#signTypeCheck").hide();
+        $("#docCountCheck").hide();
+        $("#signTyperRelationshipCheck").hide();
     } else {
 
         if (sign_type == "") {
@@ -3896,7 +3905,13 @@ function submitSignedDoc(req_id, cus_id) {
         } else {
             $("#docCountCheck").hide();
         }
-
+        if (sign_type == '2' || sign_type == '3') {
+            if (signType_relationship == '') {
+                $('#signTyperRelationshipCheck').show();
+            } else {
+                $('#signTyperRelationshipCheck').hide();
+            }
+        }
         // if(files.length <= 0 || files.length != doc_Count){
         //     $('#docupdCheck').show();
         // }else{
@@ -3939,6 +3954,7 @@ function resetchequeInfo(req_id, cus_id) {
             $("#chequebankCheck").hide();
             $("#chequeCountCheck").hide();
             $('#chequeupdCheck').hide();
+            $("#holderNameCheck").hide();
 
         }
     }).then(function () {
@@ -3975,7 +3991,7 @@ function chequeInfoEditEvent() {
                 } else {
                     $('#holder_name').hide();
                     $('#holder_relationship_name').show();
-                    getFamilyList('holder_relationship_name',result['holder_relationship_name']); // Holder Name From Family Table.
+                    getFamilyList('holder_relationship_name', result['holder_relationship_name']); // Holder Name From Family Table.
                     // $("#holder_relationship_name").val(result['holder_relationship_name']);
                 }
 
@@ -3989,11 +4005,11 @@ function chequeInfoEditEvent() {
 
     });
 
-    $('#cheque_count').off().keyup(function(){
+    $('#cheque_count').off().keyup(function () {
         let chequeCnt = $(this).val();
-        getChequeColumn(chequeCnt,''); // show input to insert Cheque No.
+        getChequeColumn(chequeCnt, ''); // show input to insert Cheque No.
     });
-    
+
 }
 
 //Create Div and cheque no input elements based on count of cheque need to upload
@@ -4047,7 +4063,7 @@ function submitCheque(req_id, cus_id) {
         i++;
     })
 
-  if ( holder_type != "" && chequebank_name != "" && cheque_count != "" && req_id != "" && !chequeArr.includes('')) { // !chequeArr.includes('') will check if any of array values is empty
+    if (holder_type != "" && chequebank_name != "" && cheque_count != "" && req_id != "" && !chequeArr.includes('') && ((holder_type == "2") ? holder_relationship_name != "" : true)) { // !chequeArr.includes('') will check if any of array values is empty
 
         for (var i = 0; i < files.length; i++) {
             formdata.append('cheque_upd[]', files[i])
@@ -4116,7 +4132,13 @@ function submitCheque(req_id, cus_id) {
         } else {
             $('#chequeNoCheck').hide();
         }
-
+        if (holder_type == '2') {
+            if (holder_relationship_name == "") {
+                $("#holderNameCheck").show();
+            } else {
+                $("#holderNameCheck").hide();
+            }
+        }
         // if (files.length != cheque_count || chequeArr.includes('')) {
         //     $('#chequeupdCheck').show();
         // } else {
@@ -4300,6 +4322,7 @@ function resetdocInfo(req_id, cus_id) {
             $("#document_type").val('');
             $("#document_holder").val('');
             $("#docholder_name").val('');
+            $("#docholder_relationship_name").val('');
             $("#relation_name").val('');
             $("#doc_relation").val('');
             $("#document_info_upd").val('');
@@ -4309,6 +4332,7 @@ function resetdocInfo(req_id, cus_id) {
             $("#documentTypeCheck").hide();
             $("#docholderCheck").hide();
             $('#docinfoupdCheck').hide();
+            $("#docHolderNameCheck").hide();
 
         }
     }).then(function () {
@@ -4342,7 +4366,7 @@ function docInfoEditEvent() {
                 } else {
                     $("#docholder_name").hide();
                     $("#docholder_relationship_name").show();
-                    getFamilyList('docholder_relationship_name',response['relation_name']);//get member details
+                    getFamilyList('docholder_relationship_name', response['relation_name']);//get member details
                     // $("#docholder_relationship_name").val(response['relation_name']);
                 }
                 $("#doc_relation").val(response['relation']);
@@ -4367,12 +4391,12 @@ function submitDocument(req_id, cus_id) {
     let relation_name = $("#docholder_relationship_name").val();
     let relation = $("#doc_relation").val();
 
-    if ( doc_name != "" && doc_details != "" && doc_type != "" && doc_holder != "") {
-            
+    if (doc_name != "" && doc_details != "" && doc_type != "" && doc_holder != "" && ((doc_holder === "2") ? relation_name !== "" : true)) {
+
         for (var i = 0; i < files.length; i++) {
             formdata.append('document_info_upd[]', files[i])
         }
-        
+
         formdata.append('req_id', req_id)
         formdata.append('cus_id', cus_id)
         formdata.append('doc_info_id', doc_info_id)
@@ -4421,30 +4445,36 @@ function submitDocument(req_id, cus_id) {
 
     } else {
 
-        if (!doc_name){
+        if (!doc_name) {
             $("#documentnameCheck").show();
-        }else{
+        } else {
             $("#documentnameCheck").hide();
         }
 
-        if (!doc_details){
+        if (!doc_details) {
             $("#documentdetailsCheck").show();
-        }else{
+        } else {
             $("#documentdetailsCheck").hide();
         }
 
-        if (!doc_type){
+        if (!doc_type) {
             $("#documentTypeCheck").show();
-        }else{
+        } else {
             $("#documentTypeCheck").hide();
         }
 
-        if (!doc_holder){
+        if (!doc_holder) {
             $("#docholderCheck").show();
-        }else{
+        } else {
             $("#docholderCheck").hide();
-        } 
-
+        }
+        if (doc_holder == '2') {
+            if (relation_name == "") {
+                $("#docHolderNameCheck").show();
+            } else {
+                $("#docHolderNameCheck").hide();
+            }
+        }
         // if(files.length <= 0){
         //     $('#docinfoupdCheck').show();
         // } else {
@@ -4532,112 +4562,112 @@ function showCustomerOldData() {
 }
 
 function getGuarentorName() {
-  let req_id = $("#req_id").val();
-  let cus_id = $("#cus_id").val();
-  $.ajax({
-    url: "verificationFile/getGuarentorName.php",
-    type: "post",
-    data: { req_id: req_id, cus_id: cus_id },
-    cache: false,
-    success: function (response) {
-      $("#guar_name_div").show();
-      $("#guar_name").val(response);
-    },
-  });
+    let req_id = $("#req_id").val();
+    let cus_id = $("#cus_id").val();
+    $.ajax({
+        url: "verificationFile/getGuarentorName.php",
+        type: "post",
+        data: { req_id: req_id, cus_id: cus_id },
+        cache: false,
+        success: function (response) {
+            $("#guar_name_div").show();
+            $("#guar_name").val(response);
+        },
+    });
 }
 
 // Signed Doc
 function signTypeRelation() {
-  let cus_id = $("#cus_id").val();
-  $.ajax({
-    url: "verificationFile/verificationFam.php",
-    type: "post",
-    data: { cus_id: cus_id },
-    dataType: "json",
-    cache: false,
-    success: function (response) {
-      var len = response.length;
-      $("#signType_relationship").empty();
-      $("#signType_relationship").append(
-        "<option value=''>" + "Select Relationship" + "</option>"
-      );
-      for (var i = 0; i < len - 1; i++) {
-        //-1 because last name will be customer name
-        var fam_name = response[i]["fam_name"];
-        var fam_id = response[i]["fam_id"];
-        var relationship = response[i]["relationship"];
-        $("#signType_relationship").append(
-          "<option value='" +
-            fam_id +
-            "'>" +
-            fam_name +
-            " - " +
-            relationship +
-            "</option>"
-        );
-      }
-    // Sort signType_relationship dropdown
-    sortDropdownAlphabetically("#signType_relationship");
-    },
-  });
+    let cus_id = $("#cus_id").val();
+    $.ajax({
+        url: "verificationFile/verificationFam.php",
+        type: "post",
+        data: { cus_id: cus_id },
+        dataType: "json",
+        cache: false,
+        success: function (response) {
+            var len = response.length;
+            $("#signType_relationship").empty();
+            $("#signType_relationship").append(
+                "<option value=''>" + "Select Relationship" + "</option>"
+            );
+            for (var i = 0; i < len - 1; i++) {
+                //-1 because last name will be customer name
+                var fam_name = response[i]["fam_name"];
+                var fam_id = response[i]["fam_id"];
+                var relationship = response[i]["relationship"];
+                $("#signType_relationship").append(
+                    "<option value='" +
+                    fam_id +
+                    "'>" +
+                    fam_name +
+                    " - " +
+                    relationship +
+                    "</option>"
+                );
+            }
+            // Sort signType_relationship dropdown
+            sortDropdownAlphabetically("#signType_relationship");
+        },
+    });
 }
 
 //Cheque Holder Name
 function chequeHolderName() {
-  let cus_id = $("#cus_id").val();
-  $.ajax({
-    url: "verificationFile/verificationFam.php",
-    type: "post",
-    data: { cus_id: cus_id },
-    dataType: "json",
-    success: function (response) {
-      var len = response.length;
-      $("#holder_relationship_name").empty();
-      $("#holder_relationship_name").append(
-        "<option value=''>" + "Select Holder Name" + "</option>"
-      );
-      for (var i = 0; i < len - 1; i++) {
-        //-1 because last one name will be customer name
-        var fam_name = response[i]["fam_name"];
-        var fam_id = response[i]["fam_id"];
-        $("#holder_relationship_name").append(
-          "<option value='" + fam_id + "'>" + fam_name + "</option>"
-        );
-      }
-    // Sort holder_relationship_name dropdown
-    sortDropdownAlphabetically("#holder_relationship_name");
-    },
-  });
+    let cus_id = $("#cus_id").val();
+    $.ajax({
+        url: "verificationFile/verificationFam.php",
+        type: "post",
+        data: { cus_id: cus_id },
+        dataType: "json",
+        success: function (response) {
+            var len = response.length;
+            $("#holder_relationship_name").empty();
+            $("#holder_relationship_name").append(
+                "<option value=''>" + "Select Holder Name" + "</option>"
+            );
+            for (var i = 0; i < len - 1; i++) {
+                //-1 because last one name will be customer name
+                var fam_name = response[i]["fam_name"];
+                var fam_id = response[i]["fam_id"];
+                $("#holder_relationship_name").append(
+                    "<option value='" + fam_id + "'>" + fam_name + "</option>"
+                );
+            }
+            // Sort holder_relationship_name dropdown
+            sortDropdownAlphabetically("#holder_relationship_name");
+        },
+    });
 }
 
 function docHolderName(callback) {
-  let cus_id = $("#cus_id").val();
+    let cus_id = $("#cus_id").val();
 
-  $.ajax({
-    url: "verificationFile/verificationFam.php",
-    type: "post",
-    data: { cus_id: cus_id },
-    dataType: "json",
-    success: function (response) {
-      var len = response.length;
-      $("#docholder_relationship_name").empty();
-      $("#docholder_relationship_name").append(
-        "<option value=''>" + "Select Holder Name" + "</option>"
-      );
-      for (var i = 0; i < len - 1; i++) {
-        // -1 because this ajax's response will contain customer value at the last of the response for verification person
-        var fam_name = response[i]["fam_name"];
-        var fam_id = response[i]["fam_id"];
-        $("#docholder_relationship_name").append(
-          "<option value='" + fam_id + "'>" + fam_name + "</option>"
-        );
-      }
-    // Sort docholder_relationship_name dropdown
-    sortDropdownAlphabetically("#docholder_relationship_name");
+    $.ajax({
+        url: "verificationFile/verificationFam.php",
+        type: "post",
+        data: { cus_id: cus_id },
+        dataType: "json",
+        success: function (response) {
+            var len = response.length;
+            $("#docholder_relationship_name").empty();
+            $("#docholder_relationship_name").append(
+                "<option value=''>" + "Select Holder Name" + "</option>"
+            );
+            for (var i = 0; i < len - 1; i++) {
+                // -1 because this ajax's response will contain customer value at the last of the response for verification person
+                var fam_name = response[i]["fam_name"];
+                var fam_id = response[i]["fam_id"];
+                $("#docholder_relationship_name").append(
+                    "<option value='" + fam_id + "'>" + fam_name + "</option>"
+                );
+            }
+            // Sort docholder_relationship_name dropdown
+            sortDropdownAlphabetically("#docholder_relationship_name");
 
-      if (typeof callback === "function") {
-        callback();
-      }
-    },
-  });
+            if (typeof callback === "function") {
+                callback();
+            }
+        },
+    });
 }

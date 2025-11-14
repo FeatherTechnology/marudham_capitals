@@ -456,6 +456,7 @@ $(document).ready(function () {
   $("#docpropertymeasureCheck").hide();
   $("#docpropertylocCheck").hide();
   $("#docpropertyvalueCheck").hide();
+  $("#propertyholderNameCheck").hide();
 
   // $('#mortgagenameCheck').hide(); $('#mortgagedsgnCheck').hide(); $('#mortgagenumCheck').hide(); $('#regofficeCheck').hide(); $('#mortgagevalueCheck').hide(); $('#mortgagedocCheck').hide();
 
@@ -466,6 +467,7 @@ $(document).ready(function () {
   $("#vehicleprocessCheck").hide();
   $("#enCompanyCheck").hide();
   $("#enModelCheck").hide();
+  $("#ownerNameCheck").hide();
   // $('#vehicle_reg_noCheck').hide(); $('#endorsementnameCheck').hide(); $('#enRCCheck').hide(); $('#enKeyCheck').hide();
 
   //Gold Info
@@ -482,7 +484,7 @@ $(document).ready(function () {
   $("#documentdetailsCheck").hide();
   $("#documentTypeCheck").hide();
   $("#docholderCheck").hide();
-
+  $("#docHolderNameCheck").hide();
   $("#sign_type").change(function () {
     // Signed Type
     let type = $(this).val();
@@ -490,6 +492,7 @@ $(document).ready(function () {
     $("#cus_name_div").hide();
     $("#guar_name_div").hide();
     $("#relation_doc").hide();
+    $('#signTyperRelationshipCheck').hide();
 
     if (type == "0") {
       // if customer , then show Customer name
@@ -608,7 +611,7 @@ $(document).ready(function () {
     // Cheque info
     let type = $(this).val();
     let req_id = $("#req_id").val();
-
+    $("#holderNameCheck").hide();
     if (type == "0") {
       $("#holder_name").show();
       $("#holder_relationship_name").hide();
@@ -802,6 +805,7 @@ $(document).ready(function () {
       $("#doc_property_measurement").val("");
       $("#doc_property_location").val("");
       $("#doc_property_value").val("");
+      $("#propertyholderNameCheck").hide();
     }
 
     let mort = process == "0" ? true : false;
@@ -812,6 +816,7 @@ $(document).ready(function () {
   $("#Propertyholder_type").change(function () {
     let type = $(this).val();
     let req_id = $("#req_id").val();
+    $("#propertyholderNameCheck").hide();
 
     if (type == "0") {
       $("#Propertyholder_name").show();
@@ -891,6 +896,7 @@ $(document).ready(function () {
       $("#vehicle_process").val("");
       $("#en_Company").val("");
       $("#en_Model").val("");
+      $("#ownerNameCheck").hide();
       // $('#vehicle_reg_no').val('');
       // $('#endorsement_name').val('');
       // $('#en_RC').val('');
@@ -905,7 +911,7 @@ $(document).ready(function () {
   $("#owner_type").change(function () {
     let type = $(this).val();
     let req_id = $("#req_id").val();
-
+    $("#ownerNameCheck").hide();
     if (type == "0") {
       $("#owner_name").show();
       $("#ownername_relationship_name").val("");
@@ -969,6 +975,7 @@ $(document).ready(function () {
   $("#document_holder").change(function () {
     let type = $(this).val();
     let req_id = $("#req_id").val();
+    $("#docHolderNameCheck").hide();
 
     if (type == "0") {
       //Customer
@@ -1114,9 +1121,9 @@ $(document).ready(function () {
 
 
   $('#cus_monthly_income ,#cus_Commitment ,#cus_other_income ,#cus_support_income ,#cus_monDue_capacity , #cus_loan_limit').on('input', function () {
-        let value = $(this).val();
-        $(this).val(formatIndianNumber(value));
-    });
+    let value = $(this).val();
+    $(this).val(formatIndianNumber(value));
+  });
   $(document).on("click", "#hide_document_history", function () {
     $("#docHistoryDiv").empty();
     $("#show_document_history").show();
@@ -2697,8 +2704,8 @@ function getDistrictDropdown(StateSelected) {
   $("#district").html(htmlString);
   $("#district1").val(district_upd);
 
-    // Sort district dropdown
-    sortDropdownAlphabetically("#district");
+  // Sort district dropdown
+  sortDropdownAlphabetically("#district");
 }
 
 //get Taluk Dropdown
@@ -3235,8 +3242,8 @@ function getTalukDropdown(DistSelected) {
   $("#taluk").html(htmlString);
   $("#taluk1").val(taluk_upd);
 
-    // Sort taluk dropdown
-    sortDropdownAlphabetically("#taluk");
+  // Sort taluk dropdown
+  sortDropdownAlphabetically("#taluk");
 }
 
 //Get Taluk Based Area
@@ -3510,19 +3517,19 @@ $('#cus_responsible').change(function () {
 ////////////////////////////////////////////////Submit Verification //////////////////////////////////////////////////////////////////////////////
 
 $("#submit_verification").click(function (event) {
-    if(validation(event)){
-            let confirmAction = confirm("Are you sure you want to Customer Profile?");
-            if (!confirmAction) {
-            event.preventDefault();
-            return false; 
-            }
-        }else{
-            event.preventDefault();
-            return false;
+  if (validation(event)) {
+    let confirmAction = confirm("Are you sure you want to Customer Profile?");
+    if (!confirmAction) {
+      event.preventDefault();
+      return false;
     }
+  } else {
+    event.preventDefault();
+    return false;
+  }
 });
 
-function validation( event) {
+function validation(event) {
   var cus_id = $("#cus_id").val();
   var cus_name = $("#cus_name").val();
   var dob = $("#dob").val();
@@ -3560,7 +3567,7 @@ function validation( event) {
   var cus_loan_limit = $("#cus_loan_limit").val();
   var about_cus = $("#about_cus").val();
   var req_id = $("#req_id").val();
-var validation = true;
+  var validation = true;
   var responsible = $("#cus_responsible").val();
   if (responsible == "" && $(".responsible").css("display") != "none") {
     event.preventDefault();
@@ -3766,7 +3773,7 @@ var validation = true;
   }
 
   let famCnt = $("#famTable").DataTable().rows().count();
-  if(famCnt == 0 ){
+  if (famCnt == 0) {
     event.preventDefault();
     $("#kyc_infoCheck").show();
     validation = false;
@@ -3775,14 +3782,14 @@ var validation = true;
   }
 
   let kycCnt = $("#kyc_dataTable").DataTable().rows().count();
-  if(kycCnt == 0 ){
+  if (kycCnt == 0) {
     event.preventDefault();
     $("#kyc_infoCheck").show();
     validation = false;
   } else {
     $("#kyc_infoCheck").hide();
   }
- return validation ;
+  return validation;
 
   // $.ajax({
   //   url: "verificationFile/validateModals.php",
@@ -3825,7 +3832,6 @@ $("#Communitcation_to_cus").change(function () {
     $("#verifyaudio").hide();
   }
 });
-
 //////////////////////////////////////////////////// Documentation  Start////////////////////////////////////////
 
 // //Get DOC id
@@ -3957,7 +3963,7 @@ $(document).on("click", "#signInfoBtn", function () {
   let doc_Count = $("#doc_Count").val();
   let signedID = $("#signedID").val();
 
-  if (sign_type != "" && doc_Count != "" && req_id != "") {
+  if (sign_type != "" && doc_Count != "" && req_id != "" && ((sign_type == "2" || sign_type == "3") ? signType_relationship != "" : true)) {
     $.ajax({
       url: "verificationFile/documentation/signed_doc_info_submit.php",
       type: "POST",
@@ -3999,6 +4005,7 @@ $(document).on("click", "#signInfoBtn", function () {
     $("#docNameCheck").hide();
     $("#signTypeCheck").hide();
     $("#docCountCheck").hide();
+    $("#signTyperRelationshipCheck").hide();
   } else {
     if (sign_type == "") {
       $("#signTypeCheck").show();
@@ -4010,6 +4017,13 @@ $(document).on("click", "#signInfoBtn", function () {
       $("#docCountCheck").show();
     } else {
       $("#docCountCheck").hide();
+    }
+    if (sign_type == '2' || sign_type == '3') {
+      if (signType_relationship == '') {
+        $('#signTyperRelationshipCheck').show();
+      } else {
+        $('#signTyperRelationshipCheck').hide();
+      }
     }
   }
 });
@@ -4034,6 +4048,7 @@ function resetsignInfo() {
       $("#signType_relationship").val("");
       $("#doc_Count").val("");
       $("#signedID").val("");
+      $("#signTyperRelationshipCheck").hide();
     },
   });
 }
@@ -4124,6 +4139,7 @@ function resetsigninfoList() {
 $("#chequebankCheck").hide();
 $("#holdertypeCheck").hide();
 $("#chequeCountCheck").hide();
+$("#holderNameCheck").hide();
 
 $(document).on("click", "#chequeInfoBtn", function () {
   let req_id = $("#req_id").val();
@@ -4141,7 +4157,7 @@ $(document).on("click", "#chequeInfoBtn", function () {
     holder_type != "" &&
     chequebank_name != "" &&
     cheque_count != "" &&
-    req_id != ""
+    req_id != "" && ((holder_type == "2") ? holder_relationship_name != "" : true)
   ) {
     $.ajax({
       url: "verificationFile/documentation/cheque_info_submit.php",
@@ -4186,6 +4202,7 @@ $(document).on("click", "#chequeInfoBtn", function () {
     $("#chequebankCheck").hide();
     $("#holdertypeCheck").hide();
     $("#chequeCountCheck").hide();
+    $("#holderNameCheck").hide();
   } else {
     if (holder_type == "") {
       $("#holdertypeCheck").show();
@@ -4203,6 +4220,13 @@ $(document).on("click", "#chequeInfoBtn", function () {
       $("#chequeCountCheck").show();
     } else {
       $("#chequeCountCheck").hide();
+    }
+    if (holder_type == '2') {
+      if (holder_relationship_name == "") {
+        $("#holderNameCheck").show();
+      } else {
+        $("#holderNameCheck").hide();
+      }
     }
   }
 });
@@ -4463,6 +4487,7 @@ $("#documentnameCheck").hide();
 $("#documentdetailsCheck").hide();
 $("#documentTypeCheck").hide();
 $("#docholderCheck").hide();
+$("#docHolderNameCheck").hide();
 //Document info submit button action
 $("#docInfoBtn").click(function () {
   let req_id = $("#req_id").val();
@@ -4481,7 +4506,7 @@ $("#docInfoBtn").click(function () {
     doc_details != "" &&
     doc_type != "" &&
     doc_holder != "" &&
-    relation != ""
+    relation != "" && ((doc_holder === "2") ? relation_name !== "" : true)
   ) {
     $.ajax({
       url: "verificationFile/documentation/doc_info_submit.php",
@@ -4523,11 +4548,44 @@ $("#docInfoBtn").click(function () {
         resetdocInfo();
       },
     });
+
+    $("#documentnameCheck").hide();
+    $("#documentdetailsCheck").hide();
+    $("#documentTypeCheck").hide();
+    $("#docholderCheck").hide();
+    $("#docHolderNameCheck").hide();
   } else {
-    $("#documentnameCheck").show();
-    $("#documentdetailsCheck").show();
-    $("#documentTypeCheck").show();
-    $("#docholderCheck").show();
+    if (doc_name == "") {
+      $("#documentnameCheck").show();
+    } else {
+      $("#documentnameCheck").hide();
+    }
+
+    if (doc_details == "") {
+      $("#documentdetailsCheck").show();
+    } else {
+      $("#documentdetailsCheck").hide();
+    }
+
+    if (doc_type == "") {
+      $("#documentTypeCheck").show();
+    } else {
+      $("#documentTypeCheck").hide();
+    }
+
+    if (doc_holder == "") {
+      $("#docholderCheck").show();
+    } else {
+      $("#docholderCheck").hide();
+    }
+
+    if (doc_holder == '2') {
+      if (relation_name == "") {
+        $("#docHolderNameCheck").show();
+      } else {
+        $("#docHolderNameCheck").hide();
+      }
+    }
   }
 });
 
@@ -4706,7 +4764,7 @@ function docHistoryTable() {
 
 function getDocumentHistory() {
   $("#show_document_history").hide();
-   $("#hide_document_history").show();
+  $("#hide_document_history").show();
   let cus_id = $("#cus_id_load").val();
   let req_id = $("#req_id").val();
   let cus_type = $("#cus_type").val();
@@ -4776,39 +4834,41 @@ function getDocumentHistory() {
 
 //Documentation Submit Validation
 $("#submit_documentation").click(function () {
-  if(doc_submit_validation()){
-  let confirmAction = confirm("Are you sure you want to submit Documentation ?");
-        if (!confirmAction) {
-            event.preventDefault(); 
-            return false;
-        }
-      }else{
-        event.preventDefault();
-        return false;
-      }
+  if (doc_submit_validation()) {
+    let confirmAction = confirm("Are you sure you want to submit Documentation ?");
+    if (!confirmAction) {
+      event.preventDefault();
+      return false;
+    }
+  } else {
+    event.preventDefault();
+    return false;
+  }
 });
 
 function doc_submit_validation() {
   var cus_id_doc = $("#cus_id_doc").val();
   var mortgage_process = $("#mortgage_process").val();
   var Propertyholder_type = $("#Propertyholder_type").val();
+  var Propertyholder_relationship_name = $("#Propertyholder_relationship_name").val();
   var doc_property_pype = $("#doc_property_pype").val();
   var doc_property_measurement = $("#doc_property_measurement").val();
   var doc_property_location = $("#doc_property_location").val();
   var doc_property_value = $("#doc_property_value").val();
   var endorsement_process = $("#endorsement_process").val();
+  var ownername_relationship_name = $("#ownername_relationship_name").val();
   var owner_type = $("#owner_type").val();
   var vehicle_type = $("#vehicle_type").val();
   var vehicle_process = $("#vehicle_process").val();
   var en_Company = $("#en_Company").val();
   var en_Model = $("#en_Model").val();
-  var validation= true;
+  var validation = true;
 
   var responsible = $("#doc_responsible").val();
   if (responsible == "" && $(".responsible").css("display") != "none") {
     $("#docResponsibleCheck").show();
     event.preventDefault();
-    validation= false;
+    validation = false;
   } else {
     $("#docResponsibleCheck").hide();
   }
@@ -4823,13 +4883,13 @@ function doc_submit_validation() {
       confirmButtonColor: "#009688",
     });
     event.preventDefault();
-    validation= false;
+    validation = false;
   }
 
   if (mortgage_process == "") {
     event.preventDefault();
     $("#mortgageprocessCheck").show();
-    validation= false;
+    validation = false;
   } else {
     $("#mortgageprocessCheck").hide();
   }
@@ -4838,44 +4898,53 @@ function doc_submit_validation() {
     if (Propertyholder_type == "") {
       event.preventDefault();
       $("#propertyholdertypeCheck").show();
-      validation= false;
+      validation = false;
     } else {
       $("#propertyholdertypeCheck").hide();
     }
     if (doc_property_pype == "") {
       event.preventDefault();
       $("#docpropertytypeCheck").show();
-      validation= false;
+      validation = false;
     } else {
       $("#docpropertytypeCheck").hide();
     }
     if (doc_property_measurement == "") {
       event.preventDefault();
       $("#docpropertymeasureCheck").show();
-      validation= false;
+      validation = false;
     } else {
       $("#docpropertymeasureCheck").hide();
     }
     if (doc_property_location == "") {
       event.preventDefault();
       $("#docpropertylocCheck").show();
-      validation= false;
+      validation = false;
     } else {
       $("#docpropertylocCheck").hide();
     }
     if (doc_property_value == "") {
       event.preventDefault();
       $("#docpropertyvalueCheck").show();
-      validation= false;
+      validation = false;
     } else {
       $("#docpropertyvalueCheck").hide();
+    }
+    if (Propertyholder_type == '2') {
+      if (Propertyholder_relationship_name == "") {
+        event.preventDefault();
+        validation = false;
+        $("#propertyholderNameCheck").show();
+      } else {
+        $("#propertyholderNameCheck").hide();
+      }
     }
   }
 
   if (endorsement_process == "") {
     event.preventDefault();
     $("#endorsementprocessCheck").show();
-    validation= false;
+    validation = false;
   } else {
     $("#endorsementprocessCheck").hide();
   }
@@ -4884,40 +4953,49 @@ function doc_submit_validation() {
     if (owner_type == "") {
       event.preventDefault();
       $("#ownertypeCheck").show();
-      validation= false;
+      validation = false;
     } else {
       $("#ownertypeCheck").hide();
     }
     if (vehicle_type == "") {
       event.preventDefault();
       $("#vehicletypeCheck").show();
-      validation= false;
+      validation = false;
     } else {
       $("#vehicletypeCheck").hide();
     }
     if (vehicle_process == "") {
       event.preventDefault();
       $("#vehicleprocessCheck").show();
-      validation= false;
+      validation = false;
     } else {
       $("#vehicleprocessCheck").hide();
     }
     if (en_Company == "") {
       event.preventDefault();
       $("#enCompanyCheck").show();
-      validation= false;
+      validation = false;
     } else {
       $("#enCompanyCheck").hide();
     }
     if (en_Model == "") {
       event.preventDefault();
       $("#enModelCheck").show();
-      validation= false;
+      validation = false;
     } else {
       $("#enModelCheck").hide();
     }
+    if (owner_type == '2') {
+      if (ownername_relationship_name == "") {
+        event.preventDefault();
+        validation = false;
+        $("#ownerNameCheck").show();
+      } else {
+        $("#ownerNameCheck").hide();
+      }
+    }
   }
-return validation
+  return validation
 }
 
 async function getDocumentFunc() {
@@ -4972,75 +5050,75 @@ $("#loan_category").change(function () {
 });
 
 $("#refresh_cal").click(function () {
-    var intrest_rate = $("#int_rate").val();
-    var doc_charge = $("#doc_charge").val();
-    var proc_fee = $("#proc_fee").val();
-    var due_period = $("#due_period").val();
-    var profit_method = $("#profit_method").val();
+  var intrest_rate = $("#int_rate").val();
+  var doc_charge = $("#doc_charge").val();
+  var proc_fee = $("#proc_fee").val();
+  var due_period = $("#due_period").val();
+  var profit_method = $("#profit_method").val();
 
-    if( intrest_rate == "" || doc_charge == "" || proc_fee == "" || due_period == "" || profit_method == ""){
-        Swal.fire({
-                timerProgressBar: true,
-                timer: 2000,
-                title: 'Please Fill out Loan Info!',
-                icon: 'error',
-                showConfirmButton: true,
-                confirmButtonColor: '#009688'
-                });
-        return;
+  if (intrest_rate == "" || doc_charge == "" || proc_fee == "" || due_period == "" || profit_method == "") {
+    Swal.fire({
+      timerProgressBar: true,
+      timer: 2000,
+      title: 'Please Fill out Loan Info!',
+      icon: 'error',
+      showConfirmButton: true,
+      confirmButtonColor: '#009688'
+    });
+    return;
+  }
+
+  $(".int-diff").text("*");
+  $(".due-diff").text("*");
+
+  var profit_method = $("#profit_method").val();
+  var due_type = $("#due_type").val(); // if profit method changes, due type is EMI
+  if (profit_method == "after_intrest" && due_type == "EMI") {
+    getLoanAfterInterest();
+
+  } else if (profit_method == "pre_intrest") {
+    getLoanPreInterest();
+
+  }
+
+  if (due_type == "Interest") {
+    getLoanInterest();
+  }
+
+  var scheme_profit_method = $("#scheme_profit_method").val(); // if profit method changes, due type is EMI
+  if (scheme_profit_method == "after_intrest") {
+    getSchemeAfterIntreset();
+
+  } else if (scheme_profit_method == "pre_intrest") {
+    getSchemePreIntreset();
+
+  }
+
+  // var due_method_scheme = $('#due_method_scheme').val();
+  // if (due_method_scheme == '1') {//Monthly scheme as 1
+  //     getLoanMonthly(); changeInttoBen();
+  // } else if (due_method_scheme == '2') {//Weekly scheme as 2
+  //     getLoanWeekly(); changeInttoBen();
+  // } else if (due_method_scheme == '3') {//Daily scheme as 3
+  //     getLoanDaily(); changeInttoBen();
+  // }
+
+  changeInttoBen();
+
+  function changeInttoBen() {
+    let due_type = document.getElementById("due_type");
+    let int_label = document.querySelector("#int_amt_cal");
+    if (due_type.value == "Interest") {
+      // Set its value to 'Benefit Amount'
+      int_label.previousElementSibling.previousElementSibling.textContent =
+        "Benefit Amount";
+      $('.emi_div').hide();
+    } else {
+      int_label.previousElementSibling.previousElementSibling.textContent =
+        "Interest Amount";
+      $('.emi_div').show();
     }
-
-    $(".int-diff").text("*");
-    $(".due-diff").text("*");
-
-    var profit_method = $("#profit_method").val();
-    var due_type = $("#due_type").val(); // if profit method changes, due type is EMI
-    if (profit_method == "after_intrest" && due_type == "EMI") {
-      getLoanAfterInterest();
-
-    } else if (profit_method == "pre_intrest") {
-      getLoanPreInterest();
-
-    }
-
-    if (due_type == "Interest") {
-      getLoanInterest();
-    }
-
-    var scheme_profit_method = $("#scheme_profit_method").val(); // if profit method changes, due type is EMI
-    if (scheme_profit_method == "after_intrest") {
-      getSchemeAfterIntreset();
-
-    } else if (scheme_profit_method == "pre_intrest") {
-      getSchemePreIntreset();
-
-    }
-
-    // var due_method_scheme = $('#due_method_scheme').val();
-    // if (due_method_scheme == '1') {//Monthly scheme as 1
-    //     getLoanMonthly(); changeInttoBen();
-    // } else if (due_method_scheme == '2') {//Weekly scheme as 2
-    //     getLoanWeekly(); changeInttoBen();
-    // } else if (due_method_scheme == '3') {//Daily scheme as 3
-    //     getLoanDaily(); changeInttoBen();
-    // }
-
-    changeInttoBen();
-
-    function changeInttoBen() {
-      let due_type = document.getElementById("due_type");
-      let int_label = document.querySelector("#int_amt_cal");
-      if (due_type.value == "Interest") {
-        // Set its value to 'Benefit Amount'
-        int_label.previousElementSibling.previousElementSibling.textContent =
-          "Benefit Amount";
-        $('.emi_div').hide();
-      } else {
-        int_label.previousElementSibling.previousElementSibling.textContent =
-          "Interest Amount";
-        $('.emi_div').show();
-      }
-    }
+  }
 });
 
 $("#day_scheme").change(function () {
@@ -5099,17 +5177,17 @@ $("#due_start_from").change(function () {
 $("#submit_loan_calculation").click(function () {
   $('#due_start_from').trigger('change');
   $("#refresh_cal").trigger("click"); //For calculate once again if user missed to refresh calculation
-  if(loan_calc_validation()){
-        let confirmAction = confirm("Are you sure you want to submit Loan Calculation?");
-        if (!confirmAction) {
-            event.preventDefault(); // Stop form submission if canceled
-            return false ;
-        }
-  }else{
+  if (loan_calc_validation()) {
+    let confirmAction = confirm("Are you sure you want to submit Loan Calculation?");
+    if (!confirmAction) {
+      event.preventDefault(); // Stop form submission if canceled
+      return false;
+    }
+  } else {
     event.preventDefault();
     return false;
   }
-  
+
 });
 
 function getGroupandLine(sub_area_id) {
@@ -5395,6 +5473,7 @@ $("#sub_category").change(function () {
 //Fetch loan Details based on category select
 function getLoaninfo(sub_cat_id) {
   let cus_id = $("#cus_id_load").val();
+
   $.ajax({
     url: "requestFile/getLoanInfo.php",
     data: { sub_cat_id: sub_cat_id, cus_id: cus_id },
@@ -5405,62 +5484,67 @@ function getLoaninfo(sub_cat_id) {
       if (response["advance"] == "Yes") {
         $(".advance_yes").show();
         $("#loan_amt").attr("readonly", true);
+        $('#tot_value').on('input', function () {
+          // to calculate loan amount ant advance percentage
+          let amt = Number($("#tot_value").val().replace(/,/g, '')) || 0;
+          let advance = Number($("#ad_amt").val().replace(/,/g, '')) || 0;
+          $('#tot_value').val(formatIndianNumber(amt));
 
-       $('#tot_value').on('input', function () {
-            // to calculate loan amount ant advance percentage
-            var amt = $("#tot_value").val().replace(/,/g, '') || 0;
-            var advance = $("#ad_amt").val().replace(/,/g, '') || 0;
-            $('#tot_value').val(formatIndianNumber(amt));
-            var loan_amt = parseInt(amt) - parseInt(advance);
-            if (loan_amt <= parseInt(response["loan_limit"])) {
-              if (loan_amt != NaN) {
-                $("#loan_amt").val(formatIndianNumber(loan_amt.toFixed(0)));
-              }
+          let loan_amt = amt - advance;
+
+          if (!isNaN(loan_amt)) {
+            if (loan_amt <= Number(response["loan_limit"])) {
+              $("#loan_amt").val(formatIndianNumber(loan_amt.toFixed(0)));
             } else {
               alert("Please Enter Lesser amount!");
               $("#tot_value").val("");
               $("#loan_amt").val("");
             }
-          });
+          }
+        });
 
         $('#ad_amt').on('input', function () {
-            //To calculate loan amount and advance percentage
-            var amt = $("#tot_value").val().replace(/,/g, '');
-            var advance = $("#ad_amt").val().replace(/,/g, '');
-            $('#ad_amt').val(formatIndianNumber(advance));
-            var loan_amt = parseInt(amt) - parseInt(advance);
-            if (loan_amt != NaN) {
-              $("#loan_amt").val(formatIndianNumber(loan_amt.toFixed(0)));
-            }
-          });
+          //To calculate loan amount and advance percentage
+          let amt = Number($("#tot_value").val().replace(/,/g, '')) || 0;
+          let advance = Number($("#ad_amt").val().replace(/,/g, '')) || 0;
+          $('#ad_amt').val(formatIndianNumber(advance));
+
+          let loan_amt = amt - advance;
+
+          if (!isNaN(loan_amt)) {
+            $("#loan_amt").val(formatIndianNumber(loan_amt.toFixed(0)));
+          }
+        });
       } else {
         $(".advance_yes").hide();
         $("#loan_amt").removeAttr("readonly");
-        $('#loan_amt').on('input', function () {
-            // to calculate loan amount ant advance percentage
-            var loan_amt = $(this).val().replace(/,/g, '');
-            $('#loan_amt').val(formatIndianNumber(loan_amt));
 
-            if (loan_amt <= parseInt(response["loan_limit"])) {
-              if (loan_amt != NaN) {
-                $("#loan_amt").val(formatIndianNumber(loan_amt.toFixed(0)));
-              }
+        $('#loan_amt').on('input', function () {
+          // to calculate loan amount ant advance percentage
+          let loan_amt = Number($(this).val().replace(/,/g, '')) || 0;
+          $('#loan_amt').val(formatIndianNumber(loan_amt));
+
+          if (!isNaN(loan_amt)) {
+            if (loan_amt <= Number(response["loan_limit"])) {
+              $("#loan_amt").val(formatIndianNumber(loan_amt.toFixed(0)));
             } else {
               alert("Please Enter Lesser amount!");
               $("#loan_amt").val("");
             }
-          });
+          }
+        });
       }
     },
   });
 }
+
 
 //////////////////////// Verification history
 
 //loan history table contents get from closed file loan lists
 function getLoanHistory() {
   $("#show_loan_history").hide();
-    $("#hide_loan_history").show();
+  $("#hide_loan_history").show();
   let cus_id = $("#cus_id_load").val();
   let req_id = $("#req_id").val();
   let cus_type = $("#cus_type").val();
@@ -5825,7 +5909,7 @@ function profitCalAjax(profit_type, sub_cat, loan_cat) {
           $("#due_period").attr("onChange", `let val = parseFloat($(this).val());let min = ${parseFloat(response["due_period_min"])};let max = ${parseFloat(response["due_period_max"])}; if (!isNaN(val)) { if(val > max){ alert("Enter Lesser Value"); $(this).val(""); } else if(val < min){ alert("Enter Higher Value"); $(this).val(""); } }else{ alert("Please enter a valid numeric value"); $(this).val("");}`); //To check value between rage
 
           $("#due_period").val(due_period_upd);
-          
+
           if (response["doc_charge_type"] == "amt") {
             type = "₹";
             $(".min-max-doc").text("* (" + type + response["document_charge_min"] + " - " + type + response["document_charge_max"] + ") "); // Set min-max values with ₹ symbol before the numbers
@@ -5885,7 +5969,7 @@ function profitCalAjax(profit_type, sub_cat, loan_cat) {
             $(".min-max-doc").text("* (" + type + response["document_charge_min"] + " - " + type + response["document_charge_max"] + ") "); // Set min-max values with ₹ symbol before the numbers
           } else if (response["doc_charge_type"] == "percentage") {
             type = "%";
-             $(".min-max-doc").text("* (" + response["document_charge_min"] + type + " - " + response["document_charge_max"] + type + ") "); // Set min-max values with % symbol after the numbers
+            $(".min-max-doc").text("* (" + response["document_charge_min"] + type + " - " + response["document_charge_max"] + type + ") "); // Set min-max values with % symbol after the numbers
           }
 
           $("#doc_charge").attr("onChange", `let val = parseFloat($(this).val());let min = ${parseFloat(response["document_charge_min"])};let max = ${parseFloat(response["document_charge_max"])}; if (!isNaN(val)) { if(val > max){ alert("Enter Lesser Value"); $(this).val(""); } else if(val < min){ alert("Enter Higher Value"); $(this).val(""); } }else{ alert("Please enter a valid numeric value"); $(this).val("");}`); //To check value between rage
@@ -6054,7 +6138,7 @@ function schemeCalAjax(scheme_id) {
           response["proc_fee_max"] + " " + type + ") "); //setting min max values in span
 
         $("#proc_fee").attr("onChange", `let val = parseFloat($(this).val());let min = ${parseFloat(response["proc_fee_min"])};let max = ${parseFloat(response["proc_fee_max"])}; if (!isNaN(val)) { if(val > max){ alert("Enter Lesser Value"); $(this).val(""); } else if(val < min){ alert("Enter Higher Value"); $(this).val(""); } }else{ alert("Please enter a valid numeric value"); $(this).val("");}`); //To check value between rage
-        
+
         $("#proc_fee").val(proc_fee_upd);
       },
     });
@@ -6074,11 +6158,11 @@ function schemeCalAjax(scheme_id) {
 
 //To Get Loan Calculation for After Interest
 function getLoanAfterInterest() {
-var loan_amt = $("#loan_amt").val().replace(/[, ]+/g, '');
-var int_rate = $("#int_rate").val();
-var due_period = $("#due_period").val();
-var doc_charge = $("#doc_charge").val();
-var proc_fee = $("#proc_fee").val();
+  var loan_amt = $("#loan_amt").val().replace(/[, ]+/g, '');
+  var int_rate = $("#int_rate").val();
+  var due_period = $("#due_period").val();
+  var doc_charge = $("#doc_charge").val();
+  var proc_fee = $("#proc_fee").val();
 
   $("#loan_amt_cal").val(formatIndianNumber(loan_amt)); //get loan amt from loan info card
   // principal amt as same as loan amt for after interest
@@ -6147,11 +6231,11 @@ var proc_fee = $("#proc_fee").val();
 
 //To Get Loan Calculation for Pre Interest
 function getLoanPreInterest() {
-  var loan_amt   = $("#loan_amt").val().replace(/[, ]+/g, '');
-  var int_rate   = $("#int_rate").val;
+  var loan_amt = $("#loan_amt").val().replace(/[, ]+/g, '');
+  var int_rate = $("#int_rate").val;
   var due_period = $("#due_period").val();
   var doc_charge = $("#doc_charge").val();
-  var proc_fee   = $("#proc_fee").val();
+  var proc_fee = $("#proc_fee").val();
 
   $("#loan_amt_cal").val(formatIndianNumber(loan_amt)); //get loan amt from loan info card
 
@@ -6282,14 +6366,14 @@ function getLoanInterest() {
 
 //To Get Loan Calculation for Monthly Scheme method
 function getSchemePreIntreset() {
-  var loan_amt   = $("#loan_amt").val().replace(/[, ]+/g, '');
-  var int_rate   = $("#int_rate").val();
+  var loan_amt = $("#loan_amt").val().replace(/[, ]+/g, '');
+  var int_rate = $("#int_rate").val();
   var due_period = $("#due_period").val();
   var doc_charge = $("#doc_charge").val();
-  var proc_fee   = $("#proc_fee").val();
+  var proc_fee = $("#proc_fee").val();
 
   $("#loan_amt_cal").val(formatIndianNumber(loan_amt)); //get loan amt from loan info card
-  
+
   var intreset_type = $(".min-max-int").text(); //Scheme may have document charge in rupees or percentage . so getting symbol from span
   if (intreset_type.includes("₹")) {
     var int_amt = parseInt(int_rate); //Get document charge from loan info and directly show the document charge provided because of it is in rupees
@@ -6641,13 +6725,13 @@ function loan_calc_validation() {
   var collection_method = $("#collection_method").val();
   var Communitcation_to_cus = $("#Communitcation_to_cus").val();
   var verification_location = $("#verification_location").val();
-  var validation = true ;
+  var validation = true;
 
   var responsible = $("#loan_responsible").val();
   if (responsible == "" && $(".responsible").css("display") != "none") {
     $("#loanResponsibleCheck").show();
     event.preventDefault();
-    validation = false ;
+    validation = false;
   } else {
     $("#loanResponsibleCheck").hide();
   }
@@ -6671,21 +6755,21 @@ function loan_calc_validation() {
   if (Communitcation_to_cus == "") {
     event.preventDefault();
     $("#communicationCheck").show();
-    validation = false ;
+    validation = false;
   } else {
     $("#communicationCheck").hide();
   }
   if (person_list.length == 0) {
     event.preventDefault();
     $("#verificationPersonCheck").show();
-    validation = false ;
+    validation = false;
   } else {
     $("#verificationPersonCheck").hide();
   }
   if (verification_location == "") {
     event.preventDefault();
     $("#verificationLocCheck").show();
-    validation = false ;
+    validation = false;
   } else {
     $("#verificationLocCheck").hide();
   }
@@ -6700,13 +6784,13 @@ function loan_calc_validation() {
       confirmButtonColor: "#009688",
     });
     event.preventDefault();
-    validation = false ;
+    validation = false;
   }
 
   if (loan_category == "") {
     $("#loancategoryCheck").show();
     event.preventDefault();
-    validation = false ;
+    validation = false;
   } else {
     $("#loancategoryCheck").hide();
   }
@@ -6714,7 +6798,7 @@ function loan_calc_validation() {
   if (sub_category == "") {
     $("#subcategoryCheck").show();
     event.preventDefault();
-    validation = false ;
+    validation = false;
   } else {
     $("#subcategoryCheck").hide();
   }
@@ -6722,7 +6806,7 @@ function loan_calc_validation() {
   if (tot_value == "" && $(".advance_yes").css("display") != "none") {
     $("#total_valueCheck").show();
     event.preventDefault();
-    validation = false ;
+    validation = false;
   } else {
     $("#total_valueCheck").hide();
   }
@@ -6730,7 +6814,7 @@ function loan_calc_validation() {
   if (ad_amt == "" && $(".advance_yes").css("display") != "none") {
     $("#ad_amtCheck").show();
     event.preventDefault();
-    validation = false ;
+    validation = false;
   } else {
     $("#ad_amtCheck").hide();
   }
@@ -6738,7 +6822,7 @@ function loan_calc_validation() {
   if (loan_amt == "") {
     $("#loan_amtCheck").show();
     event.preventDefault();
-    validation = false ;
+    validation = false;
   } else {
     $("#loan_amtCheck").hide();
   }
@@ -6746,7 +6830,7 @@ function loan_calc_validation() {
   if (profit_type == "") {
     $("#profit_typeCheck").show();
     event.preventDefault();
-    validation = false ;
+    validation = false;
   } else {
     $("#profit_typeCheck").hide();
   }
@@ -6754,7 +6838,7 @@ function loan_calc_validation() {
   if (profit_method == "" && due_type == "EMI") {
     $("#profit_methodCheck").show();
     event.preventDefault();
-    validation = false ;
+    validation = false;
   } else {
     $("#profit_methodCheck").hide();
   }
@@ -6762,7 +6846,7 @@ function loan_calc_validation() {
   if (due_method_scheme == "" && $(".scheme").css("display") != "none") {
     $("#due_method_schemeCheck").show();
     event.preventDefault();
-    validation = false ;
+    validation = false;
   } else {
     $("#due_method_schemeCheck").hide();
   }
@@ -6772,14 +6856,14 @@ function loan_calc_validation() {
   ) {
     $("#scheme_methodCheck").show();
     event.preventDefault();
-    validation = false ;
+    validation = false;
   } else {
     $("#scheme_methodCheck").hide();
   }
   if (day_scheme == "" && $(".day_scheme").css("display") != "none") {
     $("#day_schemeCheck").show();
     event.preventDefault();
-    validation = false ;
+    validation = false;
   } else {
     $("#day_schemeCheck").hide();
   }
@@ -6787,7 +6871,7 @@ function loan_calc_validation() {
   if (scheme_name == "" && $(".scheme").css("display") != "none") {
     $("#scheme_nameCheck").show();
     event.preventDefault();
-    validation = false ;
+    validation = false;
   } else {
     $("#scheme_nameCheck").hide();
   }
@@ -6795,7 +6879,7 @@ function loan_calc_validation() {
   if (int_rate == "") {
     $("#int_rateCheck").show();
     event.preventDefault();
-    validation = false ;
+    validation = false;
   } else {
     $("#int_rateCheck").hide();
   }
@@ -6803,7 +6887,7 @@ function loan_calc_validation() {
   if (due_period == "") {
     $("#due_periodCheck").show();
     event.preventDefault();
-    validation = false ;
+    validation = false;
   } else {
     $("#due_periodCheck").hide();
   }
@@ -6811,7 +6895,7 @@ function loan_calc_validation() {
   if (doc_charge == "") {
     $("#doc_chargeCheck").show();
     event.preventDefault();
-    validation = false ;
+    validation = false;
   } else {
     $("#doc_chargeCheck").hide();
   }
@@ -6819,7 +6903,7 @@ function loan_calc_validation() {
   if (proc_fee == "") {
     $("#proc_feeCheck").show();
     event.preventDefault();
-    validation = false ;
+    validation = false;
   } else {
     $("#proc_feeCheck").hide();
   }
@@ -6827,7 +6911,7 @@ function loan_calc_validation() {
   if (due_start_from == "") {
     $("#due_start_fromCheck").show();
     event.preventDefault();
-    validation = false ;
+    validation = false;
   } else {
     $("#due_start_fromCheck").hide();
   }
@@ -6835,7 +6919,7 @@ function loan_calc_validation() {
   if (maturity_month == "") {
     $("#maturity_monthCheck").show();
     event.preventDefault();
-    validation = false ;
+    validation = false;
   } else {
     $("#maturity_monthCheck").hide();
   }
@@ -6843,79 +6927,79 @@ function loan_calc_validation() {
   if (collection_method == "") {
     $("#collection_methodCheck").show();
     event.preventDefault();
-    validation = false ;
+    validation = false;
   } else {
     $("#collection_methodCheck").hide();
   }
-return validation;
+  return validation;
 }
 function fingerprintTable() {//To Get family member's name are required for scanning fingerprint
-    var cus_name = $('#cus_name').val();
-    var cus_id = $('#cus_id').val();
-    $.ajax({
-        url: 'verificationFile/getNamesForFingerprint.php',
-        data: { 'cus_name': cus_name, 'cus_id': cus_id },
-        type: 'post',
-        cache: false,
-        success: function (html) {
-            $('.fingerprintTable').empty()
-            $('.fingerprintTable').html(html)
-            $('.scanBtn').click(function () {
-                var hand = $(this).prev().val();
-                var name = $(this).parent().prev().find('input[id="name_print"]').val();
-                var adhar = $(this).parent().prev().prev().find('input[id="adhar_print"]').val();
-                if (hand == '') { //prevent if hand is not selected
-                    $(this).prev().css('border-color', 'red');
-                } else {
-                    $(this).prev().css('border-color', '#009688')
-                    showOverlay();//loader start
-                    $(this).attr('disabled', true);
-                    setTimeout(() => {
-                        var quality = 60; //(1 to 100) (recommended minimum 55)
-                        var timeout = 10; // seconds (minimum=10(recommended), maximum=60, unlimited=0)
-                        var res = CaptureFinger(quality, timeout);
-                        console.log(":rocket: ~ file: acknowledgement_creation.js:934 ~ setTimeout ~ (res.data.ErrorCode:", res.data.ErrorCode);
-                        if (res.httpStaus) {
-                            if (res.data.ErrorCode == "0") {
-                                let fdata = res.data.AnsiTemplate;
-                                $(this).next().val(fdata); // Take ansi template that is the unique id which is passed by sensor
-                                storeFingerprints(fdata, hand, adhar, name);//stores the current finger data in database
-                            }//Error codes and alerts below
-                            else if (res.data.ErrorCode == -1307) {
-                                alert('Connect Your Device');
-                                $(this).removeAttr('disabled');
-                            } else if (res.data.ErrorCode == -1140 || res.data.ErrorCode == 700) {
-                                alert('Timeout');
-                                $(this).removeAttr('disabled');
-                            } else if (res.data.ErrorCode == 720) {
-                                alert('Reconnect Device');
-                                $(this).removeAttr('disabled');
-                            } else if (res.data.ErrorCode == 730) {
-                                alert('Capture Finger Again');
-                                $(this).removeAttr('disabled');
-                            } else {
-                                alert('Error Code:' + res.data.ErrorCode);
-                                $(this).removeAttr('disabled');
-                            }
-                        }
-                        else {
-                            alert(res.err);
-                        }
-                        // Hide the loading animation and remove blur effect from the body
-                        hideOverlay();//loader stop
-                    }, 700)
-                }
-            })
+  var cus_name = $('#cus_name').val();
+  var cus_id = $('#cus_id').val();
+  $.ajax({
+    url: 'verificationFile/getNamesForFingerprint.php',
+    data: { 'cus_name': cus_name, 'cus_id': cus_id },
+    type: 'post',
+    cache: false,
+    success: function (html) {
+      $('.fingerprintTable').empty()
+      $('.fingerprintTable').html(html)
+      $('.scanBtn').click(function () {
+        var hand = $(this).prev().val();
+        var name = $(this).parent().prev().find('input[id="name_print"]').val();
+        var adhar = $(this).parent().prev().prev().find('input[id="adhar_print"]').val();
+        if (hand == '') { //prevent if hand is not selected
+          $(this).prev().css('border-color', 'red');
+        } else {
+          $(this).prev().css('border-color', '#009688')
+          showOverlay();//loader start
+          $(this).attr('disabled', true);
+          setTimeout(() => {
+            var quality = 60; //(1 to 100) (recommended minimum 55)
+            var timeout = 10; // seconds (minimum=10(recommended), maximum=60, unlimited=0)
+            var res = CaptureFinger(quality, timeout);
+            console.log(":rocket: ~ file: acknowledgement_creation.js:934 ~ setTimeout ~ (res.data.ErrorCode:", res.data.ErrorCode);
+            if (res.httpStaus) {
+              if (res.data.ErrorCode == "0") {
+                let fdata = res.data.AnsiTemplate;
+                $(this).next().val(fdata); // Take ansi template that is the unique id which is passed by sensor
+                storeFingerprints(fdata, hand, adhar, name);//stores the current finger data in database
+              }//Error codes and alerts below
+              else if (res.data.ErrorCode == -1307) {
+                alert('Connect Your Device');
+                $(this).removeAttr('disabled');
+              } else if (res.data.ErrorCode == -1140 || res.data.ErrorCode == 700) {
+                alert('Timeout');
+                $(this).removeAttr('disabled');
+              } else if (res.data.ErrorCode == 720) {
+                alert('Reconnect Device');
+                $(this).removeAttr('disabled');
+              } else if (res.data.ErrorCode == 730) {
+                alert('Capture Finger Again');
+                $(this).removeAttr('disabled');
+              } else {
+                alert('Error Code:' + res.data.ErrorCode);
+                $(this).removeAttr('disabled');
+              }
+            }
+            else {
+              alert(res.err);
+            }
+            // Hide the loading animation and remove blur effect from the body
+            hideOverlay();//loader stop
+          }, 700)
         }
-    })
+      })
+    }
+  })
 }
 function storeFingerprints(fdata, hand, cus_id, cus_name) {//stores the current finger data in database
   $.post('updateFile/storeFingerprints.php', { 'fdata': fdata, 'hand': hand, 'cus_id': cus_id, 'cus_name': cus_name }, function (response) {
-      if (response.includes('Successfully')) {
-          Swal.fire({
-              title: response, icon: 'success', confirmButtonColor: '#009688'
-          })
-      }
+    if (response.includes('Successfully')) {
+      Swal.fire({
+        title: response, icon: 'success', confirmButtonColor: '#009688'
+      })
+    }
   }, 'json')
 }
 //////////////////////////////////////////////////////////////////// Loan Calculation Functions End ///////////////////////////////////////////////////////////////////////////////
