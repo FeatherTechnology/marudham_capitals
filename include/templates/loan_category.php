@@ -148,7 +148,7 @@ if ($idupd > 0) {
 							<div class="col-md-12 ">
 								<div class="row">
 									<div class="col-md-12">
-										<!-- <label><span class="text-danger" id="loanCategoryTableCheck">Category Info Mandatory Field</span></label> -->
+										<label><span class="text-danger" id="loanCategoryTableCheck" style="display: none;">Please fill the category info</span></label>
 										<table id="moduleTable" class="table custom-table">
 											<thead>
 												<tr>

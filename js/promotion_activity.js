@@ -90,10 +90,10 @@ $(document).ready(function () {
         let btnName = $(".toggle-button.active").first().val();
 
         if (btnName == 'Existing') {
-            showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list', '15');
+            showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list', '16');
 
         } else if (btnName == 'Repromotion') {
-            showPromotionList('followupFiles/promotion/showRepromotionList.php', 'repromotion_list', '16');
+            showPromotionList('followupFiles/promotion/showRepromotionList.php', 'repromotion_list', '17');
 
         }
     });
@@ -918,8 +918,7 @@ function promotionListOnclick() {
 
 function promotionChartColor(tableid, colNo) {
     $(`#${tableid} tbody tr`).not('th').each(function () {
-        var element = $(this).find(`td:eq(${colNo})`); // Get the text content of the 15th td element (Follow date)
-
+        var element = $(this).find(`td:eq(${colNo})`); // Get the text content of the td element (Follow date)
         let tddate = element.text();
         let datecorrection = tddate.split("-").reverse().join("-").replaceAll(/\s/g, ''); // Correct the date format
         let values = new Date(datecorrection); // Create a Date object from the corrected date
