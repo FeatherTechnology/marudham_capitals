@@ -1,8 +1,12 @@
 <?php
-include "../ajaxconfig.php";
+include "C:/inetpub/wwwroot/test_mc_app/ajaxconfig.php";
 session_start();
-if (isset($_SESSION['userid'])) {
+if (isset($_POST['userid'])) {
+    $userid = $_POST['userid'];
+} elseif (isset($_SESSION['userid'])) {
     $userid = $_SESSION['userid'];
+} else {
+    $userid = null; // Or set a default value or handle the error
 }
 
 if (isset($_POST['req_id'])) {
@@ -10,27 +14,34 @@ if (isset($_POST['req_id'])) {
 }
 
 if (isset($_POST['pending_sts'])) {
-    $pending_sts = implode(',', $_POST['pending_sts']);
+    $pending_sts = is_array($_POST['pending_sts']) ? implode(',', $_POST['pending_sts']) : $_POST['pending_sts'];
+
 }
 
 if (isset($_POST['od_sts'])) {
-    $od_sts = implode(',', $_POST['od_sts']);
+    $od_sts = is_array($_POST['od_sts']) ? implode(',', $_POST['od_sts']) : $_POST['od_sts'];
+
 }
 
 if (isset($_POST['due_nil_sts'])) {
-    $due_nil_sts = implode(',', $_POST['due_nil_sts']);
+    $due_nil_sts = is_array($_POST['due_nil_sts']) ? implode(',', $_POST['due_nil_sts']) : $_POST['due_nil_sts'];
+
+    
 }
 
 if (isset($_POST['closed_sts'])) {
-    $closed_sts = implode(',', $_POST['closed_sts']);
+    $closed_sts = is_array($_POST['closed_sts']) ? implode(',', $_POST['closed_sts']) : $_POST['closed_sts'];
+
 }
 
 if (isset($_POST['bal_amt'])) {
-    $bal_amt = implode(',', $_POST['bal_amt']);
+    $bal_amt = is_array($_POST['bal_amt']) ? implode(',', $_POST['bal_amt']) : $_POST['bal_amt'];
+
 }
 
 if (isset($_POST['payable'])) {
-    $payable_amnts = implode(',', $_POST['payable']);
+    $payable_amnts = is_array($_POST['payable']) ? implode(',', $_POST['payable']) : $_POST['payable'];
+
 }
 
 $curdate = date('Y-m-d');
