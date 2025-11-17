@@ -415,6 +415,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 																						echo $approvalaccess;
 																					} ?>" />
 			<input type="hidden" name="role_upd" id="role_upd" value="<?php if (isset($role)) echo $role; ?>" />
+			<input type="hidden" name="cus_limit" id="cus_limit" value="<?php if (isset($loan_limit)) echo $loan_limit; ?>" />
 			<input type="hidden" name="userid_upd" id="userid_upd" value="<?php if (isset($userid)) echo $userid; ?>" />
 			<input type="hidden" name="pge" id="pge" value="<?php if (isset($pge)) echo $pge; ?>" />
 			<!-- Row start -->
@@ -1606,12 +1607,13 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
-											<label for="Propertyholder_name"> Property Holder Name </label>
+											<label for="Propertyholder_name"> Property Holder Name </label><span class="required">&nbsp;*</span>
 											<input type="text" class="form-control" id="Propertyholder_name" name="Propertyholder_name" value="<?php if (isset($Propertyholder_name)) echo $Propertyholder_name; ?>" readonly tabindex="82">
 
 											<select type="text" class="form-control" id="Propertyholder_relationship_name" name="Propertyholder_relationship_name" style="display: none;" tabindex='83'>
 												<option value=""> Select Relationship </option>
 											</select>
+											<span class="text-danger" id="propertyholderNameCheck"> Select Property Holder Name </span>
 										</div>
 									</div>
 
@@ -1700,12 +1702,13 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
-										<label for="owner_name"> Owner Name </label>
+										<label for="owner_name"> Owner Name </label><span class="required">&nbsp;*</span>
 										<input type="text" class="form-control" id="owner_name" name="owner_name" value="<?php if (isset($owner_name)) echo $owner_name; ?>" readonly tabindex="91">
 
 										<select type="text" class="form-control" id="ownername_relationship_name" name="ownername_relationship_name" style="display: none;" tabindex="92">
 											<option value=""> Select Relationship </option>
 										</select>
+										<span class="text-danger" id="ownerNameCheck"> Select Owner Name </span>
 									</div>
 								</div>
 
@@ -3263,10 +3266,11 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" style="display: none;" id="relation_doc">
 						<div class="form-group">
-							<label for="signType_relationship"> Relationship </label>
+							<label for="signType_relationship"> Relationship </label><span class="required">&nbsp;*</span>
 							<select type="text" class="form-control" id="signType_relationship" name="signType_relationship" tabindex='5'>
 								<option value=""> Select Relationship </option>
 							</select>
+							<span class="text-danger" id="signTyperRelationshipCheck"> Select Relationship </span>
 						</div>
 					</div>
 
@@ -3360,12 +3364,13 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
-							<label for="holder_name"> Holder Name </label>
+							<label for="holder_name"> Holder Name </label><span class="required">&nbsp;*</span>
 							<input type="text" class="form-control" id="holder_name" name="holder_name" readonly tabindex='2'>
 
 							<select type="text" class="form-control" id="holder_relationship_name" name="holder_relationship_name" style="display: none;" tabindex='3'>
 								<option value=""> Select Holder Name </option>
 							</select>
+							<span class="text-danger" id="holderNameCheck"> Select Holder Name </span>
 						</div>
 					</div>
 
@@ -3731,12 +3736,13 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
-							<label for="docholder_name"> Holder Name </label>
+							<label for="docholder_name"> Holder Name </label><span class="required">&nbsp;*</span>
 							<input type="text" class="form-control" id="docholder_name" name="docholder_name" value="" readonly tabindex="5">
 
 							<select type="text" class="form-control" id="docholder_relationship_name" name="docholder_relationship_name" style="display: none;" tabindex="6">
 								<option value=""> Select Relationship </option>
 							</select>
+							<span class="text-danger" id="docHolderNameCheck" style='display:none'> Select Holder Name </span>
 						</div>
 					</div>
 

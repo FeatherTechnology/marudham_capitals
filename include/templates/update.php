@@ -1296,7 +1296,7 @@ if (sizeof($getCustomerReg) > 0) {
 
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
-											<label> Property Holder Name </label>
+											<label> Property Holder Name </label> <span class="required">&nbsp;*</span>
 											<input type="text" class="form-control" id="Propertyholder_name" name="Propertyholder_name" value="" readonly tabindex="74">
 
 											<select type="text" class="form-control" id="Propertyholder_relationship_name" name="Propertyholder_relationship_name" style="display: none;" tabindex='75'>
@@ -1473,7 +1473,7 @@ if (sizeof($getCustomerReg) > 0) {
 
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
-										<label> Owner Name </label>
+										<label> Owner Name </label> <span class="required">&nbsp;*</span>
 										<input type="text" class="form-control" id="owner_name" name="owner_name" value="" readonly tabindex='92'>
 
 										<select type="text" class="form-control" id="ownername_relationship_name" name="ownername_relationship_name" style="display: none;" tabindex="92">
@@ -2122,10 +2122,11 @@ if (sizeof($getCustomerReg) > 0) {
 
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" style="display: none;" id="relation_doc">
 							<div class="form-group">
-								<label for="signRelationship"> Relationship </label>
+								<label for="signRelationship"> Relationship </label><span class="required">&nbsp;*</span>
 								<select type="text" class="form-control" id="signType_relationship" name="signType_relationship" tabindex='5'>
 									<option value=""> Select Relationship </option>
 								</select>
+								<span class="text-danger" id="signTyperRelationshipCheck"> Select Relationship </span>
 							</div>
 						</div>
 
@@ -2230,12 +2231,13 @@ if (sizeof($getCustomerReg) > 0) {
 
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
-								<label for="HolderName "> Holder Name </label>
+								<label for="HolderName "> Holder Name </label><span class="required">&nbsp;*</span>
 								<input type="text" class="form-control" id="holder_name" name="holder_name" readonly tabindex='2'>
 
 								<select type="text" class="form-control" id="holder_relationship_name" name="holder_relationship_name" style="display: none;" >
 									<option value=""> Select Holder Name </option>
 								</select>
+								<span class="text-danger" id="holderNameCheck"> Select Holder Name </span>
 							</div>
 						</div>
 
@@ -2617,12 +2619,13 @@ if (sizeof($getCustomerReg) > 0) {
 
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
-								<label for="docholdername"> Holder Name </label>
+								<label for="docholdername"> Holder Name </label><span class="required">&nbsp;*</span>
 								<input type="text" class="form-control" id="docholder_name" name="docholder_name" value="" readonly tabindex="5" readonly>
 
 								<select type="text" class="form-control" id="docholder_relationship_name" name="docholder_relationship_name" style="display: none;" tabindex="6">
 									<option value=""> Select Relationship </option>
 								</select>
+								<span class="text-danger" id="docHolderNameCheck" style='display:none'> Select Holder Name </span>
 							</div>
 						</div>
 

@@ -184,10 +184,11 @@ foreach ($result as $row) {
     $sub_array[] = $row['cus_data'];
     $id = $row['req_id'];
     $cus_id = $row['cus_id'];
+     $loan_amt = $row['loan_amt'];
 
     $cus_status = $row['cus_status'];
     $statusLabels = [
-        '2' => "<button class='btn btn-outline-secondary move_acknowledgement' value='$id' data-cusid = '$cus_id'><span class='icon-arrow_forward'></span></button>",
+        '2' => "<button class='btn btn-outline-secondary move_acknowledgement' value='$id' data-cusid = '$cus_id' data-loan_amt = '$loan_amt'><span class='icon-arrow_forward'></span></button>",
         '3' => 'In Acknowledgement',
         '13' => 'In Issue',
         '6' => 'Cancel - Approval',

@@ -70,12 +70,15 @@ function callOnClickEvents() {
         $('.move_acknowledgement').click(function () {
             var req_id = $(this).val();
             let cus_id = $(this).data('cusid');
+            let loan_amt = $(this).data('loan_amt');
             var button = $(this)
             $.post('approveFile/check_customer_limit.php', { cus_id }, function (response) {
                 let cus_limit = response['cus_limit'];
                 if (cus_limit == '') {
                     alert('Customer Limit is not set');
-                } else {
+                } else if(cus_limit < loan_amt){
+                    alert('Customer Limit is Less than the Loan amount');
+                }else {
                     Swal.fire({
                         icon: 'info',
                         title: 'Customer Limit',
