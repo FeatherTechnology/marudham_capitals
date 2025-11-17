@@ -1259,6 +1259,15 @@ function validation() {
         $('.promotionActivityCheck').hide();
     }
 
+    let checkedCount = $('.screen-validations:checked').length;
+
+    if (checkedCount === 0) {
+        $('#screenMappingCheck').show();
+        validation = false;
+    } else {
+        $('#screenMappingCheck').hide();
+    }
+
 return validation;
 }
 
