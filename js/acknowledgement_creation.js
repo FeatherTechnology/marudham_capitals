@@ -64,8 +64,7 @@ $(document).ready(function () {
 
     ///Documentation 
 
-    //Signed Doc Validation Hide, // Signed Modal Doc Upload.
-    $('#docNameCheck').hide(); $('#signTypeCheck').hide(); $('#docCountCheck').hide(); $('#docupdCheck').hide(); $("#signTyperRelationshipCheck").hide();
+    // Signed Modal Doc Upload.
 
     $('#add_sign_doc').click(function () {
         $('#signDocUploads input').not('#signType_cus_name, #guar_name').prop('readonly', false);
@@ -229,10 +228,7 @@ $(document).ready(function () {
                 }
             });
 
-            $('#docNameCheck').hide(); $('#signTypeCheck').hide(); $('#docCountCheck').hide(); $('#docupdCheck').hide(); $("#signTyperRelationshipCheck").hide();
-
         } else {
-
 
             if (sign_type == "") {
                 $('#signTypeCheck').show();
@@ -251,6 +247,7 @@ $(document).ready(function () {
             // } else {
             //     $('#docupdCheck').hide();
             // }
+
             if (sign_type == '2' || sign_type == '3') {
                 if (signType_relationship == '') {
                     $('#signTyperRelationshipCheck').show();
@@ -263,8 +260,6 @@ $(document).ready(function () {
     });
 
     ///Cheque Modal Doc Upload
-    $('#chequebankCheck').hide(); $('#holdertypeCheck').hide(); $('#chequeCountCheck').hide(); $('#chequeupdCheck').hide(); $("#holderNameCheck").hide();
-
     $('#add_Cheque').click(function () {
         $('#chequeUploads input').not('#holder_name, #cheque_relation').prop('readonly', false);
         $('#chequeUploads select').prop('disabled', false);
@@ -410,7 +405,7 @@ $(document).ready(function () {
                     resetchequeInfo();
                 }
             });
-            $('#chequebankCheck').hide(); $('#holdertypeCheck').hide(); $('#chequeCountCheck').hide(); $('#chequeupdCheck').hide(); $("#holderNameCheck").hide();
+
         } else {
 
             if (holder_type == "") {
@@ -526,9 +521,9 @@ $(document).ready(function () {
     $('#mortgagenameCheck').hide(); $('#mortgagedsgnCheck').hide(); $('#mortgagenumCheck').hide(); $('#regofficeCheck').hide(); $('#mortgagevalueCheck').hide(); $('#mortgagedocCheck').hide(); $('#mortgagedocUpdCheck').hide();$("#propertyholderNameCheck").hide();
 
     $('#mortgage_process').change(function () {
-
         let process = $(this).val();
-$("#propertyholderNameCheck").hide();
+        $("#propertyholderNameCheck").hide();
+
         if (process == '0') {
             $('#Mortgageprocess').show();
         } else {
@@ -556,7 +551,8 @@ $("#propertyholderNameCheck").hide();
     $('#Propertyholder_type').change(function () {
         let type = $(this).val();
         let req_id = $('#req_id').val();
-$("#propertyholderNameCheck").hide();
+        $("#propertyholderNameCheck").hide();
+
         if (type == '0') {
             $('#Propertyholder_name').show();
             $('#Propertyholder_relationship_name').val('');
@@ -661,10 +657,12 @@ $("#propertyholderNameCheck").hide();
 
     //Endorsement Info
     $('#endorsementprocessCheck').hide(); $('#ownertypeCheck').hide(); $('#vehicletypeCheck').hide(); $('#vehicleprocessCheck').hide(); $('#enCompanyCheck').hide(); $('#enModelCheck').hide(); $('#vehicle_reg_noCheck').hide(); $('#endorsementnameCheck').hide(); $('#enRCCheck').hide(); $('#enKeyCheck').hide(); $('#rcdocUpdCheck').hide();$("#ownerNameCheck").hide();
+
     $('#endorsement_process').change(function () {
 
         let process = $(this).val();
-$("#ownerNameCheck").hide();
+        $("#ownerNameCheck").hide();
+
         if (process == '0') {
             $('#endorsementprocess').show();
         } else {
@@ -792,8 +790,6 @@ $("#ownerNameCheck").hide();
     })
 
     //Gold Info
-    // $('#goldCheck').hide();
-    $('#GoldstatusCheck').hide(); $('#GoldtypeCheck').hide(); $('#purityCheck').hide(); $('#goldCountCheck').hide(); $('#goldWeightCheck').hide(); $('#goldValueCheck').hide();
     // $('#gold_info').change(function () {
 
     //     let gold = $(this).val();
@@ -815,7 +811,7 @@ $("#ownerNameCheck").hide();
     $('#document_holder').change(function () {
         let type = $(this).val();
         let req_id = $('#req_id').val();
-$("#docHolderNameCheck").hide();
+        $("#docHolderNameCheck").hide();
         if (type == '0') {
             $('#docholder_name').show();
             $('#docholder_relationship_name').val('');
@@ -911,7 +907,6 @@ $("#docHolderNameCheck").hide();
     //Gold Info START ///
     $("body").on("click", "#gold_info_edit", function () {
         let id = $(this).attr('value');
-        // chequeHolderName(); // Holder Name From Family Table.
 
         $.ajax({
             url: 'verificationFile/documentation/gold_info_edit.php',
@@ -934,7 +929,6 @@ $("#docHolderNameCheck").hide();
         });
 
     });
-
 
     $("body").on("click", "#gold_info_delete", function () {
         var isok = confirm("Do you want delete this Gold Info?");
@@ -970,7 +964,6 @@ $("#docHolderNameCheck").hide();
         }
     });
     //Gold Info END ///
-
 
     ///Hide AND Show doc Card START
     $('#choose_document').change(function () {
@@ -1842,17 +1835,8 @@ function resetsignInfo() {
             $("#signTable").empty();
             $("#signTable").html(html);
 
-            $("#sign_type").val('');
-            $("#cus_name_div").hide();
-            $("#signType_cus_name").val('');
-            $("#guar_name_div").hide();
-            $("#guar_name").val('');
-            $("#signType_relationship").val('');
-            $("#doc_Count").val('');
-            $("#signdoc_upd").val('');
-            $("#signedID").val('');
-            $("#signTyperRelationshipCheck").hide();
-
+            $("#sign_type, #signType_cus_name, #guar_name, #signType_relationship, #doc_Count, #signdoc_upd, #signedID").val('');
+            $('#cus_name_div, #guar_name_div, #docNameCheck, #signTypeCheck, #docCountCheck, #docupdCheck, #signTyperRelationshipCheck').hide();
         }
     });
 }
@@ -1994,20 +1978,12 @@ function resetchequeInfo() {
             $("#chequeTable").empty();
             $("#chequeTable").html(html);
 
-            $("#holder_type").val('');
-            $("#holder_name").val('');
-            $("#holder_relationship_name").val('');
-            $("#cheque_relation").val('');
-            $("#chequebank_name").val('');
-            $("#cheque_count").val('');
-            $("#cheque_upd").val('');
-            $("#chequeID").val('');
+            $("#holder_type, #holder_name, #holder_relationship_name, #cheque_relation, #chequebank_name, #cheque_count, #cheque_upd, #chequeID").val("");
+            $('#chequebankCheck, #holdertypeCheck, #chequeCountCheck, #chequeupdCheck, #holderNameCheck').hide();
 
         }
     });
 }
-
-
 
 function chequeHolderName(editValue) {
     let cus_id = $('#cus_id').val();
@@ -2129,8 +2105,6 @@ $(document).on("click", "#goldInfoBtn", function () {
             }
         });
 
-
-        $('#GoldstatusCheck').hide(); $('#GoldtypeCheck').hide(); $('#purityCheck').hide(); $('#goldCountCheck').hide(); $('#goldWeightCheck').hide(); $('#goldValueCheck').hide(); $('#gold_uploadCheck').hide();
     }
     else {
 
@@ -2184,14 +2158,8 @@ function resetgoldInfo() {
             $("#goldTable").empty();
             $("#goldTable").html(html);
 
-            $("#gold_sts").val('');
-            $("#gold_type").val('');
-            $("#Purity").val('');
-            $("#gold_Count").val('');
-            $("#gold_Weight").val('');
-            $("#gold_Value").val('');
-            $("#gold_upload").val('');
-            $("#goldID").val('');
+            $("#gold_sts, #gold_type, #Purity, #gold_Count, #gold_Weight, #gold_Value, #gold_upload, #goldID").val('');
+            $('#GoldstatusCheck, #GoldtypeCheck, #purityCheck, #goldCountCheck, #goldWeightCheck, #goldValueCheck, #gold_uploadCheck').hide();
 
         }
     });
@@ -2235,8 +2203,6 @@ function goldinfoList() {
 /////////////////////////////////////// Gold Info Modal END/////////////////////////////////
 
 // ///////////////////////////  Document Info Modal //////////////////////////////
-
-$('#documentnameCheck').hide(); $('#documentdetailsCheck').hide(); $('#documentTypeCheck').hide(); $('#docholderCheck').hide();
 
 $('#add_document').click(function () {
     $('#docUploads input').not('#docholder_name, #doc_relation').prop('readonly', false);
@@ -2308,11 +2274,7 @@ $('#docInfoBtn').click(function () {
                 resetdocInfo();
             }
         })
-           $("#documentnameCheck").hide();
-    $("#documentdetailsCheck").hide();
-    $("#documentTypeCheck").hide();
-    $("#docholderCheck").hide();
-    $("#docHolderNameCheck").hide();
+    
     } else {
       if (doc_name == "") {
       $("#documentnameCheck").show();
@@ -2419,6 +2381,7 @@ $("body").on("click", "#doc_info_delete", function () {
         });
     }
 });
+
 //Document Info List Modal Table
 function resetdocInfo() {
     let req_id = $('#req_id').val();
@@ -2431,20 +2394,13 @@ function resetdocInfo() {
             $("#docModalDiv").empty();
             $("#docModalDiv").html(html);
 
-            $("#document_name").val('');
-            $("#document_details").val('');
-             $('#docholder_relationship_name').val('');
-            $("#document_type").val('');
-            $("#document_holder").val('');
-            $("#doc_info_id").val('');
-            $("#docholder_name").val('');
-            $("#relation_name").val('');
-            $("#doc_relation").val('');
-            $("#document_info_upd").val('');
+            $("#document_name, #document_details, #docholder_relationship_name, #document_type, #document_holder, #doc_info_id, #docholder_name, #relation_name, #doc_relation, #document_info_upd").val('');
+            $("#documentnameCheck, #documentdetailsCheck, #documentTypeCheck, #docholderCheck, #docHolderNameCheck").hide();
 
         }
     });
 }
+
 //Document Info List
 function docinfoList() {
     let req_id = $('#req_id').val();
