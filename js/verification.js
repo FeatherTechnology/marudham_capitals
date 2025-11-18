@@ -1148,7 +1148,8 @@ function showErrorAlert(message) {
 }
 $(function () {
   $(".icon-chevron-down1").parent().next("div").slideUp(); //To collapse all card on load
-
+nameFormatter('#cus_name');// To Show Namein Proper Format
+nameFormatter('#famname'); // 
   getImage(); // To show customer image when window onload.
 
   resetFamInfo(); //Call Family Info Table Initially.

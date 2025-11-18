@@ -37,7 +37,6 @@ $(document).ready(function () {
         $('#age').val(age); // set value to age.
     })
 
-
     $("#state").change(function () {
         var StateSelected = $(this).val();
         var optionsList = getDistrictDropdown(StateSelected);
@@ -717,6 +716,8 @@ $(function () {
         callCustomerProfileFunctn(); getDocumentHistory();
 
     }
+nameFormatter('#cus_name');
+nameFormatter('#famname');
 
 }); //OnLoad function.
 
