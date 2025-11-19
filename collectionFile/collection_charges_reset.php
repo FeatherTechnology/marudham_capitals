@@ -9,7 +9,6 @@ include '../ajaxconfig.php';
             <th> Date </th>
             <th> Purpose </th>
             <th> Amount </th>
-            <!-- <th> ACTION </th> -->
         </tr>
     </thead>
     <tbody>
@@ -18,23 +17,23 @@ include '../ajaxconfig.php';
         $req_id = $_POST['reqId'];
         $coll_charges = $connect->query("SELECT * FROM `collection_charges` where req_id = '$req_id' && coll_date !='' order by id desc");
 
-        $i = 1;
+        $i = 0;
         while ($charges = $coll_charges->fetch()) {
         ?>
 
             <tr>
-                <td><?php echo $i; ?></td>
+                <td><?php echo $i++; ?></td>
                 <td><?php echo date('d-m-Y',strtotime($charges["coll_date"])); ?></td>
                 <td><?php echo $charges["coll_purpose"]; ?></td>
                 <td><?php echo $charges["coll_charge"]; ?></td>
-                <!-- <td>
-                    <a id="verification_bank_edit" value="<?php echo $charges['id']; ?>"> <span class="icon-border_color"></span></a> &nbsp
-                    <a id="verification_bank_delete" value="<?php echo $charges['id']; ?>"> <span class='icon-trash-2'></span> </a>
-                </td> -->
             </tr>
 
-        <?php $i = $i + 1;
-        }     ?>
+        <?php
+        }     
+        
+        // Close the database connection
+        $connect = null;
+        ?>
     </tbody>
 </table>
 

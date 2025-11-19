@@ -88,9 +88,6 @@ $(document).ready(function () {
 
   //Collection Charge
 
-  $("#collectionChargeDateCheck").hide();
-  $("#purposeCheck").hide();
-  $("#amntCheck").hide();
   $("#collChargeBtn").click(function () {
     let req_id = $("#cc_req_id").val();
     let customer_id = $("#cusidupd").val();
@@ -133,25 +130,26 @@ $(document).ready(function () {
           resetcollCharges(req_id);
         },
       });
-      $("#collectionChargeDateCheck").hide();
-      $("#purposeCheck").hide();
-      $("#amntCheck").hide();
+
     } else {
       if (collectionCharge_date == "") {
         $("#collectionChargeDateCheck").show();
       } else {
         $("#collectionChargeDateCheck").hide();
       }
+      
       if (collectionCharge_purpose == "") {
         $("#purposeCheck").show();
       } else {
         $("#purposeCheck").hide();
       }
+
       if (collectionCharge_Amnt == "") {
         $("#amntCheck").show();
       } else {
         $("#amntCheck").hide();
       }
+
     }
   });
 
@@ -303,16 +301,12 @@ $(document).ready(function () {
     }
   });
 
-  $("#addCommitment")
-    .find(".closeModal")
-    .click(function () {
-      $("#addCommitment")
-        .find(".modal-body input,select")
-        .not("#comm_fdate,#comm_user_type,#comm_user")
-        .val("");
-      $("#addCommitment").find(".modal-body span").hide();
-      $(".person-div").hide();
-    });
+  $("#addCommitment").find(".closeModal").click(function () {
+    $("#addCommitment").find(".modal-body input,select").not("#comm_fdate,#comm_user_type,#comm_user").val("");
+    $("#addCommitment").find(".modal-body span").hide();
+    $(".person-div").hide();
+  });
+  
 }); //Document Ready End
 
 //On Load Event
@@ -1314,6 +1308,7 @@ function collectionChargeChartList(req_id) {
     },
   }); //Ajax End.
 }
+
 //Fine
 function resetcollCharges(req_id) {
   $.ajax({
@@ -1328,6 +1323,8 @@ function resetcollCharges(req_id) {
       $("#collectionCharge_date").val("");
       $("#collectionCharge_purpose").val("");
       $("#collectionCharge_Amnt").val("");
+
+      $("#collectionChargeDateCheck, #purposeCheck, #amntCheck").hide();
     },
   });
 }

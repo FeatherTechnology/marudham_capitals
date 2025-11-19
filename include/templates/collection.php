@@ -764,21 +764,21 @@ if (sizeof($getCustomerReg) > 0) {
 							<label for="coll_date "> Date </label> <span class="required">&nbsp;*</span>
 							<input type="hidden" class="form-control" id="cc_req_id" name="cc_req_id">
 							<input type="text" class="form-control" id="collectionCharge_date" name="collectionCharge_date" readonly placeholder="<?php echo date('d-m-Y') ?>" value="<?php echo date('d-m-Y') ?>" tabindex='1'>
-							<span class="text-danger" id="collectionChargeDateCheck"> Select Date </span>
+							<span class="text-danger" id="collectionChargeDateCheck" style="display: none;"> Select Date </span>
 						</div>
 					</div>
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label for="coll_purpose"> Purpose </label> <span class="required">&nbsp;*</span>
 							<input type="text" class="form-control" id="collectionCharge_purpose" name="collectionCharge_purpose" placeholder="Enter Purpose" onkeydown="return /[a-z ]/i.test(event.key)" tabindex='2'>
-							<span class="text-danger" id="purposeCheck"> Enter Purpose </span>
+							<span class="text-danger" id="purposeCheck" style="display: none;"> Enter Purpose </span>
 						</div>
 					</div>
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label for="coll_amnt"> Amount </label> <span class="required">&nbsp;*</span>
 							<input type="text" class="form-control" id="collectionCharge_Amnt" name="collectionCharge_Amnt" placeholder="Enter Amount" tabindex='3'>
-							<span class="text-danger" id="amntCheck"> Enter Amount </span>
+							<span class="text-danger" id="amntCheck" style="display: none;"> Enter Amount </span>
 						</div>
 					</div>
 					<div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12">
@@ -815,7 +815,7 @@ if (sizeof($getCustomerReg) > 0) {
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
 				<h5 class="modal-title" id="exampleModalLongTitle">Add Commitment</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button type="button" class="close closeModal" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
