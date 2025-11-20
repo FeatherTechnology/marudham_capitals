@@ -353,7 +353,7 @@ if (sizeof($getCustomerReg) > 0) {
 				<!-- Request Info ENd-->
 				 
 				<!-- Collection Info -->
-				<div class="card collection_card" id="collection_info">
+				<div class="card collection_card collection_info">
 					<div class="card-header">
 						<div class="card-title">Collection Info <span class="text-danger"> *</span></div>
 					</div>
@@ -428,7 +428,7 @@ if (sizeof($getCustomerReg) > 0) {
 					</div>
 				</div>
 				<!-- Collection Track -->
-				<div class="card collection_card">
+				<div class="card collection_card collection_info">
 					<div class="card-header">
 						<div class="card-title">Collection Track</div>
 					</div>

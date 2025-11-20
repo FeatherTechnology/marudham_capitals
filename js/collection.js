@@ -1,43 +1,32 @@
 $(document).ready(function () {
+
   $("#collection_mode").change(function () {
     var collection_mode = $(this).val();
-    getBankNames();
+    $("#trans_id, #trans_date, #cheque_no").val("");
+    
     if (collection_mode == "2") {
-      //if Checque choosen, clear all othre
-      $("#trans_id").val("");
-      $("#trans_date").val("");
-      $("#cheque_no").val("");
-
+      getBankNames();
       //if Cheque Chosen
       $(".cheque").show();
       $(".transaction").show();
       $(".other").hide(); //Extra div for alignment
       getChequeNoList(); //to get Cheque Numbers list based on the request id
+      
     } else if (collection_mode >= "3" && collection_mode <= "5") {
-      // clear all others
-      $("#trans_id").val("");
-      $("#trans_date").val("");
-      $("#cheque_no").val("");
-
+      getBankNames();
       //If other than cash and cheque
       $(".cheque").hide();
       $(".transaction").show();
       $(".other").show(); //Extra div for alignment
-    } else if (collection_mode == "1") {
-      //if Cash choosen, clear all othre
-      $("#trans_id").val("");
-      $("#trans_date").val("");
-      $("#cheque_no").val("");
 
-      $(".cheque").hide();
-      $(".transaction").hide();
-      $(".other").hide(); //Extra div for alignment
     } else {
-      //If nothing chosen
+      //If nothing / Cash chosen
       $(".cheque").hide();
       $(".transaction").hide();
       $(".other").hide(); //Extra div for alignment
+      
     }
+
   });
 
   $(
@@ -404,15 +393,16 @@ function OnLoadFunctions(cus_id) {
         $("#loanListTableDiv").html(response);
 
         $(".collection-window").click(function () {
-          $('#collection_info input').val('');
-          $(".personalinfo_card").hide();
-          $(".loanlist_card").hide();
-          $(".back-button").hide();
-          $(".collection_card").show();
+          $('.collection_info').find('input').not('#collection_date, #collection_id').val('');
+          $('#collection_loc, #collection_mode').val(1);
+          $(".personalinfo_card, .loanlist_card, .back-button").hide();
+          $(".collection_card, #close_collection_card, #submit_collection").show();
           let navbar = document.getElementById("navbar");
           navbar.classList.add("collection-card");
-          $("#close_collection_card").show();
-          $("#submit_collection").show();
+
+          $(".chequeSpan").text("*"); //span reset
+          $(".cheque, .transaction, .other").hide(); // Collection mode div.
+          $('.totalpaidCheck, #collectionlocCheck, #collectionmodeCheck, #bank_idCheck, #chequeCheck, #transidCheck, #transdateCheck').hide(); //hide span when click collect.
 
           var req_id = $(this).attr("data-value");
 
@@ -471,43 +461,6 @@ function OnLoadFunctions(cus_id) {
             cache: false,
             success: function (response) {
               $("#collection_id").val(response);
-            },
-          });
-
-          //To get Cheque List
-          $.ajax({
-            url: "collectionFile/getChequeList.php",
-            data: { req_id: req_id },
-            dataType: "json",
-            type: "post",
-            cache: false,
-            success: function (response) {
-              $("#cheque_no").empty();
-              $("#cheque_no").append(
-                '<option value="">Select Cheque No</option>'
-              );
-              for (var i = 0; i < response.length; i++) {
-                $("#cheque_no").append(
-                  '<option value="' +
-                    response[i]["cheque_no_id"] +
-                    '">' +
-                    response[i]["cheque_no"] +
-                    "</option>"
-                );
-              }
-              $("#cheque_no").change(function () {
-                var cheque_no = $(this).val();
-                if (cheque_no != "") {
-                  for (var i = 0; i < response.length; i++) {
-                    if (cheque_no == response[i]["cheque_no_id"]) {
-                      var holder_name = response[i]["cheque_holder_name"];
-                    }
-                  }
-                  $(".chequeSpan").text("* " + holder_name);
-                } else {
-                  $(".chequeSpan").text("*");
-                }
-              });
             },
           });
 
@@ -951,11 +904,44 @@ function OnLoadFunctions(cus_id) {
 } //Auto Load function END
 
 //to get Cheque Numbers list based on the request id
-function getChequeNoList() {}
+function getChequeNoList() {
+  //To get Cheque List
+  let req_id = $("#req_id").val();
+
+  $.ajax({
+    url: "collectionFile/getChequeList.php",
+    data: { req_id },
+    dataType: "json",
+    type: "post",
+    cache: false,
+    success: function (response) {
+      $("#cheque_no").empty();
+      $("#cheque_no").append('<option value="">Select Cheque No</option>');
+      for (var i = 0; i < response.length; i++) {
+        $("#cheque_no").append('<option value="' +response[i]["cheque_no_id"] +'">' +response[i]["cheque_no"] +"</option>");
+      }
+
+      $("#cheque_no").change(function () {
+        var cheque_no = $(this).val();
+        if (cheque_no != "") {
+          for (var i = 0; i < response.length; i++) {
+            if (cheque_no == response[i]["cheque_no_id"]) {
+              var holder_name = response[i]["cheque_holder_name"];
+            }
+          }
+          $(".chequeSpan").text("* " + holder_name);
+        } else {
+          $(".chequeSpan").text("*");
+        }
+      });
+
+    },
+
+  });
+  
+}
 
 function getBankNames() {
-
-  
     $.ajax({
         url: 'manageUser/getBankDetails.php',
         data: {},
@@ -971,7 +957,6 @@ function getBankNames() {
 
         }
     })
-
 }
 
 function validations() {
