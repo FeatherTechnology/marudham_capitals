@@ -1,12 +1,14 @@
 $(document).ready(function () {
-
-    // $('button').click(function (e) { e.preventDefault(); })
-
     $('#sumit_add_lfollow').click(() => {
         if (validateLoanfollowup() == true) {
             submitLoanfollowup();
         }
-    })
+    });
+
+    $("#addLoanFollow").find(".closeModal").click(function () {
+        $('#addLoanFollow').find('.modal-body input').not('[readonly]').val('');
+        $("#addLoanFollow").find(".modal-body span").hide();
+    });
 
 });
 
@@ -74,6 +76,7 @@ function submitLoanfollowup() {
         }
     })
 }
+
 function validateLoanfollowup() {
     let response = true;
     let stage = $('#lfollow_stage').val(); let label = $('#lfollow_label').val();
@@ -98,9 +101,7 @@ function validateLoanfollowup() {
     return response;
 }
 
-
 function loanFollowupTableOnclick() {
-
     //on click for customer profile showing in next page
     $('.loan-follow-chart').click(function () {
         let cus_id = $(this).data('cusid');
@@ -163,6 +164,7 @@ function loanFollowupTableOnclick() {
         }
     });
 }
+
 //Code snippet from c:\xampp\htdocs\marudham\js\due_followup.js
 function historyTableContents(req_id, cus_id, type) {
     //To get loan sub Status
@@ -272,9 +274,6 @@ function historyTableContents(req_id, cus_id, type) {
 
 }
 
-
-
-
 // Improved code snippet
 function swarlErrorAlert(response) {
     Swal.fire({
@@ -284,6 +283,7 @@ function swarlErrorAlert(response) {
         confirmButtonColor: '#009688'
     });
 }
+
 function swarlInfoAlert(title, text) {
     Swal.fire({
         title: title,
@@ -301,6 +301,7 @@ function swarlInfoAlert(title, text) {
         }
     });
 }
+
 function swarlSuccessAlert(response, callback) {
     Swal.fire({
         title: response,
@@ -313,4 +314,3 @@ function swarlSuccessAlert(response, callback) {
         }
     });
 }
-

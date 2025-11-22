@@ -342,9 +342,6 @@ function submitCommitment() {
             swarlSuccessAlert(response, function(){
                 $('.closeModal').trigger('click');
             });
-
-            $('#addCommitment').find('.modal-body input,select').not('#comm_fdate,#comm_user_type,#comm_user').val('');
-            $('.person-div').hide();
         }
     })
 }
