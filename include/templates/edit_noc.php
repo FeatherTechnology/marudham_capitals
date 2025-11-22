@@ -130,7 +130,7 @@
 			let req_id = $(this).data('reqid');
 			let cus_id = $(this).data('cusid');
 			Swal.fire({
-				title: 'Are your sure to send this NOC?',
+				title: 'Are your sure to send this NOC Handover?',
 				text: 'This action cannot be reverted!',
 				icon: 'question',
 				showConfirmButton: true,
@@ -159,7 +159,7 @@
 				success: function(response) {
 					if (response.includes('Successfully')) {
 						Swal.fire({
-							title: 'Removed Successfully!',
+							title: 'Send Successfully!',
 							icon: 'success',
 							showConfirmButton: true,
 							confirmButtonColor: '#009688',

@@ -63,11 +63,14 @@ $column = array(
     'bc.branch_name',
     'al.line_name',
     'cp.mobile1',
+    'cp.id',
+    'cp.id',
+    'cp.id',
     'cp.id'
 );
 
 if ($userid == 1) {
-    $query = 'SELECT cp.cus_id as cp_cus_id, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, al.line_name, bc.branch_name, cp.mobile1, ii.cus_id as ii_cus_id, ii.req_id, ii.cus_status
+    $query = "SELECT cp.cus_id as cp_cus_id, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, al.line_name, bc.branch_name, cp.mobile1, ii.cus_id as ii_cus_id, ii.req_id, ii.cus_status
     FROM acknowlegement_customer_profile cp 
     JOIN customer_register cr ON cp.cus_id = cr.cus_id
     JOIN in_issue ii ON cp.cus_id = ii.cus_id
@@ -75,7 +78,7 @@ if ($userid == 1) {
     JOIN sub_area_list_creation sa ON cp.area_confirm_subarea = sa.sub_area_id
     JOIN area_line_mapping al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
     JOIN branch_creation bc ON al.branch_id = bc.branch_id
-    where ii.status = 0 and ii.cus_status IN (23) GROUP BY ii.cus_id '; // Only Issued and all lines not relying on sub area
+    where ii.status = 0 and ii.cus_status = 23 GROUP BY ii.cus_id "; // Only Issued and all lines not relying on sub area
 } else {
     $query = " SELECT cp.cus_id AS cp_cus_id,
     cr.autogen_cus_id,
@@ -95,8 +98,8 @@ if ($userid == 1) {
     JOIN sub_area_list_creation sa ON cp.area_confirm_subarea = sa.sub_area_id
     JOIN area_line_mapping al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
     JOIN branch_creation bc ON al.branch_id = bc.branch_id
-    WHERE ii.status = 0 AND ii.cus_id ='977268950328'
-        AND ii.cus_status IN (23)
+    WHERE ii.status = 0 
+        AND  ii.cus_status = 23 
         AND $colName IN ($sub_area_list) ";
 
     $forcount = "SELECT cp.cus_id 
@@ -107,7 +110,7 @@ if ($userid == 1) {
         JOIN sub_area_list_creation sa ON cp.area_confirm_subarea = sa.sub_area_id
         JOIN area_line_mapping al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
         JOIN branch_creation bc ON al.branch_id = bc.branch_id
-        where ii.status = 0 AND ii.cus_id ='977268950328' AND ii.cus_status IN(23) AND $colName IN ($sub_area_list) ";
+        where ii.status = 0 AND  ii.cus_status = 23 AND $colName IN ($sub_area_list) ";
 }
 
 if (isset($_POST['search']) && $_POST['search'] != "") {
@@ -174,18 +177,85 @@ foreach ($result as $row) {
     $cus_name = $row['cus_name'];
 
     $cus_status = $row['cus_status'];
+
+// Fetch receive status + receive_by
+$qry = "SELECT receive_status, receive_by 
+        FROM noc 
+        WHERE cus_id = '$cus_id' GROUP BY cus_id";
+
+$res = $connect->query($qry);
+$rec = $res->fetch();
+
+$receive_status  = $rec['receive_status'];   // 0 or 1
+$receive_by      = $rec['receive_by'];       // user_id of the person who received
+
+// ---------------- STATUS COLUMN ----------------
+if ($receive_status == 0) {
+    $sub_array[] = "Pending";
+} else {
+    $sub_array[] = "Completed";
+}
+
+
+// ---------------- RECEIVE BY COLUMN ----------------
+$receive_person = "";
+
+if ($receive_by != "") {
+    $userQry = $connect->query("
+        SELECT user_name
+        FROM user 
+        WHERE user_id = $receive_by
+    ");
+
+    $rowuser = $userQry->fetch();
+    $receive_person = $rowuser['user_name'];
+}
+
+$sub_array[] = ($receive_person != "") ? $receive_person : " ";
     $cus_sts = "<a href='' data-value ='" . $cus_id . "' data-value1 = '$id' class='customer-status' data-toggle='modal' data-target='.customerstatus'><span class='icon-eye' style='font-size: 12px;position: relative;top: 2px;'></span></a>";
     $sub_array[] = $cus_sts;
-     $sub_array[] = $row['mobile1'];
-     $sub_array[] = $row['mobile1'];
 
-  
+// ---------------- ACTION BUTTON LOGIC ----------------
+$action = ""; // default
+
+if ($receive_status == 0) {
+
+    // Status pending → show Send to everyone
+    $action = "<div class='dropdown'>
+        <button class='btn btn-outline-secondary'>
+            <i class='fa'>&#xf107;</i>
+        </button>
+        <div class='dropdown-content'>
+            <a href='' title='Receive details' 
+               class='receive-noc' 
+               data-reqid='$id' 
+               data-cusid='$cus_id'>Receive</a>
+        </div>
+    </div>";
+
+} else {
+
+    // Status Completed → only show button to the person who received
+    if ($receive_by == $userid) {
+
         $action = "<div class='dropdown'>
-    <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
-    <div class='dropdown-content'>";
+            <button class='btn btn-outline-secondary'>
+                <i class='fa'>&#xf107;</i>
+            </button>
+            <div class='dropdown-content'>
+                <a href='noc_handover&upd=$id&cusidupd=$cus_id&action_type=noc' 
+                   title='NOC handover'>Handover</a>
+            </div>
+        </div>";
 
-        $action .= "<a href='noc_handover&upd=$id&cusidupd=$cus_id&action_type=noc' title='Edit details' >NOC Handover</a>";
-    $action .= "</div></div>";
+    } else {
+
+        // Hide action from all other users
+        $action = "<span class='text-muted'></span>";
+    }
+}
+
+$sub_array[] = $action;
 
     $sub_array[] = $action;
     $data[]      = $sub_array;

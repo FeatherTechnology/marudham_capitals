@@ -106,7 +106,7 @@ $(document).ready(function () {
     }
 
     $('#submit_noc').click(function (event) {
-
+        let req_id = $('#req_id').val()
         event.preventDefault();
 
         if (validations() == true) {
@@ -118,7 +118,10 @@ $(document).ready(function () {
                 updateNocTable()
             ])
                 .then(() => {
-                    $('.noc-window').trigger('click'); // now executes AFTER everything is updated
+                    if (req_id !== null) {
+                        $(`.noc-window[data-value='${req_id}']`).trigger('click');
+                    }
+
                 }).then(() => {
                     $('#gold_checklist').val('');
                     $('#cheque_checklist').val('');
@@ -235,7 +238,7 @@ $(function () {
     var cus_pic = $('#cuspicupd').val();
     $('#imgshow').attr('src', 'uploads/request/customer/' + cus_pic);
 })
-
+let req_id = null;
 function OnLoadFunctions(req_id, cus_id, action_type) {
 
     $.ajax({

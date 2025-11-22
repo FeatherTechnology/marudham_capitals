@@ -42,7 +42,6 @@ class updateNocTable
         UPDATE noc 
         SET cus_id = :cus_id,
             noc_date = :noc_date,
-            cus_status = 21,
             update_login_id = :user_id,
             updated_date = NOW()
         WHERE noc_id = :noc_id

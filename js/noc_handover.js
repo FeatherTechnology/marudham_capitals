@@ -110,14 +110,13 @@ $(document).ready(function () {
         event.preventDefault();
 
         if (validations() == true) {
-            let confirmAction = confirm("Are you sure you want to submit NOC ?");
+            let confirmAction = confirm("Are you sure you want to submit NOC Handover ?");
             if (!confirmAction) return;
 
             Promise.all([
                 updateNocTable()
-            ])
-                .then(() => {
-                    $('.noc-window').trigger('click'); // now executes AFTER everything is updated
+            ]).then(() => {
+                    $('#close-noc-card').trigger('click'); // now executes AFTER everything is updated
                 })
                 .catch(err => {
                     console.error(err);
@@ -431,7 +430,7 @@ function updateNocTable() {
      formData.append('noc_date', noc_date);
     formData.append('noc_member', noc_member);
     formData.append('mem_name', mem_name); // Append mem_name
-
+   const action_type = $('#action_type').val()
     // ⭐ Return the AJAX promise
     return $.ajax({
         url: 'nocFile/updateNocHandover.php',
@@ -449,6 +448,7 @@ function updateNocTable() {
                 showConfirmButton: true,
                 confirmButtonColor: '#009688'
             });
+               OnLoadFunctions(req_id, cusidupd, action_type);
         } else {
             Swal.fire({
                 title: 'Error While Submitting',

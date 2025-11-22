@@ -15,11 +15,11 @@
 <!-- Main container start -->
 <div class="main-container">
 	<!-- Row start -->
-	 <input type="hidden" id="pending_sts">
-<input type="hidden" id="od_sts">
-<input type="hidden" id="due_nil_sts">
-<input type="hidden" id="closed_sts">
-<input type="hidden" id="bal_amt">
+	<input type="hidden" id="pending_sts">
+	<input type="hidden" id="od_sts">
+	<input type="hidden" id="due_nil_sts">
+	<input type="hidden" id="closed_sts">
+	<input type="hidden" id="bal_amt">
 	<div class="row gutters">
 		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 			<div class="table-container">
@@ -56,9 +56,9 @@
 								<th>Branch</th>
 								<th>Line</th>
 								<th>Mobile</th>
-								<th>Customer Status</th>
 								<th>Receive Status</th>
 								<th>Receive By</th>
+								<th>Customer Status</th>
 								<th>Action</th>
 							</tr>
 						</thead>
@@ -124,6 +124,64 @@
 </div>
 <script>
 	function callOnClickEvents() {
+		$('.receive-noc').click(function() {
+			event.preventDefault();
+			let req_id = $(this).data('reqid');
+			let cus_id = $(this).data('cusid');
+			Swal.fire({
+				title: 'Are your sure to receive this NOC Handover?',
+				text: 'This action cannot be reverted!',
+				icon: 'question',
+				showConfirmButton: true,
+				showCancelButton: true,
+				confirmButtonColor: '#009688',
+				cancelButtonColor: '#cc4444',
+				cancelButtonText: 'No',
+				confirmButtonText: 'Yes'
+			}).then(function(result) {
+				if (result.isConfirmed) {
+					receiveNOCFromList(req_id, cus_id);
+				}
+			})
+		})
+
+		function receiveNOCFromList(req_id, cus_id) {
+			$.ajax({
+				url: 'nocFile/receiveNOCFromList.php',
+				data: {
+					'req_id': req_id,
+					'cus_id': cus_id
+				},
+				dataType: 'json',
+				type: 'post',
+				cache: false,
+				success: function(response) {
+
+					if (response == "Already Received") {
+						Swal.fire({
+							title: 'Already Received!',
+							icon: 'warning',
+							confirmButtonColor: '#d33',
+							confirmButtonText: 'OK'
+						}).then(() => {
+							window.location = 'edit_noc_handover';
+						});
+						return;
+					}
+
+					if (response == "Successfully Received") {
+						Swal.fire({
+							title: 'Received Successfully!',
+							icon: 'success',
+							confirmButtonColor: '#009688',
+							confirmButtonText: 'OK'
+						}).then(() => {
+							window.location = 'edit_noc_handover';
+						});
+					}
+				}
+			});
+		}
 
 		$('a.customer-status').click(async function() {
 			try {

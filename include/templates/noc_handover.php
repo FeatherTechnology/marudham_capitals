@@ -64,7 +64,7 @@ if (sizeof($documentationInfo) > 0) {
 	</div>
 </div><br>
 <div class="text-right" style="margin-right: 25px;">
-	<a href="edit_noc">
+	<a href="edit_noc_handover">
 		<button type="button" class="btn btn-primary" id='back-button'><span class="icon-arrow-left"></span>&nbsp; Back</button>
 	</a>
 	<button class="btn btn-primary" id='close-noc-card'>&times;&nbsp;&nbsp;Cancel</button>
