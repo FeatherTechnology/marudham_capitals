@@ -55,7 +55,7 @@ $closedmodule = '';
 $closed = '';
 $nocmodule = '';
 $noc = '';
-$noc_handover_mapping_access = '';
+$noc_mapping_access = '';
 $doctrackmodule = '';
 $doctrack = '';
 $doc_rec_access = '';
@@ -213,7 +213,7 @@ if($idupd>0)
 			$nocmodule          		     = $getUser['nocmodule'];
 			$noc          		     	= $getUser['noc'];
 			$noc_handover          		     = $getUser['noc_handover'];
-			$noc_handover_mapping_access          		     = $getUser['noc_handover_mapping_access'];
+			$noc_mapping_access          		     = $getUser['noc_mapping_access'];
 			$doctrackmodule 				= $getUser['doctrackmodule'];
 			$doctrack 				= $getUser['doctrack'];
 			$doc_rec_access 				= $getUser['doc_rec_access'];
@@ -875,17 +875,17 @@ if($idupd>0)
                                 <label class="custom-control-label" for="noc_handover">NOC Handover</label>
                             </div>
                         </div>
-						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 noc_handover_div" style="display: none;" >
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 noc_handover_div">
 							  <div class="form-group">
-                                            <label for="noc_handover_mapping_access">NOC Handover Mapping Access</label>&nbsp;<span class="text-danger">*</span>
-											<select tabindex="12" type="text" class="form-control" id="noc_handover_mapping_access" name="noc_handover_mapping_access">
-												<option value="">Select NOC Handover Mapping Access</option>
-												<option value="1" <?php if($noc_handover_mapping_access == '1') echo 'selected';?> >Group</option>
-												<option value="2" <?php if($noc_handover_mapping_access == '2') echo 'selected';?> >Line</option>
-												<option value="3" <?php if($noc_handover_mapping_access == '3') echo 'selected';?> >Followup</option>
+                                            <label for="noc_mapping_access">NOC Mapping Access</label>&nbsp;<span class="text-danger">*</span>
+											<select tabindex="12" type="text" class="form-control" id="noc_mapping_access" name="noc_mapping_access">
+												<option value="">Select NOC Mapping Access</option>
+												<option value="1" <?php if($noc_mapping_access == '1') echo 'selected';?> >Group</option>
+												<option value="2" <?php if($noc_mapping_access == '2') echo 'selected';?> >Line</option>
+												<option value="3" <?php if($noc_mapping_access == '3') echo 'selected';?> >Followup</option>
 											</select>
 											<br>
-											<span class="text-danger" style='display:none' id='handoverCheck'>Please Select NOC Handover Mapping Access</span>
+											<span class="text-danger" style='display:none' id='handoverCheck'>Please Select NOC Mapping Access</span>
                                         </div>
                         </div>
 					</div>

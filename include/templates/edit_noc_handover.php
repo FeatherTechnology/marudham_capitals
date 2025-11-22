@@ -2,7 +2,7 @@
 <br><br>
 <div class="page-header">
 	<div style="background-color:#009688; width:100%; padding:12px; color: #ffff; font-size: 20px; border-radius:5px;">
-		Marudham Capitals - NOC
+		Marudham Capitals - NOC Handover
 	</div>
 </div><br>
 <!-- <div class="text-right" style="margin-right: 25px;">
@@ -44,7 +44,7 @@
 						}
 					}
 					?>
-					<table id="noc_table" class="table custom-table">
+					<table id="noc_handover_table" class="table custom-table">
 						<thead>
 							<tr>
 								<th width="50">S.No.</th>
@@ -56,15 +56,15 @@
 								<th>Branch</th>
 								<th>Line</th>
 								<th>Mobile</th>
-								<th>Receive Status</th>
 								<th>Customer Status</th>
+								<th>Receive Status</th>
+								<th>Receive By</th>
 								<th>Action</th>
 							</tr>
 						</thead>
 						<tbody>
 						</tbody>
 					</table>
-					<div id="printnocletter" style="display: none"></div>
 				</div>
 			</div>
 		</div>
@@ -125,67 +125,6 @@
 <script>
 	function callOnClickEvents() {
 
-		$('.remove-noc').click(function() {
-			event.preventDefault();
-			let req_id = $(this).data('reqid');
-			let cus_id = $(this).data('cusid');
-			Swal.fire({
-				title: 'Are your sure to send this NOC?',
-				text: 'This action cannot be reverted!',
-				icon: 'question',
-				showConfirmButton: true,
-				showCancelButton: true,
-				confirmButtonColor: '#009688',
-				cancelButtonColor: '#cc4444',
-				cancelButtonText: 'No',
-				confirmButtonText: 'Yes'
-			}).then(function(result) {
-				if (result.isConfirmed) {
-					removeNOCFromList(req_id, cus_id);
-				}
-			})
-		})
-
-		function removeNOCFromList(req_id, cus_id) {
-			$.ajax({
-				url: 'nocFile/removeNOCFromList.php',
-				data: {
-					'req_id': req_id,
-					'cus_id': cus_id
-				},
-				dataType: 'json',
-				type: 'post',
-				cache: false,
-				success: function(response) {
-					if (response.includes('Successfully')) {
-						Swal.fire({
-							title: 'Removed Successfully!',
-							icon: 'success',
-							showConfirmButton: true,
-							confirmButtonColor: '#009688',
-							confirmButtonText: 'OK'
-						}).then((result) => {
-							// Redirect only when OK is clicked
-							if (result.isConfirmed) {
-								window.location = 'edit_noc';
-							}
-						});
-					}
-				}
-			})
-		}
-		$('.noc-letter').click(function() {
-			event.preventDefault();
-			let req_id = $(this).data('reqid');
-			let cus_id = $(this).data('cusid');
-			$.post('nocFile/nocLetter.php', {
-				req_id: req_id,
-				cus_id: cus_id
-			}, function(html) {
-				$('#printnocletter').html(html)
-			})
-		})
-		
 		$('a.customer-status').click(async function() {
 			try {
 				var cus_id = $(this).data('value');

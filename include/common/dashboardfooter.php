@@ -971,6 +971,50 @@
                     callOnClickEvents();
                 }
             });
+            //NOC Handover Table 
+             var noc_handover_table = $('#noc_handover_table').DataTable({
+                "order": [
+                    [0, "desc"]
+                ],
+                "displayStart": getDisplayStart('noc_handover_table'),
+                'processing': true,
+                'serverSide': true,
+                'serverMethod': 'post',
+                'ajax': {
+                    'url': 'ajaxFetch/ajaxNocHandoverFetch.php',
+                    'data': function(data) {
+                        var search = $('input[type=search]').val();
+                        data.search = search;
+                    }
+                },
+                dom: 'lBfrtip',
+                buttons: [{
+                        extend: 'excel',
+                        title: "NOC Handover List",
+                        action: function (e, dt, button, config) {
+                            var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                            var dynamic = curDateJs('NOC_Handover_List'); // or any base
+                            config.title = dynamic;      // for versions that use title as filename
+                            config.filename = dynamic;   // for html5 filename
+                            defaultAction.call(this, e, dt, button, config);
+                        }
+                    },
+                    {
+                        extend: 'colvis',
+                        collectionLayout: 'fixed four-column',
+                    }
+                ],
+                "lengthMenu": [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, "All"]
+                ],
+                'drawCallback': function() {
+                    searchFunction('noc_handover_table');
+                    paginationFunction('noc_handover_table');
+                    callOnClickEvents();
+                }
+            });
+
 
             //UPDATE Table
             var update_table = $('#update_table').DataTable({
@@ -1432,6 +1476,9 @@
 
     if ($current_page == 'noc') { ?>
         <script src="js/noc.js"></script>
+    <?php }
+    if ($current_page == 'noc_handover') { ?>
+        <script src="js/noc_handover.js"></script>
     <?php }
 
     //Closed

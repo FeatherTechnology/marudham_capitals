@@ -392,15 +392,7 @@ $(document).ready(function () {
             $('.promotion_activity_div').hide();
         }
     });
-    $('#noc_handover').click(function () {
-        var noc_handover_screen = document.querySelector('#noc_handover');
-        if (noc_handover_screen.checked) {
-            $('.noc_handover_div').show();
-        } else {
-            $('.noc_handover_div').hide();
-        }
-    });
-
+   
 	$('#submit_manage_user').click(function (event) {
 		event.preventDefault(); // Stop default submit; we'll submit programmatically after validation
 
@@ -517,12 +509,6 @@ $(function () {
             $('.promotion_activity_div').show()
         }else{
             $('.promotion_activity_div').hide()
-        }
-        var nochandover_screen = document.querySelector('#noc_handover');
-        if (nochandover_screen.checked) {
-            $('.noc_handover_div').show()
-        }else{
-            $('.noc_handover_div').hide()
         }
 
         var mastermodule = document.getElementById('mastermodule');
@@ -1110,11 +1096,11 @@ function validation() {
         }  
     }
   
-    var noc_handover = document.querySelector('#noc_handover');
-    var noc_handover_mapping_access = $('#noc_handover_mapping_access').val();
+    var nocmodule = document.querySelector('#nocmodule');
+    var noc_mapping_access = $('#noc_mapping_access').val();
 
     // Case 1: Checkbox checked but dropdown empty
-    if (noc_handover.checked && noc_handover_mapping_access == '') {
+    if (nocmodule.checked && noc_mapping_access == '') {
         $('#handoverCheck').show();
         validation = false;
     } else {

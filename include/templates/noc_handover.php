@@ -60,7 +60,7 @@ if (sizeof($documentationInfo) > 0) {
 <br><br>
 <div class="page-header">
 	<div style="background-color:#009688; width:100%; padding:12px; color: #ffff; font-size: 20px; border-radius:5px;">
-		Marudham Capitals - NOC
+		Marudham Capitals - NOC Handover
 	</div>
 </div><br>
 <div class="text-right" style="margin-right: 25px;">
@@ -234,58 +234,6 @@ if (sizeof($documentationInfo) > 0) {
 						</div>
 					</div>
 					<!-- Loan List End -->
-					<!-- Data Checking START -->
-					<div class="card loanlist_card">
-						<div class="card-header"> Data Checking <span style="font-weight:bold" class=""></span></div>
-						<div class="card-body">
-							<div class="row">
-								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-									<div class="form-group">
-										<label for="category"> Category </label>
-										<select type="text" class="form-control" id="category" name="category" tabindex="10">
-											<option> Select Category </option>
-											<option value="0"> Name </option>
-											<option value="1"> Aadhar Number </option>
-											<option value="2"> Mobile Number </option>
-										</select>
-									</div>
-								</div>
-
-								<div id="nameCheck" style="display: none" class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-									<div class="form-group">
-										<label for="check_name"> Name </label>
-										<select type="text" class="form-control" name="check_name" id="check_name" tabindex="11">
-											<option> Select Name </option>
-										</select>
-									</div>
-								</div>
-
-								<div id="aadharNo" style="display: none" class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-									<div class="form-group">
-										<label for="check_aadhar"> Aadhar Number </label>
-										<select type="text" class="form-control" name="check_aadhar" id="check_aadhar" tabindex="12">
-											<option> Select Aadhar Number </option>
-										</select>
-									</div>
-								</div>
-
-								<div id="mobileNo" style="display: none" class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-									<div class="form-group">
-										<label for="check_mobileno"> Mobile Number </label>
-										<select type="text" class="form-control" name="check_mobileno" id="check_mobileno" tabindex="13">
-											<option> Select Mobile Number </option>
-										</select>
-									</div>
-								</div>
-
-							</div>
-							<div id="cus_check"></div></br>
-							<div id="fam_check"></div></br>
-							<div id="group_check"></div>
-						</div>
-					</div>
-					<!-- Data Checking END -->
-
 					<!-- NOC window -->
 					<div class="card noc-card">
 						<div class="card-header">NOC Summary</div>
@@ -629,7 +577,7 @@ if (sizeof($documentationInfo) > 0) {
 							</div>
 							<!-- Document Info End -->
 							<hr>
-						<!-- /*	<div class="row">
+							<div class="row">
 								<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 									<div class="form-group">
 										<label for="noc_date">Date Of NOC</label><span class="required">&nbsp;*</span>
@@ -669,12 +617,12 @@ if (sizeof($documentationInfo) > 0) {
 										<label for="ack_fingerprint">Acknowledgement</label><span class="required">&nbsp;*</span>
 										<input type="hidden" class="form-control" id="compare_finger" name="compare_finger" value='' readonly>
 										<input type="hidden" class="form-control" id="ack_fingerprint" name="ack_fingerprint" value='' readonly>
-										<input type="text" class="form-control" value='' readonly style="visibility:hidden;">Just for spacing
+										<input type="text" class="form-control" value='' readonly style="visibility:hidden;">
 										<button type="button" class='btn btn-success scanBtn' id="" name="" style='background-color:#009688;margin-top: -50px;width: auto;' onclick="event.preventDefault()" title='Put Your Thumb' tabindex='44'><i class="material-icons" id="icon-flipped">&#xe90d;</i>&nbsp;Scan</button>
 										<span class="text-danger scanBtnCheck" style="display:none">Please Scan fingerprint</span>
 									</div>
 								</div>
-							</div> -->
+							</div>
 
 						</div>
 					</div>
@@ -684,7 +632,7 @@ if (sizeof($documentationInfo) > 0) {
 				<!-- Submit Button Start -->
 				<div class="col-md-12 ">
 					<div class="text-right">
-						<button type="submit" name="submit_noc" id="submit_noc" class="btn btn-primary" value="Submit" tabindex='45'><span class="icon-check"></span>&nbsp;Submit</button>
+						<button type="submit" name="submit_noc_handover" id="submit_noc_handover" class="btn btn-primary" value="Submit" tabindex='45'><span class="icon-check"></span>&nbsp;Submit</button>
 					</div>
 				</div>
 				<!-- Submit Button End -->

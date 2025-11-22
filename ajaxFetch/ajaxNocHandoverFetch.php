@@ -49,9 +49,9 @@ if ($userid != 1) {  // super admin bypass
     // Remove duplicates and store final list
     $sub_area_ids = array_unique(array_filter($sub_area_ids));
     $sub_area_list = implode(',', $sub_area_ids);
-    $colName = ($accessType == 3)
-        ? "cp.area_confirm_area"          // Due Followup
-        : "cp.area_confirm_subarea";      // Group/Line
+       $colName = ($accessType == 3)
+            ? "cp.area_confirm_area"          // Due Followup
+            : "cp.area_confirm_subarea";      // Group/Line
 }
 $column = array(
     'cp.id',
@@ -75,7 +75,7 @@ if ($userid == 1) {
     JOIN sub_area_list_creation sa ON cp.area_confirm_subarea = sa.sub_area_id
     JOIN area_line_mapping al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
     JOIN branch_creation bc ON al.branch_id = bc.branch_id
-    where ii.status = 0 and ii.cus_status IN (21,22) GROUP BY ii.cus_id '; // Only Issued and all lines not relying on sub area
+    where ii.status = 0 and ii.cus_status IN (23) GROUP BY ii.cus_id '; // Only Issued and all lines not relying on sub area
 } else {
     $query = " SELECT cp.cus_id AS cp_cus_id,
     cr.autogen_cus_id,
@@ -96,7 +96,7 @@ if ($userid == 1) {
     JOIN area_line_mapping al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
     JOIN branch_creation bc ON al.branch_id = bc.branch_id
     WHERE ii.status = 0 AND ii.cus_id ='977268950328'
-        AND ii.cus_status IN (21,22)
+        AND ii.cus_status IN (23)
         AND $colName IN ($sub_area_list) ";
 
     $forcount = "SELECT cp.cus_id 
@@ -107,7 +107,7 @@ if ($userid == 1) {
         JOIN sub_area_list_creation sa ON cp.area_confirm_subarea = sa.sub_area_id
         JOIN area_line_mapping al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
         JOIN branch_creation bc ON al.branch_id = bc.branch_id
-        where ii.status = 0 AND ii.cus_id ='977268950328' AND ii.cus_status IN(21,22) AND $colName IN ($sub_area_list) ";
+        where ii.status = 0 AND ii.cus_id ='977268950328' AND ii.cus_status IN(23) AND $colName IN ($sub_area_list) ";
 }
 
 if (isset($_POST['search']) && $_POST['search'] != "") {
@@ -174,36 +174,18 @@ foreach ($result as $row) {
     $cus_name = $row['cus_name'];
 
     $cus_status = $row['cus_status'];
-    if ($cus_status == 21) {
-        $noc_status = 'NOC';
-    } else if ($cus_status == 23) {
-        $noc_status = 'Pending';
-    }
-    $sub_array[] = $noc_status;
     $cus_sts = "<a href='' data-value ='" . $cus_id . "' data-value1 = '$id' class='customer-status' data-toggle='modal' data-target='.customerstatus'><span class='icon-eye' style='font-size: 12px;position: relative;top: 2px;'></span></a>";
     $sub_array[] = $cus_sts;
+     $sub_array[] = $row['mobile1'];
+     $sub_array[] = $row['mobile1'];
 
-    $action  = "<div class='dropdown'>
-                <button class='btn btn-outline-secondary'>
-                    <i class='fa'>&#xf107;</i>
-                </button>
-                <div class='dropdown-content'>";
+  
+        $action = "<div class='dropdown'>
+    <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
+    <div class='dropdown-content'>";
 
-    $action .= "<a href='noc&upd=$id&cusidupd=$cus_id&action_type=noc' title='Edit details'>NOC</a>";
-
-    // If status = 22 → show "Send"
-    if ($cus_status == 22) {
-        $action .= "<a href='' title='Remove details' class='remove-noc' data-reqid='$id' data-cusid='$cus_id'>Send</a>";
-    }
-
-    // For status 22 or 23 → Summary + Letter
-    if (in_array($cus_status, [22, 23])) {
-        $action .= "<a href='noc&upd=$id&cusidupd=$cus_id&action_type=summary'>NOC Summary</a>";
-        $action .= "<a href='' title='NOC Letter' class='noc-letter' data-reqid='$id' data-cusid='$cus_id'>NOC Letter</a>";
-    }
-
+        $action .= "<a href='noc_handover&upd=$id&cusidupd=$cus_id&action_type=noc' title='Edit details' >NOC Handover</a>";
     $action .= "</div></div>";
-
 
     $sub_array[] = $action;
     $data[]      = $sub_array;
@@ -214,7 +196,7 @@ function count_all_data($connect)
 {
     $query     = "SELECT cp.cus_id as cp_cus_id,cp.cus_name,cp.area_confirm_area,cp.area_confirm_subarea,cp.area_line,cp.mobile1, ii.cus_id as ii_cus_id, ii.req_id FROM 
     acknowlegement_customer_profile cp JOIN in_issue ii ON cp.cus_id = ii.cus_id
-    where ii.status = 0 and ii.cus_status IN(21,22) GROUP BY ii.cus_id ";
+    where ii.status = 0 and ii.cus_status IN(23) GROUP BY ii.cus_id ";
     $statement = $connect->prepare($query);
     $statement->execute();
     return $statement->rowCount();

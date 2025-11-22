@@ -28,8 +28,8 @@ function getGuarentorName($connect,$req_id){
             <th>Name</th>
             <th>Document</th>
             <th>Date Of NOC</th>
-            <th>NOC Person</th>
-            <th>Name</th>
+            <!-- <th>NOC Person</th>
+            <th>Name</th> -->
             <th>Checklist</th>
         </tr>
     </thead>
@@ -50,7 +50,7 @@ function getGuarentorName($connect,$req_id){
                 <td><a href='<?php echo 'uploads/verification/signed_doc/'.$row['upload_doc_name'];?>' target="_blank"><?php echo $row['upload_doc_name'];?></a></td>
 
                 <td><span id='sign_noc_date' name='sign_noc_date' class="sign_noc_date"><?php if($row['noc_date'] != ''){echo date('d-m-Y',strtotime($row['noc_date']));}?></span></td>
-                <td>
+                <!-- <td>
                     <select id='sign_noc_per' name='sign_noc_per' class="form-control sign_noc_per" <?php if($row['noc_person'] != '' && $row['noc_person'] != null){echo 'disabled';}else{?>style="display:none" <?php }?>>
                         <option value=''>Select Type</option>
                         <option value='1' <?php if(isset($row['noc_person']) && $row['noc_person'] == 1){echo 'selected';}?>>Customer</option>
@@ -61,7 +61,7 @@ function getGuarentorName($connect,$req_id){
                     <?php if(isset($row['noc_name']) && $row['noc_name'] != null){?>
                         <input type="text" class="form-control" value='<?php if(!is_numeric($row['noc_name'])){echo $row['noc_name'];}else{echo getfamName($connect, $row['noc_name']);}?>' readonly>
                     <?php } ?>
-                </td>
+                </td> -->
 
                 
                 <td>

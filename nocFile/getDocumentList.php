@@ -42,8 +42,8 @@ function getfamName($connect,$rel_id){
             <th>Document Holder</th> 
             <th>Document</th> 
             <th>Date Of NOC</th>
-            <th>NOC Person</th>
-            <th>Name</th>
+            <!-- <th>NOC Person</th>
+            <th>Name</th> -->
             <th>Checklist</th>
         </tr>
     </thead>
@@ -66,7 +66,7 @@ function getfamName($connect,$rel_id){
                         <td><a href='<?php echo 'uploads/verification/doc_info/'.$upd_arr[$i];?>' target="_blank"><?php echo $upd_arr[$i];?></a></td>
                         
                         <td><span id='doc_noc_date' name='doc_noc_date' class="doc_noc_date"><?php if($row['noc_date'] != ''){echo date('d-m-Y',strtotime($row['noc_date']));}?></span></td>
-                        <td>
+                        <!-- <td>
                             <select id='doc_noc_per' name='doc_noc_per' class="form-control doc_noc_per" <?php if($row['noc_person'] != '' && $row['noc_person'] != null){echo 'disabled';}else{?>style="display:none" <?php }?>>
                                 <option value=''>Select Type</option>
                                 <option value='1' <?php if(isset($row['noc_person']) && $row['noc_person'] == 1){echo 'selected';}?>>Customer</option>
@@ -77,7 +77,7 @@ function getfamName($connect,$rel_id){
                             <?php if(isset($row['noc_name']) && $row['noc_name'] != null){?>
                                 <input type="text" class="form-control" value='<?php if(!is_numeric($row['noc_name'])){echo $row['noc_name'];}else{echo getfamName($connect, $row['noc_name']);}?>' readonly>
                             <?php } ?>
-                        </td>
+                        </td> -->
 
                         <td>
                             <?php #if($row['temp_sts'] == '0'){ ?>
