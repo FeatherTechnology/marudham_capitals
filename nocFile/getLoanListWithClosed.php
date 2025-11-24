@@ -169,28 +169,50 @@ function moneyFormatIndia($num)
                     } else {
                         echo '';
                     } ?></td>
-                       <td>
-            <?php if ($actionType == "noc") { ?>
-                <span class="btn btn-success noc-window" style='font-size: 17px;position: relative;top: 0px; background-color:#009688;'
-                      data-value="<?= $row['req_id']; ?>">
-                      NOC
-                </span>
-            <?php } elseif ($actionType == "summary") { ?>
-                 <span class="btn btn-success noc-summary" style='font-size: 17px;position: relative;top: 0px; background-color:#009688;'
-                   data-reqid="<?= $row['req_id']; ?>" 
-                   data-cusid="<?= $cus_id; ?>" 
-                   data-cusname="<?= $row['cus_name']; ?>" 
-                   data-toggle="modal" 
-                   data-target=".noc-summary-modal">
-                    NOC Summary
-                </a>
-                </span>
-            <?php } ?>
-        </td>
+                <td>
+                    <?php if ($actionType == "noc") { ?>
+                        <span class="btn btn-success noc-window"
+                            style="font-size: 17px; position: relative; top: 0px; background-color:#009688;"
+                            data-value="<?= $row['req_id']; ?>">
+                            NOC
+                        </span>
+
+                    <?php } elseif ($actionType == "summary") { ?>
+
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa">&#xf107;</i>
+                            </button>
+                            <div class="dropdown-content">
+
+                                <a href=""
+                                class="noc-summary"
+                                    data-reqid="<?= $row['req_id']; ?>"
+                                    data-cusid="<?= $cus_id; ?>"
+                                    data-cusname="<?= $row['cus_name']; ?>"
+                                    data-toggle="modal"
+                                    data-target=".noc-summary-modal">
+                                    NOC Summary
+                                </a>
+
+                                <a href=""
+                                    title="NOC Letter"
+                                    class="noc-letter"
+                                    data-reqid="<?= $row['req_id']; ?>"
+                                    data-cusid="<?= $cus_id; ?>">
+                                    NOC Letter
+                                </a>
+
+                            </div>
+                        </div>
+
+                    <?php } ?>
+                </td>
+
             </tr>
 
-        <?php 
-        // $i++;
+        <?php
+            // $i++;
         } ?>
     </tbody>
 </table>
@@ -216,11 +238,11 @@ function moneyFormatIndia($num)
             dom: 'lBfrtip',
             buttons: [{
                     extend: 'excel',
-                    action: function (e, dt, button, config) {
+                    action: function(e, dt, button, config) {
                         var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                         var dynamic = curDateJs('Loan_List'); // or any base
-                        config.title = dynamic;      // for versions that use title as filename
-                        config.filename = dynamic;   // for html5 filename
+                        config.title = dynamic; // for versions that use title as filename
+                        config.filename = dynamic; // for html5 filename
                         defaultAction.call(this, e, dt, button, config);
                     }
                 },

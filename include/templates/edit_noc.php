@@ -64,7 +64,6 @@
 						<tbody>
 						</tbody>
 					</table>
-					<div id="printnocletter" style="display: none"></div>
 				</div>
 			</div>
 		</div>
@@ -174,18 +173,7 @@
 				}
 			})
 		}
-		$('.noc-letter').click(function() {
-			event.preventDefault();
-			let req_id = $(this).data('reqid');
-			let cus_id = $(this).data('cusid');
-			$.post('nocFile/nocLetter.php', {
-				req_id: req_id,
-				cus_id: cus_id
-			}, function(html) {
-				$('#printnocletter').html(html)
-			})
-		})
-		
+	
 		$('a.customer-status').click(async function() {
 			try {
 				var cus_id = $(this).data('value');

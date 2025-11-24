@@ -192,6 +192,7 @@ if (sizeof($documentationInfo) > 0) {
 							</div>
 						</div>
 					</div>
+
 					<!-- Personal info END -->
 
 					<!-- Loan List Start -->
@@ -233,6 +234,7 @@ if (sizeof($documentationInfo) > 0) {
 							</div>
 						</div>
 					</div>
+						<div id="printnocletter" style="display: none"></div>
 					<!-- Loan List End -->
 					<!-- Data Checking START -->
 					<div class="card loanlist_card">

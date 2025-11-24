@@ -196,8 +196,7 @@ foreach ($result as $row) {
 
         // For status 22 or 23 → show Summary + Letter
         if (in_array($cus_status, [22, 23])) {
-            $action .= "<a href='noc&upd=$id&cusidupd=$cus_id&action_type=summary'>NOC Summary</a>";
-            $action .= "<a href='' title='NOC Letter' class='noc-letter' data-reqid='$id' data-cusid='$cus_id'>NOC Letter</a>";
+            $action .= "<a href='noc&upd=$id&cusidupd=$cus_id&action_type=summary'>NOC Summary & Letter</a>";
         }
     }
     $action .= "</div></div>";
