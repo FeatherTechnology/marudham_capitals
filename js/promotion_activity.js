@@ -521,7 +521,7 @@ $(document).on('input', '.cus_mobile_num', function() {
 
   $("#addPromotion").find(".closeModal").click(function () {
     $('#addPromotion').find('.modal-body input').not('[readonly]').not('#orgin_table').val('');
-    $("#addPromotion").find(".modal-body span").hide();
+    $("#addPromotion").find(".modal-body span").not('.required').hide();
   });
     
 });

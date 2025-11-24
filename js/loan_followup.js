@@ -7,7 +7,7 @@ $(document).ready(function () {
 
     $("#addLoanFollow").find(".closeModal").click(function () {
         $('#addLoanFollow').find('.modal-body input').not('[readonly]').val('');
-        $("#addLoanFollow").find(".modal-body span").hide();
+        $("#addLoanFollow").find(".modal-body span").not('.required').hide();
     });
 
 });

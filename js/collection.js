@@ -292,7 +292,7 @@ $(document).ready(function () {
 
   $("#addCommitment").find(".closeModal").click(function () {
     $("#addCommitment").find(".modal-body input,select").not("#comm_fdate,#comm_user_type,#comm_user").val("");
-    $("#addCommitment").find(".modal-body span").hide();
+    $("#addCommitment").find(".modal-body span").not('.required').hide();
     $(".person-div").hide();
   });
   

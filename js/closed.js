@@ -514,7 +514,7 @@ function feedbackList() {
             $("#feedback_remark").val('');
             $("#feedbackID").val('');
 
-            $(".addloansummary").find(".modal-body span").hide();
+            $(".addloansummary").find(".modal-body span").not('.required').hide();
 
         }
     });
