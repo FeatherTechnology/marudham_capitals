@@ -333,6 +333,8 @@ $(document).ready(function () {
                 for (var i = 0; i < response.length; i++) {
                     $('#bank_id_untracked').append(`<option value='` + response[i]['bank_id'] + `'>` + response[i]['bank_name'] + `</option>`)
                 }
+
+                $('#bank_id_untrackedCheck, #untracked_amtCheck').hide();
             }
         })
     })

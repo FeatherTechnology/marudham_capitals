@@ -2134,13 +2134,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 																					echo $cus_pic_lc;
 																				} ?>"><!--
 											comment it <img id='imgshow' class="img_show" src='img/avatar.png' /> comment it
-											<img id='imgshow' class="img_show" src='<?php if (isset($pic_loan)) {
-																						echo 'uploads/request/customer/' . $pic_loan;
-																					} elseif (isset($cus_pic_lc)) {
-																						echo 'uploads/request/customer/' . $cus_pic_lc;
-																					} else {
-																						echo 'img/avatar.png';
-																					} ?>' />
+											<img id='imgshow' class="img_show" src='' />
 										</div>
 									</div>
 								</div>

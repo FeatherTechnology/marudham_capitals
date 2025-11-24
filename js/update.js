@@ -215,7 +215,7 @@ $(document).ready(function () {
     $('#Propertyholder_type').change(function () {
         let type = $(this).val();
         let req_id = $('#req_id').val();
-$("#propertyholdernameCheck").hide();
+        $("#propertyholdernameCheck").hide();
         if (type == '0') {
             $('#Propertyholder_name').show();
             $('#Propertyholder_relationship_name').val('');
@@ -311,7 +311,6 @@ $("#propertyholdernameCheck").hide();
 
     $('#mortgage_process').change(function () {
 
-        $("#propertyholdernameCheck").hide();
         let process = $(this).val();
 
         if (process == '0') {
@@ -319,22 +318,9 @@ $("#propertyholdernameCheck").hide();
         } else {
             $('#mortgage_div').hide();
 
-            $('#Propertyholder_type').val('');
-            $('#Propertyholder_name').val('');
-            $('#Propertyholder_relationship_name').val('');
-            $('#doc_property_relation').val('');
-            $('#doc_property_pype').val('');
-            $('#doc_property_measurement').val('');
-            $('#doc_property_location').val('');
-            $('#doc_property_value').val('');
-            $('#mortgage_name').val('');
-            $('#mortgage_dsgn').val('');
-            $('#mortgage_nuumber').val('');
-            $('#reg_office').val('');
-            $('#mortgage_value').val('');
-            $('#mortgage_document').val('');
-            $('#mortgage_document_upd').val('');
-            $('#mortgage_doc_upd').val('');//old uploaded name
+            $('#Propertyholder_type, #Propertyholder_name, #Propertyholder_relationship_name, #doc_property_relation, #doc_property_pype, #doc_property_measurement, #doc_property_location, #doc_property_value, #mortgage_name, #mortgage_dsgn, #mortgage_nuumber, #reg_office, #mortgage_value, #mortgage_document, #mortgage_document_upd, #mortgage_doc_upd').val('');//old uploaded name
+
+            $('#mort_form').find('span').not('.slider, .required, .icon-check').hide(); //to hide the span.
         }
     })
 
@@ -342,7 +328,7 @@ $("#propertyholdernameCheck").hide();
     $('#owner_type').change(function () {
         let type = $(this).val();
         let req_id = $('#req_id').val();
-$("#ownernameCheck").hide();
+        $("#ownernameCheck").hide();
         if (type == '0') {
             $('#owner_name').show();
             $('#ownername_relationship_name').val('');
@@ -432,22 +418,16 @@ $("#ownernameCheck").hide();
     })
 
     $('#endorsement_process').change(function () {
-        $("#ownernameCheck").hide();
-        let process = $(this).val();
 
+        let process = $(this).val();
+        
         if (process == '0') {
             $('#end_process_div').show();
         } else {
             $('#end_process_div').hide();
-
-            $('#owner_type').val('');
-            $('#owner_name').val('');
-            $('#ownername_relationship_name').val('');
-            $('#en_relation').val('');
-            $('#vehicle_type').val('');
-            $('#vehicle_process').val('');
-            $('#en_Company').val('');
-            $('#en_Model').val('');
+            
+            $('#owner_type, #owner_name, #ownername_relationship_name, #en_relation, #vehicle_type, #vehicle_process, #en_Company, #en_Model').val('');
+            $('#end_form').find('span').not('.slider, .required, .icon-check').hide(); //to hide the span.
         }
     })
 
@@ -4171,6 +4151,8 @@ function resetgoldInfo(req_id, cus_id) {
             $("#gold_Value").val('');
             $("#gold_upload").val('');
             $("#goldID").val('');
+
+            $('#GoldstatusCheck, #GoldtypeCheck, #purityCheck, #goldCountCheck, #goldWeightCheck, #goldValueCheck').hide(); //to hide span.
         }
     }).then(function () {
         goldInfoEditEvent();
