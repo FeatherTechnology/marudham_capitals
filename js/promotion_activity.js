@@ -159,6 +159,7 @@ $(document).ready(function () {
                     <option value="">Select Sub Area Name</option>
                 </select>
             </td>
+            <td class="user"></td>
             <td>
                 <button type="button"  class="btn btn-primary add_event_mem">Add</button>
             </td>
@@ -183,6 +184,7 @@ $(document).on("click", '.add_event_mem', function () {
         "<td><input type='number' class='form-control cus_mobile_num' name='cus_mobile_num'  value='' placeholder='Enter Mobile Number'></td>" +
         "<td><select class='form-control cus_area_name' name='cus_area_name'> <option value=''>Select Area Name</option> </select></td>" +
         "<td><select class='form-control sub_area_name' name='sub_area_name'> <option value=''>Select Sub Area Name</option> </select></td>" +
+        "<td class='user'></td>"+
         "<td><button type='button' class='btn btn-primary add_event_mem'>Add</button></td>" +
         "<td><span class='icon-trash-2 delet_event'></span></td>" +
         "</tr>";
@@ -464,6 +466,7 @@ $(document).on('click', '.edit_event', function (event) {
                                 <!-- sub_area will be filled by .cus_area_name change handler -->
                                 <select class="form-control sub_area_name"></select>
                             </td>
+                            <td class="user">${row.fullname}</td>
                             <td class="hidden_area" style="display:none;">${row.sub_area}</td>
                             <td class="cus_hidden_id" style="display:none;">${row.id}</td>
                             <td><button type="button" class="btn btn-primary add_event_mem">Add</button></td>

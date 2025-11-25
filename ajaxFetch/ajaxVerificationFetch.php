@@ -35,6 +35,16 @@ if ($userid != 1) {
         $loan_cat = '';
     }
 }
+$stage_arr = [
+    0 => 'Request',
+    1 => 'Verification',
+    10 => 'Verification',
+    11 => 'Verification',
+    12 => 'Verification',
+    2 => 'Approval',
+    3 => 'Acknowledgement',
+    13 => 'Loan Issue',
+];
 
 
 $column = array(
@@ -204,7 +214,7 @@ foreach ($result as $row) {
 
         if ($cus_profile_row > 0 && $cus_doc_row > 0 && $cus_loan_calc_row > 0) {
 
-            $sub_array[] = "<button class='btn btn-outline-secondary move_approval' value='$id'><span class = 'icon-arrow_forward'></span></button>";
+            $sub_array[] = "<button class='btn btn-outline-secondary move_approval' value='$id' data-cusid='" . $cus_id . "' ><span class = 'icon-arrow_forward'></span></button>";
         } else {
             $sub_array[] = "In Verification";
         }
@@ -243,6 +253,10 @@ foreach ($result as $row) {
         $action .= "<a href='verification&upd=$id&pge=1' class='customer_profile' value='$id' >Edit Verification</a>
         <a href='#' data-reqid = '$id' class='cancelverification'>Cancel Verification</a>
         <a href='#' data-reqid = '$id' class='revokeverification'>Revoke Verification</a>";
+        $action .= "<a class=' loan-follow-edit' data-cusid='" . $cus_id . "' data-stage='" .$stage_arr[ $cus_status ]. "' data-toggle='modal' data-target='#addLoanFollow'     value='Follow'><span>Followup </span></a>";
+        $action .= "<a class='loan-follow-chart' data-cusid='"  . $cus_id . "' data-toggle='modal' data-target='#loanFollowChartModal'><span> Followup Chart</span></a>";
+
+
     } else
     if ($cus_status == '5') {
         $action .= "<a href='verification&del=$id'class='removeverification'>Remove Verification</a>";
