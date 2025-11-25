@@ -570,7 +570,7 @@ class bulkUploadClass
         $connect->query("UPDATE in_acknowledgement SET updated_date = " . $data['closed_date'] . " WHERE req_id = '" . $req_id . "' ");
         $connect->query("UPDATE in_approval SET updated_date = " . $data['closed_date'] . " WHERE req_id = '" . $req_id . "' ");
 
-        $connect->query("INSERT INTO `document_track`(`req_id`, `cus_id`, `track_status`, `insert_login_id`, `created_date`) VALUES('" . strip_tags($req_id) . "','" . strip_tags($data['cus_id']) . "','3'," . $userData['user_id'] . ", '" . $data['closed_date'] . "') ");
+        // $connect->query("INSERT INTO `document_track`(`req_id`, `cus_id`, `track_status`, `insert_login_id`, `created_date`) VALUES('" . strip_tags($req_id) . "','" . strip_tags($data['cus_id']) . "','3'," . $userData['user_id'] . ", '" . $data['closed_date'] . "') ");
     }
 
     function NOCTables($connect, $data, $userData, $req_id)
