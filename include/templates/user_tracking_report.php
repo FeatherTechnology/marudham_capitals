@@ -4,12 +4,12 @@
     <div style="background-color:#009688; width:100%; padding:12px; color: #ffff; font-size: 20px; border-radius:5px;">
         Marudham Capitals - User Tracking Report
     </div>
-
 </div><br>
+
 <!-- Main container start -->
 <div class="main-container">
     <!--form start-->
-    <form id="due_followup_customer_count_report_form" name="due_followup_customer_count_report_form" action="" method="post" enctype="multipart/form-data">
+    <form name="user_tracking_report_form" action="" method="post" enctype="multipart/form-data">
 
         <div class="row gutters" id="closed_card">            
             <div class="toggle-container col-12">

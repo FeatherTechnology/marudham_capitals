@@ -2116,10 +2116,10 @@
                 }
             });
 
-            $('.remove-track').click(function() {
+            $('.return-track').click(function() {
                 var tableid = $(this).data('id');
                 event.preventDefault();
-                if (confirm('Are you sure to Remove this Track from List?')) {
+                if (confirm('Are you sure to Return this Track to Issued User?')) {
                     $.ajax({
                         url: 'documentTrackFile/removeTrack.php',
                         type: 'post',

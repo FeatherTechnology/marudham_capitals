@@ -6177,7 +6177,7 @@ class admin
 			$closed_Sts_remark = $_POST['closed_Sts_remark'];
 		}
 
-		$mysqli->query("INSERT INTO `closed_status`( `req_id`, `cus_id`, `closed_sts`, `consider_level`, `remark`,`cus_sts`,`insert_login_id`,`created_date`) VALUES ('" . strip_tags($close_req_id) . "','" . strip_tags($cus_id) . "','" . strip_tags($closed_Sts) . "','" . strip_tags($closed_Sts_consider) . "','" . strip_tags($closed_Sts_remark) . "', '21','$userid',now() )");
+		$mysqli->query("INSERT INTO `closed_status`( `req_id`, `cus_id`, `closed_sts`, `consider_level`, `remark`, `cus_sts`, `insert_login_id`, `update_login_id`, `created_date`, `updated_date`) VALUES ('" . strip_tags($close_req_id) . "', '" . strip_tags($cus_id) . "', '" . strip_tags($closed_Sts) . "', '" . strip_tags($closed_Sts_consider) . "', '" . strip_tags($closed_Sts_remark) . "', '21', '$userid', '$userid', now(), now() )");
 
 		$mysqli->query("UPDATE request_creation set cus_status = 21,updated_date = now(), update_login_id = $userid WHERE  cus_id = '" . $cus_id . "' and req_id = '" .  $close_req_id . "' && cus_status = '20' ") or die('Error on Request Table');
 
@@ -6191,10 +6191,6 @@ class admin
 
 		$mysqli->query("UPDATE `in_issue` SET `cus_status`= 21,`update_login_id` = $userid where cus_id = '" . $cus_id . "' and req_id = '" .  $close_req_id . "' && cus_status = '20' ") or die('Error on in_issue Table');
 
-		// $mysqli->query("UPDATE `closed_status` SET `cus_sts`='21',`update_login_id`=$userid,`updated_date`= now() WHERE `cus_sts`='20' and req_id = '" .  $close_req_id . "' && `cus_id`='" . $cus_id . "' ") or die('Error on closed_status Table');
-
-		$mysqli->query("INSERT INTO `document_track`(`req_id`, `cus_id`, `track_status`, `insert_login_id`, `created_date`) 
-		VALUES('" . strip_tags($close_req_id) . "','" . strip_tags($cus_id) . "','3','$userid', now()) ");
 	}
 
 	//Get User Details for Consent Creation.

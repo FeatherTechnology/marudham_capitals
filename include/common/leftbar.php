@@ -48,14 +48,14 @@ if (
 } else if ($current_page == 'edit_noc' || $current_page == 'noc' || $current_page == 'edit_noc_handover' || $current_page == 'noc_handover') {
 
 	$current_module = 'noc';
-} else if ($current_page == 'edit_update' || $current_page == 'update' || $current_page == 'document_track' || $current_page == 'update_customer_status') {
+} else if ($current_page == 'edit_update' || $current_page == 'update' || $current_page == 'update_customer_status') {
 
 	$current_module = 'update';
-} //else if($current_page == 'document_track'){
+} else if($current_page == 'document_track'){
 
-//$current_module = 'doctrack';
+	$current_module = 'doctrack';
 
-//}
+}
 else if ($current_page == 'edit_concern_creation' || $current_page == 'edit_concern_solution' || $current_page == 'concern_creation' || $current_page == 'concern_solution' || $current_page == 'concern_solution_view' || $current_page == 'edit_concern_feedback' || $current_page == 'concern_feedback') {
 
 	$current_module = 'concerncreation';
@@ -656,8 +656,28 @@ if (sizeof($getUser) > 0) {
 							</ul>
 						</div>
 					</li>
-				<?php  } ?>
-				<?php if ($collectionmodule == 0) { ?>
+
+				<?php  } 
+				 if ($doctrackmodule == 0) { ?>
+				 
+					<li class="sidebar-dropdown ">
+                        <a href="javascript:void(0)">
+							<i class='icon-credit-card'></i>
+                            <span class="menu-text">Document Track</span>
+                        </a>
+                        <div class="sidebar-submenu" <?php if ($current_module == 'doctrack') echo 'style="display:block" '; ?>>
+                            <ul>
+                                <?php if ($doctrack == 0) { ?>
+                                    <li>
+                                        <a href="document_track"><i class='icon-credit-card'></i>Document Track</a>
+                                    </li>
+                                <?php  } ?>
+                            </ul>
+                        </div>
+                    </li>
+
+				<?php  } 
+				 if ($collectionmodule == 0) { ?>
 					<li class="sidebar-dropdown acknowledge">
 						<a href="javascript:void(0)">
 							<i class='icon-credit'></i>
@@ -745,23 +765,7 @@ if (sizeof($getUser) > 0) {
 						</div>
 					</li>
 				<?php  } ?>
-				<?php if ($doctrackmodule == 0) { ?>
-					<!-- <li class="sidebar-dropdown ">
-                        <a href="javascript:void(0)">
-							<i class='icon-credit-card'></i>
-                            <span class="menu-text">Document Track</span>
-                        </a>
-                        <div class="sidebar-submenu" <?php if ($current_module == 'doctrack') echo 'style="display:block" '; ?>>
-                            <ul>
-                                <?php if ($doctrack == 0) { ?>
-                                    <li>
-                                        <a href="document_track"><i class='icon-credit-card'></i>Document Track</a>
-                                    </li>
-                                <?php  } ?>
-                            </ul>
-                        </div>
-                    </li> -->
-				<?php  } ?>
+				
 				<?php if ($updatemodule == 0) { ?>
 					<li class="sidebar-dropdown ">
 						<a href="javascript:void(0)">
@@ -775,22 +779,16 @@ if (sizeof($getUser) > 0) {
 										<a href="edit_update"><i class='icon-arrow_upward'></i>Update</a>
 									</li>
 								<?php  } ?>
-								<?php if ($doctrack == 0) { ?>
-									<li>
-										<a href="document_track"><i class='icon-broken_image'></i>Document Track</a>
-									</li>
-								<?php  } ?>
 
-								<?php if ($doctrack == 0) { ?>
 									<!-- <li>
 										<a href="update_customer_status"><i class='icon-broken_image'></i>Update Customer Status</a>
 									</li> -->
-								<?php  } ?>
 
 							</ul>
 						</div>
 					</li>
 				<?php  } ?>
+
 				<!-- <?php if ($concernmodule == 0) { ?>
 					<li class="sidebar-dropdown ">
 						<a href="javascript:void(0)">

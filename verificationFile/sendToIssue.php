@@ -24,8 +24,6 @@ $qry = $connect->query("INSERT INTO `in_issue`(`req_id`, `cus_id`, `cus_status`,
 $ii_id = $connect->lastInsertId();
 $qry = $connect->query("UPDATE in_issue set inserted_user = '$userid' , inserted_date = current_timestamp where `id` = '$ii_id' ");
 
-$qry = $connect->query("INSERT INTO `document_track`(`req_id`, `cus_id`, `track_status`, `insert_login_id`, `created_date`)  VALUES('" . strip_tags($req_id) . "','" . strip_tags($cus_id) . "','1','$userid', now()) ");
-
 if ($qry) {
     $response = 'Moved to Issue';
 } else {
