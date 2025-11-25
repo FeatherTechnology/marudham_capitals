@@ -1,3 +1,18 @@
+<?php
+
+$getUser = $userObj->getUser($mysqli, $_SESSION['userid']);
+if (sizeof($getUser) > 0) {
+	$user_name = $getUser['fullname'];
+	$user_type = $getUser['role'];
+	if ($user_type == '1') {
+		$user_type = 'Director';
+	} elseif ($user_type == '2') {
+		$user_type = 'Agent';
+	} elseif ($user_type == '3') {
+		$user_type = 'Staff';
+	}
+}
+?>
 <!-- Page header start -->
 <br><br>
 <div class="page-header">
@@ -166,6 +181,94 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeLoanModal()">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Modal for Loan Follow Chart just view table   -->
+<div class="modal fade" id="loanFollowChartModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-lg " role="document">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLongTitle">Loan Follow Chart</h5>
+				<button type="button" class="close" data-dismiss="modal" tabindex="1" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="container-fluid">
+
+					<div class="col-12">
+						<div class="row">
+							<div class="col-12 table-responsive" id='loanFollowChartDiv'></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-secondary" data-dismiss="modal" tabindex="2">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal for Loan follow add -->
+<div class="modal fade" id="addLoanFollow" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-lg " role="document">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLongTitle">Add Followup</h5>
+				<button type="button" class="close closeModal" id="closeAddFollowupModal" data-dismiss="modal" aria-label="Close" >
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="container-fluid row">
+
+					<div class="col-12">
+						<div class="row">
+							<input type="hidden" name="lfollow_cus_id" id="lfollow_cus_id">
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+								<label for="lfollow_date">Date</label><span class="required">&nbsp;*</span>
+								<input type="text" class='form-control' readonly name="lfollow_date" id="lfollow_date" tabindex="1" value='<?php echo date('d-m-Y'); ?>' />
+							</div>
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+								<label for="lfollow_stage">Stage</label><span class="required">&nbsp;*</span>
+								<input type="text" name="lfollow_stage" id="lfollow_stage" class='form-control' tabindex="2" readonly>
+							</div>
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+								<label for="lfollow_label">Label</label><span class="required">&nbsp;*</span>
+								<input type="text" name="lfollow_label" id="lfollow_label" class='form-control' placeholder="Enter Label" tabindex="3">
+								<span class="text-danger" id='lfollow_labelCheck' style="display: none;">Please Enter Label </span>
+							</div>
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 mt-2">
+								<label for="lfollow_remark">Remark</label><span class="required">&nbsp;*</span>
+								<input type="text" name="lfollow_remark" id="lfollow_remark" class='form-control' placeholder="Enter Remark" tabindex="4">
+								<span class="text-danger" id='lfollow_remarkCheck' style="display: none;">Please Enter Remark</span>
+							</div>
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 mt-2">
+								<label for="lfollow_user_type">User Type</label><span class="required">&nbsp;*</span>
+								<input type="text" name="lfollow_user_type" id="lfollow_user_type" class='form-control' value='<?php echo $user_type; ?>' tabindex="5" readonly>
+								<span class="text-danger" id='lfollow_user_typeCheck' style="display: none;">Please Enter User Type </span>
+							</div>
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 mt-2">
+								<label for="lfollow_user">User</label><span class="required">&nbsp;*</span>
+								<input type="text" name="lfollow_user" id="lfollow_user" class='form-control' value="<?php echo $user_name; ?>" tabindex="6" readonly>
+								<span class="text-danger" id='lfollow_userCheck' style="display: none;">Please Enter User </span>
+							</div>
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 mt-2">
+								<label for="lfollow_fdate">Follow Date</label><span class="required">&nbsp;*</span>
+								<input type="date" name="lfollow_fdate" id="lfollow_fdate" class='form-control' placeholder="Enter Follow Date" tabindex="7">
+								<span class="text-danger" id='lfollow_fdateCheck' style="display: none;">Please Choose Follow Date </span>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class='btn btn-primary' name="sumit_add_lfollow" id="sumit_add_lfollow" tabindex="8">Submit</button>
+				<button class="btn btn-secondary closeModal" data-dismiss="modal" tabindex="9">Close</button>
 			</div>
 		</div>
 	</div>

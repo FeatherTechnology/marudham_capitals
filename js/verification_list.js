@@ -69,7 +69,7 @@ function callOnClickEvents() {
                     url: 'verificationFile/sendToApproval.php',
                     dataType: 'json',
                     type: 'post',
-                    data: { 'req_id': req_id },
+                    data: { 'req_id': req_id ,'cus_id': $(this).data('cusid')},
                     cache: false,
                     success: function (response) {
                         if (response.includes('Moved')) {
@@ -128,6 +128,32 @@ function callOnClickEvents() {
             let req_id = $(this).data('reqid');
             window.open('request&upd=' + req_id + '&pgeView=1', '_blank');
         })
+
+        $('.loan-follow-chart').off('click').click(function () {
+            let cus_id = $(this).data('cusid');
+            $.post('followupFiles/loanFollowup/getLoanFollowupChart.php', { cus_id }, function (html) {
+                $('#loanFollowChartDiv').empty().html(html);
+            })
+        });
+
+        $('#sumit_add_lfollow').off('click').click(function () {
+            if (validateLoanfollowup() == true) {
+                submitLoanfollowup();
+            }
+        });
+
+        $('.loan-follow-edit').off('click').click(function () {
+            let stage = $(this).data('stage');
+            $('#lfollow_stage').val(stage);
+            //set cus id to hidden input for submit
+            let cus_id = $(this).data('cusid');
+            $('#lfollow_cus_id').val(cus_id);
+        });
+
+        $("#addLoanFollow").find(".closeModal").click(function () {
+            $('#addLoanFollow').find('.modal-body input').not('[readonly]').val('');
+            $("#addLoanFollow").find(".modal-body span").not('.required').hide();
+        });
 
         hideOverlay();
     }, 1000);
@@ -192,6 +218,62 @@ function successSwal(title, text) {
         // Reload only if OK is clicked
         if (result.isConfirmed) {
             location.reload();
+        }
+    });
+}
+
+function validateLoanfollowup() {
+    let response = true;
+    let stage = $('#lfollow_stage').val(); let label = $('#lfollow_label').val();
+    let remark = $('#lfollow_remark').val(); let follow_date = $('#lfollow_fdate').val();
+
+    validateField(stage, '#lfollow_stageCheck');
+    validateField(label, '#lfollow_labelCheck');
+    validateField(remark, '#lfollow_remarkCheck');
+    validateField(follow_date, '#lfollow_fdateCheck');
+
+    function validateField(value, fieldId) {
+        if (value === '') {
+            response = false;
+            event.preventDefault();
+            $(fieldId).show();
+        } else {
+            $(fieldId).hide();
+        }
+
+    }
+
+    return response;
+}
+
+function submitLoanfollowup() {
+    let cus_id = $('#lfollow_cus_id').val();
+    let stage = $('#lfollow_stage').val(); let label = $('#lfollow_label').val();
+    let remark = $('#lfollow_remark').val(); let follow_date = $('#lfollow_fdate').val();
+    let args = { cus_id, stage, label, remark, follow_date };
+
+    $.post('followupFiles/loanFollowup/submitLoanfollowup.php', args, function (response) {
+        if (response.includes('Error')) {
+            swarlErrorAlert(response);
+        } else {
+            swarlSuccessAlert(response, function(){
+                $('#closeAddFollowupModal').trigger('click');
+            });
+
+            $('#addLoanFollow').find('.modal-body input').not('[readonly]').val('');
+        }
+    })
+}
+
+function swarlSuccessAlert(response, callback) {
+    Swal.fire({
+        title: response,
+        icon: 'success',
+        confirmButtonText: 'Ok',
+        confirmButtonColor: '#009688'
+    }).then((result) => {
+        if(result.isConfirmed && typeof callback === 'function'){
+            callback();
         }
     });
 }

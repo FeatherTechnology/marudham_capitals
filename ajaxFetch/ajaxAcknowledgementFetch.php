@@ -31,6 +31,16 @@ if ($userid != 1) {
     $sub_area_list = array();
     $sub_area_list = implode(',', $sub_area_ids);
 }
+$stage_arr = [
+    0 => 'Request',
+    1 => 'Verification',
+    10 => 'Verification',
+    11 => 'Verification',
+    12 => 'Verification',
+    2 => 'Approval',
+    3 => 'Acknowledgement',
+    13 => 'Loan Issue',
+];
 
 $column = array(
     'v.req_id',
@@ -220,6 +230,8 @@ foreach ($result as $row) {
     if ($cus_status == '3') {
         $action .= "<a href='acknowledgement_creation&upd=$id&pge=1' class='customer_profile' value='$id' > Edit Acknowledgement </a>";
         $action .= "<a href='#' data-reqid = '$id' class='ack-cancel' value='$id' > Cancel </a>";
+        $action .= "<a class=' loan-follow-edit' data-cusid='" . $cus_id . "' data-stage='" .$stage_arr[ $cus_status ]. "' data-toggle='modal' data-target='#addLoanFollow'     value='Follow'><span>Followup </span></a>";
+        $action .= "<a class='loan-follow-chart' data-cusid='"  . $cus_id . "' data-toggle='modal' data-target='#loanFollowChartModal'><span> Followup Chart</span></a>";
     } else if ($cus_status == '7') {
         $action .= "<a href='acknowledgement_creation&rem=$id&pge=1' class='ack-remove' value='$id' > Remove </a>";
     }

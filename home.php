@@ -530,6 +530,11 @@ if (isset($getuserdetails['download_access'])) {
 				<?php include "include/templates/uncleared_report.php" ?>
 			<?php } else ?>
 
+			<!-- Events Report -->
+			<?php if ($current_page == 'events_report') { ?>
+				<?php include "include/templates/events_report.php" ?>
+			<?php } else ?>
+
 			<!-- User Tracking report -->
 			<?php if ($current_page == 'user_tracking_report') { ?>
 				<?php include "include/templates/user_tracking_report.php" ?>

@@ -335,6 +335,7 @@ if (sizeof($getUser) > 0) {
 											<th>Mobile</th>
 											<th>Area</th>
 											<th>Sub Area</th>
+											<th>User</th>
 											<th colspan="2">Action</th>
 										</tr>
 									</thead>
@@ -352,6 +353,7 @@ if (sizeof($getUser) > 0) {
 												<td><select type="text" class="form-control sub_area_name" id="sub_area_name" name="sub_area_name" >
 														<option value="">Select Sub Area Name</option>
 													</select></td>
+												<td class="user"></td>
 												<td>
 
 													<button type="button"  id="add_event_mem" name="add_event_mem" value="Submit" class="btn btn-primary add_event_mem">Add</button>

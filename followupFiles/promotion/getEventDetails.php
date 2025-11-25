@@ -21,9 +21,9 @@ if($event) {
 
     // Step 3: Fetch all customers for this event
     $rows = $connect->query("
-        SELECT * 
-        FROM event_promotion 
-        WHERE event_id = '$event_id'
+        SELECT e.* ,u.fullname
+        FROM event_promotion e LEFT JOIN user u ON e.insert_login_id = u.user_id 
+        WHERE e.event_id = '$event_id'
     ")->fetchAll(PDO::FETCH_ASSOC);
 
     // Attach all_areas (like old code did)

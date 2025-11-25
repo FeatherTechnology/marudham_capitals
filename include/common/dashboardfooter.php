@@ -1640,6 +1640,9 @@
     if ($current_page == 'user_tracking_report') { ?>
         <script src="js/user_tracking_report.js"></script>
     <?php }
+    if ($current_page == 'events_report') { ?>
+        <script src="js/events_report.js"></script>
+    <?php }
 
     if ($current_page == 'intrest_ledger_report') { ?>
         <script src="js/intrest_ledger_report.js"></script>
