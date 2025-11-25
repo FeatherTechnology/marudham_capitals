@@ -20,7 +20,6 @@ if (isset($_POST["closed_sts"])) {
 if (isset($_POST["bal_amt"])) {
     $bal_amt = explode(',', $_POST["bal_amt"]);
 }
-
 ?>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
@@ -119,9 +118,11 @@ function moneyFormatIndia($num)
 
         <?php
         $cus_id = $_POST['cus_id'];
-        $run = $connect->query("SELECT ii.loan_id, ad.doc_id, lcc.loan_category_creation_name as loan_catrgory_name, lc.sub_category, rc.agent_id, ii.updated_date, lc.loan_amt_cal, ii.req_id
+        $actionType = $_POST['action_type'] ?? '';
+
+        $run = $connect->query("SELECT ii.loan_id,lc.cus_name_loan as cus_name, ad.doc_id, lcc.loan_category_creation_name as loan_catrgory_name, lc.sub_category, rc.agent_id, ii.updated_date, lc.loan_amt_cal, ii.req_id
         FROM acknowlegement_loan_calculation lc JOIN acknowlegement_documentation ad ON lc.req_id = ad.req_id JOIN in_issue ii ON lc.req_id = ii.req_id JOIN request_creation rc ON ii.req_id = rc.req_id JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id JOIN user us ON us.user_id = $user_id
-        WHERE lc.cus_id_loan = $cus_id and ii.cus_status IN(21,22) "); //21 means loan has been closed form closed window for noc
+        WHERE lc.cus_id_loan = $cus_id and ii.cus_status IN(21,22,23) "); //21 means loan has been closed form closed window for noc
 
         // $i = 1;
         while ($row = $run->fetch()) {
@@ -168,12 +169,50 @@ function moneyFormatIndia($num)
                     } else {
                         echo '';
                     } ?></td>
-                <td><?php echo "<span class='btn btn-success noc-window' style='font-size: 17px;position: relative;top: 0px; background-color:#009688;' data-value='" . $row['req_id'] . "''>NOC</span>"; ?></td>
+                <td>
+                    <?php if ($actionType == "noc") { ?>
+                        <span class="btn btn-success noc-window"
+                            style="font-size: 17px; position: relative; top: 0px; background-color:#009688;"
+                            data-value="<?= $row['req_id']; ?>">
+                            NOC
+                        </span>
+
+                    <?php } elseif ($actionType == "summary") { ?>
+
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa">&#xf107;</i>
+                            </button>
+                            <div class="dropdown-content">
+
+                                <a href=""
+                                class="noc-summary"
+                                    data-reqid="<?= $row['req_id']; ?>"
+                                    data-cusid="<?= $cus_id; ?>"
+                                    data-cusname="<?= $row['cus_name']; ?>"
+                                    data-toggle="modal"
+                                    data-target=".noc-summary-modal">
+                                    NOC Summary
+                                </a>
+
+                                <a href=""
+                                    title="NOC Letter"
+                                    class="noc-letter"
+                                    data-reqid="<?= $row['req_id']; ?>"
+                                    data-cusid="<?= $cus_id; ?>">
+                                    NOC Letter
+                                </a>
+
+                            </div>
+                        </div>
+
+                    <?php } ?>
+                </td>
 
             </tr>
 
-        <?php 
-        // $i++;
+        <?php
+            // $i++;
         } ?>
     </tbody>
 </table>
@@ -199,11 +238,11 @@ function moneyFormatIndia($num)
             dom: 'lBfrtip',
             buttons: [{
                     extend: 'excel',
-                    action: function (e, dt, button, config) {
+                    action: function(e, dt, button, config) {
                         var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                         var dynamic = curDateJs('Loan_List'); // or any base
-                        config.title = dynamic;      // for versions that use title as filename
-                        config.filename = dynamic;   // for html5 filename
+                        config.title = dynamic; // for versions that use title as filename
+                        config.filename = dynamic; // for html5 filename
                         defaultAction.call(this, e, dt, button, config);
                     }
                 },

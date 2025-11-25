@@ -45,7 +45,7 @@ if (
 } else if ($current_page == 'edit_closed' || $current_page == 'closed') {
 
 	$current_module = 'closed';
-} else if ($current_page == 'edit_noc' || $current_page == 'noc') {
+} else if ($current_page == 'edit_noc' || $current_page == 'noc' || $current_page == 'edit_noc_handover' || $current_page == 'noc_handover') {
 
 	$current_module = 'noc';
 } else if ($current_page == 'edit_update' || $current_page == 'update' || $current_page == 'update_customer_status') {
@@ -157,6 +157,7 @@ $closedmodule = '';
 $closed = '';
 $nocmodule = '';
 $noc = '';
+$noc_handover = '';
 $doctrackmodule = '';
 $doctrack = '';
 $doc_rec_access = '';
@@ -262,6 +263,7 @@ if (sizeof($getUser) > 0) {
 		$closed          		     = $getUser['closed'];
 		$nocmodule          		     = $getUser['nocmodule'];
 		$noc          		     = $getUser['noc'];
+		$noc_handover          		     = $getUser['noc_handover'];
 		$doctrackmodule          		     = $getUser['doctrackmodule'];
 		$doctrack          		     = $getUser['doctrack'];
 		$doc_rec_access          		     = $getUser['doc_rec_access'];
@@ -722,6 +724,11 @@ if (sizeof($getUser) > 0) {
 										<a href="edit_noc"><i class='icon-export'></i>NOC</a>
 									</li>
 								<?php  } ?>
+								<?php if ($noc_handover == 0) { ?>
+									<li>
+										<a href="edit_noc_handover"><i class='icon-assistant'></i>NOC Handover</a>
+									</li>
+								<?php  } ?>
 							</ul>
 						</div>
 					</li>
@@ -1128,6 +1135,7 @@ $closedmodule = '';
 $closed = '';
 $nocmodule = '';
 $noc = '';
+$noc_handover = '';
 $doctrackmodule = '';
 $doctrack = '';
 $doc_rec_access = '';

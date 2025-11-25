@@ -239,6 +239,7 @@ $(document).ready(function () {
 
 $(function () {//For Update
     var idupd = $('#id').val();
+    nameFormatter('#cus_name');
     if (idupd > 0) {
         var role_upd = $('#role_upd').val();
         var ag_id_upd = $('#ag_id_upd').val();

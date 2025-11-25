@@ -209,25 +209,17 @@ function getDocumentStatus($connect,$req_id,$cus_id){
     
 
     $response3 = 'completed';
-    $sts_qry = $connect->query("SELECT mortgage_process,mortgage_document_pending,endorsement_process,Rc_document_pending FROM acknowlegement_documentation where cus_id_doc = '$cus_id' and req_id = '$req_id' ");
+    $sts_qry = $connect->query("SELECT doc_sts FROM acknowlegement_documentation where cus_id_doc = '$cus_id' and req_id = '$req_id' ");
 
-    if($sts_qry->rowCount() > 0){
-        while($sts_row=$sts_qry->fetch()){ //check any one of document for mortgage or endorsement is pending then response will be pending
-        
-            if($sts_row['mortgage_process'] == '0'){
-                if($sts_row['mortgage_document_pending'] == 'YES'){
-                    $response3 = 'pending';
-                }
+        if($sts_qry->rowCount() > 0){
+            while($sts_row=$sts_qry->fetch()){ //check any one of document for mortgage or endorsement is pending then response will be pending
+            
+                if ($sts_row['doc_sts'] == 'NO') {
                 
-            }
-            if($sts_row['endorsement_process'] == '0'){
-                if($sts_row['Rc_document_pending'] == 'YES'){
-                    $response3 = 'pending';
+                        $response3 = 'pending';
+                    }
                 }
-                
-            }
         }
-    }
     
 
     $response4 = 'completed';

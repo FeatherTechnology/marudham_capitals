@@ -398,7 +398,7 @@ $(document).ready(function () {
             $('.promotion_activity_div').hide();
         }
     });
-
+   
 	$('#submit_manage_user').click(function (event) {
 		event.preventDefault(); // Stop default submit; we'll submit programmatically after validation
 
@@ -1101,7 +1101,17 @@ function validation() {
             $('#proCheck').hide(); 
         }  
     }
+  
+    var nocmodule = document.querySelector('#nocmodule');
+    var noc_mapping_access = $('#noc_mapping_access').val();
 
+    // Case 1: Checkbox checked but dropdown empty
+    if (nocmodule.checked && noc_mapping_access == '') {
+        $('#handoverCheck').show();
+        validation = false;
+    } else {
+        $('#handoverCheck').hide();
+    }
     let dueFollowupChecked = $('#due_followup').is(':checked');
     let dueFollowupIdSort = multipleSelectSort(dueFollowupLines, '#due_follup_line_id');
     if (dueFollowupChecked && dueFollowupIdSort == 0) { //Checkbox checked but no lines selected 

@@ -101,7 +101,7 @@ if (sizeof($getRequestData) > 0) {
 }
 
 $getCustomerReg = $userObj->getCustomerRegister($mysqli, $cus_id);
-if (sizeof($getCustomerReg) > 0) { 
+if (sizeof($getCustomerReg) > 0) {
 	$autogen_cus_id 			= $getCustomerReg['autogen_cus_id'];
 }
 
@@ -176,7 +176,7 @@ if (sizeof($getcusInfoForDoc) > 0) {
 
 ////   Documentation ////////////
 $documentationInfo = $userObj->getAcknowlegementDocument($mysqli, $req_id);
-
+	 $checkedStatus = 'checked';
 if (sizeof($documentationInfo) > 0) {
 	$document_table_id = $documentationInfo['doc_Tableid'];
 	$document_sts = $documentationInfo['cus_status'];
@@ -220,7 +220,11 @@ if (sizeof($documentationInfo) > 0) {
 	$docholder_name = $documentationInfo['docholder_name'];
 	$docholder_relationship_name = $documentationInfo['docholder_relationship_name'];
 	$doc_relation = $documentationInfo['doc_relation'];
+	$doc_remark = $documentationInfo['doc_remark'];
+	$doc_sts = $documentationInfo['doc_sts'];
 	$submitted = $documentationInfo['submitted'];
+	$checkedStatus = ($doc_sts == 'YES' || $doc_sts == '' || $doc_sts === null) ? 'checked' : '';
+	
 } { //to find the documentation has been submitted in acknowledgement screen or not
 	$cus_doc = $mysqli->query("SELECT submitted FROM `acknowlegement_documentation` WHERE `req_id` ='$idupd'");
 	$cus_doc_row =  $cus_doc->fetch_assoc();
@@ -230,8 +234,9 @@ if (sizeof($documentationInfo) > 0) {
 	} else {
 		$document_sts = '';
 	}
-}
-////////   Documentation End ////////////
+	
+	
+}//////   Documentation End ////////////
 
 ///////// Loan Calculation ///////////////
 $getCusInfoForLoanCal = $userObj->getAcknowlegeCusInfoForLoanCal($mysqli, $idupd);
@@ -326,10 +331,13 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 	.switch {
 		position: relative;
 		display: inline-block;
-		width: 60px;
-		height: 34px;
+		width: 135px;
+		/* increased from 60px */
+		height: 45px;
+		/* increased from 34px */
 		left: 10px;
 	}
+
 
 	.switch input {
 		opacity: 0;
@@ -352,10 +360,12 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 	.slider:before {
 		position: absolute;
 		content: "";
-		height: 26px;
-		width: 26px;
-		left: 4px;
-		bottom: 4px;
+		height: 36px;
+		/* increased from 26px */
+		width: 36px;
+		/* increased from 26px */
+		left: 5px;
+		bottom: 5px;
 		background-color: white;
 		-webkit-transition: .4s;
 		transition: .4s;
@@ -370,9 +380,9 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 	}
 
 	input:checked+.slider:before {
-		-webkit-transform: translateX(26px);
-		-ms-transform: translateX(26px);
-		transform: translateX(26px);
+		left: calc(100% - 41px);
+		/* 36px knob + 5px padding */
+		transform: translateX(0);
 	}
 
 	/* Rounded sliders */
@@ -382,6 +392,24 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 
 	.slider.round:before {
 		border-radius: 50%;
+	}
+
+	.slider::after {
+		content: "Pending";
+		/* default text */
+		position: absolute;
+		color: white;
+		font-weight: 600;
+		font-size: 14px;
+		left: 53px;
+		top: 13px;
+	}
+
+	/* When Checked */
+	input:checked+.slider::after {
+		content: "Completed";
+		left: 11px;
+		/* text moves to left side when active */
 	}
 </style>
 
@@ -549,14 +577,18 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
 											<div class="form-group">
 												<label for="cus_id">Aadhaar Number</label><span class="required">&nbsp;*</span>
-												<input type="text" class="form-control" id="cus_id" name="cus_id" tabindex='9' data-type="adhaar-number" maxlength="14" placeholder="Enter Aadhaar Number" value='<?php if (isset($cus_id)) {echo $cus_id;} ?>'>
+												<input type="text" class="form-control" id="cus_id" name="cus_id" tabindex='9' data-type="adhaar-number" maxlength="14" placeholder="Enter Aadhaar Number" value='<?php if (isset($cus_id)) {
+																																																						echo $cus_id;
+																																																					} ?>'>
 											</div>
 										</div>
 
 										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
 											<div class="form-group">
 												<label for="autogen_cus_id">Customer ID</label><span class="required">&nbsp;*</span>
-												<input type="text" class="form-control" id="autogen_cus_id" name="autogen_cus_id" tabindex='10' value='<?php if (isset($autogen_cus_id)) { echo $autogen_cus_id; } ?>' readonly>
+												<input type="text" class="form-control" id="autogen_cus_id" name="autogen_cus_id" tabindex='10' value='<?php if (isset($autogen_cus_id)) {
+																																							echo $autogen_cus_id;
+																																						} ?>' readonly>
 											</div>
 										</div>
 
@@ -991,7 +1023,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 								<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
 									<div class="form-group">
 										<label for="latlong">Location</label>
-										<input type="text" class="form-control" name="latlong" id="latlong" placeholder="Enter Latitude Longitude" value="<?php echo $latlong; ?>" tabindex="39" >
+										<input type="text" class="form-control" name="latlong" id="latlong" placeholder="Enter Latitude Longitude" value="<?php echo $latlong; ?>" tabindex="39">
 									</div>
 								</div>
 								<div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12">
@@ -1181,43 +1213,53 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 									<div class="form-group">
 										<label for="minvcome"> Monthly Income </label> <span class="required">*</span>
 										<input type="text" class="form-control" name="cus_monthly_income" id="cus_monthly_income" placeholder="Enter Monthly Income" value="<?php if (isset($monthly_income)) {
-																																													echo moneyFormatIndia($monthly_income);
-																																												} ?>" tabindex="46">
+																																												echo moneyFormatIndia($monthly_income);
+																																											} ?>" tabindex="46">
 									</div>
 								</div>
 
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="otherincome"> Other Income </label> <span class="required">*</span>
-										<input type="text" class="form-control" name="cus_other_income" id="cus_other_income" placeholder="Enter Other Income" value="<?php if (isset($other_income)) {echo moneyFormatIndia($other_income);} ?>" tabindex="47">
+										<input type="text" class="form-control" name="cus_other_income" id="cus_other_income" placeholder="Enter Other Income" value="<?php if (isset($other_income)) {
+																																											echo moneyFormatIndia($other_income);
+																																										} ?>" tabindex="47">
 									</div>
 								</div>
 
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="suppincome"> Support Income </label> <span class="required">*</span>
-										<input type="text" class="form-control" name="cus_support_income" id="cus_support_income" placeholder="Enter Support Income" value="<?php if (isset($support_income)) {echo moneyFormatIndia($support_income);} ?>" tabindex="48">
+										<input type="text" class="form-control" name="cus_support_income" id="cus_support_income" placeholder="Enter Support Income" value="<?php if (isset($support_income)) {
+																																												echo moneyFormatIndia($support_income);
+																																											} ?>" tabindex="48">
 									</div>
 								</div>
 
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="commit"> Commitment </label> <span class="required">*</span>
-										<input type="text" class="form-control" name="cus_Commitment" id="cus_Commitment" placeholder="Enter Commitment" value="<?php if (isset($commitment)) {echo moneyFormatIndia($commitment);} ?>" tabindex="49">
+										<input type="text" class="form-control" name="cus_Commitment" id="cus_Commitment" placeholder="Enter Commitment" value="<?php if (isset($commitment)) {
+																																									echo moneyFormatIndia($commitment);
+																																								} ?>" tabindex="49">
 									</div>
 								</div>
 
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="duecapacity"> Monthly Due Capacity </label> <span class="required">*</span>
-										<input type="text" class="form-control" name="cus_monDue_capacity" id="cus_monDue_capacity" placeholder="Enter Monthly Due Capacity" value="<?php if (isset($monthly_due_capacity)) {echo moneyFormatIndia($monthly_due_capacity);} ?>" tabindex="50">
+										<input type="text" class="form-control" name="cus_monDue_capacity" id="cus_monDue_capacity" placeholder="Enter Monthly Due Capacity" value="<?php if (isset($monthly_due_capacity)) {
+																																														echo moneyFormatIndia($monthly_due_capacity);
+																																													} ?>" tabindex="50">
 									</div>
 								</div>
 
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="loanlimit"> Customer Limit </label>
-										<input type="text" class="form-control" name="cus_loan_limit" id="cus_loan_limit" placeholder="Enter Customer Limit" value="<?php if (isset($loan_limit)) {echo moneyFormatIndia($loan_limit);} ?>" tabindex="51">
+										<input type="text" class="form-control" name="cus_loan_limit" id="cus_loan_limit" placeholder="Enter Customer Limit" value="<?php if (isset($loan_limit)) {
+																																										echo moneyFormatIndia($loan_limit);
+																																									} ?>" tabindex="51">
 									</div>
 								</div>
 							</div>
@@ -1251,7 +1293,9 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 								<div class="col-xl-4 col-lg-6 col-md-8 col-sm-12 col-12">
 									<div class="form-group">
 										<label for="abtCustomer"> About Customer </label> <span class="required">*</span>
-										<textarea class="form-control" name="about_cus" id="about_cus" readonly tabindex="52"> <?php if (isset($about_customer)) {echo $about_customer;} ?> </textarea>
+										<textarea class="form-control" name="about_cus" id="about_cus" readonly tabindex="52"> <?php if (isset($about_customer)) {
+																																	echo $about_customer;
+																																} ?> </textarea>
 									</div>
 								</div>
 							</div>
@@ -1314,7 +1358,9 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="autogen_cus_id_doc">Customer ID</label><span class="required">&nbsp;*</span>
-										<input type="text" class="form-control" id="autogen_cus_id_doc" name="autogen_cus_id_doc" tabindex='54' value='<?php if (isset($autogen_cus_id)) { echo $autogen_cus_id; } ?>' readonly>
+										<input type="text" class="form-control" id="autogen_cus_id_doc" name="autogen_cus_id_doc" tabindex='54' value='<?php if (isset($autogen_cus_id)) {
+																																							echo $autogen_cus_id;
+																																						} ?>' readonly>
 									</div>
 								</div>
 
@@ -1328,10 +1374,10 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 									<div class="form-group">
 										<label for="responsible">Responsible&nbsp;<span class="required">&nbsp;*</span></label>
 										<input tabindex="56" type="text" class="form-control" id="responsible" name="responsible" value="<?php if (isset($responsible) and $responsible == '0') {
-																																			echo 'Yes';
-																																		} else {
-																																			echo 'No';
-																																		} ?>" readonly>
+																																				echo 'Yes';
+																																			} else {
+																																				echo 'No';
+																																			} ?>" readonly>
 									</div>
 								</div>
 
@@ -1601,7 +1647,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 										</div>
 									</div>
 
-									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" id="docUpd" style="display: none;">
+									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" id="docUpd" >
 										<div class="form-group">
 											<label for="MortgageDocumentUpd"> Mortgage Document Uploads </label>
 											<input type="file" onchange="compressImage(this,200)" class="form-control" id="mortgage_document_upd" name="mortgage_document_upd" tabindex="78">
@@ -1610,7 +1656,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 											<span class="text-danger" id="mortgagedocUpdCheck"> Upload Mortgage Document </span>
 										</div>
 									</div>
-
+<!-- 
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="pendingDocument"> Pending </label> <span class="required">&nbsp;*</span>
@@ -1619,7 +1665,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 												<span class="slider round"></span>
 											</label>
 										</div>
-									</div>
+									</div> -->
 
 								</div>
 							</div>
@@ -1671,7 +1717,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 										<select type="text" class="form-control" id="ownername_relationship_name" name="ownername_relationship_name" style="display: none;" tabindex="83">
 											<option value=""> Select Relationship </option>
 										</select>
-											<span class="text-danger" id="ownerNameCheck"> Select Owner Name </span>
+										<span class="text-danger" id="ownerNameCheck"> Select Owner Name </span>
 									</div>
 								</div>
 
@@ -1763,7 +1809,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 									</div>
 								</div>
 
-								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" id="RCdocUpd" style="display: none;">
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" id="RCdocUpd">
 									<div class="form-group">
 										<label for="RCDocumentUpd"> RC Uploads </label>
 										<input type="file" onchange="compressImage(this,200)" class="form-control" id="RC_document_upd" name="Rc_document_upd" tabindex="93">
@@ -1773,7 +1819,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 									</div>
 								</div>
 
-								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+								<!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="pendingendorse"> Pending </label> <span class="required">&nbsp;*</span>
 										<label class="switch">
@@ -1781,7 +1827,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 											<span class="slider round"></span>
 										</label>
 									</div>
-								</div>
+								</div> -->
 							</div>
 						</div>
 					</div>
@@ -1847,6 +1893,35 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 						</div>
 					</div>
 					<!-- Document Info End -->
+
+					<!-- Documents Status START-->
+					<div class="card" id="documents_status_card">
+						<div class="card-header"> Documents Status
+						</div>
+						<div class="card-body">
+							<div class="row">
+								<div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 col-12">
+									<div class="form-group">
+										<label for="doc_sts"> Docuemnt Status </label> <span class="required">&nbsp;*</span>
+										<label class="switch">
+											<input type="checkbox" value="YES" id="doc_sts" name="doc_sts" <?php echo $checkedStatus; ?> tabindex="79">
+											<span class="slider round"></span>
+										</label>
+									</div>
+								</div>
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+									<div class="form-group">
+										<label for="doc_remark">Remarks</label><span class="required">&nbsp;*</span>
+										<textarea class="form-control" name="doc_remark" id="doc_remark" tabindex="52"> <?php if (isset($doc_remark)) {
+																																	echo $doc_remark;
+																																} ?> </textarea>
+										<span class="text-danger" id="doc_remarkcheck"> Enter Remarks </span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Document Status End -->
 
 					<!-- Fingerprint Info start-->
 					<div class="card">
@@ -1964,10 +2039,10 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 									<div class="form-group">
 										<label for="responsible">Responsible&nbsp;<span class="required">&nbsp;*</span></label>
 										<input tabindex="102" type="text" class="form-control" id="responsible" name="responsible" value="<?php if (isset($responsible) and $responsible == '0') {
-																																			echo 'Yes';
-																																		} else {
-																																			echo 'No';
-																																		} ?>" readonly>
+																																				echo 'Yes';
+																																			} else {
+																																				echo 'No';
+																																			} ?>" readonly>
 									</div>
 								</div>
 
@@ -2254,21 +2329,33 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 advance_yes" style="display:none">
 											<div class="form-group">
 												<label for="tot_value">Total Value</label>&nbsp;<span class="text-danger">*</span>
-												<input tabindex="119" type="text" class="form-control" id="tot_value" name="tot_value" value='<?php if (isset($tot_value_lc)) {echo moneyFormatIndia($tot_value_lc);} elseif (isset($tot_value)) {echo moneyFormatIndia($tot_value);} ?>'>
+												<input tabindex="119" type="text" class="form-control" id="tot_value" name="tot_value" value='<?php if (isset($tot_value_lc)) {
+																																					echo moneyFormatIndia($tot_value_lc);
+																																				} elseif (isset($tot_value)) {
+																																					echo moneyFormatIndia($tot_value);
+																																				} ?>'>
 												<span class="text-danger" style='display:none' id='total_valueCheck'>Please Enter Total Value</span>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 advance_yes" style="display:none">
 											<div class="form-group">
 												<label for="ad_amt">Advance Amount</label>&nbsp;<span class="text-danger">*</span>
-												<input tabindex="120" type="text" class="form-control" id="ad_amt" name="ad_amt" value='<?php if (isset($ad_amt_lc)) {echo moneyFormatIndia($ad_amt_lc);} elseif (isset($ad_amt)) {echo moneyFormatIndia($ad_amt);} ?>'>
+												<input tabindex="120" type="text" class="form-control" id="ad_amt" name="ad_amt" value='<?php if (isset($ad_amt_lc)) {
+																																			echo moneyFormatIndia($ad_amt_lc);
+																																		} elseif (isset($ad_amt)) {
+																																			echo moneyFormatIndia($ad_amt);
+																																		} ?>'>
 												<span class="text-danger" style='display:none' id='ad_amtCheck'>Please Enter Advance Amount</span>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
 												<label for="loan_amt">Loan Amount</label>&nbsp;<span class="text-danger">*</span>
-												<input tabindex="121" type="text" class="form-control" id="loan_amt" name="loan_amt" value='<?php if (isset($loan_amt_lc)) {echo moneyFormatIndia($loan_amt_lc);} elseif (isset($loan_amt)) {echo moneyFormatIndia($loan_amt);} ?>'>
+												<input tabindex="121" type="text" class="form-control" id="loan_amt" name="loan_amt" value='<?php if (isset($loan_amt_lc)) {
+																																				echo moneyFormatIndia($loan_amt_lc);
+																																			} elseif (isset($loan_amt)) {
+																																				echo moneyFormatIndia($loan_amt);
+																																			} ?>'>
 												<span class="text-danger" style='display:none' id='loan_amtCheck'>Please Enter Loan Amount</span>
 											</div>
 										</div>

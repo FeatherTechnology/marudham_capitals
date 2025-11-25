@@ -30,6 +30,7 @@ if ($userid != 1) {
 
 $column = array(
     'cp.id',
+    'cc.closing_date',
     'cp.cus_id',
     'cr.autogen_cus_id',
     'cp.cus_name',
@@ -42,7 +43,7 @@ $column = array(
 );
 
 if ($userid == 1) {
-    $query = 'SELECT cp.cus_id as cp_cus_id, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, al.line_name, bc.branch_name, cp.mobile1, ii.cus_id as ii_cus_id, ii.req_id 
+    $query = 'SELECT cp.cus_id as cp_cus_id, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, al.line_name, bc.branch_name, cp.mobile1, ii.cus_id as ii_cus_id, ii.req_id,cc.closing_date
     FROM acknowlegement_customer_profile cp 
     JOIN customer_register cr ON cp.cus_id = cr.cus_id
     JOIN in_issue ii ON cp.cus_id = ii.cus_id
@@ -56,10 +57,11 @@ if ($userid == 1) {
     FROM 
       area_line_mapping
   ) al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
+    JOIN closing_customer cc ON cc.cus_id = cp.cus_id AND cc.closing_date = (SELECT MAX(cc1.closing_date) FROM closing_customer cc1 WHERE cc1.cus_id = cp.cus_id)
     JOIN branch_creation bc ON al.branch_id = bc.branch_id
     where ii.status = 0 and ii.cus_status = 20 '; // Only Issued and all lines not relying on sub area
 } else {
-    $query = "SELECT cp.cus_id as cp_cus_id, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, al.line_name, bc.branch_name, cp.mobile1, ii.cus_id as ii_cus_id, ii.req_id 
+    $query = "SELECT cp.cus_id as cp_cus_id, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, al.line_name, bc.branch_name, cp.mobile1, ii.cus_id as ii_cus_id, ii.req_id,cc.closing_date
     FROM acknowlegement_customer_profile cp 
     JOIN customer_register cr ON cp.cus_id = cr.cus_id
     JOIN in_issue ii ON cp.cus_id = ii.cus_id
@@ -73,6 +75,7 @@ if ($userid == 1) {
     FROM 
       area_line_mapping
   ) al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
+   JOIN closing_customer cc ON cc.cus_id = cp.cus_id AND cc.closing_date = (SELECT MAX(cc1.closing_date) FROM closing_customer cc1 WHERE cc1.cus_id = cp.cus_id)
     JOIN branch_creation bc ON al.branch_id = bc.branch_id
     where ii.status = 0 and ii.cus_status = 20 and cp.area_confirm_subarea IN ($sub_area_list) "; //show only issued customers within the same lines of user. 
 }
@@ -87,6 +90,7 @@ if (isset($_POST['search']) && $_POST['search'] != "") {
             OR sa.sub_area_name LIKE '%" . $_POST['search'] . "%'
             OR bc.branch_name LIKE '%" . $_POST['search'] . "%'
             OR al.line_name LIKE '%" . $_POST['search'] . "%'
+            OR cc.closing_date LIKE '%" . $_POST['search'] . "%'
             OR cp.mobile1 LIKE '%" . $_POST['search'] . "%') ";
 }
 $query .= " GROUP BY ii.cus_id ";
@@ -115,7 +119,7 @@ foreach ($result as $row) {
     $sub_array   = array();
 
     $sub_array[] = $sno;
-
+    $sub_array[] = date('d-m-Y', strtotime($row["closing_date"]));
     $sub_array[] = $row['cp_cus_id'];
     $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = $row['cus_name'];
@@ -126,6 +130,7 @@ foreach ($result as $row) {
     $sub_array[] = $row['line_name'];
 
     $sub_array[] = $row['mobile1'];
+   
 
     $cus_id = $row['cp_cus_id'];
     $id          = $row['req_id'];

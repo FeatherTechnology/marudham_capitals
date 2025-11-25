@@ -971,18 +971,17 @@
                     callOnClickEvents();
                 }
             });
-
-            //UPDATE Table
-            var update_table = $('#update_table').DataTable({
+            //NOC Handover Table 
+             var noc_handover_table = $('#noc_handover_table').DataTable({
                 "order": [
                     [0, "desc"]
                 ],
-                "displayStart": getDisplayStart('update_table'),
+                "displayStart": getDisplayStart('noc_handover_table'),
                 'processing': true,
                 'serverSide': true,
                 'serverMethod': 'post',
                 'ajax': {
-                    'url': 'ajaxFetch/ajaxUpdateFetch.php',
+                    'url': 'ajaxFetch/ajaxNocHandoverFetch.php',
                     'data': function(data) {
                         var search = $('input[type=search]').val();
                         data.search = search;
@@ -991,10 +990,10 @@
                 dom: 'lBfrtip',
                 buttons: [{
                         extend: 'excel',
-                        title: "Update List",
+                        title: "NOC Handover List",
                         action: function (e, dt, button, config) {
                             var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
-                            var dynamic = curDateJs('Update_List'); // or any base
+                            var dynamic = curDateJs('NOC_Handover_List'); // or any base
                             config.title = dynamic;      // for versions that use title as filename
                             config.filename = dynamic;   // for html5 filename
                             defaultAction.call(this, e, dt, button, config);
@@ -1010,10 +1009,55 @@
                     [10, 25, 50, "All"]
                 ],
                 'drawCallback': function() {
-                    searchFunction('update_table');
-                    paginationFunction('update_table');
+                    searchFunction('noc_handover_table');
+                    paginationFunction('noc_handover_table');
+                    callOnClickEvents();
                 }
             });
+
+
+            //UPDATE Table
+            // var update_table = $('#update_table').DataTable({
+            //     "order": [
+            //         [0, "desc"]
+            //     ],
+            //     "displayStart": getDisplayStart('update_table'),
+            //     'processing': true,
+            //     'serverSide': true,
+            //     'serverMethod': 'post',
+            //     'ajax': {
+            //         'url': 'ajaxFetch/ajaxUpdateFetch.php',
+            //         'data': function(data) {
+            //             var search = $('input[type=search]').val();
+            //             data.search = search;
+            //         }
+            //     },
+            //     dom: 'lBfrtip',
+            //     buttons: [{
+            //             extend: 'excel',
+            //             title: "Update List",
+            //             action: function (e, dt, button, config) {
+            //                 var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+            //                 var dynamic = curDateJs('Update_List'); // or any base
+            //                 config.title = dynamic;      // for versions that use title as filename
+            //                 config.filename = dynamic;   // for html5 filename
+            //                 defaultAction.call(this, e, dt, button, config);
+            //             }
+            //         },
+            //         {
+            //             extend: 'colvis',
+            //             collectionLayout: 'fixed four-column',
+            //         }
+            //     ],
+            //     "lengthMenu": [
+            //         [10, 25, 50, -1],
+            //         [10, 25, 50, "All"]
+            //     ],
+            //     'drawCallback': function() {
+            //         searchFunction('update_table');
+            //         paginationFunction('update_table');
+            //     }
+            // });
             //Document Track Table
             var doc_track_table = $('#doc_track_table').DataTable({
                 "order": [
@@ -1433,6 +1477,9 @@
     if ($current_page == 'noc') { ?>
         <script src="js/noc.js"></script>
     <?php }
+    if ($current_page == 'noc_handover') { ?>
+        <script src="js/noc_handover.js"></script>
+    <?php }
 
     //Closed
     if ($current_page == 'edit_closed') { ?>
@@ -1454,6 +1501,10 @@
     //Concern Feedback
     if ($current_page == 'concern_feedback') { ?>
         <script src="js/concern_feedback.js"></script>
+    <?php }
+   // update screen
+       if ($current_page == 'edit_update') { ?>
+        <script src="js/edit_update.js"></script>
     <?php }
 
     //Document track Screen
@@ -2318,6 +2369,28 @@
 
     // ✅ Save file
     XLSX.writeFile(wb, fileName);
+}
+function nameFormatter(selector) {
+    $(selector).on('input', function () {
+        let value = $(this).val();
+
+        // Split by space
+        let parts = value.split(" ");
+
+        if (parts.length > 1) {
+            // Convert second part to CAPS and allow only 2 letters
+            parts[1] = parts[1].toUpperCase()
+                .replace(/[^A-Z]/g, "")
+                .substring(0, 2);
+
+            // Block more than 2 parts
+            if (parts.length > 2) {
+                parts = parts.slice(0, 2);
+            }
+        }
+
+        $(this).val(parts.join(" "));
+    });
 }
 
 </script>
