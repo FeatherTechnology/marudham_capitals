@@ -368,72 +368,7 @@ $(document).ready(function () {
     })
 
     $('#refresh_cal').click(function () {
-        var intrest_rate = $("#int_rate").val();
-        var doc_charge = $("#doc_charge").val();
-        var proc_fee = $("#proc_fee").val();
-        var due_period = $("#due_period").val();
-        var profit_method = $("#profit_method").val();
-
-        if( intrest_rate == "" || doc_charge == "" || proc_fee == "" || due_period == "" || profit_method == ""){
-            Swal.fire({
-                timerProgressBar: true,
-                timer: 2000,
-                title: 'Please Fill out Loan Info!',
-                icon: 'error',
-                showConfirmButton: true,
-                confirmButtonColor: '#009688'
-            });
-            return;
-        }
-
-        var profit_method = $('#profit_method').val(); // if profit method changes, due type is EMI
-        var due_type = $('#due_type').val();
-
-        if (profit_method == "after_intrest" && due_type == "EMI") {
-            getLoanAfterInterest();
-            
-        } else if (profit_method == 'pre_intrest') {
-            getLoanPreInterest();
-            
-        }
-
-        if (due_type == 'Interest') {
-            getLoanInterest();
-            
-        }
-
-        var scheme_profit_method = $('#scheme_profit_method').val(); // if profit method changes, due type is EMI
-        if (scheme_profit_method == 'after_intrest') {
-            getSchemeAfterIntreset(); 
-
-        } else if (scheme_profit_method == 'pre_intrest') {
-            getSchemePreIntreset(); 
-
-        }
-
-        // var due_method_scheme = $('#due_method_scheme').val();
-        // if (due_method_scheme == '1') {//Monthly scheme as 1
-        //     getLoanMonthly(); changeInttoBen()
-        // } else if (due_method_scheme == '2') {//Weekly scheme as 2
-        //     getLoanWeekly(); changeInttoBen()
-        // } else if (due_method_scheme == '3') {//Daily scheme as 3
-        //     getLoanDaily(); changeInttoBen()
-        // }
-
-        changeInttoBen();
-
-        function changeInttoBen() {
-            let due_type = document.getElementById("due_type");
-            let int_label = document.querySelector("#int_amt_cal");
-            if (due_type.value == "Interest") {
-                // Set its value to 'Benefit Amount'
-                int_label.previousElementSibling.textContent = "Benefit Amount";
-                $('.emi_div').hide();
-            } else {
-                int_label.previousElementSibling.textContent = "Interest Amount";
-                $('.emi_div').show();
-            }
-        }
+        performLoanCalculation();
     });
 
     $('#day_scheme').change(function () {
@@ -646,21 +581,40 @@ $(document).ready(function () {
     //////////////////////////////////////////////////////////// Bank Info END ///////////////////////////////////////////////////////
 
 
-    $('#submit_loanIssue').click(function () { // loan Issue Submit Validation.
+    $('#submit_loanIssue').click(function (e) {  // loan Issue Submit Validation.
         hideCheckSpan();
-        //   $('#refresh_cal').trigger('click');
-        if(loanIssueSumitValidation()){
-        let confirmAction = confirm("Are you sure you want to submit Loan Issue ?");
-            if (!confirmAction) {
-                event.preventDefault(); // Stop form submission if canceled
+
+        function proceedAfterCalc() {
+            // run validation
+            if (!loanIssueSumitValidation()) {
+                e.preventDefault();  // stop default submit until we finish everything
                 return false;
             }
-        }else{
-            event.preventDefault(); 
-            return false;
+
+            // confirm
+            let confirmAction = confirm("Are you sure you want to submit Loan Issue ?");
+            if (!confirmAction) {
+                e.preventDefault();  // stop default submit until we finish everything
+                return false;
+            }
+
+            // finally submit the form
+            $('#loanIssueForm').submit();
         }
 
+        // If refresh button is visible → run calculation first
+        if ($("#refresh_cal").is(":visible")) {
+
+            performLoanCalculation(function () {
+                proceedAfterCalc();
+            });
+
+        } else {
+            // Directly continue without calculation
+            proceedAfterCalc();
+        }
     });
+
 });
 
 
@@ -1778,4 +1732,78 @@ function resetbankInfo() {
             $("#bankID").val("");
         },
     });
+}
+
+function performLoanCalculation(callback){
+    var intrest_rate = $("#int_rate").val();
+    var doc_charge = $("#doc_charge").val();
+    var proc_fee = $("#proc_fee").val();
+    var due_period = $("#due_period").val();
+    var profit_method = $("#profit_method").val();
+
+    if( intrest_rate == "" || doc_charge == "" || proc_fee == "" || due_period == "" || profit_method == ""){
+        Swal.fire({
+            timerProgressBar: true,
+            timer: 2000,
+            title: 'Please Fill out Loan Info!',
+            icon: 'error',
+            showConfirmButton: true,
+            confirmButtonColor: '#009688'
+        });
+
+        event.preventDefault();
+        return;
+    }
+
+    var profit_method = $('#profit_method').val(); // if profit method changes, due type is EMI
+    var due_type = $('#due_type').val();
+
+    if (profit_method == "after_intrest" && due_type == "EMI") {
+        getLoanAfterInterest();
+        
+    } else if (profit_method == 'pre_intrest') {
+        getLoanPreInterest();
+        
+    }
+
+    if (due_type == 'Interest') {
+        getLoanInterest();
+        
+    }
+
+    var scheme_profit_method = $('#scheme_profit_method').val(); // if profit method changes, due type is EMI
+    if (scheme_profit_method == 'after_intrest') {
+        getSchemeAfterIntreset(); 
+
+    } else if (scheme_profit_method == 'pre_intrest') {
+        getSchemePreIntreset(); 
+
+    }
+
+    // var due_method_scheme = $('#due_method_scheme').val();
+    // if (due_method_scheme == '1') {//Monthly scheme as 1
+    //     getLoanMonthly(); changeInttoBen()
+    // } else if (due_method_scheme == '2') {//Weekly scheme as 2
+    //     getLoanWeekly(); changeInttoBen()
+    // } else if (due_method_scheme == '3') {//Daily scheme as 3
+    //     getLoanDaily(); changeInttoBen()
+    // }
+
+    changeInttoBen();
+
+    function changeInttoBen() {
+        let due_type = document.getElementById("due_type");
+        let int_label = document.querySelector("#int_amt_cal");
+        if (due_type.value == "Interest") {
+            // Set its value to 'Benefit Amount'
+            int_label.previousElementSibling.textContent = "Benefit Amount";
+            $('.emi_div').hide();
+        } else {
+            int_label.previousElementSibling.textContent = "Interest Amount";
+            $('.emi_div').show();
+        }
+    }
+
+    if (typeof callback === 'function') callback();
+
 }

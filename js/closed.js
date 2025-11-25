@@ -191,6 +191,9 @@ function OnLoadFunctions(req_id, cus_id) {
                     $('.noc_window').hide();
                     $('#close_noc_card').hide();
                     $('#submit_closed').hide();
+
+                    $('#closedStatusCheck, #considerLevelCheck, #remarkCheck').hide();
+                    $('#closed_Sts, #closed_Sts_consider, #closed_Sts_remark').val('');
                 })
 
                 $('.due-chart').click(function () {
@@ -510,6 +513,9 @@ function feedbackList() {
             $("#cus_feedback").val('');
             $("#feedback_remark").val('');
             $("#feedbackID").val('');
+
+            $(".addloansummary").find(".modal-body span").not('.required').hide();
+
         }
     });
 }
