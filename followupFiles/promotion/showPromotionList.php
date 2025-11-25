@@ -57,7 +57,7 @@ $areaColumn = ($accessType == 3)
         LEFT JOIN area_line_mapping alm ON FIND_IN_SET(sl.sub_area_id, alm.sub_area_id) 
         LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
         LEFT JOIN new_promotion np ON np.cus_id = cs.cus_id AND np.created_date = (SELECT MAX(np1.created_date) FROM new_promotion np1 WHERE np1.cus_id = cs.cus_id)
-        WHERE $areaColumn IN ($sub_area_list) AND NOT EXISTS ( SELECT 1 FROM closed_status cs2 WHERE cs2.cus_id = cr.cus_id AND cs2.closed_sts IN (2,3)) AND NOT EXISTS ( SELECT 1 FROM request_creation r WHERE r.cus_id = cs.cus_id AND (r.cus_status IN (4,5,6,7,8,9))) ";
+        WHERE $areaColumn IN ($sub_area_list) AND NOT EXISTS ( SELECT 1 FROM closed_status cs2 WHERE cs2.cus_id = cr.cus_id AND cs2.closed_sts IN (2,3)) AND NOT EXISTS ( SELECT 1 FROM request_creation r WHERE r.cus_id = cs.cus_id AND ((r.cus_status IN (4,5,6,7,8,9)) OR r.cus_status <= 20)) ";
 
     if($_POST['followUpSts']){
         $follow_up_sts = $_POST['followUpSts'];

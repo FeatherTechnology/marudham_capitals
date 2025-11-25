@@ -49,9 +49,9 @@ if ($userid != 1) {  // super admin bypass
     // Remove duplicates and store final list
     $sub_area_ids = array_unique(array_filter($sub_area_ids));
     $sub_area_list = implode(',', $sub_area_ids);
-    $colName = ($accessType == 3)
-        ? "cp.area_confirm_area"          // Due Followup
-        : "cp.area_confirm_subarea";      // Group/Line
+       $colName = ($accessType == 3)
+            ? "cp.area_confirm_area"          // Due Followup
+            : "cp.area_confirm_subarea";      // Group/Line
 }
 $column = array(
     'cp.id',
@@ -65,11 +65,12 @@ $column = array(
     'cp.mobile1',
     'cp.id',
     'cp.id',
+    'cp.id',
     'cp.id'
 );
 
 if ($userid == 1) {
-    $query = 'SELECT cp.cus_id as cp_cus_id, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, al.line_name, bc.branch_name, cp.mobile1, ii.cus_id as ii_cus_id, ii.req_id, ii.cus_status
+    $query = "SELECT cp.cus_id as cp_cus_id, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, al.line_name, bc.branch_name, cp.mobile1, ii.cus_id as ii_cus_id, ii.req_id, ii.cus_status
     FROM acknowlegement_customer_profile cp 
     JOIN customer_register cr ON cp.cus_id = cr.cus_id
     JOIN in_issue ii ON cp.cus_id = ii.cus_id
@@ -77,7 +78,7 @@ if ($userid == 1) {
     JOIN sub_area_list_creation sa ON cp.area_confirm_subarea = sa.sub_area_id
     JOIN area_line_mapping al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
     JOIN branch_creation bc ON al.branch_id = bc.branch_id
-    where ii.status = 0 and ii.cus_status IN (21,22,23) GROUP BY ii.cus_id '; // Only Issued and all lines not relying on sub area
+    where ii.status = 0 and ii.cus_status = 23 GROUP BY ii.cus_id "; // Only Issued and all lines not relying on sub area
 } else {
     $query = " SELECT cp.cus_id AS cp_cus_id,
     cr.autogen_cus_id,
@@ -98,8 +99,18 @@ if ($userid == 1) {
     JOIN area_line_mapping al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
     JOIN branch_creation bc ON al.branch_id = bc.branch_id
     WHERE ii.status = 0 
-        AND ii.cus_status IN (21,22,23)
+        AND  ii.cus_status = 23 
         AND $colName IN ($sub_area_list) ";
+
+    $forcount = "SELECT cp.cus_id 
+        FROM acknowlegement_customer_profile cp 
+        JOIN in_issue ii ON cp.cus_id = ii.cus_id
+        JOIN customer_register cr ON cp.cus_id = cr.cus_id
+        JOIN area_list_creation ac ON cp.area_confirm_area = ac.area_id
+        JOIN sub_area_list_creation sa ON cp.area_confirm_subarea = sa.sub_area_id
+        JOIN area_line_mapping al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
+        JOIN branch_creation bc ON al.branch_id = bc.branch_id
+        where ii.status = 0 AND  ii.cus_status = 23 AND $colName IN ($sub_area_list) ";
 }
 
 if (isset($_POST['search']) && $_POST['search'] != "") {
@@ -113,13 +124,17 @@ if (isset($_POST['search']) && $_POST['search'] != "") {
             OR bc.branch_name LIKE '%" . $_POST['search'] . "%'
             OR cp.mobile1 LIKE '%" . $_POST['search'] . "%' ) ";
     $query .= $search;
+    $forcount .= $search;
 }
 
 $query .= 'GROUP BY ii.cus_id ';
+$forcount .= 'GROUP BY ii.cus_id ';
 if (isset($_POST['order'])) {
     $query .= 'ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
+    $forcount .= 'ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
 } else {
     $query .= ' ';
+    $forcount .= ' ';
 }
 
 $query1 = '';
@@ -127,7 +142,7 @@ if ($_POST['length'] != -1) {
     $query1 = 'LIMIT ' . $_POST['start'] . ', ' . $_POST['length'];
 }
 
-$statement = $connect->prepare($query);
+$statement = $connect->prepare($forcount);
 
 $statement->execute();
 
@@ -162,45 +177,85 @@ foreach ($result as $row) {
     $cus_name = $row['cus_name'];
 
     $cus_status = $row['cus_status'];
-    if (in_array($cus_status, [21, 22])) {
-        $noc_status = 'NOC';
-    } else if ($cus_status == 23) {
-        $noc_status = 'Pending';
-    }
-    $sub_array[] = $noc_status;
+
+// Fetch receive status + receive_by
+$qry = "SELECT receive_status, receive_by 
+        FROM noc 
+        WHERE cus_id = '$cus_id' GROUP BY cus_id";
+
+$res = $connect->query($qry);
+$rec = $res->fetch();
+
+$receive_status  = $rec['receive_status'];   // 0 or 1
+$receive_by      = $rec['receive_by'];       // user_id of the person who received
+
+// ---------------- STATUS COLUMN ----------------
+if ($receive_status == 0) {
+    $sub_array[] = "Pending";
+} else {
+    $sub_array[] = "Completed";
+}
+
+
+// ---------------- RECEIVE BY COLUMN ----------------
+$receive_person = "";
+
+if ($receive_by != "") {
+    $userQry = $connect->query("
+        SELECT user_name
+        FROM user 
+        WHERE user_id = $receive_by
+    ");
+
+    $rowuser = $userQry->fetch();
+    $receive_person = $rowuser['user_name'];
+}
+
+$sub_array[] = ($receive_person != "") ? $receive_person : " ";
     $cus_sts = "<a href='' data-value ='" . $cus_id . "' data-value1 = '$id' class='customer-status' data-toggle='modal' data-target='.customerstatus'><span class='icon-eye' style='font-size: 12px;position: relative;top: 2px;'></span></a>";
     $sub_array[] = $cus_sts;
 
-    $action  = "<div class='dropdown'>
-                <button class='btn btn-outline-secondary'>
-                    <i class='fa'>&#xf107;</i>
-                </button>
-                <div class='dropdown-content'>";
+// ---------------- ACTION BUTTON LOGIC ----------------
+$action = ""; // default
 
-    $action .= "<a href='noc&upd=$id&cusidupd=$cus_id&action_type=noc' title='Edit details'>NOC</a>";
+if ($receive_status == 0) {
 
-    // Fetch all NOC statuses for this customer
-    $stsQry = $connect->query("SELECT cus_status FROM in_issue WHERE cus_id = '$cus_id'");
-    $allStatus = $stsQry->fetchAll(PDO::FETCH_COLUMN);
+    // Status pending → show Send to everyone
+    $action = "<div class='dropdown'>
+        <button class='btn btn-outline-secondary'>
+            <i class='fa'>&#xf107;</i>
+        </button>
+        <div class='dropdown-content'>
+            <a href='' title='Receive details' 
+               class='receive-noc' 
+               data-reqid='$id' 
+               data-cusid='$cus_id'>Receive</a>
+        </div>
+    </div>";
 
-    // Conditions
-    $has21 = in_array(21, $allStatus);
-    $all22 = !in_array(21, $allStatus) && !in_array(23, $allStatus) && in_array(22, $allStatus);
-    // If status = 22 → show "Send"
-    if (!$has21) {
+} else {
 
-        // If ALL loans are 22 → show SEND
-        if ($all22 && $cus_status == 22) {
-            $action .= "<a href='' title='Send details' class='remove-noc' data-reqid='$id' data-cusid='$cus_id'>Send</a>";
-        }
+    // Status Completed → only show button to the person who received
+    if ($receive_by == $userid) {
 
-        // For status 22 or 23 → show Summary + Letter
-        if (in_array($cus_status, [22, 23])) {
-            $action .= "<a href='noc&upd=$id&cusidupd=$cus_id&action_type=summary'>NOC Summary & Letter</a>";
-        }
+        $action = "<div class='dropdown'>
+            <button class='btn btn-outline-secondary'>
+                <i class='fa'>&#xf107;</i>
+            </button>
+            <div class='dropdown-content'>
+                <a href='noc_handover&upd=$id&cusidupd=$cus_id&action_type=noc' 
+                   title='NOC handover'>Handover</a>
+            </div>
+        </div>";
+
+    } else {
+
+        // Hide action from all other users
+        $action = "<span class='text-muted'></span>";
     }
-    $action .= "</div></div>";
+}
 
+$sub_array[] = $action;
 
     $sub_array[] = $action;
     $data[]      = $sub_array;
@@ -211,7 +266,7 @@ function count_all_data($connect)
 {
     $query     = "SELECT cp.cus_id as cp_cus_id,cp.cus_name,cp.area_confirm_area,cp.area_confirm_subarea,cp.area_line,cp.mobile1, ii.cus_id as ii_cus_id, ii.req_id FROM 
     acknowlegement_customer_profile cp JOIN in_issue ii ON cp.cus_id = ii.cus_id
-    where ii.status = 0 and ii.cus_status IN(21,22,23) GROUP BY ii.cus_id ";
+    where ii.status = 0 and ii.cus_status IN(23) GROUP BY ii.cus_id ";
     $statement = $connect->prepare($query);
     $statement->execute();
     return $statement->rowCount();

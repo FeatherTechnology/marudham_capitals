@@ -41,6 +41,7 @@ $column = array(
     'bc.branch_name',
     'ag.group_name',
     'alm.line_name',
+    'v.mobile1',
     'a.area_name',
     'sa.sub_area_name',
     'lcc.loan_category_creation_name',
@@ -89,6 +90,7 @@ if (isset($_POST['search'])) {
             OR bc.branch_name LIKE '%" . $_POST['search'] . "%'
             OR ag.group_name LIKE '%" . $_POST['search'] . "%'
             OR alm.line_name LIKE '%" . $_POST['search'] . "%'
+             OR v.mobile1 LIKE '%" . $_POST['search'] . "%'
             OR a.area_name LIKE '%" . $_POST['search'] . "%'
             OR sa.sub_area_name LIKE '%" . $_POST['search'] . "%'
             OR lcc.loan_category_creation_name LIKE '%" . $_POST['search'] . "%'
@@ -139,6 +141,7 @@ foreach ($result as $row) {
     $sub_array[] = $row["branch_name"];
     $sub_array[] = $row['group_name'];
     $sub_array[] = $row['line_name'];
+    $sub_array[] = $row['mobile1'];
     $sub_array[] = $row['area_name'];
     $sub_array[] = $row['sub_area_name'];
     $sub_array[] = $row["loan_category_creation_name"];
