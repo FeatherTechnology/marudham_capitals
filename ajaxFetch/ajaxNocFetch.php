@@ -97,7 +97,7 @@ if ($userid == 1) {
     JOIN sub_area_list_creation sa ON cp.area_confirm_subarea = sa.sub_area_id
     JOIN area_line_mapping al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
     JOIN branch_creation bc ON al.branch_id = bc.branch_id
-    WHERE ii.status = 0
+    WHERE ii.status = 0 
         AND ii.cus_status IN (21,22,23)
         AND $colName IN ($sub_area_list) ";
 }

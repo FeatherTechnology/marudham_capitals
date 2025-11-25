@@ -43,7 +43,12 @@ if($qry){
         $records['mort_doc_used'] = $row['mortgage_document_used'];//0 if unused
         
         $records['mort_doc_pending'] = $row['mortgage_document_pending'];//yes if document not uploaded
+  
     }
+          //document Status
+        $records['doc_sts'] = $row['doc_sts'];//
+        $records['doc_remark'] = $row['doc_remarks'];
+        $records['update_remark'] = $row['update_remarks'];
 }
 
 echo json_encode($records);

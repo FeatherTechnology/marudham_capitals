@@ -519,7 +519,7 @@ $(document).ready(function () {
     ////Mortgage Info  
     $('#mortgageprocessCheck').hide(); $('#propertyholdertypeCheck').hide(); $('#docpropertytypeCheck').hide(); $('#docpropertymeasureCheck').hide(); $('#docpropertylocCheck').hide(); $('#docpropertyvalueCheck').hide();
     $('#mortgagenameCheck').hide(); $('#mortgagedsgnCheck').hide(); $('#mortgagenumCheck').hide(); $('#regofficeCheck').hide(); $('#mortgagevalueCheck').hide(); $('#mortgagedocCheck').hide(); $('#mortgagedocUpdCheck').hide();$("#propertyholderNameCheck").hide();
-
+$('#doc_remarkcheck').hide();
     $('#mortgage_process').change(function () {
         let process = $(this).val();
         $("#propertyholderNameCheck").hide();
@@ -619,34 +619,34 @@ $(document).ready(function () {
     });
 
     //Mortgage Document upload show/hide based on select YES/NO.
-    var pend = document.querySelector('#pendingchk');
-    $('#mortgage_document').change(function () {
-        var docupd = $(this).val();
+    // var pend = document.querySelector('#pendingchk');
+    // $('#mortgage_document').change(function () {
+    //     var docupd = $(this).val();
 
-        if (docupd == '0') {
-            $('#docUpd').show();
-            $('#pendingchk').removeAttr('checked')
+    //     if (docupd == '0') {
+    //         $('#docUpd').show();
+    //         $('#pendingchk').removeAttr('checked')
 
-        } else {
-            $('#mortgage_document_upd').val('');
-            $('#docUpd').hide();
-            pend.checked = true;
-        }
-    })
+    //     } else {
+    //         $('#mortgage_document_upd').val('');
+    //         $('#docUpd').hide();
+    //         pend.checked = true;
+    //     }
+    // })
 
     //when Mortgage Document pending is Checked then document will empty and Doc is NO////
 
-    $('#pendingchk').click(function () {
+    // $('#pendingchk').click(function () {
 
-        if (pend.checked == true) {
-            $('#mortgage_document_upd').val('');
-            $('#mortgage_document').val('1');
-            $('#docUpd').hide();
-        } else {
-            $('#mortgage_document').val('0');
-            $('#docUpd').show();
-        }
-    })
+    //     if (pend.checked == true) {
+    //         $('#mortgage_document_upd').val('');
+    //         $('#mortgage_document').val('1');
+    //         $('#docUpd').hide();
+    //     } else {
+    //         $('#mortgage_document').val('0');
+    //         $('#docUpd').show();
+    //     }
+    // })
 
     // $('#mortgage_document_upd').change(function () {
     //     var upd = $(this).val();
@@ -752,18 +752,18 @@ $(document).ready(function () {
         });
     });
 
-    var enpend = document.querySelector('#endorsependingchk');
-    $('#endorsependingchk').click(function () {
+    // var enpend = document.querySelector('#endorsependingchk');
+    // $('#endorsependingchk').click(function () {
 
-        if (enpend.checked == true) {
-            $('#RC_document_upd').val('');
-            $('#en_RC').val('1');
-            $('#RCdocUpd').hide();
-        } else {
-            $('#en_RC').val('0');
-            $('#RCdocUpd').show();
-        }
-    })
+    //     if (enpend.checked == true) {
+    //         $('#RC_document_upd').val('');
+    //         $('#en_RC').val('1');
+    //         $('#RCdocUpd').hide();
+    //     } else {
+    //         $('#en_RC').val('0');
+    //         $('#RCdocUpd').show();
+    //     }
+    // })
 
     // $('#RC_document_upd').change(function () {
     //     var rcupd = $(this).val();
@@ -1096,7 +1096,7 @@ $(function () {
     var docupd = $('#mortgage_document').val();
 
     if (docupd == '0') {
-        $('#pendingchk').removeAttr('checked');
+        // $('#pendingchk').removeAttr('checked');
         $('#docUpd').show();
     }
 
@@ -1104,7 +1104,7 @@ $(function () {
     var endocupd = $('#en_RC').val();
 
     if (endocupd == '0') {
-        $('#endorsependingchk').removeAttr('checked');
+        // $('#endorsependingchk').removeAttr('checked');
         $('#RCdocUpd').show();
     }
 
@@ -2469,6 +2469,7 @@ function doc_submit_validation() {
     var endorsement_name = $('#endorsement_name').val(); var en_RC = $('#en_RC').val(); var en_Key = $('#en_Key').val();
     var validation = true;
   var ownername_relationship_name = $("#ownername_relationship_name").val();
+  var doc_remark = $('#doc_remark').val().trim();
     // var fingerprint = $('#fingerprint').val(); var submitted = $('#submitted').val();
 
     if (cus_id_doc == '') {
@@ -2490,6 +2491,13 @@ function doc_submit_validation() {
         validation = false;
     } else {
         $('#mortgageprocessCheck').hide();
+    }
+    if (doc_remark == '') {
+        event.preventDefault();
+        $('#doc_remarkcheck').show();
+        validation = false;
+    } else {
+        $('#doc_remarkcheck').hide();
     }
 
     if (mortgage_process == '0') {

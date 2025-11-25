@@ -1017,47 +1017,47 @@
 
 
             //UPDATE Table
-            var update_table = $('#update_table').DataTable({
-                "order": [
-                    [0, "desc"]
-                ],
-                "displayStart": getDisplayStart('update_table'),
-                'processing': true,
-                'serverSide': true,
-                'serverMethod': 'post',
-                'ajax': {
-                    'url': 'ajaxFetch/ajaxUpdateFetch.php',
-                    'data': function(data) {
-                        var search = $('input[type=search]').val();
-                        data.search = search;
-                    }
-                },
-                dom: 'lBfrtip',
-                buttons: [{
-                        extend: 'excel',
-                        title: "Update List",
-                        action: function (e, dt, button, config) {
-                            var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
-                            var dynamic = curDateJs('Update_List'); // or any base
-                            config.title = dynamic;      // for versions that use title as filename
-                            config.filename = dynamic;   // for html5 filename
-                            defaultAction.call(this, e, dt, button, config);
-                        }
-                    },
-                    {
-                        extend: 'colvis',
-                        collectionLayout: 'fixed four-column',
-                    }
-                ],
-                "lengthMenu": [
-                    [10, 25, 50, -1],
-                    [10, 25, 50, "All"]
-                ],
-                'drawCallback': function() {
-                    searchFunction('update_table');
-                    paginationFunction('update_table');
-                }
-            });
+            // var update_table = $('#update_table').DataTable({
+            //     "order": [
+            //         [0, "desc"]
+            //     ],
+            //     "displayStart": getDisplayStart('update_table'),
+            //     'processing': true,
+            //     'serverSide': true,
+            //     'serverMethod': 'post',
+            //     'ajax': {
+            //         'url': 'ajaxFetch/ajaxUpdateFetch.php',
+            //         'data': function(data) {
+            //             var search = $('input[type=search]').val();
+            //             data.search = search;
+            //         }
+            //     },
+            //     dom: 'lBfrtip',
+            //     buttons: [{
+            //             extend: 'excel',
+            //             title: "Update List",
+            //             action: function (e, dt, button, config) {
+            //                 var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+            //                 var dynamic = curDateJs('Update_List'); // or any base
+            //                 config.title = dynamic;      // for versions that use title as filename
+            //                 config.filename = dynamic;   // for html5 filename
+            //                 defaultAction.call(this, e, dt, button, config);
+            //             }
+            //         },
+            //         {
+            //             extend: 'colvis',
+            //             collectionLayout: 'fixed four-column',
+            //         }
+            //     ],
+            //     "lengthMenu": [
+            //         [10, 25, 50, -1],
+            //         [10, 25, 50, "All"]
+            //     ],
+            //     'drawCallback': function() {
+            //         searchFunction('update_table');
+            //         paginationFunction('update_table');
+            //     }
+            // });
             //Document Track Table
             var doc_track_table = $('#doc_track_table').DataTable({
                 "order": [
@@ -1501,6 +1501,10 @@
     //Concern Feedback
     if ($current_page == 'concern_feedback') { ?>
         <script src="js/concern_feedback.js"></script>
+    <?php }
+   // update screen
+       if ($current_page == 'edit_update') { ?>
+        <script src="js/edit_update.js"></script>
     <?php }
 
     //Document track Screen

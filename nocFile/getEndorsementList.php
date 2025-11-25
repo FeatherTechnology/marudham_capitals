@@ -54,7 +54,7 @@ function getfamName($connect,$rel_id){
                 </tr>
                     <?php
                 }?>
-                <?php if($row['en_RC'] == '0' && $row['Rc_document_pending'] != 'YES' && $row['en_RC_used'] != '1'){
+                <?php if($row['en_RC'] == '0' && $row['en_RC_used'] != '1'){
                     ?>
                 <tr>
                     <td><?php echo $i;$i++;?></td>

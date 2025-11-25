@@ -696,8 +696,8 @@ $(function () {
         callCustomerProfileFunctn(); getDocumentHistory();
 
     }
-nameFormatter('#cus_name');
-nameFormatter('#famname');
+    nameFormatter('#cus_name');
+    nameFormatter('#famname');
 
 }); //OnLoad function.
 
@@ -2739,11 +2739,12 @@ function getDocumentDetails(req_id, cus_id, cus_name) {
     // getFamilyList();//to get family , it may used in mort and endorse processes
     getMortgageInfo(req_id, cus_id); // to get mortgage details
     getEndorsementInfo(req_id, cus_id); // to get mortgage details
+    getDocstatusInfo(req_id, cus_id); // to get doc details
 
 
 
-    $('#update_mortgage, #update_endorsement').off('click');
-    $('#update_mortgage, #update_endorsement').click(function () {//submit events of mort and endorsement
+    $('#update_mortgage, #update_endorsement,#update_doc_sts').off('click');
+    $('#update_mortgage, #update_endorsement,#update_doc_sts').click(function () {//submit events of mort and endorsement
         let id = $(this).attr('id');
         if (MEValidation(id) == true) {// if validation are done and returned true
 
@@ -3370,7 +3371,27 @@ function getMortgageInfo(req_id) {
         }
     })
 }
+function getDocstatusInfo(req_id) {
+    $.ajax({
+        url: 'updateFile/getMortgageInfo.php',
+        data: { "req_id": req_id },
+        type: 'POST',
+        dataType: 'json',
+        cache: false,
+        success: function (response) {
+           
+            let sts = response['doc_sts'];
 
+            if (sts === 'YES' || sts === '' || sts === null || sts === undefined) {
+                $('#doc_sts').prop('checked', true);   // checked
+            } else {
+                $('#doc_sts').prop('checked', false);  // unchecked
+            }
+            $('#doc_remark').val(response['doc_remark']);
+            $('#update_remark').val(response['update_remark']);
+        }
+    })
+}
 //Endorsement info
 function getEndorsementInfo(req_id) {
     $.ajax({
@@ -3456,6 +3477,12 @@ function updateMortEndorse(id, req_id) {
     } else if (id == 'update_endorsement') {
         var file_data = $('#RC_document_upd').prop('files')[0];
         var formdata = $('#end_form').serializeArray();
+    }
+    else if (id == 'update_doc_sts') {
+        var doc_sts_val = $('#doc_sts').is(':checked') ? 'YES' : 'NO';
+        var formdata = $('#doc_sts_form').serializeArray();
+        // If unchecked → doc_sts is missing, so add it manually
+        formdata.push({ name: 'doc_sts', value: doc_sts_val });
     }
     // var mortgage_document_upd = $('#mortgage_document_upd')[0].files;
     formdata.push({ name: 'id', value: id }, { name: 'req_id', value: req_id });
@@ -3627,6 +3654,17 @@ function MEValidation(id) {
 
         }
     }
+    else if (id == 'update_doc_sts') {
+        var update_remark = $('#update_remark').val().trim();
+        if (update_remark == '') {
+            validateField(update_remark, '#update_remarkcheck');
+        } else {
+            $('#update_remarkcheck').hide();
+
+        }
+
+    }
+
 
     function validateField(value, fieldId) {
         if (value === '') {

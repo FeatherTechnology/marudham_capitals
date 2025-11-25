@@ -95,7 +95,7 @@ while ($row = $run->fetch()) {
 }
 $req_id_list = implode(',', $req_id_list);
 
-$query = " SELECT 
+$query = "SELECT 
             ag.group_name,
             alm.line_name AS line,
             adm.duefollowup_name,
@@ -122,8 +122,8 @@ $query = " SELECT
             c.due_amt_track,
             c.princ_amt_track,
             c.int_amt_track,
-            c.penalty, 
-            c.fine, 
+            COALESCE(p.total_penalty, 0) AS penalty, 
+            COALESCE(ch.total_fine, 0) AS fine, 
             c.penalty_track, 
             c.fine_track,
             c.penalty_waiver,
@@ -161,30 +161,48 @@ $query = " SELECT
         LEFT JOIN 
             agent_creation ac ON iv.agent_id = ac.ag_id
         JOIN in_acknowledgement ack ON ack.req_id = iv.req_id
-        LEFT JOIN (
-    SELECT 
-        c.req_id, 
-        SUM(c.due_amt_track) AS due_amt_track, 
-        SUM(c.princ_amt_track) AS princ_amt_track, 
-        SUM(c.int_amt_track) AS int_amt_track, 
-        SUM(c.penalty_track) AS penalty_track, 
-        SUM(c.coll_charge_track) AS fine_track,
-        SUM(c.penalty_waiver) AS penalty_waiver,
-        SUM(c.coll_charge_waiver) AS fine_waiver,
-        COALESCE(p.total_penalty, 0) AS penalty,
-        COALESCE(ch.total_fine, 0) AS fine
-    FROM  collection c
-    LEFT JOIN (
-        SELECT req_id, SUM(penalty) AS total_penalty
-        FROM   penalty_charges 
-        WHERE DATE(created_date) <= '$to_date' GROUP BY req_id) p ON p.req_id = c.req_id
-    LEFT JOIN (
-        SELECT req_id, SUM(coll_charge) AS total_fine
-        FROM collection_charges 
-        WHERE DATE(created_date) <= '$to_date'
-        GROUP BY req_id ) ch ON ch.req_id = c.req_id    
-    $where
-    GROUP BY c.req_id ) c ON c.req_id = iv.req_id
+        LEFT JOIN 
+        ( 
+            SELECT 
+                req_id, 
+                SUM(due_amt_track) AS due_amt_track, 
+                SUM(princ_amt_track) AS princ_amt_track, 
+                SUM(int_amt_track) AS int_amt_track, 
+                SUM(penalty_track) AS penalty_track, 
+                SUM(coll_charge_track) AS fine_track, 
+                SUM(penalty_waiver) AS penalty_waiver, 
+                SUM(coll_charge_waiver) AS fine_waiver 
+            FROM 
+                collection 
+            WHERE 
+                DATE(coll_date) <= '$to_date' 
+            GROUP BY 
+                req_id 
+        ) c ON c.req_id = iv.req_id 
+        LEFT JOIN 
+            ( 
+                SELECT 
+                    req_id, 
+                    SUM(penalty) AS total_penalty 
+                FROM 
+                    penalty_charges 
+                WHERE 
+                    DATE(created_date) <= '$to_date' 
+                GROUP BY 
+                    req_id 
+            ) p ON p.req_id = iv.req_id 
+        LEFT JOIN 
+            ( 
+                SELECT 
+                    req_id, 
+                    SUM(coll_charge) AS total_fine 
+                FROM 
+                    collection_charges 
+                WHERE 
+                    DATE(created_date) <= '$to_date' 
+                GROUP BY 
+                    req_id 
+            ) ch ON ch.req_id = iv.req_id
         WHERE lc.req_id IN ($req_id_list) AND lc.due_type != 'Interest' ";
 
 if(isset($_POST['loan_cat'])){

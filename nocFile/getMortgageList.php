@@ -55,7 +55,7 @@ function getfamName($connect,$rel_id){
                 </tr>
                     <?php
                 }?>
-                <?php if($row['mortgage_document'] == '0' && $row['mortgage_document_pending'] != 'YES' && $row['mortgage_document_used'] != '1'){
+                <?php if($row['mortgage_document'] == '0'  && $row['mortgage_document_used'] != '1'){
                     ?>
                 <tr>
                         <td><?php echo $i;$i++;?></td>
