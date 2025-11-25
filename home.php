@@ -306,6 +306,14 @@ if (isset($getuserdetails['download_access'])) {
 				<?php include "include/templates/noc.php" ?>
 			<?php } else ?>
 
+			<?php if ($current_page == 'edit_noc_handover') { ?>
+				<?php include "include/templates/edit_noc_handover.php" ?>
+			<?php } else ?>
+
+			<?php if ($current_page == 'noc_handover') { ?>
+				<?php include "include/templates/noc_handover.php" ?>
+			<?php } else ?>
+
 			<!-- Concern Creation -->
 			<?php if ($current_page == 'edit_concern_creation') { ?>
 				<?php include "include/templates/edit_concern_creation.php" ?>

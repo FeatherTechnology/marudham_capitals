@@ -2,7 +2,7 @@
 <br><br>
 <div class="page-header">
 	<div style="background-color:#009688; width:100%; padding:12px; color: #ffff; font-size: 20px; border-radius:5px;">
-		Marudham Capitals - NOC
+		Marudham Capitals - NOC Handover
 	</div>
 </div><br>
 <!-- <div class="text-right" style="margin-right: 25px;">
@@ -15,11 +15,11 @@
 <!-- Main container start -->
 <div class="main-container">
 	<!-- Row start -->
-	 <input type="hidden" id="pending_sts">
-<input type="hidden" id="od_sts">
-<input type="hidden" id="due_nil_sts">
-<input type="hidden" id="closed_sts">
-<input type="hidden" id="bal_amt">
+	<input type="hidden" id="pending_sts">
+	<input type="hidden" id="od_sts">
+	<input type="hidden" id="due_nil_sts">
+	<input type="hidden" id="closed_sts">
+	<input type="hidden" id="bal_amt">
 	<div class="row gutters">
 		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 			<div class="table-container">
@@ -44,7 +44,7 @@
 						}
 					}
 					?>
-					<table id="noc_table" class="table custom-table">
+					<table id="noc_handover_table" class="table custom-table">
 						<thead>
 							<tr>
 								<th width="50">S.No.</th>
@@ -57,6 +57,7 @@
 								<th>Line</th>
 								<th>Mobile</th>
 								<th>Receive Status</th>
+								<th>Receive By</th>
 								<th>Customer Status</th>
 								<th>Action</th>
 							</tr>
@@ -123,13 +124,12 @@
 </div>
 <script>
 	function callOnClickEvents() {
-
-		$('.remove-noc').click(function() {
+		$('.receive-noc').click(function() {
 			event.preventDefault();
 			let req_id = $(this).data('reqid');
 			let cus_id = $(this).data('cusid');
 			Swal.fire({
-				title: 'Are your sure to send this NOC Handover?',
+				title: 'Are your sure to receive this NOC Handover?',
 				text: 'This action cannot be reverted!',
 				icon: 'question',
 				showConfirmButton: true,
@@ -140,14 +140,14 @@
 				confirmButtonText: 'Yes'
 			}).then(function(result) {
 				if (result.isConfirmed) {
-					removeNOCFromList(req_id, cus_id);
+					receiveNOCFromList(req_id, cus_id);
 				}
 			})
 		})
 
-		function removeNOCFromList(req_id, cus_id) {
+		function receiveNOCFromList(req_id, cus_id) {
 			$.ajax({
-				url: 'nocFile/removeNOCFromList.php',
+				url: 'nocFile/receiveNOCFromList.php',
 				data: {
 					'req_id': req_id,
 					'cus_id': cus_id
@@ -156,24 +156,33 @@
 				type: 'post',
 				cache: false,
 				success: function(response) {
-					if (response.includes('Successfully')) {
+
+					if (response == "Already Received") {
 						Swal.fire({
-							title: 'Send Successfully!',
+							title: 'Already Received!',
+							icon: 'warning',
+							confirmButtonColor: '#d33',
+							confirmButtonText: 'OK'
+						}).then(() => {
+							window.location = 'edit_noc_handover';
+						});
+						return;
+					}
+
+					if (response == "Successfully Received") {
+						Swal.fire({
+							title: 'Received Successfully!',
 							icon: 'success',
-							showConfirmButton: true,
 							confirmButtonColor: '#009688',
 							confirmButtonText: 'OK'
-						}).then((result) => {
-							// Redirect only when OK is clicked
-							if (result.isConfirmed) {
-								window.location = 'edit_noc';
-							}
+						}).then(() => {
+							window.location = 'edit_noc_handover';
 						});
 					}
 				}
-			})
+			});
 		}
-	
+
 		$('a.customer-status').click(async function() {
 			try {
 				var cus_id = $(this).data('value');

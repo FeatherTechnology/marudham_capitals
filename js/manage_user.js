@@ -234,6 +234,12 @@ $(document).ready(function () {
         checkbox(checkboxesToEnable, loanissuemodule);
     });
 
+    $("#doctrackmodule").on("change", function () {
+        const checkboxesToEnable = document.querySelectorAll("input.doctrack-checkbox");
+        var doctrackmodule = document.querySelector('#doctrackmodule');
+        checkbox(checkboxesToEnable, doctrackmodule);
+    });
+
     $("#collectionmodule").on("change", function () {
         const checkboxesToEnable = document.querySelectorAll("input.collection-checkbox");
         var collectionmodule = document.querySelector('#collectionmodule');
@@ -392,7 +398,7 @@ $(document).ready(function () {
             $('.promotion_activity_div').hide();
         }
     });
-
+   
 	$('#submit_manage_user').click(function (event) {
 		event.preventDefault(); // Stop default submit; we'll submit programmatically after validation
 
@@ -518,10 +524,10 @@ $(function () {
         var approvalmodule = document.getElementById('approvalmodule');
         var acknowledgementmodule = document.getElementById('acknowledgementmodule');
         var loanissuemodule = document.getElementById('loanissuemodule');
+        var doctrackmodule = document.getElementById('doctrackmodule');
         var collectionmodule = document.getElementById('collectionmodule');
         var closedmodule = document.getElementById('closedmodule');
         var nocmodule = document.getElementById('nocmodule');
-        // var doctrackmodule = document.getElementById('doctrackmodule');
         var updatemodule = document.getElementById('updatemodule');
         var concernmodule = document.getElementById('concernmodule');
         var accountsmodule = document.getElementById('accountsmodule');
@@ -540,10 +546,10 @@ $(function () {
         if (approvalmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.approval-checkbox"); checkbox(checkboxesToEnable, approvalmodule); }
         if (acknowledgementmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.acknowledgement-checkbox"); checkbox(checkboxesToEnable, acknowledgementmodule); }
         if (loanissuemodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.loan_issue-checkbox"); checkbox(checkboxesToEnable, loanissuemodule); }
+        if(doctrackmodule.checked){const checkboxesToEnable = document.querySelectorAll("input.doctrack-checkbox");var doctrackmodule = document.querySelector('#doctrackmodule');checkbox(checkboxesToEnable,doctrackmodule);}
         if (collectionmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.collection-checkbox"); checkbox(checkboxesToEnable, collectionmodule); }
         if (closedmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.closed-checkbox"); checkbox(checkboxesToEnable, closedmodule); }
         if (nocmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.noc-checkbox"); checkbox(checkboxesToEnable, nocmodule); }
-        // if(doctrackmodule.checked){const checkboxesToEnable = document.querySelectorAll("input.doctrack-checkbox");var doctrackmodule = document.querySelector('#doctrackmodule');checkbox(checkboxesToEnable,doctrackmodule);}
         if (updatemodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.update-checkbox"); checkbox(checkboxesToEnable, updatemodule); }
         if (concernmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.concern-checkbox"); checkbox(checkboxesToEnable, concernmodule); }
         if (accountsmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.accounts-checkbox"); checkbox(checkboxesToEnable, accountsmodule); }
@@ -1095,7 +1101,17 @@ function validation() {
             $('#proCheck').hide(); 
         }  
     }
+  
+    var nocmodule = document.querySelector('#nocmodule');
+    var noc_mapping_access = $('#noc_mapping_access').val();
 
+    // Case 1: Checkbox checked but dropdown empty
+    if (nocmodule.checked && noc_mapping_access == '') {
+        $('#handoverCheck').show();
+        validation = false;
+    } else {
+        $('#handoverCheck').hide();
+    }
     let dueFollowupChecked = $('#due_followup').is(':checked');
     let dueFollowupIdSort = multipleSelectSort(dueFollowupLines, '#due_follup_line_id');
     if (dueFollowupChecked && dueFollowupIdSort == 0) { //Checkbox checked but no lines selected 

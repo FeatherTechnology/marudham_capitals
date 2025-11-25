@@ -34,19 +34,12 @@ $response2 = 'completed';
 // }
 
 $response3 = 'completed';
-$sts_qry = $connect->query("SELECT mortgage_process, mortgage_document_pending, endorsement_process, Rc_document_pending FROM acknowlegement_documentation WHERE req_id = '$req_id'");
+$sts_qry = $connect->query("SELECT doc_sts FROM acknowlegement_documentation WHERE req_id = '$req_id'");
 if ($sts_qry->rowCount() > 0) {
     while ($sts_row = $sts_qry->fetch()) {
-        if ($sts_row['mortgage_process'] == '0') {
-            if ($sts_row['mortgage_document_pending'] == 'YES') {
-                $response3 = 'pending';
-            }
-        }
-        if ($sts_row['endorsement_process'] == '0') {
-            if ($sts_row['Rc_document_pending'] == 'YES') {
-                $response3 = 'pending';
-            }
-        }
+          if ($sts_row['doc_sts'] == 'NO') {
+                    $response3 = 'pending';
+                }
     }
 }
 

@@ -86,6 +86,7 @@
 								<th>Last Paid Date</th>
 								<th>Current Month Paid</th>
 								<th>Hint</th>
+								<th>Remark</th>
 								<th>Communication Status</th>
 								<th>Commitment Date</th>
 							</tr>

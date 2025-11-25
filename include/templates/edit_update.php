@@ -1,3 +1,12 @@
+<style>
+	/* Remove hover and active highlight completely */
+	.dropdown-menu .dropdown-item:hover,
+	.dropdown-menu .dropdown-item:focus,
+	.dropdown-menu .dropdown-item:active {
+		background-color: transparent !important;
+		color: inherit !important;
+	}
+</style>
 <!-- Page header start -->
 <br><br>
 <div class="page-header">
@@ -15,6 +24,24 @@
 			<div class="table-container">
 
 				<div class="table-responsive">
+					<div class="d-flex justify-content-between align-items-center mb-2">
+						<h5 class="card-title mb-0">Update List</h5>
+						<div class="dropdown">
+							<button class="border-0 bg-transparent" type="button" id="filterDropdown" data-bs-toggle="dropdown"
+								aria-expanded="false">
+								<i class="fa fa-filter" style="color:#009688; font-size:30px; margin-right: 10px;"></i>
+							</button>
+							<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="filterDropdown">
+								<li>
+									<a class="dropdown-item filter-option" id="doc_sts_btn" value="NO" data-filter="NO">Document Pending</a>
+								</li>
+								<li>
+									<a class="dropdown-item filter-option" id="all_btn" value="All" style="display: none;" data-filter="All">All</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+						<br> <br>
 					<?php
 					$mscid = 0;
 					if (isset($_GET['msc'])) {
@@ -51,6 +78,7 @@
 						}
 					}
 					?>
+					<input type="hidden" id='doc_sts_id' name='doc_sts_id' value=<?php if(isset($_GET['docstatus'])){echo $_GET['docstatus'];}?>>
 					<table id="update_table" class="table custom-table">
 						<thead>
 							<tr>

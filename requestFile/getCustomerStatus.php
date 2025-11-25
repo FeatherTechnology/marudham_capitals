@@ -8,7 +8,7 @@ if (isset($_POST['cus_id'])) {
 
 $records = array();
 
-$result = $connect->query("SELECT req_id, dor, loan_category, sub_category, loan_amt, prompt_remark, cus_status FROM request_creation where cus_id = '" . strip_tags($cus_id) . "' and cus_status <= 22 ORDER BY created_date DESC ");
+$result = $connect->query("SELECT req_id, dor, loan_category, sub_category, loan_amt, prompt_remark, cus_status FROM request_creation where cus_id = '" . strip_tags($cus_id) . "' and cus_status <= 23 ORDER BY created_date DESC ");
 
 if ($result->rowCount() > 0) {
     $i = 0;
@@ -185,6 +185,7 @@ function getCollectionStatus($connect, $cus_id, $req_id)
     while ($row = $run->fetch()) {
         $i = 1;
         if (date('Y-m-d', strtotime($row['due_start_from'])) > date('Y-m-d', strtotime($curdate))  and $bal_amt[$i - 1] != 0) { //If the start date is on upcoming date then the sub status is current, until current date reach due_start_from date.
+            echo "ss";
             if ($row['cus_status'] == '15') {
                 $retVal = 'Error';
             } elseif ($row['cus_status'] == '16') {

@@ -55,6 +55,7 @@ $closedmodule = '';
 $closed = '';
 $nocmodule = '';
 $noc = '';
+$noc_mapping_access = '';
 $doctrackmodule = '';
 $doctrack = '';
 $doc_rec_access = '';
@@ -212,6 +213,8 @@ if($idupd>0)
 			$closed          		     = $getUser['closed'];
 			$nocmodule          		     = $getUser['nocmodule'];
 			$noc          		     	= $getUser['noc'];
+			$noc_handover          		     = $getUser['noc_handover'];
+			$noc_mapping_access          		     = $getUser['noc_mapping_access'];
 			$doctrackmodule 				= $getUser['doctrackmodule'];
 			$doctrack 				= $getUser['doctrack'];
 			$doc_rec_access 				= $getUser['doc_rec_access'];
@@ -809,7 +812,31 @@ if($idupd>0)
                             </div>
                         </div>
 					</div>
+	
+					<hr>
 
+					 <div class="custom-control custom-checkbox">
+						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($doctrackmodule==0){ echo'checked'; }} ?> tabindex="25" class="" id="doctrackmodule" name="doctrackmodule" >&nbsp;&nbsp;
+						<label class="custom-control-label" for="doctrackmodule">
+							<h5>Document Track</h5>
+						</label>
+					</div>
+					<br>
+					<div class="row">
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($doctrack==0){ echo'checked'; }} ?> tabindex="25" class="doctrack-checkbox screen-validations" id="doctrack" name="doctrack" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="doctrack">Document Track</label>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($doc_rec_access==0){ echo'checked'; }} ?> tabindex="25" class="doctrack-checkbox screen-validations" id="doc_rec_access" name="doc_rec_access" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="doc_rec_access">Document Receive Access</label>
+                            </div>
+                        </div>
+					</div>
+					
 					<hr>
 
 					<div class="custom-control custom-checkbox">
@@ -868,31 +895,26 @@ if($idupd>0)
                                 <label class="custom-control-label" for="noc">NOC</label>
                             </div>
                         </div>
-					</div>
-					
-					<!--<hr>
-
-					 <div class="custom-control custom-checkbox">
-						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($doctrackmodule==0){ echo'checked'; }} ?> tabindex="25" class="" id="doctrackmodule" name="doctrackmodule" >&nbsp;&nbsp;
-						<label class="custom-control-label" for="doctrackmodule">
-							<h5>Document Track</h5>
-						</label>
-					</div>
-					<br>
-					<div class="row">
-                        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($doctrack==0){ echo'checked'; }} ?> tabindex="25" class="doctrack-checkbox" id="doctrack" name="doctrack" disabled>&nbsp;&nbsp;
-                                <label class="custom-control-label" for="doctrack">Document Track</label>
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($noc_handover==0){ echo'checked'; }} ?> tabindex="45" class="noc-checkbox screen-validations" id="noc_handover" name="noc_handover" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="noc_handover">NOC Handover</label>
                             </div>
                         </div>
-                        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($doc_rec_access==0){ echo'checked'; }} ?> tabindex="25" class="doctrack-checkbox" id="doc_rec_access" name="doc_rec_access" disabled>&nbsp;&nbsp;
-                                <label class="custom-control-label" for="doc_rec_access">Document Receive Access</label>
-                            </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 noc_handover_div">
+							  <div class="form-group">
+                                            <label for="noc_mapping_access">NOC Mapping Access</label>&nbsp;<span class="text-danger">*</span>
+											<select tabindex="12" type="text" class="form-control" id="noc_mapping_access" name="noc_mapping_access">
+												<option value="">Select NOC Mapping Access</option>
+												<option value="1" <?php if($noc_mapping_access == '1') echo 'selected';?> >Group</option>
+												<option value="2" <?php if($noc_mapping_access == '2') echo 'selected';?> >Line</option>
+												<option value="3" <?php if($noc_mapping_access == '3') echo 'selected';?> >Followup</option>
+											</select>
+											<br>
+											<span class="text-danger" style='display:none' id='handoverCheck'>Please Select NOC Mapping Access</span>
+                                        </div>
                         </div>
-					</div> -->
+					</div>
 
 					<hr>
 
@@ -919,18 +941,6 @@ if($idupd>0)
 									<option value="2">Documentation</option>
 								</select>
 								<span class='text-danger updateScreenCheck' style="display:none">Please Select Update Screen</span>
-                            </div>
-                        </div>
-						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($doctrack==0){ echo'checked'; }} ?> tabindex="48" class="update-checkbox screen-validations" id="doctrack" name="doctrack" disabled>&nbsp;&nbsp;
-                                <label class="custom-control-label" for="doctrack">Document Track</label>
-                            </div>
-                        </div>
-						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($doc_rec_access==0){ echo'checked'; }} ?> tabindex="49" class="update-checkbox screen-validations" id="doc_rec_access" name="doc_rec_access" disabled>&nbsp;&nbsp;
-                                <label class="custom-control-label" for="doc_rec_access">Document Receive Access</label>
                             </div>
                         </div>
 					</div>

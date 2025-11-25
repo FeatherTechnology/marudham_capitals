@@ -40,7 +40,21 @@ $column = array(
     'rc.req_id',
     'rc.req_id',
 );
+$con = '';
 
+if ($_POST["doc_sts"] != '') {
+    $doc_sts = $_POST["doc_sts"];
+
+    // Use different alias: latest_doc
+    $con = " INNER JOIN (
+                SELECT cus_id_doc, MAX(req_id) AS last_req_id 
+                FROM acknowlegement_documentation 
+                WHERE doc_sts = '$doc_sts' 
+                GROUP BY cus_id_doc
+            ) latest_doc 
+            ON rc.cus_id = latest_doc.cus_id_doc 
+            AND rc.req_id = latest_doc.last_req_id ";
+}
 if ($userid == 1) {
     $query = "SELECT rc.req_id, rc.cus_id, cr.autogen_cus_id, rc.cus_name, rc.mobile1, cr.area_confirm_area AS area, rc.cus_status, rc.cus_data, cr.area_group, cr.area_line 
     FROM request_creation rc
@@ -49,14 +63,14 @@ if ($userid == 1) {
         SELECT cus_id, MAX(req_id) AS last_req_id 
         FROM request_creation  
         GROUP BY cus_id
-    ) latest ON rc.cus_id = latest.cus_id AND rc.req_id = latest.last_req_id
+    ) latest ON rc.cus_id = latest.cus_id AND rc.req_id = latest.last_req_id $con
     WHERE (rc.cus_data = 'Existing' AND rc.cus_status >= 1) OR (rc.cus_data = 'New' AND rc.cus_status > 13)";
 
 } else {
     $query = "SELECT rc.req_id, rc.cus_id, cr.autogen_cus_id, rc.cus_name, rc.mobile1, cr.area_confirm_area AS area, rc.cus_status, rc.cus_data, cr.area_group, cr.area_line
     FROM request_creation rc
     JOIN customer_register cr ON rc.cus_id = cr.cus_id 
-    INNER JOIN ( SELECT cus_id, MAX(req_id) AS last_req_id FROM request_creation GROUP BY cus_id) latest ON rc.cus_id = latest.cus_id AND rc.req_id = latest.last_req_id
+    INNER JOIN ( SELECT cus_id, MAX(req_id) AS last_req_id FROM request_creation GROUP BY cus_id) latest ON rc.cus_id = latest.cus_id AND rc.req_id = latest.last_req_id $con
     WHERE rc.sub_area IN ($sub_area_list) AND ( (rc.cus_data = 'Existing' AND rc.cus_status >= 1) OR (rc.cus_data = 'New' AND rc.cus_status > 13))";
 }
 
@@ -121,7 +135,11 @@ foreach ($result as $row) {
 
     $id          = $row['cus_id'];
     $cus_id      = $row['cus_id'];
-    $action = "<a href='update&upd=$id' title='Update'> <span class='icon-border_color' style='font-size: 12px;position: relative;top: 2px;'></span> </a>";
+    if($_POST["doc_sts"]!=''){
+         $action = "<a href='update&upd=$id&docstatus=NO' title='Update'> <span class='icon-border_color' style='font-size: 12px;position: relative;top: 2px;'></span> </a>";
+    }else{
+         $action = "<a href='update&upd=$id' title='Update'> <span class='icon-border_color' style='font-size: 12px;position: relative;top: 2px;'></span> </a>";
+    }
 
     $sub_array[] = $action;
     $data[]      = $sub_array;
@@ -150,21 +168,16 @@ function getDocumentStatus($connect, $cus_id)
 
     $status = 'completed';
 
-    $sts_qry = $connect->query("SELECT mortgage_process, mortgage_document_pending, endorsement_process, Rc_document_pending FROM acknowlegement_documentation where cus_id_doc = '$cus_id' ");
+    $sts_qry = $connect->query("SELECT doc_sts FROM acknowlegement_documentation where cus_id_doc = '$cus_id' ");
 
     if ($sts_qry->rowCount() > 0) {
         while ($sts_row = $sts_qry->fetch()) { //check any one of document for mortgage or endorsement is pending then response will be pending
 
-            if ($sts_row['mortgage_process'] == '0') {
-                if ($sts_row['mortgage_document_pending'] == 'YES') {
+            if ($sts_row['doc_sts'] == 'NO') {
+               
                     $status = 'pending';
                 }
-            }
-            if ($sts_row['endorsement_process'] == '0') {
-                if ($sts_row['Rc_document_pending'] == 'YES') {
-                    $status = 'pending';
-                }
-            }
+            
         }
     }
 

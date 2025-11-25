@@ -63,6 +63,7 @@ if (sizeof($getUser) > 0) {
 								<th>Branch</th>
 								<th>Group</th>
 								<th>Line</th>
+								<th>Mobile</th>
 								<th>Area</th>
 								<th>Sub Area</th>
 								<th>Loan Category</th>

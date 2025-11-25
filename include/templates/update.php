@@ -10,14 +10,14 @@ $update_screen_id = ''; // Default value
 $selected_screens = [];
 
 if (isset($_SESSION['userid'])) {
-    $userid = $_SESSION['userid'];
-    $getUser = $userObj->getuser($mysqli, $userid); 
+	$userid = $_SESSION['userid'];
+	$getUser = $userObj->getuser($mysqli, $userid);
 
-    // Check if user record exists and update_screen_id is not empty
-    if (!empty($getUser) && !empty($getUser['update_screen_id'])) {
-        $update_screen_id = $getUser['update_screen_id'];
-        $selected_screens = array_filter(explode(',', $update_screen_id));
-    }
+	// Check if user record exists and update_screen_id is not empty
+	if (!empty($getUser) && !empty($getUser['update_screen_id'])) {
+		$update_screen_id = $getUser['update_screen_id'];
+		$selected_screens = array_filter(explode(',', $update_screen_id));
+	}
 }
 
 if (isset($_POST['submit_update_cus_profile']) && $_POST['submit_update_cus_profile'] != '') {
@@ -110,10 +110,13 @@ if (sizeof($getCustomerReg) > 0) {
 	.switch {
 		position: relative;
 		display: inline-block;
-		width: 60px;
-		height: 34px;
+		width: 135px;
+		/* increased from 60px */
+		height: 45px;
+		/* increased from 34px */
 		left: 10px;
 	}
+
 
 	.switch input {
 		opacity: 0;
@@ -136,10 +139,12 @@ if (sizeof($getCustomerReg) > 0) {
 	.slider:before {
 		position: absolute;
 		content: "";
-		height: 26px;
-		width: 26px;
-		left: 4px;
-		bottom: 4px;
+		height: 36px;
+		/* increased from 26px */
+		width: 36px;
+		/* increased from 26px */
+		left: 5px;
+		bottom: 5px;
 		background-color: white;
 		-webkit-transition: .4s;
 		transition: .4s;
@@ -154,9 +159,9 @@ if (sizeof($getCustomerReg) > 0) {
 	}
 
 	input:checked+.slider:before {
-		-webkit-transform: translateX(26px);
-		-ms-transform: translateX(26px);
-		transform: translateX(26px);
+		left: calc(100% - 41px);
+		/* 36px knob + 5px padding */
+		transform: translateX(0);
 	}
 
 	/* Rounded sliders */
@@ -166,6 +171,24 @@ if (sizeof($getCustomerReg) > 0) {
 
 	.slider.round:before {
 		border-radius: 50%;
+	}
+
+	.slider::after {
+		content: "Pending";
+		/* default text */
+		position: absolute;
+		color: white;
+		font-weight: 600;
+		font-size: 14px;
+		left: 53px;
+		top: 13px;
+	}
+
+	/* When Checked */
+	input:checked+.slider::after {
+		content: "Completed";
+		left: 11px;
+		/* text moves to left side when active */
 	}
 </style>
 
@@ -190,7 +213,9 @@ if (sizeof($getCustomerReg) > 0) {
 	</div>
 </div><br>
 <div class="text-right" style="margin-right: 25px;">
-	<a href="edit_update">
+	<a href="edit_update<?php if (isset($_GET['docstatus'])) {
+							echo '&docstatus=' . $_GET['docstatus'];
+						} ?>">
 		<button type="button" class="btn btn-primary"><span class="icon-arrow-left"></span>&nbsp; Back</button>
 	</a>
 </div><br><br>
@@ -203,7 +228,9 @@ if (sizeof($getCustomerReg) > 0) {
 
 	<div class="col-md-12">
 		<div class="form-group" style="text-align:center">
-			<input type="hidden" name="selected_screens" id="selected_screens" value="<?php if (isset($selected_screens)) { echo implode(',', $selected_screens); } ?>" > 
+			<input type="hidden" name="selected_screens" id="selected_screens" value="<?php if (isset($selected_screens)) {
+																							echo implode(',', $selected_screens);
+																						} ?>">
 			<?php if (!empty($selected_screens)) { ?>
 				<?php if (in_array("1", $selected_screens)) { ?>
 					<input type="radio" name="verification_type" id="cus_profile" value="cus_profile">
@@ -288,7 +315,9 @@ if (sizeof($getCustomerReg) > 0) {
 										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
 											<div class="form-group">
 												<label for="autogen_cus_id">Customer ID</label><span class="required">&nbsp;*</span>
-												<input type="text" class="form-control" id="autogen_cus_id" name="autogen_cus_id" value='<?php if (isset($autogen_cus_id)) { echo $autogen_cus_id; } ?>' tabindex='2' readonly>
+												<input type="text" class="form-control" id="autogen_cus_id" name="autogen_cus_id" value='<?php if (isset($autogen_cus_id)) {
+																																				echo $autogen_cus_id;
+																																			} ?>' tabindex='2' readonly>
 											</div>
 										</div>
 										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
@@ -407,11 +436,13 @@ if (sizeof($getCustomerReg) > 0) {
 												<span class="text-danger" style='display:none' id='mobile2Check'>Please Enter Mobile Number</span>
 											</div>
 										</div>
-										
+
 										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
 											<div class="form-group">
 												<label for="whatsapp">Whatsapp No </label>
-												<input type="number" class="form-control" id="whatsapp_no" name="whatsapp_no" tabindex='15' placeholder="Enter WhatsApp Number" maxlength="10" onkeypress="if(this.value.length==10) return false;" value="<?php if (isset($cp_whatsapp)) { echo $cp_whatsapp; } ?>">
+												<input type="number" class="form-control" id="whatsapp_no" name="whatsapp_no" tabindex='15' placeholder="Enter WhatsApp Number" maxlength="10" onkeypress="if(this.value.length==10) return false;" value="<?php if (isset($cp_whatsapp)) {
+																																																																echo $cp_whatsapp;
+																																																															} ?>">
 												<span class="text-danger" style='display:none' id='whatsapp_noCheck'>Please Enter Whatsapp Number</span>
 											</div>
 										</div>
@@ -490,8 +521,8 @@ if (sizeof($getCustomerReg) > 0) {
 																																} ?>'>
 											<img id='imgshow' class="imgshow" src='img/avatar.png' /><br>
 											<input type="file" onchange="compressImage(this,200)" class="form-control" id="pic" name="pic" tabindex='22' value='<?php if (isset($pic)) {
-																																											echo $pic;
-																																										} ?>'>
+																																									echo $pic;
+																																								} ?>'>
 											<span class="text-danger" style='display:none' id='customerpicCheck'>Please Choose Customer Image</span>
 										</div>
 									</div>
@@ -667,7 +698,9 @@ if (sizeof($getCustomerReg) > 0) {
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="cus_occ_detail"> Occupation Detail </label>
-										<input type="text" class="form-control" name="cus_occ_detail" id="cus_occ_detail" placeholder="Enter Occupation Detail" onkeydown="return /[a-z ]/i.test(event.key)" value="<?php if (isset($occupation_details)) {echo $occupation_details;} ?>" tabindex="33">
+										<input type="text" class="form-control" name="cus_occ_detail" id="cus_occ_detail" placeholder="Enter Occupation Detail" onkeydown="return /[a-z ]/i.test(event.key)" value="<?php if (isset($occupation_details)) {
+																																																						echo $occupation_details;
+																																																					} ?>" tabindex="33">
 									</div>
 								</div>
 
@@ -785,13 +818,13 @@ if (sizeof($getCustomerReg) > 0) {
 								<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
 									<div class="form-group">
 										<label for="latlong">Location</label>
-										<input type="text" class="form-control" name="latlong" id="latlong" placeholder="Enter Latitude Longitude" value="<?php echo $latlong; ?>" tabindex="44" >
+										<input type="text" class="form-control" name="latlong" id="latlong" placeholder="Enter Latitude Longitude" value="<?php echo $latlong; ?>" tabindex="44">
 									</div>
 								</div>
 								<div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12">
 									<div class="form-group">
 										<label style="visibility:hidden">Location</label>
-										<button class="btn btn-primary" id="getlatlong" name="getlatlong" style="padding: 5px 35px;" tabindex="45" ><span class="icon-my_location"></span></button>
+										<button class="btn btn-primary" id="getlatlong" name="getlatlong" style="padding: 5px 35px;" tabindex="45"><span class="icon-my_location"></span></button>
 									</div>
 								</div>
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
@@ -983,8 +1016,8 @@ if (sizeof($getCustomerReg) > 0) {
 									<div class="form-group">
 										<label for="cus_monthly_income"> Monthly Income </label> <span class="required">*</span>
 										<input type="text" class="form-control" name="cus_monthly_income" id="cus_monthly_income" placeholder="Enter Monthly Income" value="<?php if (isset($monthly_income)) {
-																																													echo moneyFormatIndia($monthly_income);
-																																												} ?>" tabindex="55">
+																																												echo moneyFormatIndia($monthly_income);
+																																											} ?>" tabindex="55">
 										<span class="text-danger" style='display:none' id='monthlyIncomeCheck'>Please Enter Monthly Income </span>
 									</div>
 								</div>
@@ -1003,8 +1036,8 @@ if (sizeof($getCustomerReg) > 0) {
 									<div class="form-group">
 										<label for="cus_support_income"> Support Income </label> <span class="required">*</span>
 										<input type="text" class="form-control" name="cus_support_income" id="cus_support_income" placeholder="Enter Support Income" value="<?php if (isset($support_income)) {
-																																													echo moneyFormatIndia($support_income);
-																																												} ?>" tabindex="57">
+																																												echo moneyFormatIndia($support_income);
+																																											} ?>" tabindex="57">
 										<span class="text-danger" style='display:none' id='supportIncomeCheck'>Please Enter Support Income </span>
 									</div>
 								</div>
@@ -1013,8 +1046,8 @@ if (sizeof($getCustomerReg) > 0) {
 									<div class="form-group">
 										<label for="cus_Commitment"> Commitment </label> <span class="required">*</span>
 										<input type="text" class="form-control" name="cus_Commitment" id="cus_Commitment" placeholder="Enter Commitment" value="<?php if (isset($commitment)) {
-																																										echo moneyFormatIndia($commitment);
-																																									} ?>" tabindex="58">
+																																									echo moneyFormatIndia($commitment);
+																																								} ?>" tabindex="58">
 										<span class="text-danger" style='display:none' id='commitmentCheck'>Please Enter Commitment </span>
 									</div>
 								</div>
@@ -1023,8 +1056,8 @@ if (sizeof($getCustomerReg) > 0) {
 									<div class="form-group">
 										<label for="cus_monDue_capacity"> Monthly Due Capacity </label> <span class="required">*</span>
 										<input type="text" class="form-control" name="cus_monDue_capacity" id="cus_monDue_capacity" placeholder="Enter Monthly Due Capacity" value="<?php if (isset($monthly_due_capacity)) {
-																																															echo moneyFormatIndia($monthly_due_capacity);
-																																														} ?>" tabindex="59">
+																																														echo moneyFormatIndia($monthly_due_capacity);
+																																													} ?>" tabindex="59">
 										<span class="text-danger" style='display:none' id='monthlyDueCapacityCheck'> Please Enter Monthly Due Capacity </span>
 									</div>
 								</div>
@@ -1033,8 +1066,8 @@ if (sizeof($getCustomerReg) > 0) {
 									<div class="form-group">
 										<label for="cus_loan_limit"> Loan Limit </label> <span class="required">*</span>
 										<input type="text" class="form-control" name="cus_loan_limit" id="cus_loan_limit" placeholder="Enter Loan Limit" value="<?php if (isset($loan_limit)) {
-																																										echo moneyFormatIndia($loan_limit);
-																																									} ?>" tabindex="60">
+																																									echo moneyFormatIndia($loan_limit);
+																																								} ?>" tabindex="60">
 										<span class="text-danger" style='display:none' id='loanLimitCheck'>Please Enter Loan Limit </span>
 									</div>
 								</div>
@@ -1085,21 +1118,21 @@ if (sizeof($getCustomerReg) > 0) {
 						</div>
 					</div>
 					<!-- ///////////////////////////////////////////////  Customer Summary  END /////////////////////////////////////////////////////////// -->
-					 
-				<!-- Fingerprint Info start-->
-				<div class="card ">
-					<div class="card-header"> Fingerprint Info </div><span class="text-danger fingerSpan" style="margin-left:25px;display: none;">Please Scan Customer Fingerprint</span>
-					<div class="card-body">
-						<div class="row">
-							<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-								<div class="form-group table-responsive fingerprintTable">
 
+					<!-- Fingerprint Info start-->
+					<div class="card ">
+						<div class="card-header"> Fingerprint Info </div><span class="text-danger fingerSpan" style="margin-left:25px;display: none;">Please Scan Customer Fingerprint</span>
+						<div class="card-body">
+							<div class="row">
+								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+									<div class="form-group table-responsive fingerprintTable">
+
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				<!-- Fingerprint Info End-->
+					<!-- Fingerprint Info End-->
 
 
 					<div class="col-md-12 ">
@@ -1401,18 +1434,18 @@ if (sizeof($getCustomerReg) > 0) {
 										</div>
 									</div>
 
-									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" id="mort_doc_upd" style="display: none;">
+									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" id="mort_doc_upd">
 										<div class="form-group">
-											<label for="mortgage_document_upd"> Mortgage Document Uploads </label> 
+											<label for="mortgage_document_upd"> Mortgage Document Uploads </label>
 											<input type="file" onchange="compressImage(this,200)" class="form-control" id="mortgage_document_upd" name="mortgage_document_upd" tabindex="87">
 											<input type="hidden" id="mortgage_doc_upd" name="mortgage_doc_upd" value="">
-											<a href="" target="_blank" id="mort_doc_img">  </a>
+											<a href="" target="_blank" id="mort_doc_img"> </a>
 											<span class="text-danger" id="mortgagedocUpdCheck" style='display:none'> Upload Mortgage Document </span>
 										</div>
 									</div>
 
 
-									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+									<!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="pendingchk"> Pending </label> <span class="required">&nbsp;*</span>
 											<label class="switch">
@@ -1420,7 +1453,7 @@ if (sizeof($getCustomerReg) > 0) {
 												<span class="slider round"></span>
 											</label>
 										</div>
-									</div>
+									</div> -->
 								</div>
 
 							</div>
@@ -1571,9 +1604,9 @@ if (sizeof($getCustomerReg) > 0) {
 									</div>
 								</div>
 
-								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" id="end_doc_upd" style="display: none;">
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" id="end_doc_upd">
 									<div class="form-group">
-										<label for="RC_document_upd"> RC Uploads </label> 
+										<label for="RC_document_upd"> RC Uploads </label>
 										<input type="file" onchange="compressImage(this,200)" class="form-control" id="RC_document_upd" name="Rc_document_upd" tabindex="102">
 										<input type="hidden" id="rc_doc_upd" name="rc_doc_upd" value="">
 										<a href="" target="_blank" id="rc_doc_img"> </a>
@@ -1581,7 +1614,7 @@ if (sizeof($getCustomerReg) > 0) {
 									</div>
 								</div>
 
-								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+								<!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="endorsependingchk"> Pending </label> <span class="required">&nbsp;*</span>
 										<label class="switch">
@@ -1589,7 +1622,7 @@ if (sizeof($getCustomerReg) > 0) {
 											<span class="slider round"></span>
 										</label>
 									</div>
-								</div>
+								</div> -->
 
 							</div>
 
@@ -1638,6 +1671,45 @@ if (sizeof($getCustomerReg) > 0) {
 					</div>
 				</div>
 				<!-- Document Info End -->
+				<!-- Documents Status START-->
+				<form id="doc_sts_form" name="doc_sts_form" action="" method="post" enctype="multipart/form-data">
+					<div class="card choosing-document-card" id="documents_status_card" style='display:none'>
+						<div class="card-header"> Documents Status
+						</div>
+						<div class="card-body">
+							<div class="row">
+								<div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 col-12">
+									<div class="form-group">
+										<label for="doc_sts"> Docuemnt Status </label> <span class="required">&nbsp;*</span>
+										<label class="switch">
+											<input type="checkbox" value="YES" id="doc_sts" name="doc_sts" tabindex="79">
+											<span class="slider round"></span>
+										</label>
+									</div>
+								</div>
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+									<div class="form-group">
+										<label for="doc_remark">Acknowledgement Remarks</label><span class="required">&nbsp;*</span>
+										<textarea class="form-control" name="doc_remark" id="doc_remark" readonly tabindex="52"></textarea>
+									</div>
+								</div>
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+									<div class="form-group">
+										<label for="update_remark">Update Remarks</label><span class="required">&nbsp;*</span>
+										<textarea class="form-control" name="update_remark" id="update_remark" tabindex="52"> </textarea>
+										<span class="text-danger" id="update_remarkcheck" style='display:none'> Enter Remarks </span>
+									</div>
+								</div>
+								<div class="col-md-12 ">
+									<div class="text-right">
+										<button type="button" name="update_doc_sts" id="update_doc_sts" class="btn btn-primary" value="Submit" tabindex="104"><span class="icon-check"></span>&nbsp;Submit</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+				<!-- Document Status End -->
 
 			</div>
 		</div> <!-- Row End -->
@@ -2112,7 +2184,7 @@ if (sizeof($getCustomerReg) > 0) {
 								<input type="text" class="form-control" id="signType_cus_name" name="signType_cus_name" readonly tabindex='3'>
 							</div>
 						</div>
-					
+
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" style="display: none;" id="guar_name_div">
 							<div class="form-group">
 								<label for="guar_name"> Guarentor Name </label>
@@ -2140,7 +2212,7 @@ if (sizeof($getCustomerReg) > 0) {
 
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
-								<label for="upd"> Uploads </label> 
+								<label for="upd"> Uploads </label>
 								<input type="file" onchange="compressImage(this,200)" class="form-control" id="signdoc_upd" name="signdoc_upd[]" multiple tabindex='7'>
 								<span class="text-danger" id="docupdCheck" style="display: none;"> Upload Document </span>
 							</div>
@@ -2148,7 +2220,7 @@ if (sizeof($getCustomerReg) > 0) {
 
 						<div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12">
 							<input type="hidden" name="signedID" id="signedID">
-							<button type="button" name="signInfoBtn" id="signInfoBtn" class="btn btn-primary" style="margin-top: 19px;"  tabindex='8'>Submit</button>
+							<button type="button" name="signInfoBtn" id="signInfoBtn" class="btn btn-primary" style="margin-top: 19px;" tabindex='8'>Submit</button>
 						</div>
 
 					</div>
@@ -2234,7 +2306,7 @@ if (sizeof($getCustomerReg) > 0) {
 								<label for="HolderName "> Holder Name </label><span class="required">&nbsp;*</span>
 								<input type="text" class="form-control" id="holder_name" name="holder_name" readonly tabindex='2'>
 
-								<select type="text" class="form-control" id="holder_relationship_name" name="holder_relationship_name" style="display: none;" >
+								<select type="text" class="form-control" id="holder_relationship_name" name="holder_relationship_name" style="display: none;">
 									<option value=""> Select Holder Name </option>
 								</select>
 								<span class="text-danger" id="holderNameCheck"> Select Holder Name </span>
