@@ -1,8 +1,10 @@
 <?php
 include('../ajaxconfig.php');
+
 if(isset($_POST['req_id'])){
     $req_id = $_POST['req_id'];
 }
+
 if(isset($_POST['cus_name'])){
     $cus_name = $_POST['cus_name'];
 }
@@ -12,6 +14,7 @@ function getfamName($connect,$rel_id){
     $run=$qry1->fetch();
     return $run['famname'];
 }
+
 function getGuarentorName($connect,$req_id){
     $qry1=$connect->query("SELECT famname FROM `verification_family_info` a JOIN `acknowlegement_customer_profile` b on b.guarentor_name = a.id where b.req_id=$req_id");
     $run=$qry1->fetch();
@@ -32,7 +35,7 @@ function getGuarentorName($connect,$req_id){
     <tbody>
         <?php
         $i=1;
-        $qry = $connect->query("SELECT a.doc_name,a.sign_type,a.signType_relationship,b.id,b.upload_doc_name,b.noc_given,b.noc_date,b.noc_person,b.noc_name FROM `signed_doc_info` a join signed_doc b on a.id = b.signed_doc_id  where b.req_id = $req_id  ");
+        $qry = $connect->query("SELECT a.doc_name, a.sign_type, a.signType_relationship, b.upload_doc_name FROM `signed_doc_info` a LEFT JOIN signed_doc b ON a.id = b.signed_doc_id WHERE a.req_id = $req_id ");
         while($row = $qry->fetch()){
             $rel_id = $row['signType_relationship'];
             $name ='';

@@ -1,4 +1,9 @@
 function getAllDocumentList(req_id, cus_name, cus_id) {
+    // To get the Customer details.
+    $.post('collectionFile/getDueMethodName.php', { req_id }, function (response) {
+        $('#myLargeModalLabel').text(`View Document ( Aadhaar Number : ${response.cus_id} | Cus ID : ${response.autogen_cus_id}  | Cus Name : ${response.cus_name}  | Loan ID : ${response.loan_id}  | DOC ID : ${response.doc_id} | Loan Category : ${response.loan_category} )`);
+    }, 'json');
+
     // To get the Signed Document List on Checklist
     $.ajax({
         url: 'documentTrackFile/getSignedDocList.php',

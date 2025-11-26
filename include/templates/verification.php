@@ -2287,7 +2287,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 																																					echo moneyFormatIndia($tot_value_lc);
 																																				} elseif (isset($tot_value)) {
 																																					echo moneyFormatIndia($tot_value);
-																																				} ?>'>
+																																				} ?>' oninput="validateInputNumber(this,'loaninfo')">
 												<span class="text-danger" style='display:none' id='total_valueCheck'>Please Enter Total Value</span>
 											</div>
 										</div>
@@ -2298,7 +2298,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 																																			echo moneyFormatIndia($ad_amt_lc);
 																																		} elseif (isset($ad_amt)) {
 																																			echo moneyFormatIndia($ad_amt);
-																																		} ?>'>
+																																		} ?>' oninput="validateInputNumber(this,'loaninfo')">
 												<span class="text-danger" style='display:none' id='ad_amtCheck'>Please Enter Advance Amount</span>
 											</div>
 										</div>
@@ -2309,7 +2309,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 																																				echo moneyFormatIndia($loan_amt_lc);
 																																			} elseif (isset($loan_amt)) {
 																																				echo moneyFormatIndia($loan_amt);
-																																			} ?>'>
+																																			} ?>' oninput="validateInputNumber(this,'loaninfo')">
 												<span class="text-danger" style='display:none' id='loan_amtCheck'>Please Enter Loan Amount</span>
 											</div>
 										</div>
@@ -2401,7 +2401,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
 												<label for="int_rate">Interest Rate </label>&nbsp;<span class="text-danger min-max-int">*</span><!-- Min and max intrest rate-->
-												<input tabindex="136" type="number" class="form-control" id="int_rate" name="int_rate" value='<?php if (isset($int_rate)) echo $int_rate; ?>'>
+												<input tabindex="136" type="text" class="form-control" id="int_rate" name="int_rate" value='<?php if (isset($int_rate)) echo $int_rate; ?>' oninput="validateInputNumber(this,'loaninfo')">
 
 												<span class="text-danger" style='display:none' id='int_rateCheck'>Please Enter Interest Rate</span>
 											</div>
@@ -2409,7 +2409,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
 												<label for="due_period">Due Period </label>&nbsp;<span class="text-danger min-max-due">*</span><!-- Min and max Profit Method-->
-												<input tabindex="137" type="number" class="form-control" id="due_period" name="due_period" value=''>
+												<input tabindex="137" type="text" class="form-control" id="due_period" name="due_period" value='' oninput="validateInputNumber(this,'loaninfo')">
 
 												<span class="text-danger" style='display:none' id='due_periodCheck'>Please Enter Due Period</span>
 											</div>
@@ -2418,14 +2418,14 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 											<div class="form-group">
 												<label for="doc_charge">Document Charges </label>&nbsp;<span class="text-danger min-max-doc">*</span><!-- Min and max Document charges-->
 
-												<input tabindex="138" type="number" class="form-control" id="doc_charge" name="doc_charge" value='<?php if (isset($doc_charge)) echo $doc_charge; ?>'>
+												<input tabindex="138" type="text" class="form-control" id="doc_charge" name="doc_charge" value='<?php if (isset($doc_charge)) echo $doc_charge; ?>' oninput="validateInputNumber(this,'loaninfo')">
 												<span class="text-danger" style='display:none' id='doc_chargeCheck'>Please Enter Document Charge</span>
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
 												<label for="proc_fee">Processing Fees</label>&nbsp;<span class="text-danger min-max-proc">*</span><!-- Min and max Processing fee-->
-												<input tabindex="139" type="number" class="form-control" id="proc_fee" name="proc_fee" value='<?php if (isset($proc_fee)) echo $proc_fee; ?>'>
+												<input tabindex="139" type="text" class="form-control" id="proc_fee" name="proc_fee" value='<?php if (isset($proc_fee)) echo $proc_fee; ?>' oninput="validateInputNumber(this,'loaninfo')">
 
 												<span class="text-danger" style='display:none' id='proc_feeCheck'>Please Enter Processing fee</span>
 											</div>
