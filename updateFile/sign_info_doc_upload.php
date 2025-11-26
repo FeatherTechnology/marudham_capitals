@@ -8,13 +8,11 @@ $sign_type               = $_POST['sign_type'];
 $signType_relationship   = $_POST['signType_relationship'];
 $doc_Count               = $_POST['doc_Count'];
 $fileArray               = $_FILES['signdoc_upd'] ?? '';
-
-if ($signedID == '') {
-
-    if ($sign_type == '1') {
+  if ($sign_type == '1') {
         $qry = $connect->query("SELECT fam.id from verification_family_info fam JOIN customer_profile cp on cp.guarentor_name = fam.id where cp.req_id = $req_id");
         $signType_relationship = $qry->fetch()['id'];
     }
+if ($signedID == '') {
 
     $qry = $connect->query("SELECT id FROM `customer_profile` WHERE `req_id` = $req_id");
     $cus_profile_id = $qry->fetch()['id'];

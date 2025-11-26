@@ -39,7 +39,7 @@ if ($chequeID == '') {
 
 $connect->query("DELETE FROM `cheque_no_list` WHERE `cheque_table_id`='$chequeID'");
 
-if(!empty($fileArray)){
+if (!empty($filesArray['name'][0])){
     $connect->query("DELETE FROM `cheque_upd` WHERE `cheque_table_id`='$chequeID'");
     
     foreach($filesArray['name'] as $key=>$val)
