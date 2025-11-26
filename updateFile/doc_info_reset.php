@@ -57,7 +57,7 @@ if(isset($_POST['cus_id'])){
 
                 <td>
                     <?php
-                        if(empty($docUpd)){?>
+                        if(empty($docUpd[0])){?>
                             <a class="doc_info_edit" value="<?php echo $row['id']; ?>" style="text-decoration: underline;"> Upload</a> &nbsp;
                     <?php } ?>
                 </td>
