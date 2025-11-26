@@ -2342,58 +2342,66 @@
     }
 
     //to validate input and enter only number/ moneyformat works only text type so validating here instead of number type
-    function validateInputNumber(e){
+    function validateInputNumber(e,screen){
         let val = $(e).val();
 
-        // Remove all non-digit characters
-        val = val.replace(/[^0-9]/g, '');
+        if(screen ==='collection'){ //Collection track to insert one round off so not allowed dot
+            // Remove all non-digit characters
+            val = val.replace(/[^0-9]/g, '');
+
+        } else if(screen ==='loaninfo'){
+            val = val.replace(/(\..*)\./g, '$1'); // allow only one dot
+            
+        }
 
         // Update the field with only numeric value
         $(e).val(val);
     }
+
     // To download Excel file
     function exportToExcel(tableId, data, reportName) {
-    // ✅ Get table headers dynamically from the given table ID
-    const table = document.getElementById(tableId);
+        // ✅ Get table headers dynamically from the given table ID
+        const table = document.getElementById(tableId);
 
-    const headers = Array.from(table.querySelectorAll("thead th"))
-        .map(th => th.textContent.trim());
+        const headers = Array.from(table.querySelectorAll("thead th"))
+            .map(th => th.textContent.trim());
 
-    // ✅ Combine headers + data
-    const wsData = [headers, ...data];
+        // ✅ Combine headers + data
+        const wsData = [headers, ...data];
 
-    // ✅ Create worksheet & workbook
-    const ws = XLSX.utils.aoa_to_sheet(wsData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, reportName || "Sheet1");
+        // ✅ Create worksheet & workbook
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, reportName || "Sheet1");
 
-    // ✅ Generate dynamic filename
-    const fileName = curDateJs(reportName || 'Report') + '.xlsx';
+        // ✅ Generate dynamic filename
+        const fileName = curDateJs(reportName || 'Report') + '.xlsx';
 
-    // ✅ Save file
-    XLSX.writeFile(wb, fileName);
-}
-function nameFormatter(selector) {
-    $(selector).on('input', function () {
-        let value = $(this).val();
+        // ✅ Save file
+        XLSX.writeFile(wb, fileName);
+    }
 
-        // Split by space
-        let parts = value.split(" ");
+    function nameFormatter(selector) {
+        $(selector).on('input', function () {
+            let value = $(this).val();
 
-        if (parts.length > 1) {
-            // Convert second part to CAPS and allow only 2 letters
-            parts[1] = parts[1].toUpperCase()
-                .replace(/[^A-Z]/g, "")
-                .substring(0, 2);
+            // Split by space
+            let parts = value.split(" ");
 
-            // Block more than 2 parts
-            if (parts.length > 2) {
-                parts = parts.slice(0, 2);
+            if (parts.length > 1) {
+                // Convert second part to CAPS and allow only 2 letters
+                parts[1] = parts[1].toUpperCase()
+                    .replace(/[^A-Z]/g, "")
+                    .substring(0, 2);
+
+                // Block more than 2 parts
+                if (parts.length > 2) {
+                    parts = parts.slice(0, 2);
+                }
             }
-        }
 
-        $(this).val(parts.join(" "));
-    });
-}
+            $(this).val(parts.join(" "));
+        });
+    }
 
 </script>

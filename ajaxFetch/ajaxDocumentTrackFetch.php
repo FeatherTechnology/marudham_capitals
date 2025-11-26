@@ -16,6 +16,7 @@ if ($userid != 1) {
 $column = array(
     'dt.id',
     'dt.created_date',
+    'ad.doc_id',
     'dt.cus_id',
     'cr.autogen_cus_id',
     'cr.customer_name',
@@ -25,14 +26,14 @@ $column = array(
     'agm.group_name',
     'alm.line_name',
     'dt.id',
-    'dt.id',
     'dt.id'
 );
 
 // Base query
 // 1- inserted, 2- send by issued user, 3- received by doc_rec_access user, 1- return.
-$query = "SELECT dt.id, dt.req_id, dt.cus_id, dt.track_status, dt.insert_login_id, dt.created_date, cr.autogen_cus_id, cr.customer_name, bc.branch_name, al.area_name, sal.sub_area_name, agm.group_name, alm.line_name, cr.sub_area
+$query = "SELECT dt.id, dt.req_id, dt.cus_id, dt.track_status, dt.insert_login_id, dt.created_date, ad.doc_id, cr.autogen_cus_id, cr.customer_name, bc.branch_name, al.area_name, sal.sub_area_name, agm.group_name, alm.line_name, cr.sub_area
         FROM document_track dt
+        JOIN acknowlegement_documentation ad ON dt.req_id = ad.req_id
         JOIN customer_register cr ON dt.cus_id = cr.cus_id
         JOIN area_list_creation al ON cr.area = al.area_id
         JOIN sub_area_list_creation sal ON cr.sub_area = sal.sub_area_id
@@ -84,9 +85,10 @@ $sno = 1;
 foreach ($result as $row) {
     $sub_array   = array();
 
-    $sub_array[] = $sno;
+    $sub_array[] = $sno++;
 
     $sub_array[] = date('d-m-Y', strtotime($row['created_date'])); //Date column
+    $sub_array[] = $row['doc_id']; //doc id column
     $sub_array[] = $row['cus_id']; //Aadhaar number column
     $sub_array[] = $row['autogen_cus_id']; //cus id column
     $cus_name = $row['customer_name']; //cus name column
@@ -100,10 +102,10 @@ foreach ($result as $row) {
     $cus_id = $row['cus_id'];
     $req_id = $row['req_id'];
     $track_status = $row['track_status'];
-    $track_status_obj = [
-        '1' => 'Acknowledgement', '2' => 'Acknowledgement', '3' => 'NOC', '4' => 'NOC'
-    ];
-    $sub_array[] = $track_status_obj[$track_status]; //Document For Column
+    // $track_status_obj = [
+    //     '1' => 'Acknowledgement', '2' => 'Acknowledgement', '3' => 'NOC', '4' => 'NOC'
+    // ];
+    // $sub_array[] = $track_status_obj[$track_status]; //Document For Column
 
 
     if ($track_status == '1') { //if 1 then raised from branch for submitting ack
@@ -159,7 +161,6 @@ foreach ($result as $row) {
     $sub_array[] = $action;
 
     $data[]      = $sub_array;
-    $sno = $sno + 1;
 }
 
 function count_all_data($connect)

@@ -1,8 +1,10 @@
 <?php
 include('../ajaxconfig.php');
+
 if(isset($_POST['req_id'])){
     $req_id = $_POST['req_id'];
 }
+
 if(isset($_POST['cus_name'])){
     $cus_name = $_POST['cus_name'];
 }
@@ -19,27 +21,23 @@ if(isset($_POST['cus_name'])){
 
         <?php
         $i=1;
-        $qry = $connect->query("SELECT * from acknowlegement_documentation  where req_id=$req_id");
+        $qry = $connect->query("SELECT en_RC, Rc_document_pending, en_Key FROM acknowlegement_documentation where req_id = $req_id");
         $row = $qry->fetch();
+        if($row['en_RC'] == '0' && $row['Rc_document_pending'] != 'YES' ){
         ?>
-                <?php if($row['en_RC'] == '0' && $row['Rc_document_pending'] != 'YES' ){
-                    ?>
-                <tr>
-                    <td><?php echo $i;$i++;?></td>
-                    <td>RC</td>
+            <tr>
+                <td><?php echo $i++;?></td>
+                <td>RC</td>
+            </tr>
 
-                </tr>
-                    <?php
-                }?>
-                <?php if($row['en_Key'] == '0' ){
-                    ?>
-                <tr>
-                    <td><?php echo $i;$i++;?></td>
-                    <td>Key</td>
+        <?php } if($row['en_Key'] == '0' ){ ?>
+            
+            <tr>
+                <td><?php echo $i++;?></td>
+                <td>Key</td>
+            </tr>
 
-                </tr>
-                    <?php
-                }?>
+        <?php } ?>
 
     </tbody>
 </table>
