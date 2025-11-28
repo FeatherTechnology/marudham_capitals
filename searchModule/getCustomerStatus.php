@@ -16,14 +16,14 @@ $result = $connect->query("SELECT req.req_id, req.prompt_remark, req.cus_status,
     CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.loan_category WHEN req.cus_status IN (3,13,14,15,16,17,20,21,22) THEN alc.loan_category ELSE req.loan_category END AS loan_category,
     CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.sub_category WHEN req.cus_status IN (3,13,14,15,16,17,20,21,22) THEN alc.sub_category ELSE req.sub_category END AS sub_category,
     CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.loan_amt WHEN req.cus_status IN (3,13,14,15,16,17,20,21,22) THEN alc.loan_amt ELSE req.loan_amt END AS loan_amt,
-    CASE WHEN req.cus_status IN (12,2,6,7,3,13,14,15,16,17,20,21,22) THEN cp.cus_name ELSE req.cus_name END AS cus_name
+    CASE WHEN req.cus_status IN (12,2,6,7,3,13,14,15,16,17,20,21,22,23,24) THEN cp.cus_name ELSE req.cus_name END AS cus_name
     FROM request_creation req
     LEFT JOIN customer_profile cp ON req.req_id = cp.req_id
     LEFT JOIN verification_loan_calculation vlc ON req.req_id = vlc.req_id
     LEFT JOIN acknowlegement_loan_calculation alc ON req.req_id = alc.req_id
     LEFT JOIN in_issue ii ON req.req_id = ii.req_id
     LEFT JOIN acknowlegement_documentation ad ON ii.req_id = ad.req_id
-    where req.cus_id = $cus_id and (req.cus_status <= 22) ORDER BY req.created_date DESC");
+    where req.cus_id = $cus_id and (req.cus_status <= 24) ORDER BY req.created_date DESC");
 
 if ($result->rowCount() > 0) {
     $i = 0;
@@ -86,7 +86,7 @@ if ($result->rowCount() > 0) {
         if ($cus_status >= 14 && $cus_status < 21) {
             $records[$i]['doc_status'] = getDocumentStatus($connect, $req_id) == 'pending' ? 'Document Pending' : 'Document Completed';
         } elseif ($cus_status >= 21) {
-            $records[$i]['doc_status'] = getNOCDocDetails($connect, $req_id, $cus_id) == 'pending' ? 'NOC Pending' : 'NOC Completed';
+            $records[$i]['doc_status'] = ($cus_status == 21) ? 'NOC Pending' : 'NOC Completed';
         } else {
             $records[$i]['doc_status'] = '';
         }
@@ -348,38 +348,35 @@ function getDocumentStatus($connect, $req_id)
     return $response;
 }
 
-function getNOCDocDetails($connect, $req_id, $cus_id)
-{
+// function getNOCDocDetails($connect, $req_id, $cus_id)
+// {
 
-    $response = 'completed';
+//     $response = 'completed';
+//     $qry = $connect->query("SELECT * FROM signed_doc where req_id ='$req_id' and cus_id = '$cus_id' and noc_given = 0 ");
+//     if ($qry->rowCount() > 0) { // if condition true, then signed doc any one is given other may be pending to give
+//         $response = 'pending';
+//     }
 
-    $qry = $connect->query("SELECT * FROM signed_doc where req_id ='$req_id' and cus_id = '$cus_id' and noc_given = 0 ");
-    if ($qry->rowCount() > 0) { // if condition true, then signed doc any one is given other may be pending to give
-        $response = 'pending';
-    }
+//     $qry = $connect->query("SELECT * FROM cheque_no_list where req_id ='$req_id' and cus_id = '$cus_id' and noc_given = 0 ");
+//     if ($qry->rowCount() > 0) { // if condition true, then Cheque doc any one is given other may be pending to give
+//         $response = 'pending';
+//     }
+//     $qry = $connect->query("SELECT * FROM acknowlegement_documentation where req_id ='$req_id' and cus_id_doc = '$cus_id' and (mortgage_process_noc = 0 or mortgage_document_noc = 0 or endorsement_process_noc = 0 or en_RC_noc = 0 or en_Key_noc = 0 ) ");
+//     if ($qry->rowCount() > 0) { // if condition true, then acknowlegement documentation any one is given other may be pending to give
+//         $response = 'pending';
+//     }
 
-    $qry = $connect->query("SELECT * FROM cheque_no_list where req_id ='$req_id' and cus_id = '$cus_id' and noc_given = 0 ");
-    if ($qry->rowCount() > 0) { // if condition true, then Cheque doc any one is given other may be pending to give
-        $response = 'pending';
-    }
+//     $qry = $connect->query("SELECT * FROM gold_info where req_id ='$req_id' and cus_id = '$cus_id' and noc_given = 0 ");
+//     if ($qry->rowCount() > 0) { // if condition true, then Gold doc any one is given other may be pending to give
+//         $response = 'pending';
+//     }
 
-    $qry = $connect->query("SELECT * FROM acknowlegement_documentation where req_id ='$req_id' and cus_id_doc = '$cus_id' and (mortgage_process_noc = 0 or mortgage_document_noc = 0 or endorsement_process_noc = 0 or en_RC_noc = 0 or en_Key_noc = 0 ) ");
-    if ($qry->rowCount() > 0) { // if condition true, then acknowlegement documentation any one is given other may be pending to give
-        $response = 'pending';
-    }
-
-    $qry = $connect->query("SELECT * FROM gold_info where req_id ='$req_id' and cus_id = '$cus_id' and noc_given = 0 ");
-    if ($qry->rowCount() > 0) { // if condition true, then Gold doc any one is given other may be pending to give
-        $response = 'pending';
-    }
-
-    $qry = $connect->query("SELECT * FROM document_info where req_id ='$req_id' and cus_id = '$cus_id' and doc_info_upload_noc = 0 ");
-    if ($qry->rowCount() > 0) { // if condition true, then Document doc any one is given other may be pending to give
-        $response = 'pending';
-    }
-
-    return $response;
-}
+//     $qry = $connect->query("SELECT * FROM document_info where req_id ='$req_id' and cus_id = '$cus_id' and doc_info_upload_noc = 0 ");
+//     if ($qry->rowCount() > 0) { // if condition true, then Document doc any one is given other may be pending to give
+//         $response = 'pending';
+//     }
+//     return $response;
+// }
 ?>
 
 

@@ -8,7 +8,7 @@ if (isset($_POST['cus_id'])) {
 
 $records = array();
 
-$result = $connect->query("SELECT req_id, dor, loan_category, sub_category, loan_amt, prompt_remark, cus_status FROM request_creation where cus_id = '" . strip_tags($cus_id) . "' and cus_status <= 23 ORDER BY created_date DESC ");
+$result = $connect->query("SELECT req_id, dor, loan_category, sub_category, loan_amt, prompt_remark, cus_status FROM request_creation where cus_id = '" . strip_tags($cus_id) . "' and cus_status <= 24 ORDER BY created_date DESC ");
 
 if ($result->rowCount() > 0) {
     $i = 0;

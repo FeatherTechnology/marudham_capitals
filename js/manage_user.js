@@ -1254,6 +1254,14 @@ function validation() {
     } else {
         $('.reportCheck').hide();
     }
+    // validation for Home Access
+    var home_access = $('#home_access').val();
+        if (home_access == '') {
+        $('#HomeAccessCheck').show();
+        validation = false;
+        } else {
+            $('#HomeAccessCheck').hide();
+        }        
 
     // validtaion for promotion activity
     var promotion_activity = document.querySelector('#promotion_activity');

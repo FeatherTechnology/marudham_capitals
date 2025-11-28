@@ -20,6 +20,7 @@ $line_id           = '';
 $group_id           = '';
 $download_access = '';
 $report_access = '';
+$home_access = '';
 $promotion_access = '';
 $promotion_activity_mapping_access = '';
 $mastermodule    = '';
@@ -178,6 +179,7 @@ if($idupd>0)
 			$group_id          		     = $getUser['group_id'];
 			$download_access          		     = $getUser['download_access'];
 			$report_access          		     = $getUser['report_access'];
+			$home_access          		     = $getUser['home_access'];
 			$promotion_access          		     = $getUser['promotion_access'];
 			$promotion_activity_mapping_access = $getUser['promotion_activity_mapping_access'];
 			$mastermodule          		     = $getUser['mastermodule'];
@@ -567,7 +569,19 @@ if($idupd>0)
 												<input class="form-check-input" type="radio" name="download_access" id="da_no" value="1" <?php if($idupd > 0){ if($download_access==1){ echo'checked'; }}?> >
 													<label for="download_access">No</label>
                                         </div>
-                                    </div>									
+                                    </div>	
+									  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+											<div class="form-group">
+												<label for="home_access">Home Upload Access</label>&nbsp;<span class="text-danger">*</span>
+												<select class="form-control" name="home_access" id="home_access" tabindex="13">
+													<option value="">Select Home Upload Access</option>
+													<option value="0" <?php if($home_access == '0') echo 'selected';?> >Yes</option>
+													<option value="1" <?php if($home_access == '1') echo 'selected';?> >No</option>
+												</select>
+												<br>
+												<span class="text-danger" style='display:none' id='HomeAccessCheck'>Please select Home Upload Access</span>
+											</div>
+										</div>								
 								</div>
 							</div>
 						</div>
