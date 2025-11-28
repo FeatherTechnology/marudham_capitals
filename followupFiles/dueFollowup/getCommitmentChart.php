@@ -6,13 +6,14 @@ include('../../ajaxconfig.php');
 $req_id = $_POST['req_id'];
 $cus_id = $_POST['cus_id'];
 
-$sql = $connect->query("SELECT a.*,b.fullname, CASE b.role WHEN 1 then 'Director' when 2 then 'Agent' when 3 then 'Staff' end as role FROM commitment a 
-        JOIN user b ON a.insert_login_id = b.user_id WHERE a.req_id = '$req_id'  ORDER BY a.id DESC "); //order by desc will show last entered data of confirmation table
+$sql = $connect->query("SELECT a.*,b.fullname, CASE b.role WHEN 1 then 'Director' when 2 then 'Agent' when 3 then 'Staff' end as role ,aklc.collection_method FROM commitment a 
+        JOIN user b ON a.insert_login_id = b.user_id  LEFT JOIN acknowlegement_loan_calculation aklc  ON aklc.req_id = a.req_id  WHERE a.req_id = '$req_id'  ORDER BY a.id DESC "); //order by desc will show last entered data of confirmation table
 
 //this query will take Confirmation followup data from that table with username and user type according to inserted login id and using switch case in query for output
 
 $ftype = [1=>'Direct',2=>'Mobile'];
 $fstatus = [1=>'Commitment',2=>'Unavailable',3=>'RNR',4=>'Not Reachable',5=>'Switch Off',6=>'Not in Use',7=>'Blocked',8=>'Paid'];
+$ecsfstatus = [1=>'Commitment',2=>'Bounce',3=>'RNR',4=>'Not Reachable',5=>'Switch Off',6=>'Not in Use',7=>'Blocked',8=>'Paid'];
 $per_type_arr = [1=>'Customer',2=>'Garentor',3=>'Family Member'];
 $sno = 1;
 
@@ -69,7 +70,12 @@ function getFamilyMember($connect,$fam_id){
                 <td><?php echo $sno;$sno++; ?></td>
                 <td><?php echo date('d-m-Y',strtotime($row['created_date'])); ?></td>
                 <td><?php echo $ftype[$row['ftype']]; ?></td>
-                <td><?php echo $fstatus[$row['fstatus']]; ?></td>
+                <td><?php if($row['collection_method']=='4'){
+                    echo $ecsfstatus[$row['fstatus']]; 
+                }else{
+                    echo $fstatus[$row['fstatus']]; 
+                }
+                 ?></td>
                 <td><?php echo $per_type_arr[$row['person_type']]??''; ?></td>
                 <td>
                     <?php 

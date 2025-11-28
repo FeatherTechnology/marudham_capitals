@@ -414,6 +414,19 @@ if (isset($getuserdetails['download_access'])) {
 				<?php include "include/templates/due_followup_info.php" ?>
 			<?php } else ?>
 
+			<!-- ECS Follow up -->
+			<?php if ($current_page == 'ecs_edit_followup') { ?>
+				<?php include "include/templates/ecs_edit_followup.php" ?>
+			<?php } else ?>
+
+			<?php if ($current_page == 'ecs_followup') { ?>
+				<?php include "include/templates/ecs_followup.php" ?>
+			<?php } else ?>
+
+			<?php if ($current_page == 'ecs_followup_info') { ?>
+				<?php include "include/templates/ecs_followup_info.php" ?>
+			<?php } else ?>
+
 			<!-- Loan Follow up -->
 			<?php if ($current_page == 'loan_followup') { ?>
 				<?php include "include/templates/loan_followup.php" ?>

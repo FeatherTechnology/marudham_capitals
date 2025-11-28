@@ -5,7 +5,7 @@ $(document).ready(function () {
         // window.history.back();
         let cusSts = $('#cus_sts').val();
         let cummDate = $('#cummDate').val();
-        window.location = 'edit_due_followup&cussts='+cusSts+'&cummDate='+cummDate;
+        window.location = 'ecs_edit_followup&cussts='+cusSts+'&cummDate='+cummDate;
     })
 
     $('#comm_ftype').change(function () {
@@ -121,7 +121,7 @@ function OnLoadFunctions(req_id, cus_id) {
 
         $.ajax({
             //in this file, details gonna fetch by customer ID, Not by req id (Because we need all loans from customer)
-            url: 'followupFiles/dueFollowup/viewLoanList.php',
+            url: 'followupFiles/dueFollowup/ecs_viewLoanList.php',
             data: { 'req_id': req_id, 'cus_id': cus_id },
             type: 'post',
             cache: false,
@@ -182,7 +182,6 @@ function OnLoadFunctions(req_id, cus_id) {
                 });
 
                 $('#close_collection_card').click(function () {
-
                     $('.loanlist_card').show();
                     $('.back-button').show();
                     $('.loan_history_card').hide();
@@ -258,6 +257,7 @@ function OnLoadFunctions(req_id, cus_id) {
                 //Commitment chart
                 $('.commitment-chart').off('click').click(function () {
                     let req_id = $(this).data('reqid'); let cus_id = $('#cusidupd').val();
+                    let coll_mtd = $(this).data('coll_mtd');
                     $.post('followupFiles/dueFollowup/getCommitmentChart.php', { cus_id, req_id }, function (html) {
                         $('#commChartDiv').empty().html(html);
                     })
