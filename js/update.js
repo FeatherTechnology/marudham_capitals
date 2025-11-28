@@ -419,12 +419,12 @@ $(document).ready(function () {
     $('#endorsement_process').change(function () {
 
         let process = $(this).val();
-        
+
         if (process == '0') {
             $('#end_process_div').show();
         } else {
             $('#end_process_div').hide();
-            
+
             $('#owner_type, #owner_name, #ownername_relationship_name, #en_relation, #vehicle_type, #vehicle_process, #en_Company, #en_Model').val('');
             $('#end_form').find('span').not('.slider, .required, .icon-check').hide(); //to hide the span.
         }
@@ -2722,6 +2722,8 @@ function getDocumentHistory() {
                 $('.choosing-document-card').show();
 
                 var req_id = $(this).data('reqid'); var cus_id = $(this).data('cusid'); var cus_name = $(this).data('cusname')
+                 var doc_id = $(this).data('docid')
+                    $('#documents_status_header').html(`Documents - Doc ID: ${doc_id}`);
                 getDocumentDetails(req_id, cus_id, cus_name);
                 $('#req_id_doc').val(req_id);
             });
@@ -3379,7 +3381,7 @@ function getDocstatusInfo(req_id) {
         dataType: 'json',
         cache: false,
         success: function (response) {
-           
+
             let sts = response['doc_sts'];
 
             if (sts === 'YES' || sts === '' || sts === null || sts === undefined) {
@@ -3766,7 +3768,7 @@ function resetsignInfo(req_id, cus_id) {
         success: function (html) {
             $("#signTable").empty();
             $("#signTable").html(html);
-
+            $('#signDocUploads input:not(#doc_name_dummy), #signDocUploads select').attr('disabled', false);
             $("#sign_type").val('');
             $("#cus_name_div").hide();
             $("#signType_cus_name").val('');
@@ -3795,9 +3797,10 @@ function signInfoEditEvent() {
     $('.signed_doc_edit').off('click');
     $('.signed_doc_edit').click(function () {
 
-        $('#signInfoBtn').removeAttr('disabled');// remove disabled attribute to submit button
+        $('#signInfoBtn').removeAttr('disabled');  // enable submit button if needed
 
         let id = $(this).attr('value');
+
         $.ajax({
             url: 'verificationFile/documentation/signed_doc_edit.php',
             type: 'POST',
@@ -3806,39 +3809,39 @@ function signInfoEditEvent() {
             cache: false,
             success: function (result) {
 
+                // FIRST remove readonly/disabled to allow setting value
+                $('#signDocUploads input, #signDocUploads select').attr('disabled', false);
+
                 $("#signedID").val(result['id']);
                 $("#sign_type").val(result['sign_type']);
 
                 if (result["sign_type"] == "0") {
-                    //if Customer
                     $("#cus_name_div").show();
                     $("#signType_cus_name").val(result["signType_cus_name"]);
-
                 } else {
                     $("#cus_name_div").hide();
-
                 }
 
                 if (result["sign_type"] == "1") {
-                    //if guarentor
                     $("#guar_name_div").show();
                     $("#guar_name").val(result["guar_name"]);
-
                 } else {
                     $("#guar_name_div").hide();
-
                 }
 
                 if (result['sign_type'] == '3' || result["sign_type"] == "2") {
                     $('#relation_doc').show();
-                    getFamilyList('signType_relationship', result['signType_relationship']);// to set family data to select box
-                    // $("#signType_relationship").val(result['signType_relationship']);
-
+                    getFamilyList('signType_relationship', result['signType_relationship']);
                 } else {
                     $('#relation_doc').hide();
                 }
 
                 $("#doc_Count").val(result['doc_Count']);
+
+                // NOW apply readonly mode after values are set
+                // Disable everything EXCEPT upload field
+                $('#signDocUploads input:not(#signdoc_upd), #signDocUploads select').attr('disabled', true);
+
 
             }
         });
@@ -3846,6 +3849,7 @@ function signInfoEditEvent() {
     });
 
 }
+
 
 // to validate the count to be uploaded in signed doc
 // function filesCount() {
@@ -3905,6 +3909,7 @@ function submitSignedDoc(req_id, cus_id) {
                 }
 
                 resetsignInfo(req_id, cus_id);
+
             }
         });
         $("#docNameCheck").hide();
@@ -3974,6 +3979,8 @@ function resetchequeInfo(req_id, cus_id) {
             $("#chequeCountCheck").hide();
             $('#chequeupdCheck').hide();
             $("#holderNameCheck").hide();
+            $('#chequeUploads input, #chequeUploads select').attr('disabled', false);
+            $('#cheque_upd_no').attr('disabled', false);
 
         }
     }).then(function () {
@@ -3997,7 +4004,7 @@ function chequeInfoEditEvent() {
             dataType: 'json',
             cache: false,
             success: function (result) {
-
+                $('#chequeUploads input, #chequeUploads select').attr('disabled', false);
                 $("#chequeID").val(result['id']);
                 $("#holder_type").val(result['holder_type']);
 
@@ -4019,6 +4026,7 @@ function chequeInfoEditEvent() {
                 $("#cheque_count").val(result['cheque_count']);
 
                 getChequeColumn(result['cheque_count'], result['cheque_no']); // show input to insert Cheque No.
+                $('#chequeUploads input:not(#cheque_upd), #chequeUploads select').attr('disabled', true);
             }
         });
 
@@ -4124,6 +4132,7 @@ function submitCheque(req_id, cus_id) {
                 }
 
                 resetchequeInfo(req_id, cus_id);
+
             }
         });
 
@@ -4163,6 +4172,7 @@ function submitCheque(req_id, cus_id) {
         // } else {
         //     $('#chequeupdCheck').hide();
         // }
+
     }
 }
 
@@ -4181,7 +4191,7 @@ function resetgoldInfo(req_id, cus_id) {
         success: function (html) {
             $("#goldTable").empty();
             $("#goldTable").html(html);
-
+            $('#goldform input, #goldform select').attr('disabled', false);
             $("#gold_sts").val('');
             $("#gold_type").val('');
             $("#Purity").val('');
@@ -4210,7 +4220,7 @@ function goldInfoEditEvent() {
             dataType: 'json',
             cache: false,
             success: function (result) {
-
+                $('#goldform input, #goldform select').attr('disabled', false);
                 $("#goldID").val(result['id']);
                 $("#gold_sts").val(result['gold_sts']);
                 $("#gold_type").val(result['gold_type']);
@@ -4219,7 +4229,7 @@ function goldInfoEditEvent() {
                 $("#gold_Weight").val(result['gold_Weight']);
                 $("#gold_Value").val(result['gold_Value']);
                 $("#goldupload").val(result['gold_upload']);
-
+                $('#goldform input:not(#gold_upload), #goldform select').attr('disabled', true);
             }
         });
     });
@@ -4337,7 +4347,7 @@ function resetdocInfo(req_id, cus_id) {
         success: function (html) {
             $("#docModalDiv").empty();
             $("#docModalDiv").html(html);
-
+            $('#docUploads input, #docUploads select').attr('disabled', false);
             $("#document_name").val('');
             $("#document_details").val('');
             $("#document_type").val('');
@@ -4374,6 +4384,7 @@ function docInfoEditEvent() {
             dataType: 'json',
             cache: false,
             success: function (response) {
+                  $('#docUploads input, #docUploads select').attr('disabled', false);
 
                 $("#doc_info_id").val(response['doc_id']);
                 $("#document_name").val(response['doc_name']);
@@ -4391,6 +4402,7 @@ function docInfoEditEvent() {
                     // $("#docholder_relationship_name").val(response['relation_name']);
                 }
                 $("#doc_relation").val(response['relation']);
+                  $('#docUploads input:not(#document_info_upd), #docUploads select').attr('disabled', true);
 
             }
         });

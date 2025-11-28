@@ -1225,8 +1225,8 @@ if (sizeof($getCustomerReg) > 0) {
 				<!-- Document History END -->
 
 				<!-- Choosing Document START -->
-				<div class="card choosing-document-card" style='display:none'>
-					<div class="card-header"> Documents</div>
+				<div class="card choosing-document-card"  style='display:none'>
+					<div class="card-header" id="documents_status_header"> Documents</div>
 					<div class="card-body">
 						<div class="row">
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
@@ -2893,7 +2893,9 @@ if (sizeof($getCustomerReg) > 0) {
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
-				<h5 class="modal-title" id=""> NOC Summary </h5>
+				<h5 class="modal-title" id="nocSummaryTitle"
+					data-base-title="NOC Summary - Customer ID: <?php echo $autogen_cus_id ?>">
+				</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="">
 					<span aria-hidden="true">&times;</span>
 				</button>

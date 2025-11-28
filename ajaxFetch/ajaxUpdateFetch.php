@@ -53,7 +53,7 @@ if ($_POST["doc_sts"] != '') {
                 GROUP BY cus_id_doc
             ) latest_doc 
             ON rc.cus_id = latest_doc.cus_id_doc 
-            AND rc.req_id = latest_doc.last_req_id ";
+            AND rc.req_id = latest_doc.last_req_id AND rc.cus_status >= 13";
 }
 if ($userid == 1) {
     $query = "SELECT rc.req_id, rc.cus_id, cr.autogen_cus_id, rc.cus_name, rc.mobile1, cr.area_confirm_area AS area, rc.cus_status, rc.cus_data, cr.area_group, cr.area_line 
@@ -126,7 +126,6 @@ foreach ($result as $row) {
 
     $sub_array[] = $row['area_group'];
     $sub_array[] = $row['area_line'];
-
     if (getDocumentStatus($connect, $cus_id) == false) {
         $sub_array[] = 'Document Pending';
     } else {
@@ -165,30 +164,30 @@ echo json_encode($output);
 
 function getDocumentStatus($connect, $cus_id)
 {
+    // Get latest req_id with cus_status > 13
+    $qry = $connect->query("
+        SELECT a.doc_sts 
+        FROM acknowlegement_documentation a
+        JOIN request_creation r ON a.req_id = r.req_id
+        WHERE a.cus_id_doc = '$cus_id' AND r.cus_status > 13
+        ORDER BY r.req_id DESC
+        LIMIT 1
+    ");
 
-    $status = 'completed';
-
-    $sts_qry = $connect->query("SELECT doc_sts FROM acknowlegement_documentation where cus_id_doc = '$cus_id' ");
-
-    if ($sts_qry->rowCount() > 0) {
-        while ($sts_row = $sts_qry->fetch()) { //check any one of document for mortgage or endorsement is pending then response will be pending
-
-            if ($sts_row['doc_sts'] == 'NO') {
-               
-                    $status = 'pending';
-                }
-            
-        }
+    if ($qry->rowCount() == 0) {
+        // No valid entry → treat as pending
+        return false;
     }
 
-    if ($status == 'completed') {
-        $response = true;
-    } else {
-        $response = false;
+    $row = $qry->fetch();
+
+    if ($row['doc_sts'] == 'NO') {
+        return false; // pending
     }
 
-    return $response;
+    return true; // completed
 }
+
 
 // Close the database connection
 $connect = null;

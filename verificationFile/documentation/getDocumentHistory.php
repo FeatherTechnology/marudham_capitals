@@ -95,6 +95,7 @@ function moneyFormatIndia($num)
     <thead>
         <tr>
             <th width='50'>Loan ID</th>
+             <th>Doc ID</th>
             <th>Loan Category</th>
             <th>Sub Category</th>
             <th>Agent</th>
@@ -113,11 +114,12 @@ function moneyFormatIndia($num)
         // $req_id = $_POST['req_id'];
         $cus_id = $_POST['cus_id'];
         $consider_lvl_arr = [1 => 'Bronze', 2 => 'Silver', 3 => 'Gold', 4 => 'Platinum', 5 => 'Diamond'];
-        $run = $connect->query("SELECT lc.due_start_from,lc.cus_name_loan,lc.loan_category,lc.sub_category,lc.loan_amt_cal,lc.due_amt_cal,lc.net_cash_cal,lc.collection_method,ii.loan_id,ii.req_id,ii.updated_date,ii.cus_status,
+        $run = $connect->query("SELECT lc.due_start_from,lc.cus_name_loan,lc.loan_category,lc.sub_category,lc.loan_amt_cal,lc.due_amt_cal,lc.net_cash_cal,lc.collection_method,ii.loan_id,ii.req_id,ii.updated_date,ii.cus_status,ad.doc_id,
         rc.agent_id,lcc.loan_category_creation_name as loan_catrgory_name, us.collection_access
         from acknowlegement_loan_calculation lc 
         LEFT JOIN in_issue ii ON lc.req_id = ii.req_id 
         LEFT JOIN request_creation rc ON ii.req_id = rc.req_id 
+        LEFT JOIN acknowlegement_documentation ad ON lc.req_id = ad.req_id 
         LEFT JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id 
         LEFT JOIN user us ON us.user_id = '$user_id'
         WHERE lc.cus_id_loan = '$cus_id' and (ii.cus_status >= 13 and ii.cus_status <= 22) ORDER BY CAST(ii.req_id AS UNSIGNED) ASC "); //Customer status greater than or equal to 14 because, after issued data only we need  
@@ -135,6 +137,7 @@ function moneyFormatIndia($num)
         ?>
             <tr>
                 <td><?php echo $row['loan_id']; ?></td> <!-- id -->
+                <td><?php echo $row['doc_id']; ?></td> <!-- id -->
                 <td><?php echo $row["loan_catrgory_name"]; ?></td> <!-- Loan Cat -->
                 <td><?php echo $row["sub_category"]; ?></td> <!-- Loan Sub Cat -->
                 <td>
@@ -145,7 +148,7 @@ function moneyFormatIndia($num)
                     }
                     ?>
                 </td> <!-- Agent -->
-                <td><?php if(isset($row["updated_date"])) echo date('d-m-Y', strtotime($row["updated_date"])); ?></td> <!-- Loan date -->
+                <td><?php if (isset($row["updated_date"])) echo date('d-m-Y', strtotime($row["updated_date"])); ?></td> <!-- Loan date -->
                 <td><?php echo moneyFormatIndia($row["loan_amt_cal"]); ?></td> <!-- Loan Amount -->
 
                 <td><?php
@@ -255,10 +258,11 @@ function moneyFormatIndia($num)
                         <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
                         <div class='dropdown-content'>";
                     if ($row['cus_status'] > 20) { //if request goes to NOC then noc summary can be fetched
-                        $action .= "<a href='' class='noc-summary' data-reqid='$ii_req_id' data-cusid='$cus_id' data-cusname='$cus_name' data-toggle='modal' data-target='.noc-summary-modal' >NOC Summary</a>";
+                        $action .= "<a href='' class='noc-summary' data-reqid='$ii_req_id' data-cusid='$cus_id' data-cusname='$cus_name'  data-loanid='" . $row['loan_id'] . "' 
+                    data-loancat='" . $row['loan_catrgory_name'] . "'data-docid='" . $row['doc_id'] . "'  data-toggle='modal' data-target='.noc-summary-modal' >NOC Summary</a>";
                     }
                     if ($screen == 'update' && $row['cus_status'] <= 20) { //cus status <= 20 will allow only document statuses only to edit, not NOC
-                        $action .= "<a href='' class='edit-doc' data-reqid='$ii_req_id' data-cusid='$cus_id' data-cusname='$cus_name'>Edit Documents</a>";
+                        $action .= "<a href='' class='edit-doc' data-reqid='$ii_req_id' data-cusid='$cus_id' data-cusname='$cus_name' data-docid='" . $row['doc_id'] . "' >Edit Documents</a>";
                     }
                     $action .= "</div></div>";
                     echo $action;
@@ -347,20 +351,14 @@ function getDocumentStatus($connect, $req_id, $cus_id)
 
 
     $response3 = 'completed';
-    $sts_qry = $connect->query("SELECT mortgage_process,mortgage_document_pending,endorsement_process,Rc_document_pending FROM acknowlegement_documentation where cus_id_doc = '$cus_id' and req_id = '$req_id' ");
+    $sts_qry = $connect->query("SELECT doc_sts FROM acknowlegement_documentation where cus_id_doc = '$cus_id' and req_id = '$req_id' ");
 
     if ($sts_qry->rowCount() > 0) {
         while ($sts_row = $sts_qry->fetch()) { //check any one of document for mortgage or endorsement is pending then response will be pending
 
-            if ($sts_row['mortgage_process'] == '0') {
-                if ($sts_row['mortgage_document_pending'] == 'YES') {
-                    $response3 = 'pending';
-                }
-            }
-            if ($sts_row['endorsement_process'] == '0') {
-                if ($sts_row['Rc_document_pending'] == 'YES') {
-                    $response3 = 'pending';
-                }
+            if ($sts_row['doc_sts'] == 'NO') {
+
+                $response3 = 'pending';
             }
         }
     }
@@ -408,7 +406,15 @@ function getDocumentStatus($connect, $req_id, $cus_id)
         let req_id = $(this).data('reqid');
         let cus_id = $(this).data('cusid');
         var cus_name = $(this).data('cusname');
+        let loan_id = $(this).data('loanid');
+        let loan_cat = $(this).data('loancat');
+        let doc_id = $(this).data('docid');
 
+        let base = $('#nocSummaryTitle').data('base-title');
+
+        $('#nocSummaryTitle').html(
+            `${base} | Loan ID: ${loan_id} | Doc ID: ${doc_id} | Loan Category: ${loan_cat}`
+        );
         $.ajax({
             url: 'verificationFile/documentation/getNOCSummary.php',
             data: {
@@ -561,11 +567,11 @@ function getDocumentStatus($connect, $req_id, $cus_id)
         buttons: [{
                 extend: 'excel',
                 title: "Document History",
-                action: function (e, dt, button, config) {
+                action: function(e, dt, button, config) {
                     var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                     var dynamic = curDateJs('Document_History'); // or any base
-                    config.title = dynamic;      // for versions that use title as filename
-                    config.filename = dynamic;   // for html5 filename
+                    config.title = dynamic; // for versions that use title as filename
+                    config.filename = dynamic; // for html5 filename
                     defaultAction.call(this, e, dt, button, config);
                 }
             },
