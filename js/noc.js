@@ -114,26 +114,28 @@ $(document).ready(function () {
             if (!confirmAction) return;
 
             Promise.all([
-                updateCheckedDetails(),
-                updateNocTable()
-            ])
-                .then(() => {
-                    if (req_id !== null) {
-                        $(`.noc-window[data-value='${req_id}']`).trigger('click');
-                    }
+                    updateNocTable()
+                    
+                ]).then(() => {
+                    updateCheckedDetails()
 
                 }).then(() => {
-                    $('#gold_checklist').val('');
-                    $('#cheque_checklist').val('');
-                    $('#endorse_checklist').val('');
-                    $('#sign_checklist').val('');
-                    $('#mort_checklist').val('');
-                    $('#doc_checklist').val('');
-                })
-                .catch(err => {
-                    console.error(err);
-                    alert("Something went wrong!");
-                });
+                        if (req_id !== null) {
+                            $(`.noc-window[data-value='${req_id}']`).trigger('click');
+                        }
+
+                    }).then(() => {
+                        $('#gold_checklist').val('');
+                        $('#cheque_checklist').val('');
+                        $('#endorse_checklist').val('');
+                        $('#sign_checklist').val('');
+                        $('#mort_checklist').val('');
+                        $('#doc_checklist').val('');
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert("Something went wrong!");
+                    });
 
         }
     });
@@ -1267,136 +1269,6 @@ function updateCheckedDetails() {
         cache: false
     });
 }
-// function updateCheckedDetails() {
-
-//     let req_id = $('#req_id').val();
-
-//     let updates = []; // array to store all ajax promises
-
-//     function makeAjax(data) {
-//         return $.ajax({
-//             url: "nocFile/updateSignDocNoc.php",
-//             type: "POST",
-//             data: data,
-//             cache: false
-//         });
-//     }
-
-//     // ============================ SIGN DOC ============================
-//     let sign_check = [];
-//     $('.sign_check').each(function () {
-//         if (this.checked && !this.disabled) {
-//             sign_check.push([$(this).attr('data-value')]);
-//         }
-//     });
-
-//     updates.push(
-//         makeAjax({
-//             noc_details: sign_check,
-//             table_name: "signed_doc_info",
-//             sign_ids: $('#sign_checklist').val().split(','),
-//             req_id
-//         })
-//     );
-
-//     // ============================ CHEQUE DOC ============================
-//     let cheque_check = [];
-//     $('.cheque_check').each(function () {
-//         if (this.checked && !this.disabled) {
-//             cheque_check.push([$(this).attr('data-value')]);
-//         }
-//     });
-
-//     updates.push(
-//         makeAjax({
-//             noc_details: cheque_check,
-//             table_name: "cheque_no_list",
-//             cheque_ids: $('#cheque_checklist').val().split(','),
-//             req_id
-//         })
-//     );
-
-//     // ============================ MORTGAGE DOC ============================
-//     let mort_check = [];
-//     $('.mort_check').each(function () {
-//         if (this.checked && !this.disabled) {
-//             mort_check.push([
-//                 $(this).attr('data-value'),
-//                 $(this).attr('data-thing')
-//             ]);
-//         }
-//     });
-
-//     updates.push(
-//         makeAjax({
-//             noc_details: mort_check,
-//             table_name: "acknowlegement_documentation",
-//             mort_ids: $('#mort_checklist').val().split(','),
-//             req_id
-//         })
-//     );
-
-//     // ============================ ENDORSEMENT ============================
-//     let endorse_check = [];
-//     $('.endorse_check').each(function () {
-//         if (this.checked && !this.disabled) {
-//             endorse_check.push([
-//                 $(this).attr('data-value'),
-//                 $(this).attr('data-thing')
-//             ]);
-//         }
-//     });
-
-//     updates.push(
-//         makeAjax({
-//             noc_details: endorse_check,
-//             table_name: "acknowlegement_documentation",
-//             endorse_ids: $('#endorse_checklist').val().split(','),
-//             req_id
-//         })
-//     );
-
-//     // ============================ GOLD DOC ============================
-//     let gold_check = [];
-//     $('.gold_check').each(function () {
-//         if (this.checked && !this.disabled) {
-//             gold_check.push([
-//                 $(this).attr('data-value'),
-//                 $(this).parent().prev().prev().children().val(),
-//                 $(this).parent().prev().children().val()
-//             ]);
-//         }
-//     });
-
-//     updates.push(
-//         makeAjax({
-//             noc_details: gold_check,
-//             table_name: "gold_info",
-//             gold_ids: $('#gold_checklist').val().split(','),
-//             req_id
-//         })
-//     );
-
-//     // ============================ OTHER DOCS ============================
-//     let doc_check = [];
-//     $('.doc_check').each(function () {
-//         if (this.checked && !this.disabled) {
-//             doc_check.push([$(this).attr('data-value')]);
-//         }
-//     });
-
-//     updates.push(
-//         makeAjax({
-//             noc_details: doc_check,
-//             table_name: "document_info",
-//             doc_ids: $('#doc_checklist').val().split(','),
-//             req_id
-//         })
-//     );
-
-//     // ============================ RETURN PROMISE ============================
-//     return Promise.all(updates);
-// }
 
 function updateNocTable() {
 

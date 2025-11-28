@@ -108,6 +108,9 @@ else if ($current_page == 'edit_concern_creation' || $current_page == 'edit_conc
 		if (currentPage == 'dashboard') {
 			$('.dashboard').css('backgroundColor', '#646969d9');
 		}
+		if (currentPage == 'home_page') {
+			$('.home_page').css('backgroundColor', '#646969d9');
+		}
 	}, 1000);
 </script>
 
@@ -466,6 +469,19 @@ if (sizeof($getUser) > 0) {
 		<!-- sidebar menu start -->
 		<div class="sidebar-menu">
 			<ul>
+				<li class="home_page">
+					<!-- <a href="javascript:void(0)"> -->
+					<!-- <span class="menu-text">Dashboard</span> -->
+					<a href="home_page"><i class='icon-home'></i>&nbsp;Home</a>
+					<!-- </a> -->
+					<!-- <div class="sidebar-submenu">
+						<ul>
+							<li>
+								<a href="dashboard"><i class='icon-credit-card'></i>Dashboard</a>
+							</li>
+						</ul>
+					</div> -->
+				</li>
 				<li class="dashboard">
 					<!-- <a href="javascript:void(0)"> -->
 					<!-- <span class="menu-text">Dashboard</span> -->

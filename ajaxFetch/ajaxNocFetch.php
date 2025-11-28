@@ -55,6 +55,7 @@ if ($userid != 1) {  // super admin bypass
 }
 $column = array(
     'cp.id',
+    'cs.created_date',
     'cp.cus_id',
     'cr.autogen_cus_id',
     'cp.cus_name',
@@ -69,7 +70,7 @@ $column = array(
 );
 
 if ($userid == 1) {
-    $query = 'SELECT cp.cus_id as cp_cus_id, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, al.line_name, bc.branch_name, cp.mobile1, ii.cus_id as ii_cus_id, ii.req_id, ii.cus_status
+    $query = 'SELECT cp.cus_id as cp_cus_id, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, al.line_name, bc.branch_name, cp.mobile1, ii.cus_id as ii_cus_id, ii.req_id, ii.cus_status,cs.created_date
     FROM acknowlegement_customer_profile cp 
     JOIN customer_register cr ON cp.cus_id = cr.cus_id
     JOIN in_issue ii ON cp.cus_id = ii.cus_id
@@ -77,6 +78,7 @@ if ($userid == 1) {
     JOIN sub_area_list_creation sa ON cp.area_confirm_subarea = sa.sub_area_id
     JOIN area_line_mapping al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
     JOIN branch_creation bc ON al.branch_id = bc.branch_id
+    JOIN closed_status cs ON cs.cus_id = cp.cus_id AND cs.created_date = (SELECT MAX(cs1.created_date) FROM closed_status cs1 WHERE cs1.cus_id = cp.cus_id)
     where ii.status = 0 and ii.cus_status IN (21,22,23) GROUP BY ii.cus_id '; // Only Issued and all lines not relying on sub area
 } else {
     $query = " SELECT cp.cus_id AS cp_cus_id,
@@ -89,7 +91,8 @@ if ($userid == 1) {
     cp.mobile1,
     ii.cus_id AS ii_cus_id,
     ii.req_id,
-   ii.cus_status
+   ii.cus_status,
+   cs.created_date
     FROM acknowlegement_customer_profile cp
     JOIN customer_register cr ON cp.cus_id = cr.cus_id
     JOIN in_issue ii ON cp.cus_id = ii.cus_id
@@ -97,7 +100,8 @@ if ($userid == 1) {
     JOIN sub_area_list_creation sa ON cp.area_confirm_subarea = sa.sub_area_id
     JOIN area_line_mapping al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
     JOIN branch_creation bc ON al.branch_id = bc.branch_id
-    WHERE ii.status = 0 
+     JOIN closed_status cs ON cs.cus_id = cp.cus_id AND cs.created_date = (SELECT MAX(cs1.created_date) FROM closed_status cs1 WHERE cs1.cus_id = cp.cus_id)
+    WHERE ii.status = 0
         AND ii.cus_status IN (21,22,23)
         AND $colName IN ($sub_area_list) ";
 }
@@ -145,7 +149,7 @@ foreach ($result as $row) {
     $sub_array   = array();
 
     $sub_array[] = $sno;
-
+    $sub_array[] = date('d-m-Y', strtotime($row["created_date"]));
     $sub_array[] = $row['cp_cus_id'];
     $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = $row['cus_name'];

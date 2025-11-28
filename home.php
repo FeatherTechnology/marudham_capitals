@@ -128,11 +128,12 @@ if (isset($getuserdetails['download_access'])) {
 				</div>
 			</header>
 			<!-- Header end -->
-
+		    <?php if ($current_page == 'home_page') { ?>
+					<?php include "include/templates/home_page.php" ?>
+				<?php } else ?>
 			<?php if ($current_page == 'dashboard') { ?>
 				<?php include "include/templates/dashboard.php" ?>
 			<?php } else ?>
-
 			<!-- Master Module-->
 			<?php if ($current_page == 'company_creation') { ?>
 				<?php include "include/templates/company_creation.php" ?>

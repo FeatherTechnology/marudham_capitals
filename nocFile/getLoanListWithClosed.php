@@ -120,7 +120,7 @@ function moneyFormatIndia($num)
         $cus_id = $_POST['cus_id'];
         $actionType = $_POST['action_type'] ?? '';
 
-        $run = $connect->query("SELECT ii.loan_id,lc.cus_name_loan as cus_name, ad.doc_id, lcc.loan_category_creation_name as loan_catrgory_name, lc.sub_category, rc.agent_id, ii.updated_date, lc.loan_amt_cal, ii.req_id
+        $run = $connect->query("SELECT ii.loan_id,lc.cus_name_loan as cus_name, ad.doc_id, lcc.loan_category_creation_name as loan_catrgory_name, lc.sub_category, rc.agent_id, ii.updated_date, lc.loan_amt_cal, ii.req_id,ii.cus_status
         FROM acknowlegement_loan_calculation lc JOIN acknowlegement_documentation ad ON lc.req_id = ad.req_id JOIN in_issue ii ON lc.req_id = ii.req_id JOIN request_creation rc ON ii.req_id = rc.req_id JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id JOIN user us ON us.user_id = $user_id
         WHERE lc.cus_id_loan = $cus_id and ii.cus_status IN(21,22,23) "); //21 means loan has been closed form closed window for noc
 
@@ -146,13 +146,11 @@ function moneyFormatIndia($num)
                 <td><?php echo date('d-m-Y', strtotime($row["updated_date"])); ?></td>
                 <td><?php echo moneyFormatIndia($row["loan_amt_cal"]); ?></td>
                 <td><?php echo date('d-m-Y', strtotime($runqry['created_date'])); ?></td> <!-- closed date-->
-                <td><?php echo 'Closed'; ?></td>
-                <td><?php if ($runqry['closed_sts'] == '1') {
-                        echo 'Consider';
-                    } elseif ($runqry['closed_sts'] == '2') {
-                        echo 'Waitlist';
-                    } elseif ($runqry['closed_sts'] == '3') {
-                        echo 'Blocklist';
+                <td><?php echo 'NOC'; ?></td>
+                <td><?php if ($row['cus_status'] == '21') {
+                        echo 'Pending';
+                    } elseif ($row['cus_status'] == '22' || $row['cus_status'] == '23' ) {
+                        echo 'Completed';
                     } else {
                         echo '';
                     } ?></td>
