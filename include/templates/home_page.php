@@ -145,7 +145,6 @@ $media_path = ($m->rowCount() > 0) ? $m->fetch()['media_path'] : "";
 // close Modal
     function closeChartsModal() {
         $('.uploadModal').modal('hide');
-        window.location.href = "home_page";
 
     }
 </script>

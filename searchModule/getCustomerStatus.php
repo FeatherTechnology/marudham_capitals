@@ -66,7 +66,9 @@ if ($result->rowCount() > 0) {
             '17' => ['status' => 'Present', 'sub_status' => getCollectionStatus($connect, $cus_id, $user_id, $req_id)],
             '20' => ['status' => 'Closed', 'sub_status' => 'In Closed'],
             '21' => ['status' => 'Closed', 'sub_status' => 'In Closed'],
-            '22' => ['status' => 'Closed', 'sub_status' => 'NOC Completed']
+            '22' => ['status' => 'Closed', 'sub_status' => 'NOC Completed'],
+            '23' => ['status' => 'Closed', 'sub_status' => 'NOC Completed'],
+            '24' => ['status' => 'Closed', 'sub_status' => 'NOC Completed']
         ];
 
         // if ($cus_status != '10' && $cus_status != '11') {
