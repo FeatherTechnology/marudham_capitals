@@ -78,6 +78,7 @@ $promotion_activity = '';
 $loan_followup  = '';
 $conf_followup  = '';
 $due_followup  = '';
+$ecs_followup  = '';
 $reportmodule = '';
 $reportmodule_intrest = '';
 $intrest_ledger_report = '';
@@ -237,6 +238,7 @@ if($idupd>0)
 			$loan_followup = $getUser['loan_followup'];
 			$conf_followup = $getUser['confirmation_followup'];
 			$due_followup = $getUser['due_followup'];
+			$ecs_followup = $getUser['ecs_followup'];
 			$due_followup_lines = $getUser['due_followup_lines'];
 			
 			$reportmodule          		     = $getUser['reportmodule'];
@@ -1077,6 +1079,13 @@ if($idupd>0)
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($due_followup==0){ echo'checked'; }} ?> tabindex="65" class="followup-checkbox screen-validations" id="due_followup" name="due_followup" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="due_followup"> Due Followup</label>&nbsp;&nbsp;
 								<span class='text-danger dueFollowupCheck' style="display:none">Please Select Due Followup </span> 
+                            </div>
+                        </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($ecs_followup==0){ echo'checked'; }} ?> tabindex="66" class="followup-checkbox screen-validations" id="ecs_followup" name="ecs_followup" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="ecs_followup">ECS Due Followup</label>&nbsp;&nbsp;
+								<span class='text-danger ecsdueFollowupCheck' style="display:none">Please Select ECS Due Followup </span> 
                             </div>
                         </div>
 					</div>

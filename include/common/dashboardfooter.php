@@ -1565,6 +1565,18 @@
     if ($current_page == 'edit_due_followup') { ?>
         <script src="js/edit_due_followup.js"></script>
     <?php }
+     // ecs due follow up
+    if ($current_page == 'ecs_followup') { ?>
+        <script src="js/ecs_followup.js"></script>
+    <?php }
+
+    if ($current_page == 'ecs_followup_info') { ?>
+        <script src="js/ecs_followup_info.js"></script>
+    <?php }
+
+    if ($current_page == 'ecs_edit_followup') { ?>
+        <script src="js/ecs_edit_followup.js"></script>
+    <?php }
 
     if ($current_page == 'loan_followup') { ?>
         <script src="js/loan_followup.js"></script>
