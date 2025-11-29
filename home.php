@@ -128,11 +128,12 @@ if (isset($getuserdetails['download_access'])) {
 				</div>
 			</header>
 			<!-- Header end -->
-
+		    <?php if ($current_page == 'home_page') { ?>
+					<?php include "include/templates/home_page.php" ?>
+				<?php } else ?>
 			<?php if ($current_page == 'dashboard') { ?>
 				<?php include "include/templates/dashboard.php" ?>
 			<?php } else ?>
-
 			<!-- Master Module-->
 			<?php if ($current_page == 'company_creation') { ?>
 				<?php include "include/templates/company_creation.php" ?>
@@ -412,6 +413,19 @@ if (isset($getuserdetails['download_access'])) {
 
 			<?php if ($current_page == 'due_followup_info') { ?>
 				<?php include "include/templates/due_followup_info.php" ?>
+			<?php } else ?>
+
+			<!-- ECS Follow up -->
+			<?php if ($current_page == 'ecs_edit_followup') { ?>
+				<?php include "include/templates/ecs_edit_followup.php" ?>
+			<?php } else ?>
+
+			<?php if ($current_page == 'ecs_followup') { ?>
+				<?php include "include/templates/ecs_followup.php" ?>
+			<?php } else ?>
+
+			<?php if ($current_page == 'ecs_followup_info') { ?>
+				<?php include "include/templates/ecs_followup_info.php" ?>
 			<?php } else ?>
 
 			<!-- Loan Follow up -->

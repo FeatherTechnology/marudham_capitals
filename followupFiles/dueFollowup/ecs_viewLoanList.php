@@ -43,13 +43,13 @@ function moneyFormatIndia($num) {
 
         <?php
         $cus_id = $_POST['cus_id'];
-        $run = $connect->query("SELECT ii.loan_id, lcc.loan_category_creation_name as loan_catrgory_name, lc.sub_category, rc.agent_id, rc.responsible, lc.loan_amt_cal, lc.collection_method, ii.cus_status, ii.req_id, cs.sub_status ,lc.collection_method
+        $run = $connect->query("SELECT ii.loan_id, lcc.loan_category_creation_name as loan_catrgory_name, lc.sub_category, rc.agent_id, rc.responsible, lc.loan_amt_cal, lc.collection_method, ii.cus_status, ii.req_id, cs.sub_status,lc.collection_method
         FROM acknowlegement_loan_calculation lc 
         LEFT JOIN in_issue ii ON lc.req_id = ii.req_id 
         LEFT JOIN request_creation rc ON ii.req_id = rc.req_id 
         LEFT JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id 
         LEFT JOIN customer_status cs ON ii.req_id = cs.req_id
-        WHERE lc.cus_id_loan = '$cus_id' AND (ii.cus_status >= 14 AND ii.cus_status < 20)"); //Customer status greater than or equal to 14 because, after issued data only we need
+        WHERE lc.cus_id_loan = '$cus_id' AND (ii.cus_status >= 14 AND ii.cus_status < 20) AND lc.collection_method = 4"); //Customer status greater than or equal to 14 because, after issued data only we need
 
         $i = 1;
         $curdate = date('Y-m-d');
@@ -97,7 +97,7 @@ function moneyFormatIndia($num) {
                         $action .= "<a><span data-toggle='modal' data-target='.DueChart' class='due-chart' value='".$row['req_id']."' > Due Chart</span></a>
                         <a><span data-toggle='modal' data-target='.PenaltyChart' class='penalty-chart' value='".$row['req_id']."' > Penalty Chart</span></a>
                         <a><span data-toggle='modal' data-target='.collectionChargeChart' class='coll-charge-chart' value='".$row['req_id']."' > Fine Chart</span></a>
-                        <a><span data-toggle='modal' data-target='#commitmentChart' class='commitment-chart' data-reqid='".$row['req_id']."' > Commitment Chart </span></a>";
+                        <a><span data-toggle='modal' data-target='#commitmentChart' class='commitment-chart' data-reqid='".$row['req_id']."' data-coll_mtd='".$row['collection_method']."' > Commitment Chart </span></a>";
                         $action .= "</div></div>";
                         echo $action;
                     ?>
@@ -108,9 +108,9 @@ function moneyFormatIndia($num) {
                         $action="<div class='dropdown' ><button class='btn btn-outline-secondary' ";
                         
                         $action .="><i class='fa'>&#xf107;</i></button><div class='dropdown-content'>";
-                        $action .= "<a href='due_followup_info&upd=$r_id&pgeView=1'> Customer Profile </a>
-                        <a href='due_followup_info&upd=$r_id&pgeView=2'> Documentation </a>
-                        <a href='due_followup_info&upd=$r_id&pgeView=3'> Loan Calculation </a>
+                        $action .= "<a href='ecs_followup_info&upd=$r_id&pgeView=1'> Customer Profile </a>
+                        <a href='ecs_followup_info&upd=$r_id&pgeView=2'> Documentation </a>
+                        <a href='ecs_followup_info&upd=$r_id&pgeView=3'> Loan Calculation </a>
                         <a href='' class='loan-history-window'> Loan History </a>
                         <a href='' class='doc-history-window'> Document History </a>";
                         $action .= "</div></div>";

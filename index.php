@@ -11,7 +11,7 @@ session_start();
 //below code is for redirecting user to dashboard if already logged in, even directly changes url
 $userid  = isset($_SESSION['userid']) ? $_SESSION['userid'] : "";
 if($userid!=""){
-	echo "<script>/*alert('Please Dont Change the URL!');*/location.href='dashboard'</script>"; 
+	echo "<script>/*alert('Please Dont Change the URL!');*/location.href='home_page'</script>"; 
 }
 
 $id=0;
@@ -40,7 +40,7 @@ if(isset($_POST['lusername'])) {
 		$_SESSION['fullname']    = $result['fullname']; 
 		$_SESSION['request_list_access']    = $result['request_list_access']; 
 		?>
-		<script>location.href='<?php echo $HOSTPATH; ?>dashboard';</script>  
+		<script>location.href='<?php echo $HOSTPATH; ?>home_page';</script>  
 	<?php
 
 	} else { 

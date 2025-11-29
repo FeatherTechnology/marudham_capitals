@@ -55,6 +55,7 @@ if ($userid != 1) {  // super admin bypass
 }
 $column = array(
     'cp.id',
+    'cp.id',
     'cp.cus_id',
     'cr.autogen_cus_id',
     'cp.cus_name',
@@ -97,7 +98,7 @@ if ($userid == 1) {
     JOIN sub_area_list_creation sa ON cp.area_confirm_subarea = sa.sub_area_id
     JOIN area_line_mapping al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
     JOIN branch_creation bc ON al.branch_id = bc.branch_id
-    WHERE ii.status = 0 
+    WHERE ii.status = 0
         AND ii.cus_status IN (21,22,23)
         AND $colName IN ($sub_area_list) ";
 }
@@ -143,9 +144,15 @@ $data = array();
 $sno = 1;
 foreach ($result as $row) {
     $sub_array   = array();
+    $cus_id = $row['cp_cus_id'];
+    $csQry = $connect->query("SELECT MAX(created_date) AS created_date 
+    FROM closed_status 
+    WHERE cus_id = '$cus_id'");
+  $csRow = $csQry->fetch();
 
+$latest_date = $csRow['created_date'] ? date('d-m-Y', strtotime($csRow['created_date'])) : '';
     $sub_array[] = $sno;
-
+    $sub_array[] = $latest_date;
     $sub_array[] = $row['cp_cus_id'];
     $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = $row['cus_name'];

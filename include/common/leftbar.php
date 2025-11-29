@@ -62,7 +62,7 @@ else if ($current_page == 'edit_concern_creation' || $current_page == 'edit_conc
 } else if ($current_page == 'cash_tally' || $current_page == 'bank_clearance' || $current_page == 'edit_bank_clearance' || $current_page == 'finance_insight'  || $current_page == 'edit_accounts_loan_issue' || $current_page == 'accounts_loan_issue') {
 
 	$current_module = 'accounts';
-} else if ($current_page == 'promotion_activity' || $current_page == 'loan_followup' || $current_page == 'confirmation_followup' || $current_page == 'due_followup' || $current_page == 'edit_due_followup') {
+} else if ($current_page == 'promotion_activity' || $current_page == 'loan_followup' || $current_page == 'confirmation_followup' || $current_page == 'due_followup' || $current_page == 'edit_due_followup'|| $current_page == 'ecs_followup' || $current_page == 'ecs_edit_followup') {
 
 	$current_module = 'followup';
 } else if (
@@ -107,6 +107,9 @@ else if ($current_page == 'edit_concern_creation' || $current_page == 'edit_conc
 		});
 		if (currentPage == 'dashboard') {
 			$('.dashboard').css('backgroundColor', '#646969d9');
+		}
+		if (currentPage == 'home_page') {
+			$('.home_page').css('backgroundColor', '#646969d9');
 		}
 	}, 1000);
 </script>
@@ -177,6 +180,7 @@ $promotion_activity = '';
 $loan_followup = '';
 $confirmation_followup = '';
 $due_followup = '';
+$ecs_followup = '';
 $reportmodule = '';
 $reportmodule_intrest = '';
 $intrest_ledger_report = '';
@@ -284,6 +288,7 @@ if (sizeof($getUser) > 0) {
 		$loan_followup          		     = $getUser['loan_followup'];
 		$confirmation_followup          		     = $getUser['confirmation_followup'];
 		$due_followup          		     = $getUser['due_followup'];
+		$ecs_followup          		     = $getUser['ecs_followup'];
 
 		$reportmodule          		     = $getUser['reportmodule'];
 		$ledger_report          		     = $getUser['ledger_report'];
@@ -464,6 +469,19 @@ if (sizeof($getUser) > 0) {
 		<!-- sidebar menu start -->
 		<div class="sidebar-menu">
 			<ul>
+				<li class="home_page">
+					<!-- <a href="javascript:void(0)"> -->
+					<!-- <span class="menu-text">Dashboard</span> -->
+					<a href="home_page"><i class='icon-home'></i>&nbsp;Home</a>
+					<!-- </a> -->
+					<!-- <div class="sidebar-submenu">
+						<ul>
+							<li>
+								<a href="dashboard"><i class='icon-credit-card'></i>Dashboard</a>
+							</li>
+						</ul>
+					</div> -->
+				</li>
 				<li class="dashboard">
 					<!-- <a href="javascript:void(0)"> -->
 					<!-- <span class="menu-text">Dashboard</span> -->
@@ -761,6 +779,11 @@ if (sizeof($getUser) > 0) {
 								<?php if ($due_followup == 0) { ?>
 									<li>
 										<a href="edit_due_followup"><i class='icon-confirmation_number'></i>Due Follow Up</a>
+									</li>
+								<?php  } ?>
+								<?php if ($ecs_followup == 0) { ?>
+									<li>
+										<a href="ecs_edit_followup"><i class='icon-confirmation_number'></i>ECS Follow Up</a>
 									</li>
 								<?php  } ?>
 							</ul>
@@ -1162,6 +1185,7 @@ $promotion_activity = '';
 $loan_followup = '';
 $confirmation_followup = '';
 $due_followup = '';
+$ecs_followup = '';
 $reportmodule = '';
 $reportmodule_intrest = '';
 $intrest_ledger_report = '';

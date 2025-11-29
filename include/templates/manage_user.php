@@ -20,6 +20,7 @@ $line_id           = '';
 $group_id           = '';
 $download_access = '';
 $report_access = '';
+$home_access = '';
 $promotion_access = '';
 $promotion_activity_mapping_access = '';
 $mastermodule    = '';
@@ -78,6 +79,7 @@ $promotion_activity = '';
 $loan_followup  = '';
 $conf_followup  = '';
 $due_followup  = '';
+$ecs_followup  = '';
 $reportmodule = '';
 $reportmodule_intrest = '';
 $intrest_ledger_report = '';
@@ -177,6 +179,7 @@ if($idupd>0)
 			$group_id          		     = $getUser['group_id'];
 			$download_access          		     = $getUser['download_access'];
 			$report_access          		     = $getUser['report_access'];
+			$home_access          		     = $getUser['home_access'];
 			$promotion_access          		     = $getUser['promotion_access'];
 			$promotion_activity_mapping_access = $getUser['promotion_activity_mapping_access'];
 			$mastermodule          		     = $getUser['mastermodule'];
@@ -237,6 +240,7 @@ if($idupd>0)
 			$loan_followup = $getUser['loan_followup'];
 			$conf_followup = $getUser['confirmation_followup'];
 			$due_followup = $getUser['due_followup'];
+			$ecs_followup = $getUser['ecs_followup'];
 			$due_followup_lines = $getUser['due_followup_lines'];
 			
 			$reportmodule          		     = $getUser['reportmodule'];
@@ -565,7 +569,19 @@ if($idupd>0)
 												<input class="form-check-input" type="radio" name="download_access" id="da_no" value="1" <?php if($idupd > 0){ if($download_access==1){ echo'checked'; }}?> >
 													<label for="download_access">No</label>
                                         </div>
-                                    </div>									
+                                    </div>	
+									  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+											<div class="form-group">
+												<label for="home_access">Home Upload Access</label>&nbsp;<span class="text-danger">*</span>
+												<select class="form-control" name="home_access" id="home_access" tabindex="13">
+													<option value="">Select Home Upload Access</option>
+													<option value="0" <?php if($home_access == '0') echo 'selected';?> >Yes</option>
+													<option value="1" <?php if($home_access == '1') echo 'selected';?> >No</option>
+												</select>
+												<br>
+												<span class="text-danger" style='display:none' id='HomeAccessCheck'>Please select Home Upload Access</span>
+											</div>
+										</div>								
 								</div>
 							</div>
 						</div>
@@ -1077,6 +1093,13 @@ if($idupd>0)
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($due_followup==0){ echo'checked'; }} ?> tabindex="65" class="followup-checkbox screen-validations" id="due_followup" name="due_followup" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="due_followup"> Due Followup</label>&nbsp;&nbsp;
 								<span class='text-danger dueFollowupCheck' style="display:none">Please Select Due Followup </span> 
+                            </div>
+                        </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($ecs_followup==0){ echo'checked'; }} ?> tabindex="66" class="followup-checkbox screen-validations" id="ecs_followup" name="ecs_followup" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="ecs_followup">ECS Due Followup</label>&nbsp;&nbsp;
+								<span class='text-danger ecsdueFollowupCheck' style="display:none">Please Select ECS Due Followup </span> 
                             </div>
                         </div>
 					</div>

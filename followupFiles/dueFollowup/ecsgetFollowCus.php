@@ -85,7 +85,7 @@ $searchValue = $_POST['search'];
 
 $data = [];
 
-$columns = ['cp.id', 'cp.cus_id', 'cr.autogen_cus_id', 'cp.cus_name', 'alc.area_name', 'salc.sub_area_name', 'bc.branch_name', 'alm.line_name', 'cp.mobile1', 'cs.sub_status', 'cp.id', 'cs.last_paid_date', 'cs.current_month_paid', 'cm.comm_err', 'cm.hint', 'cm.remark','cm.comm_date'];
+$columns = ['cp.id', 'cp.cus_id', 'cr.autogen_cus_id', 'cp.cus_name', 'alc.area_name', 'salc.sub_area_name', 'bc.branch_name', 'alm.line_name', 'cp.mobile1', 'cs.sub_status', 'cp.id','cm.comm_err','cm.comm_date'];
 
 $orderDir = $_POST['order'][0]['dir'];
 $order = $columns[$_POST['order'][0]['column']] ? "ORDER BY " . $columns[$_POST['order'][0]['column']] . " $orderDir" : "";
@@ -100,12 +100,8 @@ $query = "SELECT
     bc.branch_name,
     alm.line_name,
     cp.mobile1,
-    cs.last_paid_date,
-    cs.current_month_paid,
-    cm.hint,
     cm.comm_err,
     cm.comm_date,
-    cm.remark,
     ii.req_id
 FROM
     in_issue ii
@@ -125,7 +121,12 @@ JOIN branch_creation bc ON
     alm.branch_id = bc.branch_id
 JOIN in_verification iv ON
     cp.req_id = iv.req_id
-LEFT JOIN acknowlegement_loan_calculation aklc  ON aklc.req_id = ii.req_id  AND aklc.collection_method = 4
+LEFT JOIN (
+    SELECT DISTINCT cus_id_loan
+    FROM acknowlegement_loan_calculation
+    WHERE collection_method = 4
+) AS ack ON ack.cus_id_loan = ii.cus_id
+
 LEFT JOIN commitment cm ON 
 cm.cus_id = cp.cus_id
     AND cm.created_date = (
@@ -134,7 +135,7 @@ cm.cus_id = cp.cus_id
         WHERE c1.cus_id = cp.cus_id $commitmentCondition
     )
 WHERE
-    cs.payable_amnt > 0 AND ii.status = 0 AND ii.cus_status BETWEEN 14 AND 17 AND FIND_IN_SET(cs.sub_status,'$sub_status_mapping') $loan_agnt $search AND aklc.req_id IS NULL
+    cs.payable_amnt > 0 AND ii.status = 0 AND ii.cus_status BETWEEN 14 AND 17 AND FIND_IN_SET(cs.sub_status,'$sub_status_mapping') $loan_agnt $search AND ack.cus_id_loan IS NOT NULL
 GROUP BY
     ii.cus_id,
     cs.cus_id
@@ -158,31 +159,7 @@ foreach ($result as $row) {
     $comm_date = '';
     $hint = '';
     $comm_err = '';
-    switch ($row['last_paid_date']) {
-        case 1:
-            $last_paid_date = '1-10';
-            break;
-        case 2:
-            $last_paid_date = '11-15';
-            break;
-
-        case 3:
-            $last_paid_date = '16-20';
-            break;
-
-        case 4:
-            $last_paid_date = '21-25';
-            break;
-
-        case 5:
-            $last_paid_date = '26-30';
-            break;
-
-        default:
-            $last_paid_date = '';
-            break;
-    }
-
+ 
     $qry1 = $connect->query("SELECT 
         cus_id, 
         MIN(CASE 
@@ -229,9 +206,9 @@ foreach ($result as $row) {
     // $coll_date_qry = $collDate->fetch();
     // $date_range = isset($coll_date_qry['date_range']) ? $coll_date_qry['date_range'] : '';
 
-    $paid_status = ($row['current_month_paid'] == 1) ? 'Yes' : '';
+    // $paid_status = ($row['current_month_paid'] == 1) ? 'Yes' : '';
 
-    $hint = $row['hint'];
+    // $hint = $row['hint'];
     $comm_err = ($row['comm_err'] == '1') ? 'Error' : (($row['comm_err'] == '2') ? 'Clear' : '');
     $comm_date = (!empty($row['comm_date']) && $row['comm_date'] != '0000-00-00')
         ? date('d-m-Y', strtotime($row['comm_date']))
@@ -248,11 +225,7 @@ foreach ($result as $row) {
         $finalData['line'] = $row['line_name'],
         $finalData['mobile'] = $row['mobile1'],
         $finalData['status_priority'] = $cus_status,
-        $finalData['action'] = "<a href='due_followup&upd={$row['req_id']}&cusidupd=$cus_id&cussts=$sub_status_mapping&cummDate=$commdate' title='Edit details'><button class='btn btn-success' style='background-color:#009688;'>View Loans</button></a>",
-        $finalData['last_paid_date'] = $last_paid_date,
-        $finalData['paid_status'] = $paid_status,
-        $finalData['hint'] = $hint,
-        $finalData['remark'] = $row['remark'],
+        $finalData['action'] = "<a href='ecs_followup&upd={$row['req_id']}&cusidupd=$cus_id&cussts=$sub_status_mapping&cummDate=$commdate' title='Edit details'><button class='btn btn-success' style='background-color:#009688;'>View Loans</button></a>",
         $finalData['comm_err'] = $comm_err,
         $finalData['comm_dat'] = $comm_date
     ];
@@ -302,7 +275,13 @@ function getFilteredRecords($connect, $data, $search, $sub_status_mapping, $loan
             alm.branch_id = bc.branch_id
         JOIN in_verification iv ON
             cp.req_id = iv.req_id
-        LEFT JOIN acknowlegement_loan_calculation aklc  ON aklc.req_id = ii.req_id  AND aklc.collection_method = 4
+       LEFT JOIN (
+            SELECT 
+                cus_id_loan
+            FROM acknowlegement_loan_calculation
+            GROUP BY cus_id_loan
+            HAVING SUM(CASE WHEN collection_method = 4 THEN 1 ELSE 0 END) = 0
+        ) AS bad ON bad.cus_id_loan = ii.cus_id
         LEFT JOIN commitment cm ON 
             cm.cus_id = cp.cus_id
             AND cm.created_date = (
@@ -311,7 +290,7 @@ function getFilteredRecords($connect, $data, $search, $sub_status_mapping, $loan
                 WHERE c1.cus_id = cp.cus_id $commitmentCondition
             )
         WHERE
-            cs.payable_amnt > 0 AND FIND_IN_SET(cs.sub_status,'$sub_status_mapping') AND ii.status = 0 AND ii.cus_status BETWEEN 14 AND 17 $loan_agnt $search AND aklc.req_id IS NULL
+            cs.payable_amnt > 0 AND FIND_IN_SET(cs.sub_status,'$sub_status_mapping') AND ii.status = 0 AND ii.cus_status BETWEEN 14 AND 17 $loan_agnt $search AND bad.cus_id_loan IS NULL
         GROUP BY
             ii.cus_id,
             cs.cus_id ) as subquery");
