@@ -107,8 +107,7 @@ foreach ($result as $row) {
     // ];
     // $sub_array[] = $track_status_obj[$track_status]; //Document For Column
 
-
-    if ($track_status == '1') { //if 1 then raised from branch for submitting ack
+    if ($track_status == '1' || $track_status == '2') { //if 1 then raised from branch for submitting ack, if 2 means, Mark as sent to main branch.
 
         //then document keeper will be inser login id
         $doc_keeper = $row['insert_login_id'];
@@ -116,22 +115,24 @@ foreach ($result as $row) {
         $qry = $connect->query("SELECT fullname FROM user WHERE user_id = $doc_keeper ");
         $sub_array[] = $qry->fetch()['fullname']; //document keeper column
 
-    } else if ($track_status == '2') {
+    } 
+    // else if ($track_status == '2') {
 
-        //if status id 2 means, received in main branch
-        $sub_array[] = 'Main Branch'; //document keeper column
+    //     //if status id 2 means, received in main branch
+    //     $sub_array[] = 'Main Branch'; //document keeper column
 
-    } else if ($track_status == '3') {
+    // } 
+    // else if ($track_status == '3') {
 
-        //if status is 3, then documents not yet moved from main branch for noc
-        $sub_array[] = 'Main Branch'; //document keeper column
+    //     //if status is 3, received in main branch
+    //     $sub_array[] = 'Main Branch'; //document keeper column
 
-    } elseif ($track_status == '4') {
+    // } elseif ($track_status == '4') {
 
-        $branchqry = $connect->query("SELECT bc.branch_name FROM area_line_mapping lm JOIN branch_creation bc ON lm.branch_id = bc.branch_id where FIND_IN_SET('" . $row['sub_area'] . "' , lm.sub_area_id) ");
-        $sub_array[] = $branchqry->fetch()['branch_name'] . " Branch"; //document keeper column
+    //     $branchqry = $connect->query("SELECT bc.branch_name FROM area_line_mapping lm JOIN branch_creation bc ON lm.branch_id = bc.branch_id where FIND_IN_SET('" . $row['sub_area'] . "' , lm.sub_area_id) ");
+    //     $sub_array[] = $branchqry->fetch()['branch_name'] . " Branch"; //document keeper column
 
-    }
+    // }
 
     $id = $row['id']; //table id
 

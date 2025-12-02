@@ -21,9 +21,6 @@ if (isset($_SESSION['userid'])) {
     $qry = $connect->query("UPDATE `in_issue` SET `cus_status`= 21,`update_login_id` = $userid where cus_id = '".$cus_id."' and req_id = '".$req_id."' && cus_status = '20' ") or die('Error on in_issue Table');
     $qry = $connect->query("UPDATE `closed_status` SET `cus_sts`='21',`update_login_id`=$userid,`updated_date`= now() WHERE `cus_sts`='20' and req_id = '".$req_id."' && `cus_id`='".$cus_id."' ") or die('Error on closed_status Table');
 
-    // $qry = $connect->query("INSERT INTO `document_track`(`req_id`, `cus_id`, `track_status`, `insert_login_id`, `created_date`) 
-    // VALUES('".strip_tags($req_id)."','".strip_tags($cus_id)."','3','$userid', now()) ");
-
     if($qry){
         $response = 'Customer Moved to NOC';
     }else{

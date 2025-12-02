@@ -113,6 +113,9 @@ if (isset($_POST['balance']) && $_POST['balance'] == '0') {
 
         // Insert into customer_status
         $connect->query("INSERT INTO customer_status (req_id, cus_id, sub_status, payable_amnt, bal_amnt, insert_login_id, created_date) VALUES ('$req_id', '$cus_id', 'Current', '$cus_payable', '$tot_amt_cal', '$userid', '$current_date')");
+ 
+        //Loan move to collection only if balance = 0, in loan issue once 
+        $connect->query("INSERT INTO `document_track`(`req_id`, `cus_id`, `track_status`, `insert_login_id`, `created_date`)  VALUES('$req_id', '$cus_id', '1', '$userid', now() ) "); //Document track insert.
 
         // Commit the transaction
         $connect->commit();
