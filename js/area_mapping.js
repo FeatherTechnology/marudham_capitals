@@ -196,7 +196,7 @@ $(document).ready(function () {
         $('#area2').val(sortedStr);
 
         // getAreaBasedSubArea2(sortedStr);
-         getCusLoanCount();
+        //  getCusLoanCount();
     });
 
     // $('#sub_area_dummy2').change(function () {

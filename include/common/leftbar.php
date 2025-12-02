@@ -458,9 +458,8 @@ if (sizeof($getUser) > 0) {
 
 	<!-- Sidebar brand start  -->
 	<div class="sidebar-brand" style="background-color: #009688">
-		<a href="dashboard" class="logo">
+		<a href="home_page" class="logo">
 			<h2 class="ml-1" style="color: white; font-family: 'Maiandra GD', sans-serif;">MARUDHAM CAPITALS</h2>
-			<!-- <img src="img/logo.png" alt="Auction Dashboard" /> -->
 		</a>
 	</div>
 
@@ -470,31 +469,11 @@ if (sizeof($getUser) > 0) {
 		<div class="sidebar-menu">
 			<ul>
 				<li class="home_page">
-					<!-- <a href="javascript:void(0)"> -->
-					<!-- <span class="menu-text">Dashboard</span> -->
 					<a href="home_page"><i class='icon-home'></i>&nbsp;Home</a>
-					<!-- </a> -->
-					<!-- <div class="sidebar-submenu">
-						<ul>
-							<li>
-								<a href="dashboard"><i class='icon-credit-card'></i>Dashboard</a>
-							</li>
-						</ul>
-					</div> -->
 				</li>
-				<li class="dashboard">
-					<!-- <a href="javascript:void(0)"> -->
-					<!-- <span class="menu-text">Dashboard</span> -->
+				<!-- <li class="dashboard">
 					<a href="dashboard"><i class='icon-developer_board'></i>&nbsp;Dashboard</a>
-					<!-- </a> -->
-					<!-- <div class="sidebar-submenu">
-						<ul>
-							<li>
-								<a href="dashboard"><i class='icon-credit-card'></i>Dashboard</a>
-							</li>
-						</ul>
-					</div> -->
-				</li>
+				</li> -->
 				<?php if ($mastermodule == 0) { ?>
 					<li class="sidebar-dropdown master">
 						<a href="javascript:void(0)">
