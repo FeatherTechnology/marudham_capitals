@@ -119,7 +119,9 @@ if (isset($getuserdetails['download_access'])) {
 										<p><?php echo $fullname; ?></p>
 									</div>
 									<!-- <a href="#"><i class="icon-user1"></i> My Profile</a> -->
+									<?php if ($current_page == 'home_page') { ?>
 									<a href="logout.php" class="logout-link"><i class="icon-log-out1"></i>Log Out</a>
+									<?php } ?>
 								</div>
 							</div>
 						</li>
