@@ -440,35 +440,35 @@ if (sizeof($getCustomerReg) > 0) {
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emiLoanDiv">
 										<div class="form-group">
 											<label for="disabledInput">Due Amount</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" class="form-control" id="due_amt_track" name="due_amt_track" value='' placeholder='Enter Due Amount' tabindex='24' oninput="validateInputNumber(this,'collection')">
+											<input type="text" class="form-control" id="due_amt_track" name="due_amt_track" value='' placeholder='Enter Due Amount' tabindex='24' oninput="validateInputNumber(this,'withOutDot')">
 											<span class="text-danger totalpaidCheck" style="display: none;">Please Enter any one of these<span>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 intLoanDiv" style="display: none;">
 										<div class="form-group">
 											<label for="disabledInput">Principal Amount</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" class="form-control" id="princ_amt_track" name="princ_amt_track" value='' placeholder='Enter Principal Amount' tabindex='25' oninput="validateInputNumber(this,'collection')">
+											<input type="text" class="form-control" id="princ_amt_track" name="princ_amt_track" value='' placeholder='Enter Principal Amount' tabindex='25' oninput="validateInputNumber(this,'withOutDot')">
 											<span class="text-danger totalpaidCheck" style="display: none;">Please Enter any one of these<span>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 intLoanDiv" style="display: none;">
 										<div class="form-group">
 											<label for="disabledInput">Interest Amount</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" class="form-control" id="int_amt_track" name="int_amt_track" value='' placeholder='Enter Interest Amount' tabindex='26' oninput="validateInputNumber(this,'collection')">
+											<input type="text" class="form-control" id="int_amt_track" name="int_amt_track" value='' placeholder='Enter Interest Amount' tabindex='26' oninput="validateInputNumber(this,'withOutDot')">
 											<span class="text-danger totalpaidCheck" style="display: none;">Please Enter any one of these<span>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Penalty</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" class="form-control" id="penalty_track" name="penalty_track" value='' placeholder='Enter Penalty Amount' tabindex='27' oninput="validateInputNumber(this,'collection')">
+											<input type="text" class="form-control" id="penalty_track" name="penalty_track" value='' placeholder='Enter Penalty Amount' tabindex='27' oninput="validateInputNumber(this,'withOutDot')">
 											<span class="text-danger totalpaidCheck" style="display: none;">Please Enter any one of these<span>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Fine</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" class="form-control" id="coll_charge_track" name="coll_charge_track" value='' placeholder='Enter Fine' tabindex='28' oninput="validateInputNumber(this,'collection')">
+											<input type="text" class="form-control" id="coll_charge_track" name="coll_charge_track" value='' placeholder='Enter Fine' tabindex='28' oninput="validateInputNumber(this,'withOutDot')">
 											<span class="text-danger totalpaidCheck" style="display: none;">Please Enter any one of these<span>
 										</div>
 									</div>
@@ -487,31 +487,31 @@ if (sizeof($getCustomerReg) > 0) {
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emiLoanDiv">
 											<div class="form-group">
 												<label for="disabledInput">Pre Closure</label>
-												<input type="text" class="form-control" id="pre_close_waiver" name="pre_close_waiver" value='' placeholder='Enter Pre Closure Amount' tabindex='30' oninput="validateInputNumber(this,'collection')">
+												<input type="text" class="form-control" id="pre_close_waiver" name="pre_close_waiver" value='' placeholder='Enter Pre Closure Amount' tabindex='30' oninput="validateInputNumber(this,'withOutDot')">
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 intLoanDiv" style="display: none;">
 											<div class="form-group">
 												<label for="disabledInput">Principle Waiver</label>
-												<input type="text" class="form-control" id="principal_waiver" name="principal_waiver" value='' placeholder='Enter Principle Waiver Amount' tabindex='31' oninput="validateInputNumber(this,'collection')">
+												<input type="text" class="form-control" id="principal_waiver" name="principal_waiver" value='' placeholder='Enter Principle Waiver Amount' tabindex='31' oninput="validateInputNumber(this,'withOutDot')">
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 intLoanDiv" style="display: none;">
 											<div class="form-group">
 												<label for="disabledInput">Interest Waiver</label>
-												<input type="text" class="form-control" id="interest_waiver" name="interest_waiver" value='' placeholder='Enter Interest Waiver Amount' tabindex='32' oninput="validateInputNumber(this,'collection')">
+												<input type="text" class="form-control" id="interest_waiver" name="interest_waiver" value='' placeholder='Enter Interest Waiver Amount' tabindex='32' oninput="validateInputNumber(this,'withOutDot')">
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
 												<label for="disabledInput">Penalty Waiver</label>
-												<input type="text" class="form-control" id="penalty_waiver" name="penalty_waiver" value='' placeholder='Enter Penalty Waiver' tabindex='33' oninput="validateInputNumber(this,'collection')">
+												<input type="text" class="form-control" id="penalty_waiver" name="penalty_waiver" value='' placeholder='Enter Penalty Waiver' tabindex='33' oninput="validateInputNumber(this,'withOutDot')">
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
 												<label for="disabledInput">Fine Waiver</label>
-												<input type="text" class="form-control" id="coll_charge_waiver" name="coll_charge_waiver" value='' placeholder='Enter Fine Waiver' tabindex='34' oninput="validateInputNumber(this,'collection')">
+												<input type="text" class="form-control" id="coll_charge_waiver" name="coll_charge_waiver" value='' placeholder='Enter Fine Waiver' tabindex='34' oninput="validateInputNumber(this,'withOutDot')">
 											</div>
 										</div>
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">

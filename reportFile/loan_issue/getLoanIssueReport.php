@@ -102,9 +102,8 @@ $query = "SELECT
         ac.ag_name,
         iv.responsible,
         ii.updated_date as loan_date,
-        li.payment_type,
-        li.bank_id,
-        li.created_date,
+        GROUP_CONCAT(li.payment_type) AS combinedPaymentType,
+        li.req_id,
         lc.loan_amt_cal,
         lc.principal_amt_cal,
         lc.int_amt_cal,
@@ -165,6 +164,9 @@ if (isset($_POST['search'])) {
             OR ii.updated_date LIKE '%" . $_POST['search'] . "%') ";
     }
 }
+
+$query .= " GROUP BY ii.req_id";
+
 if (isset($_POST['order'])) {
     $query .= " ORDER BY " . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'];
 } else {
@@ -190,19 +192,28 @@ $result = $statement->fetchAll();
 
 $data = array();
 $sno = 1;
-foreach ($result as $row) {
-    $payment_type = $row['payment_type'];
+$paymentTypeArr = [ 0 => 'Cash', 1 => 'Cheque', 2 => 'Account Transfer' ];
 
-    $payment_type_str = '';
+foreach ($result as $row) {
+    $combinedPaymentType = explode(',',$row['combinedPaymentType']);
+
+    $combinedtypeStr ='';
+    if(empty($row['ag_name'])){
+        // Convert each number to text
+        $combinedtype = array_map(function($pt) use ($paymentTypeArr) {
+            return $paymentTypeArr[$pt];
+        }, $combinedPaymentType);
+
+        // Join them into a single string "Cash, Account Transfer"
+        $combinedtypeStr = implode(', ', $combinedtype);
+    }
+    
     $bank_name = '';
-    if ($payment_type == '0') {
-        $payment_type_str = 'Cash';
-    } elseif ($payment_type == '1') {
-        $payment_type_str = 'Cheque';
-        $bank_name = getBankName($row['bank_id'], $connect);
-    } elseif ($payment_type == '2') {
-        $payment_type_str = 'Account Transfer';
-        $bank_name = getBankName($row['bank_id'], $connect);
+    if (in_array('1', $combinedPaymentType) || in_array('2', $combinedPaymentType)) {
+        $qry = $connect->query("SELECT bank_id, created_date FROM loan_issue WHERE req_id = '".$row['req_id']."' AND payment_type != 0");
+        $qryfetch = $qry->fetch();
+        
+        $bank_name = getBankName($qryfetch['bank_id'], $connect);
     }
 
     $sub_array   = array();
@@ -225,9 +236,9 @@ foreach ($result as $row) {
     $sub_array[] = $row['ag_name'];
     $sub_array[] = (!empty($row['ag_name'])) ? (($row['responsible'] == '0') ? 'Yes' : 'No') : '';
     $sub_array[] = date('d-m-Y', strtotime($row['loan_date']));
-    $sub_array[] = $payment_type_str;
+    $sub_array[] = $combinedtypeStr;
     $sub_array[] = $bank_name;
-    $sub_array[] = ($payment_type != '0' && $payment_type != '') ? date('d-m-Y', strtotime($row['created_date'])) : '';
+    $sub_array[] = (in_array('1', $combinedPaymentType) || in_array('2', $combinedPaymentType)) ? date('d-m-Y', strtotime($qryfetch['created_date'])) : '';
     $sub_array[] = moneyFormatIndia($row['loan_amt_cal']);
     $sub_array[] = moneyFormatIndia($row['principal_amt_cal']);
     $sub_array[] = moneyFormatIndia($row['int_amt_cal']);
@@ -240,7 +251,7 @@ foreach ($result as $row) {
     $sub_array[] = date('d-m-Y', strtotime($row['due_start_from']));
     $sub_array[] = date('d-m-Y', strtotime($row['maturity_month']));
 
-    if ($row['rec_relationship'] == 'Customer' || $payment_type == '1' || $payment_type == '2') {
+    if ($row['rec_relationship'] == 'Customer' || in_array('1', $combinedPaymentType) || in_array('2', $combinedPaymentType)) {
         //if loan issued to customer then direclty place customer name from cp table
         $sub_array[] = $row['cus_name'];
         $sub_array[] = 'Customer';

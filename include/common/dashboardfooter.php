@@ -1565,7 +1565,7 @@
     if ($current_page == 'edit_due_followup') { ?>
         <script src="js/edit_due_followup.js"></script>
     <?php }
-     // ecs due follow up
+    
     if ($current_page == 'ecs_followup') { ?>
         <script src="js/ecs_followup.js"></script>
     <?php }
@@ -2357,11 +2357,11 @@
     function validateInputNumber(e,screen){
         let val = $(e).val();
 
-        if(screen ==='collection'){ //Collection track to insert one round off so not allowed dot
+        if(screen ==='withOutDot'){ //Collection track to insert one round off so not allowed dot
             // Remove all non-digit characters
             val = val.replace(/[^0-9]/g, '');
 
-        } else if(screen ==='loaninfo'){
+        } else if(screen ==='withDot'){
             val = val.replace(/(\..*)\./g, '$1'); // allow only one dot
             
         }

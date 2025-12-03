@@ -217,6 +217,8 @@ if($idupd>0)
 			$nocmodule          		     = $getUser['nocmodule'];
 			$noc          		     	= $getUser['noc'];
 			$noc_handover          		     = $getUser['noc_handover'];
+			$noc_replace          		     = $getUser['noc_replace'];
+			$noc_replace_access          		     = $getUser['noc_replace_access'];
 			$noc_mapping_access          		     = $getUser['noc_mapping_access'];
 			$doctrackmodule 				= $getUser['doctrackmodule'];
 			$doctrack 				= $getUser['doctrack'];
@@ -917,18 +919,33 @@ if($idupd>0)
                                 <label class="custom-control-label" for="noc_handover">NOC Handover</label>
                             </div>
                         </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($noc_replace==0){ echo'checked'; }} ?> tabindex="45" class="noc-checkbox screen-validations" id="noc_replace" name="noc_replace" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="noc_replace">NOC Replace</label>
+                            </div>
+                        </div>
+						</br> </br></br>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+							<div class="custom-control custom-checkbox">
+								<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($noc_replace_access==0){ echo'checked'; }} ?> tabindex="45" class="noc-checkbox screen-validations" id="noc_replace_access" name="noc_replace_access" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="noc_replace_access">NOC Replace Access</label>
+								<br>
+								<span class="text-danger" style='display:none' id='replaceCheck'>Please Check Replace Access</span>
+							</div>
+                        </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 noc_handover_div">
-							  <div class="form-group">
-                                            <label for="noc_mapping_access">NOC Mapping Access</label>&nbsp;<span class="text-danger">*</span>
-											<select tabindex="12" type="text" class="form-control" id="noc_mapping_access" name="noc_mapping_access">
-												<option value="">Select NOC Mapping Access</option>
-												<option value="1" <?php if($noc_mapping_access == '1') echo 'selected';?> >Group</option>
-												<option value="2" <?php if($noc_mapping_access == '2') echo 'selected';?> >Line</option>
-												<option value="3" <?php if($noc_mapping_access == '3') echo 'selected';?> >Followup</option>
-											</select>
-											<br>
-											<span class="text-danger" style='display:none' id='handoverCheck'>Please Select NOC Mapping Access</span>
-                                        </div>
+							  <div class="custom-control custom-checkbox">
+								<label for="noc_mapping_access">NOC Mapping Access</label>&nbsp;<span class="text-danger">*</span>
+								<select tabindex="12" type="text" class="form-control" id="noc_mapping_access" name="noc_mapping_access">
+									<option value="">Select NOC Mapping Access</option>
+									<option value="1" <?php if($noc_mapping_access == '1') echo 'selected';?> >Group</option>
+									<option value="2" <?php if($noc_mapping_access == '2') echo 'selected';?> >Line</option>
+									<option value="3" <?php if($noc_mapping_access == '3') echo 'selected';?> >Followup</option>
+								</select>
+								<br>
+								<span class="text-danger" style='display:none' id='handoverCheck'>Please Select NOC Mapping Access</span>
+							</div>
                         </div>
 					</div>
 
@@ -1098,8 +1115,8 @@ if($idupd>0)
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($ecs_followup==0){ echo'checked'; }} ?> tabindex="66" class="followup-checkbox screen-validations" id="ecs_followup" name="ecs_followup" disabled>&nbsp;&nbsp;
-                                <label class="custom-control-label" for="ecs_followup">ECS Due Followup</label>&nbsp;&nbsp;
-								<span class='text-danger ecsdueFollowupCheck' style="display:none">Please Select ECS Due Followup </span> 
+                                <label class="custom-control-label" for="ecs_followup">ECS Followup</label>&nbsp;&nbsp;
+								<span class='text-danger ecsdueFollowupCheck' style="display:none">Please Select ECS Followup </span> 
                             </div>
                         </div>
 					</div>
