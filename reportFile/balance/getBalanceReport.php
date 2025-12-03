@@ -203,7 +203,7 @@ $query = "SELECT
                 GROUP BY 
                     req_id 
             ) ch ON ch.req_id = iv.req_id
-        WHERE lc.req_id IN ($req_id_list) AND lc.due_type != 'Interest' ";
+        WHERE lc.req_id IN ($req_id_list) AND lc.due_type != 'Interest' AND balance_amount = '0' ";
 
 if(isset($_POST['loan_cat'])){
     $loan_cat_str = "'" . implode("','", $_POST['loan_cat']) . "'";
