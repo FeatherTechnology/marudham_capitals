@@ -12,29 +12,43 @@ if (isset($_SESSION["userid"])) {
 }
 if ($userid != 1) {
 
-    $userQry = $connect->query("SELECT group_id, ver_loan_cat FROM USER WHERE user_id = $userid ");
+    $userQry = $connect->query("SELECT group_id, ver_group_id, ver_loan_cat FROM user WHERE user_id = $userid");
     $rowuser = $userQry->fetch();
-        $group_id = $rowuser['group_id'];
-        $loan_cat = $rowuser['ver_loan_cat'];
-    
-    $group_id = explode(',', $group_id);
-    $sub_area_list = array();
-    foreach ($group_id as $group) {
-        $groupQry = $connect->query("SELECT sub_area_id FROM area_group_mapping where map_id = $group ");
-        $row_sub = $groupQry->fetch();
-        $sub_area_list[] = $row_sub['sub_area_id'];
+
+    // USE ver_group_id IF NOT NULL
+    if (!empty($rowuser['ver_group_id'])) {
+        $group_id = $rowuser['ver_group_id'];   // Use verification groups
+    } else {
+        $group_id = $rowuser['group_id'];       // Use normal groups
     }
-    $sub_area_ids = array();
-    foreach ($sub_area_list as $subarray) {
-        $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
+
+    $loan_cat     = $rowuser['ver_loan_cat'];
+    $group_id_arr = explode(',', $group_id);
+
+    // Fetch all sub-area IDs from mapping
+    $sub_area_ids = [];
+
+    foreach ($group_id_arr as $group) {
+        $groupQry = $connect->query("SELECT sub_area_id FROM area_group_mapping WHERE map_id = $group
+        ");
+
+        if ($row_sub = $groupQry->fetch()) {
+            $sub_area_ids = array_merge(
+                $sub_area_ids,
+                explode(',', $row_sub['sub_area_id'])
+            );
+        }
     }
-    $sub_area_list = array();
+
+    // Remove duplicates & convert to comma list
+    $sub_area_ids = array_unique($sub_area_ids);
     $sub_area_list = implode(',', $sub_area_ids);
 
     if ($loan_cat == null) {
         $loan_cat = '';
     }
 }
+
 $stage_arr = [
     0 => 'Request',
     1 => 'Verification',

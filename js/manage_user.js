@@ -41,6 +41,12 @@ const groupMultiselect = new Choices('#group1', {
     allowHTML: true
 });
 
+const vergroupMultiselect = new Choices('#ver_group_id', {
+    removeItemButton: true,
+    noChoicesText: 'Select Group Name',
+    allowHTML: true
+});
+
 const bankMultiselect = new Choices('#bank_details1', {
     removeItemButton: true,
     noChoicesText: 'Select Bank Name',
@@ -143,7 +149,8 @@ $(document).ready(function () {
             branch_id += branch_id1[i].value;
         }
 
-        getGroupDropdown(branch_id);
+        getGroupDropdown('group1','group_id_upd',branch_id);
+        getGroupDropdown('ver_group_id','ver_group_id_upd',branch_id);
         getLineDropdown(branch_id);
         getdueFollupLineDropdown(branch_id);
     });
@@ -456,7 +463,8 @@ $(function () {
 
         }
 
-        getGroupDropdown(branch_id_upd);
+        getGroupDropdown('group1','group_id_upd',branch_id_upd);
+       
         getLineDropdown(branch_id_upd);
         getdueFollupLineDropdown(branch_id_upd);
         getBankDetails();
@@ -486,9 +494,11 @@ $(function () {
         var verification_screen = document.querySelector('#verification');
         if (verification_screen.checked) {
             getLoanCatDropdown('#ver_loan_cat_upd', verificationloanCatMultiselect);
+             getGroupDropdown('ver_group_id','ver_group_id_upd',branch_id_upd);
             $('.ver_loancat_div').show()
         }else{
             verificationloanCatMultiselect.clearStore();
+            vergroupMultiselect.clearStore();
             $('.ver_loancat_div').hide()
         }
 
@@ -903,38 +913,39 @@ function getdueFollupLineDropdown(branch_id) {
 }
 
 //get Group Dropdown
-function getGroupDropdown(branch_id) {
-    var group_id_upd = $('#group_id_upd').val().split(',');
+function getGroupDropdown(selectBoxId, hiddenId, branch_id) {
+
+    var selected_groups = $('#' + hiddenId).val().split(',');
+
     $.ajax({
         url: 'manageUser/getGroupDropdown.php',
-        data: { 'branch_id': branch_id },
-        dataType: 'json',
         type: 'post',
-        cache: false,
+        data: { branch_id: branch_id },
+        dataType: 'json',
         success: function (response) {
-            groupMultiselect.clearStore();
-            for (var i = 0; i < response.length; i++) {
-                var map_id = response[i]['map_id'];
-                var group_name = response[i]['group_name'];
-                var selected = '';
-                if (group_id_upd != '') {
-                    for (var j = 0; j < group_id_upd.length; j++) {
-                        if (group_id_upd[j] == map_id) {
-                            selected = 'selected';
-                        }
-                    }
-                }
-                var items = [{
-                    value: map_id,
-                    label: group_name,
-                    selected: selected
-                }]
-                groupMultiselect.setChoices(items);
-                groupMultiselect.init();
-            }
+
+            var dropdownObj = (selectBoxId == 'group1')
+                ? groupMultiselect
+                : vergroupMultiselect;
+
+            dropdownObj.clearStore();
+
+            let items = [];
+
+            response.forEach(function (item) {
+                items.push({
+                    value: item.map_id,
+                    label: item.group_name,
+                    selected: selected_groups.includes(String(item.map_id)) // FIXED
+                });
+            });
+
+            dropdownObj.setChoices(items, 'value', 'label', true);
         }
-    })
+    });
 }
+
+
 
 //Get Bank Details list
 function getBankDetails() {
@@ -1040,6 +1051,7 @@ function validation() {
 
     multipleSelectSort(branchMultiselect, '#branch_id');
     multipleSelectSort(agentMultiselect, '#agentforstaff');
+    multipleSelectSort(vergroupMultiselect, '#ver_group');
 
     let groupSort = multipleSelectSort(groupMultiselect, '#group');
     if (groupSort == 0) {  

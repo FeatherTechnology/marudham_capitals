@@ -172,6 +172,7 @@ if($idupd>0)
 			$company_id          		     = $getUser['company_id'];
 			$branch_id          		     = $getUser['branch_id'];
 			$ver_loan_cat          		     = $getUser['ver_loan_cat'];
+			$ver_group_id          		     = $getUser['ver_group_id'];
 			$app_loan_cat          		     = $getUser['app_loan_cat'];
 			$ack_loan_cat          		     = $getUser['ack_loan_cat'];
 			$agentforstaff          		     = $getUser['agentforstaff'];
@@ -318,6 +319,7 @@ if($idupd>0)
 		<input type="hidden" class="form-control" value="<?php if(isset($branch_id)) echo $branch_id; ?>"  id="branch_id_upd" name="branch_id_upd">
 		<input type="hidden" class="form-control" value="<?php if(isset($agentforstaff)) echo $agentforstaff; ?>"  id="agentforstaff_upd" name="agentforstaff_upd">
 		<input type="hidden" class="form-control" value="<?php if(isset($ver_loan_cat)) echo $ver_loan_cat; ?>"  id="ver_loan_cat_upd" name="ver_loan_cat_upd">
+		<input type="hidden" class="form-control" value="<?php if(isset($ver_group_id)) echo $ver_group_id; ?>"  id="ver_group_id_upd" name="ver_group_id_upd">
 		<input type="hidden" class="form-control" value="<?php if(isset($app_loan_cat)) echo $app_loan_cat; ?>"  id="app_loan_cat_upd" name="app_loan_cat_upd">
 		<input type="hidden" class="form-control" value="<?php if(isset($ack_loan_cat)) echo $ack_loan_cat; ?>"  id="ack_loan_cat_upd" name="ackloan_cat_upd">
 		<input type="hidden" class="form-control" value="<?php if(isset($agent_id)) echo $agent_id; ?>"  id="agent_id_upd" name="agent_id_upd">
@@ -753,6 +755,15 @@ if($idupd>0)
 									<option value="">Select Loan Category</option>
 								</select>
 								<span class="text-danger" style='display:none' id='ver_loan_catCheck'>Please select Verification Loan Category</span>
+                            </div>
+                        </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 ver_loancat_div" style='display:none;'>
+                            <div class="form-group">
+								<label for="ver_group_id">Verification Group Name</label>
+								<input type='hidden' class='form-control' id='ver_group' name='ver_group' >
+								<select tabindex="32" type="text" class="form-control" id="ver_group_id" name="ver_group_id" multiple>
+									<option value="">Select Group Name</option>
+								</select>
                             </div>
                         </div>
 					</div>
