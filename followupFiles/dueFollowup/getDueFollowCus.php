@@ -288,6 +288,8 @@ function getFilteredRecords($connect, $data, $search, $sub_status_mapping, $loan
         $query = $connect->query(" SELECT COUNT(*) as total FROM ( SELECT cp.cus_id
         FROM
             in_issue ii
+        JOIN 
+        customer_register cr ON ii.cus_id = cr.cus_id 
         JOIN acknowlegement_customer_profile cp ON
             ii.req_id = cp.req_id
         JOIN customer_status cs ON
