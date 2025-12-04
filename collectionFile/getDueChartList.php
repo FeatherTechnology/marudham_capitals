@@ -890,7 +890,7 @@ function moneyFormatIndia($num)
                         $bal_amt = $loan_amt - $PcollectionAmnt - $principal_waiver;
                     }
                 } else {
-                    $bal_amt = $loan_amt - $due_amt_track - $waiver;
+                    $bal_amt = intVal($row['bal_amt']) - $due_amt_track - $waiver;
                 }
             ?>
                 <tr>
