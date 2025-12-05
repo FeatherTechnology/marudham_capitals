@@ -550,6 +550,11 @@ if (isset($getuserdetails['download_access'])) {
 			<?php if ($current_page == 'events_report') { ?>
 				<?php include "include/templates/events_report.php" ?>
 			<?php } else ?>
+			
+			<!-- Area Loan Count Report -->
+			<?php if ($current_page == 'area_loan_count_report') { ?>
+				<?php include "include/templates/area_loan_count_report.php" ?>
+			<?php } else ?>
 
 			<!-- User Tracking report -->
 			<?php if ($current_page == 'user_tracking_report') { ?>

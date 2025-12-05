@@ -1655,6 +1655,9 @@
     if ($current_page == 'events_report') { ?>
         <script src="js/events_report.js"></script>
     <?php }
+    if ($current_page == 'area_loan_count_report') { ?>
+        <script src="js/area_loan_count_report.js"></script>
+    <?php }
 
     if ($current_page == 'intrest_ledger_report') { ?>
         <script src="js/intrest_ledger_report.js"></script>
