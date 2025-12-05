@@ -102,13 +102,13 @@ $coll_modes = ['1' => 'Cash', '2' => 'Cheque', '3' => 'ECS', '4' => 'IMPS/NEFT/R
             <div>Loan Category :</div>
             <div>Loan ID :</div>
             <div>
-                <?php if ($due_type == 'EMI') { ?>
+                <?php if ($due_type != 'Interest') { ?>
                     Due Receipt :
                 <?php } else { ?>
                     Principal Receipt :
                 <?php } ?>
             </div>
-            <?php if ($due_type != 'EMI') { ?>
+            <?php if ($due_type == 'Interest') { ?>
                 <div>Interest Receipt :</div>
             <?php } ?>
             <div>Penalty :</div>
@@ -118,7 +118,7 @@ $coll_modes = ['1' => 'Cash', '2' => 'Cheque', '3' => 'ECS', '4' => 'IMPS/NEFT/R
             </b><br>
             <!-- <div>Due Balance :</div> -->
             <div>
-                <?php if ($due_type !== 'EMI') { ?>
+                <?php if ($due_type == 'Interest') { ?>
                     Interest Balance :
                 <?php } ?>
             </div>
@@ -144,13 +144,13 @@ $coll_modes = ['1' => 'Cash', '2' => 'Cheque', '3' => 'ECS', '4' => 'IMPS/NEFT/R
             </b>
             <div><?php echo $loan_category; ?></div>
             <div><?php echo $loan_id; ?></div> <div>
-                <?php if ($due_type == 'EMI') {
+                <?php if ($due_type != 'Interest') {
                     echo moneyFormatIndia($due_amt_track);
                 } else {
                     echo moneyFormatIndia($princ_amt_track);
                 } ?>
             </div>
-            <?php if ($due_type != 'EMI') { ?>
+            <?php if ($due_type == 'Interest') { ?>
                 <div>
                     <?php echo moneyFormatIndia($int_amt_track); ?>
                 </div>
@@ -162,7 +162,7 @@ $coll_modes = ['1' => 'Cash', '2' => 'Cheque', '3' => 'ECS', '4' => 'IMPS/NEFT/R
             </b><br>
             <!-- <div><?php #echo moneyFormatIndia($due_balance); ?></div> -->
             <div>
-                <?php if ($due_type !== 'EMI') {
+                <?php if ($due_type == 'Interest') {
                     echo moneyFormatIndia($interest_balance);
                 } ?>
             </div>
