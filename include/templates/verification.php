@@ -306,7 +306,7 @@ if (sizeof($getLoanCalculation) > 0) {
 		$getLoanCalCategory = $userObj->getVerificationLoanCalCategory($mysqli, $loan_cal_id);
 	}
 
-	$emicheck = strpos($due_type_lc, 'EMI') !== false;
+	$emicheck = strpos($due_type_lc, 'Interest') == false;
 }
 
 

@@ -97,7 +97,7 @@ if (sizeof($getLoanCalculation) > 0) {
         $collection_method = $getLoanCalculation['collection_method'];
     }
 
-    $emicheck = strpos($due_type_lc, 'EMI') !== false;
+   $emicheck = strpos($due_type_lc, 'Interest') === false; 
 }
 
 ///////// Loan Calculation End ///////////////
