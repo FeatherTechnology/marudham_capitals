@@ -69,6 +69,9 @@ $statusLabels = [
     '17' => 'Present',
     '20' => 'Closed',
     '21' => 'NOC',
+    '22' => 'NOC',
+    '23' => 'NOC',
+    '24' => 'NOC',
 ];
 
 $column = array(

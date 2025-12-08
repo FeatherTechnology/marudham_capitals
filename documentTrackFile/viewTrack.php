@@ -27,7 +27,7 @@ if(isset($_POST['cus_id'])){
     <div class="card noc-card" >
         <div class="card-body">
             <!-- Signed Document start -->
-            <div class="row">
+            <div class="row" id="sign_div">
                 <div class="col-md-12 ">
                     <div class="row">
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
@@ -45,9 +45,9 @@ if(isset($_POST['cus_id'])){
                 </div>
             </div>
             <!-- Signed Document End -->
-            <hr class='hr-line'>
+            <hr class='hr-line'id="sign_hr">
             <!-- Cheque List Start -->
-            <div class="row">
+            <div class="row" id="cheque_div">
                 <div class="col-md-12 ">
                     <div class="row">
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
@@ -65,9 +65,9 @@ if(isset($_POST['cus_id'])){
                 </div>
             </div>
                 <!-- Cheque List End -->
-                <hr class='hr-line'>
+                <hr class='hr-line'id="cheque_hr">
                 <!-- Mortgage List Start -->
-            <div class="row">
+            <div class="row" id="mort_div">
                 <div class="col-md-12 ">
                     <div class="row">
 
@@ -86,9 +86,9 @@ if(isset($_POST['cus_id'])){
                 </div>
             </div>
                 <!-- Mortgage List End -->
-                <hr class='hr-line'>
+                <hr class='hr-line'id="mort_hr">
                 <!-- Endorsement List Start -->
-            <div class="row">
+            <div class="row" id ="endorse_div">
                 <div class="col-md-12 ">
                     <div class="row">
 
@@ -107,9 +107,9 @@ if(isset($_POST['cus_id'])){
                 </div>
             </div>
                 <!-- Endorsement List End -->
-                <hr class='hr-line'>
+                <hr class='hr-line' id ="endo_hr">
                 <!-- Gold List Start -->
-            <div class="row">
+            <div class="row" id="gold_div">
                 <div class="col-md-12 ">
                     <div class="row">
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
@@ -127,9 +127,9 @@ if(isset($_POST['cus_id'])){
                 </div>
             </div>
                 <!-- Gold List End -->
-                <hr class='hr-line'>
+                <hr class='hr-line' id="gold_hr">
                 <!-- Document Info Start -->
-            <div class="row">
+            <div class="row" id="doc_div">
                 <div class="col-md-12 ">
                     <div class="row">
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">

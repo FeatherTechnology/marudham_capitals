@@ -1649,8 +1649,8 @@
     if ($current_page == 'uncleared_report') { ?>
         <script src="js/uncleared_report.js"></script>
     <?php }
-    if ($current_page == 'user_tracking_report') { ?>
-        <script src="js/user_tracking_report.js"></script>
+    if ($current_page == 'work_count_report') { ?>
+        <script src="js/work_count_report.js"></script>
     <?php }
     if ($current_page == 'events_report') { ?>
         <script src="js/events_report.js"></script>

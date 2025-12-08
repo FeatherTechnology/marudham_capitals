@@ -11,9 +11,15 @@ function getAllDocumentList(req_id, cus_name, cus_id) {
         type: 'post',
         cache: false,
         success: function (response) {
-
-            $('#signDocDiv').empty()
-            $('#signDocDiv').html(response);
+            let noData = $(response).find("tbody tr").length === 0;
+            if (noData) {
+                $("#sign_div").hide();
+                $("#sign_hr").hide();
+            } else {
+                $("#sign_div").show();
+                $('#signDocDiv').empty()
+                $('#signDocDiv').html(response);
+            }
 
         }
     });
@@ -26,9 +32,15 @@ function getAllDocumentList(req_id, cus_name, cus_id) {
         type: 'post',
         cache: false,
         success: function (response) {
-
-            $('#chequeDiv').empty()
-            $('#chequeDiv').html(response);
+            let noData = $(response).find("tbody tr").length === 0;
+            if (noData) {
+                $("#cheque_div").hide();
+                $("#sign_hr").hide();
+            } else {
+                $("#cheque_div").show();
+                $('#chequeDiv').empty()
+                $('#chequeDiv').html(response);
+            }
         }
     });
 
@@ -40,8 +52,15 @@ function getAllDocumentList(req_id, cus_name, cus_id) {
         cache: false,
         success: function (response) {
 
-            $('#mortgageDiv').empty()
-            $('#mortgageDiv').html(response);
+            let noData = $(response).find("tbody tr").length === 0;
+            if (noData) {
+                $("#mort_div").hide();
+                $("#cheque_hr").hide();
+            } else {
+                $("#mort_div").show();
+                $('#mortgageDiv').empty()
+                $('#mortgageDiv').html(response);
+            }
         }
     });
 
@@ -53,8 +72,16 @@ function getAllDocumentList(req_id, cus_name, cus_id) {
         cache: false,
         success: function (response) {
 
-            $('#endorsementDiv').empty()
-            $('#endorsementDiv').html(response);
+            let noData = $(response).find("tbody tr").length === 0;
+            if (noData) {
+                $("#endorse_div").hide();
+                $("#mort_hr").hide();
+            } else {
+                $("#endorse_div").show();
+                $('#endorsementDiv').empty()
+                $('#endorsementDiv').html(response);
+            }
+
         }
     });
 
@@ -65,9 +92,16 @@ function getAllDocumentList(req_id, cus_name, cus_id) {
         type: 'post',
         cache: false,
         success: function (response) {
+            let noData = $(response).find("tbody tr").length;
+            if (noData <= 1) {
+               $("#gold_div").hide();
+               $("#endo_hr").hide();
+            } else {
+                $("#gold_div").show();
+                $('#goldDiv').empty()
+                $('#goldDiv').html(response);
+            }
 
-            $('#goldDiv').empty()
-            $('#goldDiv').html(response);
         }
     });
 
@@ -78,9 +112,16 @@ function getAllDocumentList(req_id, cus_name, cus_id) {
         type: 'post',
         cache: false,
         success: function (response) {
+            let noData = $(response).find("tbody tr").length === 0;
 
-            $('#documentDiv').empty()
-            $('#documentDiv').html(response);
+            if (noData) {
+                $("#doc_div").hide();
+                 $("#gold_hr").hide();
+            } else {
+                $("#doc_div").show();
+                $('#documentDiv').empty()
+                $('#documentDiv').html(response);
+            }
         }
     });
 
@@ -92,7 +133,7 @@ function swalAlert(response) {
             title: response,
             icon: 'success',
             confirmButtonText: 'OK',
-            confirmButtonColor: '#009688', 
+            confirmButtonColor: '#009688',
             showConfirmButton: true
         });
     } else if (response.includes('Error')) {
@@ -100,7 +141,7 @@ function swalAlert(response) {
             title: response,
             icon: 'error',
             confirmButtonText: 'OK',
-            confirmButtonColor: '#009688', 
+            confirmButtonColor: '#009688',
             showConfirmButton: true
         });
     }
