@@ -21,9 +21,9 @@ if(isset($_POST['cus_name'])){
 
         <?php
         $i=1;
-        $qry = $connect->query("SELECT en_RC, Rc_document_pending, en_Key FROM acknowlegement_documentation where req_id = $req_id");
+        $qry = $connect->query("SELECT en_RC, en_Key FROM acknowlegement_documentation where req_id = $req_id");
         $row = $qry->fetch();
-        if($row['en_RC'] == '0' && $row['Rc_document_pending'] != 'YES' ){
+        if($row['en_RC'] == '0' ){
         ?>
             <tr>
                 <td><?php echo $i++;?></td>

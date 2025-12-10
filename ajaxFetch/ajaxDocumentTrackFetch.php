@@ -107,21 +107,30 @@ foreach ($result as $row) {
     // ];
     // $sub_array[] = $track_status_obj[$track_status]; //Document For Column
 
-    if ($track_status == '1' || $track_status == '2') { //if 1 then raised from branch for submitting ack, if 2 means, Mark as sent to main branch.
+    $doc_keeper_name = '';
 
-        //then document keeper will be inser login id
+    if ($track_status == '1') {
+        // Status 1 → Raised from branch → document keeper is insert_login_id
         $doc_keeper = $row['insert_login_id'];
+    } else if ($track_status == '2') {
+        // Status 2 → Received in main branch
+        if ($userid != $row['insert_login_id']) {
+            // If received but handled by different user → show inserted user
+            $doc_keeper = $row['insert_login_id'];
+        } else {
+            // If received by same user → show main branch
+            $doc_keeper_name = 'Main Branch';
+        }
+    }
 
-        $qry = $connect->query("SELECT fullname FROM user WHERE user_id = $doc_keeper ");
-        $sub_array[] = $qry->fetch()['fullname']; //document keeper column
+    // Fetch username only if needed
+    if (empty($doc_keeper_name) && !empty($doc_keeper)) {
+        $qry = $connect->query("SELECT fullname FROM user WHERE user_id = $doc_keeper");
+        $doc_keeper_name = $qry->fetchColumn();
+    }
 
-    } 
-    // else if ($track_status == '2') {
+    $sub_array[] = $doc_keeper_name;
 
-    //     //if status id 2 means, received in main branch
-    //     $sub_array[] = 'Main Branch'; //document keeper column
-
-    // } 
     // else if ($track_status == '3') {
 
     //     //if status is 3, received in main branch
@@ -145,13 +154,13 @@ foreach ($result as $row) {
     if ($track_status == '1' && $userid == $row['insert_login_id']) { //1 means submitted in issued and to be sent for receive.
         $action .= "<a href='' title='Mark Documents Sent' class='send-track' data-id='$id' data-reqid='$req_id'>Mark as Sent</a>";
     }
-        
+
     if ($doc_rec_access == '0' && $track_status == '2' && $userid != $row['insert_login_id']) { //2 means send by user to receive
         //show receive track when sent from user
         $action .= "<a href='' title='Receive Documents' class='receive-track' data-id='$id' data-reqid='$req_id' >Receive</a>";
         $action .= "<a href='' title='Return Documents' class='return-track' data-id='$id' data-reqid='$req_id' >Return</a>";
     }
-    
+
     //Directly removed once received.
     // if ($track_status == '2' || $track_status == '4') {
     //     $action .= "<a href='' title='Remove Track' class='remove-track' data-id='$id' data-reqid='$req_id' >Remove Track</a>";

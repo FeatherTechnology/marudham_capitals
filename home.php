@@ -557,8 +557,8 @@ if (isset($getuserdetails['download_access'])) {
 			<?php } else ?>
 
 			<!-- User Tracking report -->
-			<?php if ($current_page == 'user_tracking_report') { ?>
-				<?php include "include/templates/user_tracking_report.php" ?>
+			<?php if ($current_page == 'work_count_report') { ?>
+				<?php include "include/templates/work_count_report.php" ?>
 			<?php } else ?>
 			
 			<!-- Intrest Ledger Report -->

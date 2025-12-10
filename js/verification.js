@@ -4680,7 +4680,7 @@ function getDocumentHistory() {
       // if(response.DESCRIPTION != null ){//check json response is not empty
 
       if (cus_type == "Existing") {
-        if (response.length > 0) {
+        if (response.length != 0) {//check json response is not empty
           for (var i = 0; i < response["pending_customer"].length; i++) {
             pending_arr[i] = response["pending_customer"][i];
             od_arr[i] = response["od_customer"][i];
