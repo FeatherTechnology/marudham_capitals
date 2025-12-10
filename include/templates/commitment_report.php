@@ -2,7 +2,8 @@
 <br><br>
 <div class="page-header">
     <div style="background-color:#009688; width:100%; padding:12px; color: #ffff; font-size: 20px; border-radius:5px;">
-        Marudham Capitals - Commitment Report
+        <!-- Marudham Capitals - Commitment Report   name changes to  Due Followup Activity-->
+        Marudham Capitals - Due Followup Activity
     </div>
 
 </div><br>
@@ -22,7 +23,8 @@
             </div>
             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="card">
-                    <div class="card-header">Commitment Report</div>
+                     <!-- Commitment Report   name changes to  Due Followup Activity-->
+                    <div class="card-header">Due Followup Activity</div>
                     <div class="card-body">
                         <div id="commitment_table_div" class="table-divs" style="overflow-x: auto;">
                             <table id="commitment_report_table" class="table custom-table">

@@ -67,10 +67,10 @@ function commitmentReportTable() {
         dom: 'lBfrtip',
         buttons: [{
             extend: 'excel',
-            title: "Commitment Report List",
+            title: "Due Followup Activity List",
             action: function (e, dt, button, config) {
                 var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
-                var dynamic = curDateJs('Commitment_Report'); // or any base
+                var dynamic = curDateJs('Due_Followup_Activity'); // or any base
                 config.title = dynamic;      // for versions that use title as filename
                 config.filename = dynamic;   // for html5 filename
                 defaultAction.call(this, e, dt, button, config);
