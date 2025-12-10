@@ -61,8 +61,18 @@
 							<option value="5">To Follow</option>
 						</select>
 					</div>
+					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+						<label for="res_sts">Responsible</label>
+						<select class="form-control" id="res_sts" name="res_sts">
+							<option value="">Select Responsible</option>
 
-					<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+							<option value="0" <?php echo (isset($_GET['res_sts']) && $_GET['res_sts'] === "0") ? 'selected' : ''; ?>>Yes</option>
+
+							<option value="1" <?php echo (isset($_GET['res_sts']) && $_GET['res_sts'] === "1") ? 'selected' : ''; ?>>No</option>
+						</select>
+					</div>
+
+					<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
 						<button type="button" class="btn btn-primary" id="show_due_followup" style="margin-top:20px;">Proceed</button>
 					</div>
 				</div>
@@ -82,6 +92,7 @@
 								<th>Line</th>
 								<th>Mobile</th>
 								<th>Sub Status</th>
+								<th>Responsible status</th>
 								<th>Action</th>
 								<th>Last Paid Date</th>
 								<th>Current Month Paid</th>
