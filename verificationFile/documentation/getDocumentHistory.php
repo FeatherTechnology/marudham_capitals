@@ -175,6 +175,7 @@ function moneyFormatIndia($num)
                         }
                     } else {
                         if ($row['cus_status'] <= 20) {
+                          
                             if ($pending_sts[$i - 1] == 'true' && $od_sts[$i - 1] == 'false') {
                                 if ($row['cus_status'] == '15') {
                                     echo 'Error';

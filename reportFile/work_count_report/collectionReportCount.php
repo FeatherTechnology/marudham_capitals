@@ -40,8 +40,8 @@ foreach ($loanCats as $cat) {
     $qry = "
         SELECT 
             coll_sub_status,
-            COUNT(coll_id) AS total_bill,
-            SUM(COALESCE(due_amt_track, 0)) AS total_amount
+            COUNT(req_id) AS total_bill,
+            SUM(COALESCE(total_paid_track, 0)) AS total_amount
         FROM collection 
         WHERE loan_category = '$cat_id'
           AND insert_login_id IN ($user_id_str)

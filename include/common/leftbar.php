@@ -992,6 +992,12 @@ if (sizeof($getUser) > 0) {
 													<a href="due_followup_customer_count_report"><i class='icon-area-graph'></i>Due Summary</a>
 												</li>
 											<?php  } ?> 
+											<?php if ($work_count_report == 0) { ?>
+												<li>
+												<!-- name changes customer_status_report to Collection Status -->
+													<a href="work_count_report"><i class='icon-area-graph'></i>Work Count Report</a>
+												</li>
+											<?php  } ?> 
 											<?php if ($loan_track == 0) { ?>
 												<li>
 													<a href="loan_track"><i class='icon-target'></i>Loan Track</a>

@@ -42,16 +42,24 @@ $(document).ready(function () {
             headerText = "Issued Count Report";
         } else if (screen == "5") {
             headerText = "Collection Count Report";
+        } else if (screen == "6") {
+            headerText = "Closed Count Report";
+        } else if (screen == "7") {
+             headerName = "NOC";
+            headerText = "NOC Count Report";
+        }else if (screen == "8") {
+            headerName = "NOC Handover";
+            headerText = "NOC Handover Count Report";
         }
 
-
         $('.card-header').text(headerText);
-
 
         // Refresh table
         $('#request_count_table').hide();
         $('#issue_count_table').hide();
         $('#collection_count_table').hide();
+        $('#closed_count_table').hide();
+        $('#noc_count_table').hide();
         $('.dataTables_wrapper').hide();
         if (screen == "1" || screen == "2" || screen == '3') {
             // ==========================================
@@ -77,11 +85,19 @@ $(document).ready(function () {
         } else if (screen == "4") {
             $('#issue_count_table').show();
             $('#issue_count_wrapper').show();
-            issuedReportCount(from_date, to_date, selected_user, screen, headerName);
+            issuedReportCount(from_date, to_date, selected_user, screen);
         } else if (screen == "5") {
             $('#collection_count_table').show();
             $('#collection_count_wrapper').show();
             collectionReportCount(from_date, to_date, selected_user, screen);
+        } else if (screen == "6") {
+            $('#closed_count_table').show();
+            $('#closed_count_wrapper').show();
+            closedReportCount(from_date, to_date, selected_user, screen);
+        } else if (screen == "7" || screen == "8") {
+            $('#noc_count_table').show();
+            $('#noc_count_wrapper').show();
+            nocReportCount(from_date, to_date, selected_user, screen,headerName);
         }
 
     });
@@ -102,6 +118,7 @@ function getUserNames() {
     }, 'json');
 }
 
+// Request To Loan Issue
 function requestToIssuedReportCount(from_date, to_date, selected_user, screen, headerName) {
 
     $.ajax({
@@ -198,8 +215,8 @@ function requestToIssuedReportCount(from_date, to_date, selected_user, screen, h
         }
     });
 }
-
-function issuedReportCount(from_date, to_date, selected_user, screen, headerName) {
+// Loan Issue
+function issuedReportCount(from_date, to_date, selected_user, screen) {
 
     $.ajax({
         url: 'reportFile/work_count_report/issuedReportCount.php',
@@ -284,7 +301,7 @@ function issuedReportCount(from_date, to_date, selected_user, screen, headerName
     });
 }
 
-
+// Collection 
 function collectionReportCount(from_date, to_date, selected_user, screen) {
 
     $.ajax({
@@ -368,6 +385,183 @@ function collectionReportCount(from_date, to_date, selected_user, screen) {
     });
 }
 
+// Closed
+function closedReportCount(from_date, to_date, selected_user, screen) {
+
+    $.ajax({
+        url: 'reportFile/work_count_report/closedReportCount.php',
+        type: 'POST',
+        data: {
+            from_date: from_date,
+            to_date: to_date,
+            user_id: selected_user,
+            screen: screen
+        },
+        dataType: 'json',
+
+        success: function (res) {
+
+            if (!res.data || res.data.length === 0) {
+                $('#closed_count_table').DataTable().clear().draw();
+                $('#closed_count_table thead').html(
+                    "<tr><th colspan='12'>No data found for selected filters</th></tr>"
+                );
+                return;
+            }
+
+            const totalRow = res.data[res.data.length - 1];
+            const tableData = res.data.slice(0, -1);
+
+            // DataTable Columns
+            const columns = [
+                { data: "sno", title: "S.No" },
+                { data: "fullname", title: "User Name" },
+                { data: "loan_category", title: "Loan Category" },
+                { data: "closed", title: "Closed" },
+
+                // Consider levels
+                { data: "bronze", title: "Bronze" },
+                { data: "silver", title: "Silver" },
+                { data: "gold", title: "Gold" },
+                { data: "platinum", title: "Platinum" },
+                { data: "diamond", title: "Diamond" },
+
+                { data: "total_consider", title: "Total Consider" },
+                { data: "waiting", title: "Waiting List" },
+                { data: "block", title: "Block List" }
+            ];
+
+            $('#closed_count_table').DataTable().destroy();
+
+            $('#closed_count_table').DataTable({
+                data: tableData,
+                columns: columns,
+                dom: 'lBfrtip',
+                buttons: [
+                    {
+                        extend: 'excel',
+                        title: 'Closed_Count_Report',
+                        action: function (e, dt, button, config) {
+                            var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                            var file = curDateJs('Closed_Count_Report');
+                            config.title = file;
+                            config.filename = file;
+                            defaultAction.call(this, e, dt, button, config);
+                        }
+                    },
+                    { extend: 'colvis', collectionLayout: 'fixed four-column' }
+                ],
+                drawCallback: function () {
+                    searchFunction('closed_count_table');
+                    paginationFunction('closed_count_table');
+                }
+            });
+
+            // Footer Total Row
+            $('#closed_count_table tfoot').html(`
+                <tr>
+                    <td></td>
+                    <td><b>Total</b></td>
+                    <td></td>
+                    <td><b>${totalRow.closed}</b></td>
+
+                    <td><b>${totalRow.bronze}</b></td>
+                    <td><b>${totalRow.silver}</b></td>
+                    <td><b>${totalRow.gold}</b></td>
+                    <td><b>${totalRow.platinum}</b></td>
+                    <td><b>${totalRow.diamond}</b></td>
+
+                    <td><b>${totalRow.total_consider}</b></td>
+                    <td><b>${totalRow.waiting}</b></td>
+                    <td><b>${totalRow.block}</b></td>
+                </tr>
+            `);
+        }
+    });
+}
+
+// NOC
+function nocReportCount(from_date, to_date, selected_user, screen,headerName) {
+
+    $.ajax({
+        url: 'reportFile/work_count_report/nocReportCount.php',
+        type: 'POST',
+        data: {
+            from_date: from_date,
+            to_date: to_date,
+            user_id: selected_user,
+            screen: screen
+        },
+        dataType: 'json',
+
+        success: function (res) {
+
+            // No Data Case
+            if (!res.data || res.data.length === 0) {
+                $('#noc_count_table').DataTable().clear().draw();
+                $('#noc_count_table thead').html(
+                    "<tr><th colspan='10'>No data found for selected filters</th></tr>"
+                );
+                return;
+            }
+
+            // Extract last row as total
+            const totalRow = res.data[res.data.length - 1];
+            const tableData = res.data.slice(0, -1);
+
+            // DATA TABLE COLUMNS
+            const columns = [
+                { data: 'sno', title: "S.No" },
+                { data: 'fullname', title: "User Name" },
+                { data: 'loan_category', title: "Loan Category" },
+                { data: 'noc_count', title: "NOC" }
+            ];
+
+            // Destroy old table
+            $('#noc_count_table').DataTable().destroy();
+
+            // Create new table
+            $('#noc_count_table').DataTable({
+                data: tableData,
+                columns: columns,
+                dom: 'lBfrtip',
+                buttons: [
+                    {
+                        extend: 'excel',
+                        title: 'NOC_Count_Report',
+                        action: function (e, dt, button, config) {
+                            var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                            var file = curDateJs('NOC_Count_Report');
+                            config.title = file;
+                            config.filename = file;
+                            defaultAction.call(this, e, dt, button, config);
+                        }
+                    },
+                    { extend: 'colvis', collectionLayout: 'fixed four-column' }
+                ],
+                drawCallback: function () {
+                    searchFunction('noc_count_table');
+                    paginationFunction('noc_count_table');
+                }
+            });
+            // Update the column header AFTER DataTable builds the table
+            $('#noc_count_table thead th#nameHeader').text(headerName);
+
+
+            // FOOTER TOTAL
+            $('#noc_count_table tfoot').html(`
+                <tr>
+                    <td></td>
+                    <td><b>Total</b></td>
+                    <td></td>
+                    <td><b>${totalRow.noc_count}</b></td>
+                </tr>
+            `);
+        }
+    });
+}
+
+
 function resetAllTables() {
     $("#request_count_table thead").show();
     $("#request_count_table tbody").show();
@@ -380,6 +574,14 @@ function resetAllTables() {
     $("#collection_count_table thead").show();
     $("#collection_count_table tbody").show();
     $("#collection_count_table tfoot").show();
+
+    $("#closed_count_table thead").show();
+    $("#closed_count_table tbody").show();
+    $("#closed_count_table tfoot").show();
+
+    $("#noc_count_table thead").show();
+    $("#noc_count_table tbody").show();
+    $("#noc_count_table tfoot").show();
 
     $("th, td").show(); // reset any hidden columns
 }

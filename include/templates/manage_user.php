@@ -1249,6 +1249,12 @@ if($idupd>0)
                                 <label class="custom-control-label" for="due_followup_customer_count_report">Due Follow Up Customer Count</label>
                             </div>
                         </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($work_count_report==0){ echo'checked'; }} ?> tabindex="85" class="monitor-checkbox  screen-validations" id="work_count_report" name="work_count_report" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="work_count_report">Work Count Report</label>
+                            </div>
+                        </div>
 						</div>
 					</div>
 					<br>
@@ -1312,12 +1318,7 @@ if($idupd>0)
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($uncleared_report==0){ echo'checked'; }} ?> tabindex="89" class="acounts-checkbox    screen-validations" id="uncleared_report" name="uncleared_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="uncleared_report">Uncleared Report</label>
                             </div>
-						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($work_count_report==0){ echo'checked'; }} ?> tabindex="85" class="report-checkbox screen-validations" id="work_count_report" name="work_count_report" disabled>&nbsp;&nbsp;
-                                <label class="custom-control-label" for="work_count_report">Work Count Report</label>
-                            </div>
-                        </div>
+						
                         </div>
 							
 						</div>

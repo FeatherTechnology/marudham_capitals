@@ -24,6 +24,9 @@
 					<option value='3'>Approval</option>
 					<option value='4'>Loan Issue</option>
 					<option value='5'>Collection</option>
+					<option value='6'>Closed</option>
+					<!-- <option value='7'>NOC</option>
+					<option value='8'>NOC Handover</option> -->
 				</select>
 
 				<input type="button" id='reset_btn' name='reset_btn' class="toggle-button" style="background-color: #009688;color:white" value='Search'>
@@ -72,6 +75,47 @@
 										<th>Status</th>
 										<th>Total Bill</th>
 										<th>Total Amount</th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+								<tfoot></tfoot>
+							</table>
+							<table id="closed_count_table" class="table custom-table" style="display: none;">
+								<thead>
+									<tr>
+										<th rowspan="2">S.No</th>
+										<th rowspan="2">User Name</th>
+										<th rowspan="2">Loan Category</th>
+										<th rowspan="2">Closed</th>
+
+										<!-- Consider Main Header -->
+										<th colspan="5" style="text-align:center;">Consider</th>
+                                         <th rowspan="2">Total Consider</th>
+										<th rowspan="2">Waiting List</th>
+										<th rowspan="2">Block List</th>
+										
+									</tr>
+
+									<!-- Sub headers for Consider -->
+									<tr>
+										<th>Bronze</th>
+										<th>Silver</th>
+										<th>Gold</th>
+										<th>Platinum</th>
+										<th>Diamond</th>
+									</tr>
+								</thead>
+
+								<tbody></tbody>
+								<tfoot></tfoot>
+							</table>
+							<table id="noc_count_table" class="table custom-table" style="display: none;">
+								<thead>
+									<tr>
+										<th>S.No</th>
+										<th>User Name</th>
+										<th>Loan Category</th>
+										<th id="nameHeader">NOC</th>
 									</tr>
 								</thead>
 								<tbody></tbody>
