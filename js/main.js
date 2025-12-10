@@ -142,6 +142,24 @@ jQuery(function ($) {
 			$(this).parent().addClass("active");
 		}
 	});
+$(".sidebar-dropdown-2 > a").click(function () {
+
+    let parent = $(this).parent();
+
+    // close all other 2nd level menus
+    $(".sidebar-dropdown-2").not(parent).removeClass("active")
+        .children(".sidebar-submenu-2").slideUp(200);
+
+    // toggle current menu
+    if (parent.hasClass("active")) {
+        parent.removeClass("active");
+        parent.children(".sidebar-submenu-2").slideUp(200);
+    } else {
+        parent.addClass("active");
+        parent.children(".sidebar-submenu-2").slideDown(200);
+    }
+});
+
 
 	//toggle sidebar
 	$("#toggle-sidebar").click(function () {

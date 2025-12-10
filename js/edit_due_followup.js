@@ -9,8 +9,9 @@ $(document).ready(function () {
     $('#show_due_followup').click(function () {
         let cusSts = $("#sub_status_mapping").val();
         let comm_date = $("#comm_date").val();
+        let res_sts = $("#res_sts").val();
 
-        OnLoadFunctions(cusSts, comm_date);
+        OnLoadFunctions(cusSts, comm_date,res_sts);
     });
 });
 
@@ -21,9 +22,10 @@ $(function () {
     $("#comm_date").val(cummDate);
     let cus_Sts = $("#customer_status").val();
     let cusSts = cus_Sts.split(',');
+    let res_sts = $("#res_sts").val();
 
     if (cusSts != '') {
-        OnLoadFunctions(cusSts, cummDate );
+        OnLoadFunctions(cusSts, cummDate ,res_sts );
     }
 });
 function warningSwal(title, text) {
@@ -37,7 +39,7 @@ function warningSwal(title, text) {
     });
 }
 
-function OnLoadFunctions(cusSts, comm_date) {
+function OnLoadFunctions(cusSts, comm_date, res_sts) {
     if (!cusSts) {
         warningSwal('Warning!', 'Select Customer Status.');
         return;
@@ -57,6 +59,7 @@ function OnLoadFunctions(cusSts, comm_date) {
                 data.search = search;
                 data.cus_sts = cusSts;
                 data.comm_date = comm_date;
+                data.res_sts = res_sts;
             }
         },
         dom: 'lBfrtip',
@@ -97,7 +100,7 @@ function OnLoadFunctions(cusSts, comm_date) {
 function enableDateColoring() {
     //for coloring
     $('#due_followup_table tbody tr').not('th').each(function () {
-        let tddate = $(this).find('td:eq(16)').text(); // Get the text content of the 12th td element (Follow date)
+        let tddate = $(this).find('td:eq(17)').text(); // Get the text content of the 12th td element (Follow date)
         let datecorrection = tddate.split("-").reverse().join("-").replaceAll(/\s/g, ''); // Correct the date format
         let values = new Date(datecorrection); // Create a Date object from the corrected date
         values.setHours(0, 0, 0, 0); // Set the time to midnight for accurate date comparison
@@ -110,11 +113,11 @@ function enableDateColoring() {
         if (tddate != '' && values != 'Invalid Date') { // Check if the extracted date and the created Date object are valid
 
             if (values < curDate) { // Compare the extracted date with the current date
-                $(this).find('td:eq(16)').css({ 'background-color': colors.past, 'color': 'white' }); // Apply styling for past dates
+                $(this).find('td:eq(17)').css({ 'background-color': colors.past, 'color': 'white' }); // Apply styling for past dates
             } else if (values > curDate) {
-                $(this).find('td:eq(16)').css({ 'background-color': colors.future, 'color': 'white' }); // Apply styling for future dates
+                $(this).find('td:eq(17)').css({ 'background-color': colors.future, 'color': 'white' }); // Apply styling for future dates
             } else {
-                $(this).find('td:eq(16)').css({ 'background-color': colors.current, 'color': 'white' }); // Apply styling for the current date
+                $(this).find('td:eq(17)').css({ 'background-color': colors.current, 'color': 'white' }); // Apply styling for the current date
             }
         }
     });

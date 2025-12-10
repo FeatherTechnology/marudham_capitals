@@ -950,7 +950,7 @@ ul.header-tasks:last-child {
 }
 
 .page-wrapper .sidebar-wrapper {
-  width: 242px;
+  width: 250px;
   height: 100%;
   background: #191919;
   position: fixed !important;
@@ -1142,7 +1142,7 @@ ul.header-tasks:last-child {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  padding: 9px 35px 9px 42px;
+  padding: 9px 0px 6px 40px;
   font-size: .775rem;
 }
 
@@ -1162,6 +1162,24 @@ ul.header-tasks:last-child {
   transform: rotate(-180deg);
   right: 15px;
 }
+/* Second-level arrow — using SAME arrow from first-level */
+.page-wrapper .sidebar-wrapper .sidebar-menu .sidebar-dropdown-2 > a:after {
+  font-family: "icomoon";
+  font-weight: 700;
+  font-size: 1rem;
+  content: "\e90f";  /* SAME as your first arrow */
+  display: inline-block;
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  transition: transform .3s ease;
+}
+
+/* Rotate arrow on active */
+.page-wrapper .sidebar-wrapper .sidebar-menu .sidebar-dropdown-2.active > a:after {
+  transform: rotate(-180deg);
+}
+
 
 .page-wrapper .page-content {
   display: inline-block;
@@ -1223,6 +1241,18 @@ ul.header-tasks:last-child {
   .page-wrapper.pinned:not(.sidebar-hovered) .sidebar-wrapper .sidebar-menu ul>li>a::after {
     display: none !important;
   }
+}
+.submenu-arrow-2 {
+    float: right;
+    transition: transform 0.3s;
+    font-size: 14px;
+}
+
+.sidebar-dropdown-2.active .submenu-arrow-2 {
+    transform: rotate(180deg);
+}
+.sidebar-dropdown-2.active > a {
+    background-color: #646969d9 !important;
 }
 
 .main-container {
