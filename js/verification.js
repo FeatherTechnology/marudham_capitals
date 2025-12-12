@@ -1155,9 +1155,6 @@ nameFormatter('#famname'); //
   // closeBankModal(); //Bank Info List.
   resetbankinfoList(); //Bank Info List.
 
-  // resetkycInfo(); //KYC info Modal Table Reset.
-  resetkycinfoList(); //KYC Info List.
-
   resetfeedback(); //Reset Feedback Modal Table.
   feedbackList(); // Feedback List.
 
@@ -1232,6 +1229,11 @@ nameFormatter('#famname'); //
     $("#cus_agent_name").attr("disabled", true);
     $("#cus_responsible").attr("disabled", true);
   }
+
+  setTimeout(function(){
+    resetkycinfoList(); //KYC Info List.
+  }, 1000);
+
 });
 
 //To get Reponsible Dropdown
@@ -1651,6 +1653,8 @@ $("#guarentor_name").change(function () {
     cache: false,
     success: function (result) {
       $("#guarentor_relationship").val(result["relation"]);
+
+      resetkycinfoList();
     },
   });
 });
@@ -2364,10 +2368,13 @@ function validateKyc() {
 function resetkycInfo() {
   let cus_id = $("#cus_id").val();
   let req_id = $("#req_id").val();
+  let guarentor_val = $("#guarentor_name :selected").val();
+  let guarentor_name = $("#guarentor_name :selected").text();
+  let guarentor_relationship = $("#guarentor_relationship").val();
   $.ajax({
     url: "verificationFile/verification_kyc_reset.php",
     type: "POST",
-    data: { cus_id: cus_id, req_id },
+    data: { cus_id, req_id, guarentor_val, guarentor_name, guarentor_relationship },
     cache: false,
     success: function (html) {
       $("#kycTable").empty();
@@ -2454,11 +2461,14 @@ $("body").on("click", "#verification_kyc_delete", function () {
 function resetkycinfoList() {
   let cus_id = $("#cus_id").val();
   let req_id = $("#req_id").val();
+  let guarentor_val = $("#guarentor_name :selected").val();
+  let guarentor_name = $("#guarentor_name :selected").text();
+  let guarentor_relationship = $("#guarentor_relationship").val();
 
   $.ajax({
     url: "verificationFile/verification_kyc_list.php",
     type: "POST",
-    data: { req_id, cus_id },
+    data: { req_id, cus_id, guarentor_val, guarentor_name, guarentor_relationship },
     cache: false,
     success: function (html) {
       $("#kycListTable").empty();
@@ -2470,11 +2480,13 @@ function resetkycinfoList() {
 }
 
 $("#proofof").change(function () {
+
   let req_id = $("#req_id").val();
   let cus_id = $("#cus_id").val();
   let proof = $("#proofof").val();
+  let guarentorName = $('#guarentor_name :selected');
 
-  if (proof == "0" || proof == "1") {
+  if (proof == "0") { //Customer
     $.post(
       "verificationFile/get_proof_of_name.php",
       { req_id, cus_id, proof },
@@ -2484,6 +2496,22 @@ $("#proofof").change(function () {
       },
       "json"
     );
+  } else {
+    $(".name_div").hide();
+  }
+
+  if (proof === '1' && (guarentorName.val() === '' || guarentorName.val() == null)) {
+      alert('Kindly Select Guarantor Name.');
+      $(this).val('');
+      $(".name_div").hide();
+      $(".fam_mem_div").hide(); //hide fam div
+      return;
+  }
+
+  if (proof == "1") { //Guarantor name
+    $(".name_div").show();
+    $("#proofofname").val(guarentorName.text());
+
   } else {
     $(".name_div").hide();
   }
