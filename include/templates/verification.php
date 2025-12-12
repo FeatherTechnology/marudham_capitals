@@ -677,7 +677,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 											<div class="form-group">
 												<label for="guarentor_name"> Guarentor Name </label><span class="required">&nbsp;*</span>
 												<select type="text" class="form-control" id="guarentor_name" name="guarentor_name" tabindex="21">
-													<option> Select Guarantor </option>
+													<option value=""> Select Guarantor </option>
 												</select>
 												<span class="text-danger" style='display:none' id='guarentor_nameCheck'>Please Choose Guarentor Name</span>
 											</div>

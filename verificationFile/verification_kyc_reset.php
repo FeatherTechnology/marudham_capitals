@@ -18,6 +18,9 @@ include '../ajaxconfig.php';
         <?php
         $req_id = $_POST['req_id'];
         $cus_id = $_POST['cus_id'];
+        $guarentor_val = $_POST['guarentor_val'];
+        $guarentor_name = $_POST['guarentor_name'];
+        $guarentor_relationship = $_POST['guarentor_relationship'];
         $kycInfo = $connect->query("SELECT * FROM `verification_kyc_info` where cus_id = '$cus_id' order by id desc");
 
         $i = 1;
@@ -88,8 +91,8 @@ include '../ajaxconfig.php';
                 LEFT JOIN customer_profile b ON a.id = b.guarentor_name
                 where b.req_id = '$req_id' ");
                 $rw = $qry->fetch();
-                $fam_mem = $rw['famname'] ?? '';
-                $relationship = $rw['relationship'] ?? '';
+                $fam_mem = ($guarentor_val !='') ? $guarentor_name ?? ($rw['famname'] ?? '') : '';
+                $relationship = $guarentor_relationship ?? ($rw['relationship'] ?? '');
                 // mysqli_next_result($connect); // Move to the next query
             } elseif ($kyc['proofOf'] == '0') {
                 $qry = $connect->query("CALL get_cus_name($cus_id)");
