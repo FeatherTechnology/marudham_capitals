@@ -774,7 +774,7 @@ function getLoaninfo(sub_cat_id) {
     let cus_id = $('#cus_id').val();
     return $.ajax({
         url: 'requestFile/getLoanInfo.php',
-        data: { 'sub_cat_id': sub_cat_id, "cus_id": cus_id },
+        data: { 'sub_cat_id': sub_cat_id, "cus_id": cus_id , from: "request"},
         dataType: 'json',
         type: 'post',
         cache: false,

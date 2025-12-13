@@ -14,6 +14,13 @@ if ($result->rowCount() > 0) {
     $row = $result->fetch();
     $response['advance'] = $row['collection_info'];
     $loan_limit = intVal($row['loan_limit']);
+
+    if(isset($_POST['from']) && ($_POST['from'] === "request")){
+        $response['message'] = "";
+        $response['loan_limit'] = $loan_limit;
+        echo json_encode($response);
+        exit; 
+    }
     $response['message'] = "";
 } else {
     $response['message'] = "No Loan Calculation Made!";
@@ -47,11 +54,14 @@ if ($qry->rowCount() > 0) {
     }
 
     // subract amount with customer loan limit to check exact customer limit// check which is bigger then put it in first, becoz may return negative value
-    if ($cus_balance > $cus_limit) {
-        $cus_limit = $cus_balance - $cus_limit;
-    } else if ($cus_limit > $cus_balance) {
-        $cus_limit = $cus_limit - $cus_balance;
-    }
+    // if ($cus_balance > $cus_limit) {
+    //     $cus_limit = $cus_balance - $cus_limit;
+    // } else if ($cus_limit > $cus_balance) {
+    //     $cus_limit = $cus_limit - $cus_balance;
+    // }
+
+    $cus_limit = max(0, $cus_limit - $cus_balance);
+
 } else {
     $cus_limit = 0;
 }

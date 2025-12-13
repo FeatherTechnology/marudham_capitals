@@ -418,6 +418,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 			<input type="hidden" name="cus_limit" id="cus_limit" value="<?php if (isset($loan_limit)) echo $loan_limit; ?>" />
 			<input type="hidden" name="userid_upd" id="userid_upd" value="<?php if (isset($userid)) echo $userid; ?>" />
 			<input type="hidden" name="pge" id="pge" value="<?php if (isset($pge)) echo $pge; ?>" />
+			<input type="hidden" name="customer_limit" id="customer_limit" value="" />
 			<!-- Row start -->
 			<div class="row gutters">
 				<!-- Request Info -->

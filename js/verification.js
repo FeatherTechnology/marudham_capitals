@@ -4974,12 +4974,25 @@ $("#loan_category").change(function () {
 });
 
 $("#refresh_cal").click(function () {
+  var customer_limit = $("#customer_limit").val();
+  var loan_amt = $("#loan_amt").val();
   var intrest_rate = $("#int_rate").val();
   var doc_charge = $("#doc_charge").val();
   var proc_fee = $("#proc_fee").val();
   var due_period = $("#due_period").val();
   var profit_method = $("#profit_method").val();
 
+  if (loan_amt > customer_limit) {
+    Swal.fire({
+      timerProgressBar: true,
+      timer: 2000,
+      title: 'Customer limit exceeded..!',
+      icon: 'error',
+      showConfirmButton: true,
+      confirmButtonColor: '#009688'
+    });
+    return;
+  }
   if (intrest_rate == "" || doc_charge == "" || proc_fee == "" || due_period == "" || profit_method == "") {
     Swal.fire({
       timerProgressBar: true,
@@ -5405,6 +5418,7 @@ function getLoaninfo(sub_cat_id) {
     type: "post",
     cache: false,
     success: function (response) {
+      $("#customer_limit").val(response["loan_limit"]);
       if (response["advance"] == "Yes") {
         $(".advance_yes").show();
         $("#loan_amt").attr("readonly", true);
@@ -5420,7 +5434,14 @@ function getLoaninfo(sub_cat_id) {
             if (loan_amt <= Number(response["loan_limit"])) {
               $("#loan_amt").val(formatIndianNumber(loan_amt.toFixed(0)));
             } else {
-              alert("Please Enter Lesser amount!");
+              Swal.fire({
+              timerProgressBar: true,
+              timer: 2000,
+              title: 'Customer limit exceeded..!',
+              icon: 'error',
+              showConfirmButton: true,
+              confirmButtonColor: '#009688'
+            });
               $("#tot_value").val("");
               $("#loan_amt").val("");
             }
@@ -5452,7 +5473,14 @@ function getLoaninfo(sub_cat_id) {
             if (loan_amt <= Number(response["loan_limit"])) {
               $("#loan_amt").val(formatIndianNumber(loan_amt.toFixed(0)));
             } else {
-              alert("Please Enter Lesser amount!");
+              Swal.fire({
+              timerProgressBar: true,
+              timer: 2000,
+              title: 'Customer limit exceeded..!',
+              icon: 'error',
+              showConfirmButton: true,
+              confirmButtonColor: '#009688'
+            });
               $("#loan_amt").val("");
             }
           }
