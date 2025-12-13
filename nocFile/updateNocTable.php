@@ -15,8 +15,8 @@ class updateNocTable
 
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-            $req_id = $_POST['req_id'];
             $cus_id = $_POST['cusidupd'];
+            $req_id = $_POST['req_id'];
 
             $sign_checklist     = $_POST['sign_checklist'];
             $cheque_checklist   = $_POST['cheque_checklist'];
@@ -39,28 +39,29 @@ class updateNocTable
                 $noc_id = $row['noc_id'];
 
                 $qry = $connect->prepare("
-        UPDATE noc 
-        SET cus_id = :cus_id,
-            noc_date = :noc_date,
-            update_login_id = :user_id,
-            updated_date = NOW()
-        WHERE noc_id = :noc_id
-    ");
+                    UPDATE noc 
+                    SET cus_id = :cus_id,
+                        noc_date = :noc_date,
+                        update_login_id = :user_id,
+                        updated_date = NOW()
+                    WHERE noc_id = :noc_id
+                ");
 
                 $qry->bindParam(':cus_id', $cus_id);
                 $qry->bindParam(':noc_date', $noc_date);
                 $qry->bindParam(':user_id', $user_id);
                 $qry->bindParam(':noc_id', $noc_id);
                 $qry->execute();
+
             } else {
 
                 // INSERT NEW NOC
                 $qry = $connect->prepare("
-        INSERT INTO noc 
-        (req_id, cus_id, noc_date, cus_status, insert_login_id, created_date) 
-        VALUES 
-        (:req_id, :cus_id, :noc_date, 21, :user_id, NOW())
-    ");
+                    INSERT INTO noc 
+                    (req_id, cus_id, noc_date, cus_status, insert_login_id, created_date) 
+                    VALUES 
+                    (:req_id, :cus_id, :noc_date, 21, :user_id, NOW())
+                ");
 
                 $qry->bindParam(':req_id', $req_id);
                 $qry->bindParam(':cus_id', $cus_id);
@@ -70,17 +71,17 @@ class updateNocTable
 
                 $noc_id = $connect->lastInsertId();
             }
+            
             // ---------------------------------------
             // INSERT CHECKLIST INTO CHILD TABLES
             // ---------------------------------------
 
             $this->insertChecklist($connect, "noc_sign_checklist", "sign_id", $noc_id, $sign_checklist);
             $this->insertChecklist($connect, "noc_cheque_checklist", "cheque_id", $noc_id, $cheque_checklist);
-            $this->insertChecklist($connect, "noc_gold_checklist", "gold_id", $noc_id, $gold_checklist);
             $this->insertChecklist($connect, "noc_mort_checklist", "mort_id", $noc_id, $mort_checklist);
             $this->insertChecklist($connect, "noc_endorse_checklist", "endorse_id", $noc_id, $endorse_checklist);
+            $this->insertChecklist($connect, "noc_gold_checklist", "gold_id", $noc_id, $gold_checklist);
             $this->insertChecklist($connect, "noc_doc_checklist", "doc_id", $noc_id, $doc_checklist);
-
 
             $this->response = "Success";
             return;

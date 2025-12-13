@@ -10,13 +10,6 @@ $payload = json_decode($_POST['data'], true);
 $req_id = $payload['req_id'];
 
 // Extract arrays from payload
-$sign_ids     = $payload['sign_ids'];
-$cheque_ids   = $payload['cheque_ids'];
-$mort_ids     = $payload['mort_ids'];
-$endorse_ids  = $payload['endorse_ids'];
-$gold_ids     = $payload['gold_ids'];
-$doc_ids      = $payload['doc_ids'];
-
 $sign_details     = $payload['sign'];
 $cheque_details   = $payload['cheque'];
 $mort_details     = $payload['mort'];     
@@ -32,7 +25,7 @@ foreach ($sign_details as $row){
 
     $connect->query("
         UPDATE signed_doc_info 
-        SET noc_date = CURDATE(),noc_given = 1, update_login_id = '$user_id', updated_date = NOW() 
+        SET noc_date = CURDATE(), noc_given = 1, update_login_id = '$user_id', updated_date = NOW() 
         WHERE id = '$id'
     ");
 }
@@ -45,7 +38,7 @@ foreach ($cheque_details as $row){
 
     $connect->query("
         UPDATE cheque_no_list 
-        SET  noc_date = CURDATE(),noc_given = 1, update_login_id = '$user_id', updated_date = NOW() 
+        SET noc_date = CURDATE(), noc_given = 1, update_login_id = '$user_id', updated_date = NOW() 
         WHERE id = '$id'
     ");
 }
@@ -60,22 +53,14 @@ foreach ($mort_details as $row){
     if($mort_type == 'process'){
         $connect->query("
             UPDATE acknowlegement_documentation 
-            SET 
-                mort_noc_date = CURDATE(), 
-                mortgage_process_noc = 1,
-                update_login_id = '$user_id', 
-                updated_date = NOW() 
+            SET mort_noc_date = CURDATE(), mortgage_process_noc = 1, update_login_id = '$user_id', updated_date = NOW() 
             WHERE id = '$id'
         ");
     }
     elseif($mort_type == 'document'){
         $connect->query("
             UPDATE acknowlegement_documentation 
-            SET 
-                mort_doc_noc_date = CURDATE(), 
-                mortgage_document_noc = 1,
-                update_login_id = '$user_id', 
-                updated_date = NOW() 
+            SET mort_doc_noc_date = CURDATE(), mortgage_document_noc = 1, update_login_id = '$user_id', updated_date = NOW() 
             WHERE id = '$id'
         ");
     }
@@ -91,33 +76,21 @@ foreach ($endorse_details as $row){
     if($type == 'en_process'){
         $connect->query("
             UPDATE acknowlegement_documentation 
-            SET 
-                endor_noc_date = CURDATE(), 
-                endorsement_process_noc = 1,
-                update_login_id = '$user_id', 
-                updated_date = NOW() 
+            SET endor_noc_date = CURDATE(), endorsement_process_noc = 1, update_login_id = '$user_id', updated_date = NOW() 
             WHERE id = '$id'
         ");
     }
     elseif($type == 'en_rc'){
         $connect->query("
             UPDATE acknowlegement_documentation 
-            SET 
-                en_rc_noc_date = CURDATE(), 
-                en_RC_noc = 1,
-                update_login_id = '$user_id', 
-                updated_date = NOW() 
+            SET en_rc_noc_date = CURDATE(), en_RC_noc = 1, update_login_id = '$user_id', updated_date = NOW() 
             WHERE id = '$id'
         ");
     }
     elseif($type == 'en_key'){
         $connect->query("
             UPDATE acknowlegement_documentation 
-            SET 
-                en_key_noc_date = CURDATE(), 
-                en_Key_noc = 1,
-                update_login_id = '$user_id', 
-                updated_date = NOW() 
+            SET en_key_noc_date = CURDATE(), en_Key_noc = 1, update_login_id = '$user_id', updated_date = NOW() 
             WHERE id = '$id'
         ");
     }
@@ -133,11 +106,7 @@ foreach ($gold_details as $row){
 
     $connect->query("
         UPDATE gold_info 
-        SET 
-        noc_date = CURDATE(),
-            noc_given = 1,
-            update_login_id = '$user_id',
-            updated_date = NOW()
+        SET noc_date = CURDATE(), noc_given = 1, update_login_id = '$user_id', updated_date = NOW()
         WHERE id = '$id'
     ");
 }
@@ -150,7 +119,7 @@ foreach ($other_doc_details as $row){
 
     $connect->query("
         UPDATE document_info 
-        SET  noc_date = CURDATE(),doc_info_upload_noc = 1, update_login_id = '$user_id', updated_date = NOW() 
+        SET  noc_date = CURDATE(), doc_info_upload_noc = 1, update_login_id = '$user_id', updated_date = NOW() 
         WHERE id = '$id'
     ");
 }
@@ -162,7 +131,6 @@ foreach ($other_doc_details as $row){
 updateNOCgiven($connect, $user_id, $req_id);
 
 echo "Success";
-
 
 
 // =======================================================================

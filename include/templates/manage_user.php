@@ -876,6 +876,12 @@ if($idupd>0)
                                 <label class="custom-control-label" for="doc_rec_access">Document Receive Access</label>
                             </div>
                         </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($noc_replace==0){ echo'checked'; }} ?> tabindex="45" class="doctrack-checkbox screen-validations" id="noc_replace" name="noc_replace" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="noc_replace">NOC Replace</label>
+                            </div>
+                        </div>
 					</div>
 					
 					<hr>
@@ -926,7 +932,7 @@ if($idupd>0)
 						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($nocmodule==0){ echo'checked'; }} ?> tabindex="44" class="" id="nocmodule" name="nocmodule" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="nocmodule">
 							<h5>NOC</h5>
-						</label>
+						</label> &nbsp;&nbsp; <span class="text-danger" style='display:none' id='nocCheck'>Please Check NOC </span>
 					</div>
 					<br>
 					<div class="row">
@@ -943,13 +949,6 @@ if($idupd>0)
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($noc_replace==0){ echo'checked'; }} ?> tabindex="45" class="noc-checkbox screen-validations" id="noc_replace" name="noc_replace" disabled>&nbsp;&nbsp;
-                                <label class="custom-control-label" for="noc_replace">NOC Replace</label>
-                            </div>
-                        </div>
-						</br> </br></br>
-						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
 							<div class="custom-control custom-checkbox">
 								<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($noc_replace_access==0){ echo'checked'; }} ?> tabindex="45" class="noc-checkbox screen-validations" id="noc_replace_access" name="noc_replace_access" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="noc_replace_access">NOC Replace Access</label>
@@ -960,7 +959,7 @@ if($idupd>0)
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 noc_handover_div">
 							  <div class="custom-control custom-checkbox">
 								<label for="noc_mapping_access">NOC Mapping Access</label>&nbsp;<span class="text-danger">*</span>
-								<select tabindex="12" type="text" class="form-control" id="noc_mapping_access" name="noc_mapping_access">
+								<select tabindex="12" type="text" class="form-control noc-checkbox" id="noc_mapping_access" name="noc_mapping_access" style="width: 250px;" <?php if($noc_mapping_access =='') echo 'disabled'; ?> >
 									<option value="">Select NOC Mapping Access</option>
 									<option value="1" <?php if($noc_mapping_access == '1') echo 'selected';?> >Group</option>
 									<option value="2" <?php if($noc_mapping_access == '2') echo 'selected';?> >Line</option>

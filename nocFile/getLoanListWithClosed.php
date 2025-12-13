@@ -21,6 +21,7 @@ if (isset($_POST["bal_amt"])) {
     $bal_amt = explode(',', $_POST["bal_amt"]);
 }
 ?>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
     .dropbtn {
@@ -74,29 +75,30 @@ if (isset($_POST["bal_amt"])) {
         left: -20px;
     }
 </style>
+
 <?php
-function moneyFormatIndia($num)
-{
-    $explrestunits = "";
-    if (strlen($num) > 3) {
-        $lastthree = substr($num, strlen($num) - 3, strlen($num));
-        $restunits = substr($num, 0, strlen($num) - 3);
-        $restunits = (strlen($restunits) % 2 == 1) ? "0" . $restunits : $restunits;
-        $expunit = str_split($restunits, 2);
-        for ($i = 0; $i < sizeof($expunit); $i++) {
-            if ($i == 0) {
-                $explrestunits .= (int)$expunit[$i] . ",";
-            } else {
-                $explrestunits .= $expunit[$i] . ",";
+    function moneyFormatIndia($num){
+        $explrestunits = "";
+        if (strlen($num) > 3) {
+            $lastthree = substr($num, strlen($num) - 3, strlen($num));
+            $restunits = substr($num, 0, strlen($num) - 3);
+            $restunits = (strlen($restunits) % 2 == 1) ? "0" . $restunits : $restunits;
+            $expunit = str_split($restunits, 2);
+            for ($i = 0; $i < sizeof($expunit); $i++) {
+                if ($i == 0) {
+                    $explrestunits .= (int)$expunit[$i] . ",";
+                } else {
+                    $explrestunits .= $expunit[$i] . ",";
+                }
             }
+            $thecash = $explrestunits . $lastthree;
+        } else {
+            $thecash = $num;
         }
-        $thecash = $explrestunits . $lastthree;
-    } else {
-        $thecash = $num;
+        return $thecash;
     }
-    return $thecash;
-}
 ?>
+
 <table class="table custom-table" id='loanListTable'>
     <thead>
         <tr>
@@ -117,18 +119,20 @@ function moneyFormatIndia($num)
     <tbody>
 
         <?php
-        $cus_id = $_POST['cus_id'];
-        $actionType = $_POST['action_type'] ?? '';
+            $userQry = $connect->query("SELECT noc_replace_access FROM user WHERE user_id = $user_id");
+            $rowuser = $userQry->fetch();
+            $nocReplaceAccess = $rowuser['noc_replace_access'];
+            
+            $cus_id = $_POST['cus_id'];
+            $actionType = $_POST['action_type'] ?? '';
 
-        $run = $connect->query("SELECT ii.loan_id,lc.cus_name_loan as cus_name, ad.doc_id, lcc.loan_category_creation_name as loan_catrgory_name, lc.sub_category, rc.agent_id, ii.updated_date, lc.loan_amt_cal, ii.req_id,ii.cus_status
-        FROM acknowlegement_loan_calculation lc JOIN acknowlegement_documentation ad ON lc.req_id = ad.req_id JOIN in_issue ii ON lc.req_id = ii.req_id JOIN request_creation rc ON ii.req_id = rc.req_id JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id JOIN user us ON us.user_id = $user_id
-        WHERE lc.cus_id_loan = $cus_id and ii.cus_status IN(21,22,23) "); //21 means loan has been closed form closed window for noc
+            $run = $connect->query("SELECT ii.loan_id, lc.cus_name_loan as cus_name, ad.doc_id, lcc.loan_category_creation_name as loan_catrgory_name, lc.sub_category, rc.agent_id, ii.updated_date, lc.loan_amt_cal, ii.req_id, ii.cus_status
+            FROM acknowlegement_loan_calculation lc JOIN acknowlegement_documentation ad ON lc.req_id = ad.req_id JOIN in_issue ii ON lc.req_id = ii.req_id JOIN request_creation rc ON ii.req_id = rc.req_id JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id JOIN user us ON us.user_id = $user_id
+            WHERE lc.cus_id_loan = $cus_id and ii.cus_status IN(21,22,23) "); //21 means loan has been closed form closed window for noc
 
-        // $i = 1;
-        while ($row = $run->fetch()) {
-            $qry = $connect->query("SELECT created_date, closed_sts, consider_level FROM `closed_status` WHERE req_id = '" . $row['req_id'] . "' ");
-
-            $runqry = $qry->fetch();
+            while ($row = $run->fetch()) {
+                $qry = $connect->query("SELECT created_date, closed_sts, consider_level FROM `closed_status` WHERE req_id = '" . $row['req_id'] . "' ");
+                $runqry = $qry->fetch();
         ?>
             <tr>
                 <td><?php echo $row["loan_id"]; ?></td>
@@ -154,7 +158,8 @@ function moneyFormatIndia($num)
                     } else {
                         echo '';
                     } ?></td>
-                <td><?php if ($runqry['consider_level'] == '1') {
+                <td>
+                    <?php if ($runqry['consider_level'] == '1') {
                         echo 'Bronze';
                     } elseif ($runqry['consider_level'] == '2') {
                         echo 'Silver';
@@ -166,52 +171,59 @@ function moneyFormatIndia($num)
                         echo 'Diamond';
                     } else {
                         echo '';
-                    } ?></td>
+                    } ?>
+                </td>
                 <td>
-                    <?php if ($actionType == "noc") { ?>
-                        <span class="btn btn-success noc-window"
-                            style="font-size: 17px; position: relative; top: 0px; background-color:#009688;"
-                            data-value="<?= $row['req_id']; ?>">
-                            NOC
-                        </span>
-
-                    <?php } elseif ($actionType == "summary") { ?>
-
-                        <div class="dropdown">
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa">&#xf107;</i>
-                            </button>
+                    <div class="dropdown" style='float:right'>
+                        <button class="btn btn-outline-secondary"><i class="fa">&#xf107;</i></button>
                             <div class="dropdown-content">
+                                <?php if ($nocReplaceAccess == 0){ //need noc replace access // if having noc replace means show only noc replace and noc summary;
+                                    if ($row['cus_status'] == '21'){ //noc replace show only if cus status is 21.
+                                ?>
 
-                                <a href=""
-                                class="noc-summary"
-                                    data-reqid="<?= $row['req_id']; ?>"
-                                    data-cusid="<?= $cus_id; ?>"
-                                    data-cusname="<?= $row['cus_name']; ?>"
-                                    data-toggle="modal"
-                                    data-target=".noc-summary-modal">
-                                    NOC Summary
-                                </a>
+                                    <a href="#" class="noc-replace" data-value="<?= $row['req_id']; ?>"> NOC Replace </a>
+                                
+                                <?php } ?>
 
-                                <a href=""
-                                    title="NOC Letter"
-                                    class="noc-letter"
-                                    data-reqid="<?= $row['req_id']; ?>"
-                                    data-cusid="<?= $cus_id; ?>">
-                                    NOC Letter
-                                </a>
+                                    <a href="#" class="noc-summary" data-reqid="<?= $row['req_id']; ?>" data-cusid="<?= $cus_id; ?>" data-cusname="<?= $row['cus_name']; ?>" data-toggle="modal" data-target=".noc-summary-modal"> NOC Summary </a>
+                                    
+                                <?php } else{
+
+                                        if ($actionType == "noc") { ?>
+
+                                        <a href="#" class="noc-window" data-value="<?= $row['req_id']; ?>"> NOC </a>
+
+                                    <?php } elseif ($actionType == "summary") { ?>
+
+                                        <a href=""
+                                        class="noc-summary"
+                                            data-reqid="<?= $row['req_id']; ?>"
+                                            data-cusid="<?= $cus_id; ?>"
+                                            data-cusname="<?= $row['cus_name']; ?>"
+                                            data-toggle="modal"
+                                            data-target=".noc-summary-modal">
+                                            NOC Summary
+                                        </a>
+
+                                        <a href=""
+                                            title="NOC Letter"
+                                            class="noc-letter"
+                                            data-reqid="<?= $row['req_id']; ?>"
+                                            data-cusid="<?= $cus_id; ?>">
+                                            NOC Letter
+                                        </a>
+
+                                    <?php } 
+                                }
+                                ?>
 
                             </div>
-                        </div>
-
-                    <?php } ?>
+                    </div>
                 </td>
-
             </tr>
 
-        <?php
-            // $i++;
-        } ?>
+        <?php } ?>
+
     </tbody>
 </table>
 
@@ -224,13 +236,7 @@ function moneyFormatIndia($num)
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"]
             ],
-            // "createdRow": function(row, data, dataIndex) {
-            //     $(row).find('td:first').html(dataIndex + 1);
-            // },
             "drawCallback": function(settings) {
-                // this.api().column(0).nodes().each(function(cell, i) {
-                //     cell.innerHTML = i + 1;
-                // });
                 searchFunction('loanListTable');
             },
             dom: 'lBfrtip',

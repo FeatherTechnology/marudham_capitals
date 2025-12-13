@@ -114,28 +114,29 @@ $(document).ready(function () {
             if (!confirmAction) return;
 
             Promise.all([
-                    updateNocTable()
+                updateNocTable()
                     
-                ]).then(() => {
-                    updateCheckedDetails()
+            ]).then(() => {
+                updateCheckedDetails()
 
-                }).then(() => {
-                        if (req_id !== null) {
-                            $(`.noc-window[data-value='${req_id}']`).trigger('click');
-                        }
+            }).then(() => {
+                if (req_id !== null) {
+                    $(`.noc-window[data-value='${req_id}']`).trigger('click');
+                }
 
-                    }).then(() => {
-                        $('#gold_checklist').val('');
-                        $('#cheque_checklist').val('');
-                        $('#endorse_checklist').val('');
-                        $('#sign_checklist').val('');
-                        $('#mort_checklist').val('');
-                        $('#doc_checklist').val('');
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        alert("Something went wrong!");
-                    });
+            }).then(() => {
+                $('#sign_checklist').val('');
+                $('#cheque_checklist').val('');
+                $('#mort_checklist').val('');
+                $('#endorse_checklist').val('');
+                $('#gold_checklist').val('');
+                $('#doc_checklist').val('');
+                
+            }).catch(err => {
+                console.error(err);
+                alert("Something went wrong!");
+                
+            });
 
         }
     });
@@ -846,17 +847,15 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
             });
 
         })//Window onclick end
-        $('.noc-summary').off('click').click(function () {
+
+        $(document).on('click', '.noc-summary', function () {
             let req_id = $(this).data('reqid');
             let cus_id = $(this).data('cusid');
             var cus_name = $(this).data('cusname');
 
             $.ajax({
                 url: 'verificationFile/documentation/getNOCSummary.php',
-                data: {
-                    'req_id': req_id,
-                    'cus_id': cus_id
-                },
+                data: { req_id, cus_id },
                 type: 'post',
                 cache: false,
                 success: function (html) {
@@ -973,24 +972,56 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
                     }
                 }).then(function () {
                     remove4columns('documentTable');
-                })
+                });
             })
-        })
+        });
 
         function remove4columns(tablename) {
             $('input[type=checkbox]').attr('disabled', true)
         }
-        $('.noc-letter').click(function () {
+
+        $(document).on('click', '.noc-letter', function (event) {
             event.preventDefault();
             let req_id = $(this).data('reqid');
             let cus_id = $(this).data('cusid');
-            $.post('nocFile/nocLetter.php', {
-                req_id: req_id,
-                cus_id: cus_id
-            }, function (html) {
-                $('#printnocletter').html(html)
-            })
+            $.post('nocFile/nocLetter.php', { req_id, cus_id }, function (html) {
+                $('#printnocletter').html(html);
+            });
         })
+
+        $(document).on('click', '.noc-replace', function(event){
+            event.preventDefault();
+            let reqId = $(this).data('value');
+            let cusId = $('#cusidupd').val();
+
+            Swal.fire({
+				title: 'Are your sure to replace this NOC?',
+				text: 'This action cannot be reverted!',
+				icon: 'question',
+				showConfirmButton: true,
+				showCancelButton: true,
+				confirmButtonColor: '#009688',
+				cancelButtonColor: '#cc4444',
+				cancelButtonText: 'No',
+				confirmButtonText: 'Yes'
+			}).then(function(result) {
+				if (result.isConfirmed) {
+                    $.post('nocFile/nocReplace.php', {reqId, cusId}, function(response){
+                        if(response.status =='success'){
+                            var req_id = $('#idupd').val()
+                            const cus_id = $('#cusidupd').val()
+                            const action_type = $('#action_type').val()
+                            OnLoadFunctions(req_id, cus_id, action_type);
+
+                        } else{
+                            alert("NOC Replace Failed.");
+                            
+                        }
+                    },'json');
+				}
+			});
+
+        });
 
     })//Ajax done End
 
@@ -1193,20 +1224,13 @@ function updateCheckedDetails() {
 
     let payload = {
         req_id: req_id,
+        // id lists (needed for noc_given update)
         sign: [],
         cheque: [],
         mort: [],
         endorse: [],
         gold: [],
-        other: [],
-
-        // id lists (needed for noc_given update)
-        sign_ids: $('#sign_checklist').val().split(','),
-        cheque_ids: $('#cheque_checklist').val().split(','),
-        mort_ids: $('#mort_checklist').val().split(','),
-        endorse_ids: $('#endorse_checklist').val().split(','),
-        gold_ids: $('#gold_checklist').val().split(','),
-        doc_ids: $('#doc_checklist').val().split(',')
+        other: []
     };
 
     // SIGN
@@ -1280,7 +1304,6 @@ function updateNocTable() {
     let mort_checklist = $('#mort_checklist').val();
     let endorse_checklist = $('#endorse_checklist').val();
     let doc_checklist = $('#doc_checklist').val();
-    let noc_date = $('#noc_date').val();
 
     var formData = new FormData();
     formData.append('cusidupd', cusidupd);
@@ -1291,7 +1314,6 @@ function updateNocTable() {
     formData.append('mort_checklist', mort_checklist);
     formData.append('endorse_checklist', endorse_checklist);
     formData.append('doc_checklist', doc_checklist);
-    formData.append('noc_date', noc_date);
 
     // ⭐ Return the AJAX promise
     return $.ajax({
@@ -1323,9 +1345,7 @@ function updateNocTable() {
     });
 }
 
-
 function famNameList() {  // To show family name for Data Check.
-    let req_id = $('#req_id').val();
     var cus_name = $('#cus_name').val();
     var cus_id = $('#cusidupd').val();//customer id
 
@@ -1345,13 +1365,11 @@ function famNameList() {  // To show family name for Data Check.
                 let relationship = response[i]['relationship'];
                 $('#check_name').append("<option value='" + name + "'> " + name + " - " + relationship + " </option>")
             }
-
         }
     });
 }
 
 function mobileList() { // To show Mobile No for Data Checking.
-    let req_id = $('#req_id').val();
     var mobile1 = $('#mobile').val();
     var cus_id = $('#cusidupd').val();//customer id
 
@@ -1371,14 +1389,11 @@ function mobileList() { // To show Mobile No for Data Checking.
                 let relationship = response[i]['relationship'];
                 $('#check_mobileno').append("<option value='" + no + "'> " + no + " - " + relationship + " </option>")
             }
-
         }
     });
 }
 
-
 function aadharList() {   // To show Aadhar No for Data Checking.
-    let req_id = $('#req_id').val();
     var cus_name = $('#cus_name').val();//Customer name for display
     var cus_id = $('#cusidupd').val();//customer adhar for 
 
@@ -1399,7 +1414,6 @@ function aadharList() {   // To show Aadhar No for Data Checking.
                 let relationship = response[i]['relationship'];
                 $('#check_aadhar').append("<option value='" + aadhar + "'> " + fam_name + " - " + relationship + " </option>")
             }
-
         }
     });
 }

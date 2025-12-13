@@ -130,7 +130,7 @@
 			let req_id = $(this).data('reqid');
 			let cus_id = $(this).data('cusid');
 			Swal.fire({
-				title: 'Are your sure to send this NOC Handover?',
+				title: 'Are your sure to send this NOC to NOC Handover?',
 				text: 'This action cannot be reverted!',
 				icon: 'question',
 				showConfirmButton: true,
