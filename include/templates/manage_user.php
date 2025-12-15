@@ -115,6 +115,7 @@ $uncleared_report = '';
 $events_report = '';
 $area_loan_count_report = '';
 $work_count_report = '';
+$noc_handover_report = '';
 $search_module = '';
 $search_screen = '';
 $bulk_upload_module = '';
@@ -287,6 +288,7 @@ if($idupd>0)
 			$events_report  = $getUser['events_report'];
 			$area_loan_count_report  = $getUser['area_loan_count_report'];
 			$work_count_report  = $getUser['work_count_report'];
+			$noc_handover_report  = $getUser['noc_handover_report'];
 
 			$search_module = $getUser['search_module'];
 			$search_screen = $getUser['search'];
@@ -1200,6 +1202,12 @@ if($idupd>0)
 								<div class="custom-control custom-checkbox">
 									<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($due_list_report==0){ echo'checked'; }} ?> tabindex="73" class="work-checkbox    screen-validations" id="due_list_report" name="due_list_report" disabled>&nbsp;&nbsp;
 									<label class="custom-control-label" for="due_list_report">Due List</label>
+								</div>
+							</div>
+							<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+								<div class="custom-control custom-checkbox">
+									<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($noc_handover_report==0){ echo'checked'; }} ?> tabindex="73" class="work-checkbox    screen-validations" id="noc_handover_report" name="noc_handover_report" disabled>&nbsp;&nbsp;
+									<label class="custom-control-label" for="noc_handover_report">NOC Handover</label>
 								</div>
 							</div>
 						</div>
