@@ -66,11 +66,12 @@ foreach ($loanCats as $cat) {
     } else if ($screen == 2) {
 
         $req_qry = "
-            SELECT req_id 
-            FROM in_verification
-            WHERE loan_category = '$cat_id'
-              AND insert_login_id IN ($user_id_str)
-              AND DATE(created_date) BETWEEN '$from_date' AND '$to_date'
+            SELECT ia.req_id 
+            FROM verification_loan_calculation vlc
+            JOIN in_approval ia ON ia.req_id = vlc.req_id
+            WHERE vlc.loan_category = '$cat_id'
+              AND ia.insert_login_id IN ($user_id_str)
+              AND DATE(vlc.create_date) BETWEEN '$from_date' AND '$to_date'
         ";
 
     } else if ($screen == 3) {
@@ -78,10 +79,10 @@ foreach ($loanCats as $cat) {
         $req_qry = "
             SELECT ia.req_id 
             FROM verification_loan_calculation vlc
-            JOIN in_approval ia ON ia.req_id = vlc.req_id
+            JOIN in_acknowledgement ia ON ia.req_id = vlc.req_id
             WHERE vlc.loan_category = '$cat_id'
-              AND ia.insert_login_id IN ($user_id_str)
-              AND DATE(vlc.create_date) BETWEEN '$from_date' AND '$to_date'
+              AND ia.inserted_user IN ($user_id_str)
+              AND DATE(ia.inserted_date) BETWEEN '$from_date' AND '$to_date'
         ";
     }
 

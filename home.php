@@ -556,9 +556,14 @@ if (isset($getuserdetails['download_access'])) {
 				<?php include "include/templates/area_loan_count_report.php" ?>
 			<?php } else ?>
 
-			<!-- User Tracking report -->
+			<!-- Work Count report -->
 			<?php if ($current_page == 'work_count_report') { ?>
 				<?php include "include/templates/work_count_report.php" ?>
+			<?php } else ?>
+
+			<!-- NOC Handover report -->
+			<?php if ($current_page == 'noc_handover_report') { ?>
+				<?php include "include/templates/noc_handover_report.php" ?>
 			<?php } else ?>
 			
 			<!-- Intrest Ledger Report -->
