@@ -1661,6 +1661,9 @@
     if ($current_page == 'noc_handover_report') { ?>
         <script src="js/noc_handover_report.js"></script>
     <?php }
+    if ($current_page == 'confirmation_count_report') { ?>
+        <script src="js/confirmation_count_report.js"></script>
+    <?php }
     if ($current_page == 'intrest_ledger_report') { ?>
         <script src="js/intrest_ledger_report.js"></script>
     <?php }
