@@ -116,6 +116,7 @@ $events_report = '';
 $area_loan_count_report = '';
 $work_count_report = '';
 $noc_handover_report = '';
+$confirmation_count_report = '';
 $search_module = '';
 $search_screen = '';
 $bulk_upload_module = '';
@@ -289,6 +290,7 @@ if($idupd>0)
 			$area_loan_count_report  = $getUser['area_loan_count_report'];
 			$work_count_report  = $getUser['work_count_report'];
 			$noc_handover_report  = $getUser['noc_handover_report'];
+			$confirmation_count_report  = $getUser['confirmation_count_report'];
 
 			$search_module = $getUser['search_module'];
 			$search_screen = $getUser['search'];
@@ -1261,6 +1263,12 @@ if($idupd>0)
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($work_count_report==0){ echo'checked'; }} ?> tabindex="85" class="monitor-checkbox  screen-validations" id="work_count_report" name="work_count_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="work_count_report">Work Count Report</label>
+                            </div>
+                        </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($confirmation_count_report==0){ echo'checked'; }} ?> tabindex="85" class="monitor-checkbox  screen-validations" id="confirmation_count_report" name="confirmation_count_report" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="confirmation_count_report">Confirmation Count Report</label>
                             </div>
                         </div>
 						</div>
