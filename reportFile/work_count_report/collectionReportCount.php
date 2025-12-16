@@ -39,14 +39,15 @@ foreach ($loanCats as $cat) {
     ================================== */
     $qry = "
         SELECT 
-            coll_sub_status,
-            COUNT(req_id) AS total_bill,
-            SUM(COALESCE(total_paid_track, 0)) AS total_amount
-        FROM collection 
-        WHERE loan_category = '$cat_id'
-          AND insert_login_id IN ($user_id_str)
-          AND DATE(coll_date) BETWEEN '$from_date' AND '$to_date'
-        GROUP BY coll_sub_status
+            cl.coll_sub_status,
+            COUNT(cl.req_id) AS total_bill,
+            SUM(COALESCE(cl.total_paid_track, 0)) AS total_amount
+        FROM collection cl
+        JOIN acknowlegement_loan_calculation alc ON cl.req_id = alc.req_id
+        WHERE alc.loan_category = '$cat_id'
+          AND cl.insert_login_id IN ($user_id_str)
+          AND DATE(cl.coll_date) BETWEEN '$from_date' AND '$to_date'
+        GROUP BY cl.coll_sub_status
     ";
 
     $result = $connect->query($qry)->fetchAll(PDO::FETCH_ASSOC);

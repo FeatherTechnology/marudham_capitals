@@ -1658,7 +1658,9 @@
     if ($current_page == 'area_loan_count_report') { ?>
         <script src="js/area_loan_count_report.js"></script>
     <?php }
-
+    if ($current_page == 'noc_handover_report') { ?>
+        <script src="js/noc_handover_report.js"></script>
+    <?php }
     if ($current_page == 'intrest_ledger_report') { ?>
         <script src="js/intrest_ledger_report.js"></script>
     <?php }
@@ -2418,5 +2420,22 @@
             $(this).val(parts.join(" "));
         });
     }
+      // For Hard Reload and need to create a text file version   
+    let currentVersion = null;
+
+    fetch("version.txt?rand=" + Math.random())
+        .then(res => res.text())
+        .then(v => currentVersion = v.trim());
+
+    // Check every 5 seconds
+    setInterval(() => {
+        fetch("version.txt?rand=" + Math.random())
+            .then(res => res.text())
+            .then(serverVersion => {
+                if (currentVersion && serverVersion.trim() !== currentVersion) {
+                    location.reload(true);
+                }
+            });
+    }, 6000);
 
 </script>
