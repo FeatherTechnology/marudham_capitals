@@ -240,7 +240,8 @@ $(function () {
 
     var cus_pic = $('#cuspicupd').val();
     $('#imgshow').attr('src', 'uploads/request/customer/' + cus_pic);
-})
+});
+
 let req_id = null;
 function OnLoadFunctions(req_id, cus_id, action_type) {
 
@@ -848,137 +849,20 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
 
         })//Window onclick end
 
-        $(document).on('click', '.noc-summary', function () {
+        $(document).on('click', '.noc-summary', function (e) {
+            e.preventDefault();
             let req_id = $(this).data('reqid');
-            let cus_id = $(this).data('cusid');
             var cus_name = $(this).data('cusname');
-
             $.ajax({
                 url: 'verificationFile/documentation/getNOCSummary.php',
-                data: { req_id, cus_id },
+                data: { req_id, cus_name },
                 type: 'post',
                 cache: false,
                 success: function (html) {
-                    $('#nocsummaryModal').empty();
                     $('#nocsummaryModal').html(html);
                 }
-            }).then(function () {
-
-                // To get the Signed Document List on Checklist
-                $.ajax({
-                    url: 'nocFile/getSignedDocList.php',
-                    data: {
-                        'req_id': req_id,
-                        'cus_name': cus_name
-                    },
-                    type: 'post',
-                    cache: false,
-                    success: function (response) {
-
-                        $('#signDocDiv').empty()
-                        $('#signDocDiv').html(response);
-
-                    }
-                }).then(function () {
-                    remove4columns('signDocTable');
-                })
-
-
-                // To get the unused Cheque List on Checklist
-                $.ajax({
-                    url: 'nocFile/getChequeDocList.php',
-                    data: {
-                        'req_id': req_id,
-                        'cus_name': cus_name
-                    },
-                    type: 'post',
-                    cache: false,
-                    success: function (response) {
-
-                        $('#chequeDiv').empty()
-                        $('#chequeDiv').html(response);
-                    }
-                }).then(function () {
-                    remove4columns('chequeTable');
-                })
-
-                // To get the Mortgage List on Checklist
-                $.ajax({
-                    url: 'nocFile/getMortgageList.php',
-                    data: {
-                        'req_id': req_id,
-                        'cus_name': cus_name
-                    },
-                    type: 'post',
-                    cache: false,
-                    success: function (response) {
-
-                        $('#mortgageDiv').empty()
-                        $('#mortgageDiv').html(response);
-                    }
-                }).then(function () {
-                    remove4columns('mortgageTable');
-                })
-
-                // To get the Endorsement List on Checklist
-                $.ajax({
-                    url: 'nocFile/getEndorsementList.php',
-                    data: {
-                        'req_id': req_id,
-                        'cus_name': cus_name
-                    },
-                    type: 'post',
-                    cache: false,
-                    success: function (response) {
-
-                        $('#endorsementDiv').empty()
-                        $('#endorsementDiv').html(response);
-                    }
-                }).then(function () {
-                    remove4columns('endorsementTable');
-                })
-
-                // To get the Gold List on Checklist
-                $.ajax({
-                    url: 'nocFile/getGoldList.php',
-                    data: {
-                        'req_id': req_id,
-                        'cus_name': cus_name
-                    },
-                    type: 'post',
-                    cache: false,
-                    success: function (response) {
-
-                        $('#goldDiv').empty()
-                        $('#goldDiv').html(response);
-                    }
-                }).then(function () {
-                    remove4columns('goldTable');
-                })
-
-                // To get the Document List on Checklist
-                $.ajax({
-                    url: 'nocFile/getDocumentList.php',
-                    data: {
-                        'req_id': req_id,
-                        'cus_name': cus_name
-                    },
-                    type: 'post',
-                    cache: false,
-                    success: function (response) {
-
-                        $('#documentDiv').empty()
-                        $('#documentDiv').html(response);
-                    }
-                }).then(function () {
-                    remove4columns('documentTable');
-                });
-            })
+            });
         });
-
-        function remove4columns(tablename) {
-            $('input[type=checkbox]').attr('disabled', true)
-        }
 
         $(document).on('click', '.noc-letter', function (event) {
             event.preventDefault();

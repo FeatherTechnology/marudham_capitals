@@ -47,6 +47,7 @@ if (isset($_POST['to_date']) && $_POST['to_date'] != '') {
 }
 
 $where  .= $user_based;
+
 $consider_lvl_arr = [1 => 'Bronze', 2 => 'Silver', 3 => 'Gold', 4 => 'Platinum', 5 => 'Diamond'];
 $statusObj = [
     '14' => 'Current',
@@ -56,6 +57,7 @@ $statusObj = [
     '20' => 'In Closed',
     '21' => 'Closed',
 ];
+
 $column = array(
     'ii.loan_id',
     'ag.group_name',
@@ -92,19 +94,30 @@ $column = array(
     'ii.loan_id'
 );
 
-$qry = " SELECT req.req_id FROM request_creation req JOIN acknowlegement_customer_profile cp ON req.req_id = cp.req_id
+$qry = "SELECT req.req_id 
+        FROM request_creation req 
+        JOIN acknowlegement_customer_profile cp ON req.req_id = cp.req_id
         JOIN customer_status cs ON req.req_id = cs.req_id
-         LEFT JOIN (
-    SELECT req_id, MAX(created_date) AS last_collection_date
-    FROM collection
-    GROUP BY req_id
-) coll ON req.req_id = coll.req_id
-        JOIN loan_issue li ON req.req_id = li.req_id  AND DATE(li.created_date) < DATE('$to_date')  AND balance_amount = '0'
-        WHERE req.cus_status BETWEEN 14 AND 18  AND ( cs.sub_status != 'Due Nil' OR (cs.sub_status = 'Due Nil' AND  coll.last_collection_date > '$to_date') )
+        LEFT JOIN (
+            SELECT req_id, MAX(created_date) AS last_collection_date
+            FROM collection
+            GROUP BY req_id
+        ) coll ON req.req_id = coll.req_id
+        JOIN loan_issue li ON req.req_id = li.req_id AND DATE(li.created_date) < DATE('$to_date') AND balance_amount = '0'
+        WHERE req.cus_status BETWEEN 14 AND 18 AND ( cs.sub_status != 'Due Nil' OR (cs.sub_status = 'Due Nil' AND  coll.last_collection_date > '$to_date') )
 
         UNION 
 
-        SELECT li.req_id FROM loan_issue li JOIN closing_customer cc ON li.req_id = cc.req_id LEFT JOIN ( SELECT req_id, MAX(coll_date) AS max_coll_date FROM collection WHERE coll_date <= '$to_date' GROUP BY req_id ) AS latest_collection ON li.req_id = latest_collection.req_id LEFT JOIN collection c ON latest_collection.req_id = c.req_id AND latest_collection.max_coll_date = c.coll_date WHERE DATE(cc.closing_date) >= DATE('$to_date') AND DATE(li.created_date) <= DATE('$to_date') AND ( c.req_id IS NULL OR (c.bal_amt - c.due_amt_track) > 0 )";
+        SELECT li.req_id 
+        FROM loan_issue li 
+        JOIN closing_customer cc ON li.req_id = cc.req_id 
+        LEFT JOIN ( 
+            SELECT req_id, MAX(coll_date) AS max_coll_date 
+            FROM collection 
+            WHERE coll_date <= '$to_date' GROUP BY req_id 
+        ) AS latest_collection ON li.req_id = latest_collection.req_id 
+        LEFT JOIN collection c ON latest_collection.req_id = c.req_id AND latest_collection.max_coll_date = c.coll_date 
+        WHERE DATE(cc.closing_date) >= DATE('$to_date') AND DATE(li.created_date) <= DATE('$to_date') AND ( c.req_id IS NULL OR (c.bal_amt - c.due_amt_track) > 0 ) AND balance_amount = '0'";
 
 $run = $connect->query($qry);
 $req_id_list = [];
@@ -198,7 +211,7 @@ LEFT JOIN
            ) latest
     ON c.req_id = latest.req_id AND c.coll_id = latest.max_coll_id ) c ON lc.req_id = c.req_id 
 WHERE
-    lc.req_id IN ($req_id_list) ";
+    lc.req_id IN ($req_id_list) AND balance_amount = '0' ";
 
 
 

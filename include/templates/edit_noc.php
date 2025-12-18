@@ -5,12 +5,6 @@
 		Marudham Capitals - NOC
 	</div>
 </div><br>
-<!-- <div class="text-right" style="margin-right: 25px;">
-    <a href="verification">
-        <button type="button" class="btn btn-primary"><span class="icon-add"></span>&nbsp; Add verification</button>
-    </a>
-</div><br><br> -->
-<!-- Page header end -->
 
 <!-- Main container start -->
 <div class="main-container">

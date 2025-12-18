@@ -222,6 +222,8 @@ if (sizeof($documentationInfo) > 0) {
 	$doc_relation = $documentationInfo['doc_relation'];
 	$doc_remark = $documentationInfo['doc_remark'];
 	$doc_sts = $documentationInfo['doc_sts'];
+	$noc_replace_status = $documentationInfo['noc_replace_status'];
+	$noc_replace_doc_id = $documentationInfo['noc_replace_doc_id'];
 	$submitted = $documentationInfo['submitted'];
 	$checkedStatus = ($doc_sts == 'YES' || $doc_sts == '' || $doc_sts === null) ? 'checked' : '';
 	
@@ -328,6 +330,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 		background-color: white;
 	}
 
+	/*Document status*/
 	.switch {
 		position: relative;
 		display: inline-block;
@@ -337,7 +340,6 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 		/* increased from 34px */
 		left: 10px;
 	}
-
 
 	.switch input {
 		opacity: 0;
@@ -411,6 +413,88 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 		left: 11px;
 		/* text moves to left side when active */
 	}
+
+	/* Replace status design START */
+	.replaceSwitch {
+		position: relative;
+		display: inline-block;
+		width: 80px;
+		height: 34px;
+		left: 10px;
+	}
+
+	.replaceSwitch input {
+		opacity: 0;
+		width: 0;
+		height: 0;
+	}
+
+	.replaceSlider {
+		position: absolute;
+		cursor: pointer;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-color: #ccc;
+		-webkit-transition: .4s;
+		transition: .4s;
+	}
+
+	.replaceSlider:before {
+		position: absolute;
+		content: "";
+		height: 26px;
+		width: 26px;
+		left: 4px;
+		bottom: 4px;
+		background-color: white;
+		-webkit-transition: .4s;
+		transition: .4s;
+	}
+
+	input:checked+.replaceSlider {
+		background-color: #009688;
+	}
+
+	input:focus+.replaceSlider {
+		box-shadow: 0 0 1px #2196F3;
+	}
+
+	input:checked+.replaceSlider:before {
+		left: calc(100% - 31px);
+		/* 36px knob + 5px padding */
+		transform: translateX(0);
+	}
+
+	/* Rounded sliders */
+	.replaceSlider.replaceRound {
+		border-radius: 34px;
+	}
+
+	.replaceSlider.replaceRound:before {
+		border-radius: 50%;
+	}
+
+	.replaceSlider::after {
+		content: "NO";
+		/* default text */
+		position: absolute;
+		color: white;
+		font-weight: 600;
+		font-size: 14px;
+		left: 43px;
+		top: 9px;
+	}
+
+	/* When Checked */
+	input:checked+.replaceSlider::after {
+		content: "YES";
+		left: 11px;
+		/* text moves to left side when active */
+	}
+	/* Replace status design END */
+
 </style>
 
 <!-- Page header start -->
@@ -1337,6 +1421,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 			<input type="hidden" name="submitted" id="submitted" value="<?php if (isset($submitted)) {
 																			echo $submitted;
 																		} ?>">
+			<input type="hidden" name="replace_doc_id_upd" id="replace_doc_id_upd" value="<?php if (isset($noc_replace_doc_id)) {echo $noc_replace_doc_id;} ?>">
 
 			<!-- Row start -->
 			<div class="row gutters">
@@ -1916,6 +2001,24 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 																																	echo $doc_remark;
 																																} ?> </textarea>
 										<span class="text-danger" id="doc_remarkcheck"> Enter Remarks </span>
+									</div>
+								</div>
+								<div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 col-12">
+									<div class="form-group">
+										<label for="replace_status"> NOC Replace Status </label> <span class="required">&nbsp;*</span>
+										<label class="replaceSwitch">
+											<input type="checkbox" name="replace_status" id="replace_status" value="0" tabindex="79" <?php if(isset($noc_replace_status) && $noc_replace_status == '0') echo 'checked'; ?> >
+											<span class="replaceSlider replaceRound"></span>
+										</label>
+									</div>
+								</div>
+								<div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 col-12 replce_doc_id" style="display: none;">
+									<div class="form-group">
+										<label for="replace_doc_id"> Replace Document ID </label> <span class="required">&nbsp;*</span>
+										<select class="form-control" name="replace_doc_id" id="replace_doc_id" tabindex="79">
+											<option value="">Select Replace Document ID</option>
+										</select>
+										<span class="text-danger rplce_doc_id" style="display: none;">Please Select Replace Document ID</span>
 									</div>
 								</div>
 							</div>

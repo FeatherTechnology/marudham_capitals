@@ -88,7 +88,7 @@ function moneyFormatIndia($num)
         color: #383737;
         border-color: #383737;
         position: inherit;
-        left: -20px;
+        /* left: -20px; */
     }
 </style>
 <table class="table custom-table" id='DocListTable'>
@@ -111,11 +111,9 @@ function moneyFormatIndia($num)
     <tbody>
 
         <?php
-        // $req_id = $_POST['req_id'];
         $cus_id = $_POST['cus_id'];
         $consider_lvl_arr = [1 => 'Bronze', 2 => 'Silver', 3 => 'Gold', 4 => 'Platinum', 5 => 'Diamond'];
-        $run = $connect->query("SELECT lc.due_start_from,lc.cus_name_loan,lc.loan_category,lc.sub_category,lc.loan_amt_cal,lc.due_amt_cal,lc.net_cash_cal,lc.collection_method,ii.loan_id,ii.req_id,ii.updated_date,ii.cus_status,ad.doc_id,
-        rc.agent_id,lcc.loan_category_creation_name as loan_catrgory_name, us.collection_access
+        $run = $connect->query("SELECT lc.due_start_from, lc.cus_name_loan, lc.loan_category, lc.sub_category, lc.loan_amt_cal, lc.due_amt_cal, lc.net_cash_cal, lc.collection_method, ii.loan_id, ii.req_id, ii.updated_date, ii.cus_status, ad.doc_id, rc.agent_id, lcc.loan_category_creation_name as loan_catrgory_name,  us.collection_access
         from acknowlegement_loan_calculation lc 
         LEFT JOIN in_issue ii ON lc.req_id = ii.req_id 
         LEFT JOIN request_creation rc ON ii.req_id = rc.req_id 
@@ -259,8 +257,7 @@ function moneyFormatIndia($num)
                         <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
                         <div class='dropdown-content'>";
                     if ($row['cus_status'] > 20) { //if request goes to NOC then noc summary can be fetched
-                        $action .= "<a href='' class='noc-summary' data-reqid='$ii_req_id' data-cusid='$cus_id' data-cusname='$cus_name'  data-loanid='" . $row['loan_id'] . "' 
-                    data-loancat='" . $row['loan_catrgory_name'] . "'data-docid='" . $row['doc_id'] . "'  data-toggle='modal' data-target='.noc-summary-modal' >NOC Summary</a>";
+                        $action .= "<a href='' class='noc-summary'  data-reqid='$ii_req_id' data-cusid='$cus_id' data-cusname='$cus_name' data-loanid='" . $row['loan_id'] . "' data-loancat='" . $row['loan_catrgory_name'] . "' data-docid='" . $row['doc_id'] . "' data-toggle='modal' data-target='.noc-summary-modal'>NOC Summary</a>";
                     }
                     if ($screen == 'update' && $row['cus_status'] <= 20) { //cus status <= 20 will allow only document statuses only to edit, not NOC
                         $action .= "<a href='' class='edit-doc' data-reqid='$ii_req_id' data-cusid='$cus_id' data-cusname='$cus_name' data-docid='" . $row['doc_id'] . "' >Edit Documents</a>";
@@ -403,9 +400,9 @@ function getDocumentStatus($connect, $req_id, $cus_id)
         }
     });
 
-    $('.noc-summary').click(function() {
+    $(document).on('click', '.noc-summary', function (e) {
+        e.preventDefault();
         let req_id = $(this).data('reqid');
-        let cus_id = $(this).data('cusid');
         var cus_name = $(this).data('cusname');
         let loan_id = $(this).data('loanid');
         let loan_cat = $(this).data('loancat');
@@ -416,146 +413,17 @@ function getDocumentStatus($connect, $req_id, $cus_id)
         $('#nocSummaryTitle').html(
             `${base} | Loan ID: ${loan_id} | Doc ID: ${doc_id} | Loan Category: ${loan_cat}`
         );
+
         $.ajax({
             url: 'verificationFile/documentation/getNOCSummary.php',
-            data: {
-                'req_id': req_id,
-                'cus_id': cus_id
-            },
+            data: { req_id, cus_name },
             type: 'post',
             cache: false,
             success: function(html) {
-                $('#nocsummaryModal').empty();
                 $('#nocsummaryModal').html(html);
             }
-        }).then(function() {
-
-            // To get the Signed Document List on Checklist
-            $.ajax({
-                url: 'nocFile/getSignedDocList.php',
-                data: {
-                    'req_id': req_id,
-                    'cus_name': cus_name
-                },
-                type: 'post',
-                cache: false,
-                success: function(response) {
-
-                    $('#signDocDiv').empty()
-                    $('#signDocDiv').html(response);
-
-                }
-            }).then(function() {
-                remove4columns('signDocTable');
-            })
-
-
-            // To get the unused Cheque List on Checklist
-            $.ajax({
-                url: 'nocFile/getChequeDocList.php',
-                data: {
-                    'req_id': req_id,
-                    'cus_name': cus_name
-                },
-                type: 'post',
-                cache: false,
-                success: function(response) {
-
-                    $('#chequeDiv').empty()
-                    $('#chequeDiv').html(response);
-                }
-            }).then(function() {
-                remove4columns('chequeTable');
-            })
-
-            // To get the Mortgage List on Checklist
-            $.ajax({
-                url: 'nocFile/getMortgageList.php',
-                data: {
-                    'req_id': req_id,
-                    'cus_name': cus_name
-                },
-                type: 'post',
-                cache: false,
-                success: function(response) {
-
-                    $('#mortgageDiv').empty()
-                    $('#mortgageDiv').html(response);
-                }
-            }).then(function() {
-                remove4columns('mortgageTable');
-            })
-
-            // To get the Endorsement List on Checklist
-            $.ajax({
-                url: 'nocFile/getEndorsementList.php',
-                data: {
-                    'req_id': req_id,
-                    'cus_name': cus_name
-                },
-                type: 'post',
-                cache: false,
-                success: function(response) {
-
-                    $('#endorsementDiv').empty()
-                    $('#endorsementDiv').html(response);
-                }
-            }).then(function() {
-                remove4columns('endorsementTable');
-            })
-
-            // To get the Gold List on Checklist
-            $.ajax({
-                url: 'nocFile/getGoldList.php',
-                data: {
-                    'req_id': req_id,
-                    'cus_name': cus_name
-                },
-                type: 'post',
-                cache: false,
-                success: function(response) {
-
-                    $('#goldDiv').empty()
-                    $('#goldDiv').html(response);
-                }
-            }).then(function() {
-                remove4columns('goldTable');
-            })
-
-            // To get the Document List on Checklist
-            $.ajax({
-                url: 'nocFile/getDocumentList.php',
-                data: {
-                    'req_id': req_id,
-                    'cus_name': cus_name
-                },
-                type: 'post',
-                cache: false,
-                success: function(response) {
-
-                    $('#documentDiv').empty()
-                    $('#documentDiv').html(response);
-                }
-            }).then(function() {
-                remove4columns('documentTable');
-            })
-
-            // setTimeout(() => {
-            //     console.log('asdfasdfasdf')
-            //     $('#signDocTable').DataTable().destroy();
-            //     $('#chequeTable').DataTable().destroy();
-            //     $('#mortgageTable').DataTable().destroy();
-            //     $('#endorsementTable').DataTable().destroy();
-            //     $('#goldTable').DataTable().destroy();
-            //     $('#documentTable').DataTable().destroy();
-            // }, 1500);
-        })
-    })
-
-    function remove4columns(tablename) {
-        $('input[type=checkbox]').attr('disabled', true)
-    }
-
+        });
+    });
 
     $('#DocListTable').DataTable({
         'processing': true,

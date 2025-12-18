@@ -31,7 +31,7 @@ $column = array(
 
 // Base query
 // 1- inserted, 2- send by issued user, 3- received by doc_rec_access user, 1- return.
-$query = "SELECT dt.id, dt.req_id, dt.cus_id, dt.track_status, dt.insert_login_id, dt.created_date, ad.doc_id, cr.autogen_cus_id, cr.customer_name, bc.branch_name, al.area_name, sal.sub_area_name, agm.group_name, alm.line_name, cr.sub_area
+$query = "SELECT dt.id, dt.req_id, dt.cus_id, dt.track_status, dt.insert_login_id, dt.created_date, ad.doc_id, cr.autogen_cus_id, cr.customer_name, bc.branch_name, al.area_name, sal.sub_area_name, agm.group_name, alm.line_name, cr.sub_area, ad.noc_replace_status, ad.noc_replace_doc_id
         FROM document_track dt
         JOIN acknowlegement_documentation ad ON dt.req_id = ad.req_id
         JOIN customer_register cr ON dt.cus_id = cr.cus_id
@@ -128,7 +128,7 @@ foreach ($result as $row) {
         $qry = $connect->query("SELECT fullname FROM user WHERE user_id = $doc_keeper");
         $doc_keeper_name = $qry->fetchColumn();
     }
-
+    
     $sub_array[] = $doc_keeper_name;
 
     // else if ($track_status == '3') {
@@ -142,6 +142,18 @@ foreach ($result as $row) {
     //     $sub_array[] = $branchqry->fetch()['branch_name'] . " Branch"; //document keeper column
 
     // }
+
+    $replace_doc_action ='';
+    if($row['noc_replace_status'] == '0'){
+        $replace_doc_id = $row['noc_replace_doc_id'];
+        
+        $qry = $connect->query("SELECT req_id FROM acknowlegement_documentation WHERE doc_id = '$replace_doc_id' ");
+        $replace_doc_req_id = $qry->fetchColumn();
+    
+        $replace_doc_action = "<a href='#' title='View Replace Doc' class='view-track' data-reqid='$replace_doc_req_id' data-cusid='$cus_id' data-cusname='$cus_name'  data-toggle='modal' data-target='.viewDocModal'>$replace_doc_id</a>";   
+    }
+
+    $sub_array[] = $replace_doc_action;
 
     $id = $row['id']; //table id
 

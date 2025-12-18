@@ -72,7 +72,7 @@ if (isset($_POST["bal_amt"])) {
         color: #383737;
         border-color: #383737;
         position: inherit;
-        left: -20px;
+        /* left: -20px; */
     }
 </style>
 
@@ -174,7 +174,7 @@ if (isset($_POST["bal_amt"])) {
                     } ?>
                 </td>
                 <td>
-                    <div class="dropdown" style='float:right'>
+                    <div class="dropdown">
                         <button class="btn btn-outline-secondary"><i class="fa">&#xf107;</i></button>
                             <div class="dropdown-content">
                                 <?php if ($nocReplaceAccess == 0){ //need noc replace access // if having noc replace means show only noc replace and noc summary;
