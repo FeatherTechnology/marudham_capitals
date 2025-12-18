@@ -260,7 +260,8 @@ $(document).ready(function () {
     });
 
     $("#nocmodule").on("change", function () {
-        const checkboxesToEnable = document.querySelectorAll("input.noc-checkbox");
+        $('#noc_mapping_access').val('');
+        const checkboxesToEnable = document.querySelectorAll("input.noc-checkbox, select.noc-checkbox");
         var nocmodule = document.querySelector('#nocmodule');
         checkbox(checkboxesToEnable, nocmodule);
     });
@@ -1163,15 +1164,22 @@ function validation() {
     }
   
     var nocmodule = document.querySelector('#nocmodule');
+    let nocChecked = $('#noc, #noc_handover').is(':checked');
     var noc_mapping_access = $('#noc_mapping_access').val();
+
+    $('#nocCheck').hide();
+    $('#handoverCheck').hide();
 
     // Case 1: Checkbox checked but dropdown empty
     if (nocmodule.checked && noc_mapping_access == '') {
         $('#handoverCheck').show();
         validation = false;
-    } else {
-        $('#handoverCheck').hide();
+
+    } else if(!nocChecked && noc_mapping_access !=''){
+        $('#nocCheck').show();
+        validation = false;
     }
+
     let dueFollowupChecked = $('#due_followup').is(':checked');
     let dueFollowupIdSort = multipleSelectSort(dueFollowupLines, '#due_follup_line_id');
     if (dueFollowupChecked && dueFollowupIdSort == 0) { //Checkbox checked but no lines selected 

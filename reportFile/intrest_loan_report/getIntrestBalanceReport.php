@@ -79,15 +79,18 @@ $column = [
     'lc.loan_cal_id',
 ];
 
-
-$qry = "SELECT req.req_id FROM request_creation req
+$qry = "SELECT req.req_id 
+    FROM request_creation req
     JOIN acknowlegement_customer_profile cp ON req.req_id = cp.req_id
     JOIN loan_issue li ON req.req_id = li.req_id $li_where
     WHERE req.cus_status BETWEEN 14 AND 18  $user_based
 
     UNION
 
-    SELECT cc.req_id FROM closing_customer cc JOIN loan_issue li ON cc.req_id = li.req_id WHERE date(cc.closing_date) > date('$to_date') AND date(li.created_date) <= date('$to_date')  ";
+    SELECT cc.req_id 
+    FROM closing_customer cc 
+    JOIN loan_issue li ON cc.req_id = li.req_id 
+    WHERE date(cc.closing_date) > date('$to_date') AND date(li.created_date) <= date('$to_date')  ";
 
 $run = $connect->query($qry);
 $req_id_list = [];
@@ -99,7 +102,7 @@ $req_id_list = implode(',', $req_id_list);
 $query = " SELECT 
             ag.group_name,
             alm.line_name AS line,
-             adm.duefollowup_name,
+            adm.duefollowup_name,
             ii.loan_id,
             ad.doc_id,
             ii.updated_date AS loan_date,
@@ -146,10 +149,12 @@ $query = " SELECT
             area_list_creation al ON cp.area_confirm_area = al.area_id
         JOIN 
             sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
-        JOIN area_group_mapping ag ON FIND_IN_SET(sal.sub_area_id, ag.sub_area_id)
+        JOIN 
+            area_group_mapping ag ON FIND_IN_SET(sal.sub_area_id, ag.sub_area_id)
         JOIN 
             area_line_mapping alm ON FIND_IN_SET(sal.sub_area_id, alm.sub_area_id)
-        JOIN area_duefollowup_mapping adm ON FIND_IN_SET(al.area_id, adm.area_id)
+        JOIN 
+            area_duefollowup_mapping adm ON FIND_IN_SET(al.area_id, adm.area_id)
         JOIN 
             in_verification iv ON lc.req_id = iv.req_id
         LEFT JOIN 
@@ -181,7 +186,7 @@ $query = " SELECT
                 GROUP BY req_id ) ch ON ch.req_id = c.req_id    
             $where
             GROUP BY c.req_id ) c ON c.req_id = iv.req_id
-        WHERE lc.req_id IN ($req_id_list) AND lc.due_type = 'Interest' ";
+        WHERE lc.req_id IN ($req_id_list) AND lc.due_type = 'Interest' AND balance_amount = '0' ";
 
 if (isset($_POST['loan_cat'])) {
     $loan_cat_str = "'" . implode("','", $_POST['loan_cat']) . "'";

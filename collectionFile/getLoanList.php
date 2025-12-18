@@ -28,7 +28,7 @@ if (isset($_POST["bal_amt"])) {
         color: #383737;
         border-color: #383737;
         position: inherit;
-        left: -20px;
+        /* left: -20px; */
     }
 </style>
 <?php
@@ -176,7 +176,7 @@ function moneyFormatIndia($num)
                     echo " ' data-value='" . $row['req_id'] . "'' tabindex='0'>$</span>"; ?></td>
                 <td>
                     <?php
-                    $action = "<div class='dropdown' style='float:right'><button class='btn btn-outline-secondary' ";
+                    $action = "<div class='dropdown'><button class='btn btn-outline-secondary' ";
 
                     $action .= "><i class='fa'>&#xf107;</i></button><div class='dropdown-content'>";
                     $action .= "<a><span data-toggle='modal' data-target='.DueChart' class='due-chart' value='" . $row['req_id'] . "' > Due Chart</span></a>
@@ -189,7 +189,7 @@ function moneyFormatIndia($num)
                 </td>
                 <td>
                     <?php
-                    $action = "<div class='dropdown' style='float:right'><button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button><div class='dropdown-content'>";
+                    $action = "<div class='dropdown'><button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button><div class='dropdown-content'>";
                     
                     if ($row['collection_access'] == '0') {
                         $action .= "<a href='' class='move-error' value='" . $row['req_id'] . "' > Move To Error</a>

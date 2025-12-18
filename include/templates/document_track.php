@@ -30,6 +30,7 @@
 								<th>Group</th>
 								<th>Line</th>
 								<th>Document Holder</th>
+								<th>Replace Doc</th>
 								<th>Action</th>
 							</tr>
 						</thead>

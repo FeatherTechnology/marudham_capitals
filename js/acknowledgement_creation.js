@@ -1005,13 +1005,27 @@ $('#doc_remarkcheck').hide();
     });
     ///Hide AND Show doc Card END
 
+    ////NOC replace status START//////
+    $('#replace_status').change(function(event){
+        let sts = $(this).is(':checked');
+        
+        if(sts){
+            getDocumentIds();
+
+        }else{
+            $('#replace_doc_id').val('');
+            $('.replce_doc_id').hide();
+        }
+    });
+    ////NOC replace status END//////
+
 });   ////////Document Ready End
 
 $(function () {
     $('.icon-chevron-down1').parent().next('div').slideUp(); //To collapse all card on load
     // Disable all inputs except the ones you want to keep editable
     $('input').not('#int_rate, #due_period, #doc_charge, #proc_fee').attr('readonly', true);
-    $('select').not('#choose_document, #mortgage_process, #endorsement_process').attr('disabled', true);
+    $('select').not('#choose_document, #mortgage_process, #endorsement_process, #replace_doc_id').attr('disabled', true);
 
 
     getImage(); // To show customer image when window onload.
@@ -1111,6 +1125,25 @@ $(function () {
     let agent_id = $('#agent_id').val();
     getresponsiblecolumn(agent_id);
 });
+
+//Get document ids
+function getDocumentIds(){
+    let cusid = $('#cus_id_doc').val();
+    $.post("verificationFile/documentation/getDoumentIDsTillHandover.php", { cusid }, function(response){
+                
+        $('#replace_doc_id').empty().append(`<option value=''>Select Replace Document ID</option>`);
+        let replace_doc_id_upd = $('#replace_doc_id_upd').val();
+        if(response.length > 0){
+            response.forEach(element => {
+                let selected = (element.doc_id == replace_doc_id_upd) ? 'selected' : '';
+                $('#replace_doc_id').append(`<option value='${element.doc_id}' ${selected}>${element.doc_id}</option>`);
+            });
+        }
+
+        $('.replce_doc_id').show();
+
+    },'json');
+}
 
 //To get Reponsible Dropdown
 function getresponsiblecolumn(ag_id) {
@@ -2455,23 +2488,24 @@ $('#submit_documentation').click(function () {
 
 function doc_submit_validation() {
 
-    var cus_id_doc = $('#cus_id_doc').val(); var mortgage_process = $('#mortgage_process').val(); var Propertyholder_type = $('#Propertyholder_type').val(); var doc_property_pype = $('#doc_property_pype').val(); var doc_property_measurement = $('#doc_property_measurement').val(); var doc_property_location = $('#doc_property_location').val(); var doc_property_value = $('#doc_property_value').val();
-    var endorsement_process = $('#endorsement_process').val(); var owner_type = $('#owner_type').val(); var vehicle_type = $('#vehicle_type').val(); var vehicle_process = $('#vehicle_process').val();
+    var cus_id_doc = $('#cus_id_doc').val(); var mortgage_process = $('#mortgage_process').val(); var Propertyholder_type = $('#Propertyholder_type').val(); var doc_property_pype = $('#doc_property_pype').val(); var doc_property_measurement = $('#doc_property_measurement').val(); var doc_property_location = $('#doc_property_location').val(); var doc_property_value = $('#doc_property_value').val(); var endorsement_process = $('#endorsement_process').val(); var owner_type = $('#owner_type').val(); var vehicle_type = $('#vehicle_type').val(); var vehicle_process = $('#vehicle_process').val();
     var en_Company = $('#en_Company').val(); var en_Model = $('#en_Model').val();
 
- var Propertyholder_relationship_name = $("#Propertyholder_relationship_name").val();
+    var Propertyholder_relationship_name = $("#Propertyholder_relationship_name").val();
     var mortgage_document_upd = $('#mortgage_document_upd').val(); var mortgage_old_doc_upd = $('#mortgage_doc_upd').val();
     var RC_document_upd = $('#RC_document_upd').val(); var RC_old_document_upd = $('#rc_doc_upd').val();
 
     var mortgage_name = $('#mortgage_name').val(); var mortgage_dsgn = $('#mortgage_dsgn').val(); var mortgage_nuumber = $('#mortgage_nuumber').val(); var reg_office = $('#reg_office').val(); var mortgage_value = $('#mortgage_value').val(); var mortgage_document = $('#mortgage_document').val();
 
-    var vehicle_reg_no = $('#vehicle_reg_no').val();
     var endorsement_name = $('#endorsement_name').val(); var en_RC = $('#en_RC').val(); var en_Key = $('#en_Key').val();
-    var validation = true;
-  var ownername_relationship_name = $("#ownername_relationship_name").val();
-  var doc_remark = $('#doc_remark').val().trim();
+    var ownername_relationship_name = $("#ownername_relationship_name").val();
+    var doc_remark = $('#doc_remark').val().trim();
+    let replaceStatusChecked = $('#replace_status').is(':checked'); 
+    
     // var fingerprint = $('#fingerprint').val(); var submitted = $('#submitted').val();
-
+    
+    var validation = true;
+    
     if (cus_id_doc == '') {
         Swal.fire({
             timerProgressBar: true,
@@ -2689,6 +2723,17 @@ function doc_submit_validation() {
 
     }
 
+    if(replaceStatusChecked){
+        let replaceDocId = $('#replace_doc_id').val();
+        if (replaceDocId == '') {  
+            $('.rplce_doc_id').show(); 
+            validation = false;
+        } else { 
+            $('.rplce_doc_id').hide(); 
+        }
+    }
+
+
     // if (submitted == undefined || submitted == '' || submitted == null) {
     //     if (fingerprint == '') {
     //         event.preventDefault();
@@ -2732,6 +2777,11 @@ async function getDocumentFunc() {
 
     }
     storeDocInfo.endorseInfo = endorse;
+
+    let sts = $('#replace_status').is(':checked');   
+    if(sts){
+        getDocumentIds();
+    }
 }
 //////////////////////////////////////////////////// Documentation  END////////////////////////////////////////
 

@@ -296,6 +296,7 @@ if (sizeof($getUser) > 0) {
 		$noc_handover          		     = $getUser['noc_handover'];
 		$doctrackmodule          		     = $getUser['doctrackmodule'];
 		$doctrack          		     = $getUser['doctrack'];
+		$noc_replace          		     = $getUser['noc_replace'];
 		$doc_rec_access          		     = $getUser['doc_rec_access'];
 		$updatemodule          		     = $getUser['updatemodule'];
 		$update_screen          		     = $getUser['update_screen'];
@@ -702,6 +703,11 @@ if (sizeof($getUser) > 0) {
                                 <?php if ($doctrack == 0) { ?>
                                     <li>
                                         <a href="document_track"><i class='icon-credit-card'></i>Document Track</a>
+                                    </li>
+								 <?php  } 
+								 if (isset($noc_replace) && $noc_replace == 0) { ?>
+                                    <li>
+                                        <a href="noc_replace"><i class='icon-unlock'></i>NOC Replace</a>
                                     </li>
                                 <?php  } ?>
                             </ul>

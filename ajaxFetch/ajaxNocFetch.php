@@ -69,6 +69,10 @@ $column = array(
     'cp.id'
 );
 
+//21 closed
+//22 NOC given
+//23 send NOC Handover
+//24 NOC Handovered.
 if ($userid == 1) {
     $query = 'SELECT cp.cus_id as cp_cus_id, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, al.line_name, bc.branch_name, cp.mobile1, ii.cus_id as ii_cus_id, ii.req_id, ii.cus_status
     FROM acknowlegement_customer_profile cp 

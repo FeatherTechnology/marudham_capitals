@@ -12,8 +12,11 @@ $msc = 0;
 if (isset($_GET['msc'])) {
 	$msc = $_GET['msc'];
 }
+
 $current_page = isset($_GET['page']) ? $_GET['page'] : null;
+
 include('api/main.php'); // Database Connection File   
+
 if (isset($getuserdetails['download_access'])) {
 	define('DACC', $getuserdetails['download_access']);
 }
@@ -352,6 +355,11 @@ if (isset($getuserdetails['download_access'])) {
 				<?php include "include/templates/document_track.php" ?>
 			<?php } else ?>
 
+			<!-- NOC Replace Screen -->
+			<?php if ($current_page == 'noc_replace') { ?>
+				<?php include "include/templates/noc_replace.php" ?>
+			<?php } else ?>
+
 			<!-- update customer status Screen -->
 			<?php if ($current_page == 'update_customer_status') { ?>
 				<?php include "include/templates/update_customer_status.php" ?>
@@ -392,13 +400,16 @@ if (isset($getuserdetails['download_access'])) {
 			<?php if ($current_page == 'finance_insight') { ?>
 				<?php include "include/templates/finance_insight.php" ?>
 			<?php } else ?>
+			
 			<!--Accounts Loan Issue--->
 			<?php if ($current_page == 'edit_accounts_loan_issue') { ?>
 				<?php include "include/templates/edit_accounts_loan_issue.php" ?>
 			<?php } else ?>
+
 			<?php if ($current_page == 'accounts_loan_issue') { ?>
 				<?php include "include/templates/accounts_loan_issue.php" ?>
 			<?php } else ?>
+
 			<!-- Follow up -->
 			<?php if ($current_page == 'promotion_activity') { ?>
 				<?php include "include/templates/promotion_activity.php" ?>
@@ -630,38 +641,7 @@ if (isset($getuserdetails['download_access'])) {
 
 	<!-- Important -->
 	<!-- This the important section for download excel file and script adding with our screen -->
-	<?php if ($current_page != 'vendorcreation') { ?>
-		<?php include "include/common/dashboardfooter.php" ?>
-	<?php } ?>
-
-	<?php
-	if ($current_page == 'vendorcreation') { ?>
-		<?php include "include/common/dashboardfinancedatatablefooter.php" ?>
-	<?php } ?>
-
-
-
+	<?php include "include/common/dashboardfooter.php" ?>
 
 </body>
-
 </html>
-
-
-<script>
-	$('#search_input_').keyup(function() {
-		let search_content = $('#search_input_').val();
-		$.post('searchScreens.php', {
-			search_content
-		}, function(response) {
-			if (response.status == 'Fetched') {
-				let append = '';
-				$.each(response, function(index, val) {
-					if (val.display_name != undefined) {
-						append += "<li class='dropdown-contents'><a href='" + val.module_name + "'>" + val.display_name + "</a></li>";
-					}
-				})
-				$('#search_ul').empty().append(append);
-			}
-		}, 'json')
-	})
-</script>

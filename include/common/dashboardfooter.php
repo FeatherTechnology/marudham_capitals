@@ -38,7 +38,8 @@
         color: black;
     }
 </style>
-<script>
+
+<script type="text/javascript">
     $(document).ready(function() {
         // Show/hide the Scroll to Top button based on the user's scroll position
         $(window).scroll(function() {
@@ -971,6 +972,7 @@
                     callOnClickEvents();
                 }
             });
+            
             //NOC Handover Table 
              var noc_handover_table = $('#noc_handover_table').DataTable({
                 "order": [
@@ -1058,6 +1060,7 @@
             //         paginationFunction('update_table');
             //     }
             // });
+
             //Document Track Table
             var doc_track_table = $('#doc_track_table').DataTable({
                 "order": [
@@ -1101,6 +1104,51 @@
                     getDocOnClickFunction();
                 }
             });
+  
+            //NOC replace Table
+            var noc_replace_table = $('#noc_replace_table').DataTable({
+                "order": [
+                    [0, "desc"]
+                ],
+                "displayStart": getDisplayStart('noc_replace_table'),
+                'processing': true,
+                'serverSide': true,
+                'serverMethod': 'post',
+                'ajax': {
+                    'url': 'ajaxFetch/ajaxNocReplaceFetch.php',
+                    'data': function(data) {
+                        var search = $('input[type=search]').val();
+                        data.search = search;
+                    }
+                },
+                dom: 'lBfrtip',
+                buttons: [{
+                        extend: 'excel',
+                        title: "NOC Replace List",
+                        action: function (e, dt, button, config) {
+                            var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                            var dynamic = curDateJs('NOC_Replace_List'); // or any base
+                            config.title = dynamic;      // for versions that use title as filename
+                            config.filename = dynamic;   // for html5 filename
+                            defaultAction.call(this, e, dt, button, config);
+                        }
+                    },
+                    {
+                        extend: 'colvis',
+                        collectionLayout: 'fixed four-column',
+                    }
+                ],
+                "lengthMenu": [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, "All"]
+                ],
+                'drawCallback': function() {
+                    searchFunction('noc_replace_table');
+                    paginationFunction('noc_replace_table');
+                    callOnClickEvents();
+                }
+            });
+            
             //Concern Table
             var concern_table = $('#concern_table').DataTable({
                 "order": [
@@ -1358,552 +1406,256 @@
                 }
             });
 
+            $('#search_input_').keyup(function() {
+                let search_content = $('#search_input_').val();
+                $.post('searchScreens.php', {
+                    search_content
+                }, function(response) {
+                    if (response.status == 'Fetched') {
+                        let append = '';
+                        $.each(response, function(index, val) {
+                            if (val.display_name != undefined) {
+                                append += "<li class='dropdown-contents'><a href='" + val.module_name + "'>" + val.display_name + "</a></li>";
+                            }
+                        })
+                        $('#search_ul').empty().append(append);
+                    }
+                }, 'json')
+            });
+
+             // item delete
+            $(document).on("click", '.delete_company', function() {
+                var dlt = confirm("Do you want to delete this Company ?");
+                if (dlt) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            // loan category delete
+            $(document).on("click", '.delete_loan_calculation', function() {
+                var dlt = confirm("Do you want to delete this Loan Category ?");
+                if (dlt) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            // loan category delete
+            $(document).on("click", '.loan_category_delete', function() {
+                var dlt = confirm("Do you want to delete this Loan Category ?");
+                if (dlt) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            // Branch Creation delete
+            $(document).on("click", '.delete_branch', function() {
+                var dlt = confirm("Do you want to delete this Branch ?");
+                if (dlt) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            // Area Creation delete
+            // $(document).on("click", '.delete_area', function() {
+            //     var dlt = confirm("Do you want to delete this Area ?");
+            //     if (dlt) {
+            //         return true;
+            //     } else {
+            //         return false;
+            //     }
+            // });
+
+            // Loan Scheme delete
+            $(document).on("click", '.delete_loan_scheme', function() {
+                var dlt = confirm("Do you want to delete this Scheme ?");
+                if (dlt) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            // Area Mapping delete
+            $(document).on("click", '.delete_area_mapping', function() {
+                var dlt = confirm("Do you want to delete this Mapping ?");
+                if (dlt) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            // Director creation delete
+            $(document).on("click", '.delete_dir', function() {
+                var dlt = confirm("Do you want to delete this Director ?");
+                if (dlt) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            // Agent creation delete
+            $(document).on("click", '.delete_ag', function() {
+                var dlt = confirm("Do you want to delete this Agent ?");
+                if (dlt) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            // Staff creation delete
+            $(document).on("click", '.delete_staff', function() {
+                var dlt = confirm("Do you want to delete this Staff ?");
+                if (dlt) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            // Manage user delete
+            $(document).on("click", '.delete_user', function() {
+                var dlt = confirm("Do you want to delete this User ?");
+                if (dlt) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            // Bank Creation delete
+            $(document).on("click", '.delete_bank', function() {
+                var dlt = confirm("Do you want to delete this Bank Account ?");
+                if (dlt) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            // Documentation Mapping delete
+            $(document).on("click", '.delete_doc_mapping', function() {
+                var dlt = confirm("Do you want to delete this Documentation Mapping ?");
+                if (dlt) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            // Request Actions
+            $(document).on("click", '.removerequest', function() {
+                var dlt = confirm("Do you want to Remove this Request?");
+                if (dlt) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            // Verification Actions
+            $(document).on("click", '.removeverification', function() {
+                var dlt = confirm("Do you want to Remove this Verification?");
+                if (dlt) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            $(document).on("click", '.removeapproval', function() {
+                var appdlt = confirm("Do you want to Remove this Approval?");
+                if (appdlt) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            $(document).on("click", '.ack-remove', function() {
+                var appdlt = confirm("Do you want to remove this Acknowledgement?");
+                if (appdlt) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+            
+            setTimeout(function() {
+                $('.alert').fadeOut('slow');
+            }, 2000);
+
+            $('.modal').attr({
+                'data-backdrop': "static",
+                'data-keyboard': "false"
+            }); //this will disable clicking outside of a modal in overall project
+
+            $('input').attr('autocomplete', 'off');
+
+            window.alert = function(message) { // this will prevent normal window.alert messages to set it as swal
+
+                Swal.fire({
+                    text: message,
+                    target: 'body',
+                    toast: true,
+                    position: 'top-right',
+                    // background: '#00e2cd',
+                    timer: 2000,
+                    showConfirmButton: true,
+                    confirmButtonColor: '#f2372b',
+                    timerProgressBar: true,
+                    // allowOutsideClick: false, // Disable outside click
+                    // allowEscapeKey: false, // Disable escape key
+                    // allowEnterKey: false, // Disable enter key
+                })
+
+                return false;
+            };
+
+            ////////// Show Loader if ajax function is called inside anywhere in entire project  ////////
+
+            $(document).ajaxStart(function() {
+                showOverlay();
+                // Stop session timers while AJAX is in progress
+                clearTimeout(warningTimeout);
+                clearTimeout(logoutTimeout);
+            });
+
+            $(document).ajaxStop(function() {
+                hideOverlay();
+                resetTimers(); // Reset again after AJAX completes
+            });
+
+            // For Hard Reload and need to create a text file version   
+            let currentVersion = null;
+
+            fetch("version.txt?rand=" + Math.random())
+                .then(res => res.text())
+                .then(v => currentVersion = v.trim());
+
+            // Check every 5 seconds
+            setInterval(() => {
+                fetch("version.txt?rand=" + Math.random())
+                    .then(res => res.text())
+                    .then(serverVersion => {
+                        if (currentVersion && serverVersion.trim() !== currentVersion) {
+                            location.reload(true);
+                        }
+                    });
+            }, 6000);
 
         }); //Document Ready End
-    </script>
 
-    <?php
-    // Master Module
-    if ($current_page == 'company_creation') { ?>
-        <script src="js/company_creation.js"></script>
-    <?php }
-
-    if ($current_page == 'branch_creation') { ?>
-        <script src="js/branch_creation.js"></script>
-    <?php }
-
-    if ($current_page == 'loan_category') { ?>
-        <script src="js/loan_category.js"></script>
-    <?php }
-
-    if ($current_page == 'loan_calculation') { ?>
-        <script src="js/loan_calculation.js"></script>
-    <?php }
-
-    if ($current_page == 'loan_scheme') { ?>
-        <script src="js/loan_scheme.js"></script>
-    <?php }
-    if ($current_page == 'edit_loan_scheme') { ?>
-        <script src="js/edit_loan_scheme.js"></script>
-    <?php }
-
-    if ($current_page == 'area_creation') { ?>
-        <script src="js/area_creation.js"></script>
-    <?php }
-
-    if ($current_page == 'area_mapping') { ?>
-        <script src="js/area_mapping.js"></script>
-    <?php }
-    if ($current_page == 'edit_area_mapping') { ?>
-        <script src="js/edit_area_mapping.js"></script>
-    <?php }
-
-    if ($current_page == 'area_status') { ?>
-        <script src="js/area_status.js"></script>
-    <?php }
-
-    // Administration Module
-
-    if ($current_page == 'director_creation') { ?>
-        <script src="js/director_creation.js"></script>
-    <?php }
-
-    if ($current_page == 'agent_creation') { ?>
-        <script src="js/agent_creation.js"></script>
-    <?php }
-
-    if ($current_page == 'staff_creation') { ?>
-        <script src="js/staff_creation.js"></script>
-    <?php }
-
-    if ($current_page == 'manage_user') { ?>
-        <script src="js/manage_user.js"></script>
-    <?php }
-
-    if ($current_page == 'bank_creation') { ?>
-        <script src="js/bank_creation.js"></script>
-    <?php }
-
-    if ($current_page == 'doc_mapping') { ?>
-        <script src="js/doc_mapping.js"></script>
-    <?php }
-
-    // Request Module
-    if ($current_page == 'request') { ?>
-        <script src="js/request.js"></script>
-    <?php }
-    if ($current_page == 'edit_request') { ?>
-        <script src="js/edit_request.js"></script>
-    <?php }
-
-    if ($current_page == 'verification') { ?>
-        <script src="js/verification.js"></script>
-    <?php }
-
-    if ($current_page == 'verification_list') { ?>
-        <script src="js/verification_list.js"></script>
-    <?php }
-
-    if ($current_page == 'approval_list') { ?>
-        <script src="js/approval_list.js"></script>
-    <?php }
-
-    //Acknowledgement screen
-    if ($current_page == 'edit_acknowledgement_list') { ?>
-        <script src="js/edit_acknowledgement_list.js"></script>
-    <?php }
-
-    if ($current_page == 'acknowledgement_creation') { ?>
-        <script src="js/acknowledgement_creation.js"></script>
-    <?php }
-
-    //Loan Issue screen
-    if ($current_page == 'edit_loan_issue') { ?>
-        <script src="js/edit_loan_issue.js"></script>
-    <?php }
-
-    if ($current_page == 'loan_issue') { ?>
-        <script src="js/loan_issue.js"></script>
-    <?php }
-
-    if ($current_page == 'edit_collection') { ?>
-        <script src="js/edit_collection.js"></script>
-    <?php }
-
-    if ($current_page == 'collection') { ?>
-        <script src="js/collection.js"></script>
-    <?php }
-
-    if ($current_page == 'noc') { ?>
-        <script src="js/noc.js"></script>
-    <?php }
-    if ($current_page == 'noc_handover') { ?>
-        <script src="js/noc_handover.js"></script>
-    <?php }
-
-    //Closed
-    if ($current_page == 'edit_closed') { ?>
-        <script src="js/edit_closed.js"></script>
-    <?php }
-
-    if ($current_page == 'closed') { ?>
-        <script src="js/closed.js"></script>
-    <?php }
-
-    //Concern Creation
-    if ($current_page == 'concern_creation') { ?>
-        <script src="js/concern_creation.js"></script>
-    <?php }
-
-    if ($current_page == 'concern_solution' || $current_page == 'concern_solution_view') { ?>
-        <script src="js/concern_solution.js"></script>
-    <?php }
-    //Concern Feedback
-    if ($current_page == 'concern_feedback') { ?>
-        <script src="js/concern_feedback.js"></script>
-    <?php }
-   // update screen
-       if ($current_page == 'edit_update') { ?>
-        <script src="js/edit_update.js"></script>
-    <?php }
-
-    //Document track Screen
-    if ($current_page == 'document_track') { ?>
-        <script src="js/document_track.js"></script>
-    <?php }
-
-    //Update Customer Status Screen
-    if ($current_page == 'update_customer_status') { ?>
-        <script src="js/update_customer_status.js"></script>
-    <?php }
-
-
-    //Update Screen
-    if ($current_page == 'update') { ?>
-        <script src="js/update.js"></script>
-    <?php }
-
-    //Cash Tally
-    if ($current_page == 'cash_tally') { ?>
-        <script src="js/cash_tally.js"></script>
-    <?php }
-
-    //Bank Clearance
-    if ($current_page == 'bank_clearance') { ?>
-        <script src="js/bank_clearance.js"></script>
-    <?php }
-
-    if ($current_page == 'edit_bank_clearance') { ?>
-        <script src="js/edit_bank_clearance.js"></script>
-    <?php }
-
-    //Financial Insights
-    if ($current_page == 'finance_insight') { ?>
-        <script src="js/finance_insight.js"></script>
-    <?php }
-    // accounts loan Isue
-    if ($current_page == 'edit_accounts_loan_issue') { ?>
-        <script src="js/edit_accounts_loan_issue.js"></script>
-    <?php }
-
-    if ($current_page == 'accounts_loan_issue') { ?>
-        <script src="js/accounts_loan_issue.js"></script>
-    <?php }
-    //Follow up
-    if ($current_page == 'promotion_activity') { ?>
-        <script src="js/promotion_activity.js"></script>
-    <?php }
-
-    if ($current_page == 'due_followup') { ?>
-        <script src="js/due_followup.js"></script>
-    <?php }
-
-    if ($current_page == 'due_followup_info') { ?>
-        <script src="js/due_followup_info.js"></script>
-    <?php }
-
-    if ($current_page == 'edit_due_followup') { ?>
-        <script src="js/edit_due_followup.js"></script>
-    <?php }
-    
-    if ($current_page == 'ecs_followup') { ?>
-        <script src="js/ecs_followup.js"></script>
-    <?php }
-
-    if ($current_page == 'ecs_followup_info') { ?>
-        <script src="js/ecs_followup_info.js"></script>
-    <?php }
-
-    if ($current_page == 'ecs_edit_followup') { ?>
-        <script src="js/ecs_edit_followup.js"></script>
-    <?php }
-
-    if ($current_page == 'loan_followup') { ?>
-        <script src="js/loan_followup.js"></script>
-    <?php }
-
-    if ($current_page == 'confirmation_followup') { ?>
-        <script src="js/confirmation_followup.js"></script>
-    <?php }
-
-    if ($current_page == 'ledger_report') { ?>
-        <script src="js/ledger_report.js"></script>
-    <?php }
-    if ($current_page == 'request_report') { ?>
-        <script src="js/request_report.js"></script>
-    <?php }
-    if ($current_page == 'cancel_revoke_report') { ?>
-        <script src="js/cancel_revoke_report.js"></script>
-    <?php }
-    if ($current_page == 'cus_profile_report') { ?>
-        <script src="js/cus_profile_report.js"></script>
-    <?php }
-    if ($current_page == 'loan_issue_report') { ?>
-        <script src="js/loan_issue_report.js"></script>
-    <?php }
-    if ($current_page == 'collection_report') { ?>
-        <script src="js/collection_report.js"></script>
-    <?php }
-    if ($current_page == 'principal_interest_report') { ?>
-        <script src="js/principal_interest_report.js"></script>
-    <?php }
-    if ($current_page == 'balance_report') { ?>
-        <script src="js/balance_report.js"></script>
-    <?php }
-    if ($current_page == 'due_list_report') { ?>
-        <script src="js/due_list_report.js"></script>
-    <?php }
-    if ($current_page == 'in_closed_report') { ?>
-        <script src="js/in_closed_report.js"></script>
-    <?php }
-    if ($current_page == 'closed_report') { ?>
-        <script src="js/closed_report.js"></script>
-    <?php }
-    if ($current_page == 'confirmation_followup_report') { ?>
-        <script src="js/confirmation_followup_report.js"></script>
-    <?php }
-    if ($current_page == 'agent_report') { ?>
-        <script src="js/agent_report.js"></script>
-    <?php }
-    if ($current_page == 'no_due_pay_report') { ?>
-        <script src="js/no_due_pay_report.js"></script>
-    <?php }
-    if ($current_page == 'other_transaction_report') { ?>
-        <script src="js/other_transaction_report.js"></script>
-    <?php }
-    if ($current_page == 'due_followup_customer_count_report') { ?>
-        <script src="js/due_followup_customer_count_report.js"></script>
-    <?php }
-    if ($current_page == 'day_end_report') { ?>
-        <script src="js/day_end_report.js"></script>
-    <?php }
-    if ($current_page == 'commitment_report') { ?>
-        <script src="js/commitment_report.js"></script>
-    <?php }
-    if ($current_page == 'customer_status_report') { ?>
-        <script src="js/customer_status_report.js"></script>
-    <?php }
-    if ($current_page == 'promotion_activity_report') { ?>
-        <script src="js/promotion_activity_report.js"></script>
-    <?php }
-    if ($current_page == 'uncleared_report') { ?>
-        <script src="js/uncleared_report.js"></script>
-    <?php }
-    if ($current_page == 'work_count_report') { ?>
-        <script src="js/work_count_report.js"></script>
-    <?php }
-    if ($current_page == 'events_report') { ?>
-        <script src="js/events_report.js"></script>
-    <?php }
-    if ($current_page == 'area_loan_count_report') { ?>
-        <script src="js/area_loan_count_report.js"></script>
-    <?php }
-    if ($current_page == 'noc_handover_report') { ?>
-        <script src="js/noc_handover_report.js"></script>
-    <?php }
-    if ($current_page == 'confirmation_count_report') { ?>
-        <script src="js/confirmation_count_report.js"></script>
-    <?php }
-    if ($current_page == 'intrest_ledger_report') { ?>
-        <script src="js/intrest_ledger_report.js"></script>
-    <?php }
-    if ($current_page == 'intrest_loan_issue_report') { ?>
-        <script src="js/intrest_loan_issue_report.js"></script>
-    <?php }
-    if ($current_page == 'intrest_collection_report') { ?>
-        <script src="js/intrest_collection_report.js"></script>
-    <?php }
-    if ($current_page == 'intrest_balance_report') { ?>
-        <script src="js/intrest_balance_report.js"></script>
-    <?php }
-    if ($current_page == 'intrest_closed_report') { ?>
-        <script src="js/intrest_closed_report.js"></script>
-    <?php }
-    
-    if ($current_page == 'search_module') { ?>
-        <script src="js/search_module.js"></script>
-    <?php }
-
-    if ($current_page == 'bulk_upload') { ?>
-        <script src="js/bulk_upload.js"></script>
-    <?php }
-    if ($current_page == 'loan_track') { ?>
-        <script src="js/loan_track.js"></script>
-    <?php }
-
-    if ($current_page == 'sms_generation') { ?>
-        <script src="js/sms_generation.js"></script>
-    <?php }
-
-    ?>
-
-
-    <script src="js/logincreation.js"></script>
-
-    <!-- Slimscroll JS -->
-    <script src="vendor/slimscroll/slimscroll.min.js"></script>
-    <script src="vendor/slimscroll/custom-scrollbar.js"></script>
-
-
-    <!-- Datepickers -->
-    <script src="vendor/datepicker/js/picker.js"></script>
-    <script src="vendor/datepicker/js/picker.date.js"></script>
-    <script src="vendor/datepicker/js/custom-picker.js"></script>
-
-    <script type="text/javascript">
-        // item delete
-        $(document).on("click", '.delete_company', function() {
-            var dlt = confirm("Do you want to delete this Company ?");
-            if (dlt) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-
-        // loan category delete
-        $(document).on("click", '.delete_loan_calculation', function() {
-            var dlt = confirm("Do you want to delete this Loan Category ?");
-            if (dlt) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-        // loan category delete
-        $(document).on("click", '.loan_category_delete', function() {
-            var dlt = confirm("Do you want to delete this Loan Category ?");
-            if (dlt) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-
-        // Branch Creation delete
-        $(document).on("click", '.delete_branch', function() {
-            var dlt = confirm("Do you want to delete this Branch ?");
-            if (dlt) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-        // Area Creation delete
-        // $(document).on("click", '.delete_area', function() {
-        //     var dlt = confirm("Do you want to delete this Area ?");
-        //     if (dlt) {
-        //         return true;
-        //     } else {
-        //         return false;
-        //     }
-        // });
-        // Loan Scheme delete
-        $(document).on("click", '.delete_loan_scheme', function() {
-            var dlt = confirm("Do you want to delete this Scheme ?");
-            if (dlt) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-        // Area Mapping delete
-        $(document).on("click", '.delete_area_mapping', function() {
-            var dlt = confirm("Do you want to delete this Mapping ?");
-            if (dlt) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-
-        // Director creation delete
-        $(document).on("click", '.delete_dir', function() {
-            var dlt = confirm("Do you want to delete this Director ?");
-            if (dlt) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-        // Agent creation delete
-        $(document).on("click", '.delete_ag', function() {
-            var dlt = confirm("Do you want to delete this Agent ?");
-            if (dlt) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-        // Staff creation delete
-        $(document).on("click", '.delete_staff', function() {
-            var dlt = confirm("Do you want to delete this Staff ?");
-            if (dlt) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-        // Manage user delete
-        $(document).on("click", '.delete_user', function() {
-            var dlt = confirm("Do you want to delete this User ?");
-            if (dlt) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-        // Bank Creation delete
-        $(document).on("click", '.delete_bank', function() {
-            var dlt = confirm("Do you want to delete this Bank Account ?");
-            if (dlt) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-        // Documentation Mapping delete
-        $(document).on("click", '.delete_doc_mapping', function() {
-            var dlt = confirm("Do you want to delete this Documentation Mapping ?");
-            if (dlt) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-
-        // Request Actions
-        $(document).on("click", '.removerequest', function() {
-            var dlt = confirm("Do you want to Remove this Request?");
-            if (dlt) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-
-
-        // Verification Actions
-        $(document).on("click", '.removeverification', function() {
-            var dlt = confirm("Do you want to Remove this Verification?");
-            if (dlt) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-
-        $(document).on("click", '.removeapproval', function() {
-            var appdlt = confirm("Do you want to Remove this Approval?");
-            if (appdlt) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-
-        $(document).on("click", '.ack-remove', function() {
-            var appdlt = confirm("Do you want to remove this Acknowledgement?");
-            if (appdlt) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-    </script>
-
-    <script>
-        setTimeout(function() {
-            $('.alert').fadeOut('slow');
-        }, 2000);
-
-        $('.modal').attr({
-            'data-backdrop': "static",
-            'data-keyboard': "false"
-        }); //this will disable clicking outside of a modal in overall project
-
-        $('input').attr('autocomplete', 'off');
-
-
-        window.alert = function(message) { // this will prevent normal window.alert messages to set it as swal
-
-            Swal.fire({
-                text: message,
-                target: 'body',
-                toast: true,
-                position: 'top-right',
-                // background: '#00e2cd',
-                timer: 2000,
-                showConfirmButton: true,
-                confirmButtonColor: '#f2372b',
-                timerProgressBar: true,
-                // allowOutsideClick: false, // Disable outside click
-                // allowEscapeKey: false, // Disable escape key
-                // allowEnterKey: false, // Disable enter key
-            })
-
-            return false;
-        };
 
         function moneyFormatIndia(num) {
             var isNegative = false;
@@ -1982,20 +1734,6 @@
             }
         }
 
-        ////////// Show Loader if ajax function is called inside anywhere in entire project  ////////
-
-        $(document).ajaxStart(function() {
-            showOverlay();
-            // Stop session timers while AJAX is in progress
-            clearTimeout(warningTimeout);
-            clearTimeout(logoutTimeout);
-        });
-
-        $(document).ajaxStop(function() {
-            hideOverlay();
-            resetTimers(); // Reset again after AJAX completes
-        });
-
         function compressImage(input, targetSizeKB) {
             if (input.files.length > 0) {
                 const fileSize = input.files[0].size; // Get the size of the selected file
@@ -2060,6 +1798,7 @@
                 }
             }
         }
+
         // function checkInputFileSize(input, allowdsize) {
         //     if (input.files.length > 0) {
         //         const fileSize = input.files[0].size; // Get the size of the selected file
@@ -2162,7 +1901,7 @@
             });
         }
 
- ///////////////////////////////////////////////////////////////////// Pagination  Start //////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////// Pagination  Start ////////////////////////////////////
 
         function paginationFunction(tableId) {
             const table = $(`#${tableId}`).DataTable();
@@ -2256,9 +1995,9 @@
             return savedPage ? parseInt(savedPage) * pageLength : 0;
         }
 
-///////////////////////////////////////////////////////////////////// Pagination  End //////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////// Pagination  End ////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////// Session Logout Time Start /////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////// Session Logout Time Start ////////////////////////////////////
 
         let warningTimeout, logoutTimeout;
         let swalOpen = false;
@@ -2329,116 +2068,483 @@
             }
         });
 
-    //////////////////////////////////////////////////////////// Session Logut Time End ////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////// Session Logut Time End ////////////////////////////////////
 
-    // Reusable function to sort a dropdown alphabetically
-    function sortDropdownAlphabetically(selectSelector) {
-        var $select = $(selectSelector);
-        var $firstOption = $select.find('option:first-child');
-        $select.find('option:not(:first-child)')
-            .sort(function(a, b) {
-            return a.text.localeCompare(b.text);
-        })
-        .appendTo($select); // moves elements, preserves selected
-        $select.prepend($firstOption); // keep first option at top
-    }
-
-    function formatIndianNumber(num) {
-        if (num == null || num === '') return '';
-
-        num = String(num).replace(/,/g, ''); // remove existing commas
-
-        let lastThree = num.slice(-3);
-        let rest = num.slice(0, -3);
-
-        if (rest !== '') {
-            rest = rest.replace(/\B(?=(\d{2})+(?!\d))/g, ',');
-            num = rest + ',' + lastThree;
-        } else {
-            num = lastThree;
+        // Reusable function to sort a dropdown alphabetically
+        function sortDropdownAlphabetically(selectSelector) {
+            var $select = $(selectSelector);
+            var $firstOption = $select.find('option:first-child');
+            $select.find('option:not(:first-child)')
+                .sort(function(a, b) {
+                return a.text.localeCompare(b.text);
+            })
+            .appendTo($select); // moves elements, preserves selected
+            $select.prepend($firstOption); // keep first option at top
         }
 
-        return num;
-    }
+        function formatIndianNumber(num) {
+            if (num == null || num === '') return '';
 
-    //to validate input and enter only number/ moneyformat works only text type so validating here instead of number type
-    function validateInputNumber(e,screen){
-        let val = $(e).val();
+            num = String(num).replace(/,/g, ''); // remove existing commas
 
-        if(screen ==='withOutDot'){ //Collection track to insert one round off so not allowed dot
-            // Remove all non-digit characters
-            val = val.replace(/[^0-9]/g, '');
+            let lastThree = num.slice(-3);
+            let rest = num.slice(0, -3);
 
-        } else if(screen ==='withDot'){
-            val = val.replace(/(\..*)\./g, '$1'); // allow only one dot
-            
-        }
-
-        // Update the field with only numeric value
-        $(e).val(val);
-    }
-
-    // To download Excel file
-    function exportToExcel(tableId, data, reportName) {
-        // ✅ Get table headers dynamically from the given table ID
-        const table = document.getElementById(tableId);
-
-        const headers = Array.from(table.querySelectorAll("thead th"))
-            .map(th => th.textContent.trim());
-
-        // ✅ Combine headers + data
-        const wsData = [headers, ...data];
-
-        // ✅ Create worksheet & workbook
-        const ws = XLSX.utils.aoa_to_sheet(wsData);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, reportName || "Sheet1");
-
-        // ✅ Generate dynamic filename
-        const fileName = curDateJs(reportName || 'Report') + '.xlsx';
-
-        // ✅ Save file
-        XLSX.writeFile(wb, fileName);
-    }
-
-    function nameFormatter(selector) {
-        $(selector).on('input', function () {
-            let value = $(this).val();
-
-            // Split by space
-            let parts = value.split(" ");
-
-            if (parts.length > 1) {
-                // Convert second part to CAPS and allow only 2 letters
-                parts[1] = parts[1].toUpperCase()
-                    .replace(/[^A-Z]/g, "")
-                    .substring(0, 2);
-
-                // Block more than 2 parts
-                if (parts.length > 2) {
-                    parts = parts.slice(0, 2);
-                }
+            if (rest !== '') {
+                rest = rest.replace(/\B(?=(\d{2})+(?!\d))/g, ',');
+                num = rest + ',' + lastThree;
+            } else {
+                num = lastThree;
             }
 
-            $(this).val(parts.join(" "));
-        });
-    }
-      // For Hard Reload and need to create a text file version   
-    let currentVersion = null;
+            return num;
+        }
 
-    fetch("version.txt?rand=" + Math.random())
-        .then(res => res.text())
-        .then(v => currentVersion = v.trim());
+        //to validate input and enter only number/ moneyformat works only text type so validating here instead of number type
+        function validateInputNumber(e,screen){
+            let val = $(e).val();
 
-    // Check every 5 seconds
-    setInterval(() => {
-        fetch("version.txt?rand=" + Math.random())
-            .then(res => res.text())
-            .then(serverVersion => {
-                if (currentVersion && serverVersion.trim() !== currentVersion) {
-                    location.reload(true);
+            if(screen ==='withOutDot'){ //Collection track to insert one round off so not allowed dot
+                // Remove all non-digit characters
+                val = val.replace(/[^0-9]/g, '');
+
+            } else if(screen ==='withDot'){
+                val = val.replace(/(\..*)\./g, '$1'); // allow only one dot
+                
+            }
+
+            // Update the field with only numeric value
+            $(e).val(val);
+        }
+
+        // To download Excel file
+        function exportToExcel(tableId, data, reportName) {
+            // ✅ Get table headers dynamically from the given table ID
+            const table = document.getElementById(tableId);
+
+            const headers = Array.from(table.querySelectorAll("thead th"))
+                .map(th => th.textContent.trim());
+
+            // ✅ Combine headers + data
+            const wsData = [headers, ...data];
+
+            // ✅ Create worksheet & workbook
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, reportName || "Sheet1");
+
+            // ✅ Generate dynamic filename
+            const fileName = curDateJs(reportName || 'Report') + '.xlsx';
+
+            // ✅ Save file
+            XLSX.writeFile(wb, fileName);
+        }
+
+        function nameFormatter(selector) {
+            $(selector).on('input', function () {
+                let value = $(this).val();
+
+                // Split by space
+                let parts = value.split(" ");
+
+                if (parts.length > 1) {
+                    // Convert second part to CAPS and allow only 2 letters
+                    parts[1] = parts[1].toUpperCase()
+                        .replace(/[^A-Z]/g, "")
+                        .substring(0, 2);
+
+                    // Block more than 2 parts
+                    if (parts.length > 2) {
+                        parts = parts.slice(0, 2);
+                    }
                 }
-            });
-    }, 6000);
 
-</script>
+                $(this).val(parts.join(" "));
+            });
+        }
+
+    </script>
+
+    <?php
+    // Master Module
+    if ($current_page == 'company_creation') { ?>
+        <script src="js/company_creation.js"></script>
+    <?php }
+
+    if ($current_page == 'branch_creation') { ?>
+        <script src="js/branch_creation.js"></script>
+    <?php }
+
+    if ($current_page == 'loan_category') { ?>
+        <script src="js/loan_category.js"></script>
+    <?php }
+
+    if ($current_page == 'loan_calculation') { ?>
+        <script src="js/loan_calculation.js"></script>
+    <?php }
+
+    if ($current_page == 'loan_scheme') { ?>
+        <script src="js/loan_scheme.js"></script>
+    <?php }
+
+    if ($current_page == 'edit_loan_scheme') { ?>
+        <script src="js/edit_loan_scheme.js"></script>
+    <?php }
+
+    if ($current_page == 'area_creation') { ?>
+        <script src="js/area_creation.js"></script>
+    <?php }
+
+    if ($current_page == 'area_mapping') { ?>
+        <script src="js/area_mapping.js"></script>
+    <?php }
+
+    if ($current_page == 'edit_area_mapping') { ?>
+        <script src="js/edit_area_mapping.js"></script>
+    <?php }
+
+    if ($current_page == 'area_status') { ?>
+        <script src="js/area_status.js"></script>
+    <?php }
+
+    // Administration Module
+
+    if ($current_page == 'director_creation') { ?>
+        <script src="js/director_creation.js"></script>
+    <?php }
+
+    if ($current_page == 'agent_creation') { ?>
+        <script src="js/agent_creation.js"></script>
+    <?php }
+
+    if ($current_page == 'staff_creation') { ?>
+        <script src="js/staff_creation.js"></script>
+    <?php }
+
+    if ($current_page == 'manage_user') { ?>
+        <script src="js/manage_user.js"></script>
+    <?php }
+
+    if ($current_page == 'bank_creation') { ?>
+        <script src="js/bank_creation.js"></script>
+    <?php }
+
+    if ($current_page == 'doc_mapping') { ?>
+        <script src="js/doc_mapping.js"></script>
+    <?php }
+
+    // Request Module
+    if ($current_page == 'request') { ?>
+        <script src="js/request.js"></script>
+    <?php }
+
+    if ($current_page == 'edit_request') { ?>
+        <script src="js/edit_request.js"></script>
+    <?php }
+
+    if ($current_page == 'verification') { ?>
+        <script src="js/verification.js"></script>
+    <?php }
+
+    if ($current_page == 'verification_list') { ?>
+        <script src="js/verification_list.js"></script>
+    <?php }
+
+    if ($current_page == 'approval_list') { ?>
+        <script src="js/approval_list.js"></script>
+    <?php }
+
+    //Acknowledgement screen
+    if ($current_page == 'edit_acknowledgement_list') { ?>
+        <script src="js/edit_acknowledgement_list.js"></script>
+    <?php }
+
+    if ($current_page == 'acknowledgement_creation') { ?>
+        <script src="js/acknowledgement_creation.js"></script>
+    <?php }
+
+    //Loan Issue screen
+    if ($current_page == 'edit_loan_issue') { ?>
+        <script src="js/edit_loan_issue.js"></script>
+    <?php }
+
+    if ($current_page == 'loan_issue') { ?>
+        <script src="js/loan_issue.js"></script>
+    <?php }
+
+    if ($current_page == 'edit_collection') { ?>
+        <script src="js/edit_collection.js"></script>
+    <?php }
+
+    if ($current_page == 'collection') { ?>
+        <script src="js/collection.js"></script>
+    <?php }
+
+    if ($current_page == 'noc') { ?>
+        <script src="js/noc.js"></script>
+    <?php }
+
+    if ($current_page == 'noc_handover') { ?>
+        <script src="js/noc_handover.js"></script>
+    <?php }
+
+    //Closed
+    if ($current_page == 'edit_closed') { ?>
+        <script src="js/edit_closed.js"></script>
+    <?php }
+
+    if ($current_page == 'closed') { ?>
+        <script src="js/closed.js"></script>
+    <?php }
+
+    //Concern Creation
+    if ($current_page == 'concern_creation') { ?>
+        <script src="js/concern_creation.js"></script>
+    <?php }
+
+    if ($current_page == 'concern_solution' || $current_page == 'concern_solution_view') { ?>
+        <script src="js/concern_solution.js"></script>
+    <?php }
+
+    //Concern Feedback
+    if ($current_page == 'concern_feedback') { ?>
+        <script src="js/concern_feedback.js"></script>
+    <?php }
+
+   // update screen
+       if ($current_page == 'edit_update') { ?>
+        <script src="js/edit_update.js"></script>
+    <?php }
+
+    //Document track Screen
+    if ($current_page == 'document_track') { ?>
+        <script src="js/document_track.js"></script>
+    <?php }
+
+    //NOC Replace Screen
+    if ($current_page == 'noc_replace') { ?>
+        <script src="js/noc_replace.js"></script>
+    <?php }
+
+    //Update Customer Status Screen
+    if ($current_page == 'update_customer_status') { ?>
+        <script src="js/update_customer_status.js"></script>
+    <?php }
+
+    //Update Screen
+    if ($current_page == 'update') { ?>
+        <script src="js/update.js"></script>
+    <?php }
+
+    //Cash Tally
+    if ($current_page == 'cash_tally') { ?>
+        <script src="js/cash_tally.js"></script>
+    <?php }
+
+    //Bank Clearance
+    if ($current_page == 'bank_clearance') { ?>
+        <script src="js/bank_clearance.js"></script>
+    <?php }
+
+    if ($current_page == 'edit_bank_clearance') { ?>
+        <script src="js/edit_bank_clearance.js"></script>
+    <?php }
+
+    //Financial Insights
+    if ($current_page == 'finance_insight') { ?>
+        <script src="js/finance_insight.js"></script>
+    <?php }
+    // accounts loan Isue
+    if ($current_page == 'edit_accounts_loan_issue') { ?>
+        <script src="js/edit_accounts_loan_issue.js"></script>
+    <?php }
+
+    if ($current_page == 'accounts_loan_issue') { ?>
+        <script src="js/accounts_loan_issue.js"></script>
+    <?php }
+    //Follow up
+    if ($current_page == 'promotion_activity') { ?>
+        <script src="js/promotion_activity.js"></script>
+    <?php }
+
+    if ($current_page == 'due_followup') { ?>
+        <script src="js/due_followup.js"></script>
+    <?php }
+
+    if ($current_page == 'due_followup_info') { ?>
+        <script src="js/due_followup_info.js"></script>
+    <?php }
+
+    if ($current_page == 'edit_due_followup') { ?>
+        <script src="js/edit_due_followup.js"></script>
+    <?php }
+    
+    if ($current_page == 'ecs_followup') { ?>
+        <script src="js/ecs_followup.js"></script>
+    <?php }
+
+    if ($current_page == 'ecs_followup_info') { ?>
+        <script src="js/ecs_followup_info.js"></script>
+    <?php }
+
+    if ($current_page == 'ecs_edit_followup') { ?>
+        <script src="js/ecs_edit_followup.js"></script>
+    <?php }
+
+    if ($current_page == 'loan_followup') { ?>
+        <script src="js/loan_followup.js"></script>
+    <?php }
+
+    if ($current_page == 'confirmation_followup') { ?>
+        <script src="js/confirmation_followup.js"></script>
+    <?php }
+
+    if ($current_page == 'ledger_report') { ?>
+        <script src="js/ledger_report.js"></script>
+    <?php }
+
+    if ($current_page == 'request_report') { ?>
+        <script src="js/request_report.js"></script>
+    <?php }
+
+    if ($current_page == 'cancel_revoke_report') { ?>
+        <script src="js/cancel_revoke_report.js"></script>
+    <?php }
+
+    if ($current_page == 'cus_profile_report') { ?>
+        <script src="js/cus_profile_report.js"></script>
+    <?php }
+
+    if ($current_page == 'loan_issue_report') { ?>
+        <script src="js/loan_issue_report.js"></script>
+    <?php }
+
+    if ($current_page == 'collection_report') { ?>
+        <script src="js/collection_report.js"></script>
+    <?php }
+
+    if ($current_page == 'principal_interest_report') { ?>
+        <script src="js/principal_interest_report.js"></script>
+    <?php }
+
+    if ($current_page == 'balance_report') { ?>
+        <script src="js/balance_report.js"></script>
+    <?php }
+
+    if ($current_page == 'due_list_report') { ?>
+        <script src="js/due_list_report.js"></script>
+    <?php }
+
+    if ($current_page == 'in_closed_report') { ?>
+        <script src="js/in_closed_report.js"></script>
+    <?php }
+
+    if ($current_page == 'closed_report') { ?>
+        <script src="js/closed_report.js"></script>
+    <?php }
+
+    if ($current_page == 'confirmation_followup_report') { ?>
+        <script src="js/confirmation_followup_report.js"></script>
+    <?php }
+
+    if ($current_page == 'agent_report') { ?>
+        <script src="js/agent_report.js"></script>
+    <?php }
+
+    if ($current_page == 'no_due_pay_report') { ?>
+        <script src="js/no_due_pay_report.js"></script>
+    <?php }
+
+    if ($current_page == 'other_transaction_report') { ?>
+        <script src="js/other_transaction_report.js"></script>
+    <?php }
+
+    if ($current_page == 'due_followup_customer_count_report') { ?>
+        <script src="js/due_followup_customer_count_report.js"></script>
+    <?php }
+
+    if ($current_page == 'day_end_report') { ?>
+        <script src="js/day_end_report.js"></script>
+    <?php }
+
+    if ($current_page == 'commitment_report') { ?>
+        <script src="js/commitment_report.js"></script>
+    <?php }
+
+    if ($current_page == 'customer_status_report') { ?>
+        <script src="js/customer_status_report.js"></script>
+    <?php }
+
+    if ($current_page == 'promotion_activity_report') { ?>
+        <script src="js/promotion_activity_report.js"></script>
+    <?php }
+
+    if ($current_page == 'uncleared_report') { ?>
+        <script src="js/uncleared_report.js"></script>
+    <?php }
+
+    if ($current_page == 'work_count_report') { ?>
+        <script src="js/work_count_report.js"></script>
+    <?php }
+
+    if ($current_page == 'events_report') { ?>
+        <script src="js/events_report.js"></script>
+    <?php }
+
+    if ($current_page == 'area_loan_count_report') { ?>
+        <script src="js/area_loan_count_report.js"></script>
+    <?php }
+
+    if ($current_page == 'noc_handover_report') { ?>
+        <script src="js/noc_handover_report.js"></script>
+    <?php }
+
+    if ($current_page == 'confirmation_count_report') { ?>
+        <script src="js/confirmation_count_report.js"></script>
+    <?php }
+
+    if ($current_page == 'intrest_ledger_report') { ?>
+        <script src="js/intrest_ledger_report.js"></script>
+    <?php }
+
+    if ($current_page == 'intrest_loan_issue_report') { ?>
+        <script src="js/intrest_loan_issue_report.js"></script>
+    <?php }
+
+    if ($current_page == 'intrest_collection_report') { ?>
+        <script src="js/intrest_collection_report.js"></script>
+    <?php }
+
+    if ($current_page == 'intrest_balance_report') { ?>
+        <script src="js/intrest_balance_report.js"></script>
+    <?php }
+
+    if ($current_page == 'intrest_closed_report') { ?>
+        <script src="js/intrest_closed_report.js"></script>
+    <?php }
+    
+    if ($current_page == 'search_module') { ?>
+        <script src="js/search_module.js"></script>
+    <?php }
+
+    if ($current_page == 'bulk_upload') { ?>
+        <script src="js/bulk_upload.js"></script>
+    <?php }
+    if ($current_page == 'loan_track') { ?>
+        <script src="js/loan_track.js"></script>
+    <?php }
+
+    if ($current_page == 'sms_generation') { ?>
+        <script src="js/sms_generation.js"></script>
+    <?php } ?>
+
+    <script src="js/logincreation.js"></script>
+
+    <!-- Slimscroll JS -->
+    <script src="vendor/slimscroll/slimscroll.min.js"></script>
+    <script src="vendor/slimscroll/custom-scrollbar.js"></script>
+
+    <!-- Datepickers -->
+    <script src="vendor/datepicker/js/picker.js"></script>
+    <script src="vendor/datepicker/js/picker.date.js"></script>
+    <script src="vendor/datepicker/js/custom-picker.js"></script>
