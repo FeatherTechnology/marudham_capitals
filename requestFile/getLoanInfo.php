@@ -15,6 +15,7 @@ if ($result->rowCount() > 0) {
     $response['advance'] = $row['collection_info'];
     $loan_limit = intVal($row['loan_limit']);
 
+    //this section is only for the request screen to get the loan category limit 
     if(isset($_POST['from']) && ($_POST['from'] === "request")){
         $response['message'] = "";
         $response['loan_limit'] = $loan_limit;

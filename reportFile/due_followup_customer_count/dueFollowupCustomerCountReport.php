@@ -59,7 +59,9 @@ $grand_totals = [
     'responsible_zero' => 0,
     'paid' => 0,
     'partially_paid' => 0,
-    'unpaid' => 0
+    'unpaid' => 0,
+    'balance_count' => 0,
+    'total_paid' => 0
 ];
 
 while ($userRow = $userQry->fetch()) {
@@ -84,7 +86,11 @@ while ($userRow = $userQry->fetch()) {
                 'responsible_zero' => 0,
                 'paid' => 0,
                 'partially_paid' => 0,
-                'unpaid' => 0
+                'unpaid' => 0,
+                'balance_count' => 0,
+                'total_paid' => 0,
+                'paid_percentage' => 0,
+                'unpaid_percentage' => 0
             ];
         }
 
@@ -184,8 +190,6 @@ while ($userRow = $userQry->fetch()) {
             $rid = $row['req_id'];
             if (!in_array($rid, $filtered_ids)) continue;
 
-            if ($row['responsible'] == '0') $loan_category_data[$cat_id]['responsible_zero']++;
-
             $collList = $collectionData[$rid] ?? [];
             $end = strtotime(min($row['maturity_date'], $to_date));
             $start = strtotime($row['due_start_from']);
@@ -202,6 +206,10 @@ while ($userRow = $userQry->fetch()) {
             $payable_amount = ($months * $row['due_amt_cal']) - $collectedTillMonthStart;
             $pending_amount_atMonthStart = ($pending_month * $row['due_amt_cal']) - $collectedTillMonthStart;
 
+            // ===== Determine current and balance customer =====
+            $isCurrentCustomer = false;
+            $isBalanceCustomer = false;
+
             $iscurrentMonthStart  = $payable_amount <= $row['due_amt_cal']
                 && $pending_amount_atMonthStart <= 0
                 && (
@@ -211,32 +219,35 @@ while ($userRow = $userQry->fetch()) {
                         && strtotime($row['maturity_date']) > $start_month)
                 );
 
-            $isCurrentCustomer = false;
             if ($iscurrentMonthStart) {
                 $loan_category_data[$cat_id]['t_current_count']++;
-                // $current_loanId = $row['loan_id'];
-                // print_r($current_loanId);
-                // echo "<br>";
+
                 $isCurrentCustomer = true;
+
+                // Balance customer check
+                if ($payable_amount > 0 && $row['responsible'] != 0) {
+                    $loan_category_data[$cat_id]['balance_count']++;
+                    $isBalanceCustomer = true;
+                }
             }
 
-            // ===== Paid / Partially Paid / Unpaid / Payable Zero =====
-            if ($isCurrentCustomer) {
+            // ===== Responsible Zero (current customer) =====
+            if ($isCurrentCustomer && $row['responsible'] == '0') {
+                $loan_category_data[$cat_id]['responsible_zero']++;
+            }
+
+            // ===== Payable Zero (current customer) =====
+            if ($isCurrentCustomer && $payable_amount <= 0) {
+                $loan_category_data[$cat_id]['payable_zero']++;
+            }
+
+            // ===== Paid / Partially Paid / Unpaid (balance customer only) =====
+            if ($isBalanceCustomer) {
                 if (isset($paidSummary[$rid])) {
                     $p = $paidSummary[$rid];
                     $expected_months = monthDiff($p['due_start_from'], $to_date);
 
                     switch (true) {
-                        case (strtotime($p['due_start_from']) > strtotime($to_date)):
-                        case ($p['total_paid'] >= $p['expected_due'] && strtotime($p['last_paid_date']) < $start_month):
-                        case ($p['till_last_month_paid'] >= $p['expected_due']):
-                        case ($p['paid_month_count'] > $expected_months && $p['total_paid'] >= ($p['expected_due'] + $p['monthly_due'])
-                            && date('Y-m', strtotime($p['last_paid_date'])) == date('Y-m', $start_month)):
-                            $loan_category_data[$cat_id]['payable_zero']++;
-                            break;
-
-                        case (date('Y-m', strtotime($p['due_start_from'])) == date('Y-m', $start_month)
-                            && $p['total_paid'] >= $p['expected_due']):
                         case ($p['total_paid'] >= $p['expected_due']
                             && date('Y-m', strtotime($p['last_paid_date'])) == date('Y-m', $start_month)):
                             $loan_category_data[$cat_id]['paid']++;
@@ -253,17 +264,23 @@ while ($userRow = $userQry->fetch()) {
                             break;
                     }
                 } else {
-                    if (
-                        strtotime($row['due_start_from']) > strtotime($to_date) &&
-                        date('Y-m', strtotime($row['due_start_from'])) != date('Y-m', $start_month)
-                    ) {
-                        $loan_category_data[$cat_id]['payable_zero']++;
-                    } else {
-                        $loan_category_data[$cat_id]['unpaid']++;
-                    }
+                    $loan_category_data[$cat_id]['unpaid']++;
                 }
             }
-        } // end customer loop
+        }
+ // end customer loop
+ 
+        // ===== Calculate total paid & percentages =====
+        $total_paid = $loan_category_data[$cat_id]['paid'] + $loan_category_data[$cat_id]['partially_paid'];
+
+        $balance = $loan_category_data[$cat_id]['balance_count'];
+
+        $loan_category_data[$cat_id]['total_paid'] = $total_paid;
+
+        $loan_category_data[$cat_id]['paid_percentage'] = ($balance > 0)? round(($total_paid / $balance) * 100, 1) : 0;
+    
+        $loan_category_data[$cat_id]['unpaid_percentage'] = ($balance > 0) ? round(($loan_category_data[$cat_id]['unpaid'] / $balance) * 100, 1) : 0;
+    
     } // end loan category loop
 
     foreach ($loan_category_data as $cat_data) {
@@ -277,7 +294,9 @@ while ($userRow = $userQry->fetch()) {
     }
 }
 
-// ===== Add total row =====
+$total_paid = $grand_totals['paid'] + $grand_totals['partially_paid'];
+$balance = $grand_totals['balance_count'];
+
 $data[] = [
     'sno' => '',
     'fullname' => 'Total',
@@ -287,7 +306,11 @@ $data[] = [
     'responsible_zero' => $grand_totals['responsible_zero'],
     'paid' => $grand_totals['paid'],
     'partially_paid' => $grand_totals['partially_paid'],
-    'unpaid' => $grand_totals['unpaid']
+    'unpaid' => $grand_totals['unpaid'],
+    'balance_count' => $balance,
+    'total_paid' => $total_paid,
+    'paid_percentage' => ($balance > 0) ? number_format(round(($total_paid / $balance) * 100, 1), 1) : '0.0',
+    'unpaid_percentage' => ($balance > 0) ? number_format(round(($grand_totals['unpaid'] / $balance) * 100, 2), 1) : '0.0'
 ];
 
 // ===== Pagination =====

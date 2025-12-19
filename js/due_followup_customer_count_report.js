@@ -41,7 +41,7 @@ function dueFollowUpCustomerCountReportTable() {
             const parsed = JSON.parse(res);
 
             if (!parsed.data || parsed.data.length === 0) {
-                $('#due_followup_customer_count_report_table thead').html("<tr><th colspan='9'>No data found for the selected filters</th></tr>");
+              $('#due_followup_customer_count_report_table thead').html("<tr><th colspan='13'>No data found for the selected filters</th></tr>");
                 $('#due_followup_customer_count_report_table').DataTable().clear().draw();
                 return;
             }
@@ -61,9 +61,23 @@ function dueFollowUpCustomerCountReportTable() {
                 { data: 't_current_count' },
                 { data: 'payable_zero' },
                 { data: 'responsible_zero' },
+                { data: 'balance_count' },
                 { data: 'paid' },
                 { data: 'partially_paid' },
-                { data: 'unpaid' }
+                { data: 'total_paid' },
+                { 
+                    data: 'paid_percentage',
+                    render: function (data) {
+                        return data + ' %';
+                    }
+                },
+                { data: 'unpaid' },
+                { 
+                    data: 'unpaid_percentage',
+                    render: function (data) {
+                        return data + ' %';
+                    }
+                }
             ];
 
             // Rebuild table
@@ -103,9 +117,13 @@ function dueFollowUpCustomerCountReportTable() {
         <td><b>${totalRow.t_current_count}</b></td>
         <td><b>${totalRow.payable_zero}</b></td>
         <td><b>${totalRow.responsible_zero}</b></td>
+        <td><b>${totalRow.balance_count}</b></td>
         <td><b>${totalRow.paid}</b></td>
         <td><b>${totalRow.partially_paid}</b></td>
+        <td><b>${totalRow.total_paid}</b></td>
+        <td><b>${totalRow.paid_percentage} %</b></td>
         <td><b>${totalRow.unpaid}</b></td>
+        <td><b>${totalRow.unpaid_percentage} %</b></td>
     </tr>`;
 
             $('#due_followup_customer_count_report_table tfoot').html(footerHtml);
