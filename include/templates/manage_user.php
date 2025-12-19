@@ -1028,12 +1028,12 @@ if($idupd>0)
                             </div>
                         </div>
 
-						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+						<!-- <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($concern_feedback==0){ echo'checked'; }} ?> tabindex="53" class="concern-checkbox screen-validations" id="concernFeedback" name="concernFeedback" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="concernFeedback">Concern Feedback</label>
                             </div>
-                        </div>
+                        </div> -->
 						
 					</div>
 

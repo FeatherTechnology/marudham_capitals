@@ -3,6 +3,15 @@ $idupd = 0;
 if (isset($_GET['upd'])) {
     $idupd = $_GET['upd'];
 }
+if (isset($_GET['pageId'])) {
+    $pgid = $_GET['pageId'];
+}
+$getUserDetails = $userObj->getUserDetails($mysqli, $userid);
+if ($getUserDetails) {
+    $company_id = $getUserDetails['company_id'];
+    $user_name = $getUserDetails['fullname'];
+    $staff_code = $getUserDetails['staff_code'];
+}
 
 $getConcernCreation = $userObj->getConcernCreation($mysqli, $idupd, $userid);
 if (count($getConcernCreation) > 0) {
@@ -23,25 +32,29 @@ if (count($getConcernCreation) > 0) {
     $cus_line       = $getConcernCreation['cus_line'];
     $conDate        = $getConcernCreation['com_date'];
     $conCode        = $getConcernCreation['com_code'];
-    $branchName     = $getConcernCreation['branch_name'];
+    // $branchName     = $getConcernCreation['branch_name'];
     $concernTo      = $getConcernCreation['concern_to'];
     $toDeptName     = $getConcernCreation['to_dept_name'];
     $toTeamName     = $getConcernCreation['to_team_name'];
+    $concernAgainst     = $getConcernCreation['concern_against'];
     $conSub         = $getConcernCreation['com_sub'];
     $conRemark      = $getConcernCreation['com_remark'];
-    $conPriority    = $getConcernCreation['com_priority'];
+    // $conPriority    = $getConcernCreation['com_priority'];
+    $roleType    = $getConcernCreation['role_type'];
     $assignStaffName      = $getConcernCreation['staff_assign_to'];
     $insert_user_name      = $getConcernCreation['insert_user_name'];
 }
 
 if (isset($_POST['submit_concern_solution']) && $_POST['submit_concern_solution'] != '') {
+
     $userObj->addConcernsolution($mysqli, $userid);
 
-?>
+    $msc = (isset($_POST['pg_id']) && $_POST['pg_id'] == '1') ? 1 : 2;
+    ?>
     <script>
-        location.href = '<?php echo $HOSTPATH; ?>edit_concern_solution&msc=1';
+        location.href = '<?php echo $HOSTPATH; ?>edit_concern_solution&msc=<?php echo $msc; ?>';
     </script>
-<?php
+    <?php
 }
 ?>
 <style>
@@ -77,9 +90,14 @@ if (isset($_POST['submit_concern_solution']) && $_POST['submit_concern_solution'
     <div id="concernDiv">
         <form id="concern_form" name="concern_form" action="" method="post" enctype="multipart/form-data">
             <input type="hidden" name="id" id="id" value="<?php if (isset($idupd)) echo $idupd; ?>">
+            <input type="hidden" name="pg_id" id="pg_id" value="<?php if (isset($pgid)) echo $pgid; ?>">
             <input type="hidden" name="staff_dept" id="staff_dept" value="<?php if (isset($staffDept)) echo $staffDept; ?>">
             <input type="hidden" name="staff_team" id="staff_team" value="<?php if (isset($staffTeam)) echo $staffTeam; ?>">
             <input type="hidden" name="con_sub" id="con_sub" value="<?php if (isset($conSub)) echo $conSub; ?>">
+            <input type="hidden" name="con_against" id="con_against" value="<?php if (isset($concernAgainst)) echo $concernAgainst; ?>">
+            <input type="hidden" name="con_staff" id="con_staff" value="<?php if (isset($assignStaffName)) echo $assignStaffName; ?>">
+            <input type="hidden" name="con_role" id="con_role" value="<?php if (isset($roleType)) echo $roleType; ?>">
+            <input type="hidden" name="company_id" id="company_id" value="<?php if (isset($company_id)) echo $company_id; ?>">
             <!-- Row start -->
             <div class="row gutters">
                 <!-- Concern Creation Start -->
@@ -95,7 +113,7 @@ if (isset($_POST['submit_concern_solution']) && $_POST['submit_concern_solution'
                                         <select type="text" class="form-control" id="raising_for" name="raising_for" tabindex='1' disabled>
                                             <option value="">Select Raising For</option>
                                             <option value="1" <?php if (isset($raisingFor) and $raisingFor == '1') echo 'selected'; ?>>Myself</option>
-                                            <option value="2" <?php if (isset($raisingFor) and $raisingFor == '2') echo 'selected'; ?>>staff</option>
+                                            <!-- <option value="2" <?php if (isset($raisingFor) and $raisingFor == '2') echo 'selected'; ?>>staff</option> -->
                                             <option value="3" <?php if (isset($raisingFor) and $raisingFor == '3') echo 'selected'; ?>>Agent</option>
                                             <option value="4" <?php if (isset($raisingFor) and $raisingFor == '4') echo 'selected'; ?>>Customer</option>
                                         </select>
@@ -300,6 +318,16 @@ if (isset($_POST['submit_concern_solution']) && $_POST['submit_concern_solution'
 
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
+                                        <label for="concern_against">Concern Against</label><span class="required">&nbsp;*</span>
+                                        <select class="form-control" id="concern_against" name="concern_against" tabindex='19' disabled>
+                                            <option value="">Select Concern Against</option>
+                                        </select>
+                                        <span class="text-danger" style='display:none' id='concernAgainstcheck'>Please Select Concern Against</span>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                                    <div class="form-group">
                                         <label for="comsub">Concern Subject</label><span class="required">&nbsp;*</span>
                                         <select type="text" class="form-control" id="com_sub" name="com_sub" tabindex='21' disabled>
                                             <option value=""> Select Concern Subject </option>
@@ -308,7 +336,7 @@ if (isset($_POST['submit_concern_solution']) && $_POST['submit_concern_solution'
                                     </div>
                                 </div>
 
-                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                                <!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="com-priority">Concern Priority</label><span class="required">&nbsp;*</span>
                                         <select class="form-control" id="com_priority" name="com_priority" tabindex='22' disabled>
@@ -319,7 +347,7 @@ if (isset($_POST['submit_concern_solution']) && $_POST['submit_concern_solution'
                                         </select>
                                         <span class="text-danger" style='display:none' id='conpriorityCheck'>Please Select Concern Priority</span>
                                     </div>
-                                </div>
+                                </div> -->
 
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
@@ -328,6 +356,25 @@ if (isset($_POST['submit_concern_solution']) && $_POST['submit_concern_solution'
                                         <span class="text-danger" style='display:none' id='comRemarkCheck'>Please Enter Concern Remark</span>
                                     </div>
                                 </div>
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                                    <div class="form-group">
+                                        <label for="role_type">Role Type</label><span class="required">&nbsp;*</span>
+                                        <select class="form-control" id="role_type" name="role_type"  style="<?php echo (!isset($pgid) || $pgid != '1') ? 'pointer-events:none;background:#e9ecef;' : ''; ?>" tabindex='19'>
+                                            <option value="">Select Role Type</option>
+                                        </select>
+                                        <span class="text-danger" style='display:none' id='roleTypeCheck'>Please Select Role Type</span>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                                    <div class="form-group">
+                                        <label for="assign-to">Assign To</label><span class="required">&nbsp;*</span>
+                                        <select class="form-control" id="staff_assign_to" name="staff_assign_to"  style="<?php echo (!isset($pgid) || $pgid != '1') ? 'pointer-events:none;background:#e9ecef;' : ''; ?>"tabindex='19'>
+                                            <option value="">Select Assign To</option>
+                                        </select>
+                                        <span class="text-danger" style='display:none' id='staffAssignCheck'>Please Select Staff Assign</span>
+                                    </div>
+                                </div>
+
 
                             </div>
                         </div>
@@ -335,7 +382,10 @@ if (isset($_POST['submit_concern_solution']) && $_POST['submit_concern_solution'
                     <!-- Concern Assign END -->
 
                     <!-- Consern Solution START-->
-                    <div class="card">
+                    <div class="card solution_card" <?php if (isset($pgid) and $pgid == '2') {
+                                                    } else {
+                                                        echo 'style="display: none;"';
+                                                    } ?>>
                         <div class="card-header"> Concern Solution <span style="font-weight:bold" class=""></span></div>
                         <div class="card-body">
                             <div class="row">
@@ -361,9 +411,29 @@ if (isset($_POST['submit_concern_solution']) && $_POST['submit_concern_solution'
 
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" style="display: none;" id="solutionUploads">
                                     <div class="form-group">
-                                        <label for="Communitcation"> Uploads </label>
+                                        <label for="Communitcation"> Uploads </label><span class="text-danger">*</span>
                                         <input type="file" class="form-control" name="concern_upload[]" id="concern_upload" tabindex="26" multiple>
                                         <span class="text-danger" style='display:none' id='updCheck'>Please Upload </span>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 location-div" style="display: none;">
+                                    <div class="form-group">
+                                        <label for="location">Location </label><span class="text-danger">*</span>
+                                        <select type="text" class="form-control" id="location" name="location" tabindex="8">
+                                            <option value="">Select Location</option>
+                                            <option value="1">Office</option>
+                                            <option value="2">On Spot</option>
+                                            <option value="3">Customer Spot</option>
+                                        </select>
+                                           <span class="text-danger" style='display:none' id='locationCheck'>Please Select Location </span>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                                    <div class="form-group">
+                                        <label for="sol_participants">Participants</label><span class="text-danger">*</span>
+                                        <textarea class="form-control" name="sol_participants" id="sol_participants" placeholder="Enter Participants" tabindex="12"></textarea>
+                                         <span class="text-danger" style='display:none' id='participantsCheck'>Please Enter Participants </span>
+                                        
                                     </div>
                                 </div>
 

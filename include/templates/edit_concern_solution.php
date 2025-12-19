@@ -14,10 +14,10 @@ if (isset($_SESSION["userid"])) {
 	$userid = $_SESSION["userid"];
 }
 
-$userQry = $connect->query("SELECT 1 FROM USER WHERE user_id = '$userid' && role ='3'"); // Check Whether the user is staff or not ,if not means concern screen will not be show.
-$rowuser = $userQry->rowCount();
-if ($rowuser > 0) {
-?>
+// $userQry = $connect->query("SELECT 1 FROM USER WHERE user_id = '$userid' && role ='3'"); // Check Whether the user is staff or not ,if not means concern screen will not be show.
+// $rowuser = $userQry->rowCount();
+// if ($rowuser > 0) {
+// ?>
 
 	<!-- Main container start -->
 	<div class="main-container">
@@ -34,13 +34,13 @@ if ($rowuser > 0) {
 							$mscid = $_GET['msc'];
 							if ($mscid == 1) { ?>
 								<div class="alert alert-success" role="alert">
-									<div class="alert-text"> Concern solution Submitted Successfully! </div>
+									<div class="alert-text"> Concern Assigned Successfully! </div>
 								</div>
 							<?php
 							}
 							if ($mscid == 2) { ?>
 								<div class="alert alert-success" role="alert">
-									<div class="alert-text"> Collection Removed Successfully! </div>
+									<div class="alert-text"> Concern Solution Submitted Successfully! </div>
 								</div>
 						<?php
 							}
@@ -52,7 +52,6 @@ if ($rowuser > 0) {
 									<th width="50">S.No.</th>
 									<th>Concern Code</th>
 									<th>Concern Date</th>
-									<th>Branch Name</th>
 									<th>Staff Assign</th>
 									<th>Subject</th>
 									<th>Status</th>
@@ -70,7 +69,9 @@ if ($rowuser > 0) {
 	</div>
 	<!-- Main container end -->
 
-<?php } else { ?>
+ <!-- <?php 
+//  } 
+//  else { ?>
 
 	<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 		<div class="card">
@@ -89,7 +90,8 @@ if ($rowuser > 0) {
 		</div>
 	</div>
 
-<?php } 
+<?php 
+// } 
 // Close the database connection
-$connect = null;
-?>
+// $connect = null;
+// ?>

@@ -6,10 +6,14 @@ $i = 0;
 
 $user_track = isset($_POST['user_track']) ? $_POST['user_track'] : '';  
 
-if ($user_track != '') {
-    // When user_track is passed
+if ($user_track == '1') {
+    // When user_track is passed, all users
     $where = "status = 0";
-} else {
+} else if($user_track == '2'){
+    // confirmation
+     $where = "status = 0 AND (confirmation_followup = 0)";
+
+} else  {
     // When user_track is NOT passed
     $where = "status = 0 AND (collection = 0 OR due_followup = 0)";
 }

@@ -16,18 +16,33 @@ $(document).ready(function () {
 
         let from_date = $('#from_date').val();
         let to_date = $('#to_date').val();
+         let selected_user = $('#by_user').val();
 
-        if (!from_date || !to_date) {
+
+        if (!from_date || !to_date || !selected_user) {
             swalError('Please Select All Fields!', 'All fields are required.');
             return;
         }
-     confirmationReportCount(from_date, to_date)
+     confirmationReportCount(from_date, to_date ,selected_user)
 
     });
 
 });
+// Load User List
+$(function () {
+    getUserNames();
+});
 
-function confirmationReportCount(from_date, to_date) {
+function getUserNames() {
+    $.post('reportFile/customer_status_report/getAllUserList.php', { user_track: 2 }, function (response) {
+        $('#by_user').empty().append("<option value=''>Select User</option>");
+        $.each(response, function (i, val) {
+            $('#by_user').append("<option value='" + val.user_id + "'>" + val.username + "</option>");
+        });
+    }, 'json');
+}
+
+function confirmationReportCount(from_date, to_date ,selected_user) {
 
     $.ajax({
         url: 'reportFile/confirmation_count_report/getConfirmationCount.php',
@@ -35,6 +50,7 @@ function confirmationReportCount(from_date, to_date) {
         data: {
             from_date: from_date,
             to_date: to_date,
+            user_id: selected_user,
         },
         dataType: 'json',
 
@@ -55,6 +71,7 @@ function confirmationReportCount(from_date, to_date) {
             // DataTable Columns
             const columns = [
                 { data: 'sno', title: "S.No" },
+              { data: 'fullname', title: "User Name" },
                 { data: 'line', title: "Line Name" },
                 { data: 'total_count', title: "Total Count" },
                 { data: 't_completed_count', title: "Completed" },
@@ -95,6 +112,7 @@ function confirmationReportCount(from_date, to_date) {
             // =============================
             $('#confirmation_count_table tfoot').html(`
                 <tr>
+                    <td></td>
                     <td></td>
                     <td><b>Total</b></td>
                     <td><b>${totalRow.total_count}</b></td>
