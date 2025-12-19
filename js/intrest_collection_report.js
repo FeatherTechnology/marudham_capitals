@@ -19,7 +19,10 @@ $(document).ready(function () {
 
 function collectionReportTable(){
     $('#collection_report_table').DataTable().destroy();
-    $('#collection_report_table').DataTable({
+
+    // Declare table variable to store the DataTable instance
+    var collection_report_table = $('#collection_report_table').DataTable({
+        ...getStateSaveConfig('collection_report_table'),
         "order": [
             [0, "asc"]
         ],
@@ -88,4 +91,7 @@ function collectionReportTable(){
             paginationFunction('collection_report_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(collection_report_table, 'collection_report_table');
 }

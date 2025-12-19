@@ -127,7 +127,8 @@ $(document).ready(function () {
     }
 
     $(function () {
-        $('#coursecategoryTable').DataTable({
+        var coursecategoryTable = $('#coursecategoryTable').DataTable({
+            ...getStateSaveConfig('coursecategoryTable'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -156,12 +157,13 @@ $(document).ready(function () {
             {
                 extend: 'colvis',
                 collectionLayout: 'fixed four-column',
-            }
-            ],
+            }],
             'drawCallback': function () {
                 searchFunction('coursecategoryTable');
             }
         });
+
+        initColVisFeatures(coursecategoryTable, 'coursecategoryTable');
     });
 
 
@@ -193,7 +195,7 @@ $(document).ready(function () {
     function validateLoanCategoryTable() {
         let loanCategoryTableError = true;
 
-        $("#moduleTable tbody tr").each(function() {
+        $("#moduleTable tbody tr").each(function () {
             // get the first td text/value (trim spaces)
             let firstTdText = $(this).find("td:first").text().trim();
             let firstTdInputVal = $(this).find("td:first input").val()?.trim() || "";
@@ -217,18 +219,18 @@ $(document).ready(function () {
 
     // Submit Button 
     $('#submitLoanCategory').click(function (event) {
-    if (validation() && validateLoanCategoryTable()) {
-        let confirmAction = confirm("Are you sure you want to submit Loan Category?");
-        if (!confirmAction) {
+        if (validation() && validateLoanCategoryTable()) {
+            let confirmAction = confirm("Are you sure you want to submit Loan Category?");
+            if (!confirmAction) {
+                event.preventDefault();
+                return false;
+            }
+        } else {
             event.preventDefault();
             return false;
         }
-    } else {
-        event.preventDefault();
-        return false;
-    }
-});
- $('#loan_limit').on('input', function () {
+    });
+    $('#loan_limit').on('input', function () {
         let value = $(this).val();
         $(this).val(formatIndianNumber(value));
     });

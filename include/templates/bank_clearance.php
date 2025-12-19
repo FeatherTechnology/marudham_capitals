@@ -91,14 +91,14 @@ if(isset($_SESSION["userid"])){
                                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                         <div class="form-group">
                                             <label for='amt'>Amount</label><span class="text-danger">&nbsp;*</span>
-                                            <input type='text' id='amt' name='amt' class="form-control" tabindex='7' placeholder="Enter Amount">
+                                            <input type='text' id='amt' name='amt' class="form-control" tabindex='7' placeholder="Enter Amount" oninput="validateInputNumber(this,'withOutDot')">
                                             <span class="text-danger" style='display:none' id='amtCheck'>Please Enter Amount</span>
                                         </div>
                                     </div>
                                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                         <div class="form-group">
                                             <label for='bal'>Balance</label><span class="text-danger">&nbsp;*</span>
-                                            <input type='text' id='bal' name='bal' class="form-control" tabindex='8' placeholder="Enter Balance" title="Please enter Balance After this transaction">
+                                            <input type='text' id='bal' name='bal' class="form-control" tabindex='8' placeholder="Enter Balance" title="Please enter Balance After this transaction" oninput="validateInputNumber(this,'withOutDot')">
                                             <span class="text-danger" style='display:none' id='balCheck'>Please Enter Balance</span>
                                         </div>
                                     </div>

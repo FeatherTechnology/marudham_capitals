@@ -127,7 +127,7 @@ $tot_amt = $total_collection_amt - $total_rec_amt;
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                 <div class='form-group'>
                     <label for='rec_amt'>Received Amount</label>
-                    <input type="number" class="form-control" id='rec_amt' name='rec_amt' placeholder="Enter Receiving Amount" onkeyup="if(parseInt($(this).val()) > <?php echo $tot_amt; ?>) {alert('Enter Lesser Amount');$(this).val('')}">
+                    <input type="text" class="form-control" id='rec_amt' name='rec_amt' placeholder="Enter Receiving Amount" onkeyup="if(parseInt($(this).val()) > <?php echo $tot_amt; ?>) {alert('Enter Lesser Amount');$(this).val('')}" oninput="validateInputNumber(this,'withOutDot')">
                     <span id='rec_amt_check' class="text-danger" style='display:none'>Please Enter Value</span>
                 </div>
             </div>
@@ -172,7 +172,9 @@ $tot_amt = $total_collection_amt - $total_rec_amt;
 
 <script type='text/javascript'>
     $(function() {
-        $('#receivedTempTable').DataTable({
+        // Declare table variable to store the DataTable instance
+        var receivedTempTable = $('#receivedTempTable').DataTable({
+            ...getStateSaveConfig('receivedTempTable'),
             "title": "Amount Received List",
             'processing': true,
             'iDisplayLength': 5,
@@ -205,6 +207,9 @@ $tot_amt = $total_collection_amt - $total_rec_amt;
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(receivedTempTable, 'receivedTempTable');
     });
 </script>
 

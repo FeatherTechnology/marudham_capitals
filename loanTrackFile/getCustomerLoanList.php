@@ -84,7 +84,7 @@ if ($result->rowCount() > 0) {
                 <td><?php echo $records[$i]['sub_category']; ?></td>
                 <td><?php echo moneyFormatIndia($records[$i]['loan_amt']); ?></td>
                 <td><?php echo $records[$i]['chart_action']; ?></td>
-                <td><button class="btn btn-primary track-btn" data-req_id='<?php echo $records[$i]['req_id']; ?>'data-loan_id='<?php echo $records[$i]['loan_id']; ?>' onclick="event.preventDefault()">Track</button></td>
+                <td><button class="btn btn-primary track-btn" data-req_id='<?php echo $records[$i]['req_id']; ?>' data-loan_id='<?php echo $records[$i]['loan_id']; ?>' onclick="event.preventDefault()">Track</button></td>
             </tr>
         <?php } ?>
     </tbody>
@@ -111,7 +111,9 @@ if ($result->rowCount() > 0) {
     //datatable initialization and other link click
     var table = $('#custLoanListTable').DataTable();
     table.destroy();
-    $('#custLoanListTable').DataTable({
+    // Declare table variable to store the DataTable instance
+    var custLoanListTable = $('#custLoanListTable').DataTable({
+        ...getStateSaveConfig('custLoanListTable'),
         'processing': true,
         'iDisplayLength': 5,
         "lengthMenu": [
@@ -121,11 +123,11 @@ if ($result->rowCount() > 0) {
         dom: 'lBfrtip',
         buttons: [{
                 extend: 'excel',
-                action: function (e, dt, button, config) {
+                action: function(e, dt, button, config) {
                     var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                     var dynamic = curDateJs('Customer_Loan_List'); // or any base
-                    config.title = dynamic;      // for versions that use title as filename
-                    config.filename = dynamic;   // for html5 filename
+                    config.title = dynamic; // for versions that use title as filename
+                    config.filename = dynamic; // for html5 filename
                     defaultAction.call(this, e, dt, button, config);
                 }
             },
@@ -135,6 +137,9 @@ if ($result->rowCount() > 0) {
             }
         ],
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(custLoanListTable, 'custLoanListTable');
     customerStatusOnClickEvents();
 </script>
 

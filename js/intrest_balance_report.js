@@ -41,7 +41,9 @@ $(function(){
 
 function balanceReportTable(url, tid, columnsToSum){
     $('#'+tid).DataTable().destroy();
-    $('#'+tid).DataTable({
+    // Declare table variable to store the DataTable instance
+    var table = $('#'+tid).DataTable({
+        ...getStateSaveConfig(tid),
         "order": [
             [0, "asc"]
         ],
@@ -107,6 +109,9 @@ function balanceReportTable(url, tid, columnsToSum){
             paginationFunction(tid);
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(table, tid);
 }
 
 function getloancategorylist(){

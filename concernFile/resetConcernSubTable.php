@@ -41,7 +41,9 @@ include '../ajaxconfig.php';
 
 <script type="text/javascript">
     $(function() {
-        $('#concernsubjectTable').DataTable({
+        // Declare table variable to store the DataTable instance
+        var concernsubjectTable = $('#concernsubjectTable').DataTable({
+            ...getStateSaveConfig('concernsubjectTable'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -74,6 +76,9 @@ include '../ajaxconfig.php';
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(concernsubjectTable, 'concernsubjectTable');
     });
 </script>
 

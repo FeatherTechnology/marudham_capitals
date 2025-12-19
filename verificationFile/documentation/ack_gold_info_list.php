@@ -84,7 +84,9 @@ function moneyFormatIndia($num)
 
 <script type="text/javascript">
     $(function() {
-        $('#gold_table').DataTable({
+        // Declare table variable to store the DataTable instance
+        var gold_table = $('#gold_table').DataTable({
+            ...getStateSaveConfig('gold_table'),
             // "order": [[0,'desc']],
             'processing': true,
             'iDisplayLength': 5,
@@ -96,11 +98,11 @@ function moneyFormatIndia($num)
             buttons: [{
                     extend: 'excel',
                     title: "Gold Info",
-                    action: function (e, dt, button, config) {
+                    action: function(e, dt, button, config) {
                         var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                         var dynamic = curDateJs('Gold_info'); // or any base
-                        config.title = dynamic;      // for versions that use title as filename
-                        config.filename = dynamic;   // for html5 filename
+                        config.title = dynamic; // for versions that use title as filename
+                        config.filename = dynamic; // for html5 filename
                         defaultAction.call(this, e, dt, button, config);
                     }
                 },
@@ -113,6 +115,9 @@ function moneyFormatIndia($num)
                 searchFunction('gold_table');
             }
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(gold_table, 'gold_table');
     });
 </script>
 <?php

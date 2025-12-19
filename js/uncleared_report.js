@@ -13,7 +13,9 @@ function unclearedReportTable() {
         return;
     }
     $('#uncleared_report_table').DataTable().destroy();
-    $('#uncleared_report_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var uncleared_report_table = $('#uncleared_report_table').DataTable({
+        ...getStateSaveConfig('uncleared_report_table'),
         "order": [
             [0, "desc"]
         ],
@@ -81,6 +83,9 @@ function unclearedReportTable() {
             paginationFunction('uncleared_report_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(uncleared_report_table, 'uncleared_report_table');
 }
 
 function swalError(title, text) {

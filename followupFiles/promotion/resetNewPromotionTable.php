@@ -126,7 +126,9 @@ if ($role_type == 7 || $role_type == 3) {
 </table>
 
 <script>
-    $('#new_promo_table').dataTable({
+    // Declare table variable to store the DataTable instance
+    var new_promo_table = $('#new_promo_table').dataTable({
+        ...getStateSaveConfig('new_promo_table'),
         'iDisplayLength': 10,
         "lengthMenu": [
             [10, 25, 50, -1],
@@ -182,6 +184,9 @@ if ($role_type == 7 || $role_type == 3) {
             });
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(new_promo_table, 'new_promo_table');
 </script>
 
 <style>

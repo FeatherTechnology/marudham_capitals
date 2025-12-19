@@ -40,7 +40,9 @@ $sql = $connect->query("SELECT a.*,b.fullname, CASE b.role WHEN 1 then 'Director
 </table>
 
 <script>
-    $('#promo_chart').dataTable({
+    // Declare table variable to store the DataTable instance
+    var promo_chart = $('#promo_chart').dataTable({
+        ...getStateSaveConfig('promo_chart'),
         'processing': true,
         'iDisplayLength': 5,
         "lengthMenu": [
@@ -64,6 +66,9 @@ $sql = $connect->query("SELECT a.*,b.fullname, CASE b.role WHEN 1 then 'Director
             }
         ],
     })
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(promo_chart, 'promo_chart');
     
 </script>
 <style>

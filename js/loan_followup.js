@@ -14,7 +14,9 @@ $(document).ready(function () {
 
 function resetLoanFollowupTable(){
     $('#loan_follow_table').DataTable().destroy();
-    $('#loan_follow_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var loan_follow_table = $('#loan_follow_table').DataTable({
+        ...getStateSaveConfig('loan_follow_table'),
         "order": [
             [0, "desc"]
         ],
@@ -55,6 +57,9 @@ function resetLoanFollowupTable(){
             loanFollowupTableOnclick();
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(loan_follow_table, 'loan_follow_table');
 }
 
 function submitLoanfollowup() {

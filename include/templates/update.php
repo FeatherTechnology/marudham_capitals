@@ -421,7 +421,7 @@ if (sizeof($getCustomerReg) > 0) {
 										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
 											<div class="form-group">
 												<label for="mobile1">Mobile No 1</label><span class="required">&nbsp;*</span>
-												<input type="number" class="form-control" id="mobile1" name="mobile1" onkeypress="if(this.value.length==10) return false;" value='<?php if (isset($mobile1)) {
+												<input type="text" class="form-control" id="mobile1" name="mobile1" oninput="validateInputNumber(this,'withOutDot')" onkeypress="if(this.value.length==10) return false;" value='<?php if (isset($mobile1)) {
 																																														echo $mobile1;
 																																													} ?>' tabindex='13' placeholder="Enter Mobile Number">
 												<span class="text-danger" style='display:none' id='mobile1Check'>Please Enter Mobile Number</span>
@@ -430,7 +430,7 @@ if (sizeof($getCustomerReg) > 0) {
 										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
 											<div class="form-group">
 												<label for="mobile2">Mobile No 2</label>
-												<input type="number" class="form-control" id="mobile2" name="mobile2" onkeypress="if(this.value.length==10) return false;" value='<?php if (isset($mobile2)) {
+												<input type="text" class="form-control" id="mobile2" name="mobile2" oninput="validateInputNumber(this,'withOutDot')" onkeypress="if(this.value.length==10) return false;" value='<?php if (isset($mobile2)) {
 																																														echo $mobile2;
 																																													} ?>' tabindex='14' placeholder="Enter Mobile Number">
 												<span class="text-danger" style='display:none' id='mobile2Check'>Please Enter Mobile Number</span>
@@ -440,7 +440,7 @@ if (sizeof($getCustomerReg) > 0) {
 										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
 											<div class="form-group">
 												<label for="whatsapp">Whatsapp No </label>
-												<input type="number" class="form-control" id="whatsapp_no" name="whatsapp_no" tabindex='15' placeholder="Enter WhatsApp Number" maxlength="10" onkeypress="if(this.value.length==10) return false;" value="<?php if (isset($cp_whatsapp)) {
+												<input type="text" class="form-control" id="whatsapp_no" name="whatsapp_no" oninput="validateInputNumber(this,'withOutDot')" tabindex='15' placeholder="Enter WhatsApp Number" maxlength="10" onkeypress="if(this.value.length==10) return false;" value="<?php if (isset($cp_whatsapp)) {
 																																																																echo $cp_whatsapp;
 																																																															} ?>">
 												<span class="text-danger" style='display:none' id='whatsapp_noCheck'>Please Enter Whatsapp Number</span>
@@ -707,7 +707,7 @@ if (sizeof($getCustomerReg) > 0) {
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="cus_occ_income"> Income </label>
-										<input type="number" class="form-control" name="cus_occ_income" id="cus_occ_income" placeholder="Enter Income" value="<?php if (isset($occupation_income)) {
+										<input type="text" class="form-control" name="cus_occ_income" id="cus_occ_income" oninput="validateInputNumber(this,'withOutDot')" placeholder="Enter Income" value="<?php if (isset($occupation_income)) {
 																																									echo $occupation_income;
 																																								} ?>" tabindex="34">
 									</div>
@@ -1015,7 +1015,7 @@ if (sizeof($getCustomerReg) > 0) {
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="cus_monthly_income"> Monthly Income </label> <span class="required">*</span>
-										<input type="text" class="form-control" name="cus_monthly_income" id="cus_monthly_income" placeholder="Enter Monthly Income" value="<?php if (isset($monthly_income)) {
+										<input type="text" class="form-control" name="cus_monthly_income" id="cus_monthly_income" oninput="validateInputNumber(this,'withOutDot')" placeholder="Enter Monthly Income" value="<?php if (isset($monthly_income)) {
 																																												echo moneyFormatIndia($monthly_income);
 																																											} ?>" tabindex="55">
 										<span class="text-danger" style='display:none' id='monthlyIncomeCheck'>Please Enter Monthly Income </span>
@@ -1025,7 +1025,7 @@ if (sizeof($getCustomerReg) > 0) {
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="cus_other_income"> Other Income </label> <span class="required">*</span>
-										<input type="text" class="form-control" name="cus_other_income" id="cus_other_income" placeholder="Enter Other Income" value="<?php if (isset($other_income)) {
+										<input type="text" class="form-control" name="cus_other_income" id="cus_other_income" oninput="validateInputNumber(this,'withOutDot')" placeholder="Enter Other Income" value="<?php if (isset($other_income)) {
 																																											echo moneyFormatIndia($other_income);
 																																										} ?>" tabindex="56">
 										<span class="text-danger" style='display:none' id='otherIncomeCheck'>Please Enter Other Income </span>
@@ -1035,7 +1035,7 @@ if (sizeof($getCustomerReg) > 0) {
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="cus_support_income"> Support Income </label> <span class="required">*</span>
-										<input type="text" class="form-control" name="cus_support_income" id="cus_support_income" placeholder="Enter Support Income" value="<?php if (isset($support_income)) {
+										<input type="text" class="form-control" name="cus_support_income" id="cus_support_income" oninput="validateInputNumber(this,'withOutDot')" placeholder="Enter Support Income" value="<?php if (isset($support_income)) {
 																																												echo moneyFormatIndia($support_income);
 																																											} ?>" tabindex="57">
 										<span class="text-danger" style='display:none' id='supportIncomeCheck'>Please Enter Support Income </span>
@@ -1045,7 +1045,7 @@ if (sizeof($getCustomerReg) > 0) {
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="cus_Commitment"> Commitment </label> <span class="required">*</span>
-										<input type="text" class="form-control" name="cus_Commitment" id="cus_Commitment" placeholder="Enter Commitment" value="<?php if (isset($commitment)) {
+										<input type="text" class="form-control" name="cus_Commitment" id="cus_Commitment" oninput="validateInputNumber(this,'withOutDot')" placeholder="Enter Commitment" value="<?php if (isset($commitment)) {
 																																									echo moneyFormatIndia($commitment);
 																																								} ?>" tabindex="58">
 										<span class="text-danger" style='display:none' id='commitmentCheck'>Please Enter Commitment </span>
@@ -1055,7 +1055,7 @@ if (sizeof($getCustomerReg) > 0) {
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="cus_monDue_capacity"> Monthly Due Capacity </label> <span class="required">*</span>
-										<input type="text" class="form-control" name="cus_monDue_capacity" id="cus_monDue_capacity" placeholder="Enter Monthly Due Capacity" value="<?php if (isset($monthly_due_capacity)) {
+										<input type="text" class="form-control" name="cus_monDue_capacity" id="cus_monDue_capacity" oninput="validateInputNumber(this,'withOutDot')" placeholder="Enter Monthly Due Capacity" value="<?php if (isset($monthly_due_capacity)) {
 																																														echo moneyFormatIndia($monthly_due_capacity);
 																																													} ?>" tabindex="59">
 										<span class="text-danger" style='display:none' id='monthlyDueCapacityCheck'> Please Enter Monthly Due Capacity </span>
@@ -1065,7 +1065,7 @@ if (sizeof($getCustomerReg) > 0) {
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="cus_loan_limit"> Loan Limit </label> <span class="required">*</span>
-										<input type="text" class="form-control" name="cus_loan_limit" id="cus_loan_limit" placeholder="Enter Loan Limit" value="<?php if (isset($loan_limit)) {
+										<input type="text" class="form-control" name="cus_loan_limit" id="cus_loan_limit" oninput="validateInputNumber(this,'withOutDot')" placeholder="Enter Loan Limit" value="<?php if (isset($loan_limit)) {
 																																									echo moneyFormatIndia($loan_limit);
 																																								} ?>" tabindex="60">
 										<span class="text-danger" style='display:none' id='loanLimitCheck'>Please Enter Loan Limit </span>
@@ -1834,7 +1834,7 @@ if (sizeof($getCustomerReg) > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label class="label"> Mobile No </label>&nbsp;<span class="text-danger">*</span>
-							<input type="number" class="form-control" name="relation_Mobile" id="relation_Mobile" maxlength="10" onkeypress="if(this.value.length==10) return false;" placeholder="Mobile Number" tabindex='6'>
+							<input type="text" class="form-control" name="relation_Mobile" id="relation_Mobile" maxlength="10" onkeypress="if(this.value.length==10) return false;" placeholder="Mobile Number" tabindex='6' oninput="validateInputNumber(this,'withOutDot')">
 							<span class="text-danger" id="fammobileCheck" style='display:none'>Enter Mobile Number</span>
 						</div>
 					</div>
@@ -1842,7 +1842,7 @@ if (sizeof($getCustomerReg) > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label class="label"> Age </label>
-							<input type="number" class="form-control" name="relation_age" id="relation_age" placeholder="Enter Age" tabindex='7'>
+							<input type="text" class="form-control" name="relation_age" id="relation_age" placeholder="Enter Age" tabindex='7' oninput="validateInputNumber(this,'withOutDot')">
 							<span class="text-danger" id="famageCheck" style='display:none'>Enter Age</span>
 						</div>
 					</div>
@@ -1858,7 +1858,7 @@ if (sizeof($getCustomerReg) > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label class="label"> Income </label>
-							<input type="number" class="form-control" name="relation_Income" id="relation_Income" placeholder="Enter Income" tabindex='9'>
+							<input type="text" class="form-control" name="relation_Income" id="relation_Income" placeholder="Enter Income" tabindex='9' oninput="validateInputNumber(this,'withOutDot')">
 							<span class="text-danger" id="famincomeCheck" style='display:none'>Enter Income</span>
 						</div>
 					</div>
@@ -1955,7 +1955,7 @@ if (sizeof($getCustomerReg) > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label for="property_value"> Property Value </label><span class="required">&nbsp;*</span>
-							<input type="text" class="form-control" id="property_value" name="property_value" placeholder="Enter Property Value" tabindex='3'>
+							<input type="text" class="form-control" id="property_value" name="property_value" placeholder="Enter Property Value" tabindex='3' oninput="validateInputNumber(this,'withOutDot')">
 							<span class="text-danger" id="prtyvalCheck" style='display:none'>Enter Property Value</span>
 						</div>
 					</div>
@@ -2064,7 +2064,7 @@ if (sizeof($getCustomerReg) > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label for="account_number"> Account Number </label> <span class="required">&nbsp;*</span>
-							<input type="number" class="form-control" id="account_number" name="account_number" placeholder="Enter Account Number" tabindex='4'>
+							<input type="text" class="form-control" id="account_number" name="account_number" placeholder="Enter Account Number" tabindex='4' oninput="validateInputNumber(this,'withOutDot')">
 							<span class="text-danger" id="accnoCheck" style='display:none'> Enter Account Number </span>
 						</div>
 					</div>
@@ -2072,7 +2072,7 @@ if (sizeof($getCustomerReg) > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label for="Ifsc_code"> IFSC Code </label> <span class="required">&nbsp;*</span>
-							<input type="text" class="form-control" id="Ifsc_code" name="Ifsc_code" placeholder="Enter IFSC Code" tabindex='5'>
+							<input type="text" class="form-control" id="Ifsc_code" name="Ifsc_code" placeholder="Enter IFSC Code" tabindex='5' oninput="validateInputNumber(this,'alphaNumeric')">
 							<span class="text-danger" id="ifscCheck" style='display:none'> Enter IFSC Code </span>
 						</div>
 					</div>

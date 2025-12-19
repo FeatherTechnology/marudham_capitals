@@ -7,7 +7,9 @@ $(document).ready(function () {
 
 function noDuePayReportTable(){
     $('#no_pay_due_report_table').DataTable().destroy();
-    $('#no_pay_due_report_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var no_pay_due_report_table = $('#no_pay_due_report_table').DataTable({
+        ...getStateSaveConfig('no_pay_due_report_table'),
         "order": [
             [0, "desc"]
         ],
@@ -47,4 +49,7 @@ function noDuePayReportTable(){
             searchFunction('no_pay_due_report_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(no_pay_due_report_table, 'no_pay_due_report_table');
 }

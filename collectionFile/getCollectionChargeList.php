@@ -96,7 +96,9 @@ function moneyFormatIndia($num)
 
 <script type="text/javascript">
     $(function() {
-        $('#collectionChargeListTable').DataTable({
+        // Declare table variable to store the DataTable instance
+        var collectionChargeListTable = $('#collectionChargeListTable').DataTable({
+            ...getStateSaveConfig('collectionChargeListTable'),
             'processing': true,
             'iDisplayLength': 10,
             "lengthMenu": [
@@ -128,5 +130,8 @@ function moneyFormatIndia($num)
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(collectionChargeListTable, 'collectionChargeListTable');
     });
 </script>

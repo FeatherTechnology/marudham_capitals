@@ -52,7 +52,7 @@
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<div class="form-group">
 									<label for="mobile">Mobile Number</label>
-									<input type="text" class="form-control" id="mobile" name="mobile" placeholder="Enter Mobile Number">
+									<input type="text" class="form-control" id="mobile" name="mobile" placeholder="Enter Mobile Number" oninput="validateInputNumber(this,'withOutDot')">
 								</div>
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">

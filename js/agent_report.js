@@ -1,16 +1,16 @@
 $(document).ready(function () {
-        
-    $('#from_date').change(function(){
+
+    $('#from_date').change(function () {
         const fromDate = $(this).val();
         const toDate = $('#to_date').val();
         $('#to_date').attr('min', fromDate);
 
-         // Check if from_date is greater than to_date
+        // Check if from_date is greater than to_date
         if (toDate && fromDate > toDate) {
             $('#to_date').val(''); // Clear the invalid value
         }
     });
-    
+
     //Agent Report Table
     // var agent_report_table = 
     $('#reset_btn').click(function () {
@@ -19,9 +19,10 @@ $(document).ready(function () {
     })
 });
 
-function agentReportTable(){
+function agentReportTable() {
     $('#agent_report_table').DataTable().destroy();
-    $('#agent_report_table').DataTable({
+    var agent_report_table = $('#agent_report_table').DataTable({
+        ...getStateSaveConfig('agent_report_table'),
         "order": [
             [0, "desc"]
         ],
@@ -70,7 +71,7 @@ function agentReportTable(){
             };
 
             // Array of column indices to sum
-            var columnsToSum = [3,4,5,6];
+            var columnsToSum = [3, 4, 5, 6];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {
@@ -85,9 +86,12 @@ function agentReportTable(){
                 $(api.column(colIndex).footer()).html(`<b>` + total.toLocaleString() + `</b>`);
             });
         },
-        'drawCallback': function() {
+        'drawCallback': function () {
             searchFunction('agent_report_table');
             paginationFunction('agent_report_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(agent_report_table, 'agent_report_table');
 }

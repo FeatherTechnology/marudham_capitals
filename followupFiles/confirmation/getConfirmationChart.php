@@ -10,21 +10,23 @@ $sql = $connect->query("SELECT a.*,b.fullname, CASE b.role WHEN 1 then 'Director
 
 //this query will take Confirmation followup data from that table with username and user type according to inserted login id and using switch case in query for output
 
-$per_type_arr = [1=>'Customer',2=>'Garentor',3=>'Family Member'];
-$status_arr = [1=>'Completed',2=>'Unavailable',3=>'Reconfirmation'];
-$sub_status_arr = [1=>'RNR',2=>'Not Reachable',3=>'Switch off', 4=>'Blocked',5=>'Not in use'];
+$per_type_arr = [1 => 'Customer', 2 => 'Garentor', 3 => 'Family Member'];
+$status_arr = [1 => 'Completed', 2 => 'Unavailable', 3 => 'Reconfirmation'];
+$sub_status_arr = [1 => 'RNR', 2 => 'Not Reachable', 3 => 'Switch off', 4 => 'Blocked', 5 => 'Not in use'];
 $sno = 1;
 
-function getCustomer($connect,$cus_id){
+function getCustomer($connect, $cus_id)
+{
     $result = $connect->query("SELECT customer_name from customer_register where cus_id = '$cus_id' ");
     $cus_name = $result->fetch()['customer_name'];
     return $cus_name;
 }
-function getGarentor($connect,$req_id){
+function getGarentor($connect, $req_id)
+{
     $query = "SELECT cp.guarentor_name, vfi.famname, vfi.relationship FROM customer_profile cp JOIN verification_family_info vfi ON cp.guarentor_name = vfi.id WHERE cp.req_id = '$req_id'";
     $result = $connect->query($query);
     $row = $result->fetch();
-    
+
     $response = [
         "name" => $row['famname'],
         "relationship" => $row['relationship']
@@ -32,8 +34,9 @@ function getGarentor($connect,$req_id){
     return $response;
 }
 
-function getFamilyMember($connect,$fam_id){
-    
+function getFamilyMember($connect, $fam_id)
+{
+
     $result = $connect->query("SELECT id,famname,relationship FROM `verification_family_info` where id='$fam_id'");
 
     $row = $result->fetch();
@@ -61,57 +64,73 @@ function getFamilyMember($connect,$fam_id){
         <th>Remark</th>
     </thead>
     <tbody>
-        <?php while($row =  $sql->fetch()){?>
+        <?php while ($row =  $sql->fetch()) { ?>
             <tr>
-                <td><?php echo $sno;$sno++; ?></td>
-                <td><?php echo date('d-m-Y',strtotime($row['created_date'])); ?></td>
+                <td><?php echo $sno;
+                    $sno++; ?></td>
+                <td><?php echo date('d-m-Y', strtotime($row['created_date'])); ?></td>
                 <td><?php echo $per_type_arr[$row['person_type']]; ?></td>
                 <td>
-                    <?php 
-                        if($row['person_type'] == 1){$person_name = getCustomer($connect,$cus_id); echo $person_name; }else
-                        if($row['person_type'] == 2){$person_name = getGarentor($connect,$req_id); echo $person_name['name']; }else
-                        if($row['person_type'] == 3){$person_name = getFamilyMember($connect,$row['person_name']); echo $person_name['name'];}
+                    <?php
+                    if ($row['person_type'] == 1) {
+                        $person_name = getCustomer($connect, $cus_id);
+                        echo $person_name;
+                    } else
+                        if ($row['person_type'] == 2) {
+                        $person_name = getGarentor($connect, $req_id);
+                        echo $person_name['name'];
+                    } else
+                        if ($row['person_type'] == 3) {
+                        $person_name = getFamilyMember($connect, $row['person_name']);
+                        echo $person_name['name'];
+                    }
                     ?>
                 </td>
                 <td>
-                    <?php 
-                        if($row['person_type'] == 1){echo 'NIL'; }else
-                        if($row['person_type'] == 2){echo $person_name['relationship']; }else
-                        if($row['person_type'] == 3){echo $person_name['relationship']; }
+                    <?php
+                    if ($row['person_type'] == 1) {
+                        echo 'NIL';
+                    } else
+                        if ($row['person_type'] == 2) {
+                        echo $person_name['relationship'];
+                    } else
+                        if ($row['person_type'] == 3) {
+                        echo $person_name['relationship'];
+                    }
                     ?>
                 </td>
-                
+
                 <td><?php echo $row['mobile']; ?></td>
                 <td>
-                    <?php 
-                        if($row['upload'] != ''){
-                            echo "<a href='uploads/confirmation_followup/".$row['upload']."' target='_blank'>View File</a>"; 
-                        }
+                    <?php
+                    if ($row['upload'] != '') {
+                        echo "<a href='uploads/confirmation_followup/" . $row['upload'] . "' target='_blank'>View File</a>";
+                    }
                     ?>
                 </td>
                 <td><?php echo $status_arr[$row['status']]; ?></td>
-                
-                <?php if($row['status'] == 1){?>
+
+                <?php if ($row['status'] == 1) { ?>
 
                     <td><?php echo ''; ?></td>
                     <td><?php echo ''; ?></td>
                     <td><?php echo ''; ?></td>
 
-                <?php }else if($row['status'] == 2){?>
+                <?php } else if ($row['status'] == 2) { ?>
 
                     <td><?php echo $sub_status_arr[$row['sub_status']]; ?></td>
                     <td><?php echo ''; ?></td>
                     <td><?php echo ''; ?></td>
 
-                <?php }else if($row['status'] == 3){?>
-                    
+                <?php } else if ($row['status'] == 3) { ?>
+
                     <td><?php echo ''; ?></td>
                     <td><?php echo $row['label']; ?></td>
                     <td><?php echo $row['remark']; ?></td>
 
                 <?php }
                 ?>
-                
+
             </tr>
         <?php } ?>
 
@@ -119,7 +138,9 @@ function getFamilyMember($connect,$fam_id){
 </table>
 
 <script>
-    $('#conf_follow_chart').dataTable({
+    // Declare table variable to store the DataTable instance
+    var conf_follow_chart = $('#conf_follow_chart').dataTable({
+        ...getStateSaveConfig('conf_follow_chart'),
         'processing': true,
         'iDisplayLength': 5,
         "lengthMenu": [
@@ -129,11 +150,11 @@ function getFamilyMember($connect,$fam_id){
         dom: 'lBfrtip',
         buttons: [{
                 extend: 'excel',
-                action: function (e, dt, button, config) {
+                action: function(e, dt, button, config) {
                     var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                     var dynamic = curDateJs('Confirmation_Followup_Chart'); // or any base
-                    config.title = dynamic;      // for versions that use title as filename
-                    config.filename = dynamic;   // for html5 filename
+                    config.title = dynamic; // for versions that use title as filename
+                    config.filename = dynamic; // for html5 filename
                     defaultAction.call(this, e, dt, button, config);
                 }
             },
@@ -143,11 +164,13 @@ function getFamilyMember($connect,$fam_id){
             }
         ],
     })
-    
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(conf_follow_chart, 'conf_follow_chart');
 </script>
 <style>
     @media (max-width: 598px) {
-        #loanFollowChartDiv{
+        #loanFollowChartDiv {
             overflow: auto;
         }
     }

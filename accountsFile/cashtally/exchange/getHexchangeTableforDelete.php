@@ -56,7 +56,9 @@ $connect = null;
 
 <script type='text/javascript'>
     $(function() {
-        $('#hexCollectionTable').DataTable({
+        // Declare table variable to store the DataTable instance
+        var hexCollectionTable = $('#hexCollectionTable').DataTable({
+            ...getStateSaveConfig('hexCollectionTable'),
             "title":"Hand Exchange List",
             'processing': true,
             'iDisplayLength': 5,
@@ -89,6 +91,9 @@ $connect = null;
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(hexCollectionTable, 'hexCollectionTable');
     });
 </script>
 

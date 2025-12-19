@@ -275,7 +275,9 @@ function getDocumentStatus($connect,$req_id,$cus_id){
         });
     });
 
-    $('#DocHistTable').dataTable({
+    // Declare table variable to store the DataTable instance
+    var DocHistTable = $('#DocHistTable').dataTable({
+        ...getStateSaveConfig('DocHistTable'),
         'processing': true,
         'iDisplayLength': 5,
         "lengthMenu": [
@@ -299,6 +301,9 @@ function getDocumentStatus($connect,$req_id,$cus_id){
             }
         ],
     })
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(DocHistTable, 'DocHistTable');
 </script>
 
 <?php

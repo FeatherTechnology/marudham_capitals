@@ -185,7 +185,9 @@ while ($row = $qry->fetch()) {
 
 <script type='text/javascript'>
     $(function() {
-        $('#daily_table').DataTable({
+        // Declare table variable to store the DataTable instance
+        var daily_table = $('#daily_table').DataTable({
+            ...getStateSaveConfig('daily_table'),
             "title": "Daily Ledger",
             'processing': true,
             'iDisplayLength': 10,
@@ -196,11 +198,11 @@ while ($row = $qry->fetch()) {
             dom: 'lBfrtip',
             buttons: [{
                     extend: 'excel',
-                    action: function (e, dt, button, config) {
+                    action: function(e, dt, button, config) {
                         var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                         var dynamic = curDateJs('Interest_Daily_Ledger_Report'); // or any base
-                        config.title = dynamic;      // for versions that use title as filename
-                        config.filename = dynamic;   // for html5 filename
+                        config.title = dynamic; // for versions that use title as filename
+                        config.filename = dynamic; // for html5 filename
                         defaultAction.call(this, e, dt, button, config);
                     }
                 },
@@ -214,6 +216,9 @@ while ($row = $qry->fetch()) {
                 paginationFunction('daily_table');
             }
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(daily_table, 'daily_table');
     });
 </script>
 

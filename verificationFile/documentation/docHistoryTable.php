@@ -49,7 +49,9 @@ if(isset($_POST['cus_id'])){
 
 <script type='text/javascript'>
     $(function() {
-        $('#documentTable').DataTable({
+        // Declare table variable to store the DataTable instance
+        var documentTable = $('#documentTable').DataTable({
+            ...getStateSaveConfig('documentTable'),
             "title":"Document List",
             'processing': true,
             'iDisplayLength': 5,
@@ -75,6 +77,9 @@ if(isset($_POST['cus_id'])){
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(documentTable, 'documentTable');
     });
 </script>
 

@@ -44,10 +44,10 @@ function moneyFormatIndia($num)
         $req_id = $_POST['req_id'];
         $cus_id = $_POST['cus_id'];
         $pages = $_POST['pages'];
-        
+
         $goldInfo = $connect->query("SELECT * FROM `gold_info` where cus_id = '$cus_id' order by id desc");
 
-        if($pages == 2){// for update screen data should be fetched using request id
+        if ($pages == 2) { // for update screen data should be fetched using request id
             $goldInfo = $connect->query("SELECT * FROM `gold_info` where req_id = '$req_id' order by id desc");
         }
 
@@ -57,7 +57,11 @@ function moneyFormatIndia($num)
 
             <tr>
                 <td><?php echo $i; ?></td>
-                <td><?php if($gold["gold_sts"] == '0'){ echo 'Old';}else if($gold["gold_sts"] == '1'){echo 'New'; } ?></td>
+                <td><?php if ($gold["gold_sts"] == '0') {
+                        echo 'Old';
+                    } else if ($gold["gold_sts"] == '1') {
+                        echo 'New';
+                    } ?></td>
                 <td> <?php echo $gold["gold_type"]; ?></td>
                 <td> <?php echo $gold["Purity"]; ?></td>
                 <td><?php echo $gold["gold_Count"]; ?></td>
@@ -67,9 +71,10 @@ function moneyFormatIndia($num)
 
                 <td>
                     <a class="gold_info_edit" value="<?php echo $gold['id']; ?>"> <span class="icon-border_color"></span></a> &nbsp
-                    <?php if($pages == 1){  // Verification screen only delete option. ?>
+                    <?php if ($pages == 1) {  // Verification screen only delete option. 
+                    ?>
                         <a id="gold_info_delete" value="<?php echo $gold['id']; ?>"> <span class='icon-trash-2'></span> </a>
-                <?php  } ?>
+                    <?php  } ?>
                 </td>
 
             </tr>
@@ -82,7 +87,9 @@ function moneyFormatIndia($num)
 
 <script type="text/javascript">
     $(function() {
-        $('#goldInfo_table_data').DataTable({
+        // Declare table variable to store the DataTable instance
+        var goldInfo_table_data = $('#goldInfo_table_data').DataTable({
+            ...getStateSaveConfig('goldInfo_table_data'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -101,11 +108,11 @@ function moneyFormatIndia($num)
             dom: 'lBfrtip',
             buttons: [{
                     extend: 'excel',
-                    action: function (e, dt, button, config) {
+                    action: function(e, dt, button, config) {
                         var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                         var dynamic = curDateJs('Gold_info'); // or any base
-                        config.title = dynamic;      // for versions that use title as filename
-                        config.filename = dynamic;   // for html5 filename
+                        config.title = dynamic; // for versions that use title as filename
+                        config.filename = dynamic; // for html5 filename
                         defaultAction.call(this, e, dt, button, config);
                     }
                 },
@@ -115,5 +122,8 @@ function moneyFormatIndia($num)
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(goldInfo_table_data, 'goldInfo_table_data');
     });
 </script>

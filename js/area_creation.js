@@ -615,7 +615,9 @@ function getAreaBasedSubArea(area) {
     });
 
     $(function () {
-        $('#areaTable').DataTable({
+        // Declare table variable to store the DataTable instance
+        var areaTable = $('#areaTable').DataTable({
+            ...getStateSaveConfig('areaTable'),
             "order": [[0, "desc"]],
             'processing': true,
             'iDisplayLength': 5,
@@ -644,6 +646,9 @@ function getAreaBasedSubArea(area) {
             }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(areaTable, 'areaTable');
     });
 
     function closeModal() {
@@ -785,7 +790,9 @@ function getAreaBasedSubArea(area) {
     });
 
     $(function () {
-        $('#subAreaTable').DataTable({
+        // Declare table variable to store the DataTable instance
+        var subAreaTable = $('#subAreaTable').DataTable({
+            ...getStateSaveConfig('subAreaTable'),
             "order": [[0, "desc"]],
             'processing': true,
             'iDisplayLength': 5,
@@ -810,6 +817,9 @@ function getAreaBasedSubArea(area) {
             }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(subAreaTable, 'subAreaTable');
     });
 
     function closeSubModal() {

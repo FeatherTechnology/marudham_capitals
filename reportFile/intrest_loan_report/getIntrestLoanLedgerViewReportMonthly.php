@@ -15,9 +15,9 @@ if ($userid != 1) {
 
     $userQry = $connect->query("SELECT line_id, report_access FROM USER WHERE user_id = $userid ");
     $rowuser = $userQry->fetch();
-        $line_id = $rowuser['line_id'];
-        $report_access = $rowuser['report_access'];
-    
+    $line_id = $rowuser['line_id'];
+    $report_access = $rowuser['report_access'];
+
     if ($report_access == '1') { //Report access individual.
         $line_id = explode(',', $line_id);
         $sub_area_list = array();
@@ -159,8 +159,7 @@ $months = generateMonths($startDate, $endDate);
                         <?php
                         if ($row['opening_balance'] != '') {
                             echo moneyFormatIndia($row['opening_balance']);
-                        } 
-                        else {
+                        } else {
                             $row['opening_balance'] = $row['loan_amt_cal'];
                             echo moneyFormatIndia($row['opening_balance']);
                         }
@@ -197,7 +196,7 @@ $months = generateMonths($startDate, $endDate);
     </tbody>
     <tfoot>
         <?php
-        $tfoot = "<tr><td colspan='8'><b>Total</b></td><td><b>" . moneyFormatIndia($int_amt_sum) . "</b></td><td><b>" . moneyFormatIndia($opening_balance_sum) . "</b></td><td colspan=".$total_months."></td><td><b>" . moneyFormatIndia($total_paid_sum) . "</b></td><td><b>" . moneyFormatIndia($closing_balance_sum) . "</b></td></tr>";
+        $tfoot = "<tr><td colspan='8'><b>Total</b></td><td><b>" . moneyFormatIndia($int_amt_sum) . "</b></td><td><b>" . moneyFormatIndia($opening_balance_sum) . "</b></td><td colspan=" . $total_months . "></td><td><b>" . moneyFormatIndia($total_paid_sum) . "</b></td><td><b>" . moneyFormatIndia($closing_balance_sum) . "</b></td></tr>";
         echo $tfoot;
         ?>
     </tfoot>
@@ -205,7 +204,9 @@ $months = generateMonths($startDate, $endDate);
 
 <script type='text/javascript'>
     $(function() {
-        $('#monthly_table').DataTable({
+        // Declare table variable to store the DataTable instance
+        var monthly_table = $('#monthly_table').DataTable({
+            ...getStateSaveConfig('monthly_table'),
             "title": "Monthly Ledger",
             'processing': true,
             'iDisplayLength': 10,
@@ -216,11 +217,11 @@ $months = generateMonths($startDate, $endDate);
             dom: 'lBfrtip',
             buttons: [{
                     extend: 'excel',
-                    action: function (e, dt, button, config) {
+                    action: function(e, dt, button, config) {
                         var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                         var dynamic = curDateJs('Interest_Monthly_Ledger_Report'); // or any base
-                        config.title = dynamic;      // for versions that use title as filename
-                        config.filename = dynamic;   // for html5 filename
+                        config.title = dynamic; // for versions that use title as filename
+                        config.filename = dynamic; // for html5 filename
                         defaultAction.call(this, e, dt, button, config);
                     }
                 },
@@ -234,6 +235,9 @@ $months = generateMonths($startDate, $endDate);
                 paginationFunction('monthly_table');
             }
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(monthly_table, 'monthly_table');
     });
 </script>
 

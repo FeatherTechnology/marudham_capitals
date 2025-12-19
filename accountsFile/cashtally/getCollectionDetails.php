@@ -167,7 +167,9 @@ $connect = null;
 
 <script type='text/javascript'>
     $(function() {
-        $('#collectionTable').DataTable({
+        // Declare table variable to store the DataTable instance
+        var collectionTable = $('#collectionTable').DataTable({
+            ...getStateSaveConfig('collectionTable'),
             "title": "Collection List",
             'processing': true,
             'iDisplayLength': 5,
@@ -200,6 +202,9 @@ $connect = null;
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(collectionTable, 'collectionTable');
     });
 </script>
 

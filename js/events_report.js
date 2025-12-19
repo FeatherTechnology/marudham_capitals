@@ -1,18 +1,18 @@
 $(document).ready(function () {
 
-    $('#from_date').change(function(){
+    $('#from_date').change(function () {
         const fromDate = $(this).val();
         const toDate = $('#to_date').val();
         $('#to_date').attr('min', fromDate);
 
-         // Check if from_date is greater than to_date
+        // Check if from_date is greater than to_date
         if (toDate && fromDate > toDate) {
             $('#to_date').val(''); // Clear the invalid value
         }
     });
 
     //Event Report Table
-   $('#reset_btn').click(function () {
+    $('#reset_btn').click(function () {
         const fromDate = $('#from_date').val();
         const toDate = $('#to_date').val();
 
@@ -20,18 +20,20 @@ $(document).ready(function () {
             eventsReportTable();
         } else {
             Swal.fire({
-                    icon: 'warning',
-                    title: 'Missing Dates',
-                    text: 'Please select both From and To dates before Search.',
-                    confirmButtonColor: '#009688'
-                });
+                icon: 'warning',
+                title: 'Missing Dates',
+                text: 'Please select both From and To dates before Search.',
+                confirmButtonColor: '#009688'
+            });
         }
     });
 });
 
-function eventsReportTable(){
+function eventsReportTable() {
     $('#event_list_report_table').DataTable().destroy();
-    $('#event_list_report_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var event_list_report_table = $('#event_list_report_table').DataTable({
+        ...getStateSaveConfig('event_list_report_table'),
         "order": [
             [0, "asc"]
         ],
@@ -74,4 +76,7 @@ function eventsReportTable(){
         },
 
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(event_list_report_table, 'event_list_report_table');
 }

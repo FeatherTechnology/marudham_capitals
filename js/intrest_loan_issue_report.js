@@ -19,7 +19,9 @@ $(document).ready(function () {
 
 function loanIssueReportTable(){
     $('#interest_loan_issue_report_table').DataTable().destroy();
-    $('#interest_loan_issue_report_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var interest_loan_issue_report_table = $('#interest_loan_issue_report_table').DataTable({
+        ...getStateSaveConfig('interest_loan_issue_report_table'),
         "order": [
             [0, "asc"]
         ],
@@ -88,4 +90,7 @@ function loanIssueReportTable(){
             paginationFunction('interest_loan_issue_report_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(interest_loan_issue_report_table, 'interest_loan_issue_report_table');
 }

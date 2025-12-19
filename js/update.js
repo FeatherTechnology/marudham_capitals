@@ -2722,8 +2722,8 @@ function getDocumentHistory() {
                 $('.choosing-document-card').show();
 
                 var req_id = $(this).data('reqid'); var cus_id = $(this).data('cusid'); var cus_name = $(this).data('cusname')
-                 var doc_id = $(this).data('docid')
-                    $('#documents_status_header').html(`Documents - Doc ID: ${doc_id}`);
+                var doc_id = $(this).data('docid')
+                $('#documents_status_header').html(`Documents - Doc ID: ${doc_id}`);
                 getDocumentDetails(req_id, cus_id, cus_name);
                 $('#req_id_doc').val(req_id);
             });
@@ -2861,7 +2861,9 @@ function resetSignedDocList(req_id, cus_id) {
         }
     }).then(function () {
         $('#signed_table').DataTable().destroy();
-        $('#signed_table').DataTable({
+        // Declare table variable to store the DataTable instance
+        var signed_table = $('#signed_table').DataTable({
+            ...getStateSaveConfig('signed_table'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -2886,6 +2888,8 @@ function resetSignedDocList(req_id, cus_id) {
             ],
         });
         setTempDocumentEvents();//temp document click events
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(signed_table, 'signed_table');
     })
 }
 
@@ -2926,7 +2930,9 @@ function resetChequeList(req_id, cus_id) {
         }
     }).then(function () {
         $('#cheque_table').DataTable().destroy();
-        $('#cheque_table').DataTable({
+        // Declare table variable to store the DataTable instance
+        var cheque_table = $('#cheque_table').DataTable({
+            ...getStateSaveConfig('cheque_table'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -2951,6 +2957,8 @@ function resetChequeList(req_id, cus_id) {
             ],
         });
         setTempDocumentEvents();//temp document click events
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(cheque_table, 'cheque_table');
     })
 }
 
@@ -2988,7 +2996,9 @@ function resetGoldList(req_id, cus_id) {
         }
     }).then(function () {
         $('#gold_table').DataTable().destroy();
-        $('#gold_table').DataTable({
+        // Declare table variable to store the DataTable instance
+        var gold_table = $('#gold_table').DataTable({
+            ...getStateSaveConfig('gold_table'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -3013,6 +3023,8 @@ function resetGoldList(req_id, cus_id) {
             ],
         });
         setTempDocumentEvents();//temp document click events
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(gold_table, 'gold_table');
     })
 }
 
@@ -3053,7 +3065,9 @@ function resetDocmentList(req_id, cus_id) {
         }
     }).then(function () {
         $('#document_table').DataTable().destroy();
-        $('#document_table').DataTable({
+        // Declare table variable to store the DataTable instance
+        var document_table = $('#document_table').DataTable({
+            ...getStateSaveConfig('document_table'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -3078,6 +3092,8 @@ function resetDocmentList(req_id, cus_id) {
             ],
         });
         setTempDocumentEvents();//temp document click events
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(document_table, 'document_table');
     })
 }
 
@@ -4384,7 +4400,7 @@ function docInfoEditEvent() {
             dataType: 'json',
             cache: false,
             success: function (response) {
-                  $('#docUploads input, #docUploads select').attr('disabled', false);
+                $('#docUploads input, #docUploads select').attr('disabled', false);
 
                 $("#doc_info_id").val(response['doc_id']);
                 $("#document_name").val(response['doc_name']);
@@ -4402,7 +4418,7 @@ function docInfoEditEvent() {
                     // $("#docholder_relationship_name").val(response['relation_name']);
                 }
                 $("#doc_relation").val(response['relation']);
-                  $('#docUploads input:not(#document_info_upd), #docUploads select').attr('disabled', true);
+                $('#docUploads input:not(#document_info_upd), #docUploads select').attr('disabled', true);
 
             }
         });

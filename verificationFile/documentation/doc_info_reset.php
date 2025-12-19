@@ -58,11 +58,14 @@ if (isset($_POST['pages'])) {
                 <td>
                     <?php //if ($pages == 1) {  // Verification screen only delete option. 
                     ?>
-                        <a id="doc_info_edit" value="<?php echo $row['id']; ?>"> <span class="icon-border_color"></span></a> &nbsp;
-                        <a id="doc_info_delete" value="<?php echo $row['id']; ?>"> <span class='icon-trash-2'></span> </a>
-                    <?php  //} elseif ($pages == 2) { ?>
-                        <!-- <a id="doc_info_edit" value="<?php #echo $row['id']; ?>" style="text-decoration: underline;"> Upload</a> &nbsp; -->
-                    <?php //} ?>
+                    <a id="doc_info_edit" value="<?php echo $row['id']; ?>"> <span class="icon-border_color"></span></a> &nbsp;
+                    <a id="doc_info_delete" value="<?php echo $row['id']; ?>"> <span class='icon-trash-2'></span> </a>
+                    <?php  //} elseif ($pages == 2) { 
+                    ?>
+                    <!-- <a id="doc_info_edit" value="<?php #echo $row['id']; 
+                                                        ?>" style="text-decoration: underline;"> Upload</a> &nbsp; -->
+                    <?php //} 
+                    ?>
                 </td>
 
             </tr>
@@ -75,7 +78,9 @@ if (isset($_POST['pages'])) {
 
 <script type="text/javascript">
     $(function() {
-        $('#docModalTable').DataTable({
+        // Declare table variable to store the DataTable instance
+        var docModalTable = $('#docModalTable').DataTable({
+            ...getStateSaveConfig('docModalTable'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -94,11 +99,11 @@ if (isset($_POST['pages'])) {
             dom: 'lBfrtip',
             buttons: [{
                     extend: 'excel',
-                    action: function (e, dt, button, config) {
+                    action: function(e, dt, button, config) {
                         var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                         var dynamic = curDateJs('Doc_info'); // or any base
-                        config.title = dynamic;      // for versions that use title as filename
-                        config.filename = dynamic;   // for html5 filename
+                        config.title = dynamic; // for versions that use title as filename
+                        config.filename = dynamic; // for html5 filename
                         defaultAction.call(this, e, dt, button, config);
                     }
                 },
@@ -108,6 +113,9 @@ if (isset($_POST['pages'])) {
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(docModalTable, 'docModalTable');
     });
 </script>
 <?php

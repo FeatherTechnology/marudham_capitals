@@ -212,10 +212,10 @@ if (sizeof($getUser) > 0) {
 							<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
 								<div class="form-group">
 									<label for="cus_mob_search">Mobile</label><span class="required">&nbsp;*</span>
-									<input type="number" class="form-control" id="cus_mob_search" name="cus_mob_search" value='' placeholder='Enter Mobile Number' onKeyPress="if(this.value.length==10) return false;">
+									<input type="text" class="form-control" id="cus_mob_search" name="cus_mob_search" value='' placeholder='Enter Mobile Number' onKeyPress="if(this.value.length==10) return false;" oninput="validateInputNumber(this,'withOutDot')">
 									<span class="searchDetailsCheck text-danger" style="display: none;">Please enter any of these fields!</span>
 								</div>
-							</div>
+							</div> <!-- Use input type='text' for numeric validation, because type='number' always resets the cursor when you block invalid characters-->
 							<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
 								<div class="form-group">
 									<button class="" id='search_cus' name='search_cus'>Search&nbsp;<i class="fa fa-search"></i>
@@ -344,7 +344,7 @@ if (sizeof($getUser) > 0) {
 												<td class="current_date"></td>
 												<td><input type="text"  name="cus_name" id="cus_name" class="form-control cus_name" value="" placeholder="Enter Customer Name"></td>
 												<td>
-												<input type="number" class="form-control cus_mobile_num" id="cus_mobile_num" name="cus_mobile_num" value='' placeholder="Enter Mobile Number"></td>
+												<input type="text" class="form-control cus_mobile_num" id="cus_mobile_num" name="cus_mobile_num" value='' placeholder="Enter Mobile Number" oninput="validateInputNumber(this,'withOutDot')"></td>
 
 												<td><select type="text" class="form-control cus_area_name" id="cus_area_name" name="area_name" >
 														<option value="">Select Area Name</option>
@@ -403,9 +403,9 @@ if (sizeof($getUser) > 0) {
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<label for="cus_mob">Mobile Number</label><span class="required">&nbsp;*</span>
-								<input type="number" name="cus_mob" id="cus_mob" class='form-control' placeholder="Enter Mobile Number" tabindex="3" onKeyPress="if(this.value.length==10) return false;">
+								<input type="text" name="cus_mob" id="cus_mob" class='form-control' placeholder="Enter Mobile Number" tabindex="3" onKeyPress="if(this.value.length==10) return false;" oninput="validateInputNumber(this,'withOutDot')">
 								<span class="text-danger" id='cus_mobCheck' style="display: none;">Please Enter Mobile Number </span>
-							</div>
+							</div> <!-- Use input type='text' for numeric validation, because type='number' always resets the cursor when you block invalid characters-->
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<div class="form-group">
 									<label for="area">Area</label>&nbsp;<span class="text-danger">*</span>

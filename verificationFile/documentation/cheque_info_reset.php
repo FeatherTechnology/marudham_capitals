@@ -62,7 +62,9 @@ include '../../ajaxconfig.php';
 
 <script type="text/javascript">
     $(function() {
-        $('#chequeInfo_table_data').DataTable({
+        // Declare table variable to store the DataTable instance
+        var chequeInfo_table_data = $('#chequeInfo_table_data').DataTable({
+            ...getStateSaveConfig('chequeInfo_table_data'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -95,6 +97,9 @@ include '../../ajaxconfig.php';
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(chequeInfo_table_data, 'chequeInfo_table_data');
     });
 </script>
 <?php

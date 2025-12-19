@@ -28,7 +28,9 @@ $(document).ready(function () {
 function nocHandoverReportTable(){
    
     $('#noc_handover_report_table').DataTable().destroy();
-    $('#noc_handover_report_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var noc_handover_report_table = $('#noc_handover_report_table').DataTable({
+        ...getStateSaveConfig('noc_handover_report_table'),
         "order": [
             [0, "asc"]
         ],
@@ -84,6 +86,9 @@ function nocHandoverReportTable(){
             paginationFunction('noc_handover_report_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(noc_handover_report_table, 'noc_handover_report_table');
 }
 function swalError(title, text) {
     Swal.fire({

@@ -1,10 +1,10 @@
 <?php
 include '../ajaxconfig.php';
 
-if(isset($_POST['req_id'])){
+if (isset($_POST['req_id'])) {
     $req_id = $_POST['req_id'];
 }
-if(isset($_POST['cus_id'])){
+if (isset($_POST['cus_id'])) {
     $cus_id = $_POST['cus_id'];
 }
 ?>
@@ -30,41 +30,52 @@ if(isset($_POST['cus_id'])){
         $qry = $connect->query("SELECT * FROM `document_info` where req_id = '$req_id' order by id desc");
 
         while ($row = $qry->fetch()) {
-            if($row["holder_name"] == ''){
-                $qry1 = $connect->query("SELECT * FROM verification_family_info where id = '".$row['relation_name']."' ");
+            if ($row["holder_name"] == '') {
+                $qry1 = $connect->query("SELECT * FROM verification_family_info where id = '" . $row['relation_name'] . "' ");
                 $holder_name = $qry1->fetch()['famname'];
-            }else{
+            } else {
                 $holder_name = $row["holder_name"];
             }
 
-            $docUpd = explode(',',$row["doc_upload"]);
+            $docUpd = explode(',', $row["doc_upload"]);
             // $docUpd = $row["doc_upload"];
         ?>
 
             <tr>
-            <td></td>
+                <td></td>
                 <td><?php echo $row["doc_name"]; ?></td>
                 <td><?php echo $row["doc_detail"]; ?></td>
-                <td><?php if($row["doc_type"] == '0'){ echo 'Original';}else if($row["doc_type"] == '1'){echo 'Xerox'; } ?></td>
-                <td><?php if($row["doc_holder"] == '0'){ echo 'Customer';}else if($row["doc_holder"] == '1'){echo 'Guarentor'; }elseif($row["doc_holder"] == '2'){echo 'Family Member';} ?></td>
+                <td><?php if ($row["doc_type"] == '0') {
+                        echo 'Original';
+                    } else if ($row["doc_type"] == '1') {
+                        echo 'Xerox';
+                    } ?></td>
+                <td><?php if ($row["doc_holder"] == '0') {
+                        echo 'Customer';
+                    } else if ($row["doc_holder"] == '1') {
+                        echo 'Guarentor';
+                    } elseif ($row["doc_holder"] == '2') {
+                        echo 'Family Member';
+                    } ?></td>
                 <td><?php echo $holder_name; ?></td>
                 <td><?php echo $row["relation"]; ?></td>
-                <td><?php $text='';
-                foreach($docUpd as $upd){
-                    $text .= '<a href="uploads/verification/doc_info/'.$upd.'" target="_blank" title="View Document" > ' .$upd.  '</a>, ';
-                }
-                echo rtrim($text,', ');// to trim the comma at end ?></td>
+                <td><?php $text = '';
+                    foreach ($docUpd as $upd) {
+                        $text .= '<a href="uploads/verification/doc_info/' . $upd . '" target="_blank" title="View Document" > ' . $upd .  '</a>, ';
+                    }
+                    echo rtrim($text, ', '); // to trim the comma at end 
+                    ?></td>
 
                 <td>
                     <?php
-                        if(empty($docUpd[0])){?>
-                            <a class="doc_info_edit" value="<?php echo $row['id']; ?>" style="text-decoration: underline;"> Upload</a> &nbsp;
+                    if (empty($docUpd[0])) { ?>
+                        <a class="doc_info_edit" value="<?php echo $row['id']; ?>" style="text-decoration: underline;"> Upload</a> &nbsp;
                     <?php } ?>
                 </td>
 
             </tr>
 
-        <?php 
+        <?php
         }     ?>
     </tbody>
 </table>
@@ -72,7 +83,9 @@ if(isset($_POST['cus_id'])){
 
 <script type="text/javascript">
     $(function() {
-        $('#docModalTable').DataTable({
+        // Declare table variable to store the DataTable instance
+        var docModalTable = $('#docModalTable').DataTable({
+            ...getStateSaveConfig('docModalTable'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -91,11 +104,11 @@ if(isset($_POST['cus_id'])){
             dom: 'lBfrtip',
             buttons: [{
                     extend: 'excel',
-                    action: function (e, dt, button, config) {
+                    action: function(e, dt, button, config) {
                         var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                         var dynamic = curDateJs('Document_info'); // or any base
-                        config.title = dynamic;      // for versions that use title as filename
-                        config.filename = dynamic;   // for html5 filename
+                        config.title = dynamic; // for versions that use title as filename
+                        config.filename = dynamic; // for html5 filename
                         defaultAction.call(this, e, dt, button, config);
                     }
                 },
@@ -105,6 +118,9 @@ if(isset($_POST['cus_id'])){
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(docModalTable, 'docModalTable');
     });
 </script>
 

@@ -182,10 +182,10 @@ if ($idupd > 0) {
                                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                         <div class="form-group">
                                             <label class="label">Pincode</label>&nbsp;<span class="text-danger">*</span>
-                                            <input type="number" required onkeydown="javascript: return event.keyCode == 69 ? false : true" name="pincode" id="pincode" class="form-control" placeholder="Enter Pincode" value="<?php if (isset($pincode)) echo $pincode; ?>" pattern="/^-?\d+\.?\d*$/" onKeyPress="if(this.value.length==6) return false;" tabindex='9'>
+                                            <input type="text" required onkeydown="javascript: return event.keyCode == 69 ? false : true" name="pincode" id="pincode" class="form-control" placeholder="Enter Pincode" value="<?php if (isset($pincode)) echo $pincode; ?>" pattern="/^-?\d+\.?\d*$/" onKeyPress="if(this.value.length==6) return false;" tabindex='9' oninput="validateInputNumber(this,'withOutDot')">
                                             <!-- <span id="pincodecheck" class="text-danger">Enter Pincode</span>  -->
                                         </div>
-                                    </div>
+                                    </div> <!-- Use input type='text' for numeric validation, because type='number' always resets the cursor when you block invalid characters-->
                                 </div>
                             </div>
                         </div>
@@ -209,26 +209,24 @@ if ($idupd > 0) {
                                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                         <div class="form-group">
                                             <label for="disabledInput">Mobile Number</label>
-                                            <input type="number" name="mobile_number" id="mobile_number" class="form-control" placeholder="Enter Mobile Number" value="<?php if (isset($mobile_number)) echo $mobile_number; ?>" pattern="/^-?\d+\.?\d*$/" onKeyPress="if(this.value.length==10) return false;" tabindex='11'>
+                                            <input type="text" name="mobile_number" id="mobile_number" class="form-control" placeholder="Enter Mobile Number" value="<?php if (isset($mobile_number)) echo $mobile_number; ?>" pattern="/^-?\d+\.?\d*$/" onKeyPress="if(this.value.length==10) return false;" tabindex='11' oninput="validateInputNumber(this,'withOutDot')">
                                         </div>
-                                    </div>
+                                    </div> <!-- Use input type='text' for numeric validation, because type='number' always resets the cursor when you block invalid characters-->
                                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12"></div>
                                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                         <div class="form-group">
                                             <label for="disabledInput">WhatsApp Number</label>
-                                            <input type="number" name="whatsapp_number" id="whatsapp_number" class="form-control" placeholder="Enter WhatsApp Number" value="<?php if (isset($whatsapp_number)) echo $whatsapp_number; ?>" pattern="/^-?\d+\.?\d*$/" onKeyPress="if(this.value.length==10) return false;" tabindex='12'>
-
+                                            <input type="text" name="whatsapp_number" id="whatsapp_number" class="form-control" placeholder="Enter WhatsApp Number" value="<?php if (isset($whatsapp_number)) echo $whatsapp_number; ?>" pattern="/^-?\d+\.?\d*$/" onKeyPress="if(this.value.length==10) return false;" tabindex='12' oninput="validateInputNumber(this,'withOutDot')">
                                             <!-- <span id="whatsapp_numbercheck" class="text-danger" >Enter Whatsapp Number</span>  -->
                                         </div>
-                                    </div>
+                                    </div> <!-- Use input type='text' for numeric validation, because type='number' always resets the cursor when you block invalid characters-->
 
                                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                         <div class="form-group">
                                             <label for="disabledInput">Landline Number</label>
-                                            <input type="number" name="landline_number" id="landline_number" class="form-control" placeholder="Enter Landline Number" value="<?php if (isset($landline_number)) echo $landline_number; ?>" pattern="/^-?\d+\.?\d*$/" onKeyPress="if(this.value.length==8) return false;" tabindex='13'>
-
+                                            <input type="text" name="landline_number" id="landline_number" class="form-control" placeholder="Enter Landline Number" value="<?php if (isset($landline_number)) echo $landline_number; ?>" pattern="/^-?\d+\.?\d*$/" onKeyPress="if(this.value.length==8) return false;" tabindex='13' oninput="validateInputNumber(this,'withOutDot')">
                                         </div>
-                                    </div>
+                                    </div> <!-- Use input type='text' for numeric validation, because type='number' always resets the cursor when you block invalid characters-->
                                 </div>
                             </div>
                         </div>

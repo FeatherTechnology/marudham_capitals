@@ -34,7 +34,9 @@ if (isset($_POST['taluk'])) {
                                                         echo $ct["area_id"];
                                                     } ?>"><span class='icon-trash-2'></span>
                         </a> &nbsp
-                        <a id="swap_areas" data-toggle="modal"  data-target="#swap_area_model_box" value="<?php if (isset($ct['area_id'])) { echo $ct['area_id']; } ?>"> <span class="icon-sync"></span> </a>
+                        <a id="swap_areas" data-toggle="modal" data-target="#swap_area_model_box" value="<?php if (isset($ct['area_id'])) {
+                                                                                                                echo $ct['area_id'];
+                                                                                                            } ?>"> <span class="icon-sync"></span> </a>
 
                     </td>
                 </tr>
@@ -46,7 +48,9 @@ if (isset($_POST['taluk'])) {
 
 <script type="text/javascript">
     $(function() {
-        $('#areaTable').DataTable({
+        // Declare table variable to store the DataTable instance
+        var areaTable = $('#areaTable').DataTable({
+            ...getStateSaveConfig('areaTable'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -65,11 +69,11 @@ if (isset($_POST['taluk'])) {
             dom: 'lBfrtip',
             buttons: [{
                     extend: 'excel',
-                    action: function (e, dt, button, config) {
+                    action: function(e, dt, button, config) {
                         var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                         var dynamic = curDateJs('Area_table'); // or any base
-                        config.title = dynamic;      // for versions that use title as filename
-                        config.filename = dynamic;   // for html5 filename
+                        config.title = dynamic; // for versions that use title as filename
+                        config.filename = dynamic; // for html5 filename
                         defaultAction.call(this, e, dt, button, config);
                     }
                 },
@@ -79,6 +83,9 @@ if (isset($_POST['taluk'])) {
                 }
             ]
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(areaTable, 'areaTable');
     });
 </script>
 

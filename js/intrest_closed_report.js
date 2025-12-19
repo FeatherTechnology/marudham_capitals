@@ -19,7 +19,9 @@ $(document).ready(function () {
 
 function closedReportTable(){
     $('#closed_report_table').DataTable().destroy();
-    $('#closed_report_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var closed_report_table = $('#closed_report_table').DataTable({
+        ...getStateSaveConfig('closed_report_table'),
         "order": [
             [0, "asc"]
         ],
@@ -88,4 +90,7 @@ function closedReportTable(){
             paginationFunction('closed_report_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(closed_report_table, 'closed_report_table');
 }

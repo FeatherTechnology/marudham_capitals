@@ -67,7 +67,9 @@ $(document).ready(function () {
 
 function loanIssueReportTable(){
     $('#loan_issue_report_table').DataTable().destroy();
-    $('#loan_issue_report_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var loan_issue_report_table = $('#loan_issue_report_table').DataTable({
+        ...getStateSaveConfig('loan_issue_report_table'),
         "order": [
             [0, "asc"]
         ],
@@ -137,4 +139,7 @@ function loanIssueReportTable(){
             paginationFunction('loan_issue_report_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(loan_issue_report_table, 'loan_issue_report_table');
 }

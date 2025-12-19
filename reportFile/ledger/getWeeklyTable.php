@@ -15,8 +15,8 @@ if ($userid != 1) {
 
     $userQry = $connect->query("SELECT line_id, report_access FROM USER WHERE user_id = $userid ");
     $rowuser = $userQry->fetch();
-        $line_id = $rowuser['line_id'];
-        $report_access = $rowuser['report_access'];
+    $line_id = $rowuser['line_id'];
+    $report_access = $rowuser['report_access'];
 
     if ($report_access == '1') { //Report access individual.
         $line_id = explode(',', $line_id);
@@ -210,7 +210,9 @@ $weeks = generateWeeks($startDate, $endDate);
 
 <script type='text/javascript'>
     $(function() {
-        $('#weekly_table').DataTable({
+        // Declare table variable to store the DataTable instance
+        var weekly_table = $('#weekly_table').DataTable({
+            ...getStateSaveConfig('weekly_table'),
             "title": "Weekly Ledger Report",
             'processing': true,
             'iDisplayLength': 10,
@@ -221,11 +223,11 @@ $weeks = generateWeeks($startDate, $endDate);
             dom: 'lBfrtip',
             buttons: [{
                     extend: 'excel',
-                    action: function (e, dt, button, config) {
+                    action: function(e, dt, button, config) {
                         var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                         var dynamic = curDateJs('Weekly_Ledger_report'); // or any base
-                        config.title = dynamic;      // for versions that use title as filename
-                        config.filename = dynamic;   // for html5 filename
+                        config.title = dynamic; // for versions that use title as filename
+                        config.filename = dynamic; // for html5 filename
                         defaultAction.call(this, e, dt, button, config);
                     }
                 },
@@ -239,6 +241,9 @@ $weeks = generateWeeks($startDate, $endDate);
                 paginationFunction('weekly_table');
             }
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(weekly_table, 'weekly_table');
     });
 </script>
 

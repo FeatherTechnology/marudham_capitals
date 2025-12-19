@@ -489,18 +489,18 @@ if ($idupd > 0) {
 							<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
 								<div class="form-group">
 									<label for="mobile1">Mobile No 1</label><span class="required">&nbsp;*</span>
-									<input type="number" class="form-control" id="mobile1" name="mobile1" onkeypress="if(this.value.length==10) return false;" value='<?php if (isset($mobile1)) {
+									<input type="text" class="form-control" id="mobile1" name="mobile1" onkeypress="if(this.value.length==10) return false;" value='<?php if (isset($mobile1)) {
 																																											echo $mobile1;
-																																										} ?>' tabindex='22' placeholder="Enter Mobile Number">
+																																										} ?>' tabindex='22' oninput="validateInputNumber(this,'withOutDot')"placeholder="Enter Mobile Number">
 									<span class="text-danger" style='display:none' id='mobile1Check'>Please Enter Mobile Number</span>
 								</div>
 							</div>
 							<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
 								<div class="form-group">
 									<label for="mobile2">Mobile No 2</label>
-									<input type="number" class="form-control" id="mobile2" name="mobile2" onkeypress="if(this.value.length==10) return false;" value='<?php if (isset($mobile2)) {
+									<input type="text" class="form-control" id="mobile2" name="mobile2" onkeypress="if(this.value.length==10) return false;" value='<?php if (isset($mobile2)) {
 																																											echo $mobile2;
-																																										} ?>' tabindex='23' placeholder="Enter Mobile Number">
+																																										} ?>' tabindex='23' oninput="validateInputNumber(this,'withOutDot')"placeholder="Enter Mobile Number">
 									<span class="text-danger" style='display:none' id='mobile2Check'>Please Enter Mobile Number</span>
 								</div>
 							</div>
@@ -621,7 +621,7 @@ if ($idupd > 0) {
 							<label for="tot_value">Total value</label><span class="required">&nbsp;*</span>
 							<input type="text" class="form-control" id="tot_value" name="tot_value" value='<?php if (isset($tot_value)) {
 																													echo moneyFormatIndia($tot_value);
-																												} ?>' tabindex='33' placeholder="Enter Total Value">
+																												} ?>' tabindex='33' oninput="validateInputNumber(this,'withOutDot')" placeholder="Enter Total Value">
 						</div>
 						<span class="text-danger" style='display:none' id='totvalueCheck'>Please Enter Total Value</span>
 					</div>
@@ -630,7 +630,7 @@ if ($idupd > 0) {
 							<label for="ad_amt">Advance Amount</label><span class="required">&nbsp;*</span>
 							<input type="text" class="form-control" id="ad_amt" name="ad_amt" value='<?php if (isset($ad_amt)) {
 																											echo moneyFormatIndia($ad_amt);
-																										} ?>' tabindex='34' placeholder="Enter Advance Amount">
+																										} ?>' tabindex='34' oninput="validateInputNumber(this,'withOutDot')" placeholder="Enter Advance Amount">
 							<span class="text-danger" style='display:none' id='adamtCheck'>Please Enter Advance Amount</span>
 						</div>
 					</div>
@@ -688,16 +688,16 @@ if ($idupd > 0) {
 							<label for="due_amt">Due Amount</label><span class="required">&nbsp;*</span>
 							<input type="text" class="form-control" id="due_amt" name="due_amt" value='<?php if (isset($due_amt)) {
 																												echo moneyFormatIndia($due_amt);
-																											} ?>' tabindex='38'>
+																											} ?>' tabindex='38' oninput="validateInputNumber(this,'withOutDot')">
 							<span class="text-danger" style='display:none' id='dueamtCheck'>Please Enter Due Amount</span>
 						</div>
 					</div>
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 due_period" style="display:none">
 						<div class="form-group">
 							<label for="due_period">Due Period</label><span class="required">&nbsp;*</span>
-							<input type="number" class="form-control" id="due_period" name="due_period" value='<?php if (isset($due_period)) {
+							<input type="text" class="form-control" id="due_period" name="due_period" value='<?php if (isset($due_period)) {
 																													echo $due_period;
-																												} ?>' tabindex='39'>
+																												} ?>' tabindex='39' oninput="validateInputNumber(this,'withOutDot')">
 							<span class="text-danger" style='display:none' id='dueperiodCheck'>Please Enter Due Period</span>
 						</div>
 					</div>
@@ -711,19 +711,19 @@ if ($idupd > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label for="calc_loan_amt">Loan Amount</label>
-							<input type="number" class="form-control" id="calc_loan_amt" name="calc_loan_amt" tabindex='40'>
+							<input type="text" class="form-control" id="calc_loan_amt" name="calc_loan_amt" tabindex='40' oninput="validateInputNumber(this,'withOutDot')">
 						</div>
 					</div>
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label for="calc_int_rate">Rate of Interest</label>
-							<input type="number" class="form-control" id="calc_int_rate" name="calc_int_rate" tabindex='41' pattern="[0-9]*\.?[0-9]+">
+							<input type="text" class="form-control" id="calc_int_rate" name="calc_int_rate" tabindex='41' oninput="validateInputNumber(this,'withDot')">
 						</div>
 					</div>
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label for="calc_due_period">Due Period</label>
-							<input type="number" class="form-control" id="calc_due_period" name="calc_due_period" tabindex='42'>
+							<input type="text" class="form-control" id="calc_due_period" name="calc_due_period" tabindex='42' oninput="validateInputNumber(this,'withOutDot')">
 						</div>
 					</div>
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12"></div>

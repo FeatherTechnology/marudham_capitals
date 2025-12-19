@@ -44,7 +44,9 @@ if (isset($_POST['area'])) {
 
 <script type="text/javascript">
     $(function() {
-        $('#subAreaTable').DataTable({
+        // Declare table variable to store the DataTable instance
+        var subAreaTable = $('#subAreaTable').DataTable({
+            ...getStateSaveConfig('subAreaTable'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -63,11 +65,11 @@ if (isset($_POST['area'])) {
             dom: 'lBfrtip',
             buttons: [{
                     extend: 'excel',
-                    action: function (e, dt, button, config) {
+                    action: function(e, dt, button, config) {
                         var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                         var dynamic = curDateJs('SubArea_table'); // or any base
-                        config.title = dynamic;      // for versions that use title as filename
-                        config.filename = dynamic;   // for html5 filename
+                        config.title = dynamic; // for versions that use title as filename
+                        config.filename = dynamic; // for html5 filename
                         defaultAction.call(this, e, dt, button, config);
                     }
                 },
@@ -77,6 +79,9 @@ if (isset($_POST['area'])) {
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(subAreaTable, 'subAreaTable');
     });
 </script>
 

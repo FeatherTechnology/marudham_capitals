@@ -40,7 +40,9 @@ include '../ajaxconfig.php';
 
 <script type="text/javascript">
     $(function() {
-        $('#coll_purpose_data').DataTable({
+        // Declare table variable to store the DataTable instance
+        var coll_purpose_data = $('#coll_purpose_data').DataTable({
+            ...getStateSaveConfig('coll_purpose_data'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -72,5 +74,8 @@ include '../ajaxconfig.php';
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(coll_purpose_data, 'coll_purpose_data');
     });
 </script>

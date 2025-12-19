@@ -215,7 +215,9 @@ function moneyFormatIndia($num)
 
 <script type="text/javascript">
     $(function() {
-        $('#loanListTable').DataTable({
+        // Declare table variable to store the DataTable instance
+        var loanListTable = $('#loanListTable').DataTable({
+            ...getStateSaveConfig('loanListTable'),
             'processing': true,
             'iDisplayLength': 10,
             "lengthMenu": [
@@ -243,6 +245,9 @@ function moneyFormatIndia($num)
                 searchFunction('loanListTable');
             }
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(loanListTable, 'loanListTable');
     });
     $('.dropdown').off().click(function(event) {
         event.preventDefault();

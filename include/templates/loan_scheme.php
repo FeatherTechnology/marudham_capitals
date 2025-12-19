@@ -329,16 +329,16 @@ if (isset($_GET['type'])) {
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Total Due</label>&nbsp;<span class="text-danger">*</span>
-											<input type="number" name="total_due" id="total_due" value="<?php if (isset($total_due)) echo $total_due; ?>" placeholder="Enter Total Due" class="form-control" tabindex="8">
+											<input type="text" name="total_due" id="total_due" value="<?php if (isset($total_due)) echo $total_due; ?>" placeholder="Enter Total Due" class="form-control" tabindex="8" oninput="validateInputNumber(this,'withOutDot')">
 										</div>
-									</div>
+									</div> <!-- Use input type='text' for numeric validation, because type='number' always resets the cursor when you block invalid characters-->
 
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Advance Due</label>
-											<input type="number" name="advance_due" id="advance_due" value="<?php if (isset($advance_due)) echo $advance_due; ?>" placeholder="Enter Advance Due" class="form-control" tabindex="9">
+											<input type="text" name="advance_due" id="advance_due" value="<?php if (isset($advance_due)) echo $advance_due; ?>" placeholder="Enter Advance Due" class="form-control" tabindex="9" oninput="validateInputNumber(this,'withOutDot')">
 										</div>
-									</div>
+									</div> <!-- Use input type='text' for numeric validation, because type='number' always resets the cursor when you block invalid characters-->
 
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
@@ -538,7 +538,7 @@ if (isset($_GET['type'])) {
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Due Period</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" name="due_period1" id="due_period1" value="<?php if (isset($due_period1)) echo $due_period1; ?>" placeholder="Enter Due Period" class="form-control" tabindex='8'>
+											<input type="text" name="due_period1" id="due_period1" value="<?php if (isset($due_period1)) echo $due_period1; ?>" placeholder="Enter Due Period" class="form-control" tabindex='8' oninput="validateInputNumber(this,'withOutDot')">
 										</div>
 									</div>
 								</div>
@@ -747,7 +747,7 @@ if (isset($_GET['type'])) {
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Due Period</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" name="due_period2" id="due_period2" value="<?php if (isset($due_period2)) echo $due_period2; ?>" placeholder="Enter Due Period" class="form-control" tabindex='8'>
+											<input type="text" name="due_period2" id="due_period2" value="<?php if (isset($due_period2)) echo $due_period2; ?>" placeholder="Enter Due Period" class="form-control" tabindex='8' oninput="validateInputNumber(this,'withOutDot')">
 										</div>
 									</div>
 

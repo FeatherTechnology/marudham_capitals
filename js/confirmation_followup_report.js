@@ -19,7 +19,9 @@ $(document).ready(function () {
 
 function confirmationFollowUpReportTable(){
     $('#confirmation_followup_report_table').DataTable().destroy();
-    $('#confirmation_followup_report_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var confirmation_followup_report_table = $('#confirmation_followup_report_table').DataTable({
+        ...getStateSaveConfig('confirmation_followup_report_table'),
         "order": [
             [0, "asc"]
         ],
@@ -61,4 +63,7 @@ function confirmationFollowUpReportTable(){
             paginationFunction('confirmation_followup_report_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(confirmation_followup_report_table, 'confirmation_followup_report_table');
 }
