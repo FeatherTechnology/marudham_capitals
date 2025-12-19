@@ -3,23 +3,23 @@ $(document).ready(function () {
 	// Sort loan_category dropdown
     sortDropdownAlphabetically("#loan_category");
 
-	$('#due_type').on('change', function () {
-		var due_type = $(this).val();
+	// $('#due_type').on('change', function () {
+	// 	var due_type = $(this).val();
 
-		if (due_type == 'emi') {
-			$(".intrest_method").hide();
-			$(".emi_method").show();
-			$('#overdue').val("");
-		} else if (due_type == 'intrest') {
-			$(".intrest_method").show();
-			$(".emi_method").hide();
-			$('#overdue').val("");
-		} else {
-			$(".intrest_method").hide();
-			$(".emi_method").hide();
-			$('#overdue').val("");
-		}
-	});
+	// 	if (due_type == 'emi') {
+	// 		$(".intrest_method").hide();
+	// 		$(".emi_method").show();
+	// 		$('#overdue').val("");
+	// 	} else if (due_type == 'intrest') {
+	// 		$(".intrest_method").show();
+	// 		$(".emi_method").hide();
+	// 		$('#overdue').val("");
+	// 	} else {
+	// 		$(".intrest_method").hide();
+	// 		$(".emi_method").hide();
+	// 		$('#overdue').val("");
+	// 	}
+	// });
 
 	//change sub category based on Loan category
 	$('#loan_category').change(function () {
@@ -125,26 +125,26 @@ $(function () {
 	}
 })
 
-function toggleOverdueField() {
-	var dueType = $('#due_type').val();
+// function toggleOverdueField() {
+// 	var dueType = $('#due_type').val();
 
-	if (dueType === 'emi') {
-		$('.interest_only').hide();    // hide radio buttons
-		$('#emi_symbol').show();       // show % symbol in label
-	} else if (dueType === 'intrest') {
-		$('.interest_only').show();    // show radio buttons
-		$('#emi_symbol').hide();       // hide % symbol
-	} else {
-		$('.intrest_only').hide();
-		$('#emi_symbol').hide();
-	}
-}
+// 	if (dueType === 'emi') {
+// 		$('.interest_only').hide();    // hide radio buttons
+// 		$('#emi_symbol').show();       // show % symbol in label
+// 	} else if (dueType === 'intrest') {
+// 		$('.interest_only').show();    // show radio buttons
+// 		$('#emi_symbol').hide();       // hide % symbol
+// 	} else {
+// 		$('.intrest_only').hide();
+// 		$('#emi_symbol').hide();
+// 	}
+// }
 
-toggleOverdueField(); // run on page load
+// toggleOverdueField(); // run on page load
 
-$('#due_type').change(function () {
-	toggleOverdueField();
-});
+// $('#due_type').change(function () {
+// 	toggleOverdueField();
+// });
 
 
 //Fetch Loan Category Based on loan category

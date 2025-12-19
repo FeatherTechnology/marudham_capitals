@@ -1692,20 +1692,6 @@
                 return false;
             };
 
-            ////////// Show Loader if ajax function is called inside anywhere in entire project  ////////
-
-            $(document).ajaxStart(function() {
-                showOverlay();
-                // Stop session timers while AJAX is in progress
-                clearTimeout(warningTimeout);
-                clearTimeout(logoutTimeout);
-            });
-
-            $(document).ajaxStop(function() {
-                hideOverlay();
-                resetTimers(); // Reset again after AJAX completes
-            });
-
             // For Hard Reload and need to create a text file version   
             let currentVersion = null;
 
@@ -1726,6 +1712,18 @@
 
         }); //Document Ready End
 
+        ////////// Show Loader if ajax function is called inside anywhere in entire project  ////////
+        $(document).ajaxStart(function() {
+            showOverlay();
+            // Stop session timers while AJAX is in progress
+            // clearTimeout(warningTimeout);
+            // clearTimeout(logoutTimeout);
+        });
+
+        $(document).ajaxStop(function() {
+            hideOverlay();
+            // resetTimers(); // Reset again after AJAX completes
+        });
 
         function moneyFormatIndia(num) {
             var isNegative = false;

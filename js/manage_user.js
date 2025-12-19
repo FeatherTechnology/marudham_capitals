@@ -339,11 +339,11 @@ $(document).ready(function () {
         checkbox(checkboxesToEnable, reportmodule);
     });
 
-    $("#reportmodule_intrest").on("change", function () {
-        const checkboxesToEnable = document.querySelectorAll("input.intrest-report-checkbox");
-        var reportmodule = document.querySelector('#reportmodule_intrest');
-        checkbox(checkboxesToEnable, reportmodule);
-    });
+    // $("#reportmodule_intrest").on("change", function () {
+    //     const checkboxesToEnable = document.querySelectorAll("input.intrest-report-checkbox");
+    //     var reportmodule = document.querySelector('#reportmodule_intrest');
+    //     checkbox(checkboxesToEnable, reportmodule);
+    // });
 
     $("#searchmodule").on("change", function () {
         const checkboxesToEnable = document.querySelectorAll("input.search-checkbox");
@@ -588,7 +588,7 @@ $(function () {
         var monitor_report_module = document.getElementById('monitor_report_module');
         var analysis_report_module = document.getElementById('analysis_report_module');
         var accounts_report_module = document.getElementById('accounts_report_module');
-        var reportmodule_intrest = document.getElementById('reportmodule_intrest');
+        // var reportmodule_intrest = document.getElementById('reportmodule_intrest');
         var searchmodule = document.getElementById('searchmodule');
         var bulk_upload_module = document.getElementById('bulk_upload_module');
         var loan_track_module = document.getElementById('loan_track_module');
@@ -614,7 +614,7 @@ $(function () {
         if (monitor_report_module.checked) { const checkboxesToEnable = document.querySelectorAll("input.monitor-checkbox "); checkbox(checkboxesToEnable, monitor_report_module); }
         if (analysis_report_module.checked) { const checkboxesToEnable = document.querySelectorAll("input.analysis-checkbox "); checkbox(checkboxesToEnable, analysis_report_module); }
         if (accounts_report_module.checked) { const checkboxesToEnable = document.querySelectorAll("input.acounts-checkbox "); checkbox(checkboxesToEnable, accounts_report_module); }
-        if (reportmodule_intrest.checked) { const checkboxesToEnable = document.querySelectorAll("input.intrest-report-checkbox"); checkbox(checkboxesToEnable, reportmodule_intrest); }
+        // if (reportmodule_intrest.checked) { const checkboxesToEnable = document.querySelectorAll("input.intrest-report-checkbox"); checkbox(checkboxesToEnable, reportmodule_intrest); }
         if (searchmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.search-checkbox"); checkbox(checkboxesToEnable, searchmodule); }
         if (bulk_upload_module.checked) { const checkboxesToEnable = document.querySelectorAll("input.bulk_upload-checkbox"); checkbox(checkboxesToEnable, bulk_upload_module); }
         if (loan_track_module.checked) { const checkboxesToEnable = document.querySelectorAll("input.loan_track-checkbox"); checkbox(checkboxesToEnable, loan_track_module); }
