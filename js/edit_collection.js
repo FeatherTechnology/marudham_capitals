@@ -43,7 +43,8 @@ function getcustomerStatustable(Customer_Status) {
     table.destroy();
 
     // Reinitialize the DataTable with stateSave option to retain state
-    var newTable = $('#collection_table').DataTable({
+    var collection_table = $('#collection_table').DataTable({
+        ...getStateSaveConfig('collection_table'),
         "order": [[0, "desc"]],
         'processing': true,
         "displayStart": getDisplayStart('collection_table'),
@@ -92,6 +93,7 @@ function getcustomerStatustable(Customer_Status) {
             paginationFunction('collection_table');
         }
     });
+    initColVisFeatures(collection_table, 'collection_table');
 
     // No need to manually restore the page; it's handled automatically by stateSave
     $(".table-responsive").show();

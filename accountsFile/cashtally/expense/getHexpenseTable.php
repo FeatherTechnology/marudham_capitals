@@ -82,7 +82,9 @@ $connect = null;
 
 <script type='text/javascript'>
     $(function() {
-        $('#HexpenseTable').DataTable({
+        // Declare table variable to store the DataTable instance
+        var HexpenseTable = $('#HexpenseTable').DataTable({
+            ...getStateSaveConfig('HexpenseTable'),
             "title":"Hand Expenses List",
             'processing': true,
             'iDisplayLength': 5,
@@ -115,6 +117,9 @@ $connect = null;
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(HexpenseTable, 'HexpenseTable');
     });
 </script>
 

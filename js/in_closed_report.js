@@ -19,7 +19,9 @@ $(document).ready(function () {
 
 function closedReportTable(){
     $('#in_closed_report_table').DataTable().destroy();
-    $('#in_closed_report_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var in_closed_report_table = $('#in_closed_report_table').DataTable({
+        ...getStateSaveConfig('in_closed_report_table'),
         "order": [
             [0, "desc"]
         ],
@@ -87,4 +89,7 @@ function closedReportTable(){
             searchFunction('in_closed_report_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(in_closed_report_table, 'in_closed_report_table');
 }

@@ -1,11 +1,11 @@
 $(document).ready(function () {
-    
-    $('#from_date').change(function(){
+
+    $('#from_date').change(function () {
         const fromDate = $(this).val();
         const toDate = $('#to_date').val();
         $('#to_date').attr('min', fromDate);
 
-         // Check if from_date is greater than to_date
+        // Check if from_date is greater than to_date
         if (toDate && fromDate > toDate) {
             $('#to_date').val(''); // Clear the invalid value
         }
@@ -18,13 +18,13 @@ $(document).ready(function () {
         let type = $(this).val();
         $('#sel_screen').val('');
 
-        if(type == '1'){ // If Cancel is selected
-            $('#sel_screen .all-options').show(); 
-            $('#sel_screen .cancel-option').show(); 
+        if (type == '1') { // If Cancel is selected
+            $('#sel_screen .all-options').show();
+            $('#sel_screen .cancel-option').show();
         } else {
-           
+
             $('#sel_screen .all-options').hide();
-            $('#sel_screen .cancel-option').show(); 
+            $('#sel_screen .cancel-option').show();
         }
     });
 
@@ -34,11 +34,11 @@ $(document).ready(function () {
         var to_date = $('#to_date').val();
         var type = $('#type').val();
         var sel_screen = $('#sel_screen').val();
-    
+
         // Check if all fields are selected
         if (from_date === '' || to_date === '' || type === '' || sel_screen === '') {
             // If any field is empty, show an alert
-            swalError('Warning','Please select all required fields')
+            swalError('Warning', 'Please select all required fields')
         } else {
             // If all fields are filled, reload the table
             cancelRevokeTable();
@@ -49,17 +49,21 @@ $(document).ready(function () {
 
 //alert message
 function swalError(title, text) {
-	Swal.fire({
-		icon: 'error',
-		title: title,
-		text: text,
+    Swal.fire({
+        icon: 'error',
+        title: title,
+        text: text,
         confirmButtonColor: '#009688',
-	})
+    })
 }
 
-function cancelRevokeTable(){
+function cancelRevokeTable() {
+    // Destroy any existing DataTable instance
     $('#cancel_revoke_table').DataTable().destroy();
-    $('#cancel_revoke_table').DataTable({
+
+    // Initialize the DataTable and store the instance in a variable
+    var cancel_revoke_table = $('#cancel_revoke_table').DataTable({
+        ...getStateSaveConfig('cancel_revoke_table'),
         "order": [
             [0, "desc"]
         ],
@@ -131,4 +135,7 @@ function cancelRevokeTable(){
             });
         }
     });
+
+    // Now pass the initialized `cancel_revoke_table` to `initColVisFeatures`
+    initColVisFeatures(cancel_revoke_table, 'cancel_revoke_table');
 }

@@ -36,7 +36,9 @@ include '../ajaxconfig.php';
 
 <script type="text/javascript">
     $(function() {
-        $('#famdatatable').DataTable({
+        // Declare table variable to store the DataTable instance
+        var famdatatable = $('#famdatatable').DataTable({
+            ...getStateSaveConfig('famdatatable'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -55,11 +57,11 @@ include '../ajaxconfig.php';
             dom: 'lBfrtip',
             buttons: [{
                     extend: 'excel',
-                    action: function (e, dt, button, config) {
+                    action: function(e, dt, button, config) {
                         var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                         var dynamic = curDateJs('Family_info'); // or any base
-                        config.title = dynamic;      // for versions that use title as filename
-                        config.filename = dynamic;   // for html5 filename
+                        config.title = dynamic; // for versions that use title as filename
+                        config.filename = dynamic; // for html5 filename
                         defaultAction.call(this, e, dt, button, config);
                     }
                 },
@@ -69,6 +71,9 @@ include '../ajaxconfig.php';
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(famdatatable, 'famdatatable');
     });
 </script>
 <?php

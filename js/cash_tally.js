@@ -1044,7 +1044,7 @@ function getBankDepositDetails() {
         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
             <div class="form-group">
                 <label for="amt_bdep">Amount</label>
-                <input type="number" id="amt_bdep" name="amt_bdep" class="form-control" placeholder="Please Enter Amount" onkeyup="validateHandCash(this)">
+                <input type="text" id="amt_bdep" name="amt_bdep" class="form-control" placeholder="Please Enter Amount" onkeyup="validateHandCash(this)" oninput="validateInputNumber(this,'withOutDot')">
                 <span class="text-danger" id='amt_bdepCheck' style="display:none">Please Enter Amount</span>
             </div>
         </div>
@@ -1281,7 +1281,7 @@ function getCashWithdrawalDetails() {
         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
             <div class="form-group">
                 <label for="cheque_cwd">Cheque No.</label>
-                <input type="number" id="cheque_cwd" name="cheque_cwd" class="form-control" placeholder="Enter Cheque No.">
+                <input type="text" id="cheque_cwd" name="cheque_cwd" class="form-control" placeholder="Enter Cheque No." oninput="validateInputNumber(this,'withOutDot')">
                 <span class="text-danger" id='cheque_cwdCheck' style="display:none">Please Enter Cheque No.</span>
             </div>
         </div>
@@ -1295,7 +1295,7 @@ function getCashWithdrawalDetails() {
         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
             <div class="form-group">
                 <label for="amt_cwd">Amount</label>
-                <input type="number" id="amt_cwd" name="amt_cwd" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)">
+                <input type="text" id="amt_cwd" name="amt_cwd" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)" oninput="validateInputNumber(this,'withOutDot')">
                 <span class="text-danger" id='amt_cwdCheck' style="display:none">Please Enter Amount</span>
             </div>
         </div>
@@ -1637,7 +1637,7 @@ function getHandExchangeInputs() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
         <div class="form-group">
             <label for="amt_hed">Amount</label>
-            <input type="number" id="amt_hed" name="amt_hed" class="form-control" placeholder="Enter Amount" onkeyup="validateHandCash(this)">
+            <input type="text" id="amt_hed" name="amt_hed" class="form-control" placeholder="Enter Amount" onkeyup="validateHandCash(this)" oninput="validateInputNumber(this,'withOutDot')">
             <span class="text-danger" id='amt_hedCheck' style="display:none">Please Enter Amount</span>
         </div>
     </div>
@@ -1914,7 +1914,7 @@ function getBankExchangeInputs() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
         <div class="form-group">
             <label for="amt_bex">Amount</label>
-            <input type="number" id="amt_bex" name="amt_bex" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)">
+            <input type="text" id="amt_bex" name="amt_bex" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)" oninput="validateInputNumber(this,'withOutDot')">
             <span id="amt_bexCheck" class="text-danger" style="display:none">Please Enter Amount</span>
         </div>
     </div>
@@ -2128,7 +2128,7 @@ function getHotherincomeDetails() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
         <div class="form-group">
             <label for="amt">Amount</label>
-            <input type="number" id="amt" name="amt" class="form-control" placeholder="Enter Amount">
+            <input type="text" id="amt" name="amt" class="form-control" placeholder="Enter Amount" oninput="validateInputNumber(this,'withOutDot')">
             <span id='amtCheck' class="text-danger" style="display:none">Please Enter Amount</span>
         </div>
     </div>
@@ -2230,7 +2230,7 @@ function getBotherincomeDetails() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
         <div class="form-group">
             <label for="amt">Amount</label>
-            <input type="number" id="amt" name="amt" class="form-control" placeholder="Enter Amount">
+            <input type="text" id="amt" name="amt" class="form-control" placeholder="Enter Amount" oninput="validateInputNumber(this,'withOutDot')">
             <span id='amtCheck' class="text-danger" style="display:none">Please Enter Amount</span>
         </div>
     </div>
@@ -2552,7 +2552,7 @@ function hexpenseModalBtnClick() {
                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
                         <div class="form-group">
                             <label for="amt_hexp">Amount</label><span class='text-danger'>&nbsp;*</span>
-                            <input type="number" id="amt_hexp" name="amt_hexp" class="form-control" placeholder="Enter Amount" onkeyup="validateHandCash(this)">
+                            <input type="text" id="amt_hexp" name="amt_hexp" class="form-control" placeholder="Enter Amount" onkeyup="validateHandCash(this)" oninput="validateInputNumber(this,'withOutDot')">
                             <span id='amt_hexpCheck' class="text-danger" style="display:none">Please Enter Amount</span>
                         </div>
                     </div>
@@ -2811,7 +2811,7 @@ function bexpenseModalBtnClick() {
                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
                         <div class="form-group">
                             <label for="amt_bexp">Amount</label><span class='text-danger'>&nbsp;*</span>
-                            <input type="number" id="amt_bexp" name="amt_bexp" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)">
+                            <input type="text" id="amt_bexp" name="amt_bexp" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)" oninput="validateInputNumber(this,'withOutDot')">
                             <span id='amt_bexpCheck' class="text-danger" style="display:none">Please Enter Amount</span>
                         </div>
                     </div>
@@ -2996,7 +2996,7 @@ function getCHinvDetails() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
         <div class="form-group">
             <label for="amt_hinv">Amount</label><span class="text-danger">&nbsp;*</span>
-            <input type="number" id="amt_hinv" name="amt_hinv" class="form-control" placeholder="Enter Amount">
+            <input type="text" id="amt_hinv" name="amt_hinv" class="form-control" placeholder="Enter Amount" oninput="validateInputNumber(this,'withOutDot')">
             <span id='amt_hinvCheck' class="text-danger" style="display:none">Please Enter Amount</span>
         </div>
     </div>
@@ -3084,7 +3084,7 @@ function getDHinvDetails() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
         <div class="form-group">
             <label for="amt_hinv">Amount</label><span class="text-danger">&nbsp;*</span>
-            <input type="number" id="amt_hinv" name="amt_hinv" class="form-control" placeholder="Enter Amount" onkeyup="validateHandCash(this)">
+            <input type="text" id="amt_hinv" name="amt_hinv" class="form-control" placeholder="Enter Amount" onkeyup="validateHandCash(this)" oninput="validateInputNumber(this,'withOutDot')">
             <span id='amt_hinvCheck' class="text-danger" style="display:none">Please Enter Amount</span>
         </div>
     </div>
@@ -3200,7 +3200,7 @@ function getCBinvDetails() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
         <div class="form-group">
             <label for="amt_binv">Amount</label><span class="text-danger">&nbsp;*</span>
-            <input type="number" id="amt_binv" name="amt_binv" class="form-control" placeholder="Enter Amount">
+            <input type="text" id="amt_binv" name="amt_binv" class="form-control" placeholder="Enter Amount" oninput="validateInputNumber(this,'withOutDot')">
             <span id='amt_binvCheck' class="text-danger" style="display:none">Please Enter Amount</span>
         </div>
     </div>
@@ -3305,7 +3305,7 @@ function getDBinvDetails() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
         <div class="form-group">
             <label for="amt_binv">Amount</label><span class="text-danger">&nbsp;*</span>
-            <input type="number" id="amt_binv" name="amt_binv" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)">
+            <input type="text" id="amt_binv" name="amt_binv" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)" oninput="validateInputNumber(this,'withOutDot')">
             <span id='amt_binvCheck' class="text-danger" style="display:none">Please Enter Amount</span>
         </div>
     </div>
@@ -3424,7 +3424,7 @@ function getCHdepDetails() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
         <div class="form-group">
             <label for="amt_hdep">Amount</label><span class="text-danger">&nbsp;*</span>
-            <input type="number" id="amt_hdep" name="amt_hdep" class="form-control" placeholder="Enter Amount">
+            <input type="text" id="amt_hdep" name="amt_hdep" class="form-control" placeholder="Enter Amount" oninput="validateInputNumber(this,'withOutDot')">
             <span id='amt_hdepCheck' class="text-danger" style="display:none">Please Enter Amount</span>
         </div>
     </div>
@@ -3512,7 +3512,7 @@ function getDHdepDetails() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
         <div class="form-group">
             <label for="amt_hdep">Amount</label><span class="text-danger">&nbsp;*</span>
-            <input type="number" id="amt_hdep" name="amt_hdep" class="form-control" placeholder="Enter Amount" onkeyup="validateHandCash(this)">
+            <input type="text" id="amt_hdep" name="amt_hdep" class="form-control" placeholder="Enter Amount" onkeyup="validateHandCash(this)" oninput="validateInputNumber(this,'withOutDot')">
             <span id='amt_hdepCheck' class="text-danger" style="display:none">Please Enter Amount</span>
         </div>
     </div>
@@ -3628,7 +3628,7 @@ function getCBDepDetails() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
         <div class="form-group">
             <label for="amt_bdeposit">Amount</label><span class="text-danger">&nbsp;*</span>
-            <input type="number" id="amt_bdeposit" name="amt_bdeposit" class="form-control" placeholder="Enter Amount">
+            <input type="text" id="amt_bdeposit" name="amt_bdeposit" class="form-control" placeholder="Enter Amount" oninput="validateInputNumber(this,'withOutDot')">
             <span id='amt_bdepositCheck' class="text-danger" style="display:none">Please Enter Amount</span>
         </div>
     </div>
@@ -3732,7 +3732,7 @@ function getDBDepDetails() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
         <div class="form-group">
             <label for="amt_bdeposit">Amount</label><span class="text-danger">&nbsp;*</span>
-            <input type="number" id="amt_bdeposit" name="amt_bdeposit" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)">
+            <input type="text" id="amt_bdeposit" name="amt_bdeposit" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)" oninput="validateInputNumber(this,'withOutDot')">
             <span id='amt_bdepositCheck' class="text-danger" style="display:none">Please Enter Amount</span>
         </div>
     </div>
@@ -3850,7 +3850,7 @@ function getCHelDetails() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
         <div class="form-group">
             <label for="amt_hel">Amount</label><span class="text-danger">&nbsp;*</span>
-            <input type="number" id="amt_hel" name="amt_hel" class="form-control" placeholder="Enter Amount">
+            <input type="text" id="amt_hel" name="amt_hel" class="form-control" placeholder="Enter Amount" oninput="validateInputNumber(this,'withOutDot')">
             <span id='amt_helCheck' class="text-danger" style="display:none">Please Enter Amount</span>
         </div>
     </div>
@@ -3938,7 +3938,7 @@ function getDHelDetails() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
         <div class="form-group">
             <label for="amt_hel">Amount</label><span class="text-danger">&nbsp;*</span>
-            <input type="number" id="amt_hel" name="amt_hel" class="form-control" placeholder="Enter Amount" onkeyup="validateHandCash(this)">
+            <input type="text" id="amt_hel" name="amt_hel" class="form-control" placeholder="Enter Amount" onkeyup="validateHandCash(this)" oninput="validateInputNumber(this,'withOutDot')">
             <span id='amt_helCheck' class="text-danger" style="display:none">Please Enter Amount</span>
         </div>
     </div>
@@ -4051,7 +4051,7 @@ function getCBelDetails() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
         <div class="form-group">
             <label for="amt_bel">Amount</label><span class="text-danger">&nbsp;*</span>
-            <input type="number" id="amt_bel" name="amt_bel" class="form-control" placeholder="Enter Amount">
+            <input type="text" id="amt_bel" name="amt_bel" class="form-control" placeholder="Enter Amount" oninput="validateInputNumber(this,'withOutDot')">
             <span id='amt_belCheck' class="text-danger" style="display:none">Please Enter Amount</span>
         </div>
     </div>
@@ -4154,7 +4154,7 @@ function getDBelDetails() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
         <div class="form-group">
             <label for="amt_bel">Amount</label><span class="text-danger">&nbsp;*</span>
-            <input type="number" id="amt_bel" name="amt_bel" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)">
+            <input type="text" id="amt_bel" name="amt_bel" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)" oninput="validateInputNumber(this,'withOutDot')">
             <span id='amt_belCheck' class="text-danger" style="display:none">Please Enter Amount</span>
         </div>
     </div>
@@ -4474,7 +4474,7 @@ function getExfDetails() {
                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
                         <div class="form-group">
                             <label for="amt_exf">Amount</label><span class='text-danger'>&nbsp;*</span>
-                            <input type="number" id="amt_exf" name="amt_exf" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)">
+                            <input type="text" id="amt_exf" name="amt_exf" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)" oninput="validateInputNumber(this,'withOutDot')">
                             <span id='amt_exfCheck' class="text-danger" style="display:none">Please Enter Amount</span>
                         </div>
                     </div>
@@ -4617,7 +4617,7 @@ function getCHagDetails() {
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
                 <div class="form-group">
                     <label for="amt_ag">Amount</label><span class='text-danger'>&nbsp;*</span>
-                    <input type="number" id="amt_ag" name="amt_ag" class="form-control" placeholder="Enter Amount">
+                    <input type="text" id="amt_ag" name="amt_ag" class="form-control" placeholder="Enter Amount" oninput="validateInputNumber(this,'withOutDot')">
                     <span id='amt_agCheck' class="text-danger" style="display:none">Please Enter Amount</span>
                 </div>
             </div>
@@ -4691,7 +4691,7 @@ function getDHagDetails() {
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
                 <div class="form-group">
                     <label for="amt_ag">Amount</label><span class='text-danger'>&nbsp;*</span>
-                    <input type="number" id="amt_ag" name="amt_ag" class="form-control" placeholder="Enter Amount" onkeyup="validateHandCash(this)">
+                    <input type="text" id="amt_ag" name="amt_ag" class="form-control" placeholder="Enter Amount" onkeyup="validateHandCash(this)" oninput="validateInputNumber(this,'withOutDot')">
                     <span id='amt_agCheck' class="text-danger" style="display:none">Please Enter Amount</span>
                 </div>
             </div>
@@ -4801,7 +4801,7 @@ function getCBagDetails() {
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
                 <div class="form-group">
                     <label for="amt_ag">Amount</label><span class='text-danger'>&nbsp;*</span>
-                    <input type="number" id="amt_ag" name="amt_ag" class="form-control" placeholder="Enter Amount">
+                    <input type="text" id="amt_ag" name="amt_ag" class="form-control" placeholder="Enter Amount" oninput="validateInputNumber(this,'withOutDot')">
                     <span id='amt_agCheck' class="text-danger" style="display:none">Please Enter Amount</span>
                 </div>
             </div>
@@ -4898,7 +4898,7 @@ function getDBagDetails() {
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
                 <div class="form-group">
                     <label for="amt_ag">Amount</label><span class='text-danger'>&nbsp;*</span>
-                    <input type="number" id="amt_ag" name="amt_ag" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)">
+                    <input type="text" id="amt_ag" name="amt_ag" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)" oninput="validateInputNumber(this,'withOutDot')">
                     <span id='amt_agCheck' class="text-danger" style="display:none">Please Enter Amount</span>
                 </div>
             </div>

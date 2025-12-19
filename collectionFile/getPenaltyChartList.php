@@ -95,7 +95,9 @@ function moneyFormatIndia($num)
 
 <script type="text/javascript">
     $(function() {
-        $('#penaltyListTable').DataTable({
+        // Declare table variable to store the DataTable instance
+        var penaltyListTable = $('#penaltyListTable').DataTable({
+            ...getStateSaveConfig('penaltyListTable'),
             // 'order': [
             //     [0, 'desc']
             // ],
@@ -130,5 +132,8 @@ function moneyFormatIndia($num)
             //     });
             // },
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(penaltyListTable, 'penaltyListTable');
     });
 </script>

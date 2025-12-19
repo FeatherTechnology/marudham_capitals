@@ -45,7 +45,9 @@ function commitmentReportTable() {
     }
 
     $('#promotion_activity_report_table').DataTable().destroy();
-    $('#promotion_activity_report_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var promotion_activity_report_table = $('#promotion_activity_report_table').DataTable({
+        ...getStateSaveConfig('promotion_activity_report_table'),
         "order": [
             [0, "asc"]
         ],
@@ -86,6 +88,9 @@ function commitmentReportTable() {
             searchFunction('promotion_activity_report_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(promotion_activity_report_table, 'promotion_activity_report_table');
 }
 
 function swalError(title, text) {

@@ -23,12 +23,22 @@ $opt_for = $_POST['opt_for'];
         ?>
                 <tr>
                     <td></td>
-                    <td><?php if (isset($ct["name"])) {echo $ct["name"];} ?></td>
-                    <td><?php if (isset($ct["area"])) {echo $ct["area"];} ?></td>
-                    <td><?php if (isset($ct["ident"])) {echo $ct["ident"];} ?></td>
+                    <td><?php if (isset($ct["name"])) {
+                            echo $ct["name"];
+                        } ?></td>
+                    <td><?php if (isset($ct["area"])) {
+                            echo $ct["area"];
+                        } ?></td>
+                    <td><?php if (isset($ct["ident"])) {
+                            echo $ct["ident"];
+                        } ?></td>
                     <td>
-                        <a id="edit_name" value="<?php if (isset($ct["name_id"])) {echo $ct["name_id"];} ?>"><span class="icon-border_color"></span></a> &nbsp;
-                        <a id="delete_name" value="<?php if (isset($ct["name_id"])) {echo $ct["name_id"];} ?>"><span class='icon-trash-2'></span></a>
+                        <a id="edit_name" value="<?php if (isset($ct["name_id"])) {
+                                                        echo $ct["name_id"];
+                                                    } ?>"><span class="icon-border_color"></span></a> &nbsp;
+                        <a id="delete_name" value="<?php if (isset($ct["name_id"])) {
+                                                        echo $ct["name_id"];
+                                                    } ?>"><span class='icon-trash-2'></span></a>
                     </td>
                 </tr>
         <?php }
@@ -38,7 +48,9 @@ $opt_for = $_POST['opt_for'];
 
 <script type="text/javascript">
     $(function() {
-        $('#nameDetailTable').DataTable({
+        // Declare table variable to store the DataTable instance
+        var nameDetailTable = $('#nameDetailTable').DataTable({
+            ...getStateSaveConfig('nameDetailTable'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -56,11 +68,11 @@ $opt_for = $_POST['opt_for'];
             dom: 'lBfrtip',
             buttons: [{
                     extend: 'excel',
-                    action: function (e, dt, button, config) {
+                    action: function(e, dt, button, config) {
                         var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                         var dynamic = curDateJs('Name_Creation_List'); // or any base
-                        config.title = dynamic;      // for versions that use title as filename
-                        config.filename = dynamic;   // for html5 filename
+                        config.title = dynamic; // for versions that use title as filename
+                        config.filename = dynamic; // for html5 filename
                         defaultAction.call(this, e, dt, button, config);
                     }
                 },
@@ -70,6 +82,9 @@ $opt_for = $_POST['opt_for'];
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(nameDetailTable, 'nameDetailTable');
     });
 </script>
 

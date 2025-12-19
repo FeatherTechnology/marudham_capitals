@@ -33,7 +33,9 @@ include '../ajaxconfig.php';
 
 <script type="text/javascript">
     $(function() {
-        $('#feedback_table1').DataTable({
+        // Declare table variable to store the DataTable instance
+        var feedback_table1 = $('#feedback_table1').DataTable({
+            ...getStateSaveConfig('feedback_table1'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -58,5 +60,8 @@ include '../ajaxconfig.php';
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(feedback_table1, 'feedback_table1');
     });
 </script>

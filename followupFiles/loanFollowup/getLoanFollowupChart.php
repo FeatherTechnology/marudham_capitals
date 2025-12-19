@@ -23,16 +23,16 @@ $sql = $connect->query("SELECT a.*,b.fullname, CASE b.role WHEN 1 then 'Director
         <th>Follow Date</th>
     </thead>
     <tbody>
-        <?php while($row =  $sql->fetch()){?>
+        <?php while ($row =  $sql->fetch()) { ?>
             <tr>
-                <td><?php echo date('d-m-Y',strtotime($row['created_date'])); ?></td>
+                <td><?php echo date('d-m-Y', strtotime($row['created_date'])); ?></td>
                 <td><?php echo $row['stage']; ?></td>
                 <td><?php echo $row['label']; ?></td>
                 <td><?php echo $row['remark']; ?></td>
                 <td><?php echo $row['role']; ?></td>
                 <td><?php echo $row['fullname']; ?></td>
-                <td><?php echo date('d-m-Y',strtotime($row['follow_date'])); ?></td>
-                
+                <td><?php echo date('d-m-Y', strtotime($row['follow_date'])); ?></td>
+
             </tr>
         <?php } ?>
 
@@ -40,7 +40,9 @@ $sql = $connect->query("SELECT a.*,b.fullname, CASE b.role WHEN 1 then 'Director
 </table>
 
 <script>
-    $('#loan_follow_chart').dataTable({
+    // Declare table variable to store the DataTable instance
+    var loan_follow_chart = $('#loan_follow_chart').dataTable({
+        ...getStateSaveConfig('loan_follow_chart'),
         'processing': true,
         'iDisplayLength': 5,
         "lengthMenu": [
@@ -50,11 +52,11 @@ $sql = $connect->query("SELECT a.*,b.fullname, CASE b.role WHEN 1 then 'Director
         dom: 'lBfrtip',
         buttons: [{
                 extend: 'excel',
-                action: function (e, dt, button, config) {
+                action: function(e, dt, button, config) {
                     var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                     var dynamic = curDateJs('Loan_Followup_Chart'); // or any base
-                    config.title = dynamic;      // for versions that use title as filename
-                    config.filename = dynamic;   // for html5 filename
+                    config.title = dynamic; // for versions that use title as filename
+                    config.filename = dynamic; // for html5 filename
                     defaultAction.call(this, e, dt, button, config);
                 }
             },
@@ -64,11 +66,13 @@ $sql = $connect->query("SELECT a.*,b.fullname, CASE b.role WHEN 1 then 'Director
             }
         ],
     })
-    
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(loan_follow_chart, 'loan_follow_chart');
 </script>
 <style>
     @media (max-width: 598px) {
-        #loanFollowChartDiv{
+        #loanFollowChartDiv {
             overflow: auto;
         }
     }

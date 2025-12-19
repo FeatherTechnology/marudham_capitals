@@ -1,11 +1,11 @@
 $(document).ready(function () {
 
-    $('#from_date').change(function(){
+    $('#from_date').change(function () {
         const fromDate = $(this).val();
         const toDate = $('#to_date').val();
         $('#to_date').attr('min', fromDate);
 
-         // Check if from_date is greater than to_date
+        // Check if from_date is greater than to_date
         if (toDate && fromDate > toDate) {
             $('#to_date').val(''); // Clear the invalid value
         }
@@ -17,9 +17,10 @@ $(document).ready(function () {
     });
 });
 
-function requestReportTable(){
+function requestReportTable() {
     $('#request_report_table').DataTable().destroy();
-    $('#request_report_table').DataTable({
+    var request_report_table = $('#request_report_table').DataTable({
+        ...getStateSaveConfig('request_report_table'),
         "order": [
             [0, "asc"]
         ],
@@ -89,4 +90,7 @@ function requestReportTable(){
             });
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(request_report_table, 'request_report_table');
 }

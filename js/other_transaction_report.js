@@ -11,63 +11,63 @@ $(document).ready(function () {
         }
     });
 
-  $('#other_report_btn').click(function () {
-    const from_date = $('#from_date').val();
-    const to_date = $('#to_date').val();
-    var sheet_type = $('#sheet_type').val();
-    if ((from_date === '' || to_date === '') ) {
-        swalError('Please Fill Dates!', 'Both From and To dates are required.');
-        return false;
-    }
-  if ( sheet_type == '') {
-        swalError('Warning', 'Select Balance Sheet Type');
-        return false;
-    }
-    // Hide all tables and their DataTable wrappers
-    $('#contra_table, #expenses_report_table, #exchange_report_table, #other_income_table,#investment_report_table,#deposit_report_table,#el_report_table,#excess_report_table,#agent_report_table').hide();
-    $('.dataTables_wrapper').hide();
-    // Show the selected table and call its function
-    if (sheet_type === '1') {
-        $('#contra_table').show();
-        contraReportTable();
-        $('#contra_table_wrapper').show();
-    } else if (sheet_type === '2') {
-        $('#exchange_report_table').show();
-        exchangeReportTable();
-        $('#exchange_report_table_wrapper').show();
-    } else if (sheet_type === '3') {
-        $('#other_income_table').show();
-        otherIncomeReportTable();
-        $('#other_income_table_wrapper').show();
-    } else if (sheet_type === '4') {
-        $('#expenses_report_table').show();
-        expensesReportTable();
-        $('#expenses_report_table_wrapper').show();
-    }else if (sheet_type === '5') {
-        $('#investment_report_table').show();
-        investmentReportTable();
-        $('#investment_report_table_wrapper').show();
-    } else if (sheet_type === '6') {
-        $('#deposit_report_table').show();
-        depositReportTable();
-        $('#deposit_report_table_wrapper').show();
-    } else if (sheet_type === '7') {
-        $('#el_report_table').show();
-        elReportTable();
-        $('#el_report_table_wrapper').show();
-    } else if (sheet_type === '8') {
-        $('#excess_report_table').show();
-        excessFundReportTable();
-        $('#excess_report_table_wrapper').show();
-    } else if (sheet_type === '9') {
-        $('#agent_report_table').show();
-        agentReportTable();
-        $('#agent_report_table_wrapper').show();
-    } 
-    else {
-        swalError('Select a Balance Sheet', 'Please select a valid sheet type to view report.');
-    }
-});
+    $('#other_report_btn').click(function () {
+        const from_date = $('#from_date').val();
+        const to_date = $('#to_date').val();
+        var sheet_type = $('#sheet_type').val();
+        if ((from_date === '' || to_date === '')) {
+            swalError('Please Fill Dates!', 'Both From and To dates are required.');
+            return false;
+        }
+        if (sheet_type == '') {
+            swalError('Warning', 'Select Balance Sheet Type');
+            return false;
+        }
+        // Hide all tables and their DataTable wrappers
+        $('#contra_table, #expenses_report_table, #exchange_report_table, #other_income_table,#investment_report_table,#deposit_report_table,#el_report_table,#excess_report_table,#agent_report_table').hide();
+        $('.dataTables_wrapper').hide();
+        // Show the selected table and call its function
+        if (sheet_type === '1') {
+            $('#contra_table').show();
+            contraReportTable();
+            $('#contra_table_wrapper').show();
+        } else if (sheet_type === '2') {
+            $('#exchange_report_table').show();
+            exchangeReportTable();
+            $('#exchange_report_table_wrapper').show();
+        } else if (sheet_type === '3') {
+            $('#other_income_table').show();
+            otherIncomeReportTable();
+            $('#other_income_table_wrapper').show();
+        } else if (sheet_type === '4') {
+            $('#expenses_report_table').show();
+            expensesReportTable();
+            $('#expenses_report_table_wrapper').show();
+        } else if (sheet_type === '5') {
+            $('#investment_report_table').show();
+            investmentReportTable();
+            $('#investment_report_table_wrapper').show();
+        } else if (sheet_type === '6') {
+            $('#deposit_report_table').show();
+            depositReportTable();
+            $('#deposit_report_table_wrapper').show();
+        } else if (sheet_type === '7') {
+            $('#el_report_table').show();
+            elReportTable();
+            $('#el_report_table_wrapper').show();
+        } else if (sheet_type === '8') {
+            $('#excess_report_table').show();
+            excessFundReportTable();
+            $('#excess_report_table_wrapper').show();
+        } else if (sheet_type === '9') {
+            $('#agent_report_table').show();
+            agentReportTable();
+            $('#agent_report_table_wrapper').show();
+        }
+        else {
+            swalError('Select a Balance Sheet', 'Please select a valid sheet type to view report.');
+        }
+    });
 
 });
 
@@ -83,7 +83,9 @@ function swalError(title, text) {
 /////////////////////////////////////////////////////////Contra Report
 function contraReportTable() {
     $('#contra_table').DataTable().destroy();
-    $('#contra_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var contra_table = $('#contra_table').DataTable({
+        ...getStateSaveConfig('contra_table'),
         "order": [
             [0, "asc"]
         ],
@@ -132,7 +134,7 @@ function contraReportTable() {
             };
 
             // Array of column indices to sum
-            var columnsToSum = [3,4];
+            var columnsToSum = [3, 4];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {
@@ -152,12 +154,17 @@ function contraReportTable() {
             paginationFunction('contra_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(contra_table, 'contra_table');
 }
 
 /////////////////////////////////////////////////////Exchnge Report//////////////////////////////////////////////////
 function exchangeReportTable() {
     $('#exchange_report_table').DataTable().destroy();
-    $('#exchange_report_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var exchange_report_table = $('#exchange_report_table').DataTable({
+        ...getStateSaveConfig('exchange_report_table'),
         "order": [
             [0, "asc"]
         ],
@@ -206,7 +213,7 @@ function exchangeReportTable() {
             };
 
             // Array of column indices to sum
-            var columnsToSum = [4,5];
+            var columnsToSum = [4, 5];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {
@@ -226,11 +233,16 @@ function exchangeReportTable() {
             paginationFunction('exchange_report_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(exchange_report_table, 'exchange_report_table');
 }
 ///////////////////////////////////////////////////// Other Income Report/////////////////////////////////////////////////
 function otherIncomeReportTable() {
     $('#other_income_table').DataTable().destroy();
-    $('#other_income_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var other_income_table = $('#other_income_table').DataTable({
+        ...getStateSaveConfig('other_income_table'),
         "order": [
             [0, "asc"]
         ],
@@ -299,11 +311,16 @@ function otherIncomeReportTable() {
             paginationFunction('other_income_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(other_income_table, 'other_income_table');
 }
 //////////////////////////////////////////////////////////Expenses Report////////////////////////////////////////////
 function expensesReportTable() {
     $('#expenses_report_table').DataTable().destroy();
-    $('#expenses_report_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var expenses_report_table = $('#expenses_report_table').DataTable({
+        ...getStateSaveConfig('expenses_report_table'),
         "order": [
             [0, "asc"]
         ],
@@ -372,11 +389,16 @@ function expensesReportTable() {
             paginationFunction('expenses_report_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(expenses_report_table, 'expenses_report_table');
 }
 ////////////////////////////////////////////////////////////Investment Report//////////////////////////////////////////////////
 function investmentReportTable() {
     $('#investment_report_table').DataTable().destroy();
-    $('#investment_report_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var investment_report_table = $('#investment_report_table').DataTable({
+        ...getStateSaveConfig('investment_report_table'),
         "order": [
             [0, "asc"]
         ],
@@ -425,7 +447,7 @@ function investmentReportTable() {
             };
 
             // Array of column indices to sum
-            var columnsToSum = [4,5];
+            var columnsToSum = [4, 5];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {
@@ -445,11 +467,16 @@ function investmentReportTable() {
             paginationFunction('investment_report_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(investment_report_table, 'investment_report_table');
 }
 /////////////////////////////////////////////////////// Deposit Report/////////////////////////////////////////////////////////////
 function depositReportTable() {
     $('#deposit_report_table').DataTable().destroy();
-    $('#deposit_report_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var deposit_report_table = $('#deposit_report_table').DataTable({
+        ...getStateSaveConfig('deposit_report_table'),
         "order": [
             [0, "asc"]
         ],
@@ -498,7 +525,7 @@ function depositReportTable() {
             };
 
             // Array of column indices to sum
-            var columnsToSum = [4,5];
+            var columnsToSum = [4, 5];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {
@@ -518,11 +545,16 @@ function depositReportTable() {
             paginationFunction('deposit_report_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(deposit_report_table, 'deposit_report_table');
 }
 /////////////////////////////////////////////////////EL Report////////////////////////////////////////////////////////////////
 function elReportTable() {
     $('#el_report_table').DataTable().destroy();
-    $('#el_report_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var el_report_table = $('#el_report_table').DataTable({
+        ...getStateSaveConfig('el_report_table'),
         "order": [
             [0, "asc"]
         ],
@@ -571,7 +603,7 @@ function elReportTable() {
             };
 
             // Array of column indices to sum
-            var columnsToSum = [4,5];
+            var columnsToSum = [4, 5];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {
@@ -591,12 +623,17 @@ function elReportTable() {
             paginationFunction('el_report_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(el_report_table, 'el_report_table');
 }
 
 //////////////////////////////////////////////////////////////////Excess Fund Report///////////////////////////////////////////////////////
 function excessFundReportTable() {
     $('#excess_report_table').DataTable().destroy();
-    $('#excess_report_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var excess_report_table = $('#excess_report_table').DataTable({
+        ...getStateSaveConfig('excess_report_table'),
         "order": [
             [0, "asc"]
         ],
@@ -665,6 +702,9 @@ function excessFundReportTable() {
             paginationFunction('excess_report_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(excess_report_table, 'excess_report_table');
 }
 
 

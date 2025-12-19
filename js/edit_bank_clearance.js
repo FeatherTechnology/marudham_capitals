@@ -22,7 +22,7 @@ $(document).ready(function () {
 
     $('#view_table').click(function () {
         getClearanceTable();
-        
+
     })
 
     //Unbind or disable all other event listeners to avoid conflict
@@ -101,7 +101,9 @@ function initializeDT() {
     var bank_clearance_list = $('#bank_clearance_list').DataTable();
     bank_clearance_list.destroy();
 
-    $('#bank_clearance_list').DataTable({
+    // Declare table variable to store the DataTable instance
+    var bank_clearance_list = $('#bank_clearance_list').DataTable({
+        ...getStateSaveConfig('bank_clearance_list'),
         "title": "Bank Clearance List",
         'processing': true,
         'iDisplayLength': 10,
@@ -128,7 +130,8 @@ function initializeDT() {
         ],
     });
 
-
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(bank_clearance_list, 'bank_clearance_list');
 }
 
 function tablesorting() { // for sorting table
@@ -176,16 +179,16 @@ function clrcatClickEvent() {
     $('.clr_cat').change(function () {
         var clr_cat = $(this).val();
         var ref_id_box = $(this).parent().next().children();//represents ref id select box
-        if(clr_cat){
+        if (clr_cat) {
             var bank_id = $(this).prev().val();
             var crdb = $(this).next().val();
             var trans_id = $(this).parent().prev().prev().prev().prev().text();
             var trans_amt = $(this).closest('tr').attr('data-crdr');
             var trans_date = $(this).parent().prev().prev().prev().prev().prev().prev().text().trim();
-    
+
             $.ajax({
                 url: 'accountsFile/bankclearance/getRefCodetoClear.php',
-                data: { 'clr_cat': clr_cat, 'bank_id': bank_id, 'crdb': crdb, 'trans_id': trans_id, 'trans_amt': trans_amt , 'trans_date': trans_date},
+                data: { 'clr_cat': clr_cat, 'bank_id': bank_id, 'crdb': crdb, 'trans_id': trans_id, 'trans_amt': trans_amt, 'trans_date': trans_date },
                 dataType: 'json',
                 type: 'post',
                 cache: false,
@@ -198,7 +201,7 @@ function clrcatClickEvent() {
                 }
             }); //AJAX END.
 
-        } else{
+        } else {
             ref_id_box.empty();
             ref_id_box.append("<option value=''>Select Ref ID</option>");
         }//ESLE END.
@@ -245,16 +248,16 @@ function clrcatClickEvent() {
         }
     })
 
-    $('#clear_all_bstmt').click(function(event){
+    $('#clear_all_bstmt').click(function (event) {
         event.preventDefault();
         let bankStmt = [];
 
-        $("#bank_clearance_list tbody tr").each(function(){
+        $("#bank_clearance_list tbody tr").each(function () {
             let type = $(this).data("type");
             let transId = $(this).data("trans-id");
             let crdr = $(this).data("crdr");
             let bankStmtId = $(this).data("bank-stmt-id");
-    
+
             bankStmt.push({
                 type: type,
                 trans_id: transId,
@@ -262,17 +265,17 @@ function clrcatClickEvent() {
                 bank_stmt_id: bankStmtId
             });
         });
-    
+
         let bankId = $('#bank_name').val(); // Debugging
-        $.post('accountsFile/bankclearance/clearAllTransaction.php',{bank_id: bankId, bank_stmt: bankStmt},function(response){
-            if(response.status =='1'){
+        $.post('accountsFile/bankclearance/clearAllTransaction.php', { bank_id: bankId, bank_stmt: bankStmt }, function (response) {
+            if (response.status == '1') {
                 alert('Transaction are cleared successfully.');
                 getClearanceTable();
-            } else{
+            } else {
                 alert('Failed to clear Transaction.');
             }
 
-        },'json');
+        }, 'json');
     });
 
 }
@@ -295,7 +298,7 @@ function getUnclearTotal() {
     $('#ucl_debit').text(unclear_debit).css('font-weight', 'bold');
 }
 
-function getClearanceTable(){
+function getClearanceTable() {
     if (validation() == 0) {
         var bank_id = $('#bank_name').val(); var from_date = $('#from_date').val(); var to_date = $('#to_date').val();
         $.ajax({

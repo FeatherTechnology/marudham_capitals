@@ -47,7 +47,9 @@ function commitmentReportTable() {
     }
 
     $('#commitment_report_table').DataTable().destroy();
-    $('#commitment_report_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var commitment_report_table = $('#commitment_report_table').DataTable({
+        ...getStateSaveConfig('commitment_report_table'),
         "order": [
             [0, "asc"]
         ],
@@ -89,6 +91,9 @@ function commitmentReportTable() {
             searchFunction('commitment_report_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(commitment_report_table, 'commitment_report_table');
 }
 
 function swalError(title, text) {

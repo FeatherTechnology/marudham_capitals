@@ -1,6 +1,7 @@
 <?php
 include '../../ajaxconfig.php';
-function moneyFormatIndia($num) {
+function moneyFormatIndia($num)
+{
     $explrestunits = "";
     if (strlen($num) > 3) {
         $lastthree = substr($num, strlen($num) - 3, strlen($num));
@@ -53,7 +54,7 @@ function moneyFormatIndia($num) {
 
         $i = 1;
         $curdate = date('Y-m-d');
-        $consider_lvl_arr = [1=>'Bronze',2=>'Silver',3=>'Gold',4=>'Platinum',5=>'Diamond'];
+        $consider_lvl_arr = [1 => 'Bronze', 2 => 'Silver', 3 => 'Gold', 4 => 'Platinum', 5 => 'Diamond'];
         while ($row = $run->fetch()) {
         ?>
             <tr>
@@ -62,80 +63,96 @@ function moneyFormatIndia($num) {
                 <td><?php echo $row["loan_catrgory_name"]; ?></td>
                 <td><?php echo $row["sub_category"]; ?></td>
                 <td>
-                    <?php 
-                        if($row["agent_id"] != '' || $row["agent_id"] != NULL){
-                            $run1 = $connect->query('SELECT ag_name from agent_creation where ag_id = "'.$row['agent_id'].'" ');
-                            echo $run1->fetch()['ag_name'];
-                        } 
-                        ?>
+                    <?php
+                    if ($row["agent_id"] != '' || $row["agent_id"] != NULL) {
+                        $run1 = $connect->query('SELECT ag_name from agent_creation where ag_id = "' . $row['agent_id'] . '" ');
+                        echo $run1->fetch()['ag_name'];
+                    }
+                    ?>
                 </td>
-                <td><?php echo ($row["responsible"] =='0') ? 'Yes' : 'No'; ?></td>
+                <td><?php echo ($row["responsible"] == '0') ? 'Yes' : 'No'; ?></td>
                 <td><?php echo moneyFormatIndia($row["loan_amt_cal"]); ?></td>
-                <td><?php if($row["collection_method"] == '1'){ echo 'By Self';}else if($row["collection_method"] == '2'){ echo 'Spot Collection';}else if($row["collection_method"] == '3'){ echo 'Cheque Collection';}else if($row["collection_method"] == '4'){ echo 'ECS';} ?></td>
+                <td><?php if ($row["collection_method"] == '1') {
+                        echo 'By Self';
+                    } else if ($row["collection_method"] == '2') {
+                        echo 'Spot Collection';
+                    } else if ($row["collection_method"] == '3') {
+                        echo 'Cheque Collection';
+                    } else if ($row["collection_method"] == '4') {
+                        echo 'ECS';
+                    } ?></td>
                 <td><?php echo 'Present'; ?></td>
-                    <td><?php 
-                            if($row['cus_status'] <= '20'){
-                                echo $row['sub_status'];
+                <td><?php
+                    if ($row['cus_status'] <= '20') {
+                        echo $row['sub_status'];
+                    } else if ($row['cus_status'] > '20') { // if status is closed(21) or more than that(22), then show closed status
 
-                            }else if($row['cus_status'] > '20'){// if status is closed(21) or more than that(22), then show closed status
-
-                                $closedSts = $connect->query("SELECT * FROM `closed_status` WHERE `req_id` ='".$row['req_id']."' ");
-                                $closedStsrow = $closedSts->fetch();
-                                $rclosed = $closedStsrow['closed_sts'];
-                                $consider_lvl = $closedStsrow['consider_level'];
-                                if($rclosed == '1'){echo 'Consider - '.$consider_lvl_arr[$consider_lvl]; } 
-                                if($rclosed == '2'){echo 'Waiting List';}
-                                if($rclosed == '3'){echo 'Block List';}
-                            }
-                        ?>
-                    </td>
-                <td>
-                    <?php 
-                        $action="<div class='dropdown' ><button class='btn btn-outline-secondary' ";
-                        
-                        $action .="><i class='fa'>&#xf107;</i></button><div class='dropdown-content'>";
-                        $action .= "<a><span data-toggle='modal' data-target='.DueChart' class='due-chart' value='".$row['req_id']."' > Due Chart</span></a>
-                        <a><span data-toggle='modal' data-target='.PenaltyChart' class='penalty-chart' value='".$row['req_id']."' > Penalty Chart</span></a>
-                        <a><span data-toggle='modal' data-target='.collectionChargeChart' class='coll-charge-chart' value='".$row['req_id']."' > Fine Chart</span></a>
-                        <a><span data-toggle='modal' data-target='#commitmentChart' class='commitment-chart' data-reqid='".$row['req_id']."' > Commitment Chart </span></a>";
-                        $action .= "</div></div>";
-                        echo $action;
+                        $closedSts = $connect->query("SELECT * FROM `closed_status` WHERE `req_id` ='" . $row['req_id'] . "' ");
+                        $closedStsrow = $closedSts->fetch();
+                        $rclosed = $closedStsrow['closed_sts'];
+                        $consider_lvl = $closedStsrow['consider_level'];
+                        if ($rclosed == '1') {
+                            echo 'Consider - ' . $consider_lvl_arr[$consider_lvl];
+                        }
+                        if ($rclosed == '2') {
+                            echo 'Waiting List';
+                        }
+                        if ($rclosed == '3') {
+                            echo 'Block List';
+                        }
+                    }
                     ?>
                 </td>
                 <td>
-                    <?php 
-                        $r_id = $row['req_id'];
-                        $action="<div class='dropdown' ><button class='btn btn-outline-secondary' ";
-                        
-                        $action .="><i class='fa'>&#xf107;</i></button><div class='dropdown-content'>";
-                        $action .= "<a href='due_followup_info&upd=$r_id&pgeView=1'> Customer Profile </a>
+                    <?php
+                    $action = "<div class='dropdown' ><button class='btn btn-outline-secondary' ";
+
+                    $action .= "><i class='fa'>&#xf107;</i></button><div class='dropdown-content'>";
+                    $action .= "<a><span data-toggle='modal' data-target='.DueChart' class='due-chart' value='" . $row['req_id'] . "' > Due Chart</span></a>
+                        <a><span data-toggle='modal' data-target='.PenaltyChart' class='penalty-chart' value='" . $row['req_id'] . "' > Penalty Chart</span></a>
+                        <a><span data-toggle='modal' data-target='.collectionChargeChart' class='coll-charge-chart' value='" . $row['req_id'] . "' > Fine Chart</span></a>
+                        <a><span data-toggle='modal' data-target='#commitmentChart' class='commitment-chart' data-reqid='" . $row['req_id'] . "' > Commitment Chart </span></a>";
+                    $action .= "</div></div>";
+                    echo $action;
+                    ?>
+                </td>
+                <td>
+                    <?php
+                    $r_id = $row['req_id'];
+                    $action = "<div class='dropdown' ><button class='btn btn-outline-secondary' ";
+
+                    $action .= "><i class='fa'>&#xf107;</i></button><div class='dropdown-content'>";
+                    $action .= "<a href='due_followup_info&upd=$r_id&pgeView=1'> Customer Profile </a>
                         <a href='due_followup_info&upd=$r_id&pgeView=2'> Documentation </a>
                         <a href='due_followup_info&upd=$r_id&pgeView=3'> Loan Calculation </a>
                         <a href='' class='loan-history-window'> Loan History </a>
                         <a href='' class='doc-history-window'> Document History </a>";
-                        $action .= "</div></div>";
-                        echo $action;
+                    $action .= "</div></div>";
+                    echo $action;
                     ?>
                 </td>
                 <td>
-                    <?php 
-                        $action="<div class='dropdown' ><button class='btn btn-outline-secondary' ";
-                        
-                        $action .="><i class='fa'>&#xf107;</i></button><div class='dropdown-content'>";
-                        $action .= "<a><span data-toggle='modal' data-target='#addCommitment' class='add-commitment-chart' data-reqid='".$row['req_id']."' data-coll_mtd='".$row['collection_method']."' > New Commitment </span></a>";
-                        $action .= "</div></div>";
-                        echo $action;
+                    <?php
+                    $action = "<div class='dropdown' ><button class='btn btn-outline-secondary' ";
+
+                    $action .= "><i class='fa'>&#xf107;</i></button><div class='dropdown-content'>";
+                    $action .= "<a><span data-toggle='modal' data-target='#addCommitment' class='add-commitment-chart' data-reqid='" . $row['req_id'] . "' data-coll_mtd='" . $row['collection_method'] . "' > New Commitment </span></a>";
+                    $action .= "</div></div>";
+                    echo $action;
                     ?>
                 </td>
             </tr>
 
-        <?php  $i++;} ?>
+        <?php $i++;
+        } ?>
     </tbody>
 </table>
 
 <script type="text/javascript">
     $(function() {
-        $('#loanListTable').DataTable({
+        // Declare table variable to store the DataTable instance
+        var loanListTable = $('#loanListTable').DataTable({
+            ...getStateSaveConfig('loanListTable'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -145,11 +162,11 @@ function moneyFormatIndia($num) {
             dom: 'lBfrtip',
             buttons: [{
                     extend: 'excel',
-                    action: function (e, dt, button, config) {
+                    action: function(e, dt, button, config) {
                         var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                         var dynamic = curDateJs('Loan_List'); // or any base
-                        config.title = dynamic;      // for versions that use title as filename
-                        config.filename = dynamic;   // for html5 filename
+                        config.title = dynamic; // for versions that use title as filename
+                        config.filename = dynamic; // for html5 filename
                         defaultAction.call(this, e, dt, button, config);
                     }
                 },
@@ -159,13 +176,16 @@ function moneyFormatIndia($num) {
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(loanListTable, 'loanListTable');
     });
 
-    $('button').click(function(){
+    $('button').click(function() {
         event.preventDefault();
     })
     $('.dropdown').click(function(event) {
-        
+
         $('.dropdown').not(this).removeClass('active');
         $(this).toggleClass('active');
     });
@@ -176,7 +196,7 @@ function moneyFormatIndia($num) {
             $('.dropdown').removeClass('active');
         }
     });
-    $('.due-chart, .penalty-chart, .coll-charge-chart, .coll-charge, .add-commitment-chart, .commitment-chart').css('color','black');
+    $('.due-chart, .penalty-chart, .coll-charge-chart, .coll-charge, .add-commitment-chart, .commitment-chart').css('color', 'black');
 </script>
 
 <?php

@@ -229,7 +229,9 @@ $(document).ready(function () {
 }); //Document END.
 
 $(function () {
-    $('#coursecategoryTable').DataTable({
+    // Declare table variable to store the DataTable instance
+    var coursecategoryTable = $('#coursecategoryTable').DataTable({
+        ...getStateSaveConfig('coursecategoryTable'),
         'processing': true,
         'iDisplayLength': 5,
         "lengthMenu": [
@@ -254,6 +256,9 @@ $(function () {
         }
         ],
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(coursecategoryTable, 'coursecategoryTable');
 
     getBranchName(); // To Show Branch Name List.
     DropDownCourse(); //To Show Concern Subject.

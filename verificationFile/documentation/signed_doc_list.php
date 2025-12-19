@@ -56,7 +56,9 @@ include '../../ajaxconfig.php';
 
 <script type="text/javascript">
     $(function() {
-        $('#signed_table').DataTable({
+        // Declare table variable to store the DataTable instance
+        var signed_table = $('#signed_table').DataTable({
+            ...getStateSaveConfig('signed_table'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -75,11 +77,11 @@ include '../../ajaxconfig.php';
             dom: 'lBfrtip',
             buttons: [{
                     extend: 'excel',
-                    action: function (e, dt, button, config) {
+                    action: function(e, dt, button, config) {
                         var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                         var dynamic = curDateJs('Signed_Doc_info'); // or any base
-                        config.title = dynamic;      // for versions that use title as filename
-                        config.filename = dynamic;   // for html5 filename
+                        config.title = dynamic; // for versions that use title as filename
+                        config.filename = dynamic; // for html5 filename
                         defaultAction.call(this, e, dt, button, config);
                     }
                 },
@@ -89,6 +91,9 @@ include '../../ajaxconfig.php';
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(signed_table, 'signed_table');
     });
 </script>
 <?php

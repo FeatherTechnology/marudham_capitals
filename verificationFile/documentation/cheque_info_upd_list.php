@@ -31,22 +31,21 @@ include '../../ajaxconfig.php';
             $id = $cheque["id"];
             $updresult = $connect->query("SELECT upload_cheque_name FROM `cheque_upd` where cheque_table_id = '$id'");
             $a = 1;
-            while($upd = $updresult->fetch()){
-            $docName = $upd['upload_cheque_name'];
+            while ($upd = $updresult->fetch()) {
+                $docName = $upd['upload_cheque_name'];
                 $doc_upd_name .= "<a href=uploads/verification/cheque_upd/";
-                $doc_upd_name .= $docName ;
+                $doc_upd_name .= $docName;
                 $doc_upd_name .= " target='_blank'>";
-                $doc_upd_name .=  $docName. ' ' ;
-                $doc_upd_name .= "</a>" ;
+                $doc_upd_name .=  $docName . ' ';
+                $doc_upd_name .= "</a>";
                 $a++;
             }
-            
-            $cheque_no ='';
-            $updnoresult = $connect->query("SELECT cheque_no FROM `cheque_no_list` where cheque_table_id = '$id'");
-            while($updno = $updnoresult->fetch()){
-            $no = $updno['cheque_no'];
-            $cheque_no .= $no.', ';
 
+            $cheque_no = '';
+            $updnoresult = $connect->query("SELECT cheque_no FROM `cheque_no_list` where cheque_table_id = '$id'");
+            while ($updno = $updnoresult->fetch()) {
+                $no = $updno['cheque_no'];
+                $cheque_no .= $no . ', ';
             }
         ?>
             <tr>
@@ -68,7 +67,7 @@ include '../../ajaxconfig.php';
                 <td><?php echo $cheque["cheque_relation"]; ?></td>
                 <td><?php echo $cheque["chequebank_name"]; ?></td>
                 <td><?php echo $cheque["cheque_count"]; ?></td>
-                <td><?php echo rtrim($cheque_no,','); ?></td>
+                <td><?php echo rtrim($cheque_no, ','); ?></td>
                 <td><?php echo $doc_upd_name; ?></td>
 
             </tr>
@@ -79,7 +78,9 @@ include '../../ajaxconfig.php';
 
 <script type="text/javascript">
     $(function() {
-        $('#cheque_table').DataTable({
+        // Declare table variable to store the DataTable instance
+        var cheque_table = $('#cheque_table').DataTable({
+            ...getStateSaveConfig('cheque_table'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -98,11 +99,11 @@ include '../../ajaxconfig.php';
             dom: 'lBfrtip',
             buttons: [{
                     extend: 'excel',
-                    action: function (e, dt, button, config) {
+                    action: function(e, dt, button, config) {
                         var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                         var dynamic = curDateJs('Cheque_info'); // or any base
-                        config.title = dynamic;      // for versions that use title as filename
-                        config.filename = dynamic;   // for html5 filename
+                        config.title = dynamic; // for versions that use title as filename
+                        config.filename = dynamic; // for html5 filename
                         defaultAction.call(this, e, dt, button, config);
                     }
                 },
@@ -112,6 +113,9 @@ include '../../ajaxconfig.php';
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(cheque_table, 'cheque_table');
     });
 </script>
 <?php

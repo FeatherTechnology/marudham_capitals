@@ -41,7 +41,9 @@ function mothlyDT() {
     var table = $('#loan_scheme_daily_table').DataTable();
     table.destroy();
 
-    $('#loan_scheme_monthly_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var loan_scheme_monthly_table = $('#loan_scheme_monthly_table').DataTable({
+        ...getStateSaveConfig('loan_scheme_monthly_table'),
         "order": [[0, "desc"]],
         'processing': true,
         'serverSide': true,
@@ -80,6 +82,9 @@ function mothlyDT() {
             paginationFunction('loan_scheme_monthly_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(loan_scheme_monthly_table, 'loan_scheme_monthly_table');
 }
 // Loan Scheme datatable
 function weeklyDT() {
@@ -89,7 +94,9 @@ function weeklyDT() {
     var table = $('#loan_scheme_daily_table').DataTable();
     table.destroy();
 
-    $('#loan_scheme_weekly_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var loan_scheme_weekly_table = $('#loan_scheme_weekly_table').DataTable({
+        ...getStateSaveConfig('loan_scheme_weekly_table'),
         "order": [[0, "desc"]],
         'processing': true,
         'serverSide': true,
@@ -128,6 +135,9 @@ function weeklyDT() {
             paginationFunction('loan_scheme_weekly_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(loan_scheme_weekly_table, 'loan_scheme_weekly_table');
 }
 // Loan Scheme datatable
 function dailyDT() {
@@ -137,7 +147,9 @@ function dailyDT() {
     var table = $('#loan_scheme_weekly_table').DataTable();
     table.destroy();
 
-    $('#loan_scheme_daily_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var loan_scheme_daily_table = $('#loan_scheme_daily_table').DataTable({
+        ...getStateSaveConfig('loan_scheme_daily_table'),
         "order": [[0, "desc"]],
         'processing': true,
         'serverSide': true,
@@ -176,4 +188,7 @@ function dailyDT() {
             paginationFunction('loan_scheme_daily_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(loan_scheme_daily_table, 'loan_scheme_daily_table');
 }

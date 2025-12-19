@@ -41,7 +41,9 @@ include '../ajaxconfig.php';
 
 <script type="text/javascript">
     $(function() {
-        $('#loancategoryTable').DataTable({
+        // Declare table variable to store the DataTable instance
+        var loancategoryTable = $('#loancategoryTable').DataTable({
+            ...getStateSaveConfig('loancategoryTable'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -69,6 +71,9 @@ include '../ajaxconfig.php';
                 searchFunction('loancategoryTable');
             }
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(loancategoryTable, 'loancategoryTable');
     });
 </script>
 

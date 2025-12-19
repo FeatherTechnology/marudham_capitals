@@ -70,7 +70,9 @@ include '../../ajaxconfig.php';
 
 <script type="text/javascript">
     $(function() {
-        $('#signed_table').DataTable({
+        // Declare table variable to store the DataTable instance
+        var signed_table = $('#signed_table').DataTable({
+            ...getStateSaveConfig('signed_table'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -102,6 +104,9 @@ include '../../ajaxconfig.php';
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(signed_table, 'signed_table');
     });
 </script>
 <?php

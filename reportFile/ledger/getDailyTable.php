@@ -13,8 +13,8 @@ if ($userid != 1) {
 
     $userQry = $connect->query("SELECT line_id, report_access FROM USER WHERE user_id = $userid ");
     $rowuser = $userQry->fetch();
-        $line_id = $rowuser['line_id'];
-        $report_access = $rowuser['report_access'];
+    $line_id = $rowuser['line_id'];
+    $report_access = $rowuser['report_access'];
 
     if ($report_access == '1') { //Report access individual.
         $line_id = explode(',', $line_id);
@@ -30,7 +30,7 @@ if ($userid != 1) {
         }
         $sub_area_list = array();
         $sub_area_list = implode(',', $sub_area_ids);
-        
+
         $user_based = " AND (select area_confirm_subarea from customer_profile where req_id = cp.req_id) IN ($sub_area_list) AND cp.insert_login_id = '$userid' ";
     }
 }
@@ -167,7 +167,9 @@ while ($row = $qry->fetch()) {
 
 <script type='text/javascript'>
     $(function() {
-        $('#daily_table').DataTable({
+        // Declare table variable to store the DataTable instance
+        var daily_table = $('#daily_table').DataTable({
+            ...getStateSaveConfig('daily_table'),
             "title": "Daily Ledger Report",
             'processing': true,
             'iDisplayLength': 10,
@@ -178,11 +180,11 @@ while ($row = $qry->fetch()) {
             dom: 'lBfrtip',
             buttons: [{
                     extend: 'excel',
-                    action: function (e, dt, button, config) {
+                    action: function(e, dt, button, config) {
                         var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                         var dynamic = curDateJs('Daily_Ledger_report'); // or any base
-                        config.title = dynamic;      // for versions that use title as filename
-                        config.filename = dynamic;   // for html5 filename
+                        config.title = dynamic; // for versions that use title as filename
+                        config.filename = dynamic; // for html5 filename
                         defaultAction.call(this, e, dt, button, config);
                     }
                 },
@@ -196,6 +198,9 @@ while ($row = $qry->fetch()) {
                 paginationFunction('daily_table');
             }
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(daily_table, 'daily_table');
     });
 </script>
 

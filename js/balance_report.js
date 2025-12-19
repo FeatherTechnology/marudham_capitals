@@ -12,21 +12,21 @@ $(document).ready(function () {
         let tid;
         let colArr;
 
-        if(reportType =='1'){//Balance
+        if (reportType == '1') {//Balance
             url = 'reportFile/balance/getBalanceReport.php';
             tid = 'balance_report_table';
-            colArr = [16, 17, 19,20, 22,23];
+            colArr = [16, 17, 19, 20, 22, 23];
             $('#balance_table_div').show();
             $('#princ_intrst_table_div').hide();
 
-        }else if(reportType =='2'){ //Priciple / Interest
+        } else if (reportType == '2') { //Priciple / Interest
             url = 'reportFile/principal_interest/getBalPrincipalinterest.php';
             tid = 'princ_intrst_table';
-            colArr = [16, 17, 19, 20, 21, 22, 24,25];
+            colArr = [16, 17, 19, 20, 21, 22, 24, 25];
             $('#balance_table_div').hide();
             $('#princ_intrst_table_div').show();
 
-        }else{
+        } else {
             alert("Kindly select Report type.");
             return;
         }
@@ -97,9 +97,11 @@ $(function () {
     getloancategorylist();
 });
 
-function balanceReportTable(url, tid, columnsToSum){
-    $('#'+tid).DataTable().destroy();
-    $('#'+tid).DataTable({
+function balanceReportTable(url, tid, columnsToSum) {
+    $('#' + tid).DataTable().destroy();
+    // Declare table variable to store the DataTable instance
+    var table = $('#' + tid).DataTable({
+        ...getStateSaveConfig(tid),
         "order": [
             [0, "asc"]
         ],
@@ -163,13 +165,16 @@ function balanceReportTable(url, tid, columnsToSum){
                 $(api.column(colIndex).footer()).html(`<b>` + total.toLocaleString() + `</b>`);
             });
         },
-        'drawCallback': function() {
+        'drawCallback': function () {
             searchFunction(tid);
             paginationFunction(tid);
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(table, 'tid');
 }
-function getloancategorylist(){
+function getloancategorylist() {
     $.ajax({
         url: 'loancategoryFile/ajaxGetLoanCategory.php',
         data: {},

@@ -37,6 +37,20 @@
     .dropdown-content {
         color: black;
     }
+
+    .dt-button-collection .buttons-columnVisibility.active-column {
+        background: #c6f7c6 !important;
+        background-color: #c6f7c6 !important;
+        box-shadow: none !important;
+        filter: none !important;
+    }
+
+    .dt-button-collection .buttons-columnVisibility.inactive-column {
+        background: #f7c6c6 !important;
+        background-color: #f7c6c6 !important;
+        box-shadow: none !important;
+        filter: none !important;
+    }
 </style>
 
 <script type="text/javascript">
@@ -149,6 +163,7 @@
 
         $(document).ready(function() {
             var company_creation_table = $('#company_creation_table').DataTable({
+                ...getStateSaveConfig('company_creation_table'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -193,8 +208,10 @@
                     toggleAddButton();
                 }
             });
+            initColVisFeatures(company_creation_table, 'company_creation_table');
 
             var branch_creation_info = $('#branch_creation_info').DataTable({
+                ...getStateSaveConfig('branch_creation_info'),
                 "order": [
                     [0, "asc"]
                 ],
@@ -238,8 +255,10 @@
                     paginationFunction('branch_creation_info');
                 }
             });
+            initColVisFeatures(branch_creation_info, 'branch_creation_info');
 
             var loan_creation_table = $('#loan_creation_table').DataTable({
+                ...getStateSaveConfig('loan_creation_table'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -283,9 +302,11 @@
                     paginationFunction('loan_creation_table');
                 }
             });
+            initColVisFeatures(loan_creation_table, 'loan_creation_table');
 
             // Loan Calculation datatable
             var loan_calculation_info = $('#loan_calculation_info').DataTable({
+                ...getStateSaveConfig('loan_calculation_info'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -327,8 +348,10 @@
                     paginationFunction('loan_calculation_info');
                 }
             });
+            initColVisFeatures(loan_calculation_info, 'loan_calculation_info');
 
             var area_creation_info = $('#area_creation_info').DataTable({
+                ...getStateSaveConfig('area_creation_info'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -372,9 +395,11 @@
                     paginationFunction('area_creation_info');
                 }
             });
+            initColVisFeatures(area_creation_info, 'area_creation_info');
 
             // Director Creation datatable
             var director_creation_table = $('#director_creation_table').DataTable({
+                ...getStateSaveConfig('director_creation_table'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -415,9 +440,11 @@
                     paginationFunction('director_creation_table');
                 }
             });
+            initColVisFeatures(director_creation_table, 'director_creation_table');
 
             // Agent Creation datatable
             var agent_creation_table = $('#agent_creation_table').DataTable({
+                ...getStateSaveConfig('agent_creation_table'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -458,8 +485,11 @@
                     paginationFunction('agent_creation_table');
                 }
             });
+            initColVisFeatures(agent_creation_table, 'agent_creation_table');
+
             // Staff Creation datatable
             var staff_creation_table = $('#staff_creation_table').DataTable({
+                ...getStateSaveConfig('staff_creation_table'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -500,9 +530,11 @@
                     paginationFunction('staff_creation_table');
                 }
             });
+            initColVisFeatures(staff_creation_table, 'staff_creation_table');
 
             //Bank Creation Table
             var bank_creation_table = $('#bank_creation_table').DataTable({
+                ...getStateSaveConfig('bank_creation_table'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -543,9 +575,11 @@
                     paginationFunction('bank_creation_table');
                 }
             });
+            initColVisFeatures(bank_creation_table, 'bank_creation_table');
 
             // Manage user datatable
             var manage_user_table = $('#manage_user_table').DataTable({
+                ...getStateSaveConfig('manage_user_table'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -586,8 +620,11 @@
                     paginationFunction('manage_user_table');
                 }
             });
+            initColVisFeatures(manage_user_table, 'manage_user_table');
+
             // Documentation Mapping datatable
             var doc_mapping_table = $('#doc_mapping_table').DataTable({
+                ...getStateSaveConfig('doc_mapping_table'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -620,8 +657,11 @@
                     searchFunction();
                 }
             });
+            initColVisFeatures(doc_mapping_table, 'doc_mapping_table');
+
             // Request datatable
             var request_table = $('#request_table').DataTable({
+                ...getStateSaveConfig('request_table'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -663,10 +703,11 @@
                     callOnClickEvents();
                 }
             });
-
+            initColVisFeatures(request_table, 'request_table');
 
             // Verification datatable
             var verification_table = $('#verification_table').DataTable({
+                ...getStateSaveConfig('verification_table'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -708,10 +749,11 @@
                     callOnClickEvents();
                 }
             });
-
+            initColVisFeatures(verification_table, 'verification_table');
 
             // Approval datatable
             var approval_table = $('#approval_table').DataTable({
+                ...getStateSaveConfig('approval_table'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -753,9 +795,11 @@
                     callOnClickEvents();
                 }
             });
+            initColVisFeatures(approval_table, 'approval_table');
 
             // Acknowledgement List
             var acknowledge_table = $('#acknowledge_table').DataTable({
+                ...getStateSaveConfig('acknowledge_table'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -797,9 +841,11 @@
                     callOnClickEvents();
                 }
             });
+            initColVisFeatures(acknowledge_table, 'acknowledge_table');
 
             // Loan Issue List
             var loanIssue_table = $('#loanIssue_table').DataTable({
+                ...getStateSaveConfig('loanIssue_table'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -841,9 +887,12 @@
                     callOnClickEvents();
                 }
             });
+            initColVisFeatures(loanIssue_table, 'loanIssue_table');
+
             // accounts Loan Issue Table
             // Loan Issue List
             var accountsloanIssue_table = $('#accountsloanIssue_table').DataTable({
+                ...getStateSaveConfig('accountsloanIssue_table'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -885,8 +934,11 @@
                     callOnClickEvents();
                 }
             });
+            initColVisFeatures(accountsloanIssue_table, 'accountsloanIssue_table');
+
             // Closed
             var closed_table = $('#closed_table').DataTable({
+                ...getStateSaveConfig('closed_table'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -928,9 +980,11 @@
                     setNOCButton();
                 }
             });
+            initColVisFeatures(closed_table, 'closed_table');
 
             //NOC Table
             var noc_table = $('#noc_table').DataTable({
+                ...getStateSaveConfig('noc_table'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -972,9 +1026,11 @@
                     callOnClickEvents();
                 }
             });
-            
+            initColVisFeatures(noc_table, 'noc_table');
+
             //NOC Handover Table 
-             var noc_handover_table = $('#noc_handover_table').DataTable({
+            var noc_handover_table = $('#noc_handover_table').DataTable({
+                ...getStateSaveConfig('noc_handover_table'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -1016,7 +1072,7 @@
                     callOnClickEvents();
                 }
             });
-
+            initColVisFeatures(noc_handover_table, 'noc_handover_table');
 
             //UPDATE Table
             // var update_table = $('#update_table').DataTable({
@@ -1063,6 +1119,7 @@
 
             //Document Track Table
             var doc_track_table = $('#doc_track_table').DataTable({
+                ...getStateSaveConfig('doc_track_table'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -1104,6 +1161,7 @@
                     getDocOnClickFunction();
                 }
             });
+            initColVisFeatures(doc_track_table, 'doc_track_table');
   
             //NOC replace Table
             var noc_replace_table = $('#noc_replace_table').DataTable({
@@ -1148,9 +1206,11 @@
                     callOnClickEvents();
                 }
             });
+            initColVisFeatures(noc_replace_table, 'noc_replace_table');
             
             //Concern Table
             var concern_table = $('#concern_table').DataTable({
+                ...getStateSaveConfig('concern_table'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -1191,9 +1251,11 @@
                     paginationFunction('concern_table');
                 }
             });
+            initColVisFeatures(concern_table, 'concern_table');
 
             //Concern Solution Table
             var concern_solution_table = $('#concern_solution_table').DataTable({
+                ...getStateSaveConfig('concern_solution_table'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -1234,8 +1296,11 @@
                     paginationFunction('concern_solution_table');
                 }
             });
+            initColVisFeatures(concern_solution_table, 'concern_solution_table');
+
             //Concern Feedback Table
             var concern_feedback_table = $('#concern_feedback_table').DataTable({
+                ...getStateSaveConfig('concern_feedback_table'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -1276,6 +1341,7 @@
                     paginationFunction('concern_feedback_table');
                 }
             });
+            initColVisFeatures(concern_feedback_table, 'concern_feedback_table');
 
             //SMS Generation
             var customer_birthday_table = $('#customer_birthday_table').DataTable({
@@ -1321,6 +1387,7 @@
             });
 
             var loan_follow_table = $('#loan_follow_table').DataTable({
+                ...getStateSaveConfig('loan_follow_table'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -1362,8 +1429,10 @@
                     loanFollowupTableOnclick();
                 }
             });
+            initColVisFeatures(loan_follow_table, 'loan_follow_table');
 
             var conf_follow_table = $('#conf_follow_table').DataTable({
+                ...getStateSaveConfig('conf_follow_table'),
                 "order": [
                     [0, "desc"]
                 ],
@@ -1405,6 +1474,7 @@
                     confirmationTableOnClick();
                 }
             });
+            initColVisFeatures(conf_follow_table, 'conf_follow_table');
 
             $('#search_input_').keyup(function() {
                 let search_content = $('#search_input_').val();
@@ -2108,9 +2178,12 @@
                 // Remove all non-digit characters
                 val = val.replace(/[^0-9]/g, '');
 
-            } else if(screen ==='withDot'){
+            } else if (screen === 'withDot') {
+                val = val.replace(/[^0-9.]/g, ''); // Only numbers + dot
                 val = val.replace(/(\..*)\./g, '$1'); // allow only one dot
-                
+
+            } else if (screen === 'alphaNumeric') {
+                val = val.replace(/[^A-Za-z0-9]/g, ''); // ONLY A-Z, a-z, 0-9
             }
 
             // Update the field with only numeric value
@@ -2162,6 +2235,105 @@
                 $(this).val(parts.join(" "));
             });
         }
+
+        // <------------------------------------------------------ COLUMN VISIBILITY AND COLOR CHNAGE START -------------------------------------------------------->
+
+        function getStateSaveConfig(tableId) {
+
+            return {
+                // Tells DataTables to remember state (we override which parts to save)
+                stateSave: true,
+
+                // 🔹 This runs whenever the table state is saved
+                stateSaveParams: function(settings) {
+
+                    // Collect ONLY column visibility (true/false for each column)
+                    // Ex: [true, false, true, true] means column 2 is hidden
+                    const visibility = settings.aoColumns.map(col => col.bVisible);
+
+                    // Save into localStorage, tied to this table's ID
+                    // Example key: "company_creation_table_colVis"
+                    localStorage.setItem(tableId + "_colVis", JSON.stringify(visibility));
+                },
+
+                // 🔹 This runs BEFORE DataTables builds the table
+                // It restores the previously saved visibility
+                stateLoadParams: function(settings) {
+
+                    // Read saved visibility from local storage
+                    const saved = localStorage.getItem(tableId + "_colVis");
+                    if (!saved) return; // nothing saved yet → do nothing
+
+                    // Convert back from JSON string → array of booleans
+                    const visibility = JSON.parse(saved);
+
+                    // Apply saved visibility to each column
+                    visibility.forEach((isVisible, index) => {
+                        settings.aoColumns[index].bVisible = isVisible;
+                    });
+                }
+            };
+        }
+
+        function initColVisFeatures(table, tableId) {
+
+            const STORAGE_KEY = tableId + "_colVis";
+            const COLLECTION_SELECTOR = '.dt-button-collection .buttons-columnVisibility';
+
+            // 1. Sync ColVis button active state with column
+            function syncButtonActiveState() {
+                table.buttons('.buttons-columnVisibility').each(function(idx) {
+                    const btn = table.button(idx);
+                    const colIdx = btn.conf?._fnInit?.columns;
+                    if (colIdx === undefined) return;
+                    btn.active(table.column(colIdx).visible());
+                });
+            }
+
+            // 2. Apply green/red color classes
+            function updateColVisColors() {
+                $(COLLECTION_SELECTOR).each(function() {
+                    const isActive = $(this).hasClass('active');
+                    $(this)
+                        .toggleClass('active-column', isActive)
+                        .toggleClass('inactive-column', !isActive);
+                });
+            }
+
+            // 3. One master fix (state + color)
+            function fixColVisUI() {
+                syncButtonActiveState();
+                updateColVisColors();
+            }
+
+            // 4. Restore column visibility from localStorage
+            function applySavedVisibility() {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (!saved) return;
+
+                JSON.parse(saved).forEach((isVisible, i) => {
+                    table.column(i).visible(isVisible, false);
+                });
+
+                table.columns.adjust().draw(false);
+            }
+
+            // 5. Event bindings
+            function bindColVisEvents() {
+                table.on('buttons-collection.dt column-visibility.dt', fixColVisUI);
+
+                $(document)
+                    .off('click.colvisFix_' + tableId)
+                    .on('click.colvisFix_' + tableId, '.buttons-collection', fixColVisUI);
+            }
+
+            // 6. Execution order (DO NOT CHANGE)
+            applySavedVisibility(); // restore actual column state
+            bindColVisEvents(); // attach listeners
+            fixColVisUI(); // initial correction
+        }
+
+        // <------------------------------------------------------ COLUMN VISIBILITY AND COLOR CHNAGE END -------------------------------------------------------->
 
     </script>
 

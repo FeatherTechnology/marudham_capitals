@@ -84,9 +84,9 @@ include '../ajaxconfig.php';
             $relationship = 'NIL';
             if ($kyc['proofOf'] == '2') {
                 $sql = $connect->query("SELECT famname, relationship FROM `verification_family_info` where id = '$fam_mem_id'");
-                $rw= $sql->fetch();
-                $fam_mem = $rw['famname']?? '';
-                $relationship = $rw['relationship']?? '';
+                $rw = $sql->fetch();
+                $fam_mem = $rw['famname'] ?? '';
+                $relationship = $rw['relationship'] ?? '';
             } elseif ($kyc['proofOf'] == '1') {
                 $qry = $connect->query("SELECT a.famname, a.relationship from verification_family_info a 
                 LEFT JOIN customer_profile b ON a.id = b.guarentor_name
@@ -120,7 +120,9 @@ include '../ajaxconfig.php';
 
 <script type="text/javascript">
     $(function() {
-        $('#kyc_dataTable').DataTable({
+        // Declare table variable to store the DataTable instance
+        var kyc_dataTable = $('#kyc_dataTable').DataTable({
+            ...getStateSaveConfig('kyc_dataTable'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -139,11 +141,11 @@ include '../ajaxconfig.php';
             dom: 'lBfrtip',
             buttons: [{
                     extend: 'excel',
-                    action: function (e, dt, button, config) {
+                    action: function(e, dt, button, config) {
                         var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                         var dynamic = curDateJs('Kyc_info'); // or any base
-                        config.title = dynamic;      // for versions that use title as filename
-                        config.filename = dynamic;   // for html5 filename
+                        config.title = dynamic; // for versions that use title as filename
+                        config.filename = dynamic; // for html5 filename
                         defaultAction.call(this, e, dt, button, config);
                     }
                 },
@@ -153,6 +155,9 @@ include '../ajaxconfig.php';
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(kyc_dataTable, 'kyc_dataTable');
     });
 </script>
 <?php

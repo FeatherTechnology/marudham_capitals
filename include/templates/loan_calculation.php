@@ -215,21 +215,21 @@ if ($idupd > 0) {
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-12 col-sm-6 col-12">
                             <div class="form-group">
-                                <h5>Due Period %</h5>
+                                <h5>Due Period</h5>
                             </div>
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="form-group">
                                 <label for="disabledInput">Min</label><span class="required">&nbsp;*</span>
-                                <input type="number" step="0.01" tabindex="9" id="due_period_min" name="due_period_min" class="form-control" placeholder="Due Period Min" required value="<?php if (isset($due_period_min)) echo $due_period_min; ?>">
+                                <input type="text" step="0.01" tabindex="9" id="due_period_min" name="due_period_min" class="form-control" placeholder="Due Period Min" required value="<?php if (isset($due_period_min)) echo $due_period_min; ?>" oninput="validateInputNumber(this,'withOutDot')">
                             </div>
-                        </div>
+                        </div> <!-- Use input type='text' for numeric validation, because type='number' always resets the cursor when you block invalid characters-->
                         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="form-group">
                                 <label for="disabledInput">Max</label><span class="required">&nbsp;*</span>
-                                <input type="number" step="0.01" tabindex="10" id="due_period_max" name="due_period_max" class="form-control" placeholder="Due Period Max" required value="<?php if (isset($due_period_max)) echo $due_period_max; ?>">
+                                <input type="text" step="0.01" tabindex="10" id="due_period_max" name="due_period_max" class="form-control" placeholder="Due Period Max" required value="<?php if (isset($due_period_max)) echo $due_period_max; ?>" oninput="validateInputNumber(this,'withOutDot')">
 
-                            </div>
+                            </div> <!-- Use input type='text' for numeric validation, because type='number' always resets the cursor when you block invalid characters-->
                         </div>
                         <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-12">
                             <div class="form-group">

@@ -55,7 +55,9 @@ if ($result->rowCount() > 0) {
 <script>
     var table = $('#loanSummaryTable').DataTable();
     table.destroy();
-    $('#loanSummaryTable').DataTable({
+    // Declare table variable to store the DataTable instance
+    var loanSummaryTable = $('#loanSummaryTable').DataTable({
+        ...getStateSaveConfig('loanSummaryTable'),
         'processing': true,
         'iDisplayLength': 5,
         "lengthMenu": [
@@ -80,6 +82,9 @@ if ($result->rowCount() > 0) {
             }
         ],
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(loanSummaryTable, 'loanSummaryTable');
 </script>
 <?php
 // Close the database connection

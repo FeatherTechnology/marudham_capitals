@@ -36,7 +36,9 @@ include '../../ajaxconfig.php';
 
 <script type="text/javascript">
     $(function() {
-        $('#festivaldatatable').DataTable({
+        // Declare table variable to store the DataTable instance
+        var festivaldatatable = $('#festivaldatatable').DataTable({
+            ...getStateSaveConfig('festivaldatatable'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -61,5 +63,8 @@ include '../../ajaxconfig.php';
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(festivaldatatable, 'festivaldatatable');
     });
 </script>

@@ -195,7 +195,9 @@ function moneyFormatIndia($num)
 
 
 <script>
-    $('#loanListTable').DataTable({
+    // Declare table variable to store the DataTable instance
+    var loanListTable = $('#loanListTable').DataTable({
+        ...getStateSaveConfig('loanListTable'),
         'processing': true,
         'iDisplayLength': 5,
         "lengthMenu": [
@@ -206,11 +208,11 @@ function moneyFormatIndia($num)
         buttons: [{
                 extend: 'excel',
                 title: "Loan History",
-                action: function (e, dt, button, config) {
+                action: function(e, dt, button, config) {
                     var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                     var dynamic = curDateJs('Loan_History'); // or any base
-                    config.title = dynamic;      // for versions that use title as filename
-                    config.filename = dynamic;   // for html5 filename
+                    config.title = dynamic; // for versions that use title as filename
+                    config.filename = dynamic; // for html5 filename
                     defaultAction.call(this, e, dt, button, config);
                 }
             },
@@ -236,6 +238,9 @@ function moneyFormatIndia($num)
             });
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(loanListTable, 'loanListTable');
 </script>
 
 <?php

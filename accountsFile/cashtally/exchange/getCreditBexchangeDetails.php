@@ -62,7 +62,9 @@ while($row = $qry->fetch()){
 
 <script type='text/javascript'>
     $(function() {
-        $('#bexCollectionTable').DataTable({
+        // Declare table variable to store the DataTable instance
+        var bexCollectionTable = $('#bexCollectionTable').DataTable({
+            ...getStateSaveConfig('bexCollectionTable'),
             "title":"Bank Exchange List",
             'processing': true,
             'iDisplayLength': 5,
@@ -95,6 +97,9 @@ while($row = $qry->fetch()){
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(bexCollectionTable, 'bexCollectionTable');
     });
 </script>
 

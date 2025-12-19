@@ -4,15 +4,15 @@ $(document).ready(function () {
     $('#line,#group, #due_followup').click(function () {
         var mapping_type = $('input[name=mapping_type]:checked').val();
         if (mapping_type == 'line') {
-            $('.line_mapping').show(); $('.group_mapping').hide();$('.due_followup_mapping').hide();
+            $('.line_mapping').show(); $('.group_mapping').hide(); $('.due_followup_mapping').hide();
             dT1();
         }
         if (mapping_type == 'group') {
-            $('.line_mapping').hide(); $('.group_mapping').show();$('.due_followup_mapping').hide();
+            $('.line_mapping').hide(); $('.group_mapping').show(); $('.due_followup_mapping').hide();
             dT2();
         }
         if (mapping_type == 'duefollowup') {
-            $('.line_mapping').hide(); $('.group_mapping').hide();$('.due_followup_mapping').show();
+            $('.line_mapping').hide(); $('.group_mapping').hide(); $('.due_followup_mapping').show();
             dT3();
         }
     })
@@ -34,8 +34,9 @@ function dT1() {
     $('#area_mapping_line_info').empty();
     $('#area_mapping_line_info').append(`<thead><tr><th width="50">S. No.</th><th>Line Name</th><th>Company Name</th><th>Branch Name</th><th>Area Name</th><th>Sub Area</th><th>Status</th><th>Action</th></tr></thead><tbody></tbody>`);
 
-    $('#area_mapping_line_info').DataTable({
-
+    // Declare table variable to store the DataTable instance
+    var area_mapping_line_info = $('#area_mapping_line_info').DataTable({
+        ...getStateSaveConfig('area_mapping_line_info'),
         "order": [[0, "asc"]],
         'processing': true,
         'serverSide': true,
@@ -74,14 +75,19 @@ function dT1() {
             paginationFunction('area_mapping_line_info');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(area_mapping_line_info, 'area_mapping_line_info');
 }
 
-function dT2(){
+function dT2() {
     $('#area_mapping_group_info').DataTable().destroy();
     $('#area_mapping_group_info').empty();
     $('#area_mapping_group_info').append(`<thead><tr><th width="50">S. No.</th><th>Group Name</th><th>Company Name</th><th>Branch Name</th><th>Area Name</th><th>Sub Area</th><th>Status</th><th>Action</th></tr></thead><tbody></tbody>`);
 
-    $('#area_mapping_group_info').DataTable({
+    // Declare table variable to store the DataTable instance
+    var area_mapping_group_info = $('#area_mapping_group_info').DataTable({
+        ...getStateSaveConfig('area_mapping_group_info'),
         "order": [[0, "desc"]],
         'processing': true,
         'serverSide': true,
@@ -121,6 +127,9 @@ function dT2(){
             paginationFunction('area_mapping_group_info');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(area_mapping_group_info, 'area_mapping_group_info');
 }
 
 function dT3() {
@@ -128,7 +137,9 @@ function dT3() {
     $('#area_mapping_duefollowup_info').empty();
     $('#area_mapping_duefollowup_info').append(`<thead><tr><th width="50">S. No.</th><th>Due Followup Name</th><th>Company Name</th><th>Branch Name</th><th>Area Name</th><th>Status</th><th>Action</th></tr></thead><tbody></tbody>`);
 
-    $('#area_mapping_duefollowup_info').DataTable({
+    // Declare table variable to store the DataTable instance
+    var area_mapping_duefollowup_info = $('#area_mapping_duefollowup_info').DataTable({
+        ...getStateSaveConfig('area_mapping_duefollowup_info'),
         "order": [[0, "desc"]],
         'processing': true,
         'serverSide': true,
@@ -168,5 +179,8 @@ function dT3() {
             paginationFunction('area_mapping_duefollowup_info');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(area_mapping_duefollowup_info, 'area_mapping_duefollowup_info');
 }
 

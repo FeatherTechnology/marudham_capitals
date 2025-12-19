@@ -1,7 +1,9 @@
 $(document).ready(function () {
 
     //Customer Profile Report Table
-    $('#cust_profile_report_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var cust_profile_report_table = $('#cust_profile_report_table').DataTable({
+        ...getStateSaveConfig('cust_profile_report_table'),
         "order": [
             [0, "desc"]
         ],
@@ -42,4 +44,6 @@ $(document).ready(function () {
         }
     });
 
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(cust_profile_report_table, 'cust_profile_report_table');
 });

@@ -66,11 +66,12 @@ function moneyFormatIndia($num)
 
                 <td>
                     <a id="gold_info_edit" value="<?php echo $gold['id']; ?>"> <span class="icon-border_color"></span></a> &nbsp
-                    <?php 
+                    <?php
                     // if ($pages == 1) {  // Verification screen only delete option. 
                     ?>
-                        <a id="gold_info_delete" value="<?php echo $gold['id']; ?>"> <span class='icon-trash-2'></span> </a>
-                    <?php  //} ?>
+                    <a id="gold_info_delete" value="<?php echo $gold['id']; ?>"> <span class='icon-trash-2'></span> </a>
+                    <?php  //} 
+                    ?>
                 </td>
 
             </tr>
@@ -83,7 +84,9 @@ function moneyFormatIndia($num)
 
 <script type="text/javascript">
     $(function() {
-        $('#goldInfo_table_data').DataTable({
+        // Declare table variable to store the DataTable instance
+        var goldInfo_table_data = $('#goldInfo_table_data').DataTable({
+            ...getStateSaveConfig('goldInfo_table_data'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -102,11 +105,11 @@ function moneyFormatIndia($num)
             dom: 'lBfrtip',
             buttons: [{
                     extend: 'excel',
-                    action: function (e, dt, button, config) {
+                    action: function(e, dt, button, config) {
                         var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                         var dynamic = curDateJs('Gold_info'); // or any base
-                        config.title = dynamic;      // for versions that use title as filename
-                        config.filename = dynamic;   // for html5 filename
+                        config.title = dynamic; // for versions that use title as filename
+                        config.filename = dynamic; // for html5 filename
                         defaultAction.call(this, e, dt, button, config);
                     }
                 },
@@ -116,6 +119,9 @@ function moneyFormatIndia($num)
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(goldInfo_table_data, 'goldInfo_table_data');
     });
 </script>
 <?php

@@ -879,7 +879,7 @@ if ($bank_qry->num_rows > 0) {
 						<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
 							<div class="form-group">
 								<label class="label">Untracked Amount</label>
-								<input type="number" name="untracked_amt" id="untracked_amt" class="form-control" placeholder="Enter Untracked Amount">
+								<input type="text" name="untracked_amt" id="untracked_amt" class="form-control" placeholder="Enter Untracked Amount" oninput="validateInputNumber(this,'withOutDot')">
 								<span class="text-danger" style='display:none' id='untracked_amtCheck'>Please Select Amount</span>
 								<div id="insertsuccess" style="color: green; font-weight: bold; display:none">Untracked Amount Added Successfully</div>
 								<div id="updatesuccess" style="color: red; font-weight: bold;display:none">Untracked Updated Succesfully</div>

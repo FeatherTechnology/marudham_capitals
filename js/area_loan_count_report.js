@@ -91,7 +91,9 @@ function areaLoanCountReportTable() {
     }
 
     // Initialize
-    $(tableId).DataTable({
+    // Declare table variable to store the DataTable instance
+    var table = $(tableId).DataTable({
+        ...getStateSaveConfig(tid),
         order: [[1, 'asc']],  // Sort by Area
         processing: true,
         serverSide: true,
@@ -131,7 +133,7 @@ function areaLoanCountReportTable() {
         ],
 
         columns: [
-            { 
+            {
                 data: null,
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
@@ -164,4 +166,7 @@ function areaLoanCountReportTable() {
             paginationFunction(tid);
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(table, 'tid');
 }

@@ -1,11 +1,11 @@
 $(document).ready(function () {
-    
-    $('#from_date').change(function(){
+
+    $('#from_date').change(function () {
         const fromDate = $(this).val();
         const toDate = $('#to_date').val();
         $('#to_date').attr('min', fromDate);
 
-         // Check if from_date is greater than to_date
+        // Check if from_date is greater than to_date
         if (toDate && fromDate > toDate) {
             $('#to_date').val(''); // Clear the invalid value
         }
@@ -17,9 +17,11 @@ $(document).ready(function () {
     })
 });
 
-function closedReportTable(){
+function closedReportTable() {
     $('#closed_report_table').DataTable().destroy();
-    $('#closed_report_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var closed_report_table = $('#closed_report_table').DataTable({
+        ...getStateSaveConfig('closed_report_table'),
         "order": [
             [0, "asc"]
         ],
@@ -83,9 +85,12 @@ function closedReportTable(){
                 $(api.column(colIndex).footer()).html(`<b>` + total.toLocaleString() + `</b>`);
             });
         },
-        'drawCallback': function() {
+        'drawCallback': function () {
             searchFunction('closed_report_table');
             paginationFunction('closed_report_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(closed_report_table, 'closed_report_table');
 }

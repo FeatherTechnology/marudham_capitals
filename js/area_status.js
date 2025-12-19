@@ -22,7 +22,9 @@ function dT1() {
         $('#area_status_table').DataTable().clear().destroy();
     }
 
-    $('#area_status_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var area_status_table = $('#area_status_table').DataTable({
+        ...getStateSaveConfig('area_status_table'),
         "order": [[0, "desc"]],
         'processing': true,
         'serverSide': true,
@@ -63,13 +65,18 @@ function dT1() {
             paginationFunction('area_status_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(area_status_table, 'area_status_table');
 }
 function dT2() {
     if ($.fn.DataTable.isDataTable('#sub_area_status_table')) {
         $('#sub_area_status_table').DataTable().clear().destroy();
     }
 
-    $('#sub_area_status_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var sub_area_status_table = $('#sub_area_status_table').DataTable({
+        ...getStateSaveConfig('sub_area_status_table'),
         "order": [[0, "desc"]],
         'ordering': false,
         'processing': true,
@@ -110,6 +117,9 @@ function dT2() {
             paginationFunction('sub_area_status_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(sub_area_status_table, 'sub_area_status_table');
 }
 
 //For Enable

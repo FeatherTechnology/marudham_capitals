@@ -199,9 +199,9 @@ if ($idupd > 0) {
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Pincode</label>&nbsp;<span class="text-danger">*</span>
-											<input type="number" onKeyPress="if(this.value.length==6) return false;" class="form-control" id="pincode" name="pincode" value="<?php if (isset($pincode)) echo $pincode; ?>" placeholder="Enter Pincode" tabindex="11">
+											<input type="text" onKeyPress="if(this.value.length==6) return false;" class="form-control" id="pincode" name="pincode" value="<?php if (isset($pincode)) echo $pincode; ?>" placeholder="Enter Pincode" tabindex="11" oninput="validateInputNumber(this,'withOutDot')">
 										</div>
-									</div>
+									</div> <!-- Use input type='text' for numeric validation, because type='number' always resets the cursor when you block invalid characters-->
 								</div>
 							</div>
 						</div>
@@ -237,10 +237,10 @@ if ($idupd > 0) {
 														<input type="text" tabindex="13" name="designation[]" id="designation" class="form-control" pattern="[a-zA-Z\s]+">
 													</td>
 													<td>
-														<input type="number" tabindex="14" name="mobile[]" id="mobile" class="form-control" onKeyPress="if(this.value.length==10) return false;" onblur="if(this.value != '' && this.value.length < 10) $(this).focus();">
+														<input type="text" tabindex="14" name="mobile[]" id="mobile" class="form-control" onKeyPress="if(this.value.length==10) return false;" onblur="if(this.value != '' && this.value.length < 10) $(this).focus();" oninput="validateInputNumber(this,'withOutDot')">
 													</td>
 													<td>
-														<input type="number" tabindex="15" name="whatsapp[]" id="whatsapp" class="form-control" onKeyPress="if(this.value.length==10) return false;" onblur="if(this.value != '' && this.value.length < 10) $(this).focus();">
+														<input type="text" tabindex="15" name="whatsapp[]" id="whatsapp" class="form-control" onKeyPress="if(this.value.length==10) return false;" onblur="if(this.value != '' && this.value.length < 10) $(this).focus();" oninput="validateInputNumber(this,'withOutDot')">
 													</td>
 													<td>
 														<button type="button" tabindex="16" id="add_comm[]" name="add_comm" value="Submit" class="btn btn-primary add_comm">Add</button>
@@ -270,16 +270,16 @@ if ($idupd > 0) {
 																																												} ?>" pattern="[a-zA-Z\s]+">
 															</td>
 															<td>
-																<input type="number" tabindex="<?php $tb++;
+																<input type="text" tabindex="<?php $tb++;
 																								echo $tb; ?>" name="mobile[]" id="mobile" class="form-control" onKeyPress="if(this.value.length==10) return false;" value="<?php if (isset($mobile)) {
 																																																								echo $mobile[$i];
-																																																							} ?>" onblur="if(this.value != '' && this.value.length < 10) $(this).focus();">
+																																																							} ?>" onblur="if(this.value != '' && this.value.length < 10) $(this).focus();" oninput="validateInputNumber(this,'withOutDot')">
 															</td>
 															<td>
-																<input type="number" tabindex="<?php $tb++;
+																<input type="text" tabindex="<?php $tb++;
 																								echo $tb; ?>" name="whatsapp[]" id="whatsapp" class="form-control" onKeyPress="if(this.value.length==10) return false;" value="<?php if (isset($whatsapp)) {
 																																																									echo $whatsapp[$i];
-																																																								} ?>" onblur="if(this.value != '' && this.value.length < 10) $(this).focus();">
+																																																								} ?>" onblur="if(this.value != '' && this.value.length < 10) $(this).focus();" oninput="validateInputNumber(this,'withOutDot')">
 															</td>
 															<td>
 																<button type="button" tabindex="<?php $tb++;
@@ -396,13 +396,13 @@ if ($idupd > 0) {
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Bank Account Number</label>&nbsp;<span class="text-danger">*</span>
-											<input type="number" class="form-control" id="acc_no" name="acc_no" value="<?php if (isset($acc_no)) echo $acc_no; ?>" placeholder="Enter Account Number" tabindex="112">
+											<input type="text" class="form-control" id="acc_no" name="acc_no" value="<?php if (isset($acc_no)) echo $acc_no; ?>" placeholder="Enter Account Number" tabindex="112" oninput="validateInputNumber(this,'withOutDot')">
 										</div>
-									</div>
+									</div> <!-- Use input type='text' for numeric validation, because type='number' always resets the cursor when you block invalid characters-->
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="disabledInput">IFSC Code</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" class="form-control" id="ifsc" name="ifsc" value="<?php if (isset($ifsc)) echo $ifsc; ?>" placeholder="Enter IFSC Code" tabindex="113">
+											<input type="text" class="form-control" id="ifsc" name="ifsc" value="<?php if (isset($ifsc)) echo $ifsc; ?>" placeholder="Enter IFSC Code" tabindex="113" oninput="validateInputNumber(this,'alphaNumeric')">
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">

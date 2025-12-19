@@ -52,7 +52,9 @@ $qry = $connect->query("SELECT * From cus_old_data where cus_id = '" . $_POST['c
 
 <script type="text/javascript">
     $(function() {
-        $('#oldCusData_table').DataTable({
+        // Declare table variable to store the DataTable instance
+        var oldCusData_table = $('#oldCusData_table').DataTable({
+            ...getStateSaveConfig('oldCusData_table'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -72,6 +74,9 @@ $qry = $connect->query("SELECT * From cus_old_data where cus_id = '" . $_POST['c
                 searchFunction('oldCusData_table');
             }
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(oldCusData_table, 'oldCusData_table');
     });
 </script>
 

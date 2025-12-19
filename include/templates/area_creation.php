@@ -165,9 +165,9 @@ if ($idupd > 0) {
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-10 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Pincode</label>&nbsp;<span class="text-danger"></span>
-											<input type="number" tabindex="8" onKeyPress="if(this.value.length==6) return false;" class="form-control" id="pincode" name="pincode" value="<?php if (isset($pincode)) echo $pincode; ?>" placeholder="Enter Pincode">
+											<input type="text" tabindex="8" onKeyPress="if(this.value.length==6) return false;" class="form-control" id="pincode" name="pincode" value="<?php if (isset($pincode)) echo $pincode; ?>" placeholder="Enter Pincode" oninput="validateInputNumber(this,'withOutDot')">
 										</div>
-									</div>
+									</div> <!-- Use input type='text' for numeric validation, because type='number' always resets the cursor when you block invalid characters-->
 								</div>
 								<br><br><br>
 								<div class="row">

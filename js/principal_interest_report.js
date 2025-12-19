@@ -7,7 +7,9 @@ $(document).ready(function () {
 
 function collectionReportTable(){
     $('#principal_interest_table').DataTable().destroy();
-    $('#principal_interest_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var principal_interest_table = $('#principal_interest_table').DataTable({
+        ...getStateSaveConfig('principal_interest_table'),
         "order": [
             [0, "desc"]
         ],
@@ -75,4 +77,7 @@ function collectionReportTable(){
             paginationFunction('principal_interest_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(principal_interest_table, 'principal_interest_table');
 }

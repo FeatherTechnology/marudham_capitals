@@ -105,14 +105,14 @@ if ($idupd > 0) {
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="disabledInput">Account Number</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" class="form-control" id="acc_no" name="acc_no" value="<?php if (isset($acc_no)) echo $acc_no; ?>" placeholder="Enter Account Number" tabindex="2">
+											<input type="text" class="form-control" id="acc_no" name="acc_no" value="<?php if (isset($acc_no)) echo $acc_no; ?>" placeholder="Enter Account Number" tabindex="2" oninput="validateInputNumber(this,'withOutDot')">
 											<span class='text-danger' id='accnoCheck' style="display:none">Please Enter Account Number</span>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="ifsc">IFSC Code</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" class="form-control" id="ifsc" name="ifsc" value="<?php if (isset($ifsc)) echo $ifsc; ?>" placeholder="Enter IFSC code" tabindex="3">
+											<input type="text" class="form-control" id="ifsc" name="ifsc" value="<?php if (isset($ifsc)) echo $ifsc; ?>" placeholder="Enter IFSC code" tabindex="3" oninput="validateInputNumber(this,'alphaNumeric')">
 											<span class='text-danger' id='ifscCheck' style="display:none">Please Enter IFSC Code</span>
 										</div>
 									</div>

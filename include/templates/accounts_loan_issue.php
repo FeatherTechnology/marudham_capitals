@@ -917,7 +917,7 @@ if (sizeof($getLoanCalculation) > 0) {
                                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 checque" style="display:none">
                                             <div class="form-group">
                                                 <label for="disabledInput">Cheque Value</label>
-                                                <input type="text" class="form-control" id="chequeValue" name="chequeValue" tabindex="55">
+                                                <input type="text" class="form-control" id="chequeValue" name="chequeValue" tabindex="55" oninput="validateInputNumber(this,'withOutDot')">
                                                 <span class="text-danger" style="display: none;" id="cheque_val"> Please Enter Cheque Value </span>
                                             </div>
                                         </div>
@@ -942,7 +942,7 @@ if (sizeof($getLoanCalculation) > 0) {
                                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 transaction" style="display:none">
                                             <div class="form-group">
                                                 <label for="disabledInput">Transaction Value </label>
-                                                <input type="text" class="form-control" id="transaction_value" name="transaction_value" tabindex="58">
+                                                <input type="text" class="form-control" id="transaction_value" name="transaction_value" tabindex="58" oninput="validateInputNumber(this,'withOutDot')">
                                                 <span class="text-danger" style="display: none;" id="transact_val"> Please Enter Transaction Value </span>
                                             </div>
                                         </div>

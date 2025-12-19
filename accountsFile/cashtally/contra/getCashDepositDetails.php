@@ -62,7 +62,9 @@ $qry = $connect->query("SELECT bdep.*,bc.short_name,bc.acc_no from ct_db_bank_de
 
 <script type='text/javascript'>
     $(function() {
-        $('#cdTable').DataTable({
+        // Declare table variable to store the DataTable instance
+        var cdTable = $('#cdTable').DataTable({
+            ...getStateSaveConfig('cdTable'),
             "title":"Cash Deposit List",
             'processing': true,
             'iDisplayLength': 5,
@@ -95,6 +97,9 @@ $qry = $connect->query("SELECT bdep.*,bc.short_name,bc.acc_no from ct_db_bank_de
                 }
             ],
         });
+
+        // Pass the table variable to the initColVisFeatures function
+        initColVisFeatures(cdTable, 'cdTable');
     });
 </script>
 

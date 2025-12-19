@@ -8,7 +8,9 @@ $(document).ready(function () {
 
 function requestReportTable(){
     $('#due_list_report_table').DataTable().destroy();
-    $('#due_list_report_table').DataTable({
+    // Declare table variable to store the DataTable instance
+    var due_list_report_table = $('#due_list_report_table').DataTable({
+        ...getStateSaveConfig('due_list_report_table'),
         "order": [
             [0, "asc"]
         ],
@@ -50,4 +52,7 @@ function requestReportTable(){
         },
         
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(due_list_report_table, 'due_list_report_table');
 }
