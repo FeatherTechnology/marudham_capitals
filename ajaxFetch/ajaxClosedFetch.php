@@ -64,7 +64,7 @@ if ($userid == 1) {
     $query = "SELECT cp.cus_id as cp_cus_id, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, al.line_name, bc.branch_name, cp.mobile1, ii.cus_id as ii_cus_id, ii.req_id,cc.closing_date
     FROM acknowlegement_customer_profile cp 
     JOIN customer_register cr ON cp.cus_id = cr.cus_id
-    JOIN in_issue ii ON cp.cus_id = ii.cus_id
+    JOIN in_issue ii ON cp.req_id = ii.req_id
     JOIN area_list_creation ac ON cp.area_confirm_area = ac.area_id
     JOIN sub_area_list_creation sa ON cp.area_confirm_subarea = sa.sub_area_id
     JOIN (
@@ -75,7 +75,7 @@ if ($userid == 1) {
     FROM 
       area_line_mapping
   ) al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
-   JOIN closing_customer cc ON cc.cus_id = cp.cus_id AND cc.closing_date = (SELECT MAX(cc1.closing_date) FROM closing_customer cc1 WHERE cc1.cus_id = cp.cus_id)
+   JOIN closing_customer cc ON cc.req_id = cp.req_id AND cc.closing_date = (SELECT MAX(cc1.closing_date) FROM closing_customer cc1 WHERE cc1.req_id = cp.req_id)
     JOIN branch_creation bc ON al.branch_id = bc.branch_id
     where ii.status = 0 and ii.cus_status = 20 and cp.area_confirm_subarea IN ($sub_area_list) "; //show only issued customers within the same lines of user. 
 }

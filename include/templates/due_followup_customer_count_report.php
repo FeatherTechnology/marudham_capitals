@@ -33,9 +33,13 @@
                                         <th>Total Count</th>
                                         <th>Payable Zero</th>
                                         <th>Responsible</th>
+                                        <th>Balance Count</th>
                                         <th>Paid</th>
                                         <th>Partial Paid</th>
+                                        <th>Total Paid</th>
+                                        <th>Paid %</th>
                                         <th>Un Paid</th>
+                                        <th>Unpaid %</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
