@@ -32,17 +32,15 @@ $column = array(
     'cc.id',
     'cc.com_code',
     'cc.com_date',
-    'b.branch_name',
     'sc.staff_name',
     'cs.concern_subject',
     'cc.status',
     'cc.id'
 );
 
-$query = "SELECT cc.*,b.branch_name,sc.staff_name,cs.concern_subject
+$query = "SELECT cc.*,sc.staff_name,cs.concern_subject
     FROM concern_creation cc
-    JOIN branch_creation b ON cc.branch_name = b.branch_id 
-    JOIN staff_creation sc ON cc.staff_assign_to = sc.staff_id
+     JOIN staff_creation sc ON cc.staff_assign_to = sc.staff_id
     JOIN concern_subject cs ON cc.com_sub = cs.concern_sub_id
     WHERE cc.status != 2  && cc.insert_user_id = '" . strip_tags($userid) . "'"; // 
 // echo $query;
@@ -50,7 +48,6 @@ $query = "SELECT cc.*,b.branch_name,sc.staff_name,cs.concern_subject
 if (isset($_POST['search']) && $_POST['search'] != "") {
     $query .= " AND (cc.com_code LIKE '%" . $_POST['search'] . "%' OR
             cc.com_date LIKE '%" . $_POST['search'] . "%' OR
-            b.branch_name LIKE '%" . $_POST['search'] . "%' OR
             sc.staff_name LIKE '%" . $_POST['search'] . "%' OR
             cs.concern_subject LIKE '%" . $_POST['search'] . "%') ";
 }
@@ -87,7 +84,6 @@ foreach ($result as $row) {
 
     $sub_array[] = $row['com_code'];
     $sub_array[] = date('d-m-Y', strtotime($row['com_date']));
-    $sub_array[] = $row['branch_name'];
     $sub_array[] = $row['staff_name'];
     $sub_array[] = $row['concern_subject'];
 
@@ -101,11 +97,19 @@ foreach ($result as $row) {
     }
 
     $id          = $row['id'];
+    // if ($con_sts == 1) {
+        // $action = "<a href='concern_solution_view&upd=$id&pageId=3' title='View Solution' >  <span class='icon-eye' style='font-size: 12px;position: relative;top: 2px;'></span> </a>";
+    // } else {
+    //     $action = '';
+    // }
+    $action = "<div class='dropdown'>
+                <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
+                <div class='dropdown-content'>";
+    $action .= "<a href='concern_solution_view&upd=$id&pageId=3' class='concern_details' value='" . $row['id'] . "' title='View'>View</a>";
     if ($con_sts == 1) {
-        $action = "<a href='concern_solution_view&upd=$id&pageId=1' title='View Solution' >  <span class='icon-eye' style='font-size: 12px;position: relative;top: 2px;'></span> </a>";
-    } else {
-        $action = '';
+        $action .= "<a href='#' class='concern_remove' value='" . $row['id'] . "' title='Concern Remove'>Remove</a>";
     }
+    $action .= "</div></div>";
     $sub_array[] = $action;
 
     $data[]      = $sub_array;
@@ -114,9 +118,8 @@ foreach ($result as $row) {
 
 function count_all_data($connect)
 {
-    $query     = "SELECT cc.*,b.branch_name,sc.staff_name,cs.concern_subject
+    $query     = "SELECT cc.*,sc.staff_name,cs.concern_subject
     FROM concern_creation cc
-    JOIN branch_creation b ON cc.branch_name = b.branch_id 
     JOIN staff_creation sc ON cc.staff_assign_to = sc.staff_id
     JOIN concern_subject cs ON cc.com_sub = cs.concern_sub_id
     WHERE cc.status != 2";

@@ -3,6 +3,22 @@ include '../../ajaxconfig.php';
 
 $from_date = $_POST['from_date'];
 $to_date   = $_POST['to_date'];
+$user_id   = $_POST['user_id'];
+
+if (!is_array($user_id)) {
+    $user_id = explode(',', $user_id);
+}
+$user_id = array_map('intval', $user_id);
+$user_id_str = implode(',', $user_id);
+
+/* USER NAME */
+$userNameQry = $connect->query("
+    SELECT fullname 
+    FROM user 
+    WHERE user_id IN ($user_id_str) AND status = 0 
+    LIMIT 1
+");
+$user_fullname = $userNameQry->fetchColumn();
 
 $data = [];
 $sno = 1;
@@ -20,9 +36,10 @@ INNER JOIN (
     SELECT req_id, MAX(created_date) AS max_date
     FROM confirmation_followup
     WHERE DATE(created_date) <= '$to_date'
+      AND insert_login_id IN ($user_id_str)
     GROUP BY req_id
 ) latest
-ON cf.req_id = latest.req_id 
+ON cf.req_id = latest.req_id
 AND cf.created_date = latest.max_date
 
 JOIN acknowlegement_customer_profile cp 
@@ -35,7 +52,6 @@ JOIN area_line_mapping alm
 WHERE DATE(cf.created_date) BETWEEN '$from_date' AND '$to_date'
 GROUP BY alm.line_name
 ORDER BY alm.line_name;
-
 ");
 
 $results = $qry->fetchAll(PDO::FETCH_ASSOC);
@@ -43,6 +59,7 @@ $results = $qry->fetchAll(PDO::FETCH_ASSOC);
 foreach ($results as $row) {
     $data[] = [
         "sno"                 => $sno++,
+        "fullname"      => $user_fullname,
         "line"                => $row['line_name'],
         "total_count"         => (int)$row['total_count'],
         "t_completed_count"   => (int)$row['completed_count'],
@@ -54,6 +71,7 @@ foreach ($results as $row) {
 /* ---------- TOTAL ROW ---------- */
 $data[] = [
     "sno"                 => "",
+    "fullname"                 => "",
     "line"                => "Total",
     "total_count"         => array_sum(array_column($data, "total_count")),
     "t_completed_count"   => array_sum(array_column($data, "t_completed_count")),

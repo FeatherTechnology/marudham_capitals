@@ -129,7 +129,7 @@ class admin
 			$detailrecords['work_count_report'] = strip_tags($row->work_count_report);
 			$detailrecords['noc_handover_report'] = strip_tags($row->noc_handover_report);
 			$detailrecords['confirmation_count_report'] = strip_tags($row->confirmation_count_report);
-      
+
 			$detailrecords['reportmodule_intrest'] = strip_tags($row->reportmodule_intrest);
 			$detailrecords['intrest_ledger_report'] = strip_tags($row->intrest_ledger_report);
 			$detailrecords['intrest_loan_issue_report'] = strip_tags($row->intrest_loan_issue_report);
@@ -2863,7 +2863,7 @@ class admin
 		} else {
 			$due_followup = 1;
 		}
-		if (isset($_POST['ecs_followup']) &&    $_POST['ecs_followup'] == 'Yes' && isset($_POST['followupmodule']) &&    $_POST['followupmodule'] == 'Yes' ) {
+		if (isset($_POST['ecs_followup']) &&    $_POST['ecs_followup'] == 'Yes' && isset($_POST['followupmodule']) &&    $_POST['followupmodule'] == 'Yes') {
 			$ecs_followup = 0;
 		} else {
 			$ecs_followup = 1;
@@ -2993,7 +2993,7 @@ class admin
 		} else {
 			$promotion_activity_report = 1;
 		}
-		if (isset($_POST['events_report']) &&    $_POST['events_report'] == 'Yes' && isset($_POST['reportmodule']) &&    $_POST['reportmodule'] == 'Yes' ) {
+		if (isset($_POST['events_report']) &&    $_POST['events_report'] == 'Yes' && isset($_POST['reportmodule']) &&    $_POST['reportmodule'] == 'Yes') {
 			$events_report = 0;
 		} else {
 			$events_report = 1;
@@ -3003,7 +3003,7 @@ class admin
 		} else {
 			$uncleared_report = 1;
 		}
-		if (isset($_POST['area_loan_count_report']) &&    $_POST['area_loan_count_report'] == 'Yes' && isset($_POST['reportmodule']) &&    $_POST['reportmodule'] == 'Yes' ) {
+		if (isset($_POST['area_loan_count_report']) &&    $_POST['area_loan_count_report'] == 'Yes' && isset($_POST['reportmodule']) &&    $_POST['reportmodule'] == 'Yes') {
 			$area_loan_count_report = 0;
 		} else {
 			$area_loan_count_report = 1;
@@ -3485,7 +3485,7 @@ class admin
 		} else {
 			$due_followup = 1;
 		}
-		if (isset($_POST['ecs_followup']) &&    $_POST['ecs_followup'] == 'Yes' && isset($_POST['followupmodule']) &&    $_POST['followupmodule'] == 'Yes' ) {
+		if (isset($_POST['ecs_followup']) &&    $_POST['ecs_followup'] == 'Yes' && isset($_POST['followupmodule']) &&    $_POST['followupmodule'] == 'Yes') {
 			$ecs_followup = 0;
 		} else {
 			$ecs_followup = 1;
@@ -3620,12 +3620,12 @@ class admin
 		} else {
 			$uncleared_report = 1;
 		}
-		if (isset($_POST['events_report']) &&    $_POST['events_report'] == 'Yes' && isset($_POST['reportmodule']) &&    $_POST['reportmodule'] == 'Yes' ) {
+		if (isset($_POST['events_report']) &&    $_POST['events_report'] == 'Yes' && isset($_POST['reportmodule']) &&    $_POST['reportmodule'] == 'Yes') {
 			$events_report = 0;
 		} else {
 			$events_report = 1;
 		}
-		if (isset($_POST['area_loan_count_report']) &&    $_POST['area_loan_count_report'] == 'Yes' && isset($_POST['reportmodule']) &&    $_POST['reportmodule'] == 'Yes' ) {
+		if (isset($_POST['area_loan_count_report']) &&    $_POST['area_loan_count_report'] == 'Yes' && isset($_POST['reportmodule']) &&    $_POST['reportmodule'] == 'Yes') {
 			$area_loan_count_report = 0;
 		} else {
 			$area_loan_count_report = 1;
@@ -6351,7 +6351,6 @@ class admin
 		$mysqli->query("UPDATE `in_acknowledgement` SET `cus_status`= 21,`update_login_id`= $userid and updated_date=now() WHERE  cus_id = '" . $cus_id . "' and req_id = '" .  $close_req_id . "' && cus_status = '20' ") or die('Error on in_acknowledgement Table');
 
 		$mysqli->query("UPDATE `in_issue` SET `cus_status`= 21,`update_login_id` = $userid where cus_id = '" . $cus_id . "' and req_id = '" .  $close_req_id . "' && cus_status = '20' ") or die('Error on in_issue Table');
-
 	}
 
 	//Get User Details for Consent Creation.
@@ -6468,9 +6467,9 @@ class admin
 		if (isset($_POST['com_code'])) {
 			$com_code = $_POST['com_code'];
 		}
-		if (isset($_POST['branch_name'])) {
-			$branch_name = $_POST['branch_name'];
-		}
+		// if (isset($_POST['branch_name'])) {
+		// 	$branch_name = $_POST['branch_name'];
+		// }
 		if (isset($_POST['concern_to'])) {
 			$concern_to = $_POST['concern_to'];
 		}
@@ -6495,19 +6494,25 @@ class admin
 		if (isset($_POST['com_remark'])) {
 			$com_remark = $_POST['com_remark'];
 		}
-		if (isset($_POST['com_priority'])) {
-			$com_priority = $_POST['com_priority'];
+		// if (isset($_POST['com_priority'])) {
+		// 	$com_priority = $_POST['com_priority'];
+		// }
+		if (isset($_POST['concern_against'])) {
+			$concern_against = $_POST['concern_against'];
+		}
+		if (isset($_POST['role_type'])) {
+			$role_type = $_POST['role_type'];
 		}
 		if (isset($_POST['staff_assign_to'])) {
 			$staff_assign_to = $_POST['staff_assign_to'];
 		}
 
 
-		$insertQry = "INSERT INTO `concern_creation`( `raising_for`, `self_name`, `self_code`, `staff_name`, `staff_dept_name`, `staff_team_name`, `ag_name`, `ag_grp`, `cus_id`, `cus_name`, `cus_area`, `cus_sub_area`, `cus_group`, `cus_line`, `com_date`, `com_code`, `branch_name`, `concern_to`, `to_dept_name`, `to_team_name`, `com_sub`, `com_remark`, `com_priority`, `staff_assign_to`, `insert_user_id`) VALUES('" . strip_tags($raising_for) . "','" . strip_tags($self_name) . "','" . strip_tags($self_code) . "','" . strip_tags($staff_name) . "',
+		$insertQry = "INSERT INTO `concern_creation`( `raising_for`, `self_name`, `self_code`, `staff_name`, `staff_dept_name`, `staff_team_name`, `ag_name`, `ag_grp`, `cus_id`, `cus_name`, `cus_area`, `cus_sub_area`, `cus_group`, `cus_line`, `com_date`, `com_code`,  `concern_to`, `to_dept_name`, `to_team_name`,`concern_against`, `com_sub`, `com_remark`, `role_type`, `staff_assign_to`, `insert_user_id`) VALUES('" . strip_tags($raising_for) . "','" . strip_tags($self_name) . "','" . strip_tags($self_code) . "','" . strip_tags($staff_name) . "',
 				'" . strip_tags($staff_dept_name) . "', '" . strip_tags($staff_team_name) . "', '" . strip_tags($ag_name) . "', '" . strip_tags($ag_grp) . "','" . strip_tags($cus_id) . "',
 				'" . strip_tags($cus_name) . "','" . strip_tags($cus_area) . "','" . strip_tags($cus_sub_area) . "', '" . strip_tags($cus_group) . "', '" . strip_tags($cus_line) . "', 
-				'" . strip_tags($com_date) . "','" . strip_tags($com_code) . "','" . strip_tags($branch_name) . "','" . strip_tags($concern_to) . "','" . strip_tags($to_dept_name) . "','" . strip_tags($to_team_name) . "',
-				'" . strip_tags($com_sub) . "','" . strip_tags($com_remark) . "','" . strip_tags($com_priority) . "','" . strip_tags($staff_assign_to) . "','" . strip_tags($userid) . "')";
+				'" . strip_tags($com_date) . "','" . strip_tags($com_code) . "','" . strip_tags($concern_to) . "','" . strip_tags($to_dept_name) . "','" . strip_tags($to_team_name) . "','" . strip_tags($concern_against) . "',
+				'" . strip_tags($com_sub) . "','" . strip_tags($com_remark) . "','" . strip_tags($role_type) . "','" . strip_tags($staff_assign_to) . "','" . strip_tags($userid) . "')";
 
 		$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
 	} //
@@ -6539,13 +6544,17 @@ class admin
 			$detailrecords['concern_to'] = $row['concern_to'];
 			$detailrecords['to_dept_name'] = $row['to_dept_name'];
 			$detailrecords['to_team_name'] = $row['to_team_name'];
+			$detailrecords['concern_against'] = $row['concern_against'];
 			$detailrecords['com_sub'] = $row['com_sub'];
 			$detailrecords['com_remark'] = $row['com_remark'];
-			$detailrecords['com_priority'] = $row['com_priority'];
-			// $detailrecords['staff_assign_to'] = $row['staff_assign_to'];
+			// $detailrecords['com_priority'] = $row['com_priority'];
+			$detailrecords['role_type'] = $row['role_type'];
+			$detailrecords['staff_assign_to'] = $row['staff_assign_to'];
 			$detailrecords['solution_date'] = $row['solution_date'];
 			$detailrecords['communication'] = $row['communication'];
 			$detailrecords['uploads'] = $row['uploads'];
+			$detailrecords['sol_participants'] = $row['sol_participants'];
+			$detailrecords['location'] = $row['location'];
 			$detailrecords['solution_remark'] = $row['solution_remark'];
 			// $detailrecords['insert_user_id'] = $row['insert_user_id'];
 
@@ -6582,13 +6591,13 @@ class admin
 
 			//Staff Assign Name
 			$staff_id = $row['staff_assign_to'];
-			if ($staff_id != '') {
-				$qry = $mysqli->query("SELECT staff_name FROM `staff_creation` where staff_id ='" . strip_tags($staff_id) . "'");
-				$row1 = $qry->fetch_assoc();
-				$detailrecords['staff_assign_to'] = $row1['staff_name'];
-			} else {
-				$detailrecords['staff_assign_to'] = '';
-			}
+			// if ($staff_id != '') {
+			// 	$qry = $mysqli->query("SELECT staff_name FROM `staff_creation` where staff_id ='" . strip_tags($staff_id) . "'");
+			// 	$row1 = $qry->fetch_assoc();
+			// 	$detailrecords['staff_assign_to'] = $row1['staff_name'];
+			// } else {
+			// 	$detailrecords['staff_assign_to'] = '';
+			// }
 
 			//Insert user Name
 			$insert_user = $row['insert_user_id'];
@@ -6613,7 +6622,25 @@ class admin
 		if (isset($_POST['Com_for_solution'])) {
 			$Com_for_solution = $_POST['Com_for_solution'];
 		}
-
+		if (isset($_POST['role_type'])) {
+			$role_type = $_POST['role_type'];
+		}
+		if (isset($_POST['staff_assign_to'])) {
+			$staff_assign_to = $_POST['staff_assign_to'];
+		}
+		if (isset($_POST['location'])) {
+			$location = $_POST['location'];
+		}
+		if (isset($_POST['sol_participants'])) {
+			$sol_participants = $_POST['sol_participants'];
+		}
+		if (isset($_POST['pg_id'])) {
+			$pg_id = $_POST['pg_id'];
+		}
+		$status = 0;
+		if ($pg_id != 1) {
+			$status = 1;
+		}
 		$concern_upload = '';
 		// if(isset($_FILES['concern_upload']) && $_POST['Com_for_solution'] == '1'){
 
@@ -6669,7 +6696,7 @@ class admin
 
 		$concern_upload = rtrim($concern_upload, ','); //trims the comma at right last
 
-		$updConcern = $mysqli->query("UPDATE `concern_creation` SET `status`= 1 ,`solution_date`='" . strip_tags($solution_date) . "',`communication`='" . strip_tags($Com_for_solution) . "',`uploads`='" . strip_tags($concern_upload) . "',`solution_remark`='" . strip_tags($solution_remark) . "',`update_user_id`='" . strip_tags($userid) . "',`updated_date`= now() WHERE `id`='" . strip_tags($id) . "' ");
+		$updConcern = $mysqli->query("UPDATE `concern_creation` SET role_type='$role_type',staff_assign_to = '$staff_assign_to',`status`= $status,`solution_date`='" . strip_tags($solution_date) . "',`communication`='" . strip_tags($Com_for_solution) . "',`uploads`='" . strip_tags($concern_upload) . "',`location`='" . strip_tags($location) . "',`sol_participants`='" . strip_tags($sol_participants) . "',`solution_remark`='" . strip_tags($solution_remark) . "',`update_user_id`='" . strip_tags($userid) . "',`updated_date`= now() WHERE `id`='" . strip_tags($id) . "' ");
 	}
 	function getCustomerRegister($mysqli, $cus_id)
 	{

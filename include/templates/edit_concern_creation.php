@@ -14,9 +14,9 @@ if (isset($_SESSION["userid"])) {
 	$userid = $_SESSION["userid"];
 }
 
-$userQry = $connect->query("SELECT 1 FROM USER WHERE user_id = '$userid' && role ='3'"); // Check Whether the user is staff or not ,if not means concern screen will not be show.
-$rowuser = $userQry->rowCount();
-if ($rowuser > 0) {
+// $userQry = $connect->query("SELECT 1 FROM USER WHERE user_id = '$userid' && role ='3'"); // Check Whether the user is staff or not ,if not means concern screen will not be show.
+// $rowuser = $userQry->rowCount();
+// if ($rowuser > 0) {
 ?>
 
 	<div class="text-right" style="margin-right: 25px;">
@@ -59,7 +59,6 @@ if ($rowuser > 0) {
 									<th width="50">S.No.</th>
 									<th>Concern Code</th>
 									<th>Concern Date</th>
-									<th>Branch Name</th>
 									<th>Staff Assign</th>
 									<th>Subject</th>
 									<th>Status</th>
@@ -76,9 +75,10 @@ if ($rowuser > 0) {
 		<!-- Row end -->
 	</div>
 	<!-- Main container end -->
-<?php } else { ?>
+<!-- // } else 
+// {  -->
 
-	<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+	<!-- <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 		<div class="card">
 			<div class="card-header" style="text-align: center;"> </div>
 			<div class="card-body">
@@ -95,7 +95,74 @@ if ($rowuser > 0) {
 		</div>
 	</div>
 
-<?php } 
-// Close the database connection
-$connect = null;
-?>
+
+// } 
+// Close the database connection -->
+<!-- // $connect = null; -->
+<script>
+
+    //Concern Remove
+    $(document).on('click', '.concern_remove', function () {
+        var id = $(this).attr('value'); // Get value attribute
+        swalConfirm('Remove', 'Do you want to Remove the Concern?', deleteConcern, id);
+        return;
+    });
+
+
+function deleteConcern(id) {
+    $.post(
+        'concernFile/remove_concern.php',
+        { id: id },
+        function (response) {
+            if (response == 1) {
+                successSwal('Success', 'Concern Removed Successfully!');
+            } else {
+                warningSwal('Error', 'Failed to Remove Concern');
+            }
+        }
+    );
+}
+
+function warningSwal(title, text) {
+    Swal.fire({
+        title: title,
+        html: text,
+        icon: 'warning',
+        showConfirmButton: true,
+        confirmButtonColor: '#009688', // warning color (orange/yellow)
+        confirmButtonText: 'OK'
+    });
+}
+
+function successSwal(title, text) {
+    Swal.fire({
+        title: title,
+        html: text,
+        icon: 'success',
+        confirmButtonColor: '#009688',
+        confirmButtonText: 'OK'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = 'edit_concern_creation';
+        }
+    });
+}
+function swalConfirm(title, text, functionname, idvalue, noCallback) {
+	Swal.fire({
+		title: title,
+		text: text,
+		icon: 'question',
+		showCancelButton: true,
+		confirmButtonColor: '#009688',
+		cancelButtonColor: '#d33',
+		cancelButtonText: 'No',
+		confirmButtonText: 'Yes'
+	}).then((result) => {
+		if (result.isConfirmed) {
+			functionname(idvalue);
+		} else if (noCallback) {
+			noCallback();
+		}
+	});
+}
+</script>

@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    console.log('sajdgjkds');
+ 
 
     $('#raising_for').change(function () {
         refershInput();
@@ -128,51 +128,62 @@ $(document).ready(function () {
         getStaffName('2', teamVal)
     });
 
-    $(document).on("click", "#submitConSub", function () {
-        var con_sub_id = $("#con_sub_id").val();
-        var com_sub_add = $("#com_sub_add").val();
-        if (com_sub_add != "") {
-            $.ajax({
-                url: 'concernFile/InsertConSubject.php',
-                type: 'POST',
-                data: { "com_sub_add": com_sub_add, "con_sub_id": con_sub_id },
-                cache: false,
-                success: function (response) {
-                    var insresult = response.includes("Exists");
-                    var updresult = response.includes("Updated");
-                    if (insresult) {
-                        $('#categoryInsertNotOk').show();
-                        setTimeout(function () {
-                            $('#categoryInsertNotOk').fadeOut('fast');
-                        }, 2000);
-                    } else if (updresult) {
-                        $('#categoryUpdateOk').show();
-                        setTimeout(function () {
-                            $('#categoryUpdateOk').fadeOut('fast');
-                        }, 2000);
-                        $("#coursecategoryTable").remove();
-                        resetConSubTable();
-                        $("#com_sub_add").val('');
-                        $("#con_sub_id").val('');
-                    }
-                    else {
-                        $('#categoryInsertOk').show();
-                        setTimeout(function () {
-                            $('#categoryInsertOk').fadeOut('fast');
-                        }, 2000);
-                        $("#coursecategoryTable").remove();
-                        resetConSubTable();
-                        $("#com_sub_add").val('');
-                        $("#con_sub_id").val('');
-                    }
-                }
-            });
-            $("#comsubCheck").hide();
+    
+    // role type change
+    $('#role_type').change(function () {
+        var role_type = $(this).val();
+        if (role_type !== '' && role_type != 0) {
+            getAssignName(role_type, '')
+        } else {
+            $('#staff_assign_to').val('');
         }
-        else {
-            $("#comsubCheck").show();
-        }
-    });
+    })
+
+    // $(document).on("click", "#submitConSub", function () {
+    //     var con_sub_id = $("#con_sub_id").val();
+    //     var com_sub_add = $("#com_sub_add").val();
+    //     if (com_sub_add != "") {
+    //         $.ajax({
+    //             url: 'concernFile/InsertConSubject.php',
+    //             type: 'POST',
+    //             data: { "com_sub_add": com_sub_add, "con_sub_id": con_sub_id },
+    //             cache: false,
+    //             success: function (response) {
+    //                 var insresult = response.includes("Exists");
+    //                 var updresult = response.includes("Updated");
+    //                 if (insresult) {
+    //                     $('#categoryInsertNotOk').show();
+    //                     setTimeout(function () {
+    //                         $('#categoryInsertNotOk').fadeOut('fast');
+    //                     }, 2000);
+    //                 } else if (updresult) {
+    //                     $('#categoryUpdateOk').show();
+    //                     setTimeout(function () {
+    //                         $('#categoryUpdateOk').fadeOut('fast');
+    //                     }, 2000);
+    //                     $("#coursecategoryTable").remove();
+    //                     resetConSubTable();
+    //                     $("#com_sub_add").val('');
+    //                     $("#con_sub_id").val('');
+    //                 }
+    //                 else {
+    //                     $('#categoryInsertOk').show();
+    //                     setTimeout(function () {
+    //                         $('#categoryInsertOk').fadeOut('fast');
+    //                     }, 2000);
+    //                     $("#coursecategoryTable").remove();
+    //                     resetConSubTable();
+    //                     $("#com_sub_add").val('');
+    //                     $("#con_sub_id").val('');
+    //                 }
+    //             }
+    //         });
+    //         $("#comsubCheck").hide();
+    //     }
+    //     else {
+    //         $("#comsubCheck").show();
+    //     }
+    // });
 
     $("body").on("click", "#edit_subject", function () {
         var id = $(this).attr('value');
@@ -230,37 +241,38 @@ $(document).ready(function () {
 
 $(function () {
     // Declare table variable to store the DataTable instance
-    var coursecategoryTable = $('#coursecategoryTable').DataTable({
-        ...getStateSaveConfig('coursecategoryTable'),
-        'processing': true,
-        'iDisplayLength': 5,
-        "lengthMenu": [
-            [10, 25, 50, -1],
-            [10, 25, 50, "All"]
-        ],
-        "createdRow": function (row, data, dataIndex) {
-            $(row).find('td:first').html(dataIndex + 1);
-        },
-        "drawCallback": function (settings) {
-            this.api().column(0).nodes().each(function (cell, i) {
-                cell.innerHTML = i + 1;
-            });
-        },
-        dom: 'lBfrtip',
-        buttons: [{
-            extend: 'excel',
-        },
-        {
-            extend: 'colvis',
-            collectionLayout: 'fixed four-column',
-        }
-        ],
-    });
+    // var coursecategoryTable = // $('#coursecategoryTable').DataTable({
+    //     ...getStateSaveConfig('coursecategoryTable'),
+    // //     'processing': true,
+    //     'iDisplayLength': 5,
+    //     "lengthMenu": [
+    //         [10, 25, 50, -1],
+    //         [10, 25, 50, "All"]
+    //     ],
+    //     "createdRow": function (row, data, dataIndex) {
+    //         $(row).find('td:first').html(dataIndex + 1);
+    //     },
+    //     "drawCallback": function (settings) {
+    //         this.api().column(0).nodes().each(function (cell, i) {
+    //             cell.innerHTML = i + 1;
+    //         });
+    //     },
+    //     dom: 'lBfrtip',
+    //     buttons: [{
+    //         extend: 'excel',
+    //     },
+    //     {
+    //         extend: 'colvis',
+    //         collectionLayout: 'fixed four-column',
+    //     }
+    //     ],
+    // });
 
     // Pass the table variable to the initColVisFeatures function
-    initColVisFeatures(coursecategoryTable, 'coursecategoryTable');
+    // initColVisFeatures(coursecategoryTable, 'coursecategoryTable');
 
-    getBranchName(); // To Show Branch Name List.
+    // getBranchName(); // To Show Branch Name List.
+    getConcernRoleType(); // To show Role Type
     DropDownCourse(); //To Show Concern Subject.
     resetConSubTable(); //To Reset.
 
@@ -360,28 +372,28 @@ function getConcernCode() {
     })
 }
 
-function getBranchName() {
-    var companyID = $('#company_id').val();
-    $.ajax({
-        url: 'concernFile/getBranchName.php',
-        type: 'POST',
-        data: { 'companyID': companyID },
-        dataType: 'json',
-        cache: false,
-        success: function (response) {
-            $("#branch_name").empty();
-            $('#branch_name').append("<option value=''> Select Branch Name </option>")
-            var len = response.length;
-            for (var i = 0; i < len; i++) {
-                var id = response[i]['branchID'];
-                var name = response[i]['branchName'];
-                $('#branch_name').append("<option value='" + id + "'> " + name + " </option>")
-            }
+// function getBranchName() {
+//     var companyID = $('#company_id').val();
+//     $.ajax({
+//         url: 'concernFile/getBranchName.php',
+//         type: 'POST',
+//         data: { 'companyID': companyID },
+//         dataType: 'json',
+//         cache: false,
+//         success: function (response) {
+//             $("#branch_name").empty();
+//             $('#branch_name').append("<option value=''> Select Branch Name </option>")
+//             var len = response.length;
+//             for (var i = 0; i < len; i++) {
+//                 var id = response[i]['branchID'];
+//                 var name = response[i]['branchName'];
+//                 $('#branch_name').append("<option value='" + id + "'> " + name + " </option>")
+//             }
 
-        }
-    });
+//         }
+//     });
 
-}
+// }
 
 function getConcernDeptName() {  // To show Department Name.
     var companyID = $('#company_id').val();
@@ -434,13 +446,13 @@ function getStaffName(type, staffFrom) {  // To show Staff Name.
         dataType: 'json',
         cache: false,
         success: function (response) {
-            $("#staff_assign_to").empty();
-            $('#staff_assign_to').append("<option value=''> Select Staff Name </option>")
+            $("#concern_against").empty();
+            $('#concern_against').append("<option value=''> Select Concern Against</option>")
             let len = response.length;
             for (let i = 0; i < len; i++) {
                 let id = response[i]['staffID'];
                 let name = response[i]['staffName'];
-                $('#staff_assign_to').append("<option value='" + id + "'> " + name + " </option>")
+                $('#concern_against').append("<option value='" + id + "'> " + name + " </option>")
             }
         }
     });
@@ -482,7 +494,50 @@ function DropDownCourse() {
         }
     });
 }
+// concern Role Type
+function getConcernRoleType() {
+    let role_type = 'Director,Admin,Manager,TL,Training TL,Executive Director';
+    $.post(
+        'concernFile/getConcernRoleType.php',
+        {
+            role_type: role_type,
+        },
+        function (response) {
+            let html = '<option value="">Select Role Type</option>';
 
+            $.each(response, function (index, val) {
+                // let selected = (val.id == concern_role_id) ? 'selected' : '';
+                html += `<option value="${val.staff_type_id}">${val.staff_type_name}</option>`;
+            });
+
+            $('#role_type').html(html);
+        },
+        'json'
+    );
+}
+
+// Assign Concern
+function getAssignName(staff_name_id, selectedId = '') {
+    return $.ajax({
+        url: 'manageUser/ajaxGetStaffName.php',
+        type: 'POST',
+        data: { role_type: staff_name_id },
+        dataType: 'json',
+        cache: false
+    }).done(function (response) {
+        let html = '<option value="">Select Assign To</option>';
+        $.each(response, function (index, val) {
+            html += '<option value="' + val.staff_id + '">' + val.staff_name + '</option>';
+        });
+        $('#staff_assign_to').empty().append(html);
+
+        if (selectedId) {
+            $('#staff_assign_to').val(selectedId);
+        }
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        console.error('getAssignName failed:', textStatus, errorThrown);
+    });
+}
 function submitValidation() {
     var raising = $('#raising_for').val();
     var staff_name = $('#staff_name').val();
@@ -490,13 +545,15 @@ function submitValidation() {
     var staff_team_name = $('#staff_team_name').val();
     var ag_name = $('#ag_name').val();
     var cus_id = $('#cus_id').val();
-    var branch_name = $('#branch_name').val();
+    // var branch_name = $('#branch_name').val();
     var concern_to = $('#concern_to').val(); console.log(concern_to);
     var to_dept_name = $('#to_dept_name').val();
     var to_team_name = $('#to_team_name').val();
     var com_sub = $('#com_sub').val();
     var com_remark = $('#com_remark').val();
-    var com_priority = $('#com_priority').val();
+    var concern_against = $('#concern_against').val();
+    // var com_priority = $('#com_priority').val();
+    var role_type = $('#role_type').val();
     var staff_assign_to = $('#staff_assign_to').val();
 
     if (raising == '') {
@@ -545,12 +602,12 @@ function submitValidation() {
         }
     }
 
-    if (branch_name == '') {
-        event.preventDefault();
-        $('#branchCheck').show();
-    } else {
-        $('#branchCheck').hide();
-    }
+    // if (branch_name == '') {
+    //     event.preventDefault();
+    //     $('#branchCheck').show();
+    // } else {
+    //     $('#branchCheck').hide();
+    // }
     if (concern_to == '') {
         event.preventDefault();
         $('#comtoCheck').show();
@@ -588,11 +645,23 @@ function submitValidation() {
     } else {
         $('#comRemarkCheck').hide();
     }
-    if (com_priority == '') {
+    // if (com_priority == '') {
+    //     event.preventDefault();
+    //     $('#conpriorityCheck').show();
+    // } else {
+    //     $('#conpriorityCheck').hide();
+    // }
+    if (concern_against == '') {
         event.preventDefault();
-        $('#conpriorityCheck').show();
+        $('#concernAgainstcheck').show();
     } else {
-        $('#conpriorityCheck').hide();
+        $('#concernAgainstcheck').hide();
+    }
+    if (role_type == '') {
+        event.preventDefault();
+        $('#roleTypeCheck').show();
+    } else {
+        $('#roleTypeCheck').hide();
     }
     if (staff_assign_to == '') {
         event.preventDefault();

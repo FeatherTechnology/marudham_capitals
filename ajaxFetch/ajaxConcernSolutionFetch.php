@@ -16,17 +16,16 @@ $column = array(
     'cc.id',
     'cc.com_code',
     'cc.com_date',
-    'b.branch_name',
     'sc.staff_name',
     'cs.concern_subject',
     'cc.status',
     'cc.id'
 );
 
-$query = "SELECT cc.*,b.branch_name,sc.staff_name,cs.concern_subject
+$query = "SELECT cc.*,sc.staff_name,cs.concern_subject,stc.staff_type_name
     FROM concern_creation cc
-    JOIN branch_creation b ON cc.branch_name = b.branch_id 
     JOIN staff_creation sc ON cc.staff_assign_to = sc.staff_id
+    LEFT JOIN staff_type_creation stc ON sc.staff_type = stc.staff_type_id
     JOIN concern_subject cs ON cc.com_sub = cs.concern_sub_id
     WHERE cc.status != 2 && cc.staff_assign_to = '" . strip_tags($staff_id) . "' "; // 
 // echo $query;
@@ -34,7 +33,6 @@ $query = "SELECT cc.*,b.branch_name,sc.staff_name,cs.concern_subject
 if (isset($_POST['search']) && $_POST['search'] != "") {
     $query .= " AND (cc.com_code LIKE '%" . $_POST['search'] . "%' OR
             cc.com_date LIKE '%" . $_POST['search'] . "%' OR
-            b.branch_name LIKE '%" . $_POST['search'] . "%' OR
             sc.staff_name LIKE '%" . $_POST['search'] . "%' OR
             cs.concern_subject LIKE '%" . $_POST['search'] . "%') ";
 }
@@ -71,7 +69,6 @@ foreach ($result as $row) {
 
     $sub_array[] = $row['com_code'];
     $sub_array[] = date('d-m-Y', strtotime($row['com_date']));
-    $sub_array[] = $row['branch_name'];
     $sub_array[] = $row['staff_name'];
     $sub_array[] = $row['concern_subject'];
 
@@ -86,10 +83,32 @@ foreach ($result as $row) {
 
     $id = $row['id'];
 
+    // if ($con_sts == 0) {
+    //     $action = "<a href='concern_solution&upd=$id' title='Add Solution' >  <span class='icon-border_color' style='font-size: 12px;position: relative;top: 2px;'></span> </a>";
+    // } else if ($con_sts == 1) {
+    //     $action = "<a href='concern_solution_view&upd=$id&pageId=2' title='View Solution' >  <span class='icon-eye' style='font-size: 12px;position: relative;top: 2px;'></span> </a>";
+    // }
     if ($con_sts == 0) {
-        $action = "<a href='concern_solution&upd=$id' title='Add Solution' >  <span class='icon-border_color' style='font-size: 12px;position: relative;top: 2px;'></span> </a>";
+        if ($row['staff_type_name'] == "Director" || $row['staff_type_name'] == "Manager" || $row['staff_type_name'] == "Admin" || $row['staff_type_name'] == "TL" || $row['staff_type_name'] == "Training TL" || $row['staff_type_name'] == "Executive Director") {
+
+            $action = "<div class='dropdown'>
+                <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
+                <div class='dropdown-content'>";
+
+            $action .= "<a href='concern_solution&upd=$id&pageId=1' value='" . $row['id'] . "' title='Concern Assign'>Assign</a>";
+            $action .= "<a href='concern_solution&upd=$id&pageId=2' class = 'concern_solution' value='" . $row['id'] . "' title='Concern Solution'>Solution</a>";
+            $action .= "</div></div>";
+        } else {
+            $action = "<div class='dropdown'>
+                <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
+                <div class='dropdown-content'>";
+            $action .= "<a href='concern_solution&upd=$id&pageId=2' value='" . $row['id'] . "' title='Concern Solution'>Solution</a>";
+            $action .= "</div></div>";
+        }
     } else if ($con_sts == 1) {
-        $action = "<a href='concern_solution_view&upd=$id&pageId=2' title='View Solution' >  <span class='icon-eye' style='font-size: 12px;position: relative;top: 2px;'></span> </a>";
+        $action = "<a href='concern_solution_view&upd=$id&pageId=4' value='" . $row['id'] . "'>
+                   <button class='btn btn-primary'>View</button>
+               </a>";
     }
 
     $sub_array[] = $action;
@@ -100,9 +119,8 @@ foreach ($result as $row) {
 
 function count_all_data($connect)
 {
-    $query     = "SELECT cc.*,b.branch_name,sc.staff_name,cs.concern_subject
+    $query     = "SELECT cc.*,sc.staff_name,cs.concern_subject
     FROM concern_creation cc
-    JOIN branch_creation b ON cc.branch_name = b.branch_id 
     JOIN staff_creation sc ON cc.staff_assign_to = sc.staff_id
     JOIN concern_subject cs ON cc.com_sub = cs.concern_sub_id
     WHERE cc.status != 2";

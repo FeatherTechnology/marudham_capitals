@@ -66,7 +66,7 @@ if (isset($_POST['submit_concern']) && $_POST['submit_concern'] != '') {
                                         <select type="text" class="form-control" id="raising_for" name="raising_for" tabindex='4'>
                                             <option value="">Select Raising For</option>
                                             <option value="1">Myself</option>
-                                            <option value="2">staff</option>
+                                            <!-- <option value="2">staff</option> -->
                                             <option value="3">Agent</option>
                                             <option value="4">Customer</option>
                                         </select>
@@ -216,7 +216,7 @@ if (isset($_POST['submit_concern']) && $_POST['submit_concern'] != '') {
                                     </div>
                                 </div>
 
-                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                                <!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="branch">Branch Name</label><span class="required">&nbsp;*</span>
                                         <select type="text" class="form-control" id="branch_name" name="branch_name" tabindex='13'>
@@ -224,7 +224,7 @@ if (isset($_POST['submit_concern']) && $_POST['submit_concern'] != '') {
                                         </select>
                                         <span class="text-danger" style='display:none' id='branchCheck'>Please Select Branch Name</span>
                                     </div>
-                                </div>
+                                </div> -->
 
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
@@ -257,7 +257,17 @@ if (isset($_POST['submit_concern']) && $_POST['submit_concern'] != '') {
                                     </div>
                                 </div>
 
-                                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                                    <div class="form-group">
+                                        <label for="concern_against">Concern Against</label><span class="required">&nbsp;*</span>
+                                        <select class="form-control" id="concern_against" name="concern_against" tabindex='19'>
+                                            <option value="">Select Concern Against</option>
+                                        </select>
+                                        <span class="text-danger" style='display:none' id='concernAgainstcheck'>Please Select Concern Against</span>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="comsub">Concern Subject</label><span class="required">&nbsp;*</span>
                                         <select type="text" class="form-control" id="com_sub" name="com_sub" tabindex='16'>
@@ -267,11 +277,11 @@ if (isset($_POST['submit_concern']) && $_POST['submit_concern'] != '') {
                                     </div>
                                 </div>
 
-                                <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12">
+                                <!-- <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12">
                                     <div class="form-group">
                                         <button type="button" class="btn btn-primary" id="add_complaint" name="add_complaint" data-toggle="modal" data-target=".addComplaint" style="padding: 5px 35px; margin-top: 20px;" tabindex='16'><span class="icon-add"></span></button>
                                     </div>
-                                </div>
+                                </div> -->
 
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
@@ -281,7 +291,7 @@ if (isset($_POST['submit_concern']) && $_POST['submit_concern'] != '') {
                                     </div>
                                 </div>
 
-                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                                <!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="com-priority">Concern Priority</label><span class="required">&nbsp;*</span>
                                         <select class="form-control" id="com_priority" name="com_priority" tabindex='18'>
@@ -292,13 +302,22 @@ if (isset($_POST['submit_concern']) && $_POST['submit_concern'] != '') {
                                         </select>
                                         <span class="text-danger" style='display:none' id='conpriorityCheck'>Please Select Concern Priority</span>
                                     </div>
-                                </div>
+                                </div> -->
 
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
-                                        <label for="assign-to">Staff Assign To</label><span class="required">&nbsp;*</span>
+                                        <label for="role_type">Role Type</label><span class="required">&nbsp;*</span>
+                                        <select class="form-control" id="role_type" name="role_type" tabindex='19'>
+                                            <option value="">Select Role Type</option>
+                                        </select>
+                                        <span class="text-danger" style='display:none' id='roleTypeCheck'>Please Select Role Type</span>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                                    <div class="form-group">
+                                        <label for="assign-to">Assign To</label><span class="required">&nbsp;*</span>
                                         <select class="form-control" id="staff_assign_to" name="staff_assign_to" tabindex='19'>
-                                            <option value="">Select Staff Assign To</option>
+                                            <option value="">Select Assign To</option>
                                         </select>
                                         <span class="text-danger" style='display:none' id='staffAssignCheck'>Please Select Staff Assign</span>
                                     </div>

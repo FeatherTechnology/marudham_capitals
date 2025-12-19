@@ -832,7 +832,7 @@ if (sizeof($getUser) > 0) {
 					</li>
 				<?php  } ?>
 
-				<!-- <?php if ($concernmodule == 0) { ?>
+				<?php if ($concernmodule == 0) { ?>
 					<li class="sidebar-dropdown ">
 						<a href="javascript:void(0)">
 							<i class='icon-help-with-circle'></i>
@@ -850,15 +850,15 @@ if (sizeof($getUser) > 0) {
 										<a href="edit_concern_solution"><i class='icon-center_focus_strong'></i>Concern Solution</a>
 									</li>
 								<?php  } ?>
-								<?php if ($concern_feedback == 0) { ?>
+								<!-- <?php if ($concern_feedback == 0) { ?>
 									<li>
 										<a href="edit_concern_feedback"><i class='icon-redeem'></i>Concern Feedback</a>
 									</li>
-								<?php  } ?>
+								<?php  } ?> -->
 							</ul>
 						</div>
 					</li>
-				<?php  } ?> -->
+				<?php  } ?>
 				<?php if ($accountsmodule == 0) { ?>
 					<li class="sidebar-dropdown ">
 						<a href="javascript:void(0)">
@@ -1014,7 +1014,7 @@ if (sizeof($getUser) > 0) {
 											<?php  } ?> 
 											<?php if ($confirmation_count_report == 0) { ?>
 												<li>
-													<a href="confirmation_count_report"><i class='icon-area-graph'></i>Confirmation Count Report</a>
+													<a href="confirmation_count_report"><i class='icon-area-graph'></i>Confirmation Count</a>
 												</li>
 											<?php  } ?> 
 											<?php if ($loan_track == 0) { ?>
