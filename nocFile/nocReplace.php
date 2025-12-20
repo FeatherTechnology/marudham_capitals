@@ -33,7 +33,7 @@ try {
 
     $noc_id = $connect->lastInsertId();
 
-    //insert noc checklist table /Signed doc info, cheque info, gold info
+    //insert noc checklist table /Signed doc info, cheque info, gold info //because these 3 tables only have same column name so code in loop.
     $tables = [
         'signed_doc_info' => ['noc_tb_colname' => 'sign_id',   'noc_table' => 'noc_sign_checklist'],
         'cheque_no_list'  => ['noc_tb_colname' => 'cheque_id', 'noc_table' => 'noc_cheque_checklist'],
@@ -57,7 +57,7 @@ try {
             ':req_id'  => $reqid
         ]);
 
-        //Fetch IDs
+        //Fetch IDs from the source table to insert in checklist table to mark the noc given doc. 
         $select = $connect->prepare("
             SELECT id 
             FROM $table 
@@ -74,6 +74,7 @@ try {
             (:noc_id, :ref_id)
         ");
 
+        //loop the insert based on the source id getting because store like normalization.
         if (!empty($rows)) {
             foreach ($rows as $refId) {
                 $insert->execute([
@@ -84,7 +85,7 @@ try {
         }
     }
 
-    //Mortgage document    //Endorsement Document
+    //Mortgage document    //Endorsement Document //check mortgage and endorsement for the reqid and based on it update in source table and insert in checklist table.
     $select = $connect->prepare("
     SELECT mortgage_process, mortgage_document, mortgage_document_used,
            endorsement_process, en_RC, en_RC_used, en_Key, en_Key_used
@@ -101,8 +102,7 @@ try {
 
         $insert = $connect->prepare("INSERT INTO noc_mort_checklist (noc_id, mort_id) VALUES (:noc_id, 'Mortgage Process noc')");
         $insert->execute([':noc_id' => $noc_id]);
-    }
-    
+    }   
 
     if ($row['mortgage_document'] == '0' && $row['mortgage_document_used'] != '1') {
         $updates[] = "mort_doc_noc_date = CURDATE(), mortgage_document_noc = 1";
@@ -148,7 +148,7 @@ try {
     }
 
 
-    //Doc info
+    //Doc info //updating source table and inserting checklist table.
     $update = $connect->prepare("
         UPDATE document_info 
         SET 
@@ -188,7 +188,7 @@ try {
         }
     }
 
-    //update customer status as NOC Completed - 22.
+    //update customer status as IN NOC Handovered - 23.
     $updateQueries = [
         "UPDATE request_creation SET cus_status = 23, update_login_id = '$user_id', updated_date = NOW() WHERE req_id = '$reqid'",
         "UPDATE customer_register SET cus_status = 23 WHERE req_ref_id = '$reqid'",
