@@ -125,10 +125,19 @@ if (isset($_POST["bal_amt"])) {
             
             $cus_id = $_POST['cus_id'];
             $actionType = $_POST['action_type'] ?? '';
+            $screen = $_POST['screen'] ?? '';
+
+            //for both NOC & NOC handover using this screen for loan list so if noc screen means show till handover but action may vary and handover screen means show only in noc handover. 
+            if($screen == 'nochandover'){
+                $cus_sts = "23";
+
+            }else{
+                $cus_sts = "21,22,23";
+            }
 
             $run = $connect->query("SELECT ii.loan_id, lc.cus_name_loan as cus_name, ad.doc_id, lcc.loan_category_creation_name as loan_catrgory_name, lc.sub_category, rc.agent_id, ii.updated_date, lc.loan_amt_cal, ii.req_id, ii.cus_status
             FROM acknowlegement_loan_calculation lc JOIN acknowlegement_documentation ad ON lc.req_id = ad.req_id JOIN in_issue ii ON lc.req_id = ii.req_id JOIN request_creation rc ON ii.req_id = rc.req_id JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id JOIN user us ON us.user_id = $user_id
-            WHERE lc.cus_id_loan = $cus_id and ii.cus_status IN(21,22,23) "); //21 means loan has been closed form closed window for noc
+            WHERE lc.cus_id_loan = $cus_id and ii.cus_status IN ($cus_sts) "); //21 means loan has been closed form closed window for noc
 
             while ($row = $run->fetch()) {
                 $qry = $connect->query("SELECT created_date, closed_sts, consider_level FROM `closed_status` WHERE req_id = '" . $row['req_id'] . "' ");

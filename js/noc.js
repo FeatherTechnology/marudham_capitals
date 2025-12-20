@@ -248,7 +248,7 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
     $.ajax({
         //in this file, details gonna fetch by customer ID, Not by req id (Because we need all loans from customer)
         url: 'nocFile/getLoanListWithClosed.php',
-        data: { 'req_id': req_id, 'cus_id': cus_id, 'action_type': action_type },
+        data: { 'req_id': req_id, 'cus_id': cus_id, 'action_type': action_type, 'screen': 'noc' },
         type: 'post',
         cache: false,
         success: function (response) {
