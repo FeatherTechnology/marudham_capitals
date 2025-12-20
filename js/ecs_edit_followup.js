@@ -23,7 +23,7 @@ $(function () {
     let cusSts = cus_Sts.split(',');
 
     if (cusSts != '') {
-        OnLoadFunctions(cusSts, cummDate );
+        OnLoadFunctions(cusSts, cummDate);
     }
 });
 function warningSwal(title, text) {
@@ -45,6 +45,7 @@ function OnLoadFunctions(cusSts, comm_date) {
 
     $('#due_followup_table').DataTable().destroy();
     var table = $('#due_followup_table').DataTable({
+        ...getStateSaveConfig('due_followup_table'),
         "order": [[0, "desc"]],
         "processing": true,
         "displayStart": getDisplayStart('due_followup_table'),
@@ -60,21 +61,21 @@ function OnLoadFunctions(cusSts, comm_date) {
             }
         },
         dom: 'lBfrtip',
-        buttons: [{ 
-                extend: 'excel', 
-                title: "Due Followup List",
-                action: function (e, dt, button, config) {
-                    var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
-                    var dynamic = curDateJs('Due_Followup'); // or any base
-                    config.title = dynamic;      // for versions that use title as filename
-                    config.filename = dynamic;   // for html5 filename
-                    defaultAction.call(this, e, dt, button, config);
-                }
-            },
-            { 
-                extend: 'colvis', 
-                collectionLayout: 'fixed four-column' 
+        buttons: [{
+            extend: 'excel',
+            title: "Due Followup List",
+            action: function (e, dt, button, config) {
+                var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                var dynamic = curDateJs('Due_Followup'); // or any base
+                config.title = dynamic;      // for versions that use title as filename
+                config.filename = dynamic;   // for html5 filename
+                defaultAction.call(this, e, dt, button, config);
             }
+        },
+        {
+            extend: 'colvis',
+            collectionLayout: 'fixed four-column'
+        }
         ],
         "lengthMenu": [
             [10, 25, 50, -1],
@@ -92,6 +93,9 @@ function OnLoadFunctions(cusSts, comm_date) {
             paginationFunction('due_followup_table');
         }
     });
+
+    // Pass the table variable to the initColVisFeatures function
+    initColVisFeatures(table, 'due_followup_table');
 }
 
 function enableDateColoring() {

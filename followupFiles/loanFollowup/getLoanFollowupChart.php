@@ -41,7 +41,7 @@ $sql = $connect->query("SELECT a.*,b.fullname, CASE b.role WHEN 1 then 'Director
 
 <script>
     // Declare table variable to store the DataTable instance
-    var loan_follow_chart = $('#loan_follow_chart').dataTable({
+    var loan_follow_chart = $('#loan_follow_chart').DataTable({
         ...getStateSaveConfig('loan_follow_chart'),
         'processing': true,
         'iDisplayLength': 5,

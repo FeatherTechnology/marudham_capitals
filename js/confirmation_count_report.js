@@ -16,14 +16,14 @@ $(document).ready(function () {
 
         let from_date = $('#from_date').val();
         let to_date = $('#to_date').val();
-         let selected_user = $('#by_user').val();
+        let selected_user = $('#by_user').val();
 
 
         if (!from_date || !to_date || !selected_user) {
             swalError('Please Select All Fields!', 'All fields are required.');
             return;
         }
-     confirmationReportCount(from_date, to_date ,selected_user)
+        confirmationReportCount(from_date, to_date, selected_user)
 
     });
 
@@ -42,7 +42,7 @@ function getUserNames() {
     }, 'json');
 }
 
-function confirmationReportCount(from_date, to_date ,selected_user) {
+function confirmationReportCount(from_date, to_date, selected_user) {
 
     $.ajax({
         url: 'reportFile/confirmation_count_report/getConfirmationCount.php',
@@ -71,7 +71,7 @@ function confirmationReportCount(from_date, to_date ,selected_user) {
             // DataTable Columns
             const columns = [
                 { data: 'sno', title: "S.No" },
-              { data: 'fullname', title: "User Name" },
+                { data: 'fullname', title: "User Name" },
                 { data: 'line', title: "Line Name" },
                 { data: 'total_count', title: "Total Count" },
                 { data: 't_completed_count', title: "Completed" },
@@ -81,7 +81,8 @@ function confirmationReportCount(from_date, to_date ,selected_user) {
 
             $('#confirmation_count_table').DataTable().destroy();
 
-            $('#confirmation_count_table').DataTable({
+            var confirmation_count_table = $('#confirmation_count_table').DataTable({
+                ...getStateSaveConfig('confirmation_count_table'),
                 data: tableData,
                 columns: columns,
                 dom: 'lBfrtip',
@@ -106,6 +107,8 @@ function confirmationReportCount(from_date, to_date ,selected_user) {
                 }
             });
 
+            // Pass the table variable to the initColVisFeatures function
+            initColVisFeatures(confirmation_count_table, 'confirmation_count_table');
 
             // =============================
             // 🔥 SET FOOTER (TOTAL VALUES)

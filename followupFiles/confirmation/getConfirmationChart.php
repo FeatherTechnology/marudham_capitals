@@ -139,7 +139,7 @@ function getFamilyMember($connect, $fam_id)
 
 <script>
     // Declare table variable to store the DataTable instance
-    var conf_follow_chart = $('#conf_follow_chart').dataTable({
+    var conf_follow_chart = $('#conf_follow_chart').DataTable({
         ...getStateSaveConfig('conf_follow_chart'),
         'processing': true,
         'iDisplayLength': 5,

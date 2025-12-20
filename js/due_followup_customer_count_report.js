@@ -41,7 +41,7 @@ function dueFollowUpCustomerCountReportTable() {
             const parsed = JSON.parse(res);
 
             if (!parsed.data || parsed.data.length === 0) {
-              $('#due_followup_customer_count_report_table thead').html("<tr><th colspan='13'>No data found for the selected filters</th></tr>");
+                $('#due_followup_customer_count_report_table thead').html("<tr><th colspan='13'>No data found for the selected filters</th></tr>");
                 $('#due_followup_customer_count_report_table').DataTable().clear().draw();
                 return;
             }
@@ -65,14 +65,14 @@ function dueFollowUpCustomerCountReportTable() {
                 { data: 'paid' },
                 { data: 'partially_paid' },
                 { data: 'total_paid' },
-                { 
+                {
                     data: 'paid_percentage',
                     render: function (data) {
                         return data + ' %';
                     }
                 },
                 { data: 'unpaid' },
-                { 
+                {
                     data: 'unpaid_percentage',
                     render: function (data) {
                         return data + ' %';
@@ -82,25 +82,26 @@ function dueFollowUpCustomerCountReportTable() {
 
             // Rebuild table
             $('#due_followup_customer_count_report_table').DataTable().destroy();
-            const table = $('#due_followup_customer_count_report_table').DataTable({
+            const due_followup_customer_count_report_table = $('#due_followup_customer_count_report_table').DataTable({
+                ...getStateSaveConfig('due_followup_customer_count_report_table'),
                 data: data,
                 columns: columns,
                 dom: 'lBfrtip',
-                buttons: [{ 
-                        extend: 'excel', 
-                        title: "Due Summary",
-                        action: function (e, dt, button, config) {
-                            var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
-                            var dynamic = curDateJs('Due_summary'); // or any base
-                            config.title = dynamic;      // for versions that use title as filename
-                            config.filename = dynamic;   // for html5 filename
-                            defaultAction.call(this, e, dt, button, config);
-                        }
-                    },
-                    { 
-                        extend: 'colvis', 
-                        collectionLayout: 'fixed four-column' 
+                buttons: [{
+                    extend: 'excel',
+                    title: "Due Summary",
+                    action: function (e, dt, button, config) {
+                        var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                        var dynamic = curDateJs('Due_summary'); // or any base
+                        config.title = dynamic;      // for versions that use title as filename
+                        config.filename = dynamic;   // for html5 filename
+                        defaultAction.call(this, e, dt, button, config);
                     }
+                },
+                {
+                    extend: 'colvis',
+                    collectionLayout: 'fixed four-column'
+                }
                 ],
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
                 drawCallback: function () {
@@ -108,6 +109,9 @@ function dueFollowUpCustomerCountReportTable() {
                     paginationFunction('due_followup_customer_count_report_table');
                 }
             });
+
+            // Pass the table variable to the initColVisFeatures function
+            initColVisFeatures(due_followup_customer_count_report_table, 'due_followup_customer_count_report_table');
 
             // Render footer
             let footerHtml = `<tr>
