@@ -122,7 +122,7 @@ function moneyFormatIndia($num)
 
 <script>
     // Declare table variable to store the DataTable instance
-    var LoanHistTable = $('#LoanHistTable').dataTable({
+    var LoanHistTable = $('#LoanHistTable').DataTable({
         ...getStateSaveConfig('LoanHistTable'),
         'processing': true,
         'iDisplayLength': 5,

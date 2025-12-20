@@ -276,7 +276,7 @@ function getDocumentStatus($connect,$req_id,$cus_id){
     });
 
     // Declare table variable to store the DataTable instance
-    var DocHistTable = $('#DocHistTable').dataTable({
+    var DocHistTable = $('#DocHistTable').DataTable({
         ...getStateSaveConfig('DocHistTable'),
         'processing': true,
         'iDisplayLength': 5,

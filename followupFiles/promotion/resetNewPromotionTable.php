@@ -127,7 +127,7 @@ if ($role_type == 7 || $role_type == 3) {
 
 <script>
     // Declare table variable to store the DataTable instance
-    var new_promo_table = $('#new_promo_table').dataTable({
+    var new_promo_table = $('#new_promo_table').DataTable({
         ...getStateSaveConfig('new_promo_table'),
         'iDisplayLength': 10,
         "lengthMenu": [

@@ -2313,7 +2313,7 @@
                     table.column(i).visible(isVisible, false);
                 });
 
-                table.columns.adjust().draw(false);
+                table.columns.adjust();
             }
 
             // 5. Event bindings

@@ -23,9 +23,9 @@ $(document).ready(function () {
             swalError('Please Select All Fields!', 'All fields are required.');
             return;
         }
-         resetAllTables()
-       // SET HEADER BASED ON SCREEN
-      
+        resetAllTables()
+        // SET HEADER BASED ON SCREEN
+
         let headerText = "";
         let headerName = "";
 
@@ -45,9 +45,9 @@ $(document).ready(function () {
         } else if (screen == "6") {
             headerText = "Closed Count Report";
         } else if (screen == "7") {
-             headerName = "NOC";
+            headerName = "NOC";
             headerText = "NOC Count Report";
-        }else if (screen == "8") {
+        } else if (screen == "8") {
             headerName = "NOC Handover";
             headerText = "NOC Handover Count Report";
         }
@@ -97,7 +97,7 @@ $(document).ready(function () {
         } else if (screen == "7" || screen == "8") {
             $('#noc_count_table').show();
             $('#noc_count_wrapper').show();
-            nocReportCount(from_date, to_date, selected_user, screen,headerName);
+            nocReportCount(from_date, to_date, selected_user, screen, headerName);
         }
 
     });
@@ -160,7 +160,8 @@ function requestToIssuedReportCount(from_date, to_date, selected_user, screen, h
 
             $('#request_count_table').DataTable().destroy();
 
-            $('#request_count_table').DataTable({
+            var request_count_table = $('#request_count_table').DataTable({
+                ...getStateSaveConfig('request_count_table'),
                 data: tableData,
                 columns: columns,
                 dom: 'lBfrtip',
@@ -187,6 +188,8 @@ function requestToIssuedReportCount(from_date, to_date, selected_user, screen, h
             // Update the column header AFTER DataTable builds the table
             $('#request_count_table thead th#nameHeader').text(headerName);
 
+            // Pass the table variable to the initColVisFeatures function
+            initColVisFeatures(request_count_table, 'request_count_table');
 
             // =============================
             // 🔥 SET FOOTER (TOTAL VALUES)
@@ -262,7 +265,8 @@ function issuedReportCount(from_date, to_date, selected_user, screen) {
 
             $('#issue_count_table').DataTable().destroy();
 
-            $('#issue_count_table').DataTable({
+            var issue_count_table = $('#issue_count_table').DataTable({
+                ...getStateSaveConfig('issue_count_table'),
                 data: tableData,
                 columns: columns,
                 dom: 'lBfrtip',
@@ -286,6 +290,10 @@ function issuedReportCount(from_date, to_date, selected_user, screen) {
                     paginationFunction('issue_count_table');
                 }
             });
+
+            // Pass the table variable to the initColVisFeatures function
+            initColVisFeatures(issue_count_table, 'issue_count_table');
+
             // Footer (Total)
             $('#issue_count_table tfoot').html(`
                 <tr>
@@ -346,7 +354,8 @@ function collectionReportCount(from_date, to_date, selected_user, screen) {
 
             $('#collection_count_table').DataTable().destroy();
 
-            $('#collection_count_table').DataTable({
+            var collection_count_table = $('#collection_count_table').DataTable({
+                ...getStateSaveConfig('collection_count_table'),
                 data: tableData,
                 columns: columns,
                 dom: 'lBfrtip',
@@ -369,6 +378,9 @@ function collectionReportCount(from_date, to_date, selected_user, screen) {
                     paginationFunction('collection_count_table');
                 }
             });
+
+            // Pass the table variable to the initColVisFeatures function
+            initColVisFeatures(collection_count_table, 'collection_count_table');
 
             // Footer Total Row
             $('#collection_count_table tfoot').html(`
@@ -433,7 +445,8 @@ function closedReportCount(from_date, to_date, selected_user, screen) {
 
             $('#closed_count_table').DataTable().destroy();
 
-            $('#closed_count_table').DataTable({
+            var closed_count_table = $('#closed_count_table').DataTable({
+                ...getStateSaveConfig('closed_count_table'),
                 data: tableData,
                 columns: columns,
                 dom: 'lBfrtip',
@@ -456,6 +469,9 @@ function closedReportCount(from_date, to_date, selected_user, screen) {
                     paginationFunction('closed_count_table');
                 }
             });
+
+            // Pass the table variable to the initColVisFeatures function
+            initColVisFeatures(closed_count_table, 'closed_count_table');
 
             // Footer Total Row
             $('#closed_count_table tfoot').html(`
@@ -481,7 +497,7 @@ function closedReportCount(from_date, to_date, selected_user, screen) {
 }
 
 // NOC
-function nocReportCount(from_date, to_date, selected_user, screen,headerName) {
+function nocReportCount(from_date, to_date, selected_user, screen, headerName) {
 
     $.ajax({
         url: 'reportFile/work_count_report/nocReportCount.php',
@@ -521,7 +537,8 @@ function nocReportCount(from_date, to_date, selected_user, screen,headerName) {
             $('#noc_count_table').DataTable().destroy();
 
             // Create new table
-            $('#noc_count_table').DataTable({
+            var noc_count_table = $('#noc_count_table').DataTable({
+                ...getStateSaveConfig('noc_count_table'),
                 data: tableData,
                 columns: columns,
                 dom: 'lBfrtip',
@@ -547,6 +564,8 @@ function nocReportCount(from_date, to_date, selected_user, screen,headerName) {
             // Update the column header AFTER DataTable builds the table
             $('#noc_count_table thead th#nameHeader').text(headerName);
 
+            // Pass the table variable to the initColVisFeatures function
+            initColVisFeatures(noc_count_table, 'noc_count_table');
 
             // FOOTER TOTAL
             $('#noc_count_table tfoot').html(`

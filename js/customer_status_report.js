@@ -56,7 +56,7 @@ $(document).ready(function () {
             $('#line, #group_map, #due_followup').closest('.choices').hide();
             $('#by_user').show()
             getUserNames();
-             getUserLoanCategories('');
+            getUserLoanCategories('');
         } else if (type == '3') {
             $('#group_map').closest('.choices').show();
             $('#line,#due_followup').closest('.choices').hide();
@@ -304,25 +304,26 @@ function currentReportCount(search_date, type, line, selected_user, group_map, d
             ];
 
             $('#current_table').DataTable().destroy();
-            $('#current_table').DataTable({
+            var current_table = $('#current_table').DataTable({
+                ...getStateSaveConfig('current_table'),
                 data: data,
                 columns: columns,
                 dom: 'lBfrtip',
-                buttons: [{ 
-                        extend: 'excel', 
-                        title: "Current Customer Count Report",
-                        action: function (e, dt, button, config) {
-                            var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
-                            var dynamic = curDateJs('Current_Customer_Count_Report'); // or any base
-                            config.title = dynamic;      // for versions that use title as filename
-                            config.filename = dynamic;   // for html5 filename
-                            defaultAction.call(this, e, dt, button, config);
-                        } 
-                    },
-                    { 
-                        extend: 'colvis', 
-                        collectionLayout: 'fixed four-column' 
+                buttons: [{
+                    extend: 'excel',
+                    title: "Current Customer Count Report",
+                    action: function (e, dt, button, config) {
+                        var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                        var dynamic = curDateJs('Current_Customer_Count_Report'); // or any base
+                        config.title = dynamic;      // for versions that use title as filename
+                        config.filename = dynamic;   // for html5 filename
+                        defaultAction.call(this, e, dt, button, config);
                     }
+                },
+                {
+                    extend: 'colvis',
+                    collectionLayout: 'fixed four-column'
+                }
                 ],
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
                 drawCallback: function () {
@@ -330,6 +331,9 @@ function currentReportCount(search_date, type, line, selected_user, group_map, d
                     paginationFunction('current_table');
                 }
             });
+
+            // Pass the table variable to the initColVisFeatures function
+            initColVisFeatures(current_table, 'current_table');
 
             let footerHtml = `<tr>
                 <td></td>
@@ -398,21 +402,21 @@ function pendingReportCount(search_date, type, line, selected_user, group_map, d
                 data: data,
                 columns: columns,
                 dom: 'lBfrtip',
-                buttons: [{ 
-                        extend: 'excel', 
-                        title: "Pending Customer Count Report",
-                        action: function (e, dt, button, config) {
-                            var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
-                            var dynamic = curDateJs('Pending_Customer_Count_Report'); // or any base
-                            config.title = dynamic;      // for versions that use title as filename
-                            config.filename = dynamic;   // for html5 filename
-                            defaultAction.call(this, e, dt, button, config);
-                        } 
-                    },
-                    { 
-                        extend: 'colvis', 
-                        collectionLayout: 'fixed four-column' 
+                buttons: [{
+                    extend: 'excel',
+                    title: "Pending Customer Count Report",
+                    action: function (e, dt, button, config) {
+                        var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                        var dynamic = curDateJs('Pending_Customer_Count_Report'); // or any base
+                        config.title = dynamic;      // for versions that use title as filename
+                        config.filename = dynamic;   // for html5 filename
+                        defaultAction.call(this, e, dt, button, config);
                     }
+                },
+                {
+                    extend: 'colvis',
+                    collectionLayout: 'fixed four-column'
+                }
                 ],
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
                 drawCallback: function () {
@@ -487,8 +491,8 @@ function odReportCount(search_date, type, line, selected_user, group_map, due_fo
                 columns: columns,
                 dom: 'lBfrtip',
                 buttons: [
-                    { 
-                        extend: 'excel', 
+                    {
+                        extend: 'excel',
                         title: "OD Customer Count Report",
                         action: function (e, dt, button, config) {
                             var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
@@ -496,11 +500,11 @@ function odReportCount(search_date, type, line, selected_user, group_map, due_fo
                             config.title = dynamic;      // for versions that use title as filename
                             config.filename = dynamic;   // for html5 filename
                             defaultAction.call(this, e, dt, button, config);
-                        } 
+                        }
                     },
-                    { 
-                        extend: 'colvis', 
-                        collectionLayout: 'fixed four-column' 
+                    {
+                        extend: 'colvis',
+                        collectionLayout: 'fixed four-column'
                     }
                 ],
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
