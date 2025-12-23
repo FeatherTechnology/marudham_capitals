@@ -4974,8 +4974,8 @@ $("#loan_category").change(function () {
 });
 
 $("#refresh_cal").click(function () {
-  var customer_limit = $("#customer_limit").val();
-  var loan_amt = $("#loan_amt").val();
+  var customer_limit = parseFloat($("#customer_limit").val());
+  var loan_amt = parseFloat($("#loan_amt").val());
   var intrest_rate = $("#int_rate").val();
   var doc_charge = $("#doc_charge").val();
   var proc_fee = $("#proc_fee").val();
