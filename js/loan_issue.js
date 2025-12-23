@@ -1172,7 +1172,7 @@ function getLoanAfterInterest() {
     if (proc_type.includes('₹')) {
         var proc_fee = parseInt(proc_fee);//Get processing fee from loan info and directly show the Processing Fee provided because of it is in rupees
     } else if (proc_type.includes('%')) {
-        var proc_fee = parseInt(loan_amt) * (parseInt(proc_fee) / 100);//Get processing fee from loan info and multiply with loan amt to get actual proc fee
+        var proc_fee = parseInt(loan_amt) * (parseFloat(proc_fee) / 100);//Get processing fee from loan info and multiply with loan amt to get actual proc fee
     }
     var roundeprocfee = Math.ceil(proc_fee / 5) * 5; //to increase Processing fee to nearest multiple of 5
     if (roundeprocfee < proc_fee) {
@@ -1248,7 +1248,7 @@ function getLoanPreInterest() {
     if (proc_type.includes('₹')) {
         var proc_fee = parseInt(proc_fee);//Get processing fee from loan info and directly show the Processing Fee provided because of it is in rupees
     } else if (proc_type.includes('%')) {
-        var proc_fee = parseInt(loan_amt) * (parseInt(proc_fee) / 100);//Get processing fee from loan info and multiply with loan amt to get actual proc fee
+        var proc_fee = parseInt(loan_amt) * (parseFloat(proc_fee) / 100);//Get processing fee from loan info and multiply with loan amt to get actual proc fee
     }
     var roundeprocfee = Math.ceil(proc_fee / 5) * 5; //to increase Processing fee to nearest multiple of 5
     if (roundeprocfee < proc_fee) {
@@ -1308,7 +1308,7 @@ function getLoanInterest() {
     if (proc_type.includes("₹")) {
         var proc_fee = parseInt(proc_fee);
     } else if (proc_type.includes("%")) {
-        var proc_fee = parseInt(loan_amt) * (parseInt(proc_fee) / 100);
+        var proc_fee = parseInt(loan_amt) * (parseFloat(proc_fee) / 100);
     }
 
     var roundeprocfee = Math.ceil(proc_fee / 5) * 5;
@@ -1387,7 +1387,7 @@ function getSchemeAfterIntreset() {
     if (proc_type.includes('₹')) {
         var proc_fee = parseInt(proc_fee);//Get processing fee from loan info and directly show the Processing Fee provided because of it is in rupees
     } else if (proc_type.includes('%')) {
-        var proc_fee = parseInt(loan_amt) * (parseInt(proc_fee) / 100);//Get processing fee from loan info and multiply with loan amt to get actual proc fee
+        var proc_fee = parseInt(loan_amt) * (parseFloat(proc_fee) / 100);//Get processing fee from loan info and multiply with loan amt to get actual proc fee
     }
     var roundeprocfee = Math.ceil(proc_fee / 5) * 5; //to increase Processing fee to nearest multiple of 5
     if (roundeprocfee < proc_fee) {
@@ -1467,7 +1467,7 @@ function getSchemePreIntreset() {
     if (proc_type.includes('₹')) {
         var proc_fee = parseInt(proc_fee);//Get processing fee from loan info and directly show the Processing Fee provided because of it is in rupees
     } else if (proc_type.includes('%')) {
-        var proc_fee = parseInt(loan_amt) * (parseInt(proc_fee) / 100);//Get processing fee from loan info and multiply with loan amt to get actual proc fee
+        var proc_fee = parseInt(loan_amt) * (parseFloat(proc_fee) / 100);//Get processing fee from loan info and multiply with loan amt to get actual proc fee
     }
     var roundeprocfee = Math.ceil(proc_fee / 5) * 5; //to increase Processing fee to nearest multiple of 5
     if (roundeprocfee < proc_fee) {
