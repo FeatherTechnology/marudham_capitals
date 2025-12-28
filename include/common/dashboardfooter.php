@@ -1716,13 +1716,13 @@
         $(document).ajaxStart(function() {
             showOverlay();
             // Stop session timers while AJAX is in progress
-            // clearTimeout(warningTimeout);
-            // clearTimeout(logoutTimeout);
+            clearTimeout(warningTimeout);
+            clearTimeout(logoutTimeout);
         });
 
         $(document).ajaxStop(function() {
             hideOverlay();
-            // resetTimers(); // Reset again after AJAX completes
+            resetTimers(); // Reset again after AJAX completes
         });
 
         function moneyFormatIndia(num) {
