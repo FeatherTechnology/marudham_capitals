@@ -144,7 +144,7 @@ foreach ($result as $row) {
     // }
 
     $replace_doc_action ='';
-    if($row['noc_replace_status'] == '0'){
+    if($row['noc_replace_status'] == '0'){ //ack - noc_replace_status => 0-YES/1-NO.
         $replace_doc_id = $row['noc_replace_doc_id'];
         
         $qry = $connect->query("SELECT req_id FROM acknowlegement_documentation WHERE doc_id = '$replace_doc_id' ");
@@ -169,7 +169,7 @@ foreach ($result as $row) {
 
     if ($doc_rec_access == '0' && $track_status == '2' && $userid != $row['insert_login_id']) { //2 means send by user to receive
         //show receive track when sent from user
-        $action .= "<a href='' title='Receive Documents' class='receive-track' data-id='$id' data-reqid='$req_id' >Receive</a>";
+        $action .= "<a href='' title='Receive Documents' class='receive-track' data-id='$id' data-cusid='$cus_id' >Receive</a>";
         $action .= "<a href='' title='Return Documents' class='return-track' data-id='$id' data-reqid='$req_id' >Return</a>";
     }
 

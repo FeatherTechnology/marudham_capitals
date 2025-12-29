@@ -22,13 +22,13 @@ try {
         INSERT INTO noc 
         (req_id, cus_id, noc_date, noc_replace_status, cus_status, insert_login_id, update_login_id, created_date) 
         VALUES 
-        (:req_id, :cus_id, NOW(), 1, 23, :user_id, :user_id, NOW())
+        (:req_id, :cus_id, NOW(), 1, 23, :user_id, :userid, NOW())
     ");
     $qry->execute([
         ':req_id'  => $reqid,
         ':cus_id'  => $cusid,
         ':user_id' => $user_id,
-        ':user_id' => $user_id
+        ':userid' => $user_id
     ]);
 
     $noc_id = $connect->lastInsertId();

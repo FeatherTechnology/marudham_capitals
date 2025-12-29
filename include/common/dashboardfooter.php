@@ -1904,13 +1904,15 @@
 
             $('.receive-track').click(function() {
                 var tableid = $(this).data('id');
+                let cusid = $(this).data('cusid');
                 event.preventDefault();
                 if (confirm('Are you sure to Mark this Track as Received?')) {
                     $.ajax({
                         url: 'documentTrackFile/receiveTrack.php',
                         type: 'post',
                         data: {
-                            'id': tableid
+                            'id': tableid,
+                            'cus_id': cusid
                         },
                         cache: false,
                         success: function(response) {
