@@ -99,30 +99,30 @@ $(document).ready(function () {
         }
     });
 
-    $('#concern_to').change(function () {
-        var to = $(this).val();
+    // $('#concern_to').change(function () {
+    //     var to = $(this).val();
 
-        if (to == '1') {
-            $('.dept').show();
-            $('.team').hide();
-            getConcernDeptName(); // To show Dept Name
+    //     if (to == '1') {
+    //         $('.dept').show();
+    //         $('.team').hide();
+    //         getConcernDeptName(); // To show Dept Name
 
-        } else if (to == '2') {
-            $('.dept').hide();
-            $('.team').show();
-            getconTeamName(); //To Show Team.
+    //     } else if (to == '2') {
+    //         $('.dept').hide();
+    //         $('.team').show();
+    //        
 
-        } else {
-            $('.dept').hide();
-            $('.team').hide();
+    //     } else {
+    //         $('.dept').hide();
+    //         $('.team').hide();
 
-        }
-    });
+    //     }
+    // });
 
-    $('#to_dept_name').change(function () { // To Staff list based on department
-        var deptVal = $(this).val();
-        getStaffName('1', deptVal)
-    });
+    // $('#to_dept_name').change(function () { // To Staff list based on department
+    //     var deptVal = $(this).val();
+    //     getStaffName('1', deptVal)
+    // });
     $('#to_team_name').change(function () { // To Staff list based on Team.
         var teamVal = $(this).val();
         getStaffName('2', teamVal)
@@ -272,6 +272,7 @@ $(function () {
     // initColVisFeatures(coursecategoryTable, 'coursecategoryTable');
 
     // getBranchName(); // To Show Branch Name List.
+     getconTeamName(); //To Show Team.
     getConcernRoleType(); // To show Role Type
     DropDownCourse(); //To Show Concern Subject.
     resetConSubTable(); //To Reset.
@@ -546,8 +547,8 @@ function submitValidation() {
     var ag_name = $('#ag_name').val();
     var cus_id = $('#cus_id').val();
     // var branch_name = $('#branch_name').val();
-    var concern_to = $('#concern_to').val(); console.log(concern_to);
-    var to_dept_name = $('#to_dept_name').val();
+    // var concern_to = $('#concern_to').val(); console.log(concern_to);
+    // var to_dept_name = $('#to_dept_name').val();
     var to_team_name = $('#to_team_name').val();
     var com_sub = $('#com_sub').val();
     var com_remark = $('#com_remark').val();
@@ -608,30 +609,30 @@ function submitValidation() {
     // } else {
     //     $('#branchCheck').hide();
     // }
-    if (concern_to == '') {
-        event.preventDefault();
-        $('#comtoCheck').show();
-    } else {
-        $('#comtoCheck').hide();
-    }
+    // if (concern_to == '') {
+    //     event.preventDefault();
+    //     $('#comtoCheck').show();
+    // } else {
+    //     $('#comtoCheck').hide();
+    // }
 
-    if (concern_to == '1') {
-        if (to_dept_name == '') {
-            event.preventDefault();
-            $('#todeptnameCheck').show();
-        } else {
-            $('#todeptnameCheck').hide();
-        }
-    }
+    // if (concern_to == '1') {
+    //     if (to_dept_name == '') {
+    //         event.preventDefault();
+    //         $('#todeptnameCheck').show();
+    //     } else {
+    //         $('#todeptnameCheck').hide();
+    //     }
+    // }
 
-    if (concern_to == '2') {
+    // if (concern_to == '2') {
         if (to_team_name == '') {
             event.preventDefault();
             $('#toteamnameCheck').show();
         } else {
             $('#toteamnameCheck').hide();
         }
-    }
+    // }
 
     if (com_sub == '') {
         event.preventDefault();

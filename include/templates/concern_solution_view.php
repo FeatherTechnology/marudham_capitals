@@ -35,8 +35,8 @@ if (count($getConcernCreation) > 0) {
     $conDate        = $getConcernCreation['com_date'];
     $conCode        = $getConcernCreation['com_code'];
     // $branchName     = $getConcernCreation['branch_name'];
-    $concernTo      = $getConcernCreation['concern_to'];
-    $toDeptName     = $getConcernCreation['to_dept_name'];
+    // $concernTo      = $getConcernCreation['concern_to'];
+    // $toDeptName     = $getConcernCreation['to_dept_name'];
     $toTeamName     = $getConcernCreation['to_team_name'];
     $concernAgainst     = $getConcernCreation['concern_against'];
     $conSub         = $getConcernCreation['com_sub'];
@@ -283,7 +283,7 @@ if (count($getConcernCreation) > 0) {
                                     </div>
                                 </div>
 
-                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                                <!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="to">Concern To</label><span class="required">&nbsp;*</span>
                                         <select type="text" class="form-control" id="concern_to" name="concern_to" tabindex='14' disabled>
@@ -293,9 +293,9 @@ if (count($getConcernCreation) > 0) {
                                         </select>
                                         <span class="text-danger" style='display:none' id='comtoCheck'>Please Select Concern To</span>
                                     </div>
-                                </div>
+                                </div> -->
 
-                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 dept" <?php if (isset($concernTo) and $concernTo == '1') {
+                                <!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 dept" <?php if (isset($concernTo) and $concernTo == '1') {
                                                                                                 } else {
                                                                                                     echo 'style="display: none;"';
                                                                                                 } ?>>
@@ -304,11 +304,8 @@ if (count($getConcernCreation) > 0) {
                                         <input tabindex="15" type="text" class="form-control" id="to_dept_name" name="to_dept_name" value="<?php if (isset($toDeptName)) echo $toDeptName; ?>" readonly>
                                         <span class="text-danger" style='display:none' id='todeptnameCheck'>Please Select Department Name</span>
                                     </div>
-                                </div>
-                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 team" <?php if (isset($concernTo) and $concernTo == '2') {
-                                                                                                } else {
-                                                                                                    echo 'style="display: none;"';
-                                                                                                } ?>>
+                                </div> -->
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 team">
                                     <div class="form-group">
                                         <label for="toname">Team Name </label> <span class="required">&nbsp;*</span>
                                         <input tabindex="15" type="text" class="form-control" id="to_team_name" name="to_team_name" value="<?php if (isset($toTeamName)) echo $toTeamName; ?>" readonly>

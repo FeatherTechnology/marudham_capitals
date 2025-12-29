@@ -11,7 +11,7 @@ if($type == '1'){
 
 $staffFrom = $_POST['staffFrom'];
 $companyID = $_POST['companyID'];
-$result = $connect->query("SELECT  staff_id,staff_name FROM `staff_creation` where company_id ='".strip_tags($companyID)."' && $columnName = '".strip_tags($staffFrom)."' ");
+$result = $connect->query("SELECT  staff_id,staff_name FROM `staff_creation` where company_id ='".strip_tags($companyID)."' && $columnName = '".strip_tags($staffFrom)."' && status ='0' ");
 while( $row = $result->fetch()){
     $staff_id = $row['staff_id'];
     $staff_name = $row['staff_name'];
