@@ -7,15 +7,48 @@ if (isset($_POST['cus_id'])) {
 
 $records = array();
 
-$result = $connect->query("SELECT * FROM `in_issue` where cus_id='$cus_id' and cus_status >= 14 ");
-$records['loan_count'] =  $result->rowCount();
+$result = $connect->query("
+    SELECT ii.cus_status, cs.created_date AS last_created_date
+    FROM in_issue ii
+    LEFT JOIN customer_status cs ON cs.req_id = ii.req_id
+    WHERE ii.cus_id = '$cus_id' AND ii.cus_status >= 14
+");
+
+$records['loan_count'] = $result->rowCount();
 $records['existing_type'] = '';
 
-while ($res = $result->fetch()) {
+while ($res = $result->fetch(PDO::FETCH_ASSOC)) {
+
+    // 1️⃣ Additional has highest priority
     if ($res['cus_status'] >= 14 && $res['cus_status'] < 20) {
         $records['existing_type'] = 'Additional';
-    } else if ($res['cus_status'] >= 20 && $records['existing_type'] != 'Additional') {
-        $records['existing_type'] = 'Renewal';
+        break; // stop checking further rows
+    }
+
+    // 2️⃣ Renewal / Re-Active logic (only if not Additional)
+    if ($res['cus_status'] >= 20 && $records['existing_type'] != 'Additional') {
+
+        $lastDate = $res['last_created_date'];
+
+        if (!empty($lastDate)) {
+            // End of the month of last created_date
+            $monthEnd = date('Y-m-t', strtotime($lastDate));
+
+            // First day of next month
+            $nextMonthStart = date('Y-m-d', strtotime($monthEnd . ' +1 day'));
+
+            // Add 3 months to calculate reactive date
+            $reactiveDate = date('Y-m-d', strtotime($nextMonthStart . ' +3 months'));
+
+            $today = date('Y-m-d');
+
+            // Decide Renewal or Re-Active
+            if ($today < $reactiveDate) {
+                $records['existing_type'] = 'Renewal';
+            } else {
+                $records['existing_type'] = 'Re-active';
+            }
+        }
     }
 }
 

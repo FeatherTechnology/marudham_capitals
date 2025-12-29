@@ -1358,6 +1358,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 											<thead>
 												<tr>
 													<th width="50"> S.No </th>
+													<th> Date </th>
 													<th> Feedback Label </th>
 													<th> Feedback </th>
 													<th> Remarks </th>

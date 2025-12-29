@@ -12,7 +12,7 @@ $selected_screens = [];
 if (isset($_SESSION['userid'])) {
 	$userid = $_SESSION['userid'];
 	$getUser = $userObj->getuser($mysqli, $userid);
-
+		$approvalaccess = $getUser['approval'];
 	// Check if user record exists and update_screen_id is not empty
 	if (!empty($getUser) && !empty($getUser['update_screen_id'])) {
 		$update_screen_id = $getUser['update_screen_id'];
@@ -1088,6 +1088,7 @@ if (sizeof($getCustomerReg) > 0) {
 											<thead>
 												<tr>
 													<th width="50"> S.No </th>
+													<th> Date </th>
 													<th> Feedback Label </th>
 													<th> Feedback </th>
 													<th> Remarks </th>
@@ -1806,11 +1807,21 @@ if (sizeof($getCustomerReg) > 0) {
 							<span class="text-danger" id="famrelationCheck" style='display:none'>Select Relationship</span>
 						</div>
 					</div>
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+						<div class="form-group">
+							<label class="label" for="authorize"> Authorize</label>&nbsp;
+							 <select type="text" class="form-control" id="authorize" name="authorize" tabindex='3'>
+								<option value=""> Select Authorize </option>
+								<option value="0"> Yes </option>
+								<option value="1"> No</option>
+							</select>
+						</div>
+					</div>
 
 					<div id="remark" style="display: none" class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 						<div class="form-group">
 							<label for="other_remark"> Remark</label>
-							<input type="text" class="form-control" name="other_remark" id="other_remark" placeholder="Enter Remark" tabindex='3'>
+							<input type="text" class="form-control" name="other_remark" id="other_remark" placeholder="Enter Remark" tabindex='4'>
 							<span class="text-danger" id="famremarkCheck" style='display:none'>Enter Remark</span>
 						</div>
 					</div>
@@ -1818,7 +1829,7 @@ if (sizeof($getCustomerReg) > 0) {
 					<div id="address" style="display: none" class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 						<div class="form-group">
 							<label for="other_address"> Address </label>
-							<input type="text" class="form-control" name="other_address" id="other_address" placeholder="Enter Address" tabindex='4'>
+							<input type="text" class="form-control" name="other_address" id="other_address" placeholder="Enter Address" tabindex='5'>
 							<span class="text-danger" id="famaddressCheck" style='display:none'>Enter Address</span>
 						</div>
 					</div>
@@ -1826,7 +1837,7 @@ if (sizeof($getCustomerReg) > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label class="label"> Aadhar No </label>&nbsp;<span class="text-danger">*</span>
-							<input type="text" class="form-control" name="relation_aadhar" id="relation_aadhar" data-type="adhaar-number" maxlength="14" placeholder="Enter Aadhar No" tabindex='5'>
+							<input type="text" class="form-control" name="relation_aadhar" id="relation_aadhar" data-type="adhaar-number" maxlength="14" placeholder="Enter Aadhar No" tabindex='6'>
 							<span class="text-danger" id="famaadharCheck" style='display:none'>Enter Aadhar Number</span>
 						</div>
 					</div>
@@ -1834,7 +1845,7 @@ if (sizeof($getCustomerReg) > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label class="label"> Mobile No </label>&nbsp;<span class="text-danger">*</span>
-							<input type="text" class="form-control" name="relation_Mobile" id="relation_Mobile" maxlength="10" onkeypress="if(this.value.length==10) return false;" placeholder="Mobile Number" tabindex='6' oninput="validateInputNumber(this,'withOutDot')">
+							<input type="text" class="form-control" name="relation_Mobile" id="relation_Mobile" maxlength="10" onkeypress="if(this.value.length==10) return false;" placeholder="Mobile Number" tabindex='7' oninput="validateInputNumber(this,'withOutDot')">
 							<span class="text-danger" id="fammobileCheck" style='display:none'>Enter Mobile Number</span>
 						</div>
 					</div>
@@ -1842,7 +1853,7 @@ if (sizeof($getCustomerReg) > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label class="label"> Age </label>
-							<input type="text" class="form-control" name="relation_age" id="relation_age" placeholder="Enter Age" tabindex='7' oninput="validateInputNumber(this,'withOutDot')">
+							<input type="text" class="form-control" name="relation_age" id="relation_age" placeholder="Enter Age" tabindex='8' oninput="validateInputNumber(this,'withOutDot')">
 							<span class="text-danger" id="famageCheck" style='display:none'>Enter Age</span>
 						</div>
 					</div>
@@ -1850,7 +1861,7 @@ if (sizeof($getCustomerReg) > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label class="label"> Occupation </label>
-							<input type="text" class="form-control" name="relation_Occupation" id="relation_Occupation" onkeydown="return /[a-z ]/i.test(event.key)" placeholder="Enter Occupation" tabindex='8'>
+							<input type="text" class="form-control" name="relation_Occupation" id="relation_Occupation" onkeydown="return /[a-z ]/i.test(event.key)" placeholder="Enter Occupation" tabindex='9'>
 							<span class="text-danger" id="famoccCheck" style='display:none'>Enter Occupation</span>
 						</div>
 					</div>
@@ -1858,7 +1869,7 @@ if (sizeof($getCustomerReg) > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label class="label"> Income </label>
-							<input type="text" class="form-control" name="relation_Income" id="relation_Income" placeholder="Enter Income" tabindex='9' oninput="validateInputNumber(this,'withOutDot')">
+							<input type="text" class="form-control" name="relation_Income" id="relation_Income" placeholder="Enter Income" tabindex='10' oninput="validateInputNumber(this,'withOutDot')">
 							<span class="text-danger" id="famincomeCheck" style='display:none'>Enter Income</span>
 						</div>
 					</div>
@@ -1866,14 +1877,14 @@ if (sizeof($getCustomerReg) > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label class="label"> Blood Group </label>&nbsp;
-							<input type="text" class="form-control" name="relation_Blood" id="relation_Blood" placeholder="Enter Blood Group" tabindex='10'>
+							<input type="text" class="form-control" name="relation_Blood" id="relation_Blood" placeholder="Enter Blood Group" tabindex='11'>
 						</div>
 					</div>
 
 
 					<div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12">
 						<input type="hidden" name="famID" id="famID">
-						<button type="button" tabindex="11" name="submitFamInfoBtn" id="submitFamInfoBtn" class="btn btn-primary" style="margin-top: 19px;">Submit</button>
+						<button type="button" tabindex="12" name="submitFamInfoBtn" id="submitFamInfoBtn" class="btn btn-primary" style="margin-top: 19px;">Submit</button>
 					</div>
 
 				</div>
@@ -2420,17 +2431,23 @@ if (sizeof($getCustomerReg) > 0) {
 				<div class="row">
 
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-						<div class="form-group">
-							<label for="feedback_label"> Feedback Label </label> <span class="required">&nbsp;*</span>
-							<input type="text" class="form-control" id="feedback_label" name="feedback_label" onkeydown="return /[a-z ]/i.test(event.key)" placeholder="Enter Feedback Label" tabindex='1'>
-							<span class="text-danger" id="feedbacklabelCheck" style='display:none'> Enter Feedback Label </span>
+						<div class="form-group" style="display: flex; align-items: center;">
+							<div>
+								<label for="feedback_label"> Feedback Name </label> <span class="required">&nbsp;*</span>
+								<select type="text" class="form-control" id="feedback_label" style="width: 330px;" name="feedback_label" tabindex='1'>
+									<option value=""> Select Feedback Name</option>
+								</select>
+							</div>
+							<div style="padding: 20px 0px 0px 10px;  ">
+							    <button type="button" class="btn btn-primary" id="add_cus_feedback" name="add_cus_feedback" data-toggle="modal" data-target="#add_feedback_lable" style="display: <?= ($approvalaccess == '0' ? 'inline-block' : 'none'); ?>;" tabindex="2"><span class="icon-add"></span></button>
+							</div>
 						</div>
 					</div>
 
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label for="cus_feedback"> Feedback </label> <span class="required">&nbsp;*</span>
-							<select type="text" class="form-control" id="cus_feedback" name="cus_feedback" tabindex='1'>
+							<select type="text" class="form-control" id="cus_feedback" name="cus_feedback" tabindex='2'>
 								<option value=""> Select Feedback </option>
 								<option value="1"> Bad </option>
 								<option value="2"> Poor </option>
@@ -2446,14 +2463,14 @@ if (sizeof($getCustomerReg) > 0) {
 					<div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12">
 						<div class="form-group">
 							<label for="feedback_remark"> Remarks </label>
-							<textarea class="form-control" name="feedback_remark" id="feedback_remark" tabindex='2'></textarea>
+							<textarea class="form-control" name="feedback_remark" id="feedback_remark" tabindex='3'></textarea>
 						</div>
 					</div>
 
 					<div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12"></div>
 					<div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12">
 						<input type="hidden" name="feedbackID" id="feedbackID">
-						<button type="button" name="feedbackBtn" id="feedbackBtn" class="btn btn-primary" style="margin-top: 19px;" tabindex='3'> Submit </button>
+						<button type="button" name="feedbackBtn" id="feedbackBtn" class="btn btn-primary" style="margin-top: 19px;" tabindex='4'> Submit </button>
 					</div>
 				</div>
 				</br>
@@ -2464,6 +2481,7 @@ if (sizeof($getCustomerReg) > 0) {
 						<thead>
 							<tr>
 								<th width="50"> S.No </th>
+								<th> Date </th>
 								<th> Feedback Label </th>
 								<th> Feedback </th>
 								<th> ACTION </th>
@@ -2476,7 +2494,7 @@ if (sizeof($getCustomerReg) > 0) {
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="feedbackList();">Close</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="feedbackList(); tabindex='6'">Close</button>
 			</div>
 		</div>
 	</div>
@@ -3148,4 +3166,64 @@ if (sizeof($getCustomerReg) > 0) {
 </div>
 
 
+<div class="modal fade" id="add_feedback_lable" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-lg " role="document">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLongTitle">Add Feedback Lable  </h5>
+				<button type="button" class="close" data-dismiss="modal" tabindex="7" aria-label="Close" onclick="getFeedbackLable()">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+					
+					<div class="card-body" style="height: 400px;">
+						<div class="row ">
+							<!--Fields -->
+							<div class="col-md-12 ">
+								<div class="row">
+									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-10 col-12">
+										<div class="form-group">
+											<label for="disabledInput">Feedback Name</label>&nbsp;<span class="text-danger"></span>
+											<input type="hidden" name="fedbackname_id" id="fedbackname_id">
+											<input type="text" tabindex="4" class="form-control" id="feedbackname" name="feedbackname" value="" placeholder="Enter Feedback Name">
+										</div>
+									</div>
+									<!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-10 col-12">
+										
+									</div> -->
+									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-10 col-12 d-flex align-items-center" style="margin-top: 20px;">
+										<div class="form-group">
+											<button type="submit" name="submit_feedback_lable" id="submit_feedback_lable" class="btn btn-primary" value="Submit" tabindex="5"><span class="icon-check"></span>&nbsp;Submit</button>
+										</div>
+									</div>
+								</div>
+								<br>
+							</div>
+							<div  class="col-md-12" id="cus_feedbackListTable_div">
+									<table class="table custom-table" id="cus_feedbackListTable">
+										<thead>
+											<tr>
+												<th width="50"> S.No </th>
+												<th> Feedback Label Name </th>
+												<th> ACTION </th>
+											</tr>
+										</thead>
+										<tbody>
+
+										</tbody>
+									</table>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-secondary" data-dismiss="modal" tabindex="6"  onclick="getFeedbackLable()">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
 <?php require_once __DIR__ . "/../common/fingerprintlibrary.php"; ?>

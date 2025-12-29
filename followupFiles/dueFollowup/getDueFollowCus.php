@@ -47,17 +47,19 @@ function buildResponsibleHaving($res_sts)
 {
     $having = '';
     if ($res_sts !== '' && isset($res_sts)) {
-        // Normalize empty-string handling in SQL by checking IS NULL OR = ''
+        // Normalize empty-string handling in SQL by checking IS NULL OR = '' or string values
         if ($res_sts === '0') {
-            // All must be 0 AND none empty/null -> show YES only
+            // All must be 0 AND none empty/null/string -> show YES only
             $having = "HAVING 
                 SUM(CASE WHEN rc.responsible = 0 THEN 1 ELSE 0 END) = SUM(CASE WHEN rc.req_id IS NOT NULL THEN 1 ELSE 0 END)
-                AND SUM(CASE WHEN rc.responsible IS NULL OR rc.responsible = '' OR TRIM(rc.responsible) = '' THEN 1 ELSE 0 END) = 0";
+                AND SUM(CASE WHEN rc.responsible IS NULL OR rc.responsible = '' OR TRIM(rc.responsible) = '' THEN 1 ELSE 0 END) = 0
+                AND SUM(CASE WHEN rc.responsible REGEXP '[^0-9]' THEN 1 ELSE 0 END) = 0";
         } elseif ($res_sts === '1') {
-            // Any = 1 OR any NULL/empty -> show NO
+            // Any = 1 OR any NULL/empty OR any string -> show NO
             $having = "HAVING 
                 SUM(CASE WHEN rc.responsible = 1 THEN 1 ELSE 0 END) > 0
-                OR SUM(CASE WHEN rc.responsible IS NULL OR rc.responsible = '' OR TRIM(rc.responsible) = '' THEN 1 ELSE 0 END) > 0";
+                OR SUM(CASE WHEN rc.responsible IS NULL OR rc.responsible = '' OR TRIM(rc.responsible) = '' THEN 1 ELSE 0 END) > 0
+                OR SUM(CASE WHEN rc.responsible REGEXP '[^0-9]' THEN 1 ELSE 0 END) > 0";
         }
     }
     return $having;
@@ -122,15 +124,18 @@ $query = "SELECT
     cm.comm_date,
     cm.remark,
     ii.req_id,
+CASE
+    -- if any responsible = 1 => NO
+    WHEN SUM(CASE WHEN rc.responsible = 1 THEN 1 ELSE 0 END) > 0 THEN 'No'
 
-    CASE
-        -- if any responsible = 1 => NO
-        WHEN SUM(CASE WHEN rc.responsible = 1 THEN 1 ELSE 0 END) > 0 THEN 'No'
-        -- if any responsible is NULL/empty => NO
-        WHEN SUM(CASE WHEN rc.responsible IS NULL OR rc.responsible = '' OR TRIM(rc.responsible) = '' THEN 1 ELSE 0 END) > 0 THEN 'No'
-        -- if number of zeros equals number of request_creation rows with rc (i.e. all non-empty responsibles are 0) => YES
-        WHEN SUM(CASE WHEN rc.responsible = 0 THEN 1 ELSE 0 END) = SUM(CASE WHEN rc.req_id IS NOT NULL THEN 1 ELSE 0 END) THEN 'Yes'
-        ELSE 'No'
+    -- if any responsible is NULL or empty => NO
+    WHEN SUM( CASE  WHEN rc.responsible IS NULL  OR rc.responsible = '' OR TRIM(rc.responsible) = '' THEN 1 ELSE 0  END ) > 0 THEN 'No'
+
+    -- if any responsible is STRING (non-numeric) => NO
+    WHEN SUM( CASE   WHEN rc.responsible REGEXP '[^0-9]' THEN 1 ELSE 0  END) > 0 THEN 'No'
+
+    -- if ALL responsible = 0 => YES
+    WHEN SUM( CASE WHEN rc.responsible = 0  AND rc.responsible REGEXP '^[0-9]+$' THEN 1 ELSE 0  END ) = COUNT(*) THEN 'Yes' ELSE 'No'
     END AS responsible_status
 
     FROM in_issue ii

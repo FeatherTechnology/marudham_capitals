@@ -673,6 +673,62 @@ $(document).ready(function () {
         $(this).val(formatIndianNumber(value));
     });
 
+  $("body").on("click", "#feedback_edit", function () {
+    let id = $(this).attr("value");
+
+    $.ajax({
+      url: "verificationFile/get_feedback_edit.php",
+      type: "POST",
+      data: { id: id },
+      dataType: "json",
+      cache: false,
+      success: function (result) {
+        $("#fedbackname_id").val(result["id"]);
+        $("#feedbackname").val(result["feedback_name"]);
+      },
+    });
+  });
+
+  $("body").on("click", "#feedback_delete", function () {
+    let id = $(this).attr("value");
+    if (confirm('Do You want to delete this Feedback Name?')) {
+      $.ajax({
+        url: "verificationFile/delet_feedback_edit.php",
+        type: "POST",
+        data: { id: id },
+        dataType: "json",
+        cache: false,
+        success: function (result) {
+        var delresult = result.includes("Deleted");
+        if (delresult) {
+              Swal.fire({
+                    title: 'Feedback Name Deleted...!',
+                    icon: 'success',
+                    showConfirmButton: true,
+                    confirmButtonColor: '#009688'
+                });
+              cusfeedbacklist();
+        }else{
+              Swal.fire({
+                title: 'Error Occures',
+                icon: 'error',
+                showConfirmButton: true,
+                confirmButtonColor: '#009688'
+              });
+        }
+        },
+      });
+    }
+  });
+  $(document).on("click", "#add_cus_label", function () {
+    getFeedbackLable();
+  })
+  $(document).on("click", "#add_cus_feedback", function () {
+    cusfeedbacklist();
+  })
+  $(document).on("click", "#submit_feedback_lable", function () {
+    submitfeedbackname();
+  })
     /* ********************************************** Document info END ********************************************** */
 
     //////////////////////////////////////////// Documentation END //////////////////////////////////////////////
@@ -856,12 +912,13 @@ $(document).on("click", "#submitFamInfoBtn", function () {
     let relation_Income = $("#relation_Income").val();
     let relation_Blood = $("#relation_Blood").val();
     let famTableId = $("#famID").val();
+    let authorize = $("#authorize").val();
 
     if (famname != "" && relationship != "" && relation_aadhar != "" && relation_Mobile != "" && relation_Mobile.length === 10) {
         $.ajax({
             url: 'updateFile/update_family_submit.php',
             type: 'POST',
-            data: { "famname": famname, "realtionship": relationship, "other_remark": other_remark, "other_address": other_address, "relation_age": relation_age, "relation_aadhar": relation_aadhar, "relation_Mobile": relation_Mobile, "relation_Occupation": relation_Occupation, "relation_Income": relation_Income, "relation_Blood": relation_Blood, "famTableId": famTableId, "cus_id": cus_id },
+            data: { "famname": famname, "realtionship": relationship, "other_remark": other_remark, "other_address": other_address, "relation_age": relation_age, "relation_aadhar": relation_aadhar, "relation_Mobile": relation_Mobile, "relation_Occupation": relation_Occupation, "relation_Income": relation_Income, "relation_Blood": relation_Blood, "famTableId": famTableId, "cus_id": cus_id ,"authorize":authorize },
             cache: false,
             success: function (response) {
 
@@ -944,6 +1001,7 @@ function resetFamInfo() {
 
             $("#famname").val('');
             $("#relationship").val('');
+            $("#authorize").val('');
             $("#other_remark").val('');
             $("#other_address").val('');
             $("#relation_age").val('');
@@ -988,6 +1046,7 @@ $("body").on("click", "#verification_fam_edit", function () {
             $("#famID").val(result['id']);
             $("#famname").val(result['fname']);
             $("#relationship").val(result['relation']);
+            $("#authorize").val(result['authorize']);
             $("#other_remark").val(result['remark']);
             $("#other_address").val(result['address']);
             $("#relation_age").val(result['age']);
@@ -4719,4 +4778,85 @@ function docHolderName(callback) {
             }
         },
     });
+}
+function getFeedbackLable() {
+    $.post(
+        "verificationFile/getFeedbackLable.php",
+        function (data) {
+            $("#feedback_label") .empty() .append("<option value=''>Select Feedback Label</option>");
+
+            for (var i = 0; i < data.length; i++) {
+                var feedback_name = data[i]["feedback_name"];
+                var id = data[i]["id"];
+                $("#feedback_label").append( "<option value='" + id + "'>" + feedback_name + "</option>"
+                );
+            }
+        },
+        "json"
+    );
+}
+
+function cusfeedbacklist() {
+  $.ajax({
+    url: "verificationFile/getFeedbackList.php",
+    type: "POST",
+    cache: false,
+    success: function (html) {
+      $("#cus_feedbackListTable_div").empty();
+      $("#cus_feedbackListTable_div").html(html);
+    },
+  });
+}
+
+function submitfeedbackname() {
+ let feedbackname = $("#feedbackname").val();
+ let id = $("#fedbackname_id").val();
+
+  if (feedbackname != "") {
+    $.ajax({
+      url: "verificationFile/submitFeedbackName.php",
+      data: {
+        feedbackname: feedbackname,
+        id:id
+      },
+      dataType: "json",
+      type: "POST",
+      cache: false,
+      success: function (response) {
+                if (response.includes('Inserted')) {
+                    Swal.fire({
+                        title: 'Feedback Name Inserted...!',
+                        icon: 'success',
+                        showConfirmButton: true,
+                        confirmButtonColor: '#009688'
+                    });
+                } else if (response.includes(' Updated')) {
+                    Swal.fire({
+                        title: 'Feedback Name Updated...!',
+                        icon: 'success',
+                        showConfirmButton: true,
+                        confirmButtonColor: '#009688'
+                    });
+                } else if(response.includes('Already')){
+                    Swal.fire({
+                        title: 'Feedback Name Already Existed',
+                        icon: 'error',
+                        showConfirmButton: true,
+                        confirmButtonColor: '#009688'
+                    });
+                }else if(response.includes('Failed')){
+                    Swal.fire({
+                        title: 'Error Occures',
+                        icon: 'error',
+                        showConfirmButton: true,
+                        confirmButtonColor: '#009688'
+                    });
+                }
+        $("#feedbackname").val('');
+        $("#fedbackname_id").val('');
+        cusfeedbacklist();
+      },
+    });
+
+  }
 }

@@ -11,7 +11,7 @@ $feedbackID              = $_POST['feedbackID'];
 
 if ($feedbackID == '') {
 
-    $insert_qry = $connect->query("INSERT INTO `verification_cus_feedback`( `cus_id`,`req_id`, `feedback_label`, `cus_feedback`,`feedback_remark`) VALUES ('$cus_id','$req_id','$feedback_label','$cus_feedback','$feedback_remark')");
+    $insert_qry = $connect->query("INSERT INTO `verification_cus_feedback`( `cus_id`,`req_id`, `feedback_label`, `cus_feedback`,`feedback_remark`,`inserted_date`) VALUES ('$cus_id','$req_id','$feedback_label','$cus_feedback','$feedback_remark',now())");
 } else {
     $update = $connect->query("UPDATE `verification_cus_feedback` SET `cus_id`='$cus_id',`req_id`='$req_id',`feedback_label`='$feedback_label',`cus_feedback`='$cus_feedback',`feedback_remark`='$feedback_remark' WHERE `id`='$feedbackID' ");
 }

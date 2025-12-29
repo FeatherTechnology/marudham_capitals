@@ -33,6 +33,12 @@ $search = '';
 if (isset($_POST['search']) && $_POST['search'] != "") {
     $search = " and (cr.cus_id LIKE '%" . $_POST['search'] . "%' OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%' OR cr.customer_name LIKE '%" . $_POST['search'] . "%' OR al.area_name LIKE '%" . $_POST['search'] . "%'OR sl.sub_area_name LIKE '%" . $_POST['search'] . "%' OR bc.branch_name LIKE '%" . $_POST['search'] . "%' OR agm.group_name LIKE '%" . $_POST['search'] . "%' OR alm.line_name LIKE '%" . $_POST['search'] . "%' OR cr.mobile1 LIKE '%" . $_POST['search'] . "%'  OR np.status LIKE '%" . $_POST['search'] . "%' ) ";
 }
+if (isset($_POST['re_active']) && $_POST['re_active'] != "") {
+    $re_active = "HAVING CURDATE() >= DATE_ADD(DATE_ADD(LAST_DAY(MAX(created_date)), INTERVAL 1 DAY),INTERVAL 3 MONTH)";
+}
+else{
+    $re_active ="HAVING CURDATE() < DATE_ADD( DATE_ADD(LAST_DAY(MAX(created_date)), INTERVAL 1 DAY),INTERVAL 3 MONTH)";
+}
 
 $order = '';
 if (isset($_POST['order'])) {
@@ -49,7 +55,7 @@ $areaColumn = ($accessType == 3)
             SELECT req_id, cus_id, consider_level, MAX(created_date) AS created_date 
             FROM closed_status 
             WHERE closed_sts = 1 
-            GROUP BY cus_id 
+            GROUP BY cus_id $re_active
         ) cs ON cs.cus_id = cr.cus_id 
         LEFT JOIN area_list_creation al ON cr.area_confirm_area = al.area_id 
         LEFT JOIN sub_area_list_creation sl ON cr.area_confirm_subarea = sl.sub_area_id 

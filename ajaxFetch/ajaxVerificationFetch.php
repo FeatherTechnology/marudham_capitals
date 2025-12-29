@@ -198,17 +198,53 @@ foreach ($result as $row) {
         $sub_array[] = '';
     }
 
-    $sub_array[] = $row['cus_data'];
-    $result = $connect->query("SELECT cus_status FROM `in_issue` where cus_id='$cus_id' and cus_status >= 14 ");
-    $existing_type = '';
+$sub_array[] = $row['cus_data'];
 
-    while ($res = $result->fetch()) {
-        if ($res['cus_status'] >= 14 && $res['cus_status'] < 20) {
-            $existing_type = 'Additional';
-        } else if ($res['cus_status'] >= 20 && $existing_type != 'Additional') {
-            $existing_type = 'Renewal';
+// Fetch cus_status along with last created_date from customer_status
+$result = $connect->query("
+    SELECT ii.cus_status, cs.created_date AS last_created_date
+    FROM in_issue ii
+    LEFT JOIN customer_status cs ON cs.req_id = ii.req_id
+    WHERE ii.cus_id = '$cus_id' AND ii.cus_status >= 14
+");
+
+$existing_type = '';
+
+while ($res = $result->fetch(PDO::FETCH_ASSOC)) {
+
+    // 1️⃣ Additional has highest priority
+    if ($res['cus_status'] >= 14 && $res['cus_status'] < 20) {
+        $existing_type = 'Additional';
+        break; // stop checking further rows
+    }
+
+    // 2️⃣ Renewal / Re-Active logic (only if not Additional)
+    if ($res['cus_status'] >= 20 && $existing_type != 'Additional') {
+
+        $lastDate = $res['last_created_date'];
+
+        if (!empty($lastDate)) {
+            // End of the month of last created_date
+            $monthEnd = date('Y-m-t', strtotime($lastDate));
+
+            // First day of next month
+            $nextMonthStart = date('Y-m-d', strtotime($monthEnd . ' +1 day'));
+
+            // Add 3 months to calculate reactive date
+            $reactiveDate = date('Y-m-d', strtotime($nextMonthStart . ' +3 months'));
+
+            $today = date('Y-m-d');
+
+            // Decide Renewal or Re-Active
+            if ($today < $reactiveDate) {
+                $existing_type = 'Renewal';
+            } else {
+                $existing_type = 'Re-active';
+            }
         }
     }
+}
+
 
     $sub_array[] = $existing_type;
     $id = $row['req_id'];

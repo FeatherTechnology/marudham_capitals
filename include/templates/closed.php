@@ -370,6 +370,7 @@ if (sizeof($getCustomerReg) > 0) {
 										<thead>
 											<tr>
 												<th width="50"> S.No </th>
+												<th> Date </th>
 												<th> Feedback Label </th>
 												<th> Feedback </th>
 												<th> Remarks </th>

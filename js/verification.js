@@ -1119,6 +1119,63 @@ $(document).ready(function () {
     $("#show_loan_history").show();
     $("#hide_loan_history").hide();
   })
+  
+  $("body").on("click", "#feedback_edit", function () {
+    let id = $(this).attr("value");
+
+    $.ajax({
+      url: "verificationFile/get_feedback_edit.php",
+      type: "POST",
+      data: { id: id },
+      dataType: "json",
+      cache: false,
+      success: function (result) {
+        $("#fedbackname_id").val(result["id"]);
+        $("#feedbackname").val(result["feedback_name"]);
+      },
+    });
+  });
+
+  $("body").on("click", "#feedback_delete", function () {
+    let id = $(this).attr("value");
+    if (confirm('Do You want to delete this Feedback Name?')) {
+      $.ajax({
+        url: "verificationFile/delet_feedback_edit.php",
+        type: "POST",
+        data: { id: id },
+        dataType: "json",
+        cache: false,
+        success: function (result) {
+        var delresult = result.includes("Deleted");
+        if (delresult) {
+              Swal.fire({
+                    title: 'Feedback Name Deleted...!',
+                    icon: 'success',
+                    showConfirmButton: true,
+                    confirmButtonColor: '#009688'
+                });
+              cusfeedbacklist();
+        }else{
+              Swal.fire({
+                title: 'Error Occures',
+                icon: 'error',
+                showConfirmButton: true,
+                confirmButtonColor: '#009688'
+              });
+        }
+        },
+      });
+    }
+  });
+  $(document).on("click", "#add_cus_label", function () {
+    getFeedbackLable();
+  })
+  $(document).on("click", "#add_cus_feedback", function () {
+    cusfeedbacklist();
+  })
+  $(document).on("click", "#submit_feedback_lable", function () {
+    submitfeedbackname();
+  })
   ///Hide AND Show doc Card END
 }); ////////Document Ready End
 
@@ -1305,6 +1362,7 @@ $(document).on("click", "#submitFamInfoBtn", function () {
   let relation_Income = $("#relation_Income").val();
   let relation_Blood = $("#relation_Blood").val();
   let famTableId = $("#famID").val();
+  let authorize = $("#authorize").val();
 
   if (
     famname != "" &&
@@ -1329,6 +1387,7 @@ $(document).on("click", "#submitFamInfoBtn", function () {
         relation_Income: relation_Income,
         relation_Blood: relation_Blood,
         famTableId: famTableId,
+        authorize: authorize,
         reqId: req_id,
         cus_id: cus_id,
       },
@@ -1409,7 +1468,7 @@ function resetFamInfo() {
       $("#updatedFamTable").empty();
       $("#updatedFamTable").html(html);
 
-      $("#famname, #relationship, #other_remark, #other_address, #relation_age, #relation_aadhar, #relation_Mobile, #relation_Occupation, #relation_Income, #relation_Blood, #famID").val("");
+      $("#famname, #relationship, #other_remark, #other_address, #relation_age, #relation_aadhar, #relation_Mobile, #relation_Occupation, #relation_Income, #relation_Blood, #famID,#authorize").val("");
       $("#famnameCheck, #famrelationCheck, #famremarkCheck, #famaddressCheck, #famageCheck, #famaadharCheck, #fammobileCheck, #famoccCheck, #famincomeCheck").hide();
     },
   });
@@ -1451,6 +1510,7 @@ $("body").on("click", "#verification_fam_edit", function () {
       $("#relation_Occupation").val(result["occ"]);
       $("#relation_Income").val(result["income"]);
       $("#relation_Blood").val(result["bg"]);
+      $("#authorize").val(result["authorize"]);
       if (result["relation"] == "Other") {
         $("#remark").show();
         $("#address").show();
@@ -4975,12 +5035,24 @@ $("#loan_category").change(function () {
 
 $("#refresh_cal").click(function () {
   var customer_limit = parseFloat($("#customer_limit").val());
-  var loan_amt = parseFloat($("#loan_amt").val());
+  var loan_amt = parseFloat($("#loan_amt").val().replace(/,/g, ''));
   var intrest_rate = $("#int_rate").val();
   var doc_charge = $("#doc_charge").val();
   var proc_fee = $("#proc_fee").val();
   var due_period = $("#due_period").val();
   var profit_method = $("#profit_method").val();
+
+  if (loan_amt <= 0) {
+    Swal.fire({
+      timerProgressBar: true,
+      timer: 2000,
+      title: 'Loan amount must be greater than zero',
+      icon: 'error',
+      showConfirmButton: true,
+      confirmButtonColor: '#009688'
+    });
+    return;
+  }
 
   if (loan_amt > customer_limit) {
     Swal.fire({
@@ -5425,27 +5497,8 @@ function getLoaninfo(sub_cat_id) {
         $('#tot_value').on('input', function () {
           // to calculate loan amount ant advance percentage
           let amt = Number($("#tot_value").val().replace(/,/g, '')) || 0;
-          let advance = Number($("#ad_amt").val().replace(/,/g, '')) || 0;
           $('#tot_value').val(formatIndianNumber(amt));
-
-          let loan_amt = amt - advance;
-
-          if (!isNaN(loan_amt)) {
-            if (loan_amt <= Number(response["loan_limit"])) {
-              $("#loan_amt").val(formatIndianNumber(loan_amt.toFixed(0)));
-            } else {
-              Swal.fire({
-              timerProgressBar: true,
-              timer: 2000,
-              title: 'Customer limit exceeded..!',
-              icon: 'error',
-              showConfirmButton: true,
-              confirmButtonColor: '#009688'
-            });
-              $("#tot_value").val("");
-              $("#loan_amt").val("");
-            }
-          }
+          $("#loan_amt").val(formatIndianNumber(amt));
         });
 
         $('#ad_amt').on('input', function () {
@@ -6953,5 +7006,86 @@ function storeFingerprints(fdata, hand, cus_id, cus_name) {//stores the current 
       })
     }
   }, 'json')
+}
+function getFeedbackLable() {
+    $.post(
+        "verificationFile/getFeedbackLable.php",
+        function (data) {
+            $("#feedback_label") .empty() .append("<option value=''>Select Feedback Label</option>");
+
+            for (var i = 0; i < data.length; i++) {
+                var feedback_name = data[i]["feedback_name"];
+                var id = data[i]["id"];
+                $("#feedback_label").append( "<option value='" + id + "'>" + feedback_name + "</option>"
+                );
+            }
+        },
+        "json"
+    );
+}
+
+function cusfeedbacklist() {
+  $.ajax({
+    url: "verificationFile/getFeedbackList.php",
+    type: "POST",
+    cache: false,
+    success: function (html) {
+      $("#cus_feedbackListTable_div").empty();
+      $("#cus_feedbackListTable_div").html(html);
+    },
+  });
+}
+
+function submitfeedbackname() {
+ let feedbackname = $("#feedbackname").val();
+ let id = $("#fedbackname_id").val();
+
+  if (feedbackname != "") {
+    $.ajax({
+      url: "verificationFile/submitFeedbackName.php",
+      data: {
+        feedbackname: feedbackname,
+        id:id
+      },
+      dataType: "json",
+      type: "POST",
+      cache: false,
+      success: function (response) {
+                if (response.includes('Inserted')) {
+                    Swal.fire({
+                        title: 'Feedback Name Inserted...!',
+                        icon: 'success',
+                        showConfirmButton: true,
+                        confirmButtonColor: '#009688'
+                    });
+                } else if (response.includes(' Updated')) {
+                    Swal.fire({
+                        title: 'Feedback Name Updated...!',
+                        icon: 'success',
+                        showConfirmButton: true,
+                        confirmButtonColor: '#009688'
+                    });
+                } else if(response.includes('Already')){
+                    Swal.fire({
+                        title: 'Feedback Name Already Existed',
+                        icon: 'error',
+                        showConfirmButton: true,
+                        confirmButtonColor: '#009688'
+                    });
+                }else if(response.includes('Failed')){
+                    Swal.fire({
+                        title: 'Error Occures',
+                        icon: 'error',
+                        showConfirmButton: true,
+                        confirmButtonColor: '#009688'
+                    });
+                }
+        $("#feedbackname").val('');
+        $("#fedbackname_id").val('');
+        cusfeedbacklist();
+      },
+    });
+
+  }
 }
 //////////////////////////////////////////////////////////////////// Loan Calculation Functions End ///////////////////////////////////////////////////////////////////////////////

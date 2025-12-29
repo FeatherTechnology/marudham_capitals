@@ -6,6 +6,7 @@ include '../ajaxconfig.php';
     <thead>
         <tr>
             <th width="20%"> S.No </th>
+            <th> Date </th>
             <th> Feedback Label </th>
             <th> Feedback </th>
             <th> Remarks </th>
@@ -17,7 +18,7 @@ include '../ajaxconfig.php';
 
         <?php
         $cus_id = $_POST['cus_id'];
-        $feedbackDetails = $connect->query("SELECT * FROM `verification_cus_feedback` WHERE `cus_id`='$cus_id' order by id desc");
+        $feedbackDetails = $connect->query("SELECT vcf.*,cfn.feedback_name FROM `verification_cus_feedback` vcf join cus_feedback_name cfn on cfn.id = vcf.feedback_label WHERE vcf.`cus_id`='$cus_id' order by id desc");
 
         $i = 1;
         while ($feedback = $feedbackDetails->fetch()) {
@@ -25,7 +26,8 @@ include '../ajaxconfig.php';
 
             <tr>
                 <td><?php echo $i; ?></td>
-                <td><?php echo $feedback["feedback_label"]; ?></td>
+                <td><?php echo date('d-m-Y', strtotime($feedback["inserted_date"])); ?></td>
+                <td><?php echo $feedback["feedback_name"]; ?></td>
                 <td><?php if ($feedback["cus_feedback"] == '1') {
                         echo 'Bad';
                     } else if ($feedback["cus_feedback"] == '2') {

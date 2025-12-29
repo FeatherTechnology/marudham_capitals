@@ -38,7 +38,8 @@ if (sizeof($getUser) > 0) {
 
 		<div class="row gutters">
 			<div class="toggle-container col-12">
-				<input type="button" class="toggle-button" value='Existing' id="existing_button">
+				<input type="button" class="toggle-button" value='Renewal' id="existing_button">
+				<input type="button" class="toggle-button" value='Re-active' id="reactive_button">
 				<input type="button" class="toggle-button" value='New' id="new_button">
 				<input type="button" class="toggle-button" value='Repromotion' id="repromotion_button">
 				<input type="button" class="toggle-button" value='Events' id="events_button">
@@ -90,12 +91,43 @@ if (sizeof($getUser) > 0) {
 			</div>
 		</div>
 
-		<div class="row gutters existing_card" style="display:none">
+		<div class="row gutters renewal_card" style="display:none">
 			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 				<div class="card">
-					<div class="card-header">Existing Customer</div>
+					<div class="card-header">Renewal Customer</div>
 					<div class="card-body" style="overflow-x: auto;">
-						<table class="table custom-table" id='expromotion_list' data-id="existing" style="width: 100%;">
+						<table class="table custom-table" id='expromotion_list' data-id="renewal" style="width: 100%;">
+							<thead>
+								<th width='20'>S.No</th>
+								<th>Aadhaar Number</th>
+								<th>Customer ID</th>
+								<th>Customer Name</th>
+								<th>Area</th>
+								<th>Sub Area</th>
+								<th>Branch</th>
+								<th>Group</th>
+								<th>Line</th>
+								<th>Mobile</th>
+								<th>Status</th>
+								<th>Sub Status</th>
+								<th>Closed Date</th>
+								<th>View</th>
+								<th>Action</th>
+								<th>Follow up status</th>
+								<th>Follow Date</th>
+							</thead>
+							<tbody></tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row gutters re_active_card" style="display:none">
+			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+				<div class="card">
+					<div class="card-header">Re-active Customer</div>
+					<div class="card-body" style="overflow-x: auto;">
+						<table class="table custom-table" id='re_active_promotion_list' data-id="re_Active" style="width: 100%;">
 							<thead>
 								<th width='20'>S.No</th>
 								<th>Aadhaar Number</th>
