@@ -1296,6 +1296,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 											<thead>
 												<tr>
 													<th width="50"> S.No </th>
+													<th > Date </th>
 													<th> Feedback Label </th>
 													<th> Feedback </th>
 													<th> Remarks </th>
@@ -2623,11 +2624,21 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 							<span class="text-danger" id="famrelationCheck">Select Relationship</span>
 						</div>
 					</div>
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+						<div class="form-group">
+							<label class="label" for="authorize"> Authorize</label>&nbsp;
+							 <select type="text" class="form-control" id="authorize" name="authorize" tabindex='3'>
+								<option value=""> Select Authorize </option>
+								<option value="0"> Yes </option>
+								<option value="1"> No</option>
+							</select>
+						</div>
+					</div>
 
 					<div id="remark" style="display: none" class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 						<div class="form-group">
 							<label for="other_remark"> Remark</label>
-							<input type="text" class="form-control" name="other_remark" id="other_remark" tabindex='3' placeholder="Enter Remark">
+							<input type="text" class="form-control" name="other_remark" id="other_remark" tabindex='4' placeholder="Enter Remark">
 							<span class="text-danger" id="famremarkCheck">Enter Remark</span>
 						</div>
 					</div>
@@ -2635,7 +2646,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 					<div id="address" style="display: none" class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 						<div class="form-group">
 							<label for="other_address"> Address </label>
-							<input type="text" class="form-control" name="other_address" id="other_address" tabindex='4' placeholder="Enter Address">
+							<input type="text" class="form-control" name="other_address" id="other_address" tabindex='5' placeholder="Enter Address">
 							<span class="text-danger" id="famaddressCheck">Enter Address</span>
 						</div>
 					</div>
@@ -2643,7 +2654,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label class="label" for="relation_aadhar"> Aadhar No </label>&nbsp;<span class="text-danger">*</span>
-							<input type="text" class="form-control" name="relation_aadhar" id="relation_aadhar" data-type="adhaar-number" maxlength="14" tabindex='5' placeholder="Enter Adhar Number">
+							<input type="text" class="form-control" name="relation_aadhar" id="relation_aadhar" data-type="adhaar-number" maxlength="14" tabindex='6' placeholder="Enter Adhar Number">
 							<span class="text-danger" id="famaadharCheck">Enter Aadhar Number</span>
 						</div>
 					</div>
@@ -2651,7 +2662,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label class="label" for="relation_Mobile"> Mobile No </label>&nbsp;<span class="text-danger">*</span>
-							<input type="text" class="form-control" name="relation_Mobile" id="relation_Mobile" maxlength="10" onkeypress="if(this.value.length==10) return false;" tabindex='6' placeholder="Enter Mobile Number" oninput="validateInputNumber(this,'withOutDot')">
+							<input type="text" class="form-control" name="relation_Mobile" id="relation_Mobile" maxlength="10" onkeypress="if(this.value.length==10) return false;" tabindex='7' placeholder="Enter Mobile Number" oninput="validateInputNumber(this,'withOutDot')">
 							<span class="text-danger" id="fammobileCheck">Enter Mobile Number</span>
 						</div>
 					</div>
@@ -2659,7 +2670,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label class="label" for="relation_age"> Age </label>
-							<input type="text" class="form-control" name="relation_age" id="relation_age" tabindex='7' placeholder="Enter Age" oninput="validateInputNumber(this,'withOutDot')">
+							<input type="text" class="form-control" name="relation_age" id="relation_age" tabindex='8' placeholder="Enter Age" oninput="validateInputNumber(this,'withOutDot')">
 							<span class="text-danger" id="famageCheck">Enter Age</span>
 						</div>
 					</div>
@@ -2667,7 +2678,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label class="label" for="relation_Occupation"> Occupation </label>
-							<input type="text" class="form-control" name="relation_Occupation" id="relation_Occupation" onkeydown="return /[a-z ]/i.test(event.key)" tabindex='8' placeholder="Enter Mobile Number">
+							<input type="text" class="form-control" name="relation_Occupation" id="relation_Occupation" onkeydown="return /[a-z ]/i.test(event.key)" tabindex='9' placeholder="Enter Mobile Number">
 							<span class="text-danger" id="famoccCheck">Enter Occupation</span>
 						</div>
 					</div>
@@ -2675,7 +2686,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label class="label" for="relation_Income"> Income </label>
-							<input type="text" class="form-control" name="relation_Income" id="relation_Income" tabindex='9' placeholder="Enter Income" oninput="validateInputNumber(this,'withOutDot')">
+							<input type="text" class="form-control" name="relation_Income" id="relation_Income" tabindex='10' placeholder="Enter Income" oninput="validateInputNumber(this,'withOutDot')">
 							<span class="text-danger" id="famincomeCheck">Enter Income</span>
 						</div>
 					</div>
@@ -2683,14 +2694,14 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label class="label" for="relation_Blood"> Blood Group </label>&nbsp;
-							<input type="text" class="form-control" name="relation_Blood" id="relation_Blood" tabindex='10' placeholder="Enter Blood Group">
+							<input type="text" class="form-control" name="relation_Blood" id="relation_Blood" tabindex='11' placeholder="Enter Blood Group">
 						</div>
 					</div>
 
 
 					<div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12">
 						<input type="hidden" name="famID" id="famID">
-						<button type="button" name="submitFamInfoBtn" id="submitFamInfoBtn" class="btn btn-primary" style="margin-top: 19px;" tabindex='11'>Submit</button>
+						<button type="button" name="submitFamInfoBtn" id="submitFamInfoBtn" class="btn btn-primary" style="margin-top: 19px;" tabindex='12'>Submit</button>
 					</div>
 
 				</div>
@@ -2713,7 +2724,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeFamModal()" tabindex='12'>Close</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeFamModal()" tabindex='13'>Close</button>
 			</div>
 		</div>
 	</div>
@@ -3463,17 +3474,24 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 				<div class="row">
 
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-						<div class="form-group">
-							<label for="feedback_label"> Feedback Label </label> <span class="required">&nbsp;*</span>
-							<input type="text" class="form-control" id="feedback_label" name="feedback_label" onkeydown="return /[a-z ]/i.test(event.key)" placeholder="Enter Feedback Label" tabindex='1'>
-							<span class="text-danger" id="feedbacklabelCheck"> Enter Feedback Label </span>
+						<div class="form-group" style="display: flex; align-items: center;">
+							<div>
+								<label for="feedback_label"> Feedback Name </label> <span class="required">&nbsp;*</span>
+								<select type="text" class="form-control" id="feedback_label" style="width: 330px;" name="feedback_label" tabindex='1'>
+									<option value=""> Select Feedback Name</option>
+								</select>
+								<span class="text-danger" id="feedbacklabelCheck"> Select Feedback Name</span>
+							</div>
+							<div style="padding: 20px 0px 0px 10px;  ">
+							    <button type="button" class="btn btn-primary" id="add_cus_feedback" name="add_cus_feedback" data-toggle="modal" data-target="#add_feedback_lable" style="display: <?= ($approvalaccess == 0 ? 'inline-block' : 'none'); ?>;" tabindex="2"><span class="icon-add"></span></button>
+							</div>
 						</div>
 					</div>
 
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label for="cus_feedback"> Feedback </label> <span class="required">&nbsp;*</span>
-							<select type="text" class="form-control" id="cus_feedback" name="cus_feedback" tabindex='2'>
+							<select type="text" class="form-control" id="cus_feedback" name="cus_feedback" tabindex='3'>
 								<option value=""> Select Feedback </option>
 								<option value="5"> Excellent </option>
 								<option value="4"> Good </option>
@@ -3489,14 +3507,14 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 					<div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12">
 						<div class="form-group">
 							<label for="feedback_remark"> Remarks </label>
-							<textarea class="form-control" name="feedback_remark" id="feedback_remark" tabindex='3'></textarea>
+							<textarea class="form-control" name="feedback_remark" id="feedback_remark" tabindex='4'></textarea>
 						</div>
 					</div>
 
 					<div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12"></div>
 					<div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12">
 						<input type="hidden" name="feedbackID" id="feedbackID">
-						<button type="button" name="feedbackBtn" id="feedbackBtn" class="btn btn-primary" style="margin-top: 19px;" tabindex='4'> Submit </button>
+						<button type="button" name="feedbackBtn" id="feedbackBtn" class="btn btn-primary" style="margin-top: 35px;" tabindex='5'> Submit </button>
 					</div>
 				</div>
 				</br>
@@ -3507,6 +3525,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 						<thead>
 							<tr>
 								<th width="50"> S.No </th>
+								<th > Date </th>
 								<th> Feedback Label </th>
 								<th> Feedback </th>
 								<th> ACTION </th>
@@ -3519,7 +3538,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="feedbackList();" tabindex='5'>Close</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="feedbackList();" tabindex='6'>Close</button>
 			</div>
 		</div>
 	</div>
@@ -3921,6 +3940,67 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 			</div>
 			<div class="modal-footer">
 				<button class="btn btn-secondary" data-dismiss="modal" tabindex="2" onclick="$('#commChartDiv').empty();">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="add_feedback_lable" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-lg " role="document">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLongTitle">Add Feedback Lable  </h5>
+				<button type="button" class="close" data-dismiss="modal" tabindex="7" aria-label="Close" onclick="getFeedbackLable()">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+					
+					<div class="card-body" style="height: 400px;">
+						<div class="row ">
+							<!--Fields -->
+							<div class="col-md-12 ">
+								<div class="row">
+									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-10 col-12">
+										<div class="form-group">
+											<label for="disabledInput">Feedback Name</label>&nbsp;<span class="text-danger"></span>
+											<input type="hidden" name="fedbackname_id" id="fedbackname_id">
+											<input type="text" tabindex="4" class="form-control" id="feedbackname" name="feedbackname" value="" placeholder="Enter Feedback Name">
+										</div>
+									</div>
+									<!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-10 col-12">
+										
+									</div> -->
+									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-10 col-12 d-flex align-items-center" style="margin-top: 20px;">
+										<div class="form-group">
+											<button type="submit" name="submit_feedback_lable" id="submit_feedback_lable" class="btn btn-primary" value="Submit" tabindex="5"><span class="icon-check"></span>&nbsp;Submit</button>
+										</div>
+									</div>
+								</div>
+								<br>
+							</div>
+							<div  class="col-md-12" id="cus_feedbackListTable_div">
+									<table class="table custom-table" id="cus_feedbackListTable">
+										<thead>
+											<tr>
+												<th width="50"> S.No </th>
+												<th> Feedback Label Name </th>
+												<th> ACTION </th>
+											</tr>
+										</thead>
+										<tbody>
+
+										</tbody>
+									</table>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-secondary" data-dismiss="modal" tabindex="6"  onclick="getFeedbackLable()">Close</button>
 			</div>
 		</div>
 	</div>

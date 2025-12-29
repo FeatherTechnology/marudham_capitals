@@ -10,6 +10,7 @@ $fam = $famInfo->fetch();
 $famEditRes['id'] = $fam['id'];
 $famEditRes['fname'] = $fam['famname'];
 $famEditRes['relation'] = $fam['relationship'];
+$famEditRes['authorize'] = $fam['authorize'];
 $famEditRes['remark'] = $fam['other_remark'];
 $famEditRes['address'] = $fam['other_address'];
 $famEditRes['age'] = $fam['relation_age'];

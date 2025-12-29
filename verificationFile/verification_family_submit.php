@@ -22,13 +22,14 @@ $relation_Occupation     = $_POST['relation_Occupation'];
 $relation_Income         = $_POST['relation_Income'];
 $relation_Blood          = $_POST['relation_Blood'];
 $famTableId              = $_POST['famTableId'];
+$authorize              = $_POST['authorize'];
 
 
 if ($famTableId == '') {
 
-    $insert_qry = $connect->query("INSERT INTO `verification_family_info`(`cus_id`,`req_id`, `famname`, `relationship`, `other_remark`, `other_address`, `relation_age`, `relation_aadhar`, `relation_Mobile`, `relation_Occupation`, `relation_Income`, `relation_Blood`) VALUES ('$cus_id','$reqId','$famname','$realtionship','$other_remark','$other_address ','$relation_age','$relation_aadhar','$relation_Mobile','$relation_Occupation','$relation_Income','$relation_Blood')");
+    $insert_qry = $connect->query("INSERT INTO `verification_family_info`(`cus_id`,`req_id`, `famname`, `relationship`, `authorize`,`other_remark`, `other_address`, `relation_age`, `relation_aadhar`, `relation_Mobile`, `relation_Occupation`, `relation_Income`, `relation_Blood`) VALUES ('$cus_id','$reqId','$famname','$realtionship','$authorize','$other_remark','$other_address ','$relation_age','$relation_aadhar','$relation_Mobile','$relation_Occupation','$relation_Income','$relation_Blood')");
 } else {
-    $update = $connect->query("UPDATE `verification_family_info` SET `cus_id`='$cus_id',`req_id`='$reqId',`famname`='$famname',`relationship`='$realtionship',`other_remark`='$other_remark',`other_address`='$other_address',`relation_age`='$relation_age',`relation_aadhar`='$relation_aadhar',`relation_Mobile`='$relation_Mobile',`relation_Occupation`='$relation_Occupation',`relation_Income`='$relation_Income',`relation_Blood`='$relation_Blood' WHERE id = '$famTableId ' ");
+    $update = $connect->query("UPDATE `verification_family_info` SET `cus_id`='$cus_id',`req_id`='$reqId',`famname`='$famname',`relationship`='$realtionship',`authorize`='$authorize',`other_remark`='$other_remark',`other_address`='$other_address',`relation_age`='$relation_age',`relation_aadhar`='$relation_aadhar',`relation_Mobile`='$relation_Mobile',`relation_Occupation`='$relation_Occupation',`relation_Income`='$relation_Income',`relation_Blood`='$relation_Blood' WHERE id = '$famTableId ' ");
 }
 
 if ($insert_qry) {

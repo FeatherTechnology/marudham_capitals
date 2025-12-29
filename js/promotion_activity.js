@@ -15,18 +15,23 @@ $(document).ready(function () {
         $(this).addClass("active");
 
         var typevalue = this.value;
-        $('.existing_card, .new_card, .new_promo_card, .customer-status-card, .loan-history-card, .doc-history-card, #close_history_card, .repromotion_card, .filter_card').hide();
+        $('.renewal_card, .re_active_card, .new_card, .new_promo_card, .customer-status-card, .loan-history-card, .doc-history-card, #close_history_card, .repromotion_card, .filter_card').hide();
         // $('#follow_up_sts, #date_type, #follow_up_fromdate, #follow_up_todate').val('');
         if (typevalue == 'New') {
             $('.new_card, .new_promo_card').show()
             $('.event_card').hide()
             $('.add_event_card').hide()
             resetNewPromotionTable();
-        } else if (typevalue == 'Existing') {
-            $('.existing_card, .filter_card').show();
+        } else if (typevalue == 'Renewal') {
+            $('.renewal_card, .filter_card').show();
             $('.event_card').hide()
             $('.add_event_card').hide()
             showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list', '16');
+        } else if (typevalue == 'Re-active') {
+            $('.re_active_card, .filter_card').show();
+            $('.event_card').hide()
+            $('.add_event_card').hide()
+            showPromotionList('followupFiles/promotion/showPromotionList.php', 're_active_promotion_list', '16');
         } else if (typevalue == 'Repromotion') {
             $('.event_card').hide()
             $('.add_event_card').hide()
@@ -89,12 +94,14 @@ $(document).ready(function () {
 
         let btnName = $(".toggle-button.active").first().val();
 
-        if (btnName == 'Existing') {
+        if (btnName == 'Renewal') {
             showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list', '16');
 
         } else if (btnName == 'Repromotion') {
             showPromotionList('followupFiles/promotion/showRepromotionList.php', 'repromotion_list', '17');
 
+        } else if (btnName == 'Re-active') {
+            showPromotionList('followupFiles/promotion/showPromotionList.php', 're_active_promotion_list', '16');
         }
     });
     $("#area").change(function () {
@@ -554,6 +561,9 @@ function getPromotionAccess() {
                 if (value === 4) {
                     $("#events_button").closest(".toggle-button").show();
                 }
+                if (value === 5) {
+                    $("#reactive_button").closest(".toggle-button").show();
+                }
             });
         }
     }, 'json');
@@ -825,10 +835,12 @@ function intNotintOnclick() {
     $(document).off('click', '.closeModal').on('click', '.closeModal', function () {
         let orgin_table = $('#orgin_table').val();
 
-        if (orgin_table === 'existing') {
-            $(".toggle-button[value='Existing']").trigger('click');
+        if (orgin_table === 'renewal') {
+            $(".toggle-button[value='Renewal']").trigger('click');
         } else if (orgin_table === 'repromotion') {
             $(".toggle-button[value='Repromotion']").trigger('click');
+        } else if (orgin_table === 're_Active') {
+            $(".toggle-button[value='Re-active']").trigger('click');
         } else {
             resetNewPromotionTable();
         }
@@ -840,6 +852,10 @@ function showPromotionList(url, tableid, colNo) {
     let dateType = $('#date_type').val();
     let followUpFromDate = $('#follow_up_fromdate').val();
     let followUpToDate = $('#follow_up_todate').val();
+    let re_active ="";
+    if(tableid === 're_active_promotion_list'){
+        re_active ="re_active_table"
+    }
 
     let table = $(`#${tableid}`).DataTable();
     table.destroy();
@@ -862,6 +878,7 @@ function showPromotionList(url, tableid, colNo) {
                 data.dateType = dateType;
                 data.followUpFromDate = followUpFromDate;
                 data.followUpToDate = followUpToDate;
+                data.re_active = re_active;
             }
         },
         dom: 'lBfrtip',
@@ -1014,7 +1031,7 @@ function historyTableContents(cus_id, type, url) {
 
         $('#close_history_card').show();
         $('.filter_card').hide();
-        $('.existing_card').hide();
+        $('.renewal_card').hide();
         $('.repromotion_card').hide();
 
         if (type == 'customer-status') {
@@ -1100,7 +1117,7 @@ function historyTableContents(cus_id, type, url) {
 
         $('#close_history_card').off('click').click(() => {
             let typevalue = $(".toggle-container .active").val();//this will show back active tab's contents
-            if (typevalue == 'Existing') { $('.existing_card').show(); } else { $('.repromotion_card').show(); }
+            if (typevalue == 'Renewal') { $('.renewal_card').show(); } else { $('.repromotion_card').show(); }
 
             $('.filter_card').show();
             $('.customer-status-card, .loan-history-card, .doc-history-card, #close_history_card').hide();
