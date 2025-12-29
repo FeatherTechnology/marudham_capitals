@@ -581,6 +581,11 @@ if (isset($getuserdetails['download_access'])) {
 			<?php if ($current_page == 'confirmation_count_report') { ?>
 				<?php include "include/templates/confirmation_count_report.php" ?>
 			<?php } else ?>
+
+			<!-- Concern report -->
+			<?php if ($current_page == 'concern_report') { ?>
+				<?php include "include/templates/concern_report.php" ?>
+			<?php } else ?>
 			
 			<!-- Intrest Ledger Report -->
 			<?php if ($current_page == 'intrest_ledger_report') { ?>

@@ -20,10 +20,10 @@ $(document).ready(function () {
         solutionSubmitValidation();
     });
 
-    $('#to_dept_name').change(function () { // To Staff list based on department
-        var deptVal = $(this).val();
-        getStaffName('1', deptVal)
-    });
+    // $('#to_dept_name').change(function () { // To Staff list based on department
+    //     var deptVal = $(this).val();
+    //     getStaffName('1', deptVal)
+    // });
     $('#to_team_name').change(function () { // To Staff list based on Team.
         var teamVal = $(this).val();
         getStaffName('2', teamVal)
@@ -44,12 +44,12 @@ $(function () {
 
     getDeptName();
     DropDownCourse();
-    let concern_to = $('#concern_to').val();
-    if (concern_to == '1') {
-        $('#to_dept_name').trigger('change')
-    } else if (concern_to == '2') {
+    // let concern_to = $('#concern_to').val();
+    // if (concern_to == '1') {
+    //     $('#to_dept_name').trigger('change')
+    // } else if (concern_to == '2') {
         $('#to_team_name').trigger('change')
-    }
+    // }
     getConcernRoleType();
     setTimeout(() => {
         getTeamName();

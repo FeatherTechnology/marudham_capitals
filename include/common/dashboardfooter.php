@@ -2675,6 +2675,10 @@
         <script src="js/confirmation_count_report.js"></script>
     <?php }
 
+    if ($current_page == 'concern_report') { ?>
+        <script src="js/concern_report.js"></script>
+    <?php }
+
     if ($current_page == 'intrest_ledger_report') { ?>
         <script src="js/intrest_ledger_report.js"></script>
     <?php }
