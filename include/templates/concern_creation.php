@@ -226,7 +226,7 @@ if (isset($_POST['submit_concern']) && $_POST['submit_concern'] != '') {
                                     </div>
                                 </div> -->
 
-                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                                <!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="to">Concern To</label><span class="required">&nbsp;*</span>
                                         <select type="text" class="form-control" id="concern_to" name="concern_to" tabindex='14'>
@@ -236,9 +236,9 @@ if (isset($_POST['submit_concern']) && $_POST['submit_concern'] != '') {
                                         </select>
                                         <span class="text-danger" style='display:none' id='comtoCheck'>Please Select Concern To</span>
                                     </div>
-                                </div>
+                                </div> -->
 
-                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 dept" style="display: none">
+                                <!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 dept" style="display: none">
                                     <div class="form-group">
                                         <label for="toname">Department Name </label> <span class="required">&nbsp;*</span>
                                         <select tabindex="15" type="text" class="form-control" id="to_dept_name" name="to_dept_name">
@@ -246,8 +246,8 @@ if (isset($_POST['submit_concern']) && $_POST['submit_concern'] != '') {
                                         </select>
                                         <span class="text-danger" style='display:none' id='todeptnameCheck'>Please Select Department Name</span>
                                     </div>
-                                </div>
-                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 team" style="display: none">
+                                </div> -->
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 team">
                                     <div class="form-group">
                                         <label for="toname">Team Name </label> <span class="required">&nbsp;*</span>
                                         <select tabindex="15" type="text" class="form-control" id="to_team_name" name="to_team_name">
