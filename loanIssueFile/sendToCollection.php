@@ -76,8 +76,6 @@ try {
     $query = $connect->query(" INSERT INTO `customer_status`( `req_id`, `cus_id`, `sub_status`, `payable_amnt`, `bal_amnt`, `insert_login_id`, `created_date`) VALUES ('$req_id','$cus_id','Current','$cus_payable','$tot_amt_cal','$userid', '$current_date' ) ");
 
     $connect->query("INSERT INTO `document_track`(`req_id`, `cus_id`, `track_status`, `insert_login_id`, `created_date`)  VALUES('$req_id', '$cus_id', '1', '$userid', now() ) "); //Document track insert.
-
-    $connect->query("UPDATE noc SET noc_replace_status = 2 WHERE cus_id = '$cus_id' AND noc_replace_status = 1 "); //update noc table for replace noc. 
     
     // Commit transaction
     $connect->commit();

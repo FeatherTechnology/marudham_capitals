@@ -5747,11 +5747,11 @@ class admin
 				$detailrecords['cus_status'] = $row['cus_status'];
 
 
-				$result = $mysqli->query("SELECT area_name FROM area_list_creation where area_id = '" . $detailrecords['area_confirm_area'] . "' and status=0 and area_enable = 0");
+				$result = $mysqli->query("SELECT area_name FROM area_list_creation where area_id = '" . $detailrecords['area_confirm_area'] . "' ");
 				$area = $result->fetch_assoc();
 				$detailrecords['area_name'] = $area['area_name'];
 
-				$subarearesult = $mysqli->query("SELECT sub_area_name FROM sub_area_list_creation where sub_area_id = '" . $detailrecords['area_confirm_subarea'] . "' and status=0 and sub_area_enable = 0");
+				$subarearesult = $mysqli->query("SELECT sub_area_name FROM sub_area_list_creation where sub_area_id = '" . $detailrecords['area_confirm_subarea'] . "' ");
 				$subarea = $subarearesult->fetch_assoc();
 				$detailrecords['sub_area_name'] = $subarea['sub_area_name'];
 
