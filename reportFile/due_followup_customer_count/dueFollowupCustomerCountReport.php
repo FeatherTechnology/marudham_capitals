@@ -237,7 +237,7 @@ while ($userRow = $userQry->fetch()) {
             }
 
             // ===== Payable Zero (current customer) =====
-            if ($isCurrentCustomer && $payable_amount <= 0) {
+            if ($isCurrentCustomer && $payable_amount <= 0 && $row['responsible'] != '0') {
                 $loan_category_data[$cat_id]['payable_zero']++;
             }
 

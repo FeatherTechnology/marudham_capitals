@@ -1257,7 +1257,7 @@ if($idupd>0)
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($due_followup_customer_count_report==0){ echo'checked'; }} ?> tabindex="80" class="monitor-checkbox   screen-validations" id="due_followup_customer_count_report" name="due_followup_customer_count_report" disabled>&nbsp;&nbsp;
-                                <label class="custom-control-label" for="due_followup_customer_count_report">Due Follow Up Customer Count</label>
+                                <label class="custom-control-label" for="due_followup_customer_count_report">Followup Summary</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">

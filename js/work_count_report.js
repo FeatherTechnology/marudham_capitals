@@ -11,6 +11,34 @@ $(document).ready(function () {
         }
     });
 
+    const $screen = $('#screen');
+
+    $('#by_user').on('change', function () {
+        const userId = this.value;
+
+        // reset dropdown
+        $screen.html('<option value="">Select Screen</option>');
+
+        if (!userId) return;
+
+        $.ajax({
+            url: 'reportFile/work_count_report/getUserScreens.php',
+            type: 'POST',
+            dataType: 'json',
+            data: { user_id: userId },
+            success(res) {
+                if (!Array.isArray(res)) return;
+
+                res.forEach(({ id, name }) => {
+                    $screen.append(
+                        $('<option>', { value: id, text: name })
+                    );
+                });
+            }
+        });
+    });
+
+
     // 🔹 Reset / Show Button Click
     $('#reset_btn').click(function () {
 
