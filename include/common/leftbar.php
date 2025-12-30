@@ -1005,8 +1005,8 @@ if (sizeof($getUser) > 0) {
 											<?php  } ?> 
 											<?php if ($due_followup_customer_count_report == 0) { ?>
 												<li>
-													<!-- name changes due_followup_customer_count_report to Due Summary-->
-													<a href="due_followup_customer_count_report"><i class='icon-area-graph'></i>Due Summary</a>
+													<!-- name changes due_followup_customer_count_report to Followup Summary-->
+													<a href="due_followup_customer_count_report"><i class='icon-area-graph'></i>Followup Summary</a>
 												</li>
 											<?php  } ?> 
 											<?php if ($work_count_report == 0) { ?>

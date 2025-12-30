@@ -17,16 +17,8 @@
 				<select type="text" class="toggle-button" id='by_user' name='by_user'>
 					<option value=''>Select User</option>
 				</select>
-				<select type="text" class="toggle-button" id='screen' name='screen'>
-					<option value=''>Select Screen</option>
-					<option value='1'>Request</option>
-					<option value='2'>Verification</option>
-					<option value='3'>Approval</option>
-					<option value='4'>Loan Issue</option>
-					<option value='5'>Collection</option>
-					<option value='6'>Closed</option>
-					<!-- <option value='7'>NOC</option>
-					<option value='8'>NOC Handover</option> -->
+				<select class="toggle-button" id="screen" name="screen">
+					<option value="">Select Screen</option>
 				</select>
 
 				<input type="button" id='reset_btn' name='reset_btn' class="toggle-button" style="background-color: #009688;color:white" value='Search'>
@@ -90,10 +82,10 @@
 
 										<!-- Consider Main Header -->
 										<th colspan="5" style="text-align:center;">Consider</th>
-                                         <th rowspan="2">Total Consider</th>
+										<th rowspan="2">Total Consider</th>
 										<th rowspan="2">Waiting List</th>
 										<th rowspan="2">Block List</th>
-										
+
 									</tr>
 
 									<!-- Sub headers for Consider -->
