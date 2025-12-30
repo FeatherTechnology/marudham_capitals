@@ -20,7 +20,7 @@ if(isset($_POST['follow_date'])){
     $follow_date = $_POST['follow_date'];
 }
 if(isset($_POST['orgin_table'])){
-    $originName = ['existing' => 1, 'new_promotion' => 2, 'repromotion' => 3]; //1=Existing, 2=New, 3=Repromotion
+    $originName = ['renewal' => 1, 're_active' => 4, 'new_promotion' => 2, 'repromotion' => 3]; //1=renewal, 2=New, 3=Repromotion ,4= re-active
     $orgin_table = $originName[$_POST['orgin_table']];
 }
 

@@ -1040,11 +1040,11 @@ function getProAccess() {
     var promotion_access_upd = $('#promotion_access_upd').val().split(',');
 
     const valueToLabelMap = {
-        '1': 'Re-active',
+        '1': 'Renewal',
         '2': 'New ',
         '3': 'Repromotion', 
         '4': 'Events', 
-        '5': 'Renewal' 
+        '5': 'Re-active' 
     };
     promotionAccess.clearStore();
 

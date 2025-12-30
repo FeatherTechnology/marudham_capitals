@@ -1296,7 +1296,8 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 											<thead>
 												<tr>
 													<th width="50"> S.No </th>
-													<th > Date </th>
+													<th> User Name </th>
+													<th> Created Date </th>
 													<th> Feedback Label </th>
 													<th> Feedback </th>
 													<th> Remarks </th>
@@ -3525,7 +3526,8 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 						<thead>
 							<tr>
 								<th width="50"> S.No </th>
-								<th > Date </th>
+								<th> User Name </th>
+								<th> Created Date </th>
 								<th> Feedback Label </th>
 								<th> Feedback </th>
 								<th> ACTION </th>

@@ -550,7 +550,7 @@ function getPromotionAccess() {
             $(".toggle-button").hide();
             accessArray.forEach(value => {
                 if (value === 1) {
-                    $("#existing_button").closest(".toggle-button").show();
+                    $("#renewal_button").closest(".toggle-button").show();
                 }
                 if (value === 2) {
                     $("#new_button").closest(".toggle-button").show();
@@ -1032,6 +1032,7 @@ function historyTableContents(cus_id, type, url) {
         $('#close_history_card').show();
         $('.filter_card').hide();
         $('.renewal_card').hide();
+        $('.re_active_card').hide();
         $('.repromotion_card').hide();
 
         if (type == 'customer-status') {
@@ -1117,7 +1118,7 @@ function historyTableContents(cus_id, type, url) {
 
         $('#close_history_card').off('click').click(() => {
             let typevalue = $(".toggle-container .active").val();//this will show back active tab's contents
-            if (typevalue == 'Renewal') { $('.renewal_card').show(); } else { $('.repromotion_card').show(); }
+            if (typevalue == 'Renewal') { $('.renewal_card').show(); }  if(typevalue == 'Re-active'){$('.re_active_card').show();}else { $('.repromotion_card').show(); }
 
             $('.filter_card').show();
             $('.customer-status-card, .loan-history-card, .doc-history-card, #close_history_card').hide();

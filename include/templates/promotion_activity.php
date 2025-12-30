@@ -38,7 +38,7 @@ if (sizeof($getUser) > 0) {
 
 		<div class="row gutters">
 			<div class="toggle-container col-12">
-				<input type="button" class="toggle-button" value='Renewal' id="existing_button">
+				<input type="button" class="toggle-button" value='Renewal' id="renewal_button">
 				<input type="button" class="toggle-button" value='Re-active' id="reactive_button">
 				<input type="button" class="toggle-button" value='New' id="new_button">
 				<input type="button" class="toggle-button" value='Repromotion' id="repromotion_button">
@@ -127,7 +127,7 @@ if (sizeof($getUser) > 0) {
 				<div class="card">
 					<div class="card-header">Re-active Customer</div>
 					<div class="card-body" style="overflow-x: auto;">
-						<table class="table custom-table" id='re_active_promotion_list' data-id="re_Active" style="width: 100%;">
+						<table class="table custom-table" id='re_active_promotion_list' data-id="re_active" style="width: 100%;">
 							<thead>
 								<th width='20'>S.No</th>
 								<th>Aadhaar Number</th>
