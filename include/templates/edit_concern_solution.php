@@ -17,61 +17,68 @@ if (isset($_SESSION["userid"])) {
 // $userQry = $connect->query("SELECT 1 FROM USER WHERE user_id = '$userid' && role ='3'"); // Check Whether the user is staff or not ,if not means concern screen will not be show.
 // $rowuser = $userQry->rowCount();
 // if ($rowuser > 0) {
-// ?>
+// 
+?>
 
-	<!-- Main container start -->
-	<div class="main-container">
-		<!-- Row start -->
-		<div class="row gutters">
-			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-				<div class="table-container">
+<!-- Main container start -->
+<div class="main-container">
+	<!-- Row start -->
+	<div class="row gutters">
+		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+			<div class="table-container">
 
-					<div class="table-responsive">
+				<div class="table-responsive">
+					<?php
+					$mscid = 0;
+					$id = 0;
+					if (isset($_GET['msc'])) {
+						$mscid = $_GET['msc'];
+						if ($mscid == 1) { ?>
+							<div class="alert alert-success" role="alert">
+								<div class="alert-text"> Concern Assigned Successfully! </div>
+							</div>
 						<?php
-						$mscid = 0;
-						$id = 0;
-						if (isset($_GET['msc'])) {
-							$mscid = $_GET['msc'];
-							if ($mscid == 1) { ?>
-								<div class="alert alert-success" role="alert">
-									<div class="alert-text"> Concern Assigned Successfully! </div>
-								</div>
-							<?php
-							}
-							if ($mscid == 2) { ?>
-								<div class="alert alert-success" role="alert">
-									<div class="alert-text"> Concern Solution Submitted Successfully! </div>
-								</div>
-						<?php
-							}
 						}
-						?>
-						<table id="concern_solution_table" class="table custom-table">
-							<thead>
-								<tr>
-									<th width="50">S.No.</th>
-									<th>Concern Code</th>
-									<th>Concern Date</th>
-									<th>Staff Assign</th>
-									<th>Subject</th>
-									<th>Status</th>
-									<th>Action</th>
-								</tr>
-							</thead>
-							<tbody>
-							</tbody>
-						</table>
-					</div>
+						if ($mscid == 2) { ?>
+							<div class="alert alert-success" role="alert">
+								<div class="alert-text"> Concern Solution Submitted Successfully! </div>
+							</div>
+					<?php
+						}
+					}
+					?>
+					<table id="concern_solution_table" class="table custom-table">
+						<thead>
+							<tr>
+								<th width="50">S.No.</th>
+								<th>Concern Code</th>
+								<th>Concern Date</th>
+								<th>Created User</th>
+								<th>Raised For</th>
+								<th>Raised For ID</th>
+								<th>Raised For Name</th>
+								<th>Department Name</th>
+								<th>Staff Assign</th>
+								<th>Subject</th>
+								<th>Status</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
 				</div>
 			</div>
 		</div>
-		<!-- Row end -->
 	</div>
-	<!-- Main container end -->
+	<!-- Row end -->
+</div>
+<!-- Main container end -->
 
- <!-- <?php 
-//  } 
-//  else { ?>
+<!-- <?php
+		//  } 
+		//  else { 
+		?>
 
 	<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 		<div class="card">
@@ -90,8 +97,9 @@ if (isset($_SESSION["userid"])) {
 		</div>
 	</div>
 
-<?php 
+<?php
 // } 
 // Close the database connection
 // $connect = null;
-// ?>
+// 
+?>

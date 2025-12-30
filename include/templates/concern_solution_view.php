@@ -36,9 +36,9 @@ if (count($getConcernCreation) > 0) {
     $conCode        = $getConcernCreation['com_code'];
     // $branchName     = $getConcernCreation['branch_name'];
     // $concernTo      = $getConcernCreation['concern_to'];
-    // $toDeptName     = $getConcernCreation['to_dept_name'];
-    $toTeamName     = $getConcernCreation['to_team_name'];
-    $concernAgainst     = $getConcernCreation['concern_against'];
+    $toDeptName     = $getConcernCreation['to_dept_name'];
+    // $toTeamName     = $getConcernCreation['to_team_name'];
+    // $concernAgainst     = $getConcernCreation['concern_against'];
     $conSub         = $getConcernCreation['com_sub'];
     $conRemark      = $getConcernCreation['com_remark'];
     // $conPriority    = $getConcernCreation['com_priority'];
@@ -218,7 +218,7 @@ if (count($getConcernCreation) > 0) {
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="cus-id">Customer ID</label><span class="required">&nbsp;*</span>
-                                        <input type="text" class="form-control" id="cus_id" name="cus_id" data-type="adhaar-number" maxlength="14" tabindex='5' value="<?php if (isset($cus_id)) echo $cus_id; ?>" readonly>
+                                        <input type="text" class="form-control" id="cus_id" name="cus_id"  maxlength="14" tabindex='5' value="<?php if (isset($cus_id)) echo $cus_id; ?>" readonly>
                                         <span class="text-danger" style='display:none' id='cusIdCheck'>Please Enter Customer ID</span>
                                     </div>
                                 </div>
@@ -295,25 +295,22 @@ if (count($getConcernCreation) > 0) {
                                     </div>
                                 </div> -->
 
-                                <!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 dept" <?php if (isset($concernTo) and $concernTo == '1') {
-                                                                                                } else {
-                                                                                                    echo 'style="display: none;"';
-                                                                                                } ?>>
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 dept">
                                     <div class="form-group">
                                         <label for="toname">Department Name </label> <span class="required">&nbsp;*</span>
                                         <input tabindex="15" type="text" class="form-control" id="to_dept_name" name="to_dept_name" value="<?php if (isset($toDeptName)) echo $toDeptName; ?>" readonly>
                                         <span class="text-danger" style='display:none' id='todeptnameCheck'>Please Select Department Name</span>
                                     </div>
-                                </div> -->
-                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 team">
+                                </div>
+                                <!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 team">
                                     <div class="form-group">
                                         <label for="toname">Team Name </label> <span class="required">&nbsp;*</span>
                                         <input tabindex="15" type="text" class="form-control" id="to_team_name" name="to_team_name" value="<?php if (isset($toTeamName)) echo $toTeamName; ?>" readonly>
                                         <span class="text-danger" style='display:none' id='toteamnameCheck'>Please Select Team Name</span>
                                     </div>
-                                </div>
+                                </div> -->
 
-                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                                <!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="concern_against">Concern Against</label><span class="required">&nbsp;*</span>
                                         <select class="form-control" id="concern_against" name="concern_against" tabindex='19' disabled>
@@ -321,7 +318,7 @@ if (count($getConcernCreation) > 0) {
                                         </select>
                                         <span class="text-danger" style='display:none' id='concernAgainstcheck'>Please Select Concern Against</span>
                                     </div>
-                                </div>
+                                </div> -->
 
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">

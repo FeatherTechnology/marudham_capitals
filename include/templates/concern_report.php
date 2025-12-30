@@ -26,10 +26,12 @@
                                 <th>S.NO</th>
                                 <th>Concern ID</th>
                                 <th>Concern Date</th>
-                                <th>Raised By</th>
-                                <th>Name</th>
+                                <th>Created User</th>
+                                <th>Raised For</th>
+                                <th>Raised For ID</th>
+                                <th>Raised For Name</th>
                                 <th>Concern Subject</th>
-                                <th>Concern Against</th>
+                                <th>Department Name</th>
                                 <th>Concern Remark</th>
                                 <th>Assign To</th>
                                 <th>Solution Date</th>

@@ -84,19 +84,19 @@ $(document).ready(function () {
         $('#cus_line').val('');
     });
 
-    $('input[data-type="adhaar-number"]').on("change, blur", function () {
-        var value = $(this).val();
-        var maxLength = $(this).attr("maxLength");
-        if (value.length != maxLength) {
-            $(this).addClass("required");
-        } else {
-            $(this).removeClass("required");
+    $('#cus_id').on("change, blur", function () {
+        // var value = $(this).val();
+        // var maxLength = $(this).attr("maxLength");
+        // if (value.length != maxLength) {
+        //     $(this).addClass("required");
+        // } else {
+        //     $(this).removeClass("required");
 
             var cus_id = $(this).val();
             cus_id = cus_id.replace(/\s+/g, '');
 
             getCustomerDetails(cus_id);
-        }
+        // }
     });
 
     // $('#concern_to').change(function () {
@@ -123,10 +123,10 @@ $(document).ready(function () {
     //     var deptVal = $(this).val();
     //     getStaffName('1', deptVal)
     // });
-    $('#to_team_name').change(function () { // To Staff list based on Team.
-        var teamVal = $(this).val();
-        getStaffName('2', teamVal)
-    });
+    // $('#to_team_name').change(function () { // To Staff list based on Team.
+    //     var teamVal = $(this).val();
+    //     getStaffName('2', teamVal)
+    // });
 
     
     // role type change
@@ -272,7 +272,7 @@ $(function () {
     // initColVisFeatures(coursecategoryTable, 'coursecategoryTable');
 
     // getBranchName(); // To Show Branch Name List.
-     getconTeamName(); //To Show Team.
+    getConcernDeptName(); //To Show Department Name.
     getConcernRoleType(); // To show Role Type
     DropDownCourse(); //To Show Concern Subject.
     resetConSubTable(); //To Reset.
@@ -342,7 +342,7 @@ function getagentName() {  // To show Department Name.
 function getCustomerDetails(cus_id) {
     $.ajax({
         url: 'requestFile/getCustomerDetail.php',
-        data: { 'cus_id': cus_id },
+        data: { 'autogen_cus_id': cus_id },
         dataType: 'json',
         type: 'post',
         cache: false,
@@ -548,11 +548,11 @@ function submitValidation() {
     var cus_id = $('#cus_id').val();
     // var branch_name = $('#branch_name').val();
     // var concern_to = $('#concern_to').val(); console.log(concern_to);
-    // var to_dept_name = $('#to_dept_name').val();
-    var to_team_name = $('#to_team_name').val();
+    var to_dept_name = $('#to_dept_name').val();
+    // var to_team_name = $('#to_team_name').val();
     var com_sub = $('#com_sub').val();
     var com_remark = $('#com_remark').val();
-    var concern_against = $('#concern_against').val();
+    // var concern_against = $('#concern_against').val();
     // var com_priority = $('#com_priority').val();
     var role_type = $('#role_type').val();
     var staff_assign_to = $('#staff_assign_to').val();
@@ -617,21 +617,21 @@ function submitValidation() {
     // }
 
     // if (concern_to == '1') {
-    //     if (to_dept_name == '') {
-    //         event.preventDefault();
-    //         $('#todeptnameCheck').show();
-    //     } else {
-    //         $('#todeptnameCheck').hide();
-    //     }
+        if (to_dept_name == '') {
+            event.preventDefault();
+            $('#todeptnameCheck').show();
+        } else {
+            $('#todeptnameCheck').hide();
+        }
     // }
 
     // if (concern_to == '2') {
-        if (to_team_name == '') {
-            event.preventDefault();
-            $('#toteamnameCheck').show();
-        } else {
-            $('#toteamnameCheck').hide();
-        }
+        // if (to_team_name == '') {
+        //     event.preventDefault();
+        //     $('#toteamnameCheck').show();
+        // } else {
+        //     $('#toteamnameCheck').hide();
+        // }
     // }
 
     if (com_sub == '') {
@@ -652,12 +652,12 @@ function submitValidation() {
     // } else {
     //     $('#conpriorityCheck').hide();
     // }
-    if (concern_against == '') {
-        event.preventDefault();
-        $('#concernAgainstcheck').show();
-    } else {
-        $('#concernAgainstcheck').hide();
-    }
+    // if (concern_against == '') {
+    //     event.preventDefault();
+    //     $('#concernAgainstcheck').show();
+    // } else {
+    //     $('#concernAgainstcheck').hide();
+    // }
     if (role_type == '') {
         event.preventDefault();
         $('#roleTypeCheck').show();
