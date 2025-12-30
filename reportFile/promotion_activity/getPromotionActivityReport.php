@@ -121,7 +121,7 @@ $result = $statement->fetchAll();
 $data = array();
 $sno = 1;
 $role_arr = [1 => 'Director', 2 => 'Agent', 3 => 'Staff'];
-$originName = [1 => 'Existing', 2 => 'New Promotion', 3 => 'Repromotion']; 
+$originName = [1 => 'Renewal', 2 => 'New Promotion', 3 => 'Repromotion', 4=> 'Re-active']; 
 
 foreach ($result as $row) {
     $sub_array = array();

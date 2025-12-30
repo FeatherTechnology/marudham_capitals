@@ -1112,7 +1112,7 @@ if($idupd>0)
 											<select tabindex="62" type="text" class="form-control" id="pro_aty_access" name="pro_aty_access" multiple>
 												<option value="">Select Promotion Activity</option>
 												<option value="1">Renewal</option>
-												<option value="5">Reactive</option>
+												<option value="5">Re-active</option>
 												<option value="2">New</option>
 												<option value="3">Repromotion</option>
 												<option value="4">Events</option>
