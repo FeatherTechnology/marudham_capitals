@@ -24,10 +24,10 @@ $(document).ready(function () {
     //     var deptVal = $(this).val();
     //     getStaffName('1', deptVal)
     // });
-    $('#to_team_name').change(function () { // To Staff list based on Team.
-        var teamVal = $(this).val();
-        getStaffName('2', teamVal)
-    });
+    // $('#to_team_name').change(function () { // To Staff list based on Team.
+    //     var teamVal = $(this).val();
+    //     getStaffName('2', teamVal)
+    // });
 
     $('#role_type').change(function () {
         var role_type = $(this).val();
@@ -48,7 +48,7 @@ $(function () {
     // if (concern_to == '1') {
     //     $('#to_dept_name').trigger('change')
     // } else if (concern_to == '2') {
-        $('#to_team_name').trigger('change')
+        // $('#to_team_name').trigger('change')
     // }
     getConcernRoleType();
     setTimeout(() => {
@@ -169,7 +169,7 @@ function getConcernRoleType() {
         concern_role_id = $('#con_role').val();
     }
 
-    let role_type = 'OA,Staff,Executive,Trainee';
+    let role_type = 'Director,Admin,Manager,TL,Training TL,Executive Director';
 
     $.post(
         'concernFile/getConcernRoleType.php',

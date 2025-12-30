@@ -2,11 +2,17 @@
 include('../ajaxconfig.php');
 if (isset($_POST['cus_id'])) {
     $cus_id = $_POST['cus_id'];
+    // $cus_id='100010001000';
+    $where =" cus_id = '" . strip_tags($cus_id) . "'";
 }
-// $cus_id='100010001000';
+if (isset($_POST['autogen_cus_id'])) {
+    $autogen_cus_id = $_POST['autogen_cus_id'];
+     $where =" autogen_cus_id = '" . strip_tags($autogen_cus_id) . "'";
+}
+
 $records = array();
 
-$result = $connect->query("SELECT * FROM customer_register where cus_id = '" . strip_tags($cus_id) . "' ");
+$result = $connect->query("SELECT * FROM customer_register where $where");
 if ($result->rowCount() > 0) {
     $row = $result->fetch();
 

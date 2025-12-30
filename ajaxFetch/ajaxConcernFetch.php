@@ -27,27 +27,35 @@ if ($userid != 1) {
     $sub_area_list = array();
     $sub_area_list = implode(',', $sub_area_ids);
 }
-
+$raising_arr = [1 => 'Myself', 3 => 'Agent', 4 => 'Customer'];
 $column = array(
     'cc.id',
     'cc.com_code',
     'cc.com_date',
+    'u.fullname',
+    'cc.raising_for',
+    'cc.raising_for',
+    'cc.cus_name',
+    'cc.to_dept_name',
     'sc.staff_name',
     'cs.concern_subject',
     'cc.status',
     'cc.id'
 );
 
-$query = "SELECT cc.*,sc.staff_name,cs.concern_subject
+$query = "SELECT cc.*,sc.staff_name,cs.concern_subject,ag.ag_name,u.fullname,ag.ag_code
     FROM concern_creation cc
      JOIN staff_creation sc ON cc.staff_assign_to = sc.staff_id
     JOIN concern_subject cs ON cc.com_sub = cs.concern_sub_id
+    LEFT JOIN agent_creation ag ON cc.ag_name = ag.ag_id
+    LEFT JOIN user u ON cc.insert_user_id = u.user_id
     WHERE cc.status != 2  && cc.insert_user_id = '" . strip_tags($userid) . "'"; // 
 // echo $query;
 
 if (isset($_POST['search']) && $_POST['search'] != "") {
     $query .= " AND (cc.com_code LIKE '%" . $_POST['search'] . "%' OR
             cc.com_date LIKE '%" . $_POST['search'] . "%' OR
+            cc.to_dept_name LIKE '%" . $_POST['search'] . "%' OR
             sc.staff_name LIKE '%" . $_POST['search'] . "%' OR
             cs.concern_subject LIKE '%" . $_POST['search'] . "%') ";
 }
@@ -84,6 +92,19 @@ foreach ($result as $row) {
 
     $sub_array[] = $row['com_code'];
     $sub_array[] = date('d-m-Y', strtotime($row['com_date']));
+    $sub_array[] = $row['fullname'];
+    $sub_array[] = isset($raising_arr[$row['raising_for']]) ? $raising_arr[$row['raising_for']] : '';
+    if ($row['raising_for'] == 1) {
+        $sub_array[] = isset($row['self_code']) ? $row['self_code'] : '';
+        $sub_array[] = isset($row['self_name']) ? $row['self_name'] : '';
+    } else if ($row['raising_for'] == 3) {
+        $sub_array[] = isset($row['ag_code']) ? $row['ag_code'] : '';
+        $sub_array[] = isset($row['ag_name']) ? $row['ag_name'] : '';
+    } else if ($row['raising_for'] == 4) {
+        $sub_array[] = isset($row['cus_id']) ? $row['cus_id'] : '';
+        $sub_array[] = isset($row['cus_name']) ? $row['cus_name'] : '';
+    }
+    $sub_array[] = isset($row['to_dept_name']) ? $row['to_dept_name'] : '';
     $sub_array[] = $row['staff_name'];
     $sub_array[] = $row['concern_subject'];
 
@@ -118,10 +139,8 @@ foreach ($result as $row) {
 
 function count_all_data($connect)
 {
-    $query     = "SELECT cc.*,sc.staff_name,cs.concern_subject
+    $query     = "SELECT cc.*
     FROM concern_creation cc
-    JOIN staff_creation sc ON cc.staff_assign_to = sc.staff_id
-    JOIN concern_subject cs ON cc.com_sub = cs.concern_sub_id
     WHERE cc.status != 2";
     $statement = $connect->prepare($query);
     $statement->execute();

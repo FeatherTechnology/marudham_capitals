@@ -151,7 +151,7 @@ if (isset($_POST['submit_concern']) && $_POST['submit_concern'] != '') {
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="cus-id">Customer ID</label><span class="required">&nbsp;*</span>
-                                        <input type="text" class="form-control" id="cus_id" name="cus_id" data-type="adhaar-number" maxlength="14" tabindex='5'>
+                                        <input type="text" class="form-control" id="cus_id" name="cus_id"  tabindex='5'>
                                         <span class="text-danger" style='display:none' id='cusIdCheck'>Please Enter Customer ID</span>
                                     </div>
                                 </div>
@@ -238,7 +238,7 @@ if (isset($_POST['submit_concern']) && $_POST['submit_concern'] != '') {
                                     </div>
                                 </div> -->
 
-                                <!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 dept" style="display: none">
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 dept">
                                     <div class="form-group">
                                         <label for="toname">Department Name </label> <span class="required">&nbsp;*</span>
                                         <select tabindex="15" type="text" class="form-control" id="to_dept_name" name="to_dept_name">
@@ -246,8 +246,8 @@ if (isset($_POST['submit_concern']) && $_POST['submit_concern'] != '') {
                                         </select>
                                         <span class="text-danger" style='display:none' id='todeptnameCheck'>Please Select Department Name</span>
                                     </div>
-                                </div> -->
-                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 team">
+                                </div>
+                                <!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 team">
                                     <div class="form-group">
                                         <label for="toname">Team Name </label> <span class="required">&nbsp;*</span>
                                         <select tabindex="15" type="text" class="form-control" id="to_team_name" name="to_team_name">
@@ -255,9 +255,9 @@ if (isset($_POST['submit_concern']) && $_POST['submit_concern'] != '') {
                                         </select>
                                         <span class="text-danger" style='display:none' id='toteamnameCheck'>Please Select Team Name</span>
                                     </div>
-                                </div>
+                                </div> -->
 
-                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                                <!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="concern_against">Concern Against</label><span class="required">&nbsp;*</span>
                                         <select class="form-control" id="concern_against" name="concern_against" tabindex='19'>
@@ -265,7 +265,7 @@ if (isset($_POST['submit_concern']) && $_POST['submit_concern'] != '') {
                                         </select>
                                         <span class="text-danger" style='display:none' id='concernAgainstcheck'>Please Select Concern Against</span>
                                     </div>
-                                </div>
+                                </div> -->
 
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">

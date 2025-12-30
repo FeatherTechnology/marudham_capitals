@@ -6485,18 +6485,18 @@ class admin
 		// 	$concern_to = $_POST['concern_to'];
 		// }
 
-		// $to_dept_name = '';
+		$to_dept_name = '';
 		// if (isset($concern_to) && $concern_to == '1') {
-		// 	if (isset($_POST['to_dept_name'])) {
-		// 		$to_dept_name = $_POST['to_dept_name'];
-		// 	}
+			if (isset($_POST['to_dept_name'])) {
+				$to_dept_name = $_POST['to_dept_name'];
+			}
 		// }
 
 		$to_team_name = '';
 		// if (isset($concern_to) && $concern_to == '2') {
-		if (isset($_POST['to_team_name'])) {
-			$to_team_name = $_POST['to_team_name'];
-		}
+		// if (isset($_POST['to_team_name'])) {
+		// 	$to_team_name = $_POST['to_team_name'];
+		// }
 		// }
 
 		if (isset($_POST['com_sub'])) {
@@ -6508,9 +6508,9 @@ class admin
 		// if (isset($_POST['com_priority'])) {
 		// 	$com_priority = $_POST['com_priority'];
 		// }
-		if (isset($_POST['concern_against'])) {
-			$concern_against = $_POST['concern_against'];
-		}
+		// if (isset($_POST['concern_against'])) {
+		// 	$concern_against = $_POST['concern_against'];
+		// }
 		if (isset($_POST['role_type'])) {
 			$role_type = $_POST['role_type'];
 		}
@@ -6519,10 +6519,10 @@ class admin
 		}
 
 
-		$insertQry = "INSERT INTO `concern_creation`( `raising_for`, `self_name`, `self_code`, `staff_name`, `staff_dept_name`, `staff_team_name`, `ag_name`, `ag_grp`, `cus_id`, `cus_name`, `cus_area`, `cus_sub_area`, `cus_group`, `cus_line`, `com_date`, `com_code`, `to_team_name`,`concern_against`, `com_sub`, `com_remark`, `role_type`, `staff_assign_to`, `insert_user_id`) VALUES('" . strip_tags($raising_for) . "','" . strip_tags($self_name) . "','" . strip_tags($self_code) . "','" . strip_tags($staff_name) . "',
+		$insertQry = "INSERT INTO `concern_creation`( `raising_for`, `self_name`, `self_code`, `staff_name`, `staff_dept_name`, `staff_team_name`, `ag_name`, `ag_grp`, `cus_id`, `cus_name`, `cus_area`, `cus_sub_area`, `cus_group`, `cus_line`, `com_date`, `com_code`, `to_dept_name`, `com_sub`, `com_remark`, `role_type`, `staff_assign_to`, `insert_user_id`) VALUES('" . strip_tags($raising_for) . "','" . strip_tags($self_name) . "','" . strip_tags($self_code) . "','" . strip_tags($staff_name) . "',
 				'" . strip_tags($staff_dept_name) . "', '" . strip_tags($staff_team_name) . "', '" . strip_tags($ag_name) . "', '" . strip_tags($ag_grp) . "','" . strip_tags($cus_id) . "',
 				'" . strip_tags($cus_name) . "','" . strip_tags($cus_area) . "','" . strip_tags($cus_sub_area) . "', '" . strip_tags($cus_group) . "', '" . strip_tags($cus_line) . "', 
-				'" . strip_tags($com_date) . "','" . strip_tags($com_code) . "','" . strip_tags($to_team_name) . "','" . strip_tags($concern_against) . "',
+				'" . strip_tags($com_date) . "','" . strip_tags($com_code) . "','" . strip_tags($to_dept_name) . "',
 				'" . strip_tags($com_sub) . "','" . strip_tags($com_remark) . "','" . strip_tags($role_type) . "','" . strip_tags($staff_assign_to) . "','" . strip_tags($userid) . "')";
 
 		$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
@@ -6553,9 +6553,9 @@ class admin
 			$detailrecords['com_code'] = $row['com_code'];
 			// $detailrecords['branch_name'] = $row['branch_name'];
 			// $detailrecords['concern_to'] = $row['concern_to'];
-			// $detailrecords['to_dept_name'] = $row['to_dept_name'];
-			$detailrecords['to_team_name'] = $row['to_team_name'];
-			$detailrecords['concern_against'] = $row['concern_against'];
+			$detailrecords['to_dept_name'] = $row['to_dept_name'];
+			// $detailrecords['to_team_name'] = $row['to_team_name'];
+			// $detailrecords['concern_against'] = $row['concern_against'];
 			$detailrecords['com_sub'] = $row['com_sub'];
 			$detailrecords['com_remark'] = $row['com_remark'];
 			// $detailrecords['com_priority'] = $row['com_priority'];
