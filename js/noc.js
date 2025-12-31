@@ -898,7 +898,7 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
                             OnLoadFunctions(req_id, cus_id, action_type);
 
                         } else{
-                            alert("NOC Replace Failed.");
+                            alert("Replace Failed.");
                             
                         }
                     },'json');

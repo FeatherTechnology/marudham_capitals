@@ -7,6 +7,13 @@ const personMultiselect = new Choices('#verification_person', {
 });
 personMultiselect.disable();// to disable verficiation person dropdown
 
+const replaceDOCMultiselect = new Choices('#replace_doc_id', {
+    removeItemButton: true,
+    placeholder: true,
+    placeholderValue: 'Select Replace Document ID',
+    allowHTML: true
+});
+
 let storeDocInfo = {};
 
 $(document).ready(function () {
@@ -1013,7 +1020,7 @@ $('#doc_remarkcheck').hide();
             getDocumentIds();
 
         }else{
-            $('#replace_doc_id').val('');
+            replaceDOCMultiselect.clearStore();
             $('.replce_doc_id').hide();
         }
     });
@@ -1130,14 +1137,26 @@ $(function () {
 function getDocumentIds(){
     let cusid = $('#cus_id_doc').val();
     $.post("verificationFile/documentation/getDoumentIDsTillHandover.php", { cusid }, function(response){
-                
-        $('#replace_doc_id').empty().append(`<option value=''>Select Replace Document ID</option>`);
+
+        replaceDOCMultiselect.clearChoices();
+
         let replace_doc_id_upd = $('#replace_doc_id_upd').val();
-        if(response.length > 0){
+        replace_doc_id_upd = replace_doc_id_upd
+            ? replace_doc_id_upd.split(',')
+            : [];
+
+        let items = [];
+
+        if (Array.isArray(response) && response.length > 0) {
             response.forEach(element => {
-                let selected = (element.doc_id == replace_doc_id_upd) ? 'selected' : '';
-                $('#replace_doc_id').append(`<option value='${element.doc_id}' ${selected}>${element.doc_id}</option>`);
+                items.push({
+                    value: element.doc_id,
+                    label: element.doc_id,
+                    selected: replace_doc_id_upd.includes(element.doc_id)
+                });
             });
+
+            replaceDOCMultiselect.setChoices(items, 'value', 'label', false);
         }
 
         $('.replce_doc_id').show();
@@ -2713,7 +2732,7 @@ function doc_submit_validation() {
     }
 
     //signed doc
-    if (!storeDocInfo.signDocInfo) {
+    if (!storeDocInfo.signDocInfo && !replaceStatusChecked) {
         event.preventDefault();
         $('#signed_infoCheck, #signed_doc_card').show();
         validation = false;
@@ -2724,8 +2743,9 @@ function doc_submit_validation() {
     }
 
     if(replaceStatusChecked){
-        let replaceDocId = $('#replace_doc_id').val();
-        if (replaceDocId == '') {  
+        // Get values from multiselect and sort
+        const docReplaceValues = replaceDOCMultiselect.getValue();
+        if (docReplaceValues.length == 0) {  
             $('.rplce_doc_id').show(); 
             validation = false;
         } else { 
