@@ -28,14 +28,14 @@ $column = array(
     'cc.id'
 );
 
-$query = "SELECT cc.*,sc.staff_name,cs.concern_subject,stc.staff_type_name,ag.ag_name,u.fullname,ag.ag_code
+$query = "SELECT cc.*,sc.staff_name,cs.concern_subject,stc.staff_type_name,ag.ag_name,u.fullname,ag.ag_code,cc.pass_to
     FROM concern_creation cc
-    JOIN staff_creation sc ON cc.staff_assign_to = sc.staff_id
+    JOIN staff_creation sc ON sc.staff_id = COALESCE(NULLIF(cc.pass_to, ''), cc.staff_assign_to)
     LEFT JOIN staff_type_creation stc ON sc.staff_type = stc.staff_type_id
     JOIN concern_subject cs ON cc.com_sub = cs.concern_sub_id
     LEFT JOIN agent_creation ag ON cc.ag_name = ag.ag_id
     LEFT JOIN user u ON cc.insert_user_id = u.user_id
-    WHERE cc.status != 2 && cc.staff_assign_to = '" . strip_tags($staff_id) . "' "; // 
+    WHERE cc.status != 2 AND COALESCE(NULLIF(cc.pass_to, ''), cc.staff_assign_to) = '" . strip_tags($staff_id) . "' "; // 
 
 
 if (isset($_POST['search']) && $_POST['search'] != "") {
@@ -117,7 +117,7 @@ foreach ($result as $row) {
                 <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
                 <div class='dropdown-content'>";
 
-            $action .= "<a href='concern_solution&upd=$id&pageId=1' value='" . $row['id'] . "' title='Concern Assign'>Pass</a>";
+            $action .= "<a href='concern_solution&upd=$id&pageId=1' value='" . $row['id'] . "' title='Concern Pass'>Pass</a>";
             $action .= "<a href='concern_solution&upd=$id&pageId=2' class = 'concern_solution' value='" . $row['id'] . "' title='Concern Solution'>Solution</a>";
             $action .= "</div></div>";
         } else {

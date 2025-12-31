@@ -41,6 +41,8 @@ if (count($getConcernCreation) > 0) {
     $conRemark      = $getConcernCreation['com_remark'];
     // $conPriority    = $getConcernCreation['com_priority'];
     $roleType    = $getConcernCreation['role_type'];
+    $passRole    = $getConcernCreation['pass_role'];
+    $passTo    = $getConcernCreation['pass_to'];
     $assignStaffName      = $getConcernCreation['staff_assign_to'];
     $insert_user_name      = $getConcernCreation['insert_user_name'];
 }
@@ -97,6 +99,8 @@ if (isset($_POST['submit_concern_solution']) && $_POST['submit_concern_solution'
             <input type="hidden" name="con_against" id="con_against" value="<?php if (isset($concernAgainst)) echo $concernAgainst; ?>">
             <input type="hidden" name="con_staff" id="con_staff" value="<?php if (isset($assignStaffName)) echo $assignStaffName; ?>">
             <input type="hidden" name="con_role" id="con_role" value="<?php if (isset($roleType)) echo $roleType; ?>">
+            <input type="hidden" name="pass_role" id="pass_role" value="<?php if (isset($passRole)) echo $passRole; ?>">
+            <input type="hidden" name="pass_to" id="pass_to" value="<?php if (isset($passTo)) echo $passTo; ?>">
             <input type="hidden" name="company_id" id="company_id" value="<?php if (isset($company_id)) echo $company_id; ?>">
             <!-- Row start -->
             <div class="row gutters">
@@ -361,11 +365,11 @@ if (isset($_POST['submit_concern_solution']) && $_POST['submit_concern_solution'
                                 </div>
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
-                                        <label for="assign-to">Assign To</label><span class="required">&nbsp;*</span>
+                                        <label for="assign-to">Pass To</label><span class="required">&nbsp;*</span>
                                         <select class="form-control" id="staff_assign_to" name="staff_assign_to"  style="<?php echo (!isset($pgid) || $pgid != '1') ? 'pointer-events:none;background:#e9ecef;' : ''; ?>"tabindex='19'>
-                                            <option value="">Select Assign To</option>
+                                            <option value="">Select Pass To</option>
                                         </select>
-                                        <span class="text-danger" style='display:none' id='staffAssignCheck'>Please Select Staff Assign</span>
+                                        <span class="text-danger" style='display:none' id='staffAssignCheck'>Please Select Pass To </span>
                                     </div>
                                 </div>
 

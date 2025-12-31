@@ -48,7 +48,7 @@ $(function () {
     // if (concern_to == '1') {
     //     $('#to_dept_name').trigger('change')
     // } else if (concern_to == '2') {
-        // $('#to_team_name').trigger('change')
+    // $('#to_team_name').trigger('change')
     // }
     getConcernRoleType();
     setTimeout(() => {
@@ -164,9 +164,14 @@ function getStaffName(type, staffFrom) {
 function getConcernRoleType() {
     let pg_id = $('#pg_id').val();
     let concern_role_id = '';
-
     if (pg_id != '1') {
-        concern_role_id = $('#con_role').val();
+        let concern_role = $('#con_role').val();
+        let pass_role = $('#pass_role').val();
+
+        // if pass_role is empty or null, use concern_role
+        concern_role_id = (pass_role && pass_role.trim() !== '')
+            ? pass_role
+            : concern_role;
     }
 
     let role_type = 'Director,Admin,Manager,TL,Training TL,Executive Director';
@@ -201,11 +206,15 @@ function getConcernRoleType() {
 function getAssignName(staff_name_id) {
 
     let pg_id = $('#pg_id').val();
-    let selectedId = '';
+    let staff_assign_to = $('#con_staff').val(); //  assigned staff
+    let pass_to = $('#pass_to').val(); // pass assigned staff
+ 
+     const staff_assign_id = (pass_to && pass_to.trim() !== '')
+        ? pass_to
+        : staff_assign_to;
 
-    if (pg_id != '1') {
-        selectedId = $('#con_staff').val(); // existing value (edit mode)
-    }
+    // selected id only needed in edit mode
+    const selectedId = (pg_id != '1') ? staff_assign_id : '';
 
     return $.ajax({
         url: 'manageUser/ajaxGetStaffName.php',
@@ -216,9 +225,16 @@ function getAssignName(staff_name_id) {
     })
         .done(function (response) {
 
-            let html = '<option value="">Select Assign To</option>';
+            let html = '<option value="">Select Pass To</option>';
 
             $.each(response, function (index, val) {
+
+                // ❌ Skip if same staff already assigned
+                if (pg_id == '1' && val.staff_id == staff_assign_id) {
+                    return true; // continue loop
+                }
+
+
                 let selected = (val.staff_id == selectedId) ? 'selected' : '';
                 html += `<option value="${val.staff_id}" ${selected}>${val.staff_name}</option>`;
             });
@@ -229,6 +245,7 @@ function getAssignName(staff_name_id) {
             console.error('getAssignName failed:', textStatus, errorThrown);
         });
 }
+
 
 
 

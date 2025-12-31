@@ -44,6 +44,8 @@ if (count($getConcernCreation) > 0) {
     // $conPriority    = $getConcernCreation['com_priority'];
     $roleType    = $getConcernCreation['role_type'];
     $assignStaffName      = $getConcernCreation['staff_assign_to'];
+    $passRole    = $getConcernCreation['pass_role'];
+    $passTo    = $getConcernCreation['pass_to'];
     $solution_date        = $getConcernCreation['solution_date'];
     $communication          = $getConcernCreation['communication'];
     $location          = $getConcernCreation['location'];
@@ -98,6 +100,8 @@ if (count($getConcernCreation) > 0) {
             <input type="hidden" name="con_staff" id="con_staff" value="<?php if (isset($assignStaffName)) echo $assignStaffName; ?>">
             <input type="hidden" name="con_role" id="con_role" value="<?php if (isset($roleType)) echo $roleType; ?>">
             <input type="hidden" name="company_id" id="company_id" value="<?php if (isset($company_id)) echo $company_id; ?>">
+              <input type="hidden" name="pass_role" id="pass_role" value="<?php if (isset($passRole)) echo $passRole; ?>">
+            <input type="hidden" name="pass_to" id="pass_to" value="<?php if (isset($passTo)) echo $passTo; ?>">
             <!-- Row start -->
             <div class="row gutters">
                 <!-- Concern Creation Start -->

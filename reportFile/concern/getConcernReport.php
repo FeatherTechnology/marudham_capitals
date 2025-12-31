@@ -41,6 +41,7 @@ $column = array(
     'cc.to_dept_name',
     'cc.com_remark',
     'sc.staff_name',
+    'scs.staff_name',
     'cc.solution_date',
     'cc.communication',
     'cc.uploads',
@@ -50,7 +51,7 @@ $column = array(
     'cc.status'
 );
 
-$query = "SELECT cc.id, cc.com_code,cc.com_date,cc.raising_for,cc.self_name,cc.cus_name,cs.concern_subject,cc.com_remark,sc.staff_name, cc.status,cc.solution_date,cc.communication,cc.location, cc.sol_participants,cc.solution_remark,cc.uploads ,cc.self_code,cc.cus_id,ag.ag_name,cc.to_dept_name,u.fullname,ag.ag_code FROM concern_creation cc LEFT JOIN concern_subject cs ON cc.com_sub = cs.concern_sub_id LEFT JOIN agent_creation ag ON cc.ag_name = ag.ag_id LEFT JOIN staff_creation sc ON cc.staff_assign_to = sc.staff_id 
+$query = "SELECT cc.id, cc.com_code,cc.com_date,cc.raising_for,cc.self_name,cc.cus_name,cs.concern_subject,cc.com_remark,sc.staff_name, cc.status,cc.solution_date,cc.communication,cc.location, cc.sol_participants,cc.solution_remark,cc.uploads ,cc.self_code,cc.cus_id,ag.ag_name,cc.to_dept_name,u.fullname,ag.ag_code,cc.pass_to,scs.staff_name as pass_staff FROM concern_creation cc LEFT JOIN concern_subject cs ON cc.com_sub = cs.concern_sub_id LEFT JOIN agent_creation ag ON cc.ag_name = ag.ag_id LEFT JOIN staff_creation sc ON cc.staff_assign_to = sc.staff_id LEFT JOIN staff_creation scs ON cc.pass_to = scs.staff_id 
   LEFT JOIN user u ON cc.insert_user_id = u.user_id
 WHERE $where ";
 
@@ -114,6 +115,7 @@ foreach ($result as $row) {
     $sub_array[] = isset($row['to_dept_name']) ? $row['to_dept_name'] : '';
     $sub_array[] = isset($row['com_remark']) ? $row['com_remark'] : '';
     $sub_array[] = isset($row['staff_name']) ? $row['staff_name'] : '';
+    $sub_array[] = isset($row['pass_staff']) ? $row['pass_staff'] : '';
     $sub_array[] = (!empty($row['solution_date']) && $row['solution_date'] != '0000-00-00')
     ? date('d-m-Y', strtotime($row['solution_date']))
     : '';
