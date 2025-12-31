@@ -709,7 +709,7 @@ if (sizeof($getUser) > 0) {
 								 <?php  } 
 								 if (isset($noc_replace) && $noc_replace == 0) { ?>
                                     <li>
-                                        <a href="noc_replace"><i class='icon-unlock'></i>NOC Replace</a>
+                                        <a href="noc_replace"><i class='icon-unlock'></i>DOC Replace</a>
                                     </li>
                                 <?php  } ?>
                             </ul>

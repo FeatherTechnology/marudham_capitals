@@ -31,7 +31,7 @@ $column = array(
 
 // Base query
 // 1- inserted, 2- send by issued user, 3- received by doc_rec_access user, 1- return.
-$query = "SELECT dt.id, dt.req_id, dt.cus_id, dt.track_status, dt.insert_login_id, dt.created_date, ad.doc_id, cr.autogen_cus_id, cr.customer_name, bc.branch_name, al.area_name, sal.sub_area_name, agm.group_name, alm.line_name, cr.sub_area, ad.noc_replace_status, ad.noc_replace_doc_id
+$query = "SELECT dt.id, dt.req_id, dt.cus_id, dt.track_status, dt.insert_login_id, dt.created_date, ad.doc_id, cr.autogen_cus_id, cr.customer_name, bc.branch_name, al.area_name, sal.sub_area_name, agm.group_name, alm.line_name, cr.sub_area, ad.noc_replace_status
         FROM document_track dt
         JOIN acknowlegement_documentation ad ON dt.req_id = ad.req_id
         JOIN customer_register cr ON dt.cus_id = cr.cus_id
@@ -143,14 +143,14 @@ foreach ($result as $row) {
 
     // }
 
-    $replace_doc_action ='';
+    $replace_doc_action =[];
     if($row['noc_replace_status'] == '0'){ //ack - noc_replace_status => 0-YES/1-NO.
-        $replace_doc_id = $row['noc_replace_doc_id'];
         
-        $qry = $connect->query("SELECT req_id FROM acknowlegement_documentation WHERE doc_id = '$replace_doc_id' ");
-        $replace_doc_req_id = $qry->fetchColumn();
+        $qry = $connect->query("SELECT ad.req_id, dri.replace_doc_id FROM acknowlegement_documentation ad JOIN doc_replace_ids dri ON ad.doc_id = dri.replace_doc_id WHERE dri.req_id = '$req_id' ");
+        while($replace_info = $qry->fetchObject()){
+            $replace_doc_action[] = "<a href='#' title='View Replace Doc' class='view-track' data-reqid='$replace_info->req_id' data-cusid='$cus_id' data-cusname='$cus_name'  data-toggle='modal' data-target='.viewDocModal'>$replace_info->replace_doc_id</a>";   
+        }
     
-        $replace_doc_action = "<a href='#' title='View Replace Doc' class='view-track' data-reqid='$replace_doc_req_id' data-cusid='$cus_id' data-cusname='$cus_name'  data-toggle='modal' data-target='.viewDocModal'>$replace_doc_id</a>";   
     }
 
     $sub_array[] = $replace_doc_action;

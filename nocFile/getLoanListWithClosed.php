@@ -186,17 +186,22 @@ if (isset($_POST["bal_amt"])) {
                     <div class="dropdown">
                         <button class="btn btn-outline-secondary"><i class="fa">&#xf107;</i></button>
                             <div class="dropdown-content">
-                                <?php if ($nocReplaceAccess == 0){ //need noc replace access // if having noc replace means show only noc replace and noc summary;
+                                <?php if ($nocReplaceAccess == 0 && $screen != 'nochandover'){ //need noc replace access //if noc replace access user open handover means they can handover noc so show noc option. // if having noc replace means show only noc replace and noc summary;
                                     if ($row['cus_status'] == '21'){ //noc replace show only if cus status is 21.
                                 ?>
 
-                                    <a href="#" class="noc-replace" data-value="<?= $row['req_id']; ?>"> NOC Replace </a>
+                                    <a href="#" class="noc-replace" data-value="<?= $row['req_id']; ?>"> Replace </a>
                                 
                                 <?php } ?>
 
                                     <a href="#" class="noc-summary" data-reqid="<?= $row['req_id']; ?>" data-cusid="<?= $cus_id; ?>" data-cusname="<?= $row['cus_name']; ?>" data-toggle="modal" data-target=".noc-summary-modal"> NOC Summary </a>
                                     
-                                <?php } else{
+                                    <?php if ($actionType == "summary") { ?>
+
+                                        <a href="#" title="NOC Letter" class="noc-letter" data-reqid="<?= $row['req_id']; ?>" data-cusid="<?= $cus_id; ?>"> NOC Letter </a>
+
+                                    <?php } 
+                                     } else{
 
                                         if ($actionType == "noc") { ?>
 

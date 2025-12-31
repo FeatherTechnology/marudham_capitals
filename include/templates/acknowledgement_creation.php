@@ -2007,7 +2007,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 								</div>
 								<div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
-										<label for="replace_status"> NOC Replace Status </label> <span class="required">&nbsp;*</span>
+										<label for="replace_status"> Replace Status </label> <span class="required">&nbsp;*</span>
 										<label class="replaceSwitch">
 											<input type="checkbox" name="replace_status" id="replace_status" value="0" tabindex="79" <?php if(isset($noc_replace_status) && $noc_replace_status == '0') echo 'checked'; ?> >
 											<span class="replaceSlider replaceRound"></span>
@@ -2017,7 +2017,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 								<div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 col-12 replce_doc_id" style="display: none;">
 									<div class="form-group">
 										<label for="replace_doc_id"> Replace Document ID </label> <span class="required">&nbsp;*</span>
-										<select class="form-control" name="replace_doc_id" id="replace_doc_id" tabindex="79">
+										<select class="form-control" name="replace_doc_id[]" id="replace_doc_id" tabindex="79" multiple>
 											<option value="">Select Replace Document ID</option>
 										</select>
 										<span class="text-danger rplce_doc_id" style="display: none;">Please Select Replace Document ID</span>

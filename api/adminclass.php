@@ -5654,7 +5654,7 @@ class admin
 		if (isset($_POST['replace_status'])) {
 			$replace_status = $_POST['replace_status'];
 		}
-		$replace_doc_id = ''; //value only replace status YES.
+		$replace_doc_id = []; //value only replace status YES.
 		if (isset($_POST['replace_doc_id'])) {
 			$replace_doc_id = $_POST['replace_doc_id'];
 		}
@@ -5689,14 +5689,39 @@ class admin
 				$qry = $mysqli->query("SELECT * From acknowlegement_documentation where req_id = $req_id");
 				if ($qry->num_rows == 0) {
 					//this will filter out duplication entry in customer profile table
-					$insertQry = "INSERT INTO `acknowlegement_documentation`( `req_id`, `cus_id_doc`, `customer_name`, `cus_profile_id`, `doc_id`, `mortgage_process`, `Propertyholder_type`, `Propertyholder_name`, `Propertyholder_relationship_name`, `doc_property_relation`, `doc_property_type`, `doc_property_measurement`, `doc_property_location`, `doc_property_value`, `endorsement_process`, `owner_type`, `owner_name`, `ownername_relationship_name`, `en_relation`, `vehicle_type`, `vehicle_process`, `en_Company`, `en_Model`,`doc_remarks`,`doc_sts`, `noc_replace_status`, `noc_replace_doc_id`, `cus_status`, `insert_login_id`) VALUES('" . strip_tags($req_id) . "','" . strip_tags($cus_id_doc) . "','" . strip_tags($Customer_name) . "','" . strip_tags($cus_profile_id) . "','" . strip_tags($doc_id) . "', '" . strip_tags($mortgage_process) . "', '" . strip_tags($Propertyholder_type) . "', '" . strip_tags($Propertyholder_name) . "','" . strip_tags($Propertyholder_relationship_name) . "','" . strip_tags($doc_property_relation) . "','" . strip_tags($doc_property_pype) . "','" . strip_tags($doc_property_measurement) . "', '" . strip_tags($doc_property_location) . "', '" . strip_tags($doc_property_value) . "', '" . strip_tags($endorsement_process) . "','" . strip_tags($owner_type) . "','" . strip_tags($owner_name) . "','" . strip_tags($ownername_relationship_name) . "','" . strip_tags($en_relation) . "','" . strip_tags($vehicle_type) . "','" . strip_tags($vehicle_process) . "','" . strip_tags($en_Company) . "','" . strip_tags($en_Model) . "','" . strip_tags($doc_remark) . "','" . strip_tags($doc_sts) . "', '" . strip_tags($replace_status) . "', '" . strip_tags($replace_doc_id) . "', '11','" . $userid . "' )";
+					$insertQry = "INSERT INTO `acknowlegement_documentation`( `req_id`, `cus_id_doc`, `customer_name`, `cus_profile_id`, `doc_id`, `mortgage_process`, `Propertyholder_type`, `Propertyholder_name`, `Propertyholder_relationship_name`, `doc_property_relation`, `doc_property_type`, `doc_property_measurement`, `doc_property_location`, `doc_property_value`, `endorsement_process`, `owner_type`, `owner_name`, `ownername_relationship_name`, `en_relation`, `vehicle_type`, `vehicle_process`, `en_Company`, `en_Model`,`doc_remarks`,`doc_sts`, `noc_replace_status`, `cus_status`, `insert_login_id`) VALUES('" . strip_tags($req_id) . "','" . strip_tags($cus_id_doc) . "','" . strip_tags($Customer_name) . "','" . strip_tags($cus_profile_id) . "','" . strip_tags($doc_id) . "', '" . strip_tags($mortgage_process) . "', '" . strip_tags($Propertyholder_type) . "', '" . strip_tags($Propertyholder_name) . "','" . strip_tags($Propertyholder_relationship_name) . "','" . strip_tags($doc_property_relation) . "','" . strip_tags($doc_property_pype) . "','" . strip_tags($doc_property_measurement) . "', '" . strip_tags($doc_property_location) . "', '" . strip_tags($doc_property_value) . "', '" . strip_tags($endorsement_process) . "','" . strip_tags($owner_type) . "','" . strip_tags($owner_name) . "','" . strip_tags($ownername_relationship_name) . "','" . strip_tags($en_relation) . "','" . strip_tags($vehicle_type) . "','" . strip_tags($vehicle_process) . "','" . strip_tags($en_Company) . "','" . strip_tags($en_Model) . "','" . strip_tags($doc_remark) . "','" . strip_tags($doc_sts) . "', '" . strip_tags($replace_status) . "', '11','" . $userid . "' )";
 
 					$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
 				}
 			} else {
-				$update_doc = " UPDATE `acknowlegement_documentation` SET `req_id`='" . strip_tags($req_id) . "',`cus_id_doc`='" . strip_tags($cus_id_doc) . "',`customer_name`='" . strip_tags($Customer_name) . "',`cus_profile_id`='" . strip_tags($cus_profile_id) . "',`doc_id`='" . strip_tags($doc_id) . "',`mortgage_process`='" . strip_tags($mortgage_process) . "',`Propertyholder_type`='" . strip_tags($Propertyholder_type) . "',`Propertyholder_name`='" . strip_tags($Propertyholder_name) . "',`Propertyholder_relationship_name`='" . strip_tags($Propertyholder_relationship_name) . "',`doc_property_relation`='" . strip_tags($doc_property_relation) . "',`doc_property_type`='" . strip_tags($doc_property_pype) . "',`doc_property_measurement`='" . strip_tags($doc_property_measurement) . "',`doc_property_location`='" . strip_tags($doc_property_location) . "',`doc_property_value`='" . strip_tags($doc_property_value) . "',`mortgage_name`='" . strip_tags($mortgage_name) . "',`mortgage_dsgn`='" . strip_tags($mortgage_dsgn) . "',`mortgage_nuumber`='" . strip_tags($mortgage_nuumber) . "',`reg_office`='" . strip_tags($reg_office) . "',`mortgage_value`='" . strip_tags($mortgage_value) . "',`mortgage_document`='" . strip_tags($mortgage_document) . "',`mortgage_document_upd`='" . strip_tags($mortgage_document_upd) . "',`mortgage_document_pending`='" . strip_tags($pendingchk) . "',`endorsement_process`='" . strip_tags($endorsement_process) . "',`owner_type`='" . strip_tags($owner_type) . "',`owner_name`='" . strip_tags($owner_name) . "',`ownername_relationship_name`='" . strip_tags($ownername_relationship_name) . "',`en_relation`='" . strip_tags($en_relation) . "',`vehicle_type`='" . strip_tags($vehicle_type) . "',`vehicle_process`='" . strip_tags($vehicle_process) . "',`en_Company`='" . strip_tags($en_Company) . "',`en_Model`='" . strip_tags($en_Model) . "',`vehicle_reg_no`='" . strip_tags($vehicle_reg_no) . "',`endorsement_name`='" . strip_tags($endorsement_name) . "',`en_RC`='" . strip_tags($en_RC) . "',`Rc_document_upd`='" . strip_tags($Rc_document_upd) . "',`Rc_document_pending`='" . strip_tags($endorsependingchk) . "',`en_Key`='" . strip_tags($en_Key) . "',`doc_remarks`='" . strip_tags($doc_remark) . "',`doc_sts`='" . strip_tags($doc_sts) . "', `noc_replace_status` = '" . strip_tags($replace_status) . "', `noc_replace_doc_id` = '" . strip_tags($replace_doc_id) . "', `status`='0',`submitted`='1',`update_login_id`='" . $userid . "' WHERE `id` = '" . strip_tags($doc_table_id) . "' ";
+				$update_doc = " UPDATE `acknowlegement_documentation` SET `req_id`='" . strip_tags($req_id) . "',`cus_id_doc`='" . strip_tags($cus_id_doc) . "',`customer_name`='" . strip_tags($Customer_name) . "',`cus_profile_id`='" . strip_tags($cus_profile_id) . "',`doc_id`='" . strip_tags($doc_id) . "',`mortgage_process`='" . strip_tags($mortgage_process) . "',`Propertyholder_type`='" . strip_tags($Propertyholder_type) . "',`Propertyholder_name`='" . strip_tags($Propertyholder_name) . "',`Propertyholder_relationship_name`='" . strip_tags($Propertyholder_relationship_name) . "',`doc_property_relation`='" . strip_tags($doc_property_relation) . "',`doc_property_type`='" . strip_tags($doc_property_pype) . "',`doc_property_measurement`='" . strip_tags($doc_property_measurement) . "',`doc_property_location`='" . strip_tags($doc_property_location) . "',`doc_property_value`='" . strip_tags($doc_property_value) . "',`mortgage_name`='" . strip_tags($mortgage_name) . "',`mortgage_dsgn`='" . strip_tags($mortgage_dsgn) . "',`mortgage_nuumber`='" . strip_tags($mortgage_nuumber) . "',`reg_office`='" . strip_tags($reg_office) . "',`mortgage_value`='" . strip_tags($mortgage_value) . "',`mortgage_document`='" . strip_tags($mortgage_document) . "',`mortgage_document_upd`='" . strip_tags($mortgage_document_upd) . "',`mortgage_document_pending`='" . strip_tags($pendingchk) . "',`endorsement_process`='" . strip_tags($endorsement_process) . "',`owner_type`='" . strip_tags($owner_type) . "',`owner_name`='" . strip_tags($owner_name) . "',`ownername_relationship_name`='" . strip_tags($ownername_relationship_name) . "',`en_relation`='" . strip_tags($en_relation) . "',`vehicle_type`='" . strip_tags($vehicle_type) . "',`vehicle_process`='" . strip_tags($vehicle_process) . "',`en_Company`='" . strip_tags($en_Company) . "',`en_Model`='" . strip_tags($en_Model) . "',`vehicle_reg_no`='" . strip_tags($vehicle_reg_no) . "',`endorsement_name`='" . strip_tags($endorsement_name) . "',`en_RC`='" . strip_tags($en_RC) . "',`Rc_document_upd`='" . strip_tags($Rc_document_upd) . "',`Rc_document_pending`='" . strip_tags($endorsependingchk) . "',`en_Key`='" . strip_tags($en_Key) . "',`doc_remarks`='" . strip_tags($doc_remark) . "',`doc_sts`='" . strip_tags($doc_sts) . "', `noc_replace_status` = '" . strip_tags($replace_status) . "', `status`='0',`submitted`='1',`update_login_id`='" . $userid . "' WHERE `id` = '" . strip_tags($doc_table_id) . "' ";
 
 				$updDocResult = $mysqli->query($update_doc) or die("Error " . $mysqli->error);
+			}
+
+			if ($replace_status == '0') { //Replace status - YES.
+				// Delete removed document IDs
+				if (!empty($replace_doc_id)) {
+					$escaped = array_map([$mysqli, 'real_escape_string'], $replace_doc_id);
+					$ids = "'" . implode("','", $escaped) . "'";
+
+					$mysqli->query("DELETE FROM doc_replace_ids WHERE req_id='$req_id' AND replace_doc_id NOT IN ($ids)");
+				}
+
+				// Insert new ones only
+				foreach ($replace_doc_id as $doc_id) {
+
+					$doc_id = strip_tags($doc_id);
+
+					$check = $mysqli->query("SELECT id FROM doc_replace_ids WHERE req_id='$req_id' AND replace_doc_id = '$doc_id'");
+
+					if ($check->num_rows == 0) {
+						$mysqli->query("INSERT INTO doc_replace_ids (req_id, cus_id, replace_doc_id) VALUES ('$req_id', '$cus_id_doc', '$doc_id')");
+					}
+				}
+			} else {
+				// if nothing selected, delete all
+				$mysqli->query("DELETE FROM doc_replace_ids WHERE req_id = '$req_id' ");
 			}
 
 			//iterate thru fingerprint array
@@ -5825,11 +5850,23 @@ class admin
 				$detailrecords['doc_remark'] = $row['doc_remarks'];
 				$detailrecords['doc_sts'] = $row['doc_sts'];
 				$detailrecords['noc_replace_status'] = $row['noc_replace_status'];
-				$detailrecords['noc_replace_doc_id'] = $row['noc_replace_doc_id'];
 				$detailrecords['submitted'] = $row['submitted'];
 
 				$i++;
 			}
+
+			/* ---------------- Replace Document IDs ---------------- */
+			$replace_docs = [];
+			$qry2 = $mysqli->query("SELECT replace_doc_id FROM doc_replace_ids WHERE req_id = $req_id");
+
+			if ($qry2 && $qry2->num_rows > 0) {
+				while ($r = $qry2->fetch_assoc()) {
+					$replace_docs[] = $r['replace_doc_id'];
+				}
+			}
+
+			// return as comma-separated (good for frontend)
+			$detailrecords['noc_replace_doc_id'] = implode(',', $replace_docs);
 		}
 
 		return $detailrecords;

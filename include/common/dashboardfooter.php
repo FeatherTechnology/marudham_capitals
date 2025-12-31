@@ -1182,7 +1182,7 @@
                 dom: 'lBfrtip',
                 buttons: [{
                         extend: 'excel',
-                        title: "NOC Replace List",
+                        title: "DOC Replace List",
                         action: function (e, dt, button, config) {
                             var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                             var dynamic = curDateJs('NOC_Replace_List'); // or any base
@@ -1692,23 +1692,24 @@
                 return false;
             };
 
-            // For Hard Reload and need to create a text file version   
-            let currentVersion = null;
+            //running every 6 secs so it may cause issue while in high traffic so code commented. Need to check anyother solution to solve cache issue from user end.
+            // // For Hard Reload and need to create a text file version   
+            // let currentVersion = null;
 
-            fetch("version.txt?rand=" + Math.random())
-                .then(res => res.text())
-                .then(v => currentVersion = v.trim());
+            // fetch("version.txt?rand=" + Math.random())
+            //     .then(res => res.text())
+            //     .then(v => currentVersion = v.trim());
 
-            // Check every 5 seconds
-            setInterval(() => {
-                fetch("version.txt?rand=" + Math.random())
-                    .then(res => res.text())
-                    .then(serverVersion => {
-                        if (currentVersion && serverVersion.trim() !== currentVersion) {
-                            location.reload(true);
-                        }
-                    });
-            }, 6000);
+            // // Check every 5 seconds
+            // setInterval(() => {
+            //     fetch("version.txt?rand=" + Math.random())
+            //         .then(res => res.text())
+            //         .then(serverVersion => {
+            //             if (currentVersion && serverVersion.trim() !== currentVersion) {
+            //                 location.reload(true);
+            //             }
+            //         });
+            // }, 6000);
 
         }); //Document Ready End
 

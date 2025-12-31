@@ -884,7 +884,7 @@ if($idupd>0)
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($noc_replace==0){ echo'checked'; }} ?> tabindex="45" class="doctrack-checkbox screen-validations" id="noc_replace" name="noc_replace" disabled>&nbsp;&nbsp;
-                                <label class="custom-control-label" for="noc_replace">NOC Replace</label>
+                                <label class="custom-control-label" for="noc_replace">DOC Replace</label>
                             </div>
                         </div>
 					</div>
@@ -956,7 +956,7 @@ if($idupd>0)
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
 							<div class="custom-control custom-checkbox">
 								<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($noc_replace_access==0){ echo'checked'; }} ?> tabindex="45" class="noc-checkbox screen-validations" id="noc_replace_access" name="noc_replace_access" disabled>&nbsp;&nbsp;
-                                <label class="custom-control-label" for="noc_replace_access">NOC Replace Access</label>
+                                <label class="custom-control-label" for="noc_replace_access">Replace Access</label>
 								<br>
 								<span class="text-danger" style='display:none' id='replaceCheck'>Please Check Replace Access</span>
 							</div>

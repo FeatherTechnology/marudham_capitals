@@ -4,6 +4,9 @@
 if (isset($_SESSION['fullname'])) {
 	$fullname  = $_SESSION['fullname'];
 }
+if (isset($_SESSION['username'])) {
+	$username  = $_SESSION['username'];
+}
 if (isset($_SESSION['userid'])) {
 	$userid  = $_SESSION['userid'];
 }
@@ -119,7 +122,7 @@ if (isset($getuserdetails['download_access'])) {
 											<img src="img/avatar.png" alt="Admin Template">
 										</div>
 										<h5><?php echo $fullname; ?></h5>
-										<p><?php echo $fullname; ?></p>
+										<p><?php echo $username; ?></p>
 									</div>
 									<!-- <a href="#"><i class="icon-user1"></i> My Profile</a> -->
 									<?php if ($current_page == 'home_page') { ?>
