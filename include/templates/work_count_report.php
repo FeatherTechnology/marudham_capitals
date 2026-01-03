@@ -1,3 +1,20 @@
+<style>
+	/* Force borders for grouped headers */
+/* Ensure borders are visible */
+#request_count_table {
+    border-collapse: collapse !important;
+}
+
+#request_count_table thead th {
+    border: 1px solid #ffffff;
+}
+
+/* ===== GROUP HEADER BORDER ===== */
+#request_count_table thead th.group-border {
+    border-right: 1px solid #ffffff !important;
+}
+
+</style>
 <link rel="stylesheet" type="text/css" href="css/ledger_report.css">
 <br><br>
 <div class="page-header">
@@ -28,13 +45,77 @@
 					<div class="card-header">Work Count Report</div>
 					<div class="card-body">
 						<div id="work_count_report_table_div" class="table-divs" style="overflow-x: auto;">
-							<table id="request_count_table" class="table custom-table" style="display: none;">
+							<table id="request_count_table" class="table custom-table" style="width:100%">
+								<thead>
+									<!-- GROUP HEADER -->
+									<tr>
+										<th rowspan="2">S.No</th>
+										<th rowspan="2">User Name</th>
+										<th rowspan="2">Loan Category</th>
+
+										<th colspan="6" class="group-border">Request</th>
+										<th colspan="6" class="group-border">Cancel</th>
+										<th colspan="6" class="group-border">Revoke</th>
+										<th colspan="6" class="group-border">In Process</th>
+										<th colspan="6" class="group-border">Issued</th>
+									</tr>
+
+
+									<!-- SUB HEADERS -->
+									<tr>
+										<!-- Request -->
+										<th>New</th>
+										<th>Renewal</th>
+										<th>Re-active</th>
+										<th>Additional</th>
+										<th>Existing-New</th>
+										<th>Total</th>
+
+										<!-- Cancel -->
+										<th>New</th>
+										<th>Renewal</th>
+										<th>Re-active</th>
+										<th>Additional</th>
+										<th>Existing-New</th>
+										<th>Total</th>
+
+										<!-- Revoke -->
+										<th>New</th>
+										<th>Renewal</th>
+										<th>Re-active</th>
+										<th>Additional</th>
+										<th>Existing-New</th>
+										<th>Total</th>
+
+										<!-- Process -->
+										<th>New</th>
+										<th>Renewal</th>
+										<th>Re-active</th>
+										<th>Additional</th>
+										<th>Existing-New</th>
+										<th>Total</th>
+
+										<!-- Issued -->
+										<th>New</th>
+										<th>Renewal</th>
+										<th>Re-active</th>
+										<th>Additional</th>
+										<th>Existing-New</th>
+										<th>Total</th>
+									</tr>
+								</thead>
+
+								<tbody></tbody>
+								<tfoot></tfoot>
+							</table>
+
+							<table id="verification_count_table" class="table custom-table" style="display: none;">
 								<thead>
 									<tr>
 										<th>S.No</th>
 										<th>User Name</th>
 										<th>Loan Category</th>
-										<th id="nameHeader">Request</th>
+										<th id="nameHeader">Verification</th>
 										<th>Cancel </th>
 										<th>Revoke</th>
 										<th>In Process</th>
