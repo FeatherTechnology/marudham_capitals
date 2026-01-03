@@ -4,36 +4,18 @@ include '../../ajaxconfig.php';
 $from_date = $_POST['from_date'];
 $to_date   = $_POST['to_date'];
 $user_id   = $_POST['user_id'];
-$screen    = $_POST['screen']; // 1=Request, 2=Verification, 3=Approval
 
-/* -----------------------------
-   Prepare User IDs
---------------------------------*/
 if (!is_array($user_id)) {
     $user_id = explode(',', $user_id);
 }
 $user_id = array_map('intval', $user_id);
 $user_id_str = implode(',', $user_id);
 
-if (empty($user_id)) {
-    echo json_encode(["data" => []]);
-    exit;
-}
+$userName = $connect->query("
+    SELECT fullname FROM user 
+    WHERE user_id IN ($user_id_str) AND status = 0 LIMIT 1
+")->fetchColumn();
 
-/* -----------------------------
-   Fetch USER NAME (single name)
---------------------------------*/
-$userNameQry = $connect->query("
-    SELECT fullname 
-    FROM user 
-    WHERE user_id IN ($user_id_str) AND status = 0 
-    LIMIT 1
-");
-$user_fullname = $userNameQry->fetchColumn();
-
-/* -----------------------------
-   Fetch LOAN CATEGORIES
---------------------------------*/
 $loanCats = $connect->query("
     SELECT loan_category_creation_id, loan_category_creation_name
     FROM loan_category_creation
@@ -42,136 +24,157 @@ $loanCats = $connect->query("
 $data = [];
 $sno = 1;
 
-/* -----------------------------
-   LOOP CATEGORIES ONLY
---------------------------------*/
+function emptyTypeCounter()
+{
+    return [
+        'new' => 0,
+        'renewal' => 0,
+        'reactive' => 0,
+        'additional' => 0,
+        'existing_new' => 0,
+        'total' => 0
+    ];
+}
+
+
 foreach ($loanCats as $cat) {
 
     $cat_id   = $cat['loan_category_creation_id'];
     $cat_name = $cat['loan_category_creation_name'];
 
-    /* =====================================
-       1️⃣ FETCH REQUEST / VERIFICATION / APPROVAL IDS
-    ===================================== */
-    if ($screen == 1) {
-
-        $req_qry = "
-            SELECT req_id 
-            FROM request_creation
-            WHERE loan_category = '$cat_id'
-              AND insert_login_id IN ($user_id_str)
-              AND DATE(created_date) BETWEEN '$from_date' AND '$to_date'
-        ";
-
-    } else if ($screen == 2) {
-
-        $req_qry = "
-            SELECT ia.req_id 
-            FROM verification_loan_calculation vlc
-            JOIN in_approval ia ON ia.req_id = vlc.req_id
-            WHERE vlc.loan_category = '$cat_id'
-              AND ia.insert_login_id IN ($user_id_str)
-              AND DATE(vlc.create_date) BETWEEN '$from_date' AND '$to_date'
-        ";
-
-    } else if ($screen == 3) {
-
-        $req_qry = "
-            SELECT ia.req_id 
-            FROM verification_loan_calculation vlc
-            JOIN in_acknowledgement ia ON ia.req_id = vlc.req_id
-            WHERE vlc.loan_category = '$cat_id'
-              AND ia.inserted_user IN ($user_id_str)
-              AND DATE(ia.inserted_date) BETWEEN '$from_date' AND '$to_date'
-        ";
-    }
-
-    $req_ids = array_column($connect->query($req_qry)->fetchAll(PDO::FETCH_ASSOC), 'req_id');
-    $req_count = count($req_ids);
-
-    if ($req_count == 0) continue;
-
-    $req_id_list = implode(',', $req_ids);
-    if ($req_id_list == "") $req_id_list = 0;
-
-    /* =====================================
-       2️⃣ CANCEL COUNT
-    ===================================== */
-    if ($screen == 1) $cancel_status = "4,5,6,7";
-    if ($screen == 2) $cancel_status = "5,6,7";
-    if ($screen == 3) $cancel_status = "6,7";
-
-    $cancel_count = $connect->query("
-        SELECT COUNT(*) 
+    $reqs = $connect->query("
+        SELECT req_id, cus_id, cus_data, cus_status, created_date
         FROM request_creation
-        WHERE req_id IN ($req_id_list)
-          AND cus_status IN ($cancel_status)
-         
-    ")->fetchColumn();
+        WHERE loan_category = '$cat_id'
+          AND insert_login_id IN ($user_id_str)
+          AND DATE(created_date) BETWEEN '$from_date' AND '$to_date'
+    ")->fetchAll(PDO::FETCH_ASSOC);
 
+    if (empty($reqs)) continue;
 
-    /* =====================================
-       3️⃣ REVOKE COUNT
-    ===================================== */
-    if ($screen == 3) {
-        $revoke_count = 0;
-    } else {
-        $revoke_status = ($screen == 1) ? "8,9" : "9";
-        $revoke_count = $connect->query("
-            SELECT COUNT(*) 
-            FROM request_creation
-            WHERE req_id IN ($req_id_list)
-              AND cus_status IN ($revoke_status)
-              
+    // 🔥 STATUS BUCKETS
+    $request = emptyTypeCounter();
+    $cancel  = emptyTypeCounter();
+    $revoke  = emptyTypeCounter();
+    $process = emptyTypeCounter();
+    $issued  = emptyTypeCounter();
+
+    foreach ($reqs as $r) {
+
+        $req_id  = $r['req_id'];
+        $cus_id  = $r['cus_id'];
+        $reqDate = date('Y-m-d', strtotime($r['created_date']));
+
+        // =====================
+        // Step 1: Determine type
+        // =====================
+        $type = '';
+        if (strtolower($r['cus_data']) === 'new') {
+            $type = 'new';
+        } else {
+            $issue = $connect->query("
+            SELECT ii.cus_status, cc.created_date
+            FROM in_issue ii
+            LEFT JOIN customer_status cc ON cc.req_id = ii.req_id
+            WHERE ii.cus_id = '$cus_id'
+              AND ii.cus_status >= 14
+              AND ii.req_id != '$req_id'
+            ORDER BY ii.req_id DESC
+            LIMIT 1
+        ")->fetch(PDO::FETCH_ASSOC);
+
+            if (!$issue) {
+                $type = 'existing_new';
+            } elseif ($issue['cus_status'] >= 14 && $issue['cus_status'] < 20) {
+                $type = 'additional';
+            } else {
+                $closingDate  = date('Y-m-d', strtotime($issue['created_date']));
+                $monthEnd     = date('Y-m-t', strtotime($issue['created_date']));
+                $nextMonth    = date('Y-m-d', strtotime($monthEnd . ' +1 day'));
+                $reactiveDate = date('Y-m-d', strtotime($nextMonth . ' +3 months'));
+
+                if ($closingDate > $reqDate) {
+                    $type = 'additional';
+                } elseif ($reqDate < $reactiveDate) {
+                    $type = 'renewal';
+                } else {
+                    $type = 'reactive';
+                }
+            }
+        }
+
+        // =====================
+        // Step 2: Count request type
+        // =====================
+        $request[$type]++;
+        $request['total']++;
+
+        // =====================
+        // Step 3: Count final status
+        // =====================
+        if (in_array($r['cus_status'], [4, 5, 6, 7])) {
+            $cancel[$type]++;
+            $cancel['total']++;
+        } elseif (in_array($r['cus_status'], [8, 9])) {
+            $revoke[$type]++;
+            $revoke['total']++;
+        } else {
+            $isIssued = $connect->query("
+            SELECT COUNT(*) FROM in_issue
+            WHERE req_id = '$req_id' AND cus_status >= 14
         ")->fetchColumn();
+
+            if ($isIssued) {
+                $issued[$type]++;
+                $issued['total']++;
+            } else {
+                $process[$type]++;
+                $process['total']++;
+            }
+        }
     }
 
-    /* =====================================
-       4️⃣ ISSUED COUNT
-    ===================================== */
-    $issued_count = $connect->query("
-        SELECT COUNT(*) 
-        FROM in_issue
-        WHERE req_id IN ($req_id_list)
-          AND cus_status >= 14
-    ")->fetchColumn();
+    /* =====================
+       FINAL ROW
+    ===================== */
 
-
-    /* =====================================
-       5️⃣ PROCESS COUNT
-    ===================================== */
-    $process_count = $req_count - ($cancel_count + $revoke_count + $issued_count);
-    if ($process_count < 0) $process_count = 0;
-
-    /* =====================================
-       FINAL DATA
-    ===================================== */
     $data[] = [
-        "sno"            => $sno++,
-        "fullname"       => $user_fullname,
-        "loan_category"  => $cat_name,
-        "total_count"    => $req_count,
-        "t_cancel_count" => $cancel_count,
-        "t_revoke_count" => $revoke_count,
-        "t_process"      => $process_count,
-        "t_issued"       => $issued_count
+        "sno" => $sno++,
+        "fullname" => $userName,
+        "loan_category" => $cat_name,
+
+        "request" => $request,
+        "cancel"  => $cancel,
+        "revoke"  => $revoke,
+        "process" => $process,
+        "issued"  => $issued
     ];
 }
+$totals = [
+    'request' => emptyTypeCounter(),
+    'cancel'  => emptyTypeCounter(),
+    'revoke'  => emptyTypeCounter(),
+    'process' => emptyTypeCounter(),
+    'issued'  => emptyTypeCounter()
+];
 
+foreach ($data as $row) {
+    foreach ($totals as $key => $val) {
+        foreach ($val as $type => $v) {
+            $totals[$key][$type] += $row[$key][$type] ?? 0;
+        }
+    }
+}
 
-
-/* -----------------------------
-   TOTAL ROW
---------------------------------*/
 $data[] = [
-    "sno"            => "",
-    "fullname"       => "Total",
-    "loan_category"  => "",
-    "total_count"    => array_sum(array_column($data, "total_count")),
-    "t_cancel_count" => array_sum(array_column($data, "t_cancel_count")),
-    "t_revoke_count" => array_sum(array_column($data, "t_revoke_count")),
-    "t_process"      => array_sum(array_column($data, "t_process")),
-    "t_issued"       => array_sum(array_column($data, "t_issued"))
+    "sno" => "",
+    "fullname" => "Total",
+    "loan_category" => "",
+    "request" => $totals['request'],
+    "cancel"  => $totals['cancel'],
+    "revoke"  => $totals['revoke'],
+    "process" => $totals['process'],
+    "issued"  => $totals['issued']
 ];
 
 echo json_encode(["data" => $data]);

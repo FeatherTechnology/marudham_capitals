@@ -84,32 +84,39 @@ $(document).ready(function () {
 
         // Refresh table
         $('#request_count_table').hide();
+        $('#verification_count_table').hide();
         $('#issue_count_table').hide();
         $('#collection_count_table').hide();
         $('#closed_count_table').hide();
         $('#noc_count_table').hide();
         $('.dataTables_wrapper').hide();
-        if (screen == "1" || screen == "2" || screen == '3') {
+        if (screen == "1") {
+            $('#request_count_table').show();
+            $('#request_count_wrapper').show();
+
+            // Load data
+            requestToIssuedReportCount(from_date, to_date, selected_user, screen, headerName);
+        } if (screen == "2" || screen == '3') {
             // ==========================================
             // 🔥 SHOW / HIDE THE REVOKE COLUMN (screen 3)
             // ==========================================
             if (screen == "3") {
                 // hide Revoke column (6th column)
                 $("th:nth-child(6)").hide();
-                $("#request_count_table tbody tr").each(function () {
+                $("#verification_count_table tbody tr").each(function () {
                     $(this).find("td:nth-child(6)").hide();
                 });
             } else {
                 $("th:nth-child(6)").show();
-                $("#request_count_table tbody tr").each(function () {
+                $("#verification_count_table tbody tr").each(function () {
                     $(this).find("td:nth-child(6)").show();
                 });
             }
-            $('#request_count_table').show();
-            $('#request_count_wrapper').show();
+            $('#verification_count_table').show();
+            $('#verification_count_wrapper').show();
 
             // Load data
-            requestToIssuedReportCount(from_date, to_date, selected_user, screen, headerName);
+            verificationToIssuedReportCount(from_date, to_date, selected_user, screen, headerName);
         } else if (screen == "4") {
             $('#issue_count_table').show();
             $('#issue_count_wrapper').show();
@@ -146,7 +153,6 @@ function getUserNames() {
     }, 'json');
 }
 
-// Request To Loan Issue
 function requestToIssuedReportCount(from_date, to_date, selected_user, screen, headerName) {
 
     $.ajax({
@@ -159,12 +165,169 @@ function requestToIssuedReportCount(from_date, to_date, selected_user, screen, h
             screen: screen
         },
         dataType: 'json',
+        success: function (res) {
+
+            // Handle empty response
+            if (!res.data || res.data.length === 0) {
+                if ($.fn.DataTable.isDataTable('#request_count_table')) {
+                    $('#request_count_table').DataTable().clear().draw();
+                }
+                return;
+            }
+
+            const totalRow = res.data[res.data.length - 1];
+            const tableData = res.data.slice(0, -1);
+
+            // Destroy existing table once
+            if ($.fn.DataTable.isDataTable('#request_count_table')) {
+                $('#request_count_table').DataTable().destroy();
+            }
+
+            const columns = [
+                /* BASIC */
+                { data: 'sno' },
+                { data: 'fullname' },
+                { data: 'loan_category' },
+
+                /* REQUEST */
+                { data: 'request.new' },
+                { data: 'request.renewal' },
+                { data: 'request.reactive' },
+                { data: 'request.additional' },
+                { data: 'request.existing_new' },
+                { data: 'request.total', render: d => `<b>${d}</b>` },
+
+                /* CANCEL */
+                { data: 'cancel.new' },
+                { data: 'cancel.renewal' },
+                { data: 'cancel.reactive' },
+                { data: 'cancel.additional' },
+                { data: 'cancel.existing_new' },
+                { data: 'cancel.total', render: d => `<b>${d}</b>` },
+
+                /* REVOKE */
+                { data: 'revoke.new' },
+                { data: 'revoke.renewal' },
+                { data: 'revoke.reactive' },
+                { data: 'revoke.additional' },
+                { data: 'revoke.existing_new' },
+                { data: 'revoke.total', render: d => `<b>${d}</b>` },
+
+                /* PROCESS */
+                { data: 'process.new' },
+                { data: 'process.renewal' },
+                { data: 'process.reactive' },
+                { data: 'process.additional' },
+                { data: 'process.existing_new' },
+                { data: 'process.total', render: d => `<b>${d}</b>` },
+
+                /* ISSUED */
+                { data: 'issued.new' },
+                { data: 'issued.renewal' },
+                { data: 'issued.reactive' },
+                { data: 'issued.additional' },
+                { data: 'issued.existing_new' },
+                { data: 'issued.total', render: d => `<b>${d}</b>` }
+            ];
+
+            const request_count_table = $('#request_count_table').DataTable({
+                ...getStateSaveConfig('request_count_table'),
+                data: tableData,
+                columns: columns,
+                dom: 'lBfrtip',
+                buttons: [
+                    {
+                        extend: 'excel',
+                        title: 'Request_Count_Report',
+                        action: function (e, dt, button, config) {
+                            const file = curDateJs('Request_count_table');
+                            config.title = file;
+                            config.filename = file;
+                            $.fn.dataTable.ext.buttons.excelHtml5.action.call(
+                                this, e, dt, button, config
+                            );
+                        }
+                    },
+                    { extend: 'colvis', collectionLayout: 'fixed four-column' }
+                ],
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                drawCallback: function () {
+                    searchFunction('request_count_table');
+                    paginationFunction('request_count_table');
+                }
+            });
+
+            // Update grouped header text
+            $('#request_count_table thead th#nameHeader').text(headerName);
+
+            // Column visibility helper
+            initColVisFeatures(request_count_table, 'request_count_table');
+
+            // Footer totals
+            $('#request_count_table tfoot').html(`
+                <tr>
+                    <td colspan="3"><b>Total</b></td>
+
+                    <td>${totalRow.request.new}</td>
+                    <td>${totalRow.request.renewal}</td>
+                    <td>${totalRow.request.reactive}</td>
+                    <td>${totalRow.request.additional}</td>
+                    <td>${totalRow.request.existing_new}</td>
+                    <td><b>${totalRow.request.total}</b></td>
+
+                    <td>${totalRow.cancel.new}</td>
+                    <td>${totalRow.cancel.renewal}</td>
+                    <td>${totalRow.cancel.reactive}</td>
+                    <td>${totalRow.cancel.additional}</td>
+                    <td>${totalRow.cancel.existing_new}</td>
+                    <td><b>${totalRow.cancel.total}</b></td>
+
+                    <td>${totalRow.revoke.new}</td>
+                    <td>${totalRow.revoke.renewal}</td>
+                    <td>${totalRow.revoke.reactive}</td>
+                    <td>${totalRow.revoke.additional}</td>
+                    <td>${totalRow.revoke.existing_new}</td>
+                    <td><b>${totalRow.revoke.total}</b></td>
+
+                    <td>${totalRow.process.new}</td>
+                    <td>${totalRow.process.renewal}</td>
+                    <td>${totalRow.process.reactive}</td>
+                    <td>${totalRow.process.additional}</td>
+                    <td>${totalRow.process.existing_new}</td>
+                    <td><b>${totalRow.process.total}</b></td>
+
+                    <td>${totalRow.issued.new}</td>
+                    <td>${totalRow.issued.renewal}</td>
+                    <td>${totalRow.issued.reactive}</td>
+                    <td>${totalRow.issued.additional}</td>
+                    <td>${totalRow.issued.existing_new}</td>
+                    <td><b>${totalRow.issued.total}</b></td>
+                </tr>
+            `);
+        }
+    });
+}
+
+
+// Verification To Loan Issue
+function verificationToIssuedReportCount(from_date, to_date, selected_user, screen, headerName) {
+
+    $.ajax({
+        url: 'reportFile/work_count_report/verificationToIssuedReportCount.php',
+        type: 'POST',
+        data: {
+            from_date: from_date,
+            to_date: to_date,
+            user_id: selected_user,
+            screen: screen
+        },
+        dataType: 'json',
 
         success: function (res) {
 
             if (!res.data || res.data.length === 0) {
-                $('#request_count_table').DataTable().clear().draw();
-                $('#request_count_table thead').html(
+                $('#verification_count_table').DataTable().clear().draw();
+                $('#verification_count_table thead').html(
                     "<tr><th colspan='10'>No data found for selected filters</th></tr>"
                 );
                 return;
@@ -186,20 +349,20 @@ function requestToIssuedReportCount(from_date, to_date, selected_user, screen, h
                 { data: 't_issued', title: "Issued" }
             ];
 
-            $('#request_count_table').DataTable().destroy();
+            $('#verification_count_table').DataTable().destroy();
 
-            var request_count_table = $('#request_count_table').DataTable({
-                ...getStateSaveConfig('request_count_table'),
+            var verification_count_table = $('#verification_count_table').DataTable({
+                ...getStateSaveConfig('verification_count_table'),
                 data: tableData,
                 columns: columns,
                 dom: 'lBfrtip',
                 buttons: [
                     {
                         extend: 'excel',
-                        title: 'Request_Count_Report',
+                        title: 'Verification_Count_Report',
                         action: function (e, dt, button, config) {
                             var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
-                            var file = curDateJs('Request_Count_Report');
+                            var file = curDateJs('Verification_Count_Report');
                             config.title = file;
                             config.filename = file;
                             defaultAction.call(this, e, dt, button, config);
@@ -209,20 +372,20 @@ function requestToIssuedReportCount(from_date, to_date, selected_user, screen, h
                 ],
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
                 drawCallback: function () {
-                    searchFunction('request_count_table');
-                    paginationFunction('request_count_table');
+                    searchFunction('verification_count_table');
+                    paginationFunction('verification_count_table');
                 }
             });
             // Update the column header AFTER DataTable builds the table
-            $('#request_count_table thead th#nameHeader').text(headerName);
+            $('#verification_count_table thead th#nameHeader').text(headerName);
 
             // Pass the table variable to the initColVisFeatures function
-            initColVisFeatures(request_count_table, 'request_count_table');
+            initColVisFeatures(verification_count_table, 'verification_count_table');
 
             // =============================
             // 🔥 SET FOOTER (TOTAL VALUES)
             // =============================
-            $('#request_count_table tfoot').html(`
+            $('#verification_count_table tfoot').html(`
                 <tr>
                     <td></td>
                     <td><b>Total</b></td>
@@ -238,14 +401,17 @@ function requestToIssuedReportCount(from_date, to_date, selected_user, screen, h
             // Hide revoke column if required
             if (screen == "3") {
                 $("th:nth-child(6)").hide();
-                $("#request_count_table tbody tr").each(function () {
+                $("#verification_count_table tbody tr").each(function () {
                     $(this).find("td:nth-child(6)").hide();
                 });
-                $("#request_count_table tfoot tr td:nth-child(6)").hide();
+                $("#verification_count_table tfoot tr td:nth-child(6)").hide();
             }
         }
     });
 }
+
+
+
 // Loan Issue
 function issuedReportCount(from_date, to_date, selected_user, screen) {
 
@@ -613,6 +779,10 @@ function resetAllTables() {
     $("#request_count_table thead").show();
     $("#request_count_table tbody").show();
     $("#request_count_table tfoot").show();
+
+     $("#verification_count_table thead").show();
+    $("#verification_count_table tbody").show();
+    $("#verification_count_table tfoot").show();
 
     $("#issue_count_table thead").show();
     $("#issue_count_table tbody").show();
