@@ -6524,9 +6524,9 @@ class admin
 
 		$to_dept_name = '';
 		// if (isset($concern_to) && $concern_to == '1') {
-			if (isset($_POST['to_dept_name'])) {
-				$to_dept_name = $_POST['to_dept_name'];
-			}
+		if (isset($_POST['to_dept_name'])) {
+			$to_dept_name = $_POST['to_dept_name'];
+		}
 		// }
 
 		$to_team_name = '';
@@ -6598,6 +6598,8 @@ class admin
 			// $detailrecords['com_priority'] = $row['com_priority'];
 			$detailrecords['role_type'] = $row['role_type'];
 			$detailrecords['staff_assign_to'] = $row['staff_assign_to'];
+			$detailrecords['pass_role'] = $row['pass_role'];
+			$detailrecords['pass_to'] = $row['pass_to'];
 			$detailrecords['solution_date'] = $row['solution_date'];
 			$detailrecords['communication'] = $row['communication'];
 			$detailrecords['uploads'] = $row['uploads'];
@@ -6676,6 +6678,9 @@ class admin
 		if (isset($_POST['staff_assign_to'])) {
 			$staff_assign_to = $_POST['staff_assign_to'];
 		}
+		 $pass_to = $_POST['pass_to'] ?? '';
+
+	
 		if (isset($_POST['location'])) {
 			$location = $_POST['location'];
 		}
@@ -6692,6 +6697,11 @@ class admin
 			if (isset($_POST['solution_date'])) {
 				$solution_date = $_POST['solution_date'];
 			}
+		if (empty($pass_to)) {
+			// pass_to is empty → reset these
+			$role_type = '';
+			$staff_assign_to = '';
+		}
 		}
 		$concern_upload = '';
 		// if(isset($_FILES['concern_upload']) && $_POST['Com_for_solution'] == '1'){
@@ -6748,7 +6758,7 @@ class admin
 
 		$concern_upload = rtrim($concern_upload, ','); //trims the comma at right last
 
-		$updConcern = $mysqli->query("UPDATE `concern_creation` SET role_type='$role_type',staff_assign_to = '$staff_assign_to',`status`= $status,`solution_date`='" . strip_tags($solution_date) . "',`communication`='" . strip_tags($Com_for_solution) . "',`uploads`='" . strip_tags($concern_upload) . "',`location`='" . strip_tags($location) . "',`sol_participants`='" . strip_tags($sol_participants) . "',`solution_remark`='" . strip_tags($solution_remark) . "',`update_user_id`='" . strip_tags($userid) . "',`updated_date`= now() WHERE `id`='" . strip_tags($id) . "' ");
+		$updConcern = $mysqli->query("UPDATE `concern_creation` SET pass_role='$role_type',pass_to = '$staff_assign_to',`status`= $status,`solution_date`='" . strip_tags($solution_date) . "',`communication`='" . strip_tags($Com_for_solution) . "',`uploads`='" . strip_tags($concern_upload) . "',`location`='" . strip_tags($location) . "',`sol_participants`='" . strip_tags($sol_participants) . "',`solution_remark`='" . strip_tags($solution_remark) . "',`update_user_id`='" . strip_tags($userid) . "',`updated_date`= now() WHERE `id`='" . strip_tags($id) . "' ");
 	}
 	function getCustomerRegister($mysqli, $cus_id)
 	{

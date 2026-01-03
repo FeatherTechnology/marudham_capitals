@@ -34,6 +34,7 @@
                                 <th>Department Name</th>
                                 <th>Concern Remark</th>
                                 <th>Assign To</th>
+                                <th>Pass To</th>
                                 <th>Solution Date</th>
                                 <th>Communication</th>
                                 <th>Upload</th>

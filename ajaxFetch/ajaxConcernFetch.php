@@ -45,7 +45,7 @@ $column = array(
 
 $query = "SELECT cc.*,sc.staff_name,cs.concern_subject,ag.ag_name,u.fullname,ag.ag_code
     FROM concern_creation cc
-     JOIN staff_creation sc ON cc.staff_assign_to = sc.staff_id
+     JOIN staff_creation sc ON sc.staff_id = COALESCE(NULLIF(cc.pass_to, ''), cc.staff_assign_to)
     JOIN concern_subject cs ON cc.com_sub = cs.concern_sub_id
     LEFT JOIN agent_creation ag ON cc.ag_name = ag.ag_id
     LEFT JOIN user u ON cc.insert_user_id = u.user_id
