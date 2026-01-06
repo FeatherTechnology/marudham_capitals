@@ -99,7 +99,7 @@ if ($userid == 1) {
     JOIN loan_category_creation lcc ON lcc.loan_category_creation_id = v.loan_category
     WHERE v.status = 0 and (v.cus_status NOT IN(4, 5, 6, 7, 8, 9) and v.cus_status < 14) "; //  < 14 means issued
 } else {
-    $query = "SELECT v.*, cr.autogen_cus_id, a.area_name, sa.sub_area_name, ag.group_name, bc.branch_name, alm.line_name,lcc.loan_category_creation_name
+    $query = "SELECT v.dor,v.cus_name,v.mobile1,v.sub_category,v.loan_amt,v.user_type,v.responsible ,v.cus_data,v.cus_id,v.req_id,v.user_name,v.cus_status,v.agent_id, cr.autogen_cus_id, a.area_name, sa.sub_area_name, ag.group_name, bc.branch_name, alm.line_name,lcc.loan_category_creation_name
     FROM in_verification v
     JOIN customer_register cr ON v.cus_id = cr.cus_id
     JOIN area_list_creation a ON v.area = a.area_id
@@ -183,7 +183,7 @@ foreach ($result as $row) {
     $ag_id = $row['agent_id'];
     if ($ag_id != '') {
 
-        $qry = $connect->query("SELECT * FROM agent_creation where ag_id = $ag_id ");
+        $qry = $connect->query("SELECT ag_name FROM agent_creation where ag_id = $ag_id ");
         $row1 = $qry->fetch();
         $sub_array[] = $row1['ag_name'];
     } else {
@@ -204,44 +204,51 @@ $sub_array[] = $row['cus_data'];
 $result = $connect->query("
     SELECT ii.cus_status, cs.created_date AS last_created_date
     FROM in_issue ii
-    LEFT JOIN customer_status cs ON cs.req_id = ii.req_id
+    LEFT JOIN closed_status cs ON cs.req_id = ii.req_id
     WHERE ii.cus_id = '$cus_id' AND ii.cus_status >= 14
 ");
 
-$existing_type = '';
 
-while ($res = $result->fetch(PDO::FETCH_ASSOC)) {
+$existing_type ='';
+if ($result->rowCount() > 0) {
 
-    // 1️⃣ Additional has highest priority
-    if ($res['cus_status'] >= 14 && $res['cus_status'] < 20) {
-        $existing_type = 'Additional';
-        break; // stop checking further rows
-    }
+    while ($res = $result->fetch(PDO::FETCH_ASSOC)) {
 
-    // 2️⃣ Renewal / Re-Active logic (only if not Additional)
-    if ($res['cus_status'] >= 20 && $existing_type != 'Additional') {
+        // 1️⃣ Additional has highest priority
+        if ($res['cus_status'] >= 14 && $res['cus_status'] < 20) {
+            $existing_type = 'Additional';
+            break; // stop checking further rows
+        }
 
-        $lastDate = $res['last_created_date'];
+        // 2️⃣ Renewal / Re-Active logic (only if not Additional)
+        if ($res['cus_status'] >= 20 && $existing_type != 'Additional') {
 
-        if (!empty($lastDate)) {
-            // End of the month of last created_date
-            $monthEnd = date('Y-m-t', strtotime($lastDate));
+            $lastDate = $res['last_created_date'];
 
-            // First day of next month
-            $nextMonthStart = date('Y-m-d', strtotime($monthEnd . ' +1 day'));
+            if (!empty($lastDate)) {
+                // End of the month of last created_date
+                $monthEnd = date('Y-m-t', strtotime($lastDate));
 
-            // Add 3 months to calculate reactive date
-            $reactiveDate = date('Y-m-d', strtotime($nextMonthStart . ' +3 months'));
+                // First day of next month
+                $nextMonthStart = date('Y-m-d', strtotime($monthEnd . ' +1 day'));
 
-            $today = date('Y-m-d');
+                // Add 3 months to calculate reactive date
+                $reactiveDate = date('Y-m-d', strtotime($nextMonthStart . ' +3 months'));
 
-            // Decide Renewal or Re-Active
-            if ($today < $reactiveDate) {
-                $existing_type = 'Renewal';
-            } else {
-                $existing_type = 'Re-active';
+                $today = date('Y-m-d');
+
+                // Decide Renewal or Re-Active
+                if ($today < $reactiveDate) {
+                    $existing_type = 'Renewal';
+                } else {
+                    $existing_type = 'Re-active';
+                }
             }
         }
+    }
+}else {
+    if ($row['cus_data'] == 'Existing'){
+        $existing_type = 'Existing-New';
     }
 }
 
@@ -253,13 +260,13 @@ while ($res = $result->fetch(PDO::FETCH_ASSOC)) {
     if ($cus_status == '1' or $cus_status == '10' or $cus_status == '11') {
         $sub_array[] = "In Verification";
     } elseif ($cus_status == '12') {
-        $cus_profile = $connect->query("SELECT * FROM `customer_profile` WHERE `req_id` ='$id'");
+        $cus_profile = $connect->query("SELECT req_id FROM `customer_profile` WHERE `req_id` ='$id'");
         $cus_profile_row =  $cus_profile -> rowCount();
 
-        $cus_doc = $connect->query("SELECT * FROM `verification_documentation` WHERE `req_id` ='$id'");
+        $cus_doc = $connect->query("SELECT req_id FROM `verification_documentation` WHERE `req_id` ='$id'");
         $cus_doc_row =  $cus_doc -> rowCount();
 
-        $cus_loan_calc = $connect->query("SELECT * FROM `verification_loan_calculation` WHERE `req_id` ='$id'");
+        $cus_loan_calc = $connect->query("SELECT req_id FROM `verification_loan_calculation` WHERE `req_id` ='$id'");
         $cus_loan_calc_row =  $cus_loan_calc -> rowCount();
 
         if ($cus_profile_row > 0 && $cus_doc_row > 0 && $cus_loan_calc_row > 0) {
@@ -349,7 +356,7 @@ function moneyFormatIndia($num)
 
 function count_all_data($connect)
 {
-    $query     = "SELECT * FROM in_verification";
+    $query     = "SELECT req_id FROM in_verification";
     $statement = $connect->prepare($query);
     $statement->execute();
     return $statement->rowCount();
