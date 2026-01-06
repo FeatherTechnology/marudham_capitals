@@ -75,7 +75,7 @@ foreach ($loanCats as $cat) {
             $issue = $connect->query("
             SELECT ii.cus_status, cc.created_date
             FROM in_issue ii
-            LEFT JOIN customer_status cc ON cc.req_id = ii.req_id
+            LEFT JOIN closed_status cc ON cc.req_id = ii.req_id
             WHERE ii.cus_id = '$cus_id'
               AND ii.cus_status >= 14
               AND ii.req_id != '$req_id'
