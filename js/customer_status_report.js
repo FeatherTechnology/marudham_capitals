@@ -297,9 +297,23 @@ function currentReportCount(search_date, type, line, selected_user, group_map, d
                 { data: 't_current_count' },
                 { data: 'payable_zero' },
                 { data: 'responsible_zero' },
+                { data: 'balance_count' },
                 { data: 'paid' },
                 { data: 'partially_paid' },
+                { data: 'totals_paid' },
+                {
+                    data: 'paid_percentage',
+                    render: function (data) {
+                        return Number(data).toFixed(1) + ' %';
+                    }
+                },
                 { data: 'unpaid' },
+                {
+                    data: 'unpaid_percentage',
+                    render: function (data) {
+                        return Number(data).toFixed(1) + ' %';
+                    }
+                },
                 { data: 'from_pending' }
             ];
 
@@ -335,6 +349,9 @@ function currentReportCount(search_date, type, line, selected_user, group_map, d
             // Pass the table variable to the initColVisFeatures function
             initColVisFeatures(current_table, 'current_table');
 
+            let CurrentPaidPercent = totalRow.balance_count > 0 ? (totalRow.totals_paid / totalRow.balance_count) * 100 : 0;
+            let CurrentUnpaidPercent = totalRow.balance_count > 0 ? (totalRow.unpaid / totalRow.balance_count) * 100 : 0;
+
             let footerHtml = `<tr>
                 <td></td>
                 <td></td>
@@ -344,9 +361,13 @@ function currentReportCount(search_date, type, line, selected_user, group_map, d
                 <td><b>${totalRow.t_current_count}</b></td>
                 <td><b>${totalRow.payable_zero}</b></td>
                 <td><b>${totalRow.responsible_zero}</b></td>
+                <td><b>${totalRow.balance_count}</b></td>
                 <td><b>${totalRow.paid}</b></td>
                 <td><b>${totalRow.partially_paid}</b></td>
+                <td><b>${totalRow.totals_paid}</b></td>
+                <td><b>${CurrentPaidPercent.toFixed(1)} %</b></td>
                 <td><b>${totalRow.unpaid}</b></td>
+                <td><b>${CurrentUnpaidPercent.toFixed(1)} %</b></td>
                 <td><b>${totalRow.from_pending}</b></td>
             </tr>`;
 
@@ -394,7 +415,20 @@ function pendingReportCount(search_date, type, line, selected_user, group_map, d
                 { data: 'today_pending_clear' },
                 { data: 't_pending_clear' },
                 { data: 'partially_paid' },
-                { data: 'unpaid' }
+                { data: 'total_paid_pending' },
+                {
+                    data: 'paid_percentage',
+                    render: function (data) {
+                        return Number(data).toFixed(1) + ' %';
+                    }
+                },
+                { data: 'unpaid' },
+                {
+                    data: 'unpaid_percentage',
+                    render: function (data) {
+                        return Number(data).toFixed(1) + ' %';
+                    }
+                }
             ];
 
             $('#pending_table').DataTable().destroy();
@@ -425,6 +459,9 @@ function pendingReportCount(search_date, type, line, selected_user, group_map, d
                 }
             });
 
+            let PendingPaidPercent = totalRow.t_pending_count > 0 ? (totalRow.total_paid_pending / totalRow.t_pending_count) * 100 : 0;
+            let PendingUnpaidPercent = totalRow.t_pending_count > 0 ? (totalRow.unpaid / totalRow.t_pending_count) * 100 : 0;
+
             let footerHtml = `<tr>
                 <td></td>
                 <td></td>
@@ -435,7 +472,10 @@ function pendingReportCount(search_date, type, line, selected_user, group_map, d
                 <td><b>${totalRow.today_pending_clear}</b></td>
                 <td><b>${totalRow.t_pending_clear}</b></td>
                 <td><b>${totalRow.partially_paid}</b></td>
+                <td><b>${totalRow.total_paid_pending}</b></td>
+                <td><b>${PendingPaidPercent.toFixed(1)} %</b></td>
                 <td><b>${totalRow.unpaid}</b></td>
+                <td><b>${PendingUnpaidPercent.toFixed(1)} %</b></td>
             </tr>`;
 
             $('#pending_table tfoot').html(footerHtml);
@@ -482,7 +522,20 @@ function odReportCount(search_date, type, line, selected_user, group_map, due_fo
                 { data: 'today_od_clear' },
                 { data: 't_od_clear' },
                 { data: 'partially_paid' },
-                { data: 'unpaid' }
+                { data: 'total_paid_od' },
+                {
+                    data: 'paid_percentage',
+                    render: function (data) {
+                        return Number(data).toFixed(1) + ' %';
+                    }
+                },
+                { data: 'unpaid' },
+                {
+                    data: 'unpaid_percentage',
+                    render: function (data) {
+                        return Number(data).toFixed(1) + ' %';
+                    }
+                }
             ];
 
             $('#od_table').DataTable().destroy();
@@ -514,6 +567,9 @@ function odReportCount(search_date, type, line, selected_user, group_map, due_fo
                 }
             });
 
+            let odPaidPercent = totalRow.t_od_count > 0 ? (totalRow.total_paid_od / totalRow.t_od_count) * 100 : 0;
+            let odUnpaidPercent = totalRow.t_od_count > 0 ? (totalRow.unpaid / totalRow.t_od_count) * 100 : 0;
+
             let footerHtml = `<tr>
                 <td></td>
                 <td></td>
@@ -524,7 +580,10 @@ function odReportCount(search_date, type, line, selected_user, group_map, due_fo
                 <td><b>${totalRow.today_od_clear}</b></td>
                 <td><b>${totalRow.t_od_clear}</b></td>
                 <td><b>${totalRow.partially_paid}</b></td>
+                <td><b>${totalRow.total_paid_od}</b></td>
+                <td><b>${odPaidPercent.toFixed(1)} %</b></td>
                 <td><b>${totalRow.unpaid}</b></td>
+                <td><b>${odUnpaidPercent.toFixed(1)} %</b></td>
             </tr>`;
 
             $('#od_table tfoot').html(footerHtml);

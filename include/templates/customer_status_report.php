@@ -58,7 +58,7 @@
 
 			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 				<div class="card">
-						<!-- Customer Status Report   name changes to  Collection Status Report-->
+					<!-- Customer Status Report   name changes to  Collection Status Report-->
 					<div class="card-header">Collection Status Report</div>
 					<div class="card-body">
 						<div id="pending_od_table_div" class="table-divs" style="overflow-x: auto;">
@@ -72,11 +72,15 @@
 										<th>Total Customer Count</th>
 										<th>Total Current Count</th>
 										<th>Payable Zero</th>
-                                        <th>Responsible</th>
-                                        <th>Paid</th>
-                                        <th>Partial Paid</th>
-                                        <th>Un Paid</th>
-                                        <th>From Pending</th>
+										<th>Responsible</th>
+										<th>Balance Count</th>
+										<th>Paid</th>
+										<th>Partial Paid</th>
+										<th>Total Paid</th>
+										<th>Paid %</th>
+										<th>Un Paid</th>
+										<th>Unpaid %</th>
+										<th>From Pending</th>
 									</tr>
 								</thead>
 								<tbody></tbody>
@@ -94,7 +98,10 @@
 										<th>Today Pending Clear</th>
 										<th>Total Pending Clear</th>
 										<th>Partial Paid</th>
+										<th>Total Paid</th>
+										<th>Paid %</th>
 										<th>Un Paid</th>
+										<th>Unpaid %</th>
 									</tr>
 								</thead>
 								<tbody></tbody>
@@ -112,7 +119,10 @@
 										<th>Today OD Clear</th>
 										<th>Total OD Clear</th>
 										<th>Partial Paid</th>
+										<th>Total Paid</th>
+										<th>Paid %</th>
 										<th>Un Paid</th>
+										<th>Unpaid %</th>
 									</tr>
 								</thead>
 								<tbody></tbody>
