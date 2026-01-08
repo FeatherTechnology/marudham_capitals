@@ -10,7 +10,7 @@ $feedbackID              = $_POST['feedbackID'];
 
 if($feedbackID == ''){
 
-$insert_qry = $connect ->query("INSERT INTO `verification_cus_feedback`( `cus_id`, `feedback_label`, `cus_feedback`,`feedback_remark`) VALUES ('$cus_id','$feedback_label','$cus_feedback','$feedback_remark')");
+$insert_qry = $connect ->query("INSERT INTO `verification_cus_feedback`( `cus_id`, `feedback_label`, `cus_feedback`,`feedback_remark`,`insert_login_id`,`inserted_date`,) VALUES ('$cus_id','$feedback_label','$cus_feedback','$feedback_remark','$user_id',now())");
 
 }
 else{

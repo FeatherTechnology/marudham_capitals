@@ -1,8 +1,15 @@
 <?php
 include '../ajaxconfig.php';
 ?>
-
-<h5> Family Data </h5>
+<div style="display: flex; align-items: center;">
+    <div>
+        <h5> Family Data </h5>
+    </div>
+    <div style="margin-left: 44px;">
+        <input type="button" class="btn btn-primary" id='hide_fam_data' name='hide_fam_data' value="Hide" style="margin: 5px;">
+        <input type="button" class="btn btn-primary" id='show_fam_data' name='show_fam_data' value="Show" style="margin: 5px; display: none;">
+    </div>
+</div>
 <table class="table custom-table " id="fam_datacheck">
     <thead>
         <tr>

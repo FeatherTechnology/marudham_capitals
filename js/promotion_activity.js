@@ -839,7 +839,7 @@ function intNotintOnclick() {
             $(".toggle-button[value='Renewal']").trigger('click');
         } else if (orgin_table === 'repromotion') {
             $(".toggle-button[value='Repromotion']").trigger('click');
-        } else if (orgin_table === 're_Active') {
+        } else if (orgin_table === 're_active') {
             $(".toggle-button[value='Re-active']").trigger('click');
         } else {
             resetNewPromotionTable();

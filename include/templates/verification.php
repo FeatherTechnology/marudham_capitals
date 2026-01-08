@@ -3951,7 +3951,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 	<div class="modal-dialog modal-lg " role="document">
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLongTitle">Add Feedback Lable  </h5>
+				<h5 class="modal-title" id="exampleModalLongTitle">Add Feedback Label </h5>
 				<button type="button" class="close" data-dismiss="modal" tabindex="7" aria-label="Close" onclick="getFeedbackLable()">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -3971,9 +3971,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 											<input type="text" tabindex="4" class="form-control" id="feedbackname" name="feedbackname" value="" placeholder="Enter Feedback Name">
 										</div>
 									</div>
-									<!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-10 col-12">
-										
-									</div> -->
+									
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-10 col-12 d-flex align-items-center" style="margin-top: 20px;">
 										<div class="form-group">
 											<button type="submit" name="submit_feedback_lable" id="submit_feedback_lable" class="btn btn-primary" value="Submit" tabindex="5"><span class="icon-check"></span>&nbsp;Submit</button>

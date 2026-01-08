@@ -6,7 +6,7 @@ include '../ajaxconfig.php';
     <thead>
         <tr>
             <th width="20%"> S.No </th>
-            <th> Feedback Label Name </th>
+            <th> Feedback Label </th>
             <th> ACTION </th>
 
         </tr>

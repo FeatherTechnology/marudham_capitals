@@ -145,7 +145,7 @@ $(document).ready(function () {
 
         let category = $('#category').val();
         $("#check_name, #check_mobileno, #check_aadhar").empty();
-        $("#cus_check, #fam_check, #group_check").empty();
+        $("#cus_check, #fam_check").empty();
 
         if (category == 0) {
             $('#nameCheck').show();
@@ -181,7 +181,7 @@ $(document).ready(function () {
         let name = $(this).val();
         let category = $('#category').val();
         let req_id = $('#req_id').val();
-        $("#cus_check, #fam_check, #group_check").empty();
+        $("#cus_check, #fam_check").empty();
 
         if (name != '') {
             $.ajax({
@@ -206,19 +206,32 @@ $(document).ready(function () {
                 }
             });
 
-            $.ajax({
-                url: 'verificationFile/verification_group_datacheck.php',
-                type: 'POST',
-                data: { "name": name, "req_id": req_id, "category": category },
-                cache: false,
-                success: function (html) {
-                    $("#group_check").empty();
-                    $("#group_check").html(html);
-                }
-            });
         }
+    });
+    
+    $(document).on("click", "#hide_cus_data", function () {
+        $('#cus_datacheck').hide();
+        $('#hide_cus_data').hide();
+        $('#show_cus_data ').show();
+    });
 
-    })
+    $(document).on("click", "#show_cus_data", function () {
+        $('#hide_cus_data').show();
+        $('#show_cus_data').hide();
+        $('#cus_datacheck').show();
+    });
+
+    $(document).on("click", "#hide_fam_data", function () {
+        $('#fam_datacheck').hide();
+        $('#hide_fam_data').hide();
+        $('#show_fam_data').show();
+    });
+    
+    $(document).on("click", "#show_fam_data", function () {
+        $('#hide_fam_data').show();
+        $('#show_fam_data').hide();
+        $('#fam_datacheck').show();
+    });
 
 })//Document Ready End
 

@@ -1307,6 +1307,12 @@ if($idupd>0)
 									<label class="custom-control-label" for="area_loan_count_report">Area Loan Count Report</label>
 								</div>
 							</div>
+							<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+								<div class="custom-control custom-checkbox">
+									<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($no_due_pay_report==0){ echo'checked'; }} ?> tabindex="84" class="analysis-checkbox   screen-validations" id="no_due_pay_report" name="no_due_pay_report" disabled>&nbsp;&nbsp;
+									<label class="custom-control-label" for="no_due_pay_report">No Due Pay </label>
+								</div>
+							</div>
 						</div>
 					</div>
 					<br>

@@ -56,7 +56,7 @@ $column = array(
 );
 
 if ($userid == 1) {
-    $query = 'SELECT v.*, cr.autogen_cus_id, a.area_name, sa.sub_area_name, ag.group_name, bc.branch_name, alm.line_name, lcc.loan_category_creation_name
+    $query = 'SELECT v.dor, v.cus_name, v.cus_id, v.sub_category, v.loan_amt, v.user_type, v.responsible, v.cus_data, v.req_id, v.cus_status, v.agent_id, cr.autogen_cus_id, a.area_name, sa.sub_area_name, ag.group_name, bc.branch_name, alm.line_name, lcc.loan_category_creation_name
     FROM in_verification v
     JOIN customer_register cr ON v.cus_id = cr.cus_id
     JOIN area_list_creation a ON v.area = a.area_id
@@ -67,7 +67,7 @@ if ($userid == 1) {
     JOIN loan_category_creation lcc ON lcc.loan_category_creation_id = v.loan_category
     WHERE v.status = 0 and v.cus_status IN(2,3,13)'; //2-in approval, 3-in ack,6-cancel approval, 7-cancel_ack,13-in issue.
 } else {
-    $query = "SELECT v.*, cr.autogen_cus_id, a.area_name, sa.sub_area_name, ag.group_name, bc.branch_name, alm.line_name, lcc.loan_category_creation_name
+    $query = "SELECT v.dor, v.cus_name, v.cus_id, v.sub_category, v.loan_amt, v.user_type, v.responsible, v.cus_data, v.req_id, v.cus_status, v.agent_id, cr.autogen_cus_id, a.area_name, sa.sub_area_name, ag.group_name, bc.branch_name, alm.line_name, lcc.loan_category_creation_name
     FROM in_verification v
     JOIN customer_register cr ON v.cus_id = cr.cus_id
     JOIN area_list_creation a ON v.area = a.area_id
@@ -247,7 +247,7 @@ function moneyFormatIndia($num)
 
 function count_all_data($connect)
 {
-    $query     = "SELECT * FROM in_verification";
+    $query     = "SELECT req_id FROM in_verification";
     $statement = $connect->prepare($query);
     $statement->execute();
     return $statement->rowCount();
