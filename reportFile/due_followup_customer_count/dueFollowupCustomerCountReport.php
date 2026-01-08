@@ -156,7 +156,7 @@ while ($userRow = $userQry->fetch()) {
 
         // ===== Paid Summary =====
         $paidSummary = [];
-        // $current_loanId = [];
+        // $current_loanId = []; // For debugging purpose
         $paidQry = $connect->query("SELECT c.req_id, SUM(c.due_amt_track) AS total_paid,
                 MIN(c.due_amt) AS monthly_due, MIN(a.due_start_from) AS due_start_from,
                 MAX(c.coll_date) AS last_paid_date,
@@ -221,6 +221,9 @@ while ($userRow = $userQry->fetch()) {
 
             if ($iscurrentMonthStart) {
                 $loan_category_data[$cat_id]['t_current_count']++;
+                // $current_loanId = $row['loan_id']; // For debugging purpose
+                // print_r($current_loanId); // For debugging purpose
+                // echo "<br>"; // For debugging purpose
 
                 $isCurrentCustomer = true;
 
@@ -268,8 +271,8 @@ while ($userRow = $userQry->fetch()) {
                 }
             }
         }
- // end customer loop
- 
+        // end customer loop
+
         // ===== Calculate total paid & percentages =====
         $total_paid = $loan_category_data[$cat_id]['paid'] + $loan_category_data[$cat_id]['partially_paid'];
 
@@ -277,10 +280,9 @@ while ($userRow = $userQry->fetch()) {
 
         $loan_category_data[$cat_id]['total_paid'] = $total_paid;
 
-        $loan_category_data[$cat_id]['paid_percentage'] = ($balance > 0)? round(($total_paid / $balance) * 100, 1) : 0;
-    
+        $loan_category_data[$cat_id]['paid_percentage'] = ($balance > 0) ? round(($total_paid / $balance) * 100, 1) : 0;
+
         $loan_category_data[$cat_id]['unpaid_percentage'] = ($balance > 0) ? round(($loan_category_data[$cat_id]['unpaid'] / $balance) * 100, 1) : 0;
-    
     } // end loan category loop
 
     foreach ($loan_category_data as $cat_data) {

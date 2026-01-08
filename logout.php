@@ -20,8 +20,11 @@ if (ini_get("session.use_cookies")) {
         $params["httponly"]
     );
 }
-
-// Redirect the user
-header("Location: https://localhost/marudham_capitals/");
-exit();
 ?>
+<script>
+    // FORCE LOGOUT ACROSS ALL TABS
+    localStorage.setItem('force-logout', Date.now());
+
+    // Redirect after broadcast
+    window.location.href = "https://localhost/marudham_capitals/";
+</script>

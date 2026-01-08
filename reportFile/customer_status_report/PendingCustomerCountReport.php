@@ -2,15 +2,16 @@
 <?php
 include '../../ajaxconfig.php';
 
-$search_date = $_POST['search_date'];
-$type            = $_POST['type'];
-$line            = isset($_POST['line']) ? $_POST['line'] : '';
-$user_id = isset($_POST['user_id']) ? $_POST['user_id'] : '';
-$group_map            = isset($_POST['group_map']) ? $_POST['group_map'] : '';
-$due_followup            = isset($_POST['due_followup']) ? $_POST['due_followup'] : '';
-$sub_status_type = $_POST['sub_status_type'];
-$loan_category = $_POST['loan_category'];
+$search_date        = $_POST['search_date'];
+$type               = $_POST['type'];
+$line               = isset($_POST['line']) ? $_POST['line'] : '';
+$user_id            = isset($_POST['user_id']) ? $_POST['user_id'] : '';
+$group_map          = isset($_POST['group_map']) ? $_POST['group_map'] : '';
+$due_followup       = isset($_POST['due_followup']) ? $_POST['due_followup'] : '';
+$sub_status_type    = $_POST['sub_status_type'];
+$loan_category      = $_POST['loan_category'];
 $toDate_month_start = date('Y-m-01', strtotime($search_date));
+
 if (!is_array($loan_category)) {
     $loan_category = [$loan_category];
 }
@@ -23,9 +24,11 @@ $user_id = array_unique(array_map('intval', $user_id));
 if (!is_array($line)) {
     $line = explode(',', $line);
 }
+
 if (!is_array($group_map)) {
     $group_map = explode(',', $group_map);
 }
+
 if (!is_array($due_followup)) {
     $due_followup = explode(',', $due_followup);
 }
@@ -73,11 +76,11 @@ if ($type == 1) {
         echo json_encode(["data" => []]);
         exit;
     }
-    $line_id_str = implode(',', $line_ids);
-    $condition   = "alm.map_id IN ($line_id_str)";
-    $joinTable   = "JOIN area_line_mapping alm ON FIND_IN_SET(al.area_id, alm.area_id)";
-    $userName    = implode(', ', array_unique($display_names));
-    $nameField = "NULL";
+    $line_id_str    = implode(',', $line_ids);
+    $condition      = "alm.map_id IN ($line_id_str)";
+    $joinTable      = "JOIN area_line_mapping alm ON FIND_IN_SET(al.area_id, alm.area_id)";
+    $userName       = implode(', ', array_unique($display_names));
+    $nameField      = "NULL";
 } else if ($type == 3) {
     // 🔹 Group based
     if (empty($group_map)) {
@@ -113,13 +116,12 @@ while ($row = $loanCatQry->fetch()) {
 }
 // Step 2: Fetch Pending Current req_ids to exclude
 $odReqIds = [];
-$odQuery = $connect->query("
-    SELECT DISTINCT cs3.req_id 
+$odQuery = $connect->query("SELECT DISTINCT cs3.req_id 
     FROM customer_status cs3 
     JOIN collection col ON cs3.req_id = col.req_id 
     WHERE cs3.sub_status = 'OD' 
     AND col.coll_sub_status IN ('Current','Due Nil','Pending','OD') 
-     AND DATE_FORMAT(col.coll_date, '%Y-%m-01') >= DATE_FORMAT('$search_date', '%Y-%m-01');
+    AND DATE_FORMAT(col.coll_date, '%Y-%m-01') >= DATE_FORMAT('$search_date', '%Y-%m-01');
 ");
 
 while ($row = $odQuery->fetch(PDO::FETCH_ASSOC)) {
@@ -147,27 +149,21 @@ $DueNilReqIdStr = !empty($DueNilReqIds) ? implode(',', $DueNilReqIds) : 'NULL';
 foreach ($loan_category as $cat_id) {
     // Step 1: Fetch customers
     $where = "AND alc.loan_category = $cat_id";
-    $grp_condition = "";
-    if ($type == 4) {
-        // $where .= " AND adm.loan_category_id = $cat_id";
-        $grp_condition = "GROUP BY ii.req_id";
-    }
 
-    $custQry = $connect->query("
-        SELECT 
-            ii.req_id,
-            ii.loan_id,
-            cs.sub_status,
-            cs.bal_amnt,  
-            alc.due_amt_cal,
-            alc.due_period,
-            alc.tot_amt_cal,
-            alc.sub_category,
-            alc.due_start_from,
-            alc.due_method_scheme,
-            alc.due_method_calc,
-            alc.maturity_month as maturity_date,
-            $nameField as map_name
+    $custQry = $connect->query("SELECT 
+        ii.req_id,
+        ii.loan_id,
+        cs.sub_status,
+        cs.bal_amnt,  
+        alc.due_amt_cal,
+        alc.due_period,
+        alc.tot_amt_cal,
+        alc.sub_category,
+        alc.due_start_from,
+        alc.due_method_scheme,
+        alc.due_method_calc,
+        alc.maturity_month as maturity_date,
+        $nameField as map_name
         FROM in_issue ii
         JOIN acknowlegement_customer_profile cp ON ii.req_id = cp.req_id
         JOIN acknowlegement_loan_calculation alc ON ii.req_id = alc.req_id
@@ -176,25 +172,26 @@ foreach ($loan_category as $cat_id) {
         $joinTable
         LEFT JOIN closing_customer cc ON ii.req_id = cc.req_id
         WHERE $condition
-          $where 
-          AND (
+            $where 
+            AND (
                 cs.bal_amnt > 0
-             OR (
-                cs.sub_status = 'Closed'
-                AND cc.closing_date IS NOT NULL
-                AND (
-                    YEAR(cc.closing_date) > YEAR('$search_date')
-                    OR (
-                        YEAR(cc.closing_date) = YEAR('$search_date')
-                        AND MONTH(cc.closing_date) >= MONTH('$search_date')
+                OR (
+                    cs.sub_status = 'Closed'
+                    AND cc.closing_date IS NOT NULL
+                    AND (
+                        YEAR(cc.closing_date) > YEAR('$search_date')
+                        OR (
+                            YEAR(cc.closing_date) = YEAR('$search_date')
+                            AND MONTH(cc.closing_date) >= MONTH('$search_date')
+                        )
                     )
                 )
-             )
-             OR (ii.req_id IN ($odReqIdStr))
-             OR (ii.req_id IN ($DueNilReqIdStr))
-          )
-          AND DATE(ii.updated_date) < '$toDate_month_start' $grp_condition;
+                OR (ii.req_id IN ($odReqIdStr))
+                OR (ii.req_id IN ($DueNilReqIdStr))
+            )
+            AND DATE(ii.updated_date) < '$toDate_month_start';
     ");
+
     $customers = $custQry->fetchAll(PDO::FETCH_ASSOC);
     if (empty($customers)) continue;
 
@@ -204,11 +201,10 @@ foreach ($loan_category as $cat_id) {
     // Step 2: Fetch all collections for these customers in one query
     $collectionData = [];
     if (!empty($id_list)) {
-        $colQry = $connect->query("
-            SELECT req_id, coll_date, pending_amt, due_amt_track, total_paid_track
+        $colQry = $connect->query("SELECT req_id, coll_date, pending_amt, due_amt_track, total_paid_track
             FROM collection
             WHERE req_id IN ($id_list)
-              AND DATE(coll_date) <= '$search_date'
+            AND DATE(coll_date) <= '$search_date'
             ORDER BY req_id, coll_date ASC
         ");
         while ($col = $colQry->fetch(PDO::FETCH_ASSOC)) {
@@ -217,62 +213,116 @@ foreach ($loan_category as $cat_id) {
     }
 
     $paidSummary = [];
-    $paidQry = $connect->query("SELECT 
-    c.req_id, 
+    $paidQry = $connect->query("SELECT c.req_id, 
     SUM(c.due_amt_track) AS total_paid, 
     MIN(c.due_amt) AS monthly_due, 
     MIN(a.due_start_from) AS due_start_from, 
     MAX(c.coll_date) AS last_paid_date,
     COUNT(DISTINCT EXTRACT(YEAR_MONTH FROM c.coll_date)) AS paid_month_count,
     COALESCE(SUM(CASE WHEN c.coll_date < DATE_FORMAT('$search_date', '%Y-%m-01') 
-                      THEN c.due_amt_track ELSE 0 END), 0) AS till_last_month_paid
-FROM collection c
-JOIN acknowlegement_loan_calculation a 
-      ON c.req_id = a.req_id
-WHERE DATE(c.coll_date) <= '$search_date'
-  AND c.req_id IN ($id_list)
-GROUP BY c.req_id;
-");
+    THEN c.due_amt_track ELSE 0 END), 0) AS till_last_month_paid
+    FROM collection c
+    JOIN acknowlegement_loan_calculation a ON c.req_id = a.req_id
+    WHERE DATE(c.coll_date) <= '$search_date'
+    AND c.req_id IN ($id_list)
+    GROUP BY c.req_id;");
+
     while ($row = $paidQry->fetch()) {
         $start = new DateTime($row['due_start_from']);
         $end = new DateTime($search_date);
         $months = ($end->format('Y') - $start->format('Y')) * 12 + ($end->format('m') - $start->format('m')) + 1;
 
         $paidSummary[$row['req_id']] = [
-            'total_paid' => (float)$row['total_paid'],
-            'expected_due' => (float)($months * $row['monthly_due']),
-            'previous_due' => (float)(($months - 1) * $row['monthly_due']),
-            'last_paid_date' => $row['last_paid_date'],
-            'till_last_month_paid' => $row['till_last_month_paid'],
-            'paid_month_count' => $row['paid_month_count'],
-            'monthly_due' => (float)$row['monthly_due'],
-            'due_start_from' => $row['due_start_from'],
-            'future_due' => (float)(($months + 1) * $row['monthly_due']),
+            'total_paid'            => (float)$row['total_paid'],
+            'expected_due'          => (float)($months * $row['monthly_due']),
+            'previous_due'          => (float)(($months - 1) * $row['monthly_due']),
+            'last_paid_date'        => $row['last_paid_date'],
+            'till_last_month_paid'  => $row['till_last_month_paid'],
+            'paid_month_count'      => $row['paid_month_count'],
+            'monthly_due'           => (float)$row['monthly_due'],
+            'due_start_from'        => $row['due_start_from'],
+            'future_due'            => (float)(($months + 1) * $row['monthly_due']),
         ];
     }
 
-
     $coll_DueNilReqIds = [];
     $coll_DueNilQuery = $connect->query("SELECT DISTINCT cs5.req_id
-FROM customer_status cs5
-JOIN (
-    SELECT c.req_id, MIN(c.coll_date) AS first_coll_date
-    FROM collection c
-    WHERE MONTH(c.coll_date) = MONTH('$search_date')
-    AND YEAR(c.coll_date) = YEAR('$search_date')
-    GROUP BY c.req_id
-) first_col ON cs5.req_id = first_col.req_id
-JOIN collection col
-    ON col.req_id = first_col.req_id
-    AND col.coll_date = first_col.first_coll_date
-WHERE cs5.sub_status = 'Closed'
-AND col.coll_sub_status IN ('Due Nil');
-");
+    FROM customer_status cs5
+    JOIN (
+        SELECT c.req_id, MIN(c.coll_date) AS first_coll_date
+        FROM collection c
+        WHERE MONTH(c.coll_date) = MONTH('$search_date')
+        AND YEAR(c.coll_date) = YEAR('$search_date')
+        GROUP BY c.req_id
+    ) first_col ON cs5.req_id = first_col.req_id
+    JOIN collection col
+        ON col.req_id = first_col.req_id
+        AND col.coll_date = first_col.first_coll_date
+    WHERE cs5.sub_status = 'Closed'
+    AND col.coll_sub_status IN ('Due Nil');");
 
     while ($row = $coll_DueNilQuery->fetch(PDO::FETCH_ASSOC)) {
         $coll_DueNilReqIds[] = $row['req_id'];
     }
-    $coll_DueNilReqIdStr = !empty($coll_DueNilReqIds) ? implode(',', $coll_DueNilReqIds) : 'NULL';
+
+    $Due_Nil_reqIDS = [];
+    $Due_Nil_query = $connect->query("SELECT c.req_id
+    FROM
+        collection c
+    JOIN customer_status cs
+        ON cs.req_id = c.req_id
+    WHERE
+        c.coll_sub_status = 'Due Nil'
+        AND DATE(c.coll_date) > '$search_date'
+        AND cs.sub_status = 'Closed'
+        -- :lock: Ensure Due Nil is FIRST entry of that month
+        AND NOT EXISTS (
+            SELECT 1
+            FROM collection x
+            WHERE
+                x.req_id = c.req_id
+                AND YEAR(x.coll_date) = YEAR(c.coll_date)
+                AND MONTH(x.coll_date) = MONTH(c.coll_date)
+                AND x.coll_date < c.coll_date
+        )
+        AND (
+            -- Case 1: NO collection in search month
+            NOT EXISTS (
+                SELECT 1
+                FROM collection s
+                WHERE
+                    s.req_id = c.req_id
+                    AND YEAR(s.coll_date) = YEAR('$search_date')
+                    AND MONTH(s.coll_date) = MONTH('$search_date')
+            )
+            OR
+            -- Case 2: NO collection in search & previous month
+            (
+                NOT EXISTS (
+                SELECT 1
+                FROM collection s2
+                WHERE
+                    s2.req_id = c.req_id
+                    AND YEAR(s2.coll_date) = YEAR('$search_date')
+                    AND MONTH(s2.coll_date) = MONTH('$search_date')
+            )
+            AND NOT EXISTS (
+                SELECT 1
+                FROM collection p
+                WHERE
+                    p.req_id = c.req_id
+                    AND YEAR(p.coll_date) = YEAR(DATE_SUB('$search_date', INTERVAL 1 MONTH))
+                    AND MONTH(p.coll_date) = MONTH(DATE_SUB('$search_date', INTERVAL 1 MONTH))
+            )
+        )
+    );");
+
+    while ($row = $Due_Nil_query->fetch(PDO::FETCH_ASSOC)) {
+        $Due_Nil_reqIDS[] = $row['req_id'];
+    }
+
+    $colls_DueNilReqIds = array_merge($coll_DueNilReqIds, $Due_Nil_reqIDS);
+
     // Step 3: Build groups
     $groups = [];
     foreach ($customers as $cust) {
@@ -285,11 +335,11 @@ AND col.coll_sub_status IN ('Due Nil');
 
     // Step 4: Process each group
     foreach ($groups as $groupName => $custList) {
-        $total_count = $t_pending_count = $today_pending_clear = $t_pending_clear = $partially_paid = $unpaid = 0;
+        $total_count = $t_pending_count = $today_pending_clear = $t_pending_clear = $partially_paid = $total_paid_pending = $paid_percentage = $unpaid = $unpaid_percentage = 0;
 
         foreach ($custList as $cust) {
             $total_count++;
-            if (in_array($cust['req_id'], $coll_DueNilReqIds)) {
+            if (in_array($cust['req_id'], $colls_DueNilReqIds)) {
                 $total_count--;
             }
 
@@ -312,7 +362,6 @@ AND col.coll_sub_status IN ('Due Nil');
                     $collectedTillMonthStart += (int)$coll['due_amt_track']; // cast to int
                 }
             }
-
 
             $pending_amount_atMonthStart = ($pending_month * $cust['due_amt_cal']) - $collectedTillMonthStart;
 
@@ -340,11 +389,11 @@ AND col.coll_sub_status IN ('Due Nil');
 
                 // // Pending cleared within the month
                 if (isset($paidSummary[$cust['req_id']])) {
-                    $pay_amnt     = $paidSummary[$cust['req_id']]['expected_due'] ?? null;
-                    $previous_due = $paidSummary[$cust['req_id']]['previous_due'] ?? null;
-                    $total_paid   = $paidSummary[$cust['req_id']]['total_paid'] ?? null;
+                    $pay_amnt               = $paidSummary[$cust['req_id']]['expected_due'] ?? null;
+                    $previous_due           = $paidSummary[$cust['req_id']]['previous_due'] ?? null;
+                    $total_paid             = $paidSummary[$cust['req_id']]['total_paid'] ?? null;
                     $hadCollectionThisMonth = false;
-                    $hadCollectionToday = false; // ✅ New flag
+                    $hadCollectionToday     = false; // ✅ New flag
 
                     foreach ($collList as $coll) {
                         $collDate = date('Y-m-d', strtotime($coll['coll_date']));
@@ -385,43 +434,55 @@ AND col.coll_sub_status IN ('Due Nil');
             }
         }
 
-        $display_name = ($type == 2) ? $userName : $groupName;
+        $display_name       = ($type == 2) ? $userName : $groupName;
+        $total_paid_pending = $t_pending_clear + $partially_paid;
+        $paid_percentage    = ($t_pending_count > 0) ? round(($total_paid_pending / $t_pending_count) * 100, 1) : 0.0;
+        $unpaid_percentage  = ($t_pending_count > 0) ? round(($unpaid / $t_pending_count) * 100, 1) : 0.0;
 
         $data[] = [
-            'sno' => $sno++,
-            'date' => date('d-m-Y', strtotime($search_date)),
-            'fullname' => $display_name,
-            'loan_category' => $loan_category_map[$cat_id] ?? $cat_id,
-            'total_count' => $total_count,
-            't_pending_count' => $t_pending_count,
-            'today_pending_clear' => $today_pending_clear,
-            't_pending_clear' => $t_pending_clear,
-            'partially_paid' => $partially_paid,
-            'unpaid' => $unpaid
+            'sno'                   => $sno++,
+            'date'                  => date('d-m-Y', strtotime($search_date)),
+            'fullname'              => $display_name,
+            'loan_category'         => $loan_category_map[$cat_id] ?? $cat_id,
+            'total_count'           => $total_count,
+            't_pending_count'       => $t_pending_count,
+            'today_pending_clear'   => $today_pending_clear,
+            't_pending_clear'       => $t_pending_clear,
+            'partially_paid'        => $partially_paid,
+            'total_paid_pending'    => $total_paid_pending,
+            'paid_percentage'       => ($t_pending_count > 0) ? round(($total_paid_pending / $t_pending_count) * 100, 1) : 0.0,
+            'unpaid'                => $unpaid,
+            'unpaid_percentage'     => ($t_pending_count > 0) ? round(($unpaid / $t_pending_count) * 100, 1) : 0.0,
         ];
     }
 }
 
 $grand_total = [
-    'sno' => '',
-    'date' => '',
-    'fullname' => 'Total',
-    'loan_category' => '',
-    'total_count' => 0,
-    't_pending_count' => 0,
-    'today_pending_clear' => 0,
-    't_pending_clear' => 0,
-    'partially_paid' => 0,
-    'unpaid' => 0
+    'sno'                   => '',
+    'date'                  => '',
+    'fullname'              => 'Total',
+    'loan_category'         => '',
+    'total_count'           => 0,
+    't_pending_count'       => 0,
+    'today_pending_clear'   => 0,
+    't_pending_clear'       => 0,
+    'partially_paid'        => 0,
+    'total_paid_pending'    => 0,
+    'paid_percentage'       => 0,
+    'unpaid'                => 0,
+    'unpaid_percentage'     => 0,
 ];
 
 foreach ($data as $row) {
-    $grand_total['total_count']       += $row['total_count'];
-    $grand_total['t_pending_count']   += $row['t_pending_count'];
+    $grand_total['total_count']         += $row['total_count'];
+    $grand_total['t_pending_count']     += $row['t_pending_count'];
     $grand_total['today_pending_clear'] += $row['today_pending_clear'];
-    $grand_total['t_pending_clear']   += $row['t_pending_clear'];
-    $grand_total['partially_paid']    += $row['partially_paid'];
-    $grand_total['unpaid']            += $row['unpaid'];
+    $grand_total['t_pending_clear']     += $row['t_pending_clear'];
+    $grand_total['partially_paid']      += $row['partially_paid'];
+    $grand_total['total_paid_pending']  += $row['total_paid_pending'];
+    $grand_total['paid_percentage']     += $row['paid_percentage'];
+    $grand_total['unpaid']              += $row['unpaid'];
+    $grand_total['unpaid_percentage']   += $row['unpaid_percentage'];
 }
 
 // Append totals to the end
