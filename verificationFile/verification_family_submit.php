@@ -22,7 +22,7 @@ $relation_Occupation     = $_POST['relation_Occupation'];
 $relation_Income         = $_POST['relation_Income'];
 $relation_Blood          = $_POST['relation_Blood'];
 $famTableId              = $_POST['famTableId'];
-$authorize              = $_POST['authorize'];
+$authorize               = ($_POST['authorize'] == 1) ? 1 : 0;
 
 
 if ($famTableId == '') {

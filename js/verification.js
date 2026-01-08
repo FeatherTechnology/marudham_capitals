@@ -1169,13 +1169,40 @@ $(document).ready(function () {
   });
   $(document).on("click", "#add_cus_label", function () {
     getFeedbackLable();
-  })
+  });
+
   $(document).on("click", "#add_cus_feedback", function () {
     cusfeedbacklist();
-  })
+  });
+
   $(document).on("click", "#submit_feedback_lable", function () {
     submitfeedbackname();
-  })
+  });
+
+  $(document).on("click", "#hide_cus_data", function () {
+    $('#cus_datacheck').hide();
+    $('#hide_cus_data').hide();
+    $('#show_cus_data ').show();
+  });
+
+  $(document).on("click", "#show_cus_data", function () {
+    $('#hide_cus_data').show();
+    $('#show_cus_data').hide();
+    $('#cus_datacheck').show();
+  });
+
+  $(document).on("click", "#hide_fam_data", function () {
+    $('#fam_datacheck').hide();
+    $('#hide_fam_data').hide();
+    $('#show_fam_data').show();
+  });
+
+  $(document).on("click", "#show_fam_data", function () {
+    $('#hide_fam_data').show();
+    $('#show_fam_data').hide();
+    $('#fam_datacheck').show();
+  });
+  
   ///Hide AND Show doc Card END
 }); ////////Document Ready End
 

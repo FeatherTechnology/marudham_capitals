@@ -26,9 +26,9 @@
 							<table id="due_list_report_table" class="table custom-table">
 								<thead>
                                 <th>S.No</th>
-                                <th>Group</th>
+                                <!-- <th>Group</th> -->
                                 <th>Line</th>
-                                <th>Followup</th>
+                                <!-- <th>Followup</th> -->
                                 <th>Loan ID</th>
                                 <th>Loan Date</th>
                                 <th>Due start Date</th>

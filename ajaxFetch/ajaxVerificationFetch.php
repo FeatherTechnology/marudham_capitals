@@ -88,7 +88,7 @@ $column = array(
 
 
 if ($userid == 1) {
-    $query = "SELECT v.*, cr.autogen_cus_id, a.area_name, sa.sub_area_name, ag.group_name, bc.branch_name, alm.line_name,lcc.loan_category_creation_name
+    $query = "SELECT v.dor, v.cus_name, v.mobile1, v.sub_category, v.loan_amt, v.user_type, v.responsible, v.cus_data, v.cus_id, v.req_id, v.user_name, v.cus_status, v.agent_id,  cr.autogen_cus_id,  a.area_name,  sa.sub_area_name,  ag.group_name,  bc.branch_name,  alm.line_name, lcc.loan_category_creation_name
     FROM in_verification v
     JOIN customer_register cr ON v.cus_id = cr.cus_id
     JOIN area_list_creation a ON v.area = a.area_id
@@ -99,7 +99,7 @@ if ($userid == 1) {
     JOIN loan_category_creation lcc ON lcc.loan_category_creation_id = v.loan_category
     WHERE v.status = 0 and (v.cus_status NOT IN(4, 5, 6, 7, 8, 9) and v.cus_status < 14) "; //  < 14 means issued
 } else {
-    $query = "SELECT v.dor,v.cus_name,v.mobile1,v.sub_category,v.loan_amt,v.user_type,v.responsible ,v.cus_data,v.cus_id,v.req_id,v.user_name,v.cus_status,v.agent_id, cr.autogen_cus_id, a.area_name, sa.sub_area_name, ag.group_name, bc.branch_name, alm.line_name,lcc.loan_category_creation_name
+    $query = "SELECT v.dor, v.cus_name, v.mobile1, v.sub_category, v.loan_amt, v.user_type, v.responsible , v.cus_data, v.cus_id, v.req_id, v.user_name, v.cus_status, v.agent_id,  cr.autogen_cus_id,  a.area_name,  sa.sub_area_name,  ag.group_name,  bc.branch_name,  alm.line_name, lcc.loan_category_creation_name
     FROM in_verification v
     JOIN customer_register cr ON v.cus_id = cr.cus_id
     JOIN area_list_creation a ON v.area = a.area_id

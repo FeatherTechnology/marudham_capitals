@@ -17,17 +17,11 @@ $qry = $connect->query("
             c.insert_login_id AS user_id,
             GROUP_CONCAT(DISTINCT CASE WHEN DATE(c.coll_date) = '$op_date' THEN c.branch END) AS branch_ids_today,
             GROUP_CONCAT(DISTINCT CASE WHEN DATE(c.coll_date) < '$op_date' THEN c.branch END) AS branch_ids_prev,
-            GROUP_CONCAT(DISTINCT CASE WHEN DATE(c.coll_date) = '$op_date' THEN bc.branch_name END) AS branch_name_today,
-            GROUP_CONCAT(DISTINCT CASE WHEN DATE(c.coll_date) < '$op_date' THEN bc.branch_name END) AS branch_name_prev,
-            GROUP_CONCAT(DISTINCT CASE WHEN DATE(c.coll_date) = '$op_date' THEN lm.line_name END) AS line_name_today,
-            GROUP_CONCAT(DISTINCT CASE WHEN DATE(c.coll_date) < '$op_date' THEN lm.line_name END) AS line_name_prev,
-             GROUP_CONCAT(DISTINCT CASE WHEN DATE(c.coll_date) = '$op_date' THEN c.line END) AS line_ids_today,
+            GROUP_CONCAT(DISTINCT CASE WHEN DATE(c.coll_date) = '$op_date' THEN c.line END) AS line_ids_today,
             GROUP_CONCAT(DISTINCT CASE WHEN DATE(c.coll_date) < '$op_date' THEN c.line END) AS line_ids_prev,
             SUM(CASE WHEN DATE(c.coll_date) < '$op_date' THEN c.total_paid_track ELSE 0 END) AS coll_amt_ys,
             SUM(CASE WHEN DATE(c.coll_date) = '$op_date' THEN c.total_paid_track ELSE 0 END) AS coll_amt_today
         FROM collection c
-        JOIN area_line_mapping lm ON lm.map_id = c.line
-        JOIN branch_creation bc ON bc.branch_id = c.branch 
         WHERE c.coll_mode = '1'
           AND c.branch IN ($branch_id)
           AND DATE(c.coll_date) <= '$op_date'
@@ -48,75 +42,68 @@ $qry = $connect->query("
         u.user_id AS insert_login_id,
         u.fullname,
         u.role,
-CASE 
-    WHEN uc.coll_amt_today > 0 AND (IFNULL(uc.coll_amt_ys, 0) - IFNULL(uh.rec_amt_ys, 0)) > 0 
-        THEN CONCAT_WS(',', uc.branch_ids_prev, uc.branch_ids_today)
-    WHEN uc.coll_amt_today > 0 
-        THEN uc.branch_ids_today
-    ELSE uc.branch_ids_prev
-END AS branches,
+        CASE 
+            WHEN uc.coll_amt_today > 0 AND (IFNULL(uc.coll_amt_ys, 0) - IFNULL(uh.rec_amt_ys, 0)) > 0 
+                THEN CONCAT_WS(',', uc.branch_ids_prev, uc.branch_ids_today)
+            WHEN uc.coll_amt_today > 0 
+                THEN uc.branch_ids_today
+            ELSE uc.branch_ids_prev
+        END AS branch_ids,
 
-CASE 
-    WHEN uc.coll_amt_today > 0 AND (IFNULL(uc.coll_amt_ys, 0) - IFNULL(uh.rec_amt_ys, 0)) > 0 
-        THEN CONCAT_WS(',', uc.line_ids_prev, uc.line_ids_today)
-    WHEN uc.coll_amt_today > 0 
-        THEN uc.line_ids_today
-    ELSE uc.line_ids_prev
-END AS line_ids,
-CASE 
-    WHEN uc.coll_amt_today > 0 AND (IFNULL(uc.coll_amt_ys, 0) - IFNULL(uh.rec_amt_ys, 0)) > 0 
-        THEN CONCAT_WS(',', uc.branch_name_prev, uc.branch_name_today)
-    WHEN uc.coll_amt_today > 0 
-        THEN uc.branch_name_today
-    ELSE uc.branch_name_prev
-END AS branch_name,
+        CASE 
+            WHEN uc.coll_amt_today > 0 AND (IFNULL(uc.coll_amt_ys, 0) - IFNULL(uh.rec_amt_ys, 0)) > 0 
+                THEN CONCAT_WS(',', uc.line_ids_prev, uc.line_ids_today)
+            WHEN uc.coll_amt_today > 0 
+                THEN uc.line_ids_today
+            ELSE uc.line_ids_prev
+        END AS line_ids,
 
-CASE 
-    WHEN uc.coll_amt_today > 0 AND (IFNULL(uc.coll_amt_ys, 0) - IFNULL(uh.rec_amt_ys, 0)) > 0 
-        THEN CONCAT_WS(',', uc.line_name_prev, uc.line_name_today)
-    WHEN uc.coll_amt_today > 0 
-        THEN uc.line_name_today
-    ELSE uc.line_name_prev
-END AS line_name,
-
-        IFNULL(uc.coll_amt_ys, 0) AS coll_amt_ys,
-        IFNULL(uh.rec_amt_ys, 0) AS rec_amt_ys,
-        IFNULL(uc.coll_amt_today, 0) AS coll_amt_today,
-        IFNULL(uh.rec_amt_today, 0) AS rec_amt_today,
-        (IFNULL(uc.coll_amt_ys, 0) - IFNULL(uh.rec_amt_ys, 0)) AS pre_bal,
-        (IFNULL(uc.coll_amt_today, 0) - IFNULL(uh.rec_amt_today, 0)) AS collected_amt
-    FROM user u
-    LEFT JOIN user_coll uc ON uc.user_id = u.user_id
-    LEFT JOIN user_hand uh ON uh.user_id = u.user_id
-    WHERE u.user_id NOT IN (1)
-      AND (
-            (IFNULL(uc.coll_amt_ys, 0) - IFNULL(uh.rec_amt_ys, 0)) > 0 
-            OR 
-            (IFNULL(uc.coll_amt_today, 0) - IFNULL(uh.rec_amt_today, 0)) > 0
-            OR
-            (uh.rec_amt_today > 0)
-        )
-    ORDER BY u.user_id
-");
+                IFNULL(uc.coll_amt_ys, 0) AS coll_amt_ys,
+                IFNULL(uh.rec_amt_ys, 0) AS rec_amt_ys,
+                IFNULL(uc.coll_amt_today, 0) AS coll_amt_today,
+                IFNULL(uh.rec_amt_today, 0) AS rec_amt_today,
+                (IFNULL(uc.coll_amt_ys, 0) - IFNULL(uh.rec_amt_ys, 0)) AS pre_bal,
+                (IFNULL(uc.coll_amt_today, 0) - IFNULL(uh.rec_amt_today, 0)) AS collected_amt
+            FROM user u
+            LEFT JOIN user_coll uc ON uc.user_id = u.user_id
+            LEFT JOIN user_hand uh ON uh.user_id = u.user_id
+            WHERE u.user_id NOT IN (1)
+            AND (
+                    (IFNULL(uc.coll_amt_ys, 0) - IFNULL(uh.rec_amt_ys, 0)) > 0 
+                    OR 
+                    (IFNULL(uc.coll_amt_today, 0) - IFNULL(uh.rec_amt_today, 0)) > 0
+                    OR
+                    (uh.rec_amt_today > 0)
+                )
+            ORDER BY u.user_id
+        ");
 
 $i = 0;
 while ($row = $qry->fetch()) {
-    $branches     = implode(',', array_unique(explode(',', $row['branches'])));
-    $line_ids     = implode(',', array_unique(explode(',', $row['line_ids'])));
-    $branch_names = implode(',', array_unique(explode(',', $row['branch_name'])));
-    $line_names   = implode(',', array_unique(explode(',', $row['line_name'])));
 
-   $records[$i] = [
-        'branch_id'     => $branches,
+    $branch_ids = implode(',', array_unique(explode(',', $row['branch_ids'])));
+    $line_ids = implode(',', array_unique(explode(',', $row['line_ids'])));
+
+    $branchqry = $connect->query("SELECT branch_name FROM branch_creation WHERE branch_id IN ($branch_ids)");
+    $branch = $branchqry->fetchAll(PDO::FETCH_ASSOC);
+
+    $lineqry = $connect->query("SELECT line_name FROM area_line_mapping WHERE map_id IN ($line_ids)");
+    $line = $lineqry->fetchAll(PDO::FETCH_ASSOC);
+
+    $branchNames = implode(',', array_unique(array_column($branch, 'branch_name')));
+    $lineNames   = implode(',', array_unique(array_column($line, 'line_name')));
+
+    $records[$i] = [
+        'branch_id'     => $branch_ids,
         'line_id'       => $line_ids,
         'user_id'       => $row['insert_login_id'],
         'collected_amt' => $row['coll_amt_today'],
-        'line_name'     => $line_names,
+        'line_name'     => $lineNames,
         'user_name'     => $row['fullname'],
         'user_type'     => $row['role'],
-        'branch_name'   => $branch_names,
+        'branch_name'   => $branchNames,
         'pre_bal'       => $row['pre_bal'],
-        'tot_amt'       => $row['pre_bal'] + $row['coll_amt_today'] - $row['rec_amt_today'] 
+        'tot_amt'       => $row['pre_bal'] + $row['coll_amt_today'] - $row['rec_amt_today']
     ];
     $i++;
 }
@@ -141,7 +128,6 @@ $connect = null;
     </thead>
     <tbody>
         <?php
-        $pre_bal = 0;
         for ($i = 0; $i < sizeof($records); $i++) {
         ?>
             <tr>

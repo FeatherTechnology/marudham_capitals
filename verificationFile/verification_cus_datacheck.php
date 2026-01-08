@@ -1,8 +1,15 @@
 <?php
 include '../ajaxconfig.php';
 ?>
-
-<h5> Customer Data </h5>
+<div style="display: flex; align-items: center;">
+    <div>
+        <h5> Customer Data </h5>
+    </div>
+    <div style="margin-left: 20px;">
+        <input type="button" class="btn btn-primary" id='hide_cus_data' name='hide_cus_data' value="Hide" style="margin: 5px;">
+        <input type="button" class="btn btn-primary" id='show_cus_data' name='show_cus_data' value="Show" style="margin: 5px; display: none">
+    </div>
+</div>
 <table class="table custom-table " id="cus_datacheck">
     <thead>
         <tr>
@@ -36,14 +43,14 @@ include '../ajaxconfig.php';
             $req_id = $_POST['req_id'];
         }
 
-        $cusInfo = $connect->query("SELECT cus_id,customer_name,mobile1 FROM `customer_register` where ($category = '" . strip_tags($name) . "' or $category1 = '" . strip_tags($name) . "') && req_ref_id != '" . strip_tags($req_id) . "' order by cus_reg_id desc");
+        $cusInfo = $connect->query("SELECT autogen_cus_id,customer_name,mobile1 FROM `customer_register` where ($category = '" . strip_tags($name) . "' or $category1 = '" . strip_tags($name) . "') && req_ref_id != '" . strip_tags($req_id) . "' order by cus_reg_id desc");
 
         $i = 1;
         while ($cus = $cusInfo->fetch()) {
         ?>
             <tr>
                 <td> <?php echo $i++; ?></td>
-                <td> <?php echo $cus['cus_id']; ?></td>
+                <td> <?php echo $cus['autogen_cus_id']; ?></td>
                 <td> <?php echo $cus['customer_name']; ?></td>
                 <td> <?php echo $cus['mobile1']; ?></td>
             </tr>

@@ -2434,9 +2434,9 @@ if (sizeof($getCustomerReg) > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group" style="display: flex; align-items: center;">
 							<div>
-								<label for="feedback_label"> Feedback Name </label> <span class="required">&nbsp;*</span>
+								<label for="feedback_label"> Feedback Label </label> <span class="required">&nbsp;*</span>
 								<select type="text" class="form-control" id="feedback_label" style="width: 330px;" name="feedback_label" tabindex='1'>
-									<option value=""> Select Feedback Name</option>
+									<option value=""> Select Feedback Label</option>
 								</select>
 							</div>
 							<div style="padding: 20px 0px 0px 10px;  ">
@@ -3172,7 +3172,7 @@ if (sizeof($getCustomerReg) > 0) {
 	<div class="modal-dialog modal-lg " role="document">
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLongTitle">Add Feedback Lable  </h5>
+				<h5 class="modal-title" id="exampleModalLongTitle">Add Feedback Label  </h5>
 				<button type="button" class="close" data-dismiss="modal" tabindex="7" aria-label="Close" onclick="getFeedbackLable()">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -3187,14 +3187,12 @@ if (sizeof($getCustomerReg) > 0) {
 								<div class="row">
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-10 col-12">
 										<div class="form-group">
-											<label for="disabledInput">Feedback Name</label>&nbsp;<span class="text-danger"></span>
+											<label for="disabledInput">Feedback Label</label>&nbsp;<span class="text-danger"></span>
 											<input type="hidden" name="fedbackname_id" id="fedbackname_id">
-											<input type="text" tabindex="4" class="form-control" id="feedbackname" name="feedbackname" value="" placeholder="Enter Feedback Name">
+											<input type="text" tabindex="4" class="form-control" id="feedbackname" name="feedbackname" value="" placeholder="Enter Feedback Label">
 										</div>
 									</div>
-									<!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-10 col-12">
-										
-									</div> -->
+
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-10 col-12 d-flex align-items-center" style="margin-top: 20px;">
 										<div class="form-group">
 											<button type="submit" name="submit_feedback_lable" id="submit_feedback_lable" class="btn btn-primary" value="Submit" tabindex="5"><span class="icon-check"></span>&nbsp;Submit</button>
@@ -3208,7 +3206,7 @@ if (sizeof($getCustomerReg) > 0) {
 										<thead>
 											<tr>
 												<th width="50"> S.No </th>
-												<th> Feedback Label Name </th>
+												<th> Feedback Label  </th>
 												<th> ACTION </th>
 											</tr>
 										</thead>

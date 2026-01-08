@@ -59,9 +59,9 @@ $coll_method = [1 => 'By Self', 2 => 'On Spot'];
 
 $column = array(
     'coll.coll_id',
-    'ag.group_name',
+    // 'ag.group_name',
     'alm.line_name',
-    'adm.duefollowup_name',
+    // 'adm.duefollowup_name',
     'ii.loan_id',
     'ii.updated_date',
     'coll.cus_id',
@@ -88,9 +88,9 @@ $column = array(
 );
 
 $query = "SELECT 
-ag.group_name,
+-- ag.group_name,
             alm.line_name AS line,
-            adm.duefollowup_name,
+            -- adm.duefollowup_name,
             ii.loan_id,
             ii.updated_date AS loan_date,
             coll.cus_id,
@@ -130,8 +130,8 @@ ag.group_name,
         JOIN area_list_creation al ON cp.area_confirm_area = al.area_id
         JOIN sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
         JOIN area_line_mapping alm ON FIND_IN_SET(sal.sub_area_id, alm.sub_area_id)
-        JOIN area_group_mapping ag ON FIND_IN_SET(sal.sub_area_id, ag.sub_area_id)
-        JOIN area_duefollowup_mapping adm ON FIND_IN_SET(al.area_id, adm.area_id)
+        -- JOIN area_group_mapping ag ON FIND_IN_SET(sal.sub_area_id, ag.sub_area_id)
+        -- JOIN area_duefollowup_mapping adm ON FIND_IN_SET(al.area_id, adm.area_id)
         JOIN acknowlegement_loan_calculation lc ON coll.req_id = lc.req_id
         JOIN in_verification iv ON coll.req_id = iv.req_id
         LEFT JOIN bank_creation b ON coll.bank_id = b.id
@@ -146,9 +146,9 @@ ag.group_name,
 if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {
         $query .= " and (ii.loan_id LIKE '%" . $_POST['search'] . "%'
-                OR ag.group_name LIKE '%" . $_POST['search'] . "%' 
+                -- OR ag.group_name LIKE '%" . $_POST['search'] . "%' 
                     OR alm.line_name LIKE '%" . $_POST['search'] . "%'
-                     OR adm.duefollowup_name LIKE '%" . $_POST['search'] . "%'
+                   --  OR adm.duefollowup_name LIKE '%" . $_POST['search'] . "%'
                     OR ii.updated_date LIKE '%" . $_POST['search'] . "%'
                     OR coll.cus_id LIKE '%" . $_POST['search'] . "%'
                     OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%'
@@ -181,6 +181,7 @@ if (!isset($_POST['download'])) {
         $query1 = " LIMIT " . $_POST['start'] . ", " . $_POST['length'];
     }
 }
+
 $statement = $connect->prepare($query);
 
 $statement->execute();
@@ -198,9 +199,9 @@ $sno = 1;
 foreach ($result as $row) {
     $sub_array   = array();
     $sub_array[] = $sno;
-    $sub_array[] = $row['group_name'];
+    // $sub_array[] = $row['group_name'];
     $sub_array[] = $row['line'];
-    $sub_array[] = $row['duefollowup_name'];
+    // $sub_array[] = $row['duefollowup_name'];
     $sub_array[] = $row['loan_id'];
     $sub_array[] = date('d-m-Y', strtotime($row['loan_date']));
     $sub_array[] = $row['cus_id'];
