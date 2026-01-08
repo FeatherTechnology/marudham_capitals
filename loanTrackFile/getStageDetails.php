@@ -63,13 +63,31 @@ if ($stage == 'lc') { //Loan Calculation, So show verification info
     }
 } elseif ($stage == 'noc') { // NOC, So show NOC info
     $obj = new getTrackTableDetails;
-    $nocDetails = $obj->getLatestNOCDetails($connect, $req_id);
-    
-    if(!empty($nocDetails)){
-        $table_id = $nocDetails['id'];
-        $table_name = $nocDetails['table'];
-        $detail_arr = $obj->getNOCDetails($connect,$table_id,$table_name);
+    $qry = $connect->query("SELECT noc_handover_date,noc_member,mem_name from noc where req_id = '" . strip_tags($req_id) . "'");
+    $row = $qry->fetch();
+    $response = $row;
+    $detail_arr['noc_handover_date'] = date('d-m-Y', strtotime($response['noc_handover_date']));
+    if ($response['noc_member'] == '1') {
+        // 1 = Customer
+        $detail_arr['noc_member'] = $response['mem_name'];
+        $detail_arr['noc_name']   = 'Customer';
+    } else if ($response['noc_member'] == '2') {
+        // 2 = Guarantor
+        $detail_arr['noc_member'] = $response['mem_name'];
+        $detail_arr['noc_name']   = 'Guarantor';
+    } else if ($response['noc_member'] == '3') {
+        // 3 = Family member
+        $fam_qry = $connect->query("
+        SELECT famname, relationship 
+        FROM verification_family_info 
+        WHERE id = '" . strip_tags($response['mem_name']) . "'
+    ");
+        $fam_row = $fam_qry->fetch();
+
+        $detail_arr['noc_member'] = $fam_row['famname'];
+        $detail_arr['noc_name']   = $fam_row['relationship'];
     }
+
 
     $heading_arr = ['Date of NOC', 'Member', 'Relationship'];
 }
