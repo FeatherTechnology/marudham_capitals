@@ -273,6 +273,10 @@ foreach ($result as $row) {
         $end = strtotime($row['maturity_date']);
         $start = strtotime($row['due_start_from']);
         $search_date = strtotime($to_date);
+
+        $to_dt      = new DateTime($to_date);
+        $maturity_dt = new DateTime($row['maturity_date']);
+
         $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
         $pending = $months;
         if (($row['due_method_calc'] == 'Monthly' || $row['due_method_scheme'] == '1')) {
@@ -281,6 +285,13 @@ foreach ($result as $row) {
             }
         }
         $pending_month = $pending;
+
+        $od_months = (($to_dt->format('Y') - $maturity_dt->format('Y')) * 12) + ($to_dt->format('m') - $maturity_dt->format('m'));
+
+        // No negative values
+        if ($od_months < 0) {
+            $od_months = 0;
+        }
     } else {
         $end = strtotime($to_date);
         $start = strtotime($row['due_start_from']);
@@ -293,6 +304,7 @@ foreach ($result as $row) {
         }
 
         $pending_month = $months - 1;
+        $od_months = 0;
     }
 
     $balance_amount = $row['tot_amt_cal'] - $row['total_due_amt'];
@@ -332,7 +344,7 @@ foreach ($result as $row) {
     $sub_array[] = isset($balance_due) && $balance_due >= 0 ? number_format($balance_due, 1, '.', '') : 0;
     $sub_array[] = isset($pending_amount) && ($pending_amount > 0) ? moneyFormatIndia($pending_amount) : 0;
     $sub_array[] = isset($pending_due) && $pending_due >= 0 ? number_format($pending_due, 1, '.', '') : 0;
-    $sub_array[] = isset($row['od_months']) && $row['od_months'] >= 0 ? $row['od_months'] : 0;;
+    $sub_array[] = isset($od_months) && $od_months >= 0 ? $od_months : 0;
     $sub_array[] = isset($payable_amount) ? moneyFormatIndia($payable_amount) : 0;
     $sub_array[] = 'Present';
     $payable_amount = max(0, $payable_amount);
