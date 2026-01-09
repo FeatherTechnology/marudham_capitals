@@ -1103,21 +1103,112 @@ function validation() {
     multipleSelectSort(agentMultiselect, '#agentforstaff');
     multipleSelectSort(vergroupMultiselect, '#ver_group');
 
+
+    let requireGroup = false;
+    let requireLine = false;
+    let requireFollowup = false;
+
+    const screenCategoryMap = {
+
+    /* ---------------- LINE ONLY ---------------- */
+    collection: { line: true },
+    closed: { line: true },
+    finance_insight: { line: true },
+
+    closed_report: { line: true },
+    collection_report: { line: true },
+    loan_issue_report: { line: true },
+    in_closed_report: { line: true },
+    due_list_report: { line: true },
+    customer_status_report: { line: true },
+    confirmation_followup_report: { line: true },
+
+    principal_interest_report: { line: true },
+    balance_report: { line: true },
+    no_due_pay_report: { line: true },
+
+    intrest_ledger_report: { line: true },
+    intrest_loan_issue_report: { line: true },
+    intrest_closed_report: { line: true },
+    intrest_collection_report: { line: true },
+
+    /* ---------------- GROUP ONLY ---------------- */
+    verification: { group: true },
+    approval: { group: true },
+    acknowledgement: { group: true },
+    loan_issue: { group: true },
+    accounts_loan_issue: { group: true },
+
+    request: { group: true },
+    request_list_access: { group: true },
+    update: { group: true },
+    conf_followup: { group: true },
+
+    cancel_revoke_report: { group: true },
+    request_report: { group: true },
+    /* ---------------- BOTH REQUIRED ---------------- */
+    cash_tally: { line: true, group: true }
+};
+
+
+   $('.screen-validations:checked').each(function () {
+    let id = this.id;
+
+    if (screenCategoryMap[id]) {
+        if (screenCategoryMap[id].line) requireLine = true;
+        if (screenCategoryMap[id].group) requireGroup = true;
+    }
+});
+
+    let nocCheck = $('#noc, #noc_handover').is(':checked');
+    let nocScreensChecked = $('#noc_handover_report, #noc_replace').is(':checked');
+    let nocMapping = $('#noc_mapping_access').val();
+
+    if (nocCheck || nocScreensChecked) {
+        if (nocMapping === '1') requireGroup = true;
+        if (nocMapping === '2') requireLine = true;
+        if (nocMapping === '3') requireFollowup = true;
+    } 
+    let promotionChecked = $('#promotion_activity').is(':checked');
+    let promotionMapping = $('#promotion_activity_mapping_access').val();
+
+    if (promotionChecked) {
+        if (promotionMapping === '1') requireGroup = true;
+        if (promotionMapping === '2') requireLine = true;
+        if (promotionMapping === '3') requireFollowup = true;
+
+    } 
+
     let groupSort = multipleSelectSort(groupMultiselect, '#group');
-    if (groupSort == 0) {  
+    if (requireGroup && groupSort == 0) {
         $('#groupCheck').show();
-        validation = false; 
-    } else { 
-        $('#groupCheck').hide(); 
+        validation = false;
+    } else {
+        $('#groupCheck').hide();
     }
 
     let lineSort = multipleSelectSort(lineMultiselect, '#line');
-    var role = $('#role').val();
-    if (lineSort == 0 && role != '2') {  
-        $('#lineCheck').show(); 
+    if (requireLine && lineSort == 0 && role !== '2') {
+        $('#lineCheck').show();
         validation = false;
-    } else { 
-        $('#lineCheck').hide(); 
+    } else {
+        $('#lineCheck').hide();
+    }
+    let dueFollowupChecked = $('#due_followup').is(':checked');
+    let followupSort = multipleSelectSort(dueFollowupLines, '#due_follup_line_id');
+
+    if (
+        // Followup required by screen / mapping
+        (requireFollowup && followupSort == 0)
+
+        // Checkbox checked but no lines selected
+        || (dueFollowupChecked && followupSort == 0)
+
+    ) {
+        $('.duefollowupCheck').show();
+        validation = false;
+    } else {
+        $('.duefollowupCheck').hide();
     }
 
     let varLoanCatchecked = $('#verification').is(':checked');
@@ -1179,24 +1270,6 @@ function validation() {
     } else if(!nocChecked && noc_mapping_access !=''){
         $('#nocCheck').show();
         validation = false;
-    }
-
-    let dueFollowupChecked = $('#due_followup').is(':checked');
-    let dueFollowupIdSort = multipleSelectSort(dueFollowupLines, '#due_follup_line_id');
-    if (dueFollowupChecked && dueFollowupIdSort == 0) { //Checkbox checked but no lines selected 
-        $('.duefollowupCheck').show();
-        $('.dueFollowupCheck').hide(); 
-        validation = false; 
-        
-    } else if(!dueFollowupChecked && dueFollowupIdSort > 0){ //Lines selected but checkbox not checked 
-        $('.dueFollowupCheck').show();
-        $('.duefollowupCheck').hide(); 
-        validation = false; 
-        
-    } else{
-        $('.dueFollowupCheck').hide();
-        $('.duefollowupCheck').hide(); 
-        
     }
 
 
