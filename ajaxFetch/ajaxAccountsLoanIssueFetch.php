@@ -10,19 +10,21 @@ if (isset($_SESSION["userid"])) {
         $login_user_type = 0;
     }
 }
+
 if ($userid != 1) {
 
-    $userQry = $connect->query("SELECT * FROM USER WHERE user_id = $userid ");
-    while ($rowuser = $userQry->fetch()) {
+    $userQry = $connect->query("SELECT group_id FROM USER WHERE user_id = $userid ");
+    $rowuser = $userQry->fetch();
         $group_id = $rowuser['group_id'];
-    }
+
     $group_id = explode(',', $group_id);
     $sub_area_list = array();
     foreach ($group_id as $group) {
-        $groupQry = $connect->query("SELECT * FROM area_group_mapping where map_id = $group ");
+        $groupQry = $connect->query("SELECT sub_area_id FROM area_group_mapping where map_id = $group ");
         $row_sub = $groupQry->fetch();
         $sub_area_list[] = $row_sub['sub_area_id'];
     }
+    
     $sub_area_ids = array();
     foreach ($sub_area_list as $subarray) {
         $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));

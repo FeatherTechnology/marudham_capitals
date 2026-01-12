@@ -6373,32 +6373,51 @@ class admin
 		if (isset($_POST['cus_id'])) {
 			$cus_id = $_POST['cus_id'];
 		}
+
 		if (isset($_POST['closed_Sts'])) {
 			$closed_Sts = $_POST['closed_Sts'];
 		}
+
 		$closed_Sts_consider = '';
 		if (isset($_POST['closed_Sts']) &&  $_POST['closed_Sts'] == '1') { // If Status is Consider then level will store.
 			if (isset($_POST['closed_Sts_consider'])) {
 				$closed_Sts_consider =  $_POST['closed_Sts_consider'];
 			}
 		}
+
 		if (isset($_POST['closed_Sts_remark'])) {
 			$closed_Sts_remark = $_POST['closed_Sts_remark'];
 		}
 
-		$mysqli->query("INSERT INTO `closed_status`( `req_id`, `cus_id`, `closed_sts`, `consider_level`, `remark`, `cus_sts`, `insert_login_id`, `update_login_id`, `created_date`, `updated_date`) VALUES ('" . strip_tags($close_req_id) . "', '" . strip_tags($cus_id) . "', '" . strip_tags($closed_Sts) . "', '" . strip_tags($closed_Sts_consider) . "', '" . strip_tags($closed_Sts_remark) . "', '21', '$userid', '$userid', now(), now() )");
+		try {
+			// Disable autocommit to start a transaction
+			$mysqli->autocommit(FALSE);
 
-		$mysqli->query("UPDATE request_creation set cus_status = 21,updated_date = now(), update_login_id = $userid WHERE  cus_id = '" . $cus_id . "' and req_id = '" .  $close_req_id . "' && cus_status = '20' ") or die('Error on Request Table');
+			$mysqli->query("INSERT INTO `closed_status`( `req_id`, `cus_id`, `closed_sts`, `consider_level`, `remark`, `cus_sts`, `insert_login_id`, `update_login_id`, `created_date`, `updated_date`) VALUES ('" . strip_tags($close_req_id) . "', '" . strip_tags($cus_id) . "', '" . strip_tags($closed_Sts) . "', '" . strip_tags($closed_Sts_consider) . "', '" . strip_tags($closed_Sts_remark) . "', '21', '$userid', '$userid', now(), now() )");
 
-		$mysqli->query("UPDATE customer_register set cus_status = 21 WHERE cus_id = '" . $cus_id . "' and req_ref_id = '" .  $close_req_id . "' ") or die('Error on Customer Table');
+			$mysqli->query("UPDATE request_creation SET cus_status = 21, updated_date = now(), update_login_id = $userid WHERE req_id = '" .  $close_req_id . "' AND cus_status = '20' ") or die('Error on Request Table');
 
-		$mysqli->query("UPDATE in_verification set cus_status = 21, update_login_id = $userid WHERE cus_id = '" . $cus_id . "' and req_id = '" .  $close_req_id . "' && cus_status = '20' ") or die('Error on inVerification Table');
+			$mysqli->query("UPDATE customer_register SET cus_status = 21 WHERE cus_id = '" . $cus_id . "' AND req_ref_id = '" .  $close_req_id . "' ") or die('Error on Customer Table');
 
-		$mysqli->query("UPDATE `in_approval` SET `cus_status`= 21,`update_login_id`= $userid WHERE  cus_id = '" . $cus_id . "' and req_id = '" .  $close_req_id . "' && cus_status = '20' ") or die('Error on in_approval Table');
+			$mysqli->query("UPDATE in_verification SET cus_status = 21, update_login_id = $userid WHERE req_id = '" .  $close_req_id . "' AND cus_status = '20' ") or die('Error on inVerification Table');
 
-		$mysqli->query("UPDATE `in_acknowledgement` SET `cus_status`= 21,`update_login_id`= $userid and updated_date=now() WHERE  cus_id = '" . $cus_id . "' and req_id = '" .  $close_req_id . "' && cus_status = '20' ") or die('Error on in_acknowledgement Table');
+			$mysqli->query("UPDATE `in_approval` SET `cus_status` = 21, `update_login_id` = $userid WHERE req_id = '" .  $close_req_id . "' AND cus_status = '20' ") or die('Error on in_approval Table');
 
-		$mysqli->query("UPDATE `in_issue` SET `cus_status`= 21,`update_login_id` = $userid where cus_id = '" . $cus_id . "' and req_id = '" .  $close_req_id . "' && cus_status = '20' ") or die('Error on in_issue Table');
+			$mysqli->query("UPDATE `in_acknowledgement` SET `cus_status` = 21, `update_login_id` = $userid, updated_date = now() WHERE req_id = '" .  $close_req_id . "' AND cus_status = '20' ") or die('Error on in_acknowledgement Table');
+
+			$mysqli->query("UPDATE `in_issue` SET `cus_status` = 21, `update_login_id` = $userid WHERE req_id = '" .  $close_req_id . "' AND cus_status = '20' ") or die('Error on in_issue Table');
+
+			// Commit the transaction
+			$mysqli->commit();
+
+			// Enable autocommit again
+			$mysqli->autocommit(TRUE);
+		} catch (Exception $e) {
+			// Rollback the transaction in case of error
+			$mysqli->rollback();
+			$mysqli->autocommit(TRUE);
+			echo "Error: " . $e->getMessage();
+		}
 	}
 
 	//Get User Details for Consent Creation.
@@ -6848,6 +6867,15 @@ class admin
 					$whatsapp_no = $req_row['whatsapp'];
 				}
 				$detailrecords['whatsapp_no'] = $whatsapp_no;
+
+				// Getting Line Id, Branch ID, Branch Name
+				$areaconfirmsubarea = $detailrecords['area_confirm_subarea'] || $detailrecords['sub_area'];
+				$qry = $mysqli->query("SELECT b.branch_id, b.branch_name, l.map_id, l.line_name AS area_line FROM branch_creation b JOIN area_line_mapping l ON l.branch_id = b.branch_id WHERE FIND_IN_SET(" . $areaconfirmsubarea . ", l.sub_area_id) ");
+				$row = $qry->fetch_assoc();
+				$detailrecords['line_id'] = $row['map_id'];
+				$detailrecords['area_line'] = $row['area_line'];
+				$detailrecords['branch_id'] = $row['branch_id'];
+				$detailrecords['branch_name'] = $row['branch_name'];
 
 				// $reqResult = $mysqli->query("SELECT `req_id` FROM `request_creation` WHERE `cus_id`='".$row['cus_id']."' ");
 				// // $request_id = '';

@@ -8,136 +8,70 @@ $(document).ready(function () {
         $('.loanlist_card').show(); // Show loan list
     })
 
-    // $('#noc_member').change(function () {
-    //     $('.scanBtn').removeAttr('disabled');
-    //     $('#compare_finger').val('')
-    //     var noc_member = parseInt($(this).val());
-    //     var req_id = $('#req_id').val();
-    //     //if Noc Member is Family member or Guarentor then get member names
-    //     if (noc_member > 1) {
-    //         $.ajax({
-    //             url: 'nocFile/getMemberDetails.php',
-    //             data: { 'req_id': req_id, 'noc_member': noc_member },
-    //             dataType: 'json',
-    //             type: 'post',
-    //             cache: false,
-    //             success: function (response) {
-    //                 if (noc_member == 2) {
-    //                     //if guarentor show readonly input box
-    //                     $('.mem_name').show();
-    //                     $('.mem_relation_name').hide();
-    //                     $('#mem_relation_name').empty();
-
-    //                     $('#mem_id').val(response['guarentor_id'])
-    //                     $('#mem_name').val(response['guarentor_name'])
-    //                     $('#compare_finger').val(response['fingerprint'])
-    //                 } else if (noc_member == 3) {
-    //                     //if Family member then show dropdown
-    //                     $('.mem_relation_name').show();
-    //                     $('.mem_name').hide();
-    //                     $('#mem_name').val('');
-
-    //                     $('#mem_relation_name').empty();
-    //                     $('#mem_relation_name').append("<option value=''>Select Member Name</option>")
-    //                     for (var i = 0; i < response['fam_id'].length; i++) {
-    //                         $('#mem_relation_name').append("<option value='" + response['fam_id'][i] + "'>" + response['fam_name'][i] + "</option>")
-    //                     }
-
-    //                 }
-    //             }
-    //         }).error(function () {
-    //             if (noc_member == 2) {
-    //                 alert('Guarentor Fingerprint not Registered')
-    //             }
-    //         })
-    //     } else if (noc_member == 1) {
-    //         //if member is customer then show customer name
-    //         $('.mem_name').show();
-    //         $('#mem_name').val('');
-    //         $('.mem_relation_name').hide();
-    //         $('#mem_relation_name').empty();
-
-    //         var cus_name = $('#cus_name').val();
-    //         var cus_id = $('#cus_id').val();
-    //         $('#mem_name').val(cus_name)
-
-    //         $.ajax({
-    //             url: 'nocFile/getFingerprints.php',
-    //             data: { 'id': cus_id, 'family': false },
-    //             dataType: 'json',
-    //             type: 'post',
-    //             cache: false,
-    //             success: function (response) {
-    //                 $('#compare_finger').val(response['fingerprint'])
-    //             }
-    //         })
-    //     } else {
-    //         $('.mem_name').hide();
-    //         $('#mem_name').val('');
-    //         $('.mem_relation_name').hide();
-    //         $('#mem_relation_name').empty();
-    //     }
-    // })
-
-    // $('#mem_relation_name').change(function () {
-    //     var id = $(this).val();
-    //     $('.scanBtn').removeAttr('disabled');
-    //     $.ajax({
-    //         url: 'nocFile/getFingerprints.php',
-    //         data: { 'id': id, 'family': true },
-    //         dataType: 'json',
-    //         type: 'post',
-    //         cache: false,
-    //         success: function (response) {
-    //             $('#compare_finger').val(response['fingerprint'])
-    //         }
-    //     }).error(function () {
-    //         alert('Guarentor Fingerprint not Registered')
-    //     })
-    // })
-
-    var mortgage_process = $('#mortgage_process').val()
-    var endorsement_process = $('#endorsement_process').val()
-    if (mortgage_process == '1') {
-        $('.mort_proc').hide();
-    }
-    if (endorsement_process == '1') {
-        $('.endor_proc').hide();
-    }
+    //Hide mortgage & Endorsement intially.
+    $('.mort_proc').hide();
+    $('.endor_proc').hide();
 
     $('#submit_noc').click(function (event) {
-        let req_id = $('#req_id').val()
         event.preventDefault();
+        let req_id = $('#req_id').val();
 
         if (validations() == true) {
             let confirmAction = confirm("Are you sure you want to submit NOC ?");
             if (!confirmAction) return;
 
-            Promise.all([
-                updateNocTable()
-                    
-            ]).then(() => {
-                updateCheckedDetails()
+            // 1. Update NOC master (wrap jqXHR in a real Promise)
+            Promise.resolve(updateNocTable())
+                // 2. Update individual document / sign / gold tables
+                .then(() => {
+                    return updateCheckedDetails();
+                })
+                // 3. Reload loan list and try to re-open same NOC row
+                .then(() => {
+                    if (req_id !== null) {
+                        const cus_id = $('#cusidupd').val();
 
-            }).then(() => {
-                if (req_id !== null) {
-                    $(`.noc-window[data-value='${req_id}']`).trigger('click');
-                }
+                        return $.ajax({
+                            // in this file, details gonna fetch by customer ID, Not by req id (Because we need all loans from customer)
+                            url: 'nocFile/getLoanListWithClosed.php',
+                            data: { 'cus_id': cus_id, 'screen': 'noc' },
+                            type: 'post',
+                            cache: false,
+                            success: function (response) {
+                                $('#loanListTableDiv').html(response);
 
-            }).then(() => {
-                $('#sign_checklist').val('');
-                $('#cheque_checklist').val('');
-                $('#mort_checklist').val('');
-                $('#endorse_checklist').val('');
-                $('#gold_checklist').val('');
-                $('#doc_checklist').val('');
-                
-            }).catch(err => {
-                console.error(err);
-                alert("Something went wrong!");
-                
-            });
+                                // After refresh, try to open the same NOC row
+                                const $nocRow = $(`.noc-window[data-value='${req_id}']`);
+                                if ($nocRow.length) {
+                                    // Still has NOC action (status 21 / 23)
+                                    $nocRow.trigger('click');
+                                } else {
+                                    // NOC action removed (likely fully submitted / status 22)
+                                    // Hide submit button and lock all checklist controls in current view
+                                    $('#submit_noc').hide();
 
+                                    // Disable all checklist checkboxes so they cannot be changed anymore
+                                    $('.sign_check, .cheque_check, .mort_check, .endorse_check, .gold_check, .doc_check')
+                                        .prop('disabled', true)
+                                        .off('click');
+                                }
+                            }
+                        });
+                    }
+                })
+                // 4. Clear checklist hidden fields
+                .then(() => {
+                    $('#sign_checklist').val('');
+                    $('#cheque_checklist').val('');
+                    $('#mort_checklist').val('');
+                    $('#endorse_checklist').val('');
+                    $('#gold_checklist').val('');
+                    $('#doc_checklist').val('');
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("Something went wrong!");
+                });
         }
     });
 
@@ -246,22 +180,20 @@ $(function () {
     $('.mem_relation_name').hide(); //Hide member name dropdown until chooses noc member
     $('.mem_name').hide(); //Hide member name input until chooses noc member
 
-    var req_id = $('#idupd').val()
-    const cus_id = $('#cusidupd').val()
-    const action_type = $('#action_type').val()
-    OnLoadFunctions(req_id, cus_id, action_type);
+    OnLoadFunctions();
 
     var cus_pic = $('#cuspicupd').val();
     $('#imgshow').attr('src', 'uploads/request/customer/' + cus_pic);
 });
 
-let req_id = null;
-function OnLoadFunctions(req_id, cus_id, action_type) {
+
+function OnLoadFunctions() {
+    const cus_id = $('#cusidupd').val();
 
     $.ajax({
         //in this file, details gonna fetch by customer ID, Not by req id (Because we need all loans from customer)
         url: 'nocFile/getLoanListWithClosed.php',
-        data: { 'req_id': req_id, 'cus_id': cus_id, 'action_type': action_type, 'screen': 'noc' },
+        data: { 'cus_id': cus_id, 'screen': 'noc' },
         type: 'post',
         cache: false,
         success: function (response) {
@@ -299,7 +231,6 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
                 }).then(function () {
                     var sign_check = [];
                     $('.sign_check').click(function () {
-                        // checkNocSubmit()
                         if (this.checked) {
 
                             sign_check.push($(this).attr('data-value'));
@@ -309,7 +240,6 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
                             let currDate = d.getDate() + "-" + (d.getMonth() + 1).toString().padStart(2, "0") + "-" + d.getFullYear();
                             $(this).parent().prev().children().text(currDate);
                             //show person type choosing dropdown
-                            // $(this).parent().prev().prev().children().show();
                             $(this).parent().prev().prev().children().attr('required');
 
                         } else {
@@ -320,8 +250,6 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
                             //remove date in span element
                             $(this).parent().prev().children().text('');
                             //hide person type choosing dropdown
-                            // $(this).parent().prev().prev().children().hide();
-                            // $(this).parent().prev().prev().children().val(''); // empty type dropdown
                             $(this).parent().prev().prev().children().removeAttr('required');//remove required attribute
                             //empty name td
                         }
@@ -332,33 +260,6 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
                         //store checked data
                         $('#sign_checklist').val(sign_check.join(','));
                     });
-                    // $('.sign_noc_per').change(function () {
-                    //     let sign_noc_per = $(this).val(); let noc_name = $(this).parent().next();
-                    //     if (sign_noc_per != '') {
-                    //         if (sign_noc_per == 1) {
-                    //             noc_name.html(`<input type='text' class='form-control' value='` + cus_name + `' readonly>`)
-                    //             // noc_name.html(`<input type='hidden' class='sign_noc_name' value='`+cus_id+`'><input type='text' class='form-control' value='`+cus_name+`' readonly>`)
-                    //         } else if (sign_noc_per == 2) {
-                    //             $.ajax({
-                    //                 url: 'nocFile/getFamDetails.php',
-                    //                 data: { 'cus_id': cus_id, 'req_id': req_id },
-                    //                 type: 'post',
-                    //                 dataType: 'json',
-                    //                 cache: false,
-                    //                 success: function (response) {
-                    //                     let element = `<select id='sign_noc_name' name='sign_noc_name' class="form-control sign_noc_name" required><option value=''>Select Type</option>`;
-                    //                     $.each(response, function (index, value) {
-                    //                         element += `<option value='` + value['fam_id'] + `'>` + value['fam_name'] + ` - ` + value['relationship'] + `</option>`;
-                    //                     })
-                    //                     element += `</select>`;
-                    //                     noc_name.html(element);
-                    //                 }
-                    //             })
-                    //         }
-                    //     } else {
-                    //         noc_name.empty();// empty td of name
-                    //     }
-                    // });
                 });
             }
 
@@ -380,7 +281,6 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
                 }).then(function () {
                     var cheque_check = [];
                     $('.cheque_check').click(function () {
-                        // checkNocSubmit()
                         if (this.checked) {
                             cheque_check.push($(this).attr('data-value'));
 
@@ -410,33 +310,6 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
                         });
                         $('#cheque_checklist').val(cheque_check.join(','));
                     });
-
-                    // $('.cheque_noc_per').change(function () {
-                    //     let cheque_noc_per = $(this).val(); let noc_name = $(this).parent().next();
-                    //     if (cheque_noc_per != '') {
-                    //         if (cheque_noc_per == 1) {
-                    //             noc_name.html(`<input type='text' class='form-control' value='` + cus_name + `' readonly>`)
-                    //         } else if (cheque_noc_per == 2) {
-                    //             $.ajax({
-                    //                 url: 'nocFile/getFamDetails.php',
-                    //                 data: { 'cus_id': cus_id, 'req_id': req_id },
-                    //                 type: 'post',
-                    //                 dataType: 'json',
-                    //                 cache: false,
-                    //                 success: function (response) {
-                    //                     let element = `<select id='cheque_noc_name' name='cheque_noc_name' class="form-control cheque_noc_name"><option value=''>Select Type</option>`;
-                    //                     $.each(response, function (index, value) {
-                    //                         element += `<option value='` + value['fam_id'] + `'>` + value['fam_name'] + ` - ` + value['relationship'] + `</option>`;
-                    //                     })
-                    //                     element += `</select>`;
-                    //                     noc_name.html(element);
-                    //                 }
-                    //             })
-                    //         }
-                    //     } else {
-                    //         noc_name.empty();// empty td of name
-                    //     }
-                    // });
                 });
             }
 
@@ -453,12 +326,73 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
                             $('.mortRow').hide().next().hide();
                         } else {
                             $('.mortRow').show().next().show();
+                            
+                            // Fetch mortgage details for this specific req_id
+                            $.ajax({
+                                url: 'updateFile/getMortgageInfo.php',
+                                data: { 'req_id': req_id },
+                                type: 'post',
+                                dataType: 'json',
+                                cache: false,
+                                success: function (mortData) {
+                                    // Populate mortgage form fields
+                                    if (mortData.mort_process == '0') {
+                                        $('.mort_proc').show();
+                                    }else{
+                                        $('.mort_proc').hide();
+                                    }
+                                    if (mortData.mort_process !== undefined) {
+                                        $('#mortgage_process').val(mortData.mort_process);
+                                    }
+                                    if (mortData.prop_holder_type !== undefined) {
+                                        $('#Propertyholder_type').val(mortData.prop_holder_type);
+                                    }
+                                    if (mortData.prop_holder_name !== undefined) {
+                                        $('#Propertyholder_name').val(mortData.prop_holder_name);
+                                    }
+                                    if (mortData.prop_holder_rel !== undefined) {
+                                        $('#Propertyholder_relationship_name').val(mortData.prop_holder_rel);
+                                    }
+                                    if (mortData.doc_prop_rel !== undefined) {
+                                        $('#doc_property_relation').val(mortData.doc_prop_rel);
+                                    }
+                                    if (mortData.doc_prop_type !== undefined) {
+                                        $('#doc_property_pype').val(mortData.doc_prop_type);
+                                    }
+                                    if (mortData.doc_prop_meas !== undefined) {
+                                        $('#doc_property_measurement').val(mortData.doc_prop_meas);
+                                    }
+                                    if (mortData.doc_prop_loc !== undefined) {
+                                        $('#doc_property_location').val(mortData.doc_prop_loc);
+                                    }
+                                    if (mortData.doc_prop_val !== undefined) {
+                                        $('#doc_property_value').val(mortData.doc_prop_val);
+                                    }
+                                    if (mortData.mort_name !== undefined) {
+                                        $('#mortgage_name').val(mortData.mort_name);
+                                    }
+                                    if (mortData.mort_des !== undefined) {
+                                        $('#mortgage_dsgn').val(mortData.mort_des);
+                                    }
+                                    if (mortData.mort_num !== undefined) {
+                                        $('#mortgage_nuumber').val(mortData.mort_num);
+                                    }
+                                    if (mortData.reg_office !== undefined) {
+                                        $('#reg_office').val(mortData.reg_office);
+                                    }
+                                    if (mortData.mort_value !== undefined) {
+                                        $('#mortgage_value').val(mortData.mort_value);
+                                    }
+                                    if (mortData.mort_doc !== undefined) {
+                                        $('#mortgage_document').val(mortData.mort_doc);
+                                    }
+                                }
+                            });
                         }
                     }
                 }).then(function () {
                     var mort_check = [];
                     $('.mort_check').click(function () {
-                        // checkNocSubmit()
                         var val = $(this).parent().prev().prev().text();
                         if (this.checked) {
                             mort_check.push(checkvalues(val));
@@ -492,32 +426,6 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
                         }
                         $('#mort_checklist').val(mort_check.join(','));
                     });
-                    // $('.mort_noc_per').change(function () {
-                    //     let mort_noc_per = $(this).val(); let noc_name = $(this).parent().next();
-                    //     if (mort_noc_per != '') {
-                    //         if (mort_noc_per == 1) {
-                    //             noc_name.html(`<input type='text' class='form-control' value='` + cus_name + `' readonly>`)
-                    //         } else if (mort_noc_per == 2) {
-                    //             $.ajax({
-                    //                 url: 'nocFile/getFamDetails.php',
-                    //                 data: { 'cus_id': cus_id, 'req_id': req_id },
-                    //                 type: 'post',
-                    //                 dataType: 'json',
-                    //                 cache: false,
-                    //                 success: function (response) {
-                    //                     let element = `<select id='mort_noc_name' name='mort_noc_name' class="form-control mort_noc_name"><option value=''>Select Type</option>`;
-                    //                     $.each(response, function (index, value) {
-                    //                         element += `<option value='` + value['fam_id'] + `'>` + value['fam_name'] + ` - ` + value['relationship'] + `</option>`;
-                    //                     })
-                    //                     element += `</select>`;
-                    //                     noc_name.html(element);
-                    //                 }
-                    //             })
-                    //         }
-                    //     } else {
-                    //         noc_name.empty();// empty td of name
-                    //     }
-                    // });
                 });
             }
 
@@ -534,12 +442,67 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
                             $('.endRow').hide().next().hide();
                         } else {
                             $('.endRow').show().next().show();
+                            
+                            // Fetch endorsement details for this specific req_id
+                            $.ajax({
+                                url: 'updateFile/getEndorsementInfo.php',
+                                data: { 'req_id': req_id },
+                                type: 'post',
+                                dataType: 'json',
+                                cache: false,
+                                success: function (endData) {
+                                    // Populate endorsement form fields
+                                    if (endData.end_process == '0') {
+                                        $('.endor_proc').show();
+                                    }else{
+                                        $('.endor_proc').hide();
+                                    }
+                                    if (endData.end_process !== undefined) {
+                                        $('#endorsement_process').val(endData.end_process);
+                                    }
+                                    if (endData.owner_type !== undefined) {
+                                        $('#owner_type').val(endData.owner_type);
+                                    }
+                                    if (endData.owner_name !== undefined) {
+                                        $('#owner_name').val(endData.owner_name);
+                                    }
+                                    if (endData.owner_rel_name !== undefined) {
+                                        $('#ownername_relationship_name').val(endData.owner_rel_name);
+                                    }
+                                    if (endData.owner_relation !== undefined) {
+                                        $('#en_relation').val(endData.owner_relation);
+                                    }
+                                    if (endData.vehicle_type !== undefined) {
+                                        $('#vehicle_type').val(endData.vehicle_type);
+                                    }
+                                    if (endData.vehicle_process !== undefined) {
+                                        $('#vehicle_process').val(endData.vehicle_process);
+                                    }
+                                    if (endData.vehicle_comp !== undefined) {
+                                        $('#en_Company').val(endData.vehicle_comp);
+                                    }
+                                    if (endData.vehicle_mod !== undefined) {
+                                        $('#en_Model').val(endData.vehicle_mod);
+                                    }
+                                    if (endData.vehicle_reg_no !== undefined) {
+                                        $('#vehicle_reg_no').val(endData.vehicle_reg_no);
+                                    }
+                                    if (endData.end_name !== undefined) {
+                                        $('#endorsement_name').val(endData.end_name);
+                                    }
+                                    if (endData.end_rc !== undefined) {
+                                        $('#en_RC').val(endData.end_rc);
+                                    }
+                                    if (endData.end_key !== undefined) {
+                                        $('#en_Key').val(endData.end_key);
+                                    }
+                                }
+                            });
                         }
                     }
                 }).then(function () {
                     var endorse_check = [];
                     $('.endorse_check').click(function () {
-                        // checkNocSubmit()
                         var val = $(this).parent().prev().prev().text();
                         if (this.checked) {
                             endorse_check.push(checkvalues(val));
@@ -575,32 +538,6 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
                         }
                         $('#endorse_checklist').val(endorse_check.join(','));
                     });
-                    // $('.endorse_noc_per').change(function () {
-                    //     let endorse_noc_per = $(this).val(); let noc_name = $(this).parent().next();
-                    //     if (endorse_noc_per != '') {
-                    //         if (endorse_noc_per == 1) {
-                    //             noc_name.html(`<input type='text' class='form-control' value='` + cus_name + `' readonly>`)
-                    //         } else if (endorse_noc_per == 2) {
-                    //             $.ajax({
-                    //                 url: 'nocFile/getFamDetails.php',
-                    //                 data: { 'cus_id': cus_id, 'req_id': req_id },
-                    //                 type: 'post',
-                    //                 dataType: 'json',
-                    //                 cache: false,
-                    //                 success: function (response) {
-                    //                     let element = `<select id='endorse_noc_name' name='endorse_noc_name' class="form-control endorse_noc_name"><option value=''>Select Type</option>`;
-                    //                     $.each(response, function (index, value) {
-                    //                         element += `<option value='` + value['fam_id'] + `'>` + value['fam_name'] + ` - ` + value['relationship'] + `</option>`;
-                    //                     })
-                    //                     element += `</select>`;
-                    //                     noc_name.html(element);
-                    //                 }
-                    //             })
-                    //         }
-                    //     } else {
-                    //         noc_name.empty();// empty td of name
-                    //     }
-                    // });
                 });
             }
 
@@ -623,7 +560,6 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
                 }).then(function () {
                     var gold_check = [];
                     $('.gold_check').click(function () {
-                        // checkNocSubmit()
                         if (this.checked) {
                             gold_check.push($(this).attr('data-value'));
                             // put current date in date of noc when checked
@@ -651,32 +587,6 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
                         });
                         $('#gold_checklist').val(gold_check.join(','));
                     });
-                    // $('.gold_noc_per').change(function () {
-                    //     let gold_noc_per = $(this).val(); let noc_name = $(this).parent().next();
-                    //     if (gold_noc_per != '') {
-                    //         if (gold_noc_per == 1) {
-                    //             noc_name.html(`<input type='text' class='form-control' value='` + cus_name + `' readonly>`)
-                    //         } else if (gold_noc_per == 2) {
-                    //             $.ajax({
-                    //                 url: 'nocFile/getFamDetails.php',
-                    //                 data: { 'cus_id': cus_id, 'req_id': req_id },
-                    //                 type: 'post',
-                    //                 dataType: 'json',
-                    //                 cache: false,
-                    //                 success: function (response) {
-                    //                     let element = `<select id='gold_noc_name' name='gold_noc_name' class="form-control gold_noc_name"><option value=''>Select Type</option>`;
-                    //                     $.each(response, function (index, value) {
-                    //                         element += `<option value='` + value['fam_id'] + `'>` + value['fam_name'] + ` - ` + value['relationship'] + `</option>`;
-                    //                     })
-                    //                     element += `</select>`;
-                    //                     noc_name.html(element);
-                    //                 }
-                    //             })
-                    //         }
-                    //     } else {
-                    //         noc_name.empty();// empty td of name
-                    //     }
-                    // });
                 });
             }
 
@@ -698,7 +608,6 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
                 }).then(function () {
                     var doc_check = [];
                     $('.doc_check').click(function () {
-                        // checkNocSubmit()
                         if (this.checked) {
                             doc_check.push($(this).attr('data-value'));
 
@@ -728,110 +637,8 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
                         });
                         $('#doc_checklist').val(doc_check.join(','));
                     });
-                    // $('.doc_noc_per').change(function () {
-                    //     let doc_noc_per = $(this).val(); let noc_name = $(this).parent().next();
-                    //     if (doc_noc_per != '') {
-                    //         if (doc_noc_per == 1) {
-                    //             noc_name.html(`<input type='text' class='form-control' value='` + cus_name + `' readonly>`)
-                    //         } else if (doc_noc_per == 2) {
-                    //             $.ajax({
-                    //                 url: 'nocFile/getFamDetails.php',
-                    //                 data: { 'cus_id': cus_id, 'req_id': req_id },
-                    //                 type: 'post',
-                    //                 dataType: 'json',
-                    //                 cache: false,
-                    //                 success: function (response) {
-                    //                     let element = `<select id='doc_noc_name' name='doc_noc_name' class="form-control doc_noc_name"><option value=''>Select Type</option>`;
-                    //                     $.each(response, function (index, value) {
-                    //                         element += `<option value='` + value['fam_id'] + `'>` + value['fam_name'] + ` - ` + value['relationship'] + `</option>`;
-                    //                     })
-                    //                     element += `</select>`;
-                    //                     noc_name.html(element);
-                    //                 }
-                    //             })
-                    //         }
-                    //     } else {
-                    //         noc_name.empty();// empty td of name
-                    //     }
-                    // });
                 });
             }
-
-            // $('.scanBtn').click(function () {
-            //     var mem_name = $('#mem_relation_name').val() != '' ? $('#mem_relation_name').val() : $('#mem_name').val();
-
-            //     if (mem_name != '') {
-
-            //         showOverlay();//loader start
-            //         $(this).attr('disabled', true);
-
-            //         setTimeout(() => { //Set Timeout, because loadin animation will be intrupped by this capture event
-            //             var quality = 60; //(1 to 100) (recommended minimum 55)
-            //             var timeout = 10; // seconds (minimum=10(recommended), maximum=60, unlimited=0)
-            //             var res = CaptureFinger(quality, timeout);
-            //             if (res.httpStaus) {
-            //                 if (res.data.ErrorCode == "0") {
-            //                     $('#ack_fingerprint').val(res.data.AnsiTemplate); // Take ansi template that is the unique id which is passed by sensor
-            //                 }//Error codes and alerts below
-            //                 else if (res.data.ErrorCode == -1307) {
-            //                     alert('Connect Your Device');
-            //                     $(this).removeAttr('disabled');
-            //                 } else if (res.data.ErrorCode == -1140 || res.data.ErrorCode == 700) {
-            //                     alert('Timeout');
-            //                     $(this).removeAttr('disabled');
-            //                 } else if (res.data.ErrorCode == 720) {
-            //                     alert('Reconnect Device');
-            //                     $(this).removeAttr('disabled');
-            //                 } else if (res.data.ErrorCode == 730) {
-            //                     alert('Capture Finger Again');
-            //                     $(this).removeAttr('disabled');
-            //                 } else {
-            //                     alert('Error Code:' + res.data.ErrorCode);
-            //                     $(this).removeAttr('disabled');
-            //                 }
-            //             }
-            //             else {
-            //                 alert(res.err);
-            //             }
-
-            //             //Verify the finger is matched with member name
-            //             var compare_finger = $('#compare_finger').val()
-            //             var ack_fingerprint = $('#ack_fingerprint').val()
-            //             if (ack_fingerprint != '') {
-
-            //                 var res = VerifyFinger(compare_finger, ack_fingerprint)
-            //                 if (res.httpStaus) {
-            //                     if (res.data.Status) {
-            //                         Swal.fire({
-            //                             title: 'Fingerprint Matching',
-            //                             icon: 'success',
-            //                             showConfirmButton: true,
-            //                             confirmButtonColor: '#009688'
-            //                         });
-            //                     } else {
-            //                         if (res.data.ErrorCode != "0") {
-            //                             alert(res.data.ErrorDescription);
-            //                         }
-            //                         else {
-            //                             Swal.fire({
-            //                                 title: 'Fingerprint Not Matching',
-            //                                 icon: 'error',
-            //                                 showConfirmButton: true,
-            //                                 confirmButtonColor: '#009688'
-            //                             });
-            //                             $(this).removeAttr('disabled');
-            //                         }
-            //                     }
-            //                 } else {
-            //                     alert(res.err)
-            //                 }
-            //             }
-            //             hideOverlay();//loader stop
-            //         }, 700) //Timeout End
-
-            //     }//If End
-
-            // })//Scan button Onclick end
 
             // Run all AJAX calls in parallel and wait for all to complete
             Promise.all([
@@ -884,7 +691,7 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
             $.post('nocFile/nocLetter.php', { req_id, cus_id }, function (html) {
                 $('#printnocletter').html(html);
             });
-        })
+        });
 
         $(document).on('click', '.noc-replace', function(event){
             event.preventDefault();
@@ -905,10 +712,7 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
 				if (result.isConfirmed) {
                     $.post('nocFile/nocReplace.php', {reqId, cusId}, function(response){
                         if(response.status =='success'){
-                            var req_id = $('#idupd').val()
-                            const cus_id = $('#cusidupd').val()
-                            const action_type = $('#action_type').val()
-                            OnLoadFunctions(req_id, cus_id, action_type);
+                            OnLoadFunctions();
 
                         } else{
                             alert("Replace Failed.");
@@ -924,25 +728,8 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
 
 }//Auto Load function END
 
-// function checkNocSubmit() {
-//     // 🔥 NEW CONDITION: Check if all items are checked
-//     const allChecked =
-//         $('.sign_check:checked').length === $('.sign_check').length &&
-//         $('.cheque_check:checked').length === $('.cheque_check').length &&
-//         $('.gold_check:checked').length === $('.gold_check').length &&
-//         $('.mort_check:checked').length === $('.mort_check').length &&
-//         $('.endorse_check:checked').length === $('.endorse_check').length &&
-//         $('.doc_check:checked').length === $('.doc_check').length;
-//     if (allChecked) {
-//         $('#submit_noc').show();
-//     } else {
-//         $('#submit_noc').hide();
-//     }
-
-// }
 function validations() {
     var res = true;
-    // var noc_member = $('#noc_member').val(); var mem_relation_name = $('#mem_relation_name').val(); var fingerprint = $('.scanBtn').attr('disabled');
     var sign_checklist = $('#sign_checklist').val(); var cheque_checklist = $('#cheque_checklist').val(); var gold_checklist = $('#gold_checklist').val();
     var mort_checklist = $('#mort_checklist').val(); var endorse_checklist = $('#endorse_checklist').val(); var doc_checklist = $('#doc_checklist').val();
     var sign_checkDisabled = $('.sign_check:disabled').length === $('.sign_check').length;
@@ -951,30 +738,6 @@ function validations() {
     var mort_checkDisabled = $('.mort_check:disabled').length === $('.mort_check').length;
     var endorse_checkDisabled = $('.endorse_check:disabled').length === $('.endorse_check').length;
     var doc_checkDisabled = $('.doc_check:disabled').length === $('.doc_check').length;
-
-    // if (noc_member == '') {
-    //     $('.noc_memberCheck').show()
-    //     event.preventDefault();
-    //     res = false;
-    // } else {
-    //     $('.noc_memberCheck').hide()
-    // }
-
-    // if (noc_member = '3' && mem_relation_name == '') {
-    //     $('.mem_relation_nameCheck').show()
-    //     event.preventDefault();
-    //     res = false;
-    // } else {
-    //     $('.mem_relation_nameCheck').hide()
-    // }
-
-    // if (fingerprint != 'disabled') {
-    //     $('.scanBtnCheck').show()
-    //     event.preventDefault();
-    //     res = false;
-    // } else {
-    //     $('.scanBtnCheck').hide()
-    // }
 
     if (sign_checklist == '' && cheque_checklist == '' && gold_checklist == '' && mort_checklist == '' && endorse_checklist == '' && doc_checklist == '') {
         if (sign_checkDisabled != true) {
@@ -1025,92 +788,7 @@ function validations() {
             $('.doc_checklistCheck').hide()
         }
 
-    } else {
-        // $('.sign_check').each(function () {
-        //     if (this.checked && !this.disabled) {
-        //         let person_type = $(this).parent().prev().prev().children().val();
-        //         let person_name = $(this).parent().prev().children().val();
-        //         if (person_type == '' || person_name == '') {
-        //             event.preventDefault(); res = false;
-        //             $(this).parent().prev().prev().children().css('border-color', 'red')
-        //             $(this).parent().prev().children().css('border-color', 'red')
-        //         } else {
-        //             $(this).parent().prev().prev().children().css('border-color', '')
-        //             $(this).parent().prev().children().css('border-color', '')
-        //         }
-        //     }
-        // })
-        // $('.cheque_check').each(function () {
-        //     if (this.checked && !this.disabled) {
-        //         let person_type = $(this).parent().prev().prev().children().val();
-        //         let person_name = $(this).parent().prev().children().val();
-        //         if (person_type == '' || person_name == '') {
-        //             event.preventDefault(); res = false;
-        //             $(this).parent().prev().prev().children().css('border-color', 'red')
-        //             $(this).parent().prev().children().css('border-color', 'red')
-        //         } else {
-        //             $(this).parent().prev().prev().children().css('border-color', '')
-        //             $(this).parent().prev().children().css('border-color', '')
-        //         }
-        //     }
-        // })
-        // $('.gold_check').each(function () {
-        //     if (this.checked && !this.disabled) {
-        //         let person_type = $(this).parent().prev().prev().children().val();
-        //         let person_name = $(this).parent().prev().children().val();
-        //         if (person_type == '' || person_name == '') {
-        //             event.preventDefault(); res = false;
-        //             $(this).parent().prev().prev().children().css('border-color', 'red')
-        //             $(this).parent().prev().children().css('border-color', 'red')
-        //         } else {
-        //             $(this).parent().prev().prev().children().css('border-color', '')
-        //             $(this).parent().prev().children().css('border-color', '')
-        //         }
-        //     }
-        // })
-        // $('.doc_check').each(function () {
-        //     if (this.checked && !this.disabled) {
-        //         let person_type = $(this).parent().prev().prev().children().val();
-        //         let person_name = $(this).parent().prev().children().val();
-        //         if (person_type == '' || person_name == '') {
-        //             event.preventDefault(); res = false;
-        //             $(this).parent().prev().prev().children().css('border-color', 'red')
-        //             $(this).parent().prev().children().css('border-color', 'red')
-        //         } else {
-        //             $(this).parent().prev().prev().children().css('border-color', '')
-        //             $(this).parent().prev().children().css('border-color', '')
-        //         }
-        //     }
-        // })
-        // $('.mort_check').each(function () {
-        //     if (this.checked && !this.disabled) {
-        //         let person_type = $(this).parent().prev().prev().children().val();
-        //         let person_name = $(this).parent().prev().children().val();
-        //         if (person_type == '' || person_name == '') {
-        //             event.preventDefault(); res = false;
-        //             $(this).parent().prev().prev().children().css('border-color', 'red')
-        //             $(this).parent().prev().children().css('border-color', 'red')
-        //         } else {
-        //             $(this).parent().prev().prev().children().css('border-color', '')
-        //             $(this).parent().prev().children().css('border-color', '')
-        //         }
-        //     }
-        // })
-        // $('.endorse_check').each(function () {
-        //     if (this.checked && !this.disabled) {
-        //         let person_type = $(this).parent().prev().prev().children().val();
-        //         let person_name = $(this).parent().prev().children().val();
-        //         if (person_type == '' || person_name == '') {
-        //             event.preventDefault(); res = false;
-        //             $(this).parent().prev().prev().children().css('border-color', 'red')
-        //             $(this).parent().prev().children().css('border-color', 'red')
-        //         } else {
-        //             $(this).parent().prev().prev().children().css('border-color', '')
-        //             $(this).parent().prev().children().css('border-color', '')
-        //         }
-        //     }
-        // })
-    }
+    } 
     return res;
 }
 

@@ -12,12 +12,13 @@ $(document).ready(function () {
         $('.scanBtn').removeAttr('disabled');
         $('#compare_finger').val('')
         var noc_member = parseInt($(this).val());
+        var cus_id = $('#cusidupd').val();
         var req_id = $('#req_id').val();
         //if Noc Member is Family member or Guarentor then get member names
         if (noc_member > 1) {
             $.ajax({
                 url: 'nocFile/getMemberDetails.php',
-                data: { 'req_id': req_id, 'noc_member': noc_member },
+                data: { 'cus_id': cus_id, 'req_id': req_id, 'noc_member': noc_member },
                 dataType: 'json',
                 type: 'post',
                 cache: false,
@@ -96,14 +97,9 @@ $(document).ready(function () {
         })
     })
 
-    var mortgage_process = $('#mortgage_process').val()
-    var endorsement_process = $('#endorsement_process').val()
-    if (mortgage_process == '1') {
-        $('.mort_proc').hide();
-    }
-    if (endorsement_process == '1') {
-        $('.endor_proc').hide();
-    }
+    //Hide mortgage & Endorsement intially.
+    $('.mort_proc').hide();
+    $('.endor_proc').hide();
 
     $('#submit_noc_handover').click(function (event) {
 
@@ -116,12 +112,12 @@ $(document).ready(function () {
             Promise.all([
                 updateNocTable()
             ]).then(() => {
-                    $('#close-noc-card').trigger('click'); // now executes AFTER everything is updated
-                })
-                .catch(err => {
-                    console.error(err);
-                    alert("Something went wrong!");
-                });
+                $('#close-noc-card').trigger('click'); // now executes AFTER everything is updated
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Something went wrong!");
+            });
 
         }
     });
@@ -139,21 +135,19 @@ $(function () {
     $('.mem_relation_name').hide(); //Hide member name dropdown until chooses noc member
     $('.mem_name').hide(); //Hide member name input until chooses noc member
 
-    var req_id = $('#idupd').val()
-    const cus_id = $('#cusidupd').val()
-    const action_type = $('#action_type').val()
-    OnLoadFunctions(req_id, cus_id, action_type);
+    OnLoadFunctions();
 
     var cus_pic = $('#cuspicupd').val();
     $('#imgshow').attr('src', 'uploads/request/customer/' + cus_pic);
 })
 
-function OnLoadFunctions(req_id, cus_id, action_type) {
+function OnLoadFunctions() {
+    const cus_id = $('#cusidupd').val();
 
     $.ajax({
         //in this file, details gonna fetch by customer ID, Not by req id (Because we need all loans from customer)
         url: 'nocFile/getLoanListWithClosed.php',
-        data: { 'req_id': req_id, 'cus_id': cus_id, 'action_type': action_type, 'screen': 'nochandover' },
+        data: { 'cus_id': cus_id, 'screen': 'nochandover' },
         type: 'post',
         cache: false,
         success: function (response) {
@@ -222,6 +216,68 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
                             $('.mortRow').hide().next().hide();
                         } else {
                             $('.mortRow').show().next().show();
+                            
+                            // Fetch mortgage details for this specific req_id
+                            $.ajax({
+                                url: 'updateFile/getMortgageInfo.php',
+                                data: { 'req_id': req_id },
+                                type: 'post',
+                                dataType: 'json',
+                                cache: false,
+                                success: function (mortData) {
+                                    // Populate mortgage form fields
+                                    if (mortData.mort_process == '0') {
+                                        $('.mort_proc').show();
+                                    }else{
+                                        $('.mort_proc').hide();
+                                    }
+                                    if (mortData.mort_process !== undefined) {
+                                        $('#mortgage_process').val(mortData.mort_process);
+                                    }
+                                    if (mortData.prop_holder_type !== undefined) {
+                                        $('#Propertyholder_type').val(mortData.prop_holder_type);
+                                    }
+                                    if (mortData.prop_holder_name !== undefined) {
+                                        $('#Propertyholder_name').val(mortData.prop_holder_name);
+                                    }
+                                    if (mortData.prop_holder_rel !== undefined) {
+                                        $('#Propertyholder_relationship_name').val(mortData.prop_holder_rel);
+                                    }
+                                    if (mortData.doc_prop_rel !== undefined) {
+                                        $('#doc_property_relation').val(mortData.doc_prop_rel);
+                                    }
+                                    if (mortData.doc_prop_type !== undefined) {
+                                        $('#doc_property_pype').val(mortData.doc_prop_type);
+                                    }
+                                    if (mortData.doc_prop_meas !== undefined) {
+                                        $('#doc_property_measurement').val(mortData.doc_prop_meas);
+                                    }
+                                    if (mortData.doc_prop_loc !== undefined) {
+                                        $('#doc_property_location').val(mortData.doc_prop_loc);
+                                    }
+                                    if (mortData.doc_prop_val !== undefined) {
+                                        $('#doc_property_value').val(mortData.doc_prop_val);
+                                    }
+                                    if (mortData.mort_name !== undefined) {
+                                        $('#mortgage_name').val(mortData.mort_name);
+                                    }
+                                    if (mortData.mort_des !== undefined) {
+                                        $('#mortgage_dsgn').val(mortData.mort_des);
+                                    }
+                                    if (mortData.mort_num !== undefined) {
+                                        $('#mortgage_nuumber').val(mortData.mort_num);
+                                    }
+                                    if (mortData.reg_office !== undefined) {
+                                        $('#reg_office').val(mortData.reg_office);
+                                    }
+                                    if (mortData.mort_value !== undefined) {
+                                        $('#mortgage_value').val(mortData.mort_value);
+                                    }
+                                    if (mortData.mort_doc !== undefined) {
+                                        $('#mortgage_document').val(mortData.mort_doc);
+                                    }
+                                }
+                            });
                         }
                     }
                 })
@@ -240,6 +296,62 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
                             $('.endRow').hide().next().hide();
                         } else {
                             $('.endRow').show().next().show();
+                            
+                            // Fetch endorsement details for this specific req_id
+                            $.ajax({
+                                url: 'updateFile/getEndorsementInfo.php',
+                                data: { 'req_id': req_id },
+                                type: 'post',
+                                dataType: 'json',
+                                cache: false,
+                                success: function (endData) {
+                                    // Populate endorsement form fields
+                                    if (endData.end_process == '0') {
+                                        $('.endor_proc').show();
+                                    }else{
+                                        $('.endor_proc').hide();
+                                    }
+                                    if (endData.end_process !== undefined) {
+                                        $('#endorsement_process').val(endData.end_process);
+                                    }
+                                    if (endData.owner_type !== undefined) {
+                                        $('#owner_type').val(endData.owner_type);
+                                    }
+                                    if (endData.owner_name !== undefined) {
+                                        $('#owner_name').val(endData.owner_name);
+                                    }
+                                    if (endData.owner_rel_name !== undefined) {
+                                        $('#ownername_relationship_name').val(endData.owner_rel_name);
+                                    }
+                                    if (endData.owner_relation !== undefined) {
+                                        $('#en_relation').val(endData.owner_relation);
+                                    }
+                                    if (endData.vehicle_type !== undefined) {
+                                        $('#vehicle_type').val(endData.vehicle_type);
+                                    }
+                                    if (endData.vehicle_process !== undefined) {
+                                        $('#vehicle_process').val(endData.vehicle_process);
+                                    }
+                                    if (endData.vehicle_comp !== undefined) {
+                                        $('#en_Company').val(endData.vehicle_comp);
+                                    }
+                                    if (endData.vehicle_mod !== undefined) {
+                                        $('#en_Model').val(endData.vehicle_mod);
+                                    }
+                                    if (endData.vehicle_reg_no !== undefined) {
+                                        $('#vehicle_reg_no').val(endData.vehicle_reg_no);
+                                    }
+                                    if (endData.end_name !== undefined) {
+                                        $('#endorsement_name').val(endData.end_name);
+                                    }
+                                    if (endData.end_rc !== undefined) {
+                                        $('#en_RC').val(endData.end_rc);
+                                    }
+                                    if (endData.end_key !== undefined) {
+                                        $('#en_Key').val(endData.end_key);
+                                    }
+                                }
+                            });
                         }
                     }
                 })
@@ -365,13 +477,35 @@ function OnLoadFunctions(req_id, cus_id, action_type) {
                 getEndorsementList(),
                 getGoldList(),
                 getDocumentList()
-            ]).then(() => {
-        
-            }).catch(err => {
+            ]).catch(err => {
                 console.error('Error loading lists:', err);
             });
 
         })//Window onclick end
+
+        $(document).on('click', '.noc-summary', function (e) {
+            e.preventDefault();
+            let req_id = $(this).data('reqid');
+            var cus_name = $(this).data('cusname');
+            $.ajax({
+                url: 'verificationFile/documentation/getNOCSummary.php',
+                data: { req_id, cus_name },
+                type: 'post',
+                cache: false,
+                success: function (html) {
+                    $('#nocsummaryModal').html(html);
+                }
+            });
+        });
+
+        $(document).on('click', '.noc-letter', function (event) {
+            event.preventDefault();
+            let req_id = $(this).data('reqid');
+            let cus_id = $(this).data('cusid');
+            $.post('nocFile/nocLetter.php', { req_id, cus_id }, function (html) {
+                $('#printnocletter').html(html);
+            });
+        });
 
     })//Ajax done End
 
@@ -414,7 +548,7 @@ function updateNocTable() {
     let cusidupd = $('#cusidupd').val();
     let req_id = $('#req_id').val();
     let noc_date = $('#noc_date').val();
-     let noc_member = $('#noc_member').val();
+    let noc_member = $('#noc_member').val();
     let mem_name = ''; // Initialize mem_name variable
 
     // Determine mem_name based on noc_member value
@@ -427,10 +561,9 @@ function updateNocTable() {
     var formData = new FormData();
     formData.append('cusidupd', cusidupd);
     formData.append('req_id', req_id);
-     formData.append('noc_date', noc_date);
+    formData.append('noc_date', noc_date);
     formData.append('noc_member', noc_member);
     formData.append('mem_name', mem_name); // Append mem_name
-   const action_type = $('#action_type').val()
     // ⭐ Return the AJAX promise
     return $.ajax({
         url: 'nocFile/updateNocHandover.php',
@@ -447,8 +580,11 @@ function updateNocTable() {
                 icon: 'success',
                 showConfirmButton: true,
                 confirmButtonColor: '#009688'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    OnLoadFunctions();
+                }
             });
-               OnLoadFunctions(req_id, cusidupd, action_type);
         } else {
             Swal.fire({
                 title: 'Error While Submitting',
@@ -461,8 +597,3 @@ function updateNocTable() {
         return response; // important for promise chain
     });
 }
-
-
-
-
-
