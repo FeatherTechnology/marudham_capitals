@@ -5,21 +5,6 @@ include '../ajaxconfig.php';
 if (isset($_SESSION["userid"])) {
     $user_id = $_SESSION["userid"];
 }
-if (isset($_POST["pending_sts"])) {
-    $pending_sts = explode(',', $_POST["pending_sts"]);
-}
-if (isset($_POST["od_sts"])) {
-    $od_sts = explode(',', $_POST["od_sts"]);
-}
-if (isset($_POST["due_nil_sts"])) {
-    $due_nil_sts = explode(',', $_POST["due_nil_sts"]);
-}
-if (isset($_POST["closed_sts"])) {
-    $closed_sts = explode(',', $_POST["closed_sts"]);
-}
-if (isset($_POST["bal_amt"])) {
-    $bal_amt = explode(',', $_POST["bal_amt"]);
-}
 ?>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -124,7 +109,6 @@ if (isset($_POST["bal_amt"])) {
             $nocReplaceAccess = $rowuser['noc_replace_access'];
             
             $cus_id = $_POST['cus_id'];
-            $actionType = $_POST['action_type'] ?? '';
             $screen = $_POST['screen'] ?? '';
 
             //for both NOC & NOC handover using this screen for loan list so if noc screen means show till handover but action may vary and handover screen means show only in noc handover. 
@@ -135,8 +119,12 @@ if (isset($_POST["bal_amt"])) {
                 $cus_sts = "21,22,23";
             }
 
-            $run = $connect->query("SELECT ii.loan_id, lc.cus_name_loan as cus_name, ad.doc_id, lcc.loan_category_creation_name as loan_catrgory_name, lc.sub_category, rc.agent_id, ii.updated_date, lc.loan_amt_cal, ii.req_id, ii.cus_status
-            FROM acknowlegement_loan_calculation lc JOIN acknowlegement_documentation ad ON lc.req_id = ad.req_id JOIN in_issue ii ON lc.req_id = ii.req_id JOIN request_creation rc ON ii.req_id = rc.req_id JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id JOIN user us ON us.user_id = $user_id
+            $run = $connect->query("SELECT ii.loan_id, lc.cus_name_loan as cus_name, ad.doc_id, lcc.loan_category_creation_name as loan_catrgory_name, lc.sub_category, iv.agent_id, ii.updated_date, lc.loan_amt_cal, ii.req_id, ii.cus_status
+            FROM acknowlegement_loan_calculation lc 
+            JOIN acknowlegement_documentation ad ON lc.req_id = ad.req_id 
+            JOIN in_issue ii ON lc.req_id = ii.req_id 
+            JOIN in_verification iv ON ii.req_id = iv.req_id 
+            JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
             WHERE lc.cus_id_loan = $cus_id and ii.cus_status IN ($cus_sts) "); //21 means loan has been closed form closed window for noc
 
             while ($row = $run->fetch()) {
@@ -186,50 +174,32 @@ if (isset($_POST["bal_amt"])) {
                     <div class="dropdown">
                         <button class="btn btn-outline-secondary"><i class="fa">&#xf107;</i></button>
                             <div class="dropdown-content">
-                                <?php if ($nocReplaceAccess == 0 && $screen != 'nochandover'){ //need noc replace access //if noc replace access user open handover means they can handover noc so show noc option. // if having noc replace means show only noc replace and noc summary;
-                                    if ($row['cus_status'] == '21'){ //noc replace show only if cus status is 21.
-                                ?>
+                                <?php if ($nocReplaceAccess == 0 && $screen == 'noc'){ //need noc replace access //if noc replace access user open handover means they can handover noc so show noc option. // if having noc replace means show only noc replace and noc summary;
+                                    if ($row['cus_status'] == '21'){ //noc replace show only if cus status is 21. ?>
 
-                                    <a href="#" class="noc-replace" data-value="<?= $row['req_id']; ?>"> Replace </a>
+                                        <a href="#" class="noc-replace" data-value="<?= $row['req_id']; ?>"> Replace </a>
                                 
-                                <?php } ?>
-
-                                    <a href="#" class="noc-summary" data-reqid="<?= $row['req_id']; ?>" data-cusid="<?= $cus_id; ?>" data-cusname="<?= $row['cus_name']; ?>" data-toggle="modal" data-target=".noc-summary-modal"> NOC Summary </a>
-                                    
-                                    <?php if ($actionType == "summary") { ?>
-
-                                        <a href="#" title="NOC Letter" class="noc-letter" data-reqid="<?= $row['req_id']; ?>" data-cusid="<?= $cus_id; ?>"> NOC Letter </a>
-
-                                    <?php } 
-                                     } else{
-
-                                        if ($actionType == "noc") { ?>
+                                    <?php }  
+                                } else{ //NOC & NOC handover using this same screen for loan list so if 21=IN-NOC, 23=NOC-Completed means show NOC to submit noc in NOC & NOC handover but they process are different.
+                                    if ($row['cus_status'] == '21' || $row['cus_status'] == '23') { ?>
 
                                         <a href="#" class="noc-window" data-value="<?= $row['req_id']; ?>"> NOC </a>
 
-                                    <?php } elseif ($actionType == "summary") { ?>
-
-                                        <a href=""
-                                        class="noc-summary"
-                                            data-reqid="<?= $row['req_id']; ?>"
-                                            data-cusid="<?= $cus_id; ?>"
-                                            data-cusname="<?= $row['cus_name']; ?>"
-                                            data-toggle="modal"
-                                            data-target=".noc-summary-modal">
-                                            NOC Summary
-                                        </a>
-
-                                        <a href=""
-                                            title="NOC Letter"
-                                            class="noc-letter"
-                                            data-reqid="<?= $row['req_id']; ?>"
-                                            data-cusid="<?= $cus_id; ?>">
-                                            NOC Letter
-                                        </a>
-
                                     <?php } 
-                                }
+                                } 
+                                
+                                if ($row['cus_status'] > '21' || ($nocReplaceAccess == 0 && $screen == 'noc')){ //if NOC completed or replace access user then show summary.
                                 ?>
+
+                                    <a href="#" class="noc-summary" data-reqid="<?= $row['req_id']; ?>" data-cusid="<?= $cus_id; ?>" data-cusname="<?= $row['cus_name']; ?>" data-toggle="modal" data-target=".noc-summary-modal"> NOC Summary </a>
+
+                                <?php } 
+                                if ($row['cus_status'] > '21'){ //if NOC Completed show NOC letter.
+                                ?>
+
+                                    <a href="#" title="NOC Letter" class="noc-letter" data-reqid="<?= $row['req_id']; ?>" data-cusid="<?= $cus_id; ?>"> NOC Letter </a>
+
+                                <?php } ?>
 
                             </div>
                     </div>

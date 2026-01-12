@@ -4,9 +4,13 @@ include('../ajaxconfig.php');
 if(isset($_POST['req_id'])){
     $req_id = $_POST['req_id'];
 }
+if(isset($_POST['cus_id'])){
+    $cus_id = $_POST['cus_id'];
+}
 if(isset($_POST['noc_member'])){
     $noc_member = $_POST['noc_member'];
 }
+
 $records = array();
 
 if($noc_member == 2){
@@ -16,8 +20,9 @@ if($noc_member == 2){
     $records['guarentor_id'] = $row['guarentor_name'];
     $records['guarentor_name'] = $row['famname'];
     $records['fingerprint'] = $row['ansi_template'];
+    
 }else if($noc_member == 3){
-    $qry = $connect->query("SELECT * FROM verification_family_info WHERE req_id='$req_id' ");
+    $qry = $connect->query("SELECT * FROM verification_family_info WHERE cus_id = '$cus_id' ");
     $i=0;
     while($row = $qry->fetch()){
         $records['fam_id'][$i] = $row['id'];

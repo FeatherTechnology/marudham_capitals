@@ -5,25 +5,13 @@
 		Marudham Capitals - NOC Handover
 	</div>
 </div><br>
-<!-- <div class="text-right" style="margin-right: 25px;">
-    <a href="verification">
-        <button type="button" class="btn btn-primary"><span class="icon-add"></span>&nbsp; Add verification</button>
-    </a>
-</div><br><br> -->
-<!-- Page header end -->
 
 <!-- Main container start -->
 <div class="main-container">
 	<!-- Row start -->
-	<input type="hidden" id="pending_sts">
-	<input type="hidden" id="od_sts">
-	<input type="hidden" id="due_nil_sts">
-	<input type="hidden" id="closed_sts">
-	<input type="hidden" id="bal_amt">
 	<div class="row gutters">
 		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 			<div class="table-container">
-
 				<div class="table-responsive">
 					<?php
 					$mscid = 0;
@@ -84,19 +72,6 @@
 				</button>
 			</div>
 			<div class="modal-body">
-
-				<br />
-				<div class="row">
-					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12"></div>
-					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-						<div class="form-group">
-							<input type="hidden" name="req_id" id="req_id">
-							<!-- <label class="label">Existing Type</label>
-							<input type="text" name="exist_type" id="exist_type" class="form-control" readonly > -->
-						</div>
-					</div>
-					<div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12"></div>
-				</div>
 				<div id="updatedcusHistoryTable">
 					<table class="table custom-table" id="cusHistoryTable">
 						<thead>
@@ -122,11 +97,11 @@
 		</div>
 	</div>
 </div>
+
 <script>
 	function callOnClickEvents() {
 		$('.receive-noc').click(function() {
 			event.preventDefault();
-			let req_id = $(this).data('reqid');
 			let cus_id = $(this).data('cusid');
 			Swal.fire({
 				title: 'Are your sure to receive this NOC Handover?',
@@ -140,18 +115,15 @@
 				confirmButtonText: 'Yes'
 			}).then(function(result) {
 				if (result.isConfirmed) {
-					receiveNOCFromList(req_id, cus_id);
+					receiveNOCFromList(cus_id);
 				}
 			})
 		})
 
-		function receiveNOCFromList(req_id, cus_id) {
+		function receiveNOCFromList(cus_id) {
 			$.ajax({
 				url: 'nocFile/receiveNOCFromList.php',
-				data: {
-					'req_id': req_id,
-					'cus_id': cus_id
-				},
+				data: { cus_id },
 				dataType: 'json',
 				type: 'post',
 				cache: false,
@@ -186,7 +158,6 @@
 		$('a.customer-status').click(async function() {
 			try {
 				var cus_id = $(this).data('value');
-				var req_id = $(this).data('value1');
 				showOverlay();
 
 				// Wait here until the function COMPLETES
@@ -284,12 +255,6 @@
 						let due_nil_sts = due_nil_arr.join(',');
 						let closed_sts = closed_arr.join(',');
 						let bal_amt = balance_arr.join(',');
-
-						$('#pending_sts').val(pending_sts);
-						$('#od_sts').val(od_sts);
-						$('#due_nil_sts').val(due_nil_sts);
-						$('#closed_sts').val(closed_sts);
-						$('#bal_amt').val(bal_amt);
 
 						resolve({
 							pending_sts,

@@ -1,47 +1,23 @@
 <?php
-if (isset($_POST['userid'])) {
-	$userid = $_POST['userid'];
-}
-
-
-
-if (isset($_GET['upd'])) {
-	$idupd = $_GET['upd'];
-}
 if (isset($_GET['cusidupd'])) {
 	$cusidupd = $_GET['cusidupd'];
 }
-if (isset($_GET['action_type'])) {
-	$action_type = $_GET['action_type'];
-}
-$getLoanList = $userObj->getLoanList($mysqli, $idupd);
-if (sizeof($getLoanList) > 0) {
-	for ($i = 0; $i < sizeof($getLoanList); $i++) {
-		$cus_id						= $getLoanList['cus_id'];
-		$cus_name					= $getLoanList['cus_name'];
-		$area_id					= $getLoanList['area_confirm_area'];
-		$area_name					= $getLoanList['area_name'];
-		$sub_area_id				= $getLoanList['area_confirm_subarea'];
-		$sub_area_name				= $getLoanList['sub_area_name'];
-		$branch_id					= $getLoanList['branch_id'];
-		$branch_name				= $getLoanList['branch_name'];
-		$line_id					= $getLoanList['line_id'];
-		$line_name					= $getLoanList['area_line'];
-		$mobile					= $getLoanList['mobile1'];
-		$cus_pic					= $getLoanList['cus_pic'];
-	}
-}
 
-$getCustomerReg = $userObj->getCustomerRegister($mysqli, $cus_id);
+$getCustomerReg = $userObj->getCustomerRegister($mysqli, $cusidupd);
 if (sizeof($getCustomerReg) > 0) { 
 	$autogen_cus_id 			= $getCustomerReg['autogen_cus_id'];
-}
-
-$documentationInfo = $userObj->getAcknowlegementDocument($mysqli, $idupd);
-if (sizeof($documentationInfo) > 0) {
-	foreach ($documentationInfo as $key => $val) {
-		$$key = $val;
-	}
+	$cus_id						= $getCustomerReg['cus_id'];
+	$cus_name					= $getCustomerReg['cus_name'];
+	$area_id					= $getCustomerReg['area_confirm_area'];
+	$area_name					= $getCustomerReg['area_name'];
+	$sub_area_id				= $getCustomerReg['area_confirm_subarea'];
+	$sub_area_name				= $getCustomerReg['sub_area_name'];
+	$branch_id					= $getCustomerReg['branch_id'];
+	$branch_name				= $getCustomerReg['branch_name'];
+	$line_id					= $getCustomerReg['line_id'];
+	$line_name					= $getCustomerReg['area_line'];
+	$mobile						= $getCustomerReg['mobile1'];
+	$cus_pic					= $getCustomerReg['cus_pic'];
 }
 ?>
 
@@ -53,7 +29,6 @@ if (sizeof($documentationInfo) > 0) {
 		object-fit: cover;
 		background-color: white;
 	}
-
 </style>
 
 <!-- Page header start -->
@@ -71,35 +46,15 @@ if (sizeof($documentationInfo) > 0) {
 </div><br><br>
 <!-- Page header end -->
 
-
-
 <!-- Main container start -->
 <div class="main-container">
 
 	<!--form start-->
 	<div>
 		<form id="noc_form" name="noc_form" action="" method="post" enctype="multipart/form-data">
-			<input type="hidden" name="idupd" id="idupd" value="<?php if (isset($idupd)) {
-																	echo $idupd;
-																} ?>" />
-			<input type="hidden" name="cusidupd" id="cusidupd" value="<?php if (isset($cusidupd)) {
-																			echo $cusidupd;
-																		} ?>" />
-			<input type="hidden" name="action_type" id="action_type" value="<?php if (isset($action_type)) {
-																			echo $action_type;
-																		} ?>" />
-			<input type="hidden" name="cuspicupd" id="cuspicupd" value="<?php if (isset($cus_pic)) {
-																			echo $cus_pic;
-																		} ?>" />
+			<input type="hidden" name="cusidupd" id="cusidupd" value="<?php if (isset($cusidupd)) {echo $cusidupd;} ?>" />
+			<input type="hidden" name="cuspicupd" id="cuspicupd" value="<?php if (isset($cus_pic)) {echo $cus_pic;} ?>" />
 			<input type="hidden" name="req_id" id="req_id" value='' />
-
-			<input type="hidden" name="sign_checklist" id="sign_checklist" value='' />
-			<input type="hidden" name="cheque_checklist" id="cheque_checklist" value='' />
-			<input type="hidden" name="gold_checklist" id="gold_checklist" value='' />
-			<input type="hidden" name="mort_checklist" id="mort_checklist" value='' />
-			<input type="hidden" name="endorse_checklist" id="endorse_checklist" value='' />
-			<input type="hidden" name="doc_checklist" id="doc_checklist" value='' />
-
 
 			<!-- Row start -->
 			<div class="row gutters">
@@ -181,9 +136,6 @@ if (sizeof($documentationInfo) > 0) {
 									<div class="col-xl-8 col-lg-10 col-md-6 ">
 										<div class="form-group" style="margin-left: 30px;">
 											<label for="pic" style="margin-left: -20px;">Photo</label><span class="required">&nbsp;*</span><br>
-											<input type="hidden" name="cus_pic" id="cus_pic" value="<?php if (isset($cus_pic)) {
-																										echo $cus_pic;
-																									} ?>">
 											<img id='imgshow' class="img_show" src="" />
 										</div>
 									</div>
@@ -192,6 +144,7 @@ if (sizeof($documentationInfo) > 0) {
 							</div>
 						</div>
 					</div>
+
 					<!-- Personal info END -->
 
 					<!-- Loan List Start -->
@@ -233,7 +186,10 @@ if (sizeof($documentationInfo) > 0) {
 							</div>
 						</div>
 					</div>
+
+					<div id="printnocletter" style="display: none"></div>
 					<!-- Loan List End -->
+
 					<!-- NOC window -->
 					<div class="card noc-card">
 						<div class="card-header">NOC Summary</div>
@@ -284,8 +240,8 @@ if (sizeof($documentationInfo) > 0) {
 												<label for="MortgageProcess"> Mortgage Process</label>
 												<select type="text" class="form-control" id="mortgage_process" name="mortgage_process" disabled tabindex='14'>
 													<option value=""> Select Mortgage Process </option>
-													<option value="0" <?php if (isset($mortgage_process) and $mortgage_process == '0') echo 'selected'; ?>> YES </option>
-													<option value="1" <?php if (isset($mortgage_process) and $mortgage_process == '1') echo 'selected'; ?>> NO </option>
+													<option value="0"> YES </option>
+													<option value="1"> NO </option>
 												</select>
 											</div>
 										</div>
@@ -294,9 +250,9 @@ if (sizeof($documentationInfo) > 0) {
 												<label for="PropertyHoldertype "> Property Holder type </label>
 												<select type="text" class="form-control" id="Propertyholder_type" name="Propertyholder_type" disabled tabindex='15'>
 													<option value=""> Select Holder type </option>
-													<option value="0" <?php if (isset($Propertyholder_type) and $Propertyholder_type == '0') echo 'selected'; ?>> Customer </option>
-													<option value="1" <?php if (isset($Propertyholder_type) and $Propertyholder_type == '1') echo 'selected'; ?>> Guarantor </option>
-													<option value="2" <?php if (isset($Propertyholder_type) and $Propertyholder_type == '2') echo 'selected'; ?>> Family Members </option>
+													<option value="0"> Customer </option>
+													<option value="1"> Guarantor </option>
+													<option value="2"> Family Members </option>
 												</select>
 											</div>
 										</div>
@@ -304,7 +260,7 @@ if (sizeof($documentationInfo) > 0) {
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 mort_proc">
 											<div class="form-group">
 												<label for="PropertyHolderName "> Property Holder Name </label>
-												<input type="text" class="form-control" id="Propertyholder_name" name="Propertyholder_name" value="<?php if (isset($Propertyholder_name)) echo $Propertyholder_name; ?>" readonly tabindex='16'>
+												<input type="text" class="form-control" id="Propertyholder_name" name="Propertyholder_name" readonly tabindex='16'>
 												<select type="text" class="form-control" id="Propertyholder_relationship_name" name="Propertyholder_relationship_name" style="display: none;" disabled tabindex='16'>
 													<option value=""> Select Relationship </option>
 												</select>
@@ -315,35 +271,35 @@ if (sizeof($documentationInfo) > 0) {
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 mort_proc">
 											<div class="form-group">
 												<label for="chequeRelationship"> Relationship </label>
-												<input type="text" class="form-control" id="doc_property_relation" name="doc_property_relation" value="<?php if (isset($doc_property_relation)) echo $doc_property_relation; ?>" readonly tabindex='17'>
+												<input type="text" class="form-control" id="doc_property_relation" name="doc_property_relation" readonly tabindex='17'>
 											</div>
 										</div>
 
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 mort_proc">
 											<div class="form-group">
 												<label for="DocPropertyType"> Property Type </label>
-												<input type="text" class="form-control" id="doc_property_pype" name="doc_property_pype" placeholder="Enter Property Type" value="<?php if (isset($doc_property_type)) echo $doc_property_type; ?>" readonly tabindex='18'>
+												<input type="text" class="form-control" id="doc_property_pype" name="doc_property_pype" placeholder="Enter Property Type" readonly tabindex='18'>
 											</div>
 										</div>
 
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 mort_proc">
 											<div class="form-group">
 												<label for="DocPropertyMeasurement"> Property Measurement </label>
-												<input type="text" class="form-control" id="doc_property_measurement" name="doc_property_measurement" placeholder="Enter Property Measurement" value="<?php if (isset($doc_property_measurement)) echo $doc_property_measurement; ?>" readonly tabindex='19'>
+												<input type="text" class="form-control" id="doc_property_measurement" name="doc_property_measurement" placeholder="Enter Property Measurement" readonly tabindex='19'>
 											</div>
 										</div>
 
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 mort_proc">
 											<div class="form-group">
 												<label for="DocPropertyLocation"> Property Location </label>
-												<input type="text" class="form-control" id="doc_property_location" name="doc_property_location" placeholder="Enter Property Location" value="<?php if (isset($doc_property_location)) echo $doc_property_location; ?>" readonly tabindex='20'>
+												<input type="text" class="form-control" id="doc_property_location" name="doc_property_location" placeholder="Enter Property Location" readonly tabindex='20'>
 											</div>
 										</div>
 
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 mort_proc">
 											<div class="form-group">
 												<label for="PropertyValue"> Property Value </label>
-												<input type="text" class="form-control" id="doc_property_value" name="doc_property_value" placeholder="Enter Property Value" value="<?php if (isset($doc_property_value)) echo $doc_property_value; ?>" readonly tabindex='21'>
+												<input type="text" class="form-control" id="doc_property_value" name="doc_property_value" placeholder="Enter Property Value" readonly tabindex='21'>
 											</div>
 										</div>
 									</div>
@@ -351,35 +307,35 @@ if (sizeof($documentationInfo) > 0) {
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 mort_proc">
 											<div class="form-group">
 												<label for="MortgageName"> Mortgage Name </label>
-												<input type="text" class="form-control" id="mortgage_name" name="mortgage_name" onkeydown="return /[a-z ]/i.test(event.key)" placeholder="Enter Mortgage Name" value="<?php if (isset($mortgage_name)) echo $mortgage_name; ?>" readonly tabindex='22'>
+												<input type="text" class="form-control" id="mortgage_name" name="mortgage_name" placeholder="Enter Mortgage Name" readonly tabindex='22'>
 											</div>
 										</div>
 
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 mort_proc">
 											<div class="form-group">
 												<label for="mortgageDesignation"> Designation </label>
-												<input type="text" class="form-control" id="mortgage_dsgn" name="mortgage_dsgn" onkeydown="return /[a-z ]/i.test(event.key)" placeholder="Enter Designation" value="<?php if (isset($mortgage_dsgn)) echo $mortgage_dsgn; ?>" readonly tabindex='23'>
+												<input type="text" class="form-control" id="mortgage_dsgn" name="mortgage_dsgn" onkeydown="return /[a-z ]/i.test(event.key)" placeholder="Enter Designation" readonly tabindex='23'>
 											</div>
 										</div>
 
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 mort_proc">
 											<div class="form-group">
 												<label for="MortgageNumber"> Mortgage Number </label>
-												<input type="text" class="form-control" id="mortgage_nuumber" name="mortgage_nuumber" placeholder="Enter Mortgage Number" value="<?php if (isset($mortgage_nuumber)) echo $mortgage_nuumber; ?>" readonly tabindex='24'>
+												<input type="text" class="form-control" id="mortgage_nuumber" name="mortgage_nuumber" placeholder="Enter Mortgage Number" readonly tabindex='24'>
 											</div>
 										</div>
 
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 mort_proc">
 											<div class="form-group">
 												<label for="RegOffice"> Reg Office </label>
-												<input type="text" class="form-control" id="reg_office" name="reg_office" placeholder="Enter Reg Office" value="<?php if (isset($reg_office)) echo $reg_office; ?>" readonly tabindex='25'>
+												<input type="text" class="form-control" id="reg_office" name="reg_office" placeholder="Enter Reg Office" readonly tabindex='25'>
 											</div>
 										</div>
 
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 mort_proc">
 											<div class="form-group">
 												<label for="MortgageValue"> Mortgage Value </label>
-												<input type="text" class="form-control" id="mortgage_value" name="mortgage_value" placeholder="Enter Mortgage Value" value="<?php if (isset($mortgage_value)) echo $mortgage_value; ?>" readonly tabindex='26'>
+												<input type="text" class="form-control" id="mortgage_value" name="mortgage_value" placeholder="Enter Mortgage Value" readonly tabindex='26'>
 											</div>
 										</div>
 
@@ -388,8 +344,8 @@ if (sizeof($documentationInfo) > 0) {
 												<label for="MortgageDocument"> Mortgage Document </label>
 												<select type="text" class="form-control" id="mortgage_document" name="mortgage_document" disabled tabindex='27'>
 													<option value=""> Select Mortgage Document </option>
-													<option value="0" <?php if (isset($mortgage_document) and $mortgage_document == '0') echo 'selected'; ?>> YES </option>
-													<option value="1" <?php if (isset($mortgage_document) and $mortgage_document == '1' or $mortgage_document == null) echo 'selected'; ?>> NO </option>
+													<option value="0"> YES </option>
+													<option value="1"> NO </option>
 												</select>
 											</div>
 										</div>
@@ -425,8 +381,8 @@ if (sizeof($documentationInfo) > 0) {
 												<label for="EndorsementProcess"> Endorsement Process</label>
 												<select type="text" class="form-control" id="endorsement_process" name="endorsement_process" disabled tabindex='28'>
 													<option value=""> Select Endorsement Process </option>
-													<option value="0" <?php if (isset($endorsement_process) and $endorsement_process == '0') echo 'selected'; ?>> YES </option>
-													<option value="1" <?php if (isset($endorsement_process) and $endorsement_process == '1') echo 'selected'; ?>> NO </option>
+													<option value="0"> YES </option>
+													<option value="1"> NO </option>
 												</select>
 											</div>
 										</div>
@@ -435,9 +391,9 @@ if (sizeof($documentationInfo) > 0) {
 												<label for="OwnerType "> Owner Type </label>
 												<select type="text" class="form-control" id="owner_type" name="owner_type" disabled tabindex='29'>
 													<option value=""> Select Holder type </option>
-													<option value="0" <?php if (isset($owner_type) and $owner_type == '0') echo 'selected'; ?>> Customer </option>
-													<option value="1" <?php if (isset($owner_type) and $owner_type == '1') echo 'selected'; ?>> Guarantor </option>
-													<option value="2" <?php if (isset($owner_type) and $owner_type == '2') echo 'selected'; ?>> Family Members </option>
+													<option value="0"> Customer </option>
+													<option value="1"> Guarantor </option>
+													<option value="2"> Family Members </option>
 												</select>
 											</div>
 										</div>
@@ -445,7 +401,7 @@ if (sizeof($documentationInfo) > 0) {
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 endor_proc">
 											<div class="form-group">
 												<label for="OwnerName "> Owner Name </label>
-												<input type="text" class="form-control" id="owner_name" name="owner_name" value="<?php if (isset($owner_name)) echo $owner_name; ?>" readonly tabindex='30'>
+												<input type="text" class="form-control" id="owner_name" name="owner_name" readonly tabindex='30'>
 												<select type="text" class="form-control" id="ownername_relationship_name" name="ownername_relationship_name" style="display: none;" disabled tabindex='30'>
 													<option value=""> Select Relationship </option>
 												</select>
@@ -454,7 +410,7 @@ if (sizeof($documentationInfo) > 0) {
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 endor_proc">
 											<div class="form-group">
 												<label for="chequeRelationship"> Relationship </label>
-												<input type="text" class="form-control" id="en_relation" name="en_relation" value="<?php if (isset($en_relation)) echo $en_relation; ?>" readonly tabindex='31'>
+												<input type="text" class="form-control" id="en_relation" name="en_relation" readonly tabindex='31'>
 											</div>
 										</div>
 
@@ -463,8 +419,8 @@ if (sizeof($documentationInfo) > 0) {
 												<label for="Vehicletype"> Vehicle type </label>
 												<select type="text" class="form-control" id="vehicle_type" name="vehicle_type" disabled tabindex='32'>
 													<option value=""> Select Vehicle type </option>
-													<option value="0" <?php if (isset($vehicle_type) and $vehicle_type == '0') echo 'selected'; ?>> 2 Wheeler </option>
-													<option value="1" <?php if (isset($vehicle_type) and $vehicle_type == '1') echo 'selected'; ?>> 4 Wheeler </option>
+													<option value="0"> 2 Wheeler </option>
+													<option value="1"> 4 Wheeler </option>
 												</select>
 											</div>
 										</div>
@@ -474,8 +430,8 @@ if (sizeof($documentationInfo) > 0) {
 												<label for="VehicleProcess"> Vehicle Process </label>
 												<select type="text" class="form-control" id="vehicle_process" name="vehicle_process" disabled tabindex='33'>
 													<option value=""> Select Vehicle Process </option>
-													<option value="0" <?php if (isset($vehicle_process) and $vehicle_process == '0') echo 'selected'; ?>> New </option>
-													<option value="1" <?php if (isset($vehicle_process) and $vehicle_process == '1') echo 'selected'; ?>> Old </option>
+													<option value="0"> New </option>
+													<option value="1"> Old </option>
 												</select>
 											</div>
 										</div>
@@ -483,28 +439,28 @@ if (sizeof($documentationInfo) > 0) {
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 endor_proc">
 											<div class="form-group">
 												<label for="endro_Company"> Company </label>
-												<input type="text" class="form-control" id="en_Company" name="en_Company" placeholder="Enter Company" value="<?php if (isset($en_Company)) echo $en_Company; ?>" readonly tabindex='34'>
+												<input type="text" class="form-control" id="en_Company" name="en_Company" placeholder="Enter Company" readonly tabindex='34'>
 											</div>
 										</div>
 
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 endor_proc">
 											<div class="form-group">
 												<label for="enModel"> Model </label>
-												<input type="text" class="form-control" id="en_Model" name="en_Model" placeholder="Enter Model" value="<?php if (isset($en_Model)) echo $en_Model; ?>" readonly tabindex='35'>
+												<input type="text" class="form-control" id="en_Model" name="en_Model" placeholder="Enter Model" readonly tabindex='35'>
 											</div>
 										</div>
 
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 endor_proc">
 											<div class="form-group">
 												<label for="VehicleRegNo"> Vehicle Reg No. </label>
-												<input type="text" class="form-control" id="vehicle_reg_no" name="vehicle_reg_no" placeholder="Enter Vehicle No" value="<?php if (isset($vehicle_reg_no)) echo $vehicle_reg_no; ?>" readonly tabindex='36'>
+												<input type="text" class="form-control" id="vehicle_reg_no" name="vehicle_reg_no" placeholder="Enter Vehicle No" readonly tabindex='36'>
 											</div>
 										</div>
 
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 endor_proc">
 											<div class="form-group">
 												<label for="Endorsementname"> Endorsement name </label>
-												<input type="text" class="form-control" id="endorsement_name" name="endorsement_name" onkeydown="return /[a-z ]/i.test(event.key)" placeholder="Enter Endorsement Name" value="<?php if (isset($endorsement_name)) echo $endorsement_name; ?>" readonly tabindex='37'>
+												<input type="text" class="form-control" id="endorsement_name" name="endorsement_name"  placeholder="Enter Endorsement Name" readonly tabindex='37'>
 											</div>
 										</div>
 
@@ -513,8 +469,8 @@ if (sizeof($documentationInfo) > 0) {
 												<label for="RC"> RC </label>
 												<select type="text" class="form-control" id="en_RC" name="en_RC" disabled tabindex='38'>
 													<option value=""> Select RC </option>
-													<option value="0" <?php if (isset($en_RC) and $en_RC == '0') echo 'selected'; ?>> YES </option>
-													<option value="1" <?php if (isset($en_RC) and $en_RC == '1' or $en_RC == null) echo 'selected'; ?>> NO </option>
+													<option value="0"> YES </option>
+													<option value="1"> NO </option>
 												</select>
 											</div>
 										</div>
@@ -523,8 +479,8 @@ if (sizeof($documentationInfo) > 0) {
 												<label for="enKey"> Key </label>
 												<select type="text" class="form-control" id="en_Key" name="en_Key" disabled tabindex='39'>
 													<option value=""> Select Key </option>
-													<option value="0" <?php if (isset($en_Key) and $en_Key == '0') echo 'selected'; ?>> YES </option>
-													<option value="1" <?php if (isset($en_Key) and $en_Key == '1' or $en_Key == null) echo 'selected'; ?>> NO </option>
+													<option value="0"> YES </option>
+													<option value="1"> NO </option>
 												</select>
 											</div>
 										</div>
