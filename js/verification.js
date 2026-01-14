@@ -4792,8 +4792,6 @@ function getDocumentHistory() {
     type: "post",
     cache: false,
     success: function (response) {
-      // if(response.DESCRIPTION != null ){//check json response is not empty
-
       if (cus_type == "Existing") {
         if (response.length != 0) {//check json response is not empty
           for (var i = 0; i < response["pending_customer"].length; i++) {
@@ -5593,24 +5591,25 @@ function getLoanHistory() {
     type: "post",
     cache: false,
     success: function (response) {
-      // if(response.DESCRIPTION != null ){//check json response is not empty
       if (cus_type == "Existing") {
-        for (var i = 0; i < response["pending_customer"].length; i++) {
-          pending_arr[i] = response["pending_customer"][i];
-          od_arr[i] = response["od_customer"][i];
-          due_nil_arr[i] = response["due_nil_customer"][i];
-          closed_arr[i] = response["closed_customer"][i];
-          balAmnt[i] = response["balAmnt"][i];
+        if (response.length != 0) {//check json response is not empty
+          for (var i = 0; i < response["pending_customer"].length; i++) {
+            pending_arr[i] = response["pending_customer"][i];
+            od_arr[i] = response["od_customer"][i];
+            due_nil_arr[i] = response["due_nil_customer"][i];
+            closed_arr[i] = response["closed_customer"][i];
+            balAmnt[i] = response["balAmnt"][i];
+          }
+          var pending_sts = pending_arr.join(",");
+          $("#pending_sts").val(pending_sts);
+          var od_sts = od_arr.join(",");
+          $("#od_sts").val(od_sts);
+          var due_nil_sts = due_nil_arr.join(",");
+          $("#due_nil_sts").val(due_nil_sts);
+          var closed_sts = closed_arr.join(",");
+          $("#closed_sts").val(closed_sts);
+          balAmnt = balAmnt.join(",");
         }
-        var pending_sts = pending_arr.join(",");
-        $("#pending_sts").val(pending_sts);
-        var od_sts = od_arr.join(",");
-        $("#od_sts").val(od_sts);
-        var due_nil_sts = due_nil_arr.join(",");
-        $("#due_nil_sts").val(due_nil_sts);
-        var closed_sts = closed_arr.join(",");
-        $("#closed_sts").val(closed_sts);
-        balAmnt = balAmnt.join(",");
       }
     },
   }).then(function () {
