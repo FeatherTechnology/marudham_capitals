@@ -15,7 +15,7 @@ if (sizeof($getCustomerReg) > 0) {
 	$branch_id					= $getCustomerReg['branch_id'];
 	$branch_name				= $getCustomerReg['branch_name'];
 	$line_id					= $getCustomerReg['line_id'];
-	$line_name					= $getCustomerReg['area_line'];
+	$line_name					= $getCustomerReg['line_name'];
 	$mobile						= $getCustomerReg['mobile1'];
 	$cus_pic					= $getCustomerReg['cus_pic'];
 }

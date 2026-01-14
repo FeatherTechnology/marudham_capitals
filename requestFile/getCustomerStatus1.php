@@ -3,7 +3,7 @@ include('../ajaxconfig.php');
 
 $cus_id = strip_tags($_POST['cus_id']);
 
-$response       = 'New';
+$response       = '---';
 $hasIssued      = false;
 $lastIssuedDate = '';
 $latestCusData  = '';
@@ -15,7 +15,6 @@ $result = $connect->query("
     SELECT cus_status, cus_data
     FROM request_creation
     WHERE cus_id = '$cus_id'
-      AND cus_status <= 24
     ORDER BY created_date DESC
 ");
 
@@ -30,7 +29,7 @@ if ($result->rowCount() > 0) {
         // First (latest) record
         if ($i == 0) {
             $latestCusData = $row['cus_data']; // New / Existing
-            $response = 'New';
+            $response = '---';
         }
         // Second record onwards
         else {
@@ -82,7 +81,7 @@ if ($result->rowCount() > 0) {
     }
 
 } else {
-    $response = 'New';
+    $response = '---';
 }
 
 echo $response;

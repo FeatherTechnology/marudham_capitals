@@ -4684,7 +4684,7 @@ class admin
 		}
 
 		if ($cus_Tableid == '') {
-			$qry = $mysqli->query("SELECT * From customer_profile where req_id = $req_id");
+			$qry = $mysqli->query("SELECT req_id From customer_profile where req_id = $req_id");
 			if ($qry->num_rows == 0) {
 				//this will filter out duplication entry in customer profile table
 				$insertQry = "INSERT INTO `customer_profile`( `req_id`, `cus_id`, `cus_name`, `gender`, `dob`, `age`, `blood_group`, `mobile1`, `mobile2`, `whatsapp`,`cus_pic`, `guarentor_name`, `guarentor_relation`, `guarentor_photo`, `cus_type`, `cus_exist_type`, `residential_type`, `residential_details`, `residential_address`, `residential_native_address`, `occupation_type`, `occupation_details`, `occupation_income`, `occupation_address`, `dow`, `abt_occ`, `area_confirm_type`, `area_confirm_state`, `area_confirm_district`, `area_confirm_taluk`, `area_confirm_area`, `area_confirm_subarea`,`latlong` , `area_group`, `area_line`, `cus_status`, `insert_login_id`,`created_date`) VALUES('" . strip_tags($req_id) . "','" . strip_tags($cus_id) . "','" . strip_tags($cus_name) . "','" . strip_tags($gender) . "','" . strip_tags($dob) . "', '" . strip_tags($age) . "', '" . strip_tags($bloodGroup) . "', '" . strip_tags($mobile1) . "','" . strip_tags($mobile2) . "','" . strip_tags($whatsapp_no) . "','" . strip_tags($pic_req) . "','" . strip_tags($guarentor_name) . "', '" . strip_tags($guarentor_relationship) . "', '" . strip_tags($guarentor) . "', '" . strip_tags($cus_type) . "',
@@ -4709,6 +4709,25 @@ class admin
 
 		$updateCus = "UPDATE `customer_register` SET  `cus_id`='" . strip_tags($cus_id) . "',`customer_name`='" . strip_tags($cus_name) . "',`gender`='" . strip_tags($gender) . "',`dob`='" . strip_tags($dob) . "',`age`='" . strip_tags($age) . "',`blood_group`='" . strip_tags($bloodGroup) . "',`mobile1`='" . strip_tags($mobile1) . "', `mobile2`='" . strip_tags($mobile2) . "',`whatsapp`='" . strip_tags($whatsapp_no) . "',`pic`='" . strip_tags($pic_req) . "',`how_to_know`='" . strip_tags($cus_how_know) . "',`loan_count`='" . strip_tags($cus_loan_count) . "',`first_loan_date`='" . strip_tags($cus_frst_loanDate) . "',`travel_with_company`='" . strip_tags($cus_travel_cmpy) . "',`monthly_income`='" . strip_tags($cus_monthly_income) . "',`other_income`='" . strip_tags($cus_other_income) . "',`support_income`='" . strip_tags($cus_support_income) . "',`commitment`='" . strip_tags($cus_Commitment) . "',`monthly_due_capacity`='" . strip_tags($cus_monDue_capacity) . "',`loan_limit`='" . strip_tags($cus_loan_limit) . "',`about_customer`='" . strip_tags($about_cus) . "',`residential_type`='" . strip_tags($cus_res_type) . "',`residential_details`='" . strip_tags($cus_res_details) . "',`residential_address`='" . strip_tags($cus_res_address) . "',`residential_native_address`='" . strip_tags($cus_res_native) . "',`occupation_info_occ_type`='" . strip_tags($cus_occ_type) . "',`occupation_details`='" . strip_tags($cus_occ_detail) . "',`occupation_income`='" . strip_tags($cus_occ_income) . "',`occupation_address`='" . strip_tags($cus_occ_address) . "',`dow`='" . strip_tags($cus_occ_dow) . "',`abt_occ`='" . strip_tags($cus_occ_abt) . "',`area_confirm_type`='" . strip_tags($area_cnfrm) . "',`area_confirm_state`='" . strip_tags($state) . "',`area_confirm_district`='" . strip_tags($district) . "',`area_confirm_taluk`='" . strip_tags($taluk) . "',`area_confirm_area`='" . strip_tags($area) . "',`area_confirm_subarea`='" . strip_tags($sub_area) . "',`latlong`='" . strip_tags($latlong) . "',`area_group`='" . strip_tags($area_group) . "',`area_line`='" . strip_tags($area_line) . "' WHERE `cus_id`= '" . strip_tags($cus_id) . "' ";
 		$insresult = $mysqli->query($updateCus) or die("Error " . $mysqli->error);
+
+		//To update customer profile of present loans for the customer
+		$req_id_array = [];
+		$req_result = $mysqli->query("SELECT req_id FROM request_creation WHERE cus_id = '$cus_id' AND cus_status BETWEEN 14 AND 17");
+
+		if ($req_result->num_rows > 0) {
+			while ($row = $req_result->fetch_assoc()) {
+				$req_id_array[] = $row['req_id'];
+			}
+		}
+
+		if (!empty($req_id_array)) {
+			$cusUpd = "UPDATE `customer_profile` SET `cus_name`='" . strip_tags($cus_name) . "', `gender`='" . strip_tags($gender) . "', `dob`='" . strip_tags($dob) . "', `age`='" . strip_tags($age) . "',  `whatsapp` = '" . strip_tags($whatsapp_no) . "',  `residential_type`='" . strip_tags($cus_res_type) . "', `residential_details`='" . strip_tags($cus_res_details) . "', `residential_address`='" . strip_tags($cus_res_address) . "', `residential_native_address`='" . strip_tags($cus_res_native) . "', `occupation_type`='" . strip_tags($cus_occ_type) . "', `occupation_details`='" . strip_tags($cus_occ_detail) . "', `occupation_income`='" . strip_tags($cus_occ_income) . "', `occupation_address`='" . strip_tags($cus_occ_address) . "', `dow`='" . strip_tags($cus_occ_dow) . "', `abt_occ`='" . strip_tags($cus_occ_abt) . "', `area_confirm_type`='" . strip_tags($area_cnfrm) . "', `area_confirm_state`='" . strip_tags($state) . "', `area_confirm_district`='" . strip_tags($district) . "', `area_confirm_taluk`='" . strip_tags($taluk) . "', `area_confirm_area`='" . strip_tags($area) . "', `area_confirm_subarea`='" . strip_tags($sub_area) . "', `latlong`='" . strip_tags($latlong) . "', `area_group`='" . strip_tags($area_group) . "', `area_line`='" . strip_tags($area_line) . "', `update_login_id`='" . $userid . "', `updated_date`= now() WHERE req_id IN (" . implode(",", $req_id_array) . " ) ";
+			$updateCus = $mysqli->query($cusUpd) or die("Error " . $mysqli->error);
+
+
+			$updateACkCus = "UPDATE `acknowlegement_customer_profile` SET `cus_name`='" . strip_tags($cus_name) . "', `gender`='" . strip_tags($gender) . "', `dob`='" . strip_tags($dob) . "', `age`='" . strip_tags($age) . "',  `whatsapp` = '" . strip_tags($whatsapp_no) . "',  `residential_type`='" . strip_tags($cus_res_type) . "', `residential_details`='" . strip_tags($cus_res_details) . "', `residential_address`='" . strip_tags($cus_res_address) . "', `residential_native_address`='" . strip_tags($cus_res_native) . "', `occupation_type`='" . strip_tags($cus_occ_type) . "', `occupation_details`='" . strip_tags($cus_occ_detail) . "', `occupation_income`='" . strip_tags($cus_occ_income) . "', `occupation_address`='" . strip_tags($cus_occ_address) . "', `dow`='" . strip_tags($cus_occ_dow) . "', `abt_occ`='" . strip_tags($cus_occ_abt) . "', `area_confirm_type`='" . strip_tags($area_cnfrm) . "', `area_confirm_state`='" . strip_tags($state) . "', `area_confirm_district`='" . strip_tags($district) . "', `area_confirm_taluk`='" . strip_tags($taluk) . "', `area_confirm_area`='" . strip_tags($area) . "', `area_confirm_subarea`='" . strip_tags($sub_area) . "', `latlong`='" . strip_tags($latlong) . "', `area_group`='" . strip_tags($area_group) . "', `area_line`='" . strip_tags($area_line) . "', `update_login_id`='" . $userid . "', `updated_date`= now() WHERE req_id IN (" . implode(",", $req_id_array) . " ) ";
+			$insresult = $mysqli->query($updateACkCus) or die("Error " . $mysqli->error);
+		}
 
 		$this->updateResponsible($mysqli, $req_id, $responsible);
 	}
@@ -6873,7 +6892,7 @@ class admin
 				$qry = $mysqli->query("SELECT b.branch_id, b.branch_name, l.map_id, l.line_name AS area_line FROM branch_creation b JOIN area_line_mapping l ON l.branch_id = b.branch_id WHERE FIND_IN_SET(" . $areaconfirmsubarea . ", l.sub_area_id) ");
 				$row = $qry->fetch_assoc();
 				$detailrecords['line_id'] = $row['map_id'];
-				$detailrecords['area_line'] = $row['area_line'];
+				$detailrecords['line_name'] = $row['area_line'];
 				$detailrecords['branch_id'] = $row['branch_id'];
 				$detailrecords['branch_name'] = $row['branch_name'];
 
