@@ -199,7 +199,6 @@ function calculateOthers($loan_arr, $response, $connect, $req_id, $screen)
             //If Due method is Monthly, Calculate penalty by checking the month has ended or not
             $current_date = date('Y-m');
 
-
             $start_date_obj = DateTime::createFromFormat('Y-m', $due_start_from);
             $end_date_obj = DateTime::createFromFormat('Y-m', $maturity_month);
             $current_date_obj = DateTime::createFromFormat('Y-m', $current_date);
@@ -275,6 +274,9 @@ function calculateOthers($loan_arr, $response, $connect, $req_id, $screen)
             }
             $start_date_obj = DateTime::createFromFormat('Y-m', $due_start_from);
             if ($screen == 'auto_update') {
+                if ($current_date_obj > $end_date_obj) {
+                    $count++; //because if the maturity date crossed the pending amount should have the maturity month's amount also so add 1month to count in collection
+                }
                 while ($start_date_obj <= $current_date_obj) { // To find loan date count till now from start date.
                     $penalty_checking_date = $start_date_obj->format('Y-m-01'); // This format is for query.. month , year function accept only if (Y-m-d).
                     $penalty_date = $start_date_obj->format('Y-m');
@@ -395,6 +397,10 @@ function calculateOthers($loan_arr, $response, $connect, $req_id, $screen)
         $penalty_counter = 0;
 
         if ($screen == 'auto_update') {
+
+            if ($current_date_obj > $end_date_obj) {
+                $count++; //because if the maturity date crossed the pending amount should have the maturity month's amount also so add 1month to count in collection
+            }
             while ($start_date_obj <= $current_date_obj) { // To find loan date count till now from start date.
                 $penalty_checking_date = $start_date_obj->format('Y-m-d'); // This format is for query.. month , year function accept only if (Y-m-d).
                 $penalty_date = $start_date_obj->format('Y-m-d');
@@ -558,6 +564,9 @@ function calculateOthers($loan_arr, $response, $connect, $req_id, $screen)
         }
         $penalty_counter = 0;
         if ($screen == 'auto_update') {
+             if ($current_date_obj > $end_date_obj) {
+                    $count++; //because if the maturity date crossed the pending amount should have the maturity month's amount also so add 1month to count in collection
+                }
             while ($start_date_obj <= $current_date_obj) { // To find loan date count till now from start date.
                 $penalty_checking_date = $start_date_obj->format('Y-m-d'); // This format is for query.. month , year function accept only if (Y-m-d).
                 $penalty_date = $start_date_obj->format('Y-m-d');
