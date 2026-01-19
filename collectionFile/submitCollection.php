@@ -84,6 +84,12 @@ if (isset($_POST['trans_id'])) {
 if (isset($_POST['trans_date'])) {
     $trans_date = ($_POST['trans_date'] != '') ? $_POST['trans_date'] : '0000-00-00';
 }
+if (isset($_POST['bank_clr_bank_id'])) {
+    $bank_clr_bank_id = $_POST['bank_clr_bank_id'];
+}
+if (isset($_POST['bank_clr_trans_amnt'])) {
+    $bank_clr_trans_amnt = $_POST['bank_clr_trans_amnt'];
+}
 if (isset($_POST['collection_loc'])) {
     $collection_loc = $_POST['collection_loc'];
 }
@@ -299,6 +305,20 @@ try {
 
     $query = $connect->query("UPDATE `customer_status` SET `cus_id`='$cus_id',`sub_status`='$substs',`payable_amnt` = '$payable_amnts', `bal_amnt`='$bal_amnts', `last_paid_date`= '$lpd', `current_month_paid`='1', `insert_login_id`='$userid',`created_date`='$cur_date' WHERE `req_id`='$req_id' ");
 
+    if (!empty($bank_clr_bank_id)) {
+        // Deduct paid amount
+        $bank_clr_trans_amnt -= $total_paid_track;
+
+        // Prevent negative balance
+        if ($bank_clr_trans_amnt < 0) {
+            $bank_clr_trans_amnt = 0;
+        }
+
+        $clr_sts = ($bank_clr_trans_amnt == 0) ? 1 : 0; //1 - cleared, 0 - uncleared
+        $query = $connect->prepare("UPDATE bank_stmt SET transaction_amount = ?, clr_status = ? WHERE id = ? ");
+
+        $query->execute([$bank_clr_trans_amnt, $clr_sts, $bank_clr_bank_id]);
+    }
 
     // $qry = $connect->query("SELECT customer_name, mobile1 from customer_register where req_ref_id = '$req_id' ");
     // $row = $qry->fetch_assoc();

@@ -132,9 +132,9 @@ if (sizeof($getCustomerReg) > 0) {
 		<input type="hidden" name="od_sts" id="od_sts" value="" />
 		<input type="hidden" name="due_nil_sts" id="due_nil_sts" value="" />
 		<input type="hidden" name="closed_sts" id="closed_sts" value="" />
-		<input type="hidden" name="colluserid" id="colluserid" value="<?php if (isset($userid)) {
-																			echo $userid;
-																		} ?>" />
+		<input type="hidden" name="colluserid" id="colluserid" value="<?php if (isset($userid)) {echo $userid;} ?>" />
+		<input type="hidden" name="bank_clr_bank_id" id="bank_clr_bank_id"/>
+		<input type="hidden" name="bank_clr_trans_amnt" id="bank_clr_trans_amnt"/>
 
 		<!-- Row start -->
 		<div class="row gutters">
@@ -594,7 +594,7 @@ if (sizeof($getCustomerReg) > 0) {
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 transaction" style="display:none">
 										<div class="form-group">
 											<label for="disabledInput">Transaction Date</label>&nbsp;<span class="text-danger">*</span>
-											<input type="date" class="form-control" id="trans_date" name="trans_date" value='' tabindex='43'>
+											<input type="date" class="form-control" id="trans_date" name="trans_date" value='' tabindex='43' readonly>
 											<span class="text-danger" id='transdateCheck' style="display: none;">Please Choose Transaction Date<span>
 										</div>
 									</div>

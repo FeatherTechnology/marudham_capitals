@@ -1680,7 +1680,7 @@
                     toast: true,
                     position: 'top-right',
                     // background: '#00e2cd',
-                    timer: 2000,
+                    timer: 5000,
                     showConfirmButton: true,
                     confirmButtonColor: '#f2372b',
                     timerProgressBar: true,
@@ -2373,6 +2373,12 @@
         }
 
         // <------------------------------------------------------ COLUMN VISIBILITY AND COLOR CHNAGE END -------------------------------------------------------->
+
+        /////////////////////////////////////////////////////  Check Transaction Details START  //////////////////////////////////////////////////// 
+        function checkBankTransactionDetails(crdrType, bankId, transId, amount){
+            return $.post('accountsFile/bankclearance/getBankTransactionDetails.php', {crdrType, bankId, transId, amount}, null, 'json');
+        }
+        /////////////////////////////////////////////////////  Check Transaction Details END  //////////////////////////////////////////////////// 
     </script>
 
     <?php

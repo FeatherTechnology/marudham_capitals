@@ -29,9 +29,46 @@ $(document).ready(function () {
 
   });
 
+  $('#bank_id').change(function(){
+    $('#trans_id, #trans_date, #bank_clr_bank_id, #bank_clr_trans_amnt').val('');
+  });
+
+  //Transaction id validation
+ $("#trans_id").keydown(function () { //clear transaction date if changes in trans id becuase if by chance changing trans id after gets trans date means it take while a time to reflect new date in mean time able to submit with old date.  
+    $('#trans_date').val('');
+ });
+
+ $("#trans_id").change(async function () {
+   let bankId = $('#bank_id').val();
+    if(!bankId){
+      alert("Kindly select Bank Name!"); 
+      return;
+    }
+
+    let totalPaidTrack = $('#total_paid_track').val() != '' ? $('#total_paid_track').val().replace(/,/g, '') : 0;
+    let transId = $('#trans_id').val();
+    let response = await checkBankTransactionDetails('credit', bankId, transId, totalPaidTrack);
+    if (!response.status) {
+      alert(response.message);
+      $('#trans_id').val('');
+      return;
+    }
+
+    let alertStatus = response.data.alert_status;
+    if(alertStatus){
+      alert(response.data.alert);
+      $('#trans_id').val('');
+    }else{
+      $('#trans_date').val(response.data.trans_date);
+      $('#bank_clr_bank_id').val(response.data.id);
+      $('#bank_clr_trans_amnt').val(response.data.transaction_amount);
+    }
+
+ });
+
   $(
     "#due_amt_track, #princ_amt_track, #int_amt_track, #penalty_track , #coll_charge_track"
-  ).on('input', function () {
+  ).on('input', function (e) {
     var due_amt_track =
       $("#due_amt_track").val() != "" ? $("#due_amt_track").val().replace(/,/g, '') : 0;
     var penalty_track =
@@ -50,6 +87,13 @@ $(document).ready(function () {
       parseInt(penalty_track) +
       parseInt(coll_charge_track);
     $("#total_paid_track").val(formatIndianNumber(total_paid_track));
+
+    // Only clear transaction-related values when the user actually edits the amount fields.
+    // During submit we call `.trigger('input')` from `validations()` to re-run formatting/limit checks.
+    // Those programmatic triggers should NOT wipe bank clearance mapping fields.
+    if (e && e.originalEvent) {
+      $('#trans_id, #trans_date, #bank_clr_bank_id, #bank_clr_trans_amnt').val('');
+    }
   });
 
   $("#pre_close_waiver , #penalty_waiver , #coll_charge_waiver , #principal_waiver , #interest_waiver").on('input', function () {
