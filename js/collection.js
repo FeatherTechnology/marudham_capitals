@@ -38,14 +38,19 @@ $(document).ready(function () {
     $('#trans_date').val('');
  });
 
- $("#trans_id").change(async function () {
+ $("#trans_id").blur(async function () {
    let bankId = $('#bank_id').val();
     if(!bankId){
       alert("Kindly select Bank Name!"); 
       return;
     }
-
+    
     let totalPaidTrack = $('#total_paid_track').val() != '' ? $('#total_paid_track').val().replace(/,/g, '') : 0;
+    if(!totalPaidTrack){
+      alert("Kindly Fill Collection Track!"); 
+      return;
+    }
+
     let transId = $('#trans_id').val();
     let response = await checkBankTransactionDetails('credit', bankId, transId, totalPaidTrack);
     if (!response.status) {

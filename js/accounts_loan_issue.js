@@ -156,6 +156,48 @@ $(document).ready(function () {
 
     })
 
+    $('#bank_id').change(function(){
+        $('#transaction_id, #bank_clr_bank_id, #bank_clr_trans_amnt').val('');
+    });
+
+    $("#transaction_id").blur(async function () {
+        let bankId = $('#bank_id').val();
+        if(!bankId){
+            alert("Kindly select Bank Name!"); 
+            return;
+        }
+        
+        let paymentType = $('#payment_type').val();
+        let transactionValue ='';
+        if(paymentType =='1'){
+            transactionValue = $('#chequeValue').val() != '' ? $('#chequeValue').val().replace(/,/g, '') : 0;
+        }else if(paymentType =='2'){
+            transactionValue = $('#transaction_value').val() != '' ? $('#transaction_value').val().replace(/,/g, '') : 0;
+        }
+        
+        if(!transactionValue){
+            alert("Kindly Fill Value!"); 
+            return;
+        }
+
+        let transId = $('#transaction_id').val();
+        let response = await checkBankTransactionDetails('debit', bankId, transId, transactionValue);
+        if (!response.status) {
+            alert(response.message);
+            $('#transaction_id').val('');
+            return;
+        }
+
+        let alertStatus = response.data.alert_status;
+        if(alertStatus){
+            alert(response.data.alert);
+            $('#transaction_id').val('');
+        }else{
+            $('#trans_date').val(response.data.trans_date);
+            $('#bank_clr_bank_id').val(response.data.id);
+            $('#bank_clr_trans_amnt').val(response.data.transaction_amount);
+        }
+    });
 
     $('#submit_accountsloanIssue').click(function (event) { // loan Issue Submit Validation
         event.preventDefault();
@@ -195,6 +237,8 @@ $(document).ready(function () {
             let transaction_value = $('#transaction_value').val().replace(/,/g, '');
             let transactionRemark = $('#transaction_remark').val();
             let bank_id = $('#bank_id').val();
+            let bank_clr_bank_id = $('#bank_clr_bank_id').val();
+            let bank_clr_trans_amnt = $('#bank_clr_trans_amnt').val();
 
             // AJAX call
             $.ajax({
@@ -215,7 +259,9 @@ $(document).ready(function () {
                     "transaction_id": transaction_id,
                     "transaction_value": transaction_value,
                     "transaction_remark": transactionRemark,
-                    "bank_id": bank_id
+                    "bank_id": bank_id,
+                    "bank_clr_bank_id": bank_clr_bank_id,
+                    "bank_clr_trans_amnt": bank_clr_trans_amnt
                 },
                 dataType: 'json',
                 cache: false,
@@ -1237,7 +1283,7 @@ function checkBalance() {
                     $('#issued_mode').attr('disabled', true);
                     $('#due_start_from').attr('disabled', true);
                     $('#cash_guarentor_name').attr('disabled', true);
-                    $('#submit_loanIssue').hide();
+                    $('#submit_accountsloanIssue').hide();
                 }
             } else {
                 var netcashamnt = parseInt($('#net_cash_cal').val().replace(/,/g, ''));
@@ -1372,6 +1418,15 @@ function loanIssueSumitValidation() {
         }
     }
 
+    //Transaction id.
+    if (transactionID == '') {
+        event.preventDefault();
+        $('#transact_id').show();
+        isValid = false;
+    } else {
+        $('#transact_id').hide();
+    }
+
     // Cheque
     if (paymenType == '1') {
         if (chequeNum == '') {
@@ -1409,14 +1464,6 @@ function loanIssueSumitValidation() {
 
     // Transaction
     if (paymenType == '2') {
-        if (transactionID == '') {
-            event.preventDefault();
-            $('#transact_id').show();
-            isValid = false;
-        } else {
-            $('#transact_id').hide();
-        }
-
         if (transactionVal == '') {
             event.preventDefault();
             $('#transact_val').show();

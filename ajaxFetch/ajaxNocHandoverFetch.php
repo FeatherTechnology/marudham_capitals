@@ -52,7 +52,7 @@ if ($userid != 1) {  // super admin bypass
 }
 
 $column = array(
-    'ii.id',
+    'cs.updated_date',
     'cr.cus_id',
     'cr.autogen_cus_id',
     'cr.customer_name',
@@ -61,48 +61,46 @@ $column = array(
     'bc.branch_name',
     'al.line_name',
     'cr.mobile1',
-    'ii.id',
-    'ii.id',
-    'ii.id',
-    'ii.id'
+    'cs.updated_date',
+    'cs.updated_date',
+    'cs.updated_date',
+    'cs.updated_date'
 );
 
 if ($userid == 1) {
     $query = "SELECT cr.cus_id, cr.autogen_cus_id, cr.customer_name, ac.area_name, sa.sub_area_name, al.line_name, bc.branch_name, cr.mobile1
-    FROM in_issue ii 
-    JOIN customer_register cr ON ii.cus_id = cr.cus_id
+    FROM closed_status cs 
+    JOIN customer_register cr ON cs.cus_id = cr.cus_id
     JOIN area_list_creation ac ON cr.area_confirm_area = ac.area_id
     JOIN sub_area_list_creation sa ON cr.area_confirm_subarea = sa.sub_area_id
     JOIN area_line_mapping al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
     JOIN branch_creation bc ON al.branch_id = bc.branch_id
-    WHERE ii.status = 0 
-        AND  ii.cus_status = 23 "; // Only Issued and all lines not relying on sub area
+    WHERE cs.cus_sts = 23 "; // Only Issued and all lines not relying on sub area
 } else {
     $query = "SELECT cr.cus_id, cr.autogen_cus_id, cr.customer_name, ac.area_name, sa.sub_area_name, al.line_name, bc.branch_name, cr.mobile1
-    FROM in_issue ii 
-    JOIN customer_register cr ON ii.cus_id = cr.cus_id
+    FROM closed_status cs 
+    JOIN customer_register cr ON cs.cus_id = cr.cus_id
     JOIN area_list_creation ac ON cr.area_confirm_area = ac.area_id
     JOIN sub_area_list_creation sa ON cr.area_confirm_subarea = sa.sub_area_id
     JOIN area_line_mapping al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
     JOIN branch_creation bc ON al.branch_id = bc.branch_id
-    WHERE ii.status = 0 
-        AND  ii.cus_status = 23 
+    WHERE cs.cus_sts = 23 
         AND $colName IN ($sub_area_list) ";
 }
 
 if (isset($_POST['search']) && $_POST['search'] != "") {
 
-    $query .= " AND (cp.cus_id LIKE '%" . $_POST['search'] . "%'
+    $query .= " AND (cr.cus_id LIKE '%" . $_POST['search'] . "%'
             OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%'
-            OR cp.cus_name LIKE '%" . $_POST['search'] . "%'
+            OR cr.customer_name LIKE '%" . $_POST['search'] . "%'
             OR ac.area_name LIKE '%" . $_POST['search'] . "%'
             OR sa.sub_area_name LIKE '%" . $_POST['search'] . "%'
             OR al.line_name LIKE '%" . $_POST['search'] . "%'
             OR bc.branch_name LIKE '%" . $_POST['search'] . "%'
-            OR cp.mobile1 LIKE '%" . $_POST['search'] . "%' ) ";
+            OR cr.mobile1 LIKE '%" . $_POST['search'] . "%' ) ";
 }
 
-$query .= 'GROUP BY ii.cus_id ';
+$query .= 'GROUP BY cs.cus_id ';
 
 if (isset($_POST['order'])) {
     $query .= 'ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';

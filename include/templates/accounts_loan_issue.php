@@ -272,6 +272,8 @@ if (sizeof($getLoanCalculation) > 0) {
             <input type="hidden" name="cus_profile_id" id="cus_profile_id" value="<?php if (isset($cus_Tableid)) {
                                                                                         echo $cus_Tableid;
                                                                                     } ?>" />
+            <input type="hidden" name="bank_clr_bank_id" id="bank_clr_bank_id"/>
+            <input type="hidden" name="bank_clr_trans_amnt" id="bank_clr_trans_amnt"/>
 
             <!-- Row start -->
             <div class="row gutters">
@@ -904,8 +906,18 @@ if (sizeof($getLoanCalculation) > 0) {
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="row">
 
+                                     <div class="row">
+                                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                                            <div class="form-group">
+                                                <label for="disabledInput">Transaction ID</label>
+                                                <input type="text" class="form-control" id="transaction_id" name="transaction_id" tabindex="57">
+                                                <span class="text-danger" style="display: none;" id="transact_id"> Please Enter Transaction ID </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
                                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 checque" style="display:none">
                                             <div class="form-group">
                                                 <label for="disabledInput">Cheque number</label>
@@ -921,6 +933,7 @@ if (sizeof($getLoanCalculation) > 0) {
                                                 <span class="text-danger" style="display: none;" id="cheque_val"> Please Enter Cheque Value </span>
                                             </div>
                                         </div>
+
                                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 checque" style="display:none">
                                             <div class="form-group">
                                                 <label for="disabledInput">Cheque Remark</label>
@@ -929,16 +942,8 @@ if (sizeof($getLoanCalculation) > 0) {
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="row">
-
-                                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 transaction" style="display:none">
-                                            <div class="form-group">
-                                                <label for="disabledInput">Transaction ID</label>
-                                                <input type="text" class="form-control" id="transaction_id" name="transaction_id" tabindex="57">
-                                                <span class="text-danger" style="display: none;" id="transact_id"> Please Enter Transaction ID </span>
-                                            </div>
-                                        </div>
-
                                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 transaction" style="display:none">
                                             <div class="form-group">
                                                 <label for="disabledInput">Transaction Value </label>
@@ -946,6 +951,7 @@ if (sizeof($getLoanCalculation) > 0) {
                                                 <span class="text-danger" style="display: none;" id="transact_val"> Please Enter Transaction Value </span>
                                             </div>
                                         </div>
+
                                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 transaction" style="display:none">
                                             <div class="form-group">
                                                 <label for="disabledInput">Transaction Remark </label>
