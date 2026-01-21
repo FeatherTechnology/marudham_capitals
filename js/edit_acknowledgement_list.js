@@ -16,6 +16,7 @@ function callOnClickEvents() {
         $('a.customer-status').click(function () {
             var cus_id = $(this).data('value');
             var req_id = $(this).data('value1');
+            var screen = 'acknowledgement';
             callresetCustomerStatus(cus_id);//this function will give the customer's status like pending od current
             showOverlay();//loader start
             setTimeout(() => {
@@ -23,7 +24,7 @@ function callOnClickEvents() {
                 var pending_sts = $('#pending_sts').val(); var od_sts = $('#od_sts').val(); var due_nil_sts = $('#due_nil_sts').val(); var closed_sts = $('#closed_sts').val()
                 $.ajax({
                     url: 'requestFile/getCustomerStatus.php',
-                    data: { cus_id, pending_sts, od_sts, due_nil_sts, closed_sts },
+                    data: { cus_id, pending_sts, od_sts, due_nil_sts, closed_sts, screen },
                     // dataType: 'json',
                     type: 'post',
                     cache: false,

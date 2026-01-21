@@ -6,9 +6,11 @@ if (isset($_POST['cus_id'])) {
     $cus_id = preg_replace('/\D/', '', $_POST['cus_id']);
 }
 
+$screen = isset($_POST['screen']) ? $_POST['screen'] : '';
+
 $records = array();
 
-$result = $connect->query("SELECT req_id, dor, loan_category, sub_category, loan_amt, prompt_remark, cus_status FROM request_creation where cus_id = '" . strip_tags($cus_id) . "' and cus_status <= 24 ORDER BY created_date DESC ");
+$result = $connect->query("SELECT req_id, dor, loan_category, sub_category, loan_amt, prompt_remark, cus_status FROM request_creation where cus_id = '" . strip_tags($cus_id) . "' ORDER BY created_date DESC ");
 
 if ($result->rowCount() > 0) {
     $i = 0;
@@ -93,46 +95,106 @@ if ($result->rowCount() > 0) {
             }
             $records[$i]['sub_status'] = $substatuslocal;
         }
-        // }
+        if ($screen == 'acknowledgement') { //21 means in NOC
+            $Qry = $connect->query("SELECT doc_sts, doc_remarks, update_remarks 
+                            FROM acknowlegement_documentation 
+                            WHERE cus_id_doc = $cus_id AND req_id = '" . $req_id . "' ");
+
+            $runqry1 = $Qry->fetch();
+
+            $records[$i]['doc_status'] = '';
+
+            if ($cus_status >= 14 && $cus_status < 21) {
+                if ($runqry1 && $runqry1['doc_sts'] == 'NO') {
+                    $records[$i]['doc_status'] = 'Document Pending';
+                } else {
+                    $records[$i]['doc_status'] = 'Document Completed';
+                }
+            } else if ($cus_status >= 21 && $cus_status <= 23) {
+                if ($cus_status == 21) {
+                    $records[$i]['doc_status'] = 'NOC Pending';
+                } else {
+                    $records[$i]['doc_status'] = 'NOC Completed';
+                }
+            } else if ($cus_status >= 24) {
+                $records[$i]['doc_status'] = 'NOC Handovered';
+            }
+
+            // Only assign remarks if fetch returned a row
+            $records[$i]['doc_remarks'] = $runqry1['doc_remarks'] ?? '';
+            $records[$i]['update_remarks'] = $runqry1['update_remarks'] ?? '';
+        }
+
 
         $i++;
     }
 }
-
 ?>
 
-<thead>
-    <tr>
-        <th width="25">S. No</th>
-        <th>Date</th>
-        <th>Loan Category</th>
-        <th>Sub Category</th>
-        <th>Amount</th>
-        <th>Status</th>
-        <th>Sub Status</th>
-        <th>Remark</th>
-    </tr>
-</thead>
-<tbody>
-    <?php for ($i = 0; $i < sizeof($records); $i++) { ?>
-        <tr>
-            <td><?php echo $i + 1; ?></td>
-            <td><?php echo $records[$i]['dor']; ?></td>
-            <td><?php echo $records[$i]['loan_category']; ?></td>
-            <td><?php echo $records[$i]['sub_category']; ?></td>
-            <td><?php echo $records[$i]['loan_amt']; ?></td>
-            <td><?php echo $records[$i]['status']; ?></td>
-            <td><?php echo $records[$i]['sub_status']; ?></td>
-            <td><?php echo $records[$i]['remark']; ?></td>
-        </tr>
+    <?php if ($screen == 'acknowledgement') { ?>
+        <thead>
+            <tr>
+                <th width="25" rowspan="2">S. No</th>
+                <th rowspan="2">Date</th>
+                <th rowspan="2">Loan Category</th>
+                <th rowspan="2">Sub Category</th>
+                <th rowspan="2">Amount</th>
+                <th colspan="3">Loan Status</th>
+                <th colspan="3">Document Status</th>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <th>Sub Status</th>
+                <th>Remark</th>
+                <th>Status</th>
+                <th>Acknowledgement Remark</th>
+                <th>Update Remark</th>
+            </tr>
+        </thead>
+    <?php } else { ?>
+        <thead>
+            <tr>
+                <th width="25">S. No</th>
+                <th>Date</th>
+                <th>Loan Category</th>
+                <th>Sub Category</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Sub Status</th>
+                <th>Remark</th>
+            </tr>
+        </thead>
     <?php } ?>
-</tbody>
+
+    <tbody>
+        <?php for ($i = 0; $i < sizeof($records); $i++) { ?>
+            <tr>
+                <td><?php echo $i + 1; ?></td>
+                <td><?php echo $records[$i]['dor']; ?></td>
+                <td><?php echo $records[$i]['loan_category']; ?></td>
+                <td><?php echo $records[$i]['sub_category']; ?></td>
+                <td><?php echo $records[$i]['loan_amt']; ?></td>
+                <?php if ($screen == 'acknowledgement') { ?>
+                    <td><?= $records[$i]['status'] ?></td>
+                    <td><?= $records[$i]['sub_status'] ?></td>
+                    <td><?= $records[$i]['remark'] ?></td>
+                    <td><?= $records[$i]['doc_status'] ?></td>
+                    <td><?= $records[$i]['doc_remarks'] ?></td>
+                    <td><?= $records[$i]['update_remarks'] ?></td>
+                <?php } else { ?>
+                    <td><?= $records[$i]['status'] ?></td>
+                    <td><?= $records[$i]['sub_status'] ?></td>
+                    <td><?= $records[$i]['remark'] ?></td>
+                <?php } ?>
+            </tr>
+        <?php } ?>
+    </tbody>
+
 <script>
     var table = $('#cusHistoryTable').DataTable();
     table.destroy();
     // Declare table variable to store the DataTable instance
     var cusHistoryTable = $('#cusHistoryTable').DataTable({
-        ...getStateSaveConfig('cusHistoryTable'),
         'processing': true,
         'iDisplayLength': 10,
         "lengthMenu": [
@@ -148,25 +210,21 @@ if ($result->rowCount() > 0) {
             });
         },
         dom: 'lBfrtip',
-        buttons: [{
-                extend: 'excel',
-                action: function(e, dt, button, config) {
-                    var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
-                    var dynamic = curDateJs('Customer_status_List'); // or any base
-                    config.title = dynamic; // for versions that use title as filename
-                    config.filename = dynamic; // for html5 filename
-                    defaultAction.call(this, e, dt, button, config);
-                }
-            },
-            {
-                extend: 'colvis',
-                collectionLayout: 'fixed four-column',
-            }
-        ],
+       buttons: [{
+        extend: 'excel',
+        action: function(e, dt, button, config) {
+            var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+            var dynamic = curDateJs('Customer_status_List');
+            // or any base config.title = dynamic; // for versions that use title as filename
+            config.filename = dynamic; // for html5 filename
+            defaultAction.call(this, e, dt, button, config);
+        }
+        }, {
+            extend: 'colvis',
+            collectionLayout: 'fixed four-column',
+        }],
     });
 
-    // Pass the table variable to the initColVisFeatures function
-    initColVisFeatures(cusHistoryTable, 'cusHistoryTable');
 </script>
 <?php
 function getCollectionStatus($connect, $cus_id, $req_id)

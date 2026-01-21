@@ -8,36 +8,56 @@ $where = "";
 if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'] != '' && $_POST['to_date'] != '') {
     $from_date = date('Y-m-d', strtotime($_POST['from_date']));
     $to_date = date('Y-m-d', strtotime($_POST['to_date']));
-    $where  = "AND (date(c.created_date) >= '" . $from_date . "') AND (date(c.created_date) <= '" . $to_date . "') ";
+    $where  = " (date(c.created_date) >= '" . $from_date . "') AND (date(c.created_date) <= '" . $to_date . "') ";
 }
 
-$bankqry = $connect->query("SELECT `bank_details` FROM `user` WHERE `user_id`= $user_id");
-$bank_id = $bankqry->fetch()['bank_details'];
-
-//get agent user id to get data from collection
-$ag_userid_qry = $connect->query("SELECT `user_id` from user where FIND_IN_SET( `ag_id`, (SELECT `agentforstaff` from user where `user_id` = '$user_id')) ");
-$ids = array();
-while ($row = $ag_userid_qry->fetch()) {
-    $ids[] = $row['user_id'];
+$bankqry = $connect->query("SELECT `bank_details`,`role`,`report_access`,agentforstaff,ag_id FROM `user` WHERE `user_id`= $user_id");
+$userRow = $bankqry->fetch(PDO::FETCH_ASSOC);
+$bank_id = $userRow['bank_details'];
+$role = $userRow['role'];
+$report_access = $userRow['report_access'];
+$agentforstaff = $userRow['agentforstaff'];
+$ag_id = $userRow['ag_id'];
+if ($report_access == '1') { //Report access individual.
+    if ($role != 2) {
+        //get agent user id to get data from collection
+        $ag_userid_qry = $connect->query("SELECT `user_id` from user where FIND_IN_SET( `ag_id`, (SELECT `agentforstaff` from user where `user_id` = '$user_id')) ");
+        $ids = array();
+        while ($row = $ag_userid_qry->fetch()) {
+            $ids[] = $row['user_id'];
+        }
+        $ag_user_id = implode(',', $ids);
+        $agentCondition = " AND FIND_IN_SET(c.agent_id, '$agentforstaff')";
+    } else {
+        $ag_user_id = $user_id;
+        $agentCondition = " AND FIND_IN_SET(c.agent_id, $ag_id)";
+    }
+    $agentCollection = "AND FIND_IN_SET(c.insert_login_id,'$ag_user_id')";
+    $agentCreditDebit = "AND c.insert_login_id = '$user_id'";
+}else{
+    $agentCollection='';
+    $agentCondition='';
+    $agentCreditDebit='';
 }
-$ag_user_id = implode(',', $ids);
 
 $column = array(
     'tdate',
     'ag_name',
     'tdate',
+    'details',
     'coll_amt',
     'netcash',
     'Credit',
     'Debit',
 );
 
-$query = "SELECT * FROM (
+  $query = "SELECT * FROM (
     SELECT 
         ac.ag_name, 
         u.ag_id AS ag_id, 
         DATE(c.created_date) as tdate, 
-        c.total_paid_track as coll_amt, 
+        c.cus_name as details,
+        c.total_paid_track as coll_amt,
         '' AS netcash, 
         '' AS Credit, 
         '' AS Debit
@@ -48,8 +68,8 @@ $query = "SELECT * FROM (
     JOIN 
         agent_creation ac ON u.ag_id = ac.ag_id
     WHERE 
-        c.total_paid_track != '' 
-        AND FIND_IN_SET(c.insert_login_id,'$ag_user_id') $where
+       
+         $where  AND c.total_paid_track != '' $agentCollection
 
     UNION ALL
 
@@ -57,6 +77,7 @@ $query = "SELECT * FROM (
         ac.ag_name, 
         c.agent_id AS ag_id, 
         DATE(c.created_date) as tdate, 
+        acp.cus_name as details,
         '' AS coll_amt, 
         (COALESCE(c.cash, 0) + COALESCE(c.cheque_value, 0) + COALESCE(c.transaction_value, 0)) AS netcash, 
         '' AS Credit, 
@@ -64,11 +85,11 @@ $query = "SELECT * FROM (
     FROM 
         loan_issue c 
     JOIN 
-        user u ON u.user_id = '$user_id'
+        acknowlegement_customer_profile acp ON acp.req_id = c.req_id
     JOIN 
         agent_creation ac ON c.agent_id = ac.ag_id
     WHERE 
-        FIND_IN_SET(c.agent_id, u.agentforstaff) $where
+         $where $agentCondition
 
     UNION ALL 
 
@@ -76,6 +97,7 @@ $query = "SELECT * FROM (
         ac.ag_name, 
         c.ag_id, 
         c.created_date AS tdate, 
+        'File Cash' AS details, 
         '' AS coll_amt, 
         '' AS netcash, 
         '' AS Credit, 
@@ -85,7 +107,7 @@ $query = "SELECT * FROM (
     JOIN 
         agent_creation ac ON c.ag_id = ac.ag_id
     WHERE 
-        c.insert_login_id = '$user_id' $where
+         $where $agentCreditDebit
 
     UNION ALL 
     
@@ -93,6 +115,7 @@ $query = "SELECT * FROM (
         ac.ag_name, 
         c.ag_id, 
         c.created_date AS tdate, 
+        'File Cash' AS details, 
         '' AS coll_amt, 
         '' AS netcash, 
         '' AS Credit, 
@@ -102,7 +125,7 @@ $query = "SELECT * FROM (
     JOIN 
         agent_creation ac ON c.ag_id = ac.ag_id
     WHERE 
-        FIND_IN_SET(bank_id, '$bank_id') $where
+         $where AND FIND_IN_SET(bank_id, '$bank_id')  $agentCreditDebit
 
     UNION ALL 
     
@@ -110,6 +133,7 @@ $query = "SELECT * FROM (
         ac.ag_name, 
         c.ag_id, 
         c.created_date AS tdate, 
+        'In Cash' AS details,
         '' AS coll_amt, 
         '' AS netcash, 
         amt AS Credit, 
@@ -119,7 +143,7 @@ $query = "SELECT * FROM (
     JOIN 
         agent_creation ac ON c.ag_id = ac.ag_id
     WHERE 
-        c.insert_login_id = '$user_id' $where
+        $where $agentCreditDebit
 
     UNION ALL 
     
@@ -127,6 +151,7 @@ $query = "SELECT * FROM (
         ac.ag_name, 
         c.ag_id, 
         c.created_date AS tdate, 
+        'In Cash' AS details,
         '' AS coll_amt, 
         '' AS netcash, 
         amt AS Credit, 
@@ -136,11 +161,12 @@ $query = "SELECT * FROM (
     JOIN 
         agent_creation ac ON c.ag_id = ac.ag_id
     WHERE 
-        FIND_IN_SET(bank_id, '$bank_id') $where
+        $where AND FIND_IN_SET(bank_id, '$bank_id')  $agentCreditDebit
 ) AS temp";
 
 if (isset($_POST['search']) && $_POST['search'] != "") {
     $query .= " WHERE (ag_name LIKE '%" . $_POST['search'] . "%' OR 
+      details LIKE '%" . $_POST['search'] . "%' OR 
         tdate LIKE '%" . $_POST['search'] . "%')";
 }
 
@@ -172,10 +198,11 @@ foreach ($result as $row) {
     $sub_array[] = $sno;
     $sub_array[] = $row['ag_name'];
     $sub_array[] = date('d-m-Y', strtotime($row['tdate']));
-    $sub_array[] = ($row['coll_amt'] !='') ? moneyFormatIndia($row['coll_amt']) : 0;
-    $sub_array[] = ($row['netcash'] !='') ? moneyFormatIndia($row['netcash']) : 0;
-    $sub_array[] = ($row['Credit'] !='') ? moneyFormatIndia($row['Credit']) : 0;
-    $sub_array[] = ($row['Debit'] !='') ? moneyFormatIndia($row['Debit']) : 0;
+    $sub_array[] = $row['details'];
+    $sub_array[] = ($row['coll_amt'] != '') ? moneyFormatIndia($row['coll_amt']) : 0;
+    $sub_array[] = ($row['netcash'] != '') ? moneyFormatIndia($row['netcash']) : 0;
+    $sub_array[] = ($row['Credit'] != '') ? moneyFormatIndia($row['Credit']) : 0;
+    $sub_array[] = ($row['Debit'] != '') ? moneyFormatIndia($row['Debit']) : 0;
 
     $data[]      = $sub_array;
     $sno = $sno + 1;
@@ -232,4 +259,3 @@ function moneyFormatIndia($num)
 
 // Close the database connection
 $connect = null;
-?>

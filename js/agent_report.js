@@ -71,7 +71,7 @@ function agentReportTable() {
             };
 
             // Array of column indices to sum
-            var columnsToSum = [3, 4, 5, 6];
+            var columnsToSum = [ 4, 5, 6,7];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {
