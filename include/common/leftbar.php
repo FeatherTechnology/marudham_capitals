@@ -241,7 +241,7 @@ $search_module = '';
 $search = '';
 $bulk_upload_module = '';
 $bulk_upload = '';
-$loan_track_module = '';
+// $loan_track_module = '';
 $loan_track = '';
 $sms_module = '';
 $sms_generation = '';
@@ -361,7 +361,7 @@ if (sizeof($getUser) > 0) {
 		$search          		     = $getUser['search'];
 		$bulk_upload_module          		     = $getUser['bulk_upload_module'];
 		$bulk_upload          		     = $getUser['bulk_upload'];
-		$loan_track_module          		     = $getUser['loan_track_module'];
+		// $loan_track_module          		     = $getUser['loan_track_module'];
 		$loan_track          		     = $getUser['loan_track'];
 		$sms_module          		     = $getUser['sms_module'];
 		$sms_generation          		     = $getUser['sms_generation'];
@@ -1005,13 +1005,13 @@ if (sizeof($getUser) > 0) {
 											<?php  } ?> 
 											<?php if ($due_followup_customer_count_report == 0) { ?>
 												<li>
-													<!-- name changes due_followup_customer_count_report to Followup Summary-->
-													<a href="due_followup_customer_count_report"><i class='icon-area-graph'></i>Followup Summary</a>
+													<!-- name changes due_followup_customer_count_report to Followup Summary to Due Summary-->
+													<a href="due_followup_customer_count_report"><i class='icon-area-graph'></i>Due Summary</a>
 												</li>
 											<?php  } ?> 
 											<?php if ($work_count_report == 0) { ?>
 												<li>
-													<a href="work_count_report"><i class='icon-area-graph'></i>Work Count Report</a>
+													<a href="work_count_report"><i class='icon-area-graph'></i>Work Count</a>
 												</li>
 											<?php  } ?> 
 											<?php if ($confirmation_count_report == 0) { ?>
@@ -1021,7 +1021,7 @@ if (sizeof($getUser) > 0) {
 											<?php  } ?> 
 											<?php if ($concern_report  == 0) { ?>
 												<li>
-													<a href="concern_report"><i class='icon-area-graph'></i>Concern Report</a>
+													<a href="concern_report"><i class='icon-area-graph'></i>Concern</a>
 												</li>
 											<?php  } ?> 
 											<?php if ($loan_track == 0) { ?>
@@ -1052,7 +1052,7 @@ if (sizeof($getUser) > 0) {
 											<?php  } ?>
 											<?php if ($area_loan_count_report == 0) { ?>
 												<li>
-													<a href="area_loan_count_report"><i class='icon-area-graph'></i>Area Loan Count Report</a>
+													<a href="area_loan_count_report"><i class='icon-area-graph'></i>Area Loan Count</a>
 												</li>
 											<?php  } ?> 
 											<?php if ($no_due_pay_report == 0) { ?>
@@ -1082,12 +1082,12 @@ if (sizeof($getUser) > 0) {
 											<?php  } ?>
 											<?php if ($day_end_report == 0) { ?>
 												<li>
-													<a href="day_end_report"><i class='icon-area-graph'></i>Day End Report</a>
+													<a href="day_end_report"><i class='icon-area-graph'></i>Day End</a>
 												</li>
 											<?php  } ?>
 											<?php if ($uncleared_report == 0) { ?>
 												<li>
-													<a href="uncleared_report"><i class='icon-area-graph'></i>Uncleared Report</a>
+													<a href="uncleared_report"><i class='icon-area-graph'></i>Uncleared</a>
 												</li>
 											<?php  } ?> 
 
@@ -1302,7 +1302,7 @@ $search_module = '';
 $search = '';
 $bulk_upload_module = '';
 $bulk_upload = '';
-$loan_track_module = '';
+// $loan_track_module = '';
 $loan_track = '';
 $sms_module = '';
 $sms_generation = '';

@@ -52,7 +52,7 @@ function eventsReportTable() {
         dom: 'lBfrtip',
         buttons: [{
             extend: 'excel',
-            title: "Events Report List",
+            title: "Events Activity List",
             action: function (e, dt, button, config) {
                 var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                 var dynamic = curDateJs('events_Report'); // or any base

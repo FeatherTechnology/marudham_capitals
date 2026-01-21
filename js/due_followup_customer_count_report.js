@@ -89,7 +89,7 @@ function dueFollowUpCustomerCountReportTable() {
                 dom: 'lBfrtip',
                 buttons: [{
                     extend: 'excel',
-                    title: "Followup Summary",
+                    title: "Due Summary",
                     action: function (e, dt, button, config) {
                         var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                         var dynamic = curDateJs('Due_summary'); // or any base
