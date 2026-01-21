@@ -1,15 +1,28 @@
 <?php
 include '../ajaxconfig.php';
 
-$id = $_POST['id'];
+$id = $_POST['id'] ?? '';
 
-$delct = $connect->query("DELETE FROM `cus_feedback_name` WHERE id = '$id' ");
+$message = '';
 
-if ($delct) {
-	$message = " Feedback Deleted Successfully";
+if ($id != '') {
+    // 🔹 Check whether feedback label is already used
+    $checkQry = $connect->query("SELECT * FROM verification_cus_feedback WHERE feedback_label = '$id'");
+
+    if ($checkQry->rowCount() > 0) {
+        //  Already used
+        $message = "USED";
+    } else {
+        // Safe to delete
+        $delQry = $connect->query("DELETE FROM cus_feedback_name WHERE id = '$id'");
+
+        if ($delQry) {
+            $message = "DELETED";
+        } else {
+            $message = "ERROR";
+        }
+    }
 }
 
 echo json_encode($message);
-
-// Close the database connection
 $connect = null;
