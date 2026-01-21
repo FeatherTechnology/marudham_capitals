@@ -4138,8 +4138,8 @@ class admin
 		$agent = '';
 		if (isset($_POST['agent']) && $_POST['agent'] != '') {
 			$agent = $_POST['agent'];
-			// }else if(isset($_POST['ag_id_upd']) && $_POST['ag_id_upd'] != ''){
-			// 	$agent = $_POST['ag_id_upd'];
+		}else if(isset($_POST['ag_id_upd']) && $_POST['ag_id_upd'] != ''){
+				$agent = $_POST['ag_id_upd'];
 		}
 		$responsible = '';
 		if (isset($_POST['responsible'])) {

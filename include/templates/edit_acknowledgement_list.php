@@ -1,3 +1,20 @@
+<style>
+	/* Force borders for grouped headers */
+/* Ensure borders are visible */
+#cusHistoryTable {
+    border-collapse: collapse !important;
+}
+
+#cusHistoryTable thead th {
+    border: 1px solid #ffffff;
+}
+
+/* ===== GROUP HEADER BORDER ===== */
+#cusHistoryTable thead th.group-border {
+    border-right: 1px solid #ffffff !important;
+}
+
+</style>
 <?php
 
 $getUser = $userObj->getUser($mysqli, $_SESSION['userid']);
@@ -114,17 +131,25 @@ if (sizeof($getUser) > 0) {
 					</div>
 					<div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12"></div>
 				</div>
-				<div id="updatedcusHistoryTable">
+				<div id="updatedcusHistoryTable" style="overflow-x: scroll;">
 					<table class="table custom-table" id="cusHistoryTable">
 						<thead>
 							<tr>
-								<th width="25">S. No</th>
-								<th>Date</th>
-								<th>Loan Category</th>
-								<th>Sub Category</th>
-								<th>Amount</th>
+								<th width="25" rowspan="2">S. No</th>
+								<th rowspan="2" class="group-border">Date</th>
+								<th rowspan="2" class="group-border">Loan Category</th>
+								<th rowspan="2" class="group-border">Sub Category</th>
+								<th rowspan="2" class="group-border">Amount</th>
+								<th colspan="3" class="group-border">Loan Status</th>
+								<th colspan="3" class="group-border">Document Status</th>
+							</tr>
+							<tr>
 								<th>Status</th>
 								<th>Sub Status</th>
+								<th>Remark</th>
+								<th>Status</th>
+								<th>Acknowledgement Remark</th>
+								<th>Update Remark</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -218,7 +243,7 @@ if (sizeof($getUser) > 0) {
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
 				<h5 class="modal-title" id="exampleModalLongTitle">Add Followup</h5>
-				<button type="button" class="close closeModal" id="closeAddFollowupModal" data-dismiss="modal" aria-label="Close" >
+				<button type="button" class="close closeModal" id="closeAddFollowupModal" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>

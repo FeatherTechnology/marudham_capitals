@@ -23,7 +23,7 @@ $result = $connect->query("SELECT req.req_id, req.prompt_remark, req.cus_status,
     LEFT JOIN acknowlegement_loan_calculation alc ON req.req_id = alc.req_id
     LEFT JOIN in_issue ii ON req.req_id = ii.req_id
     LEFT JOIN acknowlegement_documentation ad ON ii.req_id = ad.req_id
-    where req.cus_id = $cus_id and (req.cus_status <= 24) ORDER BY req.created_date DESC");
+    where req.cus_id = $cus_id ORDER BY req.created_date DESC");
 
 if ($result->rowCount() > 0) {
     $i = 0;
@@ -87,8 +87,10 @@ if ($result->rowCount() > 0) {
         //for document status
         if ($cus_status >= 14 && $cus_status < 21) {
             $records[$i]['doc_status'] = getDocumentStatus($connect, $req_id) == 'pending' ? 'Document Pending' : 'Document Completed';
-        } elseif ($cus_status >= 21) {
+        } elseif ($cus_status >= 21 && $cus_status <= 23) {
             $records[$i]['doc_status'] = ($cus_status == 21) ? 'NOC Pending' : 'NOC Completed';
+        } elseif ($cus_status >= 24) {
+            $records[$i]['doc_status'] = 'NOC Handovered';
         } else {
             $records[$i]['doc_status'] = '';
         }
