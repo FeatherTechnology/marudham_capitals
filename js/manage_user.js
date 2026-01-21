@@ -1142,7 +1142,6 @@ function validation() {
     request: { group: true },
     request_list_access: { group: true },
     update: { group: true },
-    conf_followup: { group: true },
 
     cancel_revoke_report: { group: true },
     request_report: { group: true },
@@ -1194,6 +1193,7 @@ function validation() {
     } else {
         $('#lineCheck').hide();
     }
+
     let dueFollowupChecked = $('#due_followup').is(':checked');
     let followupSort = multipleSelectSort(dueFollowupLines, '#due_follup_line_id');
 
@@ -1203,6 +1203,21 @@ function validation() {
 
         // Checkbox checked but no lines selected
         || (dueFollowupChecked && followupSort == 0)
+
+    ) {
+        $('.duefollowupCheck').show();
+        validation = false;
+    } else {
+        $('.duefollowupCheck').hide();
+    }
+
+    let confFollowupChecked = $('#conf_followup').is(':checked');
+    if (
+        // Followup required by screen / mapping
+        (requireFollowup && followupSort == 0)
+
+        // Checkbox checked but no lines selected
+        || (confFollowupChecked && followupSort == 0)
 
     ) {
         $('.duefollowupCheck').show();
