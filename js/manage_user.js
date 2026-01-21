@@ -357,11 +357,11 @@ $(document).ready(function () {
         checkbox(checkboxesToEnable, bulk_upload_module);
     });
 
-    $("#loan_track_module").on("change", function () {
-        const checkboxesToEnable = document.querySelectorAll("input.loan_track-checkbox");
-        var loan_track_module = document.querySelector('#loan_track_module');
-        checkbox(checkboxesToEnable, loan_track_module);
-    });
+    // $("#loan_track_module").on("change", function () {
+    //     const checkboxesToEnable = document.querySelectorAll("input.loan_track-checkbox");
+    //     var loan_track_module = document.querySelector('#loan_track_module');
+    //     checkbox(checkboxesToEnable, loan_track_module);
+    // });
 
     $("#sms_module").on("change", function () {
         const checkboxesToEnable = document.querySelectorAll("input.sms_generation-checkbox");
@@ -591,7 +591,7 @@ $(function () {
         // var reportmodule_intrest = document.getElementById('reportmodule_intrest');
         var searchmodule = document.getElementById('searchmodule');
         var bulk_upload_module = document.getElementById('bulk_upload_module');
-        var loan_track_module = document.getElementById('loan_track_module');
+        // var loan_track_module = document.getElementById('loan_track_module');
         var sms_module = document.getElementById('sms_module');
 
         if (mastermodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.master-checkbox"); checkbox(checkboxesToEnable, mastermodule); }
@@ -617,7 +617,7 @@ $(function () {
         // if (reportmodule_intrest.checked) { const checkboxesToEnable = document.querySelectorAll("input.intrest-report-checkbox"); checkbox(checkboxesToEnable, reportmodule_intrest); }
         if (searchmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.search-checkbox"); checkbox(checkboxesToEnable, searchmodule); }
         if (bulk_upload_module.checked) { const checkboxesToEnable = document.querySelectorAll("input.bulk_upload-checkbox"); checkbox(checkboxesToEnable, bulk_upload_module); }
-        if (loan_track_module.checked) { const checkboxesToEnable = document.querySelectorAll("input.loan_track-checkbox"); checkbox(checkboxesToEnable, loan_track_module); }
+        // if (loan_track_module.checked) { const checkboxesToEnable = document.querySelectorAll("input.loan_track-checkbox"); checkbox(checkboxesToEnable, loan_track_module); }
         if (sms_module.checked) { const checkboxesToEnable = document.querySelectorAll("input.sms_generation-checkbox"); checkbox(checkboxesToEnable, sms_module); }
     }
 })

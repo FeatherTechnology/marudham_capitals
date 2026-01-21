@@ -26,7 +26,7 @@ if(isset($_POST['lusername'])) {
 	$username  = $_POST['lusername'];
 	$password  =  $_POST['lpassword'];
 
-	$qry     = "SELECT * FROM user WHERE user_name = '".$username."' AND user_password = '".$password."' and status = 0"; 
+	$qry     = "SELECT user_name, user_id, fullname, request_list_access FROM user WHERE user_name = '".$username."' AND user_password = '".$password."' and status = 0"; 
 	
 	$res = ($connect->query($qry)) or die("Error in Get All Records"); 
 	if ($res->rowCount() > 0){  
