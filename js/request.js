@@ -1032,7 +1032,7 @@ function callresetCustomerStatus(cus_id) {
 //Validations
 function validation(event) {
     var idupd = $('#id').val();
-    var role = $('#role_load').val();
+    var role = (idupd && idupd > 0) ? $('#role_upd').val() : $('#role_load').val();  
     var validation = true ;
     if (role == '1') {
         var declaration = $('#declaration').val();
@@ -1076,7 +1076,7 @@ function validation(event) {
     var cus_id = $('#cus_id').val(); var cus_name = $('#cus_name').val(); var dob = $('#dob').val(); var gender = $('#gender').val(); var pic = $('#pic').val(); var state = $('#state').val(); var district = $('#district1').val(); var taluk = $('#taluk1').val(); var area = $('#area').val(); var sub_area = $('#sub_area').val(); var address = $('#address').val(); var mobile1 = $('#mobile1').val();var mobile2 = $('#mobile2').val(); var father_name = $('#father_name').val(); var mother_name = $('#mother_name').val(); var marital = $('#marital').val(); var spouse_name = $('#spouse_name').val(); var occupation_type = $('#occupation_type').val(); var occupation = $('#occupation').val(); var loan_category = $('#loan_category').val(); var sub_category = $('#sub_category').val(); var tot_value = $('#tot_value').val(); var ad_amt = $('#ad_amt').val(); var ad_perc = $('#ad_perc').val(); var loan_amt = $('#loan_amt').val(); var poss_type = $('#poss_type').val(); var due_amt = $('#due_amt').val(); var due_period = $('#due_period').val(); var agent = $('#agent').val();
 
     //if loan category is Appliance, vehicle, 2 vehicle, 4 vehicle need to check agent select  because these type of loan given by agent only. so validation added.
-    if(loan_category == '1' || loan_category =='2' || loan_category == '4'){
+    if( role != '2' && (loan_category == '1' || loan_category == '2' || loan_category == '4')){
         if (!agent) {
             event.preventDefault();
             $('#agentCheck').show();

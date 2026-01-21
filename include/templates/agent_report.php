@@ -26,6 +26,7 @@
                                     <th>S.No</th>
                                     <th>Agent</th>
                                     <th>Date</th>
+                                    <th>Details/Name</th>
                                     <th>Coll Amount</th>
                                     <th>Net Cash</th>
                                     <th>Credit</th>
@@ -34,7 +35,7 @@
 								<tbody></tbody>
 								<tfoot>
 									<tr>
-										<td colspan="3"></td>
+										<td colspan="4"></td>
 										<td></td>
 										<td></td>
 										<td></td>
