@@ -21,6 +21,7 @@ if($values != ''){
             $records[$i]['bank_fullname'] = $row['bank_name'];
             $records[$i]['acc_no'] = $row['acc_no'];
             $records[$i]['bank_name'] = $row['short_name'] .' - '. substr($row['acc_no'],-5) ;
+            $records[$i]['short_name'] = $row['short_name'];
             $i++;
         }
     }

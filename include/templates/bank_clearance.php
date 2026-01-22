@@ -59,28 +59,32 @@ if(isset($_SESSION["userid"])){
                                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                         <div class="form-group">
                                             <label for='trans_date'>Transaction Date</label><span class="text-danger">&nbsp;*</span>
-                                            <input type='date' id='trans_date' name='trans_date' class="form-control" tabindex='3'>
-                                            <span class="text-danger" style='display:none' id='trans_dateCheck'>Please Select From Date</span>
+											<div style="display: flex;">
+											<input type='date' id='trans_date' name='trans_date' class="form-control" tabindex='3'>
+											<input type="time" id="trans_time" name="trans_time" class="form-control" style="width: 160px;">
+										</div>
+                                            
+                                            <span class="text-danger" style='display:none' id='trans_dateCheck'>Please Select Transation Date And Time</span>
                                         </div>
                                     </div>
-                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                                    <!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                         <div class="form-group">
                                             <label for='trans_id'>Transaction ID</label><span class="text-danger">&nbsp;*</span>
                                             <input type='text' id='trans_id' name='trans_id' class="form-control" tabindex='4' placeholder="Enter Transaction ID">
                                             <span class="text-danger" style='display:none' id='trans_idCheck'>Please Enter Transaction ID</span>
                                         </div>
-                                    </div>
+                                    </div> -->
                                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                         <div class="form-group">
                                             <label for='narration'>Narration</label><span class="text-danger">&nbsp;*</span>
-                                            <input type='text' id='narration' name='narration' class="form-control" tabindex='5' placeholder="Enter Narration">
+                                            <input type='text' id='narration' name='narration' class="form-control" tabindex='4' placeholder="Enter Narration">
                                             <span class="text-danger" style='display:none' id='narrationCheck'>Please Enter Narration</span>
                                         </div>
                                     </div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for='crdb'>Credit / Debit</label><span class="text-danger">&nbsp;*</span>
-											<select id='crdb' name='crdb' class="form-control" tabindex='6'>
+											<select id='crdb' name='crdb' class="form-control" tabindex='5'>
 												<option value=''>Select Credit / Debit</option>
 												<option value='1'>Credit</option>
 												<option value='2'>Debit</option>
@@ -91,14 +95,14 @@ if(isset($_SESSION["userid"])){
                                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                         <div class="form-group">
                                             <label for='amt'>Amount</label><span class="text-danger">&nbsp;*</span>
-                                            <input type='text' id='amt' name='amt' class="form-control" tabindex='7' placeholder="Enter Amount" oninput="validateInputNumber(this,'withOutDot')">
+                                            <input type='text' id='amt' name='amt' class="form-control" tabindex='6'  oninput="validateInputNumber(this, 'withDot')" placeholder="Enter Amount" >
                                             <span class="text-danger" style='display:none' id='amtCheck'>Please Enter Amount</span>
                                         </div>
                                     </div>
                                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                         <div class="form-group">
                                             <label for='bal'>Balance</label><span class="text-danger">&nbsp;*</span>
-                                            <input type='text' id='bal' name='bal' class="form-control" tabindex='8' placeholder="Enter Balance" title="Please enter Balance After this transaction" oninput="validateInputNumber(this,'withOutDot')">
+                                            <input type='text' id='bal' name='bal' class="form-control" tabindex='7' placeholder="Enter Balance"   oninput="validateInputNumber(this, 'withDot')" title="Please enter Balance After this transaction" >
                                             <span class="text-danger" style='display:none' id='balCheck'>Please Enter Balance</span>
                                         </div>
                                     </div>
@@ -120,13 +124,13 @@ if(isset($_SESSION["userid"])){
 								<hr>
 								<div class="row">
                                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-										<button type="button"  tabindex="9"  id="download_bank_stmt" name="download_bank_stmt" class="btn btn-primary"><span class="icon-download"></span>&nbsp;Download Format</button>
-										<button type="button" data-toggle="modal" data-target="#bankUploadModal" tabindex="10"  id="upload_bank_stmt" name="upload_bank_stmt" class="btn btn-primary"><span class="icon-upload"></span>&nbsp;Upload</button>		
+										<button type="button"  tabindex="8"  id="download_bank_stmt" name="download_bank_stmt" class="btn btn-primary"><span class="icon-download"></span>&nbsp;Download Format</button>
+										<button type="button" data-toggle="modal" data-target="#bankUploadModal" tabindex="9"  id="upload_bank_stmt" name="upload_bank_stmt" class="btn btn-primary"><span class="icon-upload"></span>&nbsp;Upload</button>		
 									</div>
 									<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
 										<div class="text-right">
-											<button type="button" name="submit_bank_clearance" id="submit_bank_clearance" class="btn btn-primary" value="Submit" tabindex="11"><span class="icon-check"></span>&nbsp;Submit</button>
-											<button type="reset" class="btn btn-outline-secondary" tabindex="12" >Clear</button>
+											<button type="button" name="submit_bank_clearance" id="submit_bank_clearance" class="btn btn-primary" value="Submit" tabindex="10"><span class="icon-check"></span>&nbsp;Submit</button>
+											<button type="reset" class="btn btn-outline-secondary" tabindex="11" >Clear</button>
 										</div>
 									</div>
 								</div>
@@ -183,7 +187,7 @@ if(isset($_SESSION["userid"])){
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
 				<h5 class="modal-title" id="vCenterModalTitle">Area Bulk Upload</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close_upd_modal">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>

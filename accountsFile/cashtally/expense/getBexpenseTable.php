@@ -18,6 +18,8 @@ while($row = $qry->fetch()){
     $records[$i]['username'] = $row['username'];
     $records[$i]['usertype'] = $row['usertype'];
     $records[$i]['ref_code'] = $row['ref_code'];
+    $records[$i]['bank_id']  = $row['bank_id'];   
+    $records[$i]['trans_id'] = $row['trans_id']; 
     // $records[$i]['cat'] = $row['cat'];
     $records[$i]['category'] = $row['category'];
     $records[$i]['part'] = $row['part'];
@@ -72,7 +74,7 @@ $connect = null;
                     <a target='_blank' href='../../../uploads/expenseBill/'<?php echo $records[$i]['upload'];?>><?php echo $records[$i]['upload'];?></a>
                 </td> -->
                 <td>
-                    <span data-value='<?php echo $records[$i]['id']; ?>' title='Delete details' class='delete_bexp'><span class='icon-trash-2'></span></span>
+                    <span data-value="<?php echo $records[$i]['id']; ?>" data-bank_id="<?php echo $records[$i]['bank_id']; ?>"data-trans_id="<?php echo $records[$i]['trans_id']; ?>" title='Delete details' class='delete_bexp'><span class='icon-trash-2'></span></span>
                 </td>
                 
             </tr>

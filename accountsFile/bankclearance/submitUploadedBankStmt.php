@@ -1,119 +1,188 @@
 <?php
-// error_reporting(0);
 @session_start();
-$user_id = $_SESSION["userid"];
+$user_id = $_SESSION["userid"] ?? 0;
 include("../../ajaxconfig.php");
 
-$bank_id = $_POST['bank_id']; // bank id selected in upload modal
+// Get POST data
+$bank_id   = $_POST['bank_id'] ?? '';
+$bank_name = $_POST['bank_short_name'] ?? '';
 
+// Include Excel Reader libraries
 require_once('../../vendor/csvreader/php-excel-reader/excel_reader2.php');
 require_once('../../vendor/csvreader/SpreadsheetReader.php');
-if(isset($_FILES["file"]["type"])){
-    $allowedFileType = ['application/vnd.ms-excel','text/xls','text/xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
-    if(in_array($_FILES["file"]["type"],$allowedFileType)){
-        
-        
-        $targetPath = '../../uploads/bank_stmt/'.$_FILES['file']['name'];
-        move_uploaded_file($_FILES['file']['tmp_name'], $targetPath);
 
-        $Reader = new SpreadsheetReader($targetPath);
-        $sheetCount = count($Reader->sheets()); 
-        
-        for($i=0;$i<$sheetCount;$i++)
-        {
-            $Reader->ChangeSheet($i);
-            foreach ($Reader as $Row){ 
-                if($Row[0] != "Date"){
-                    
+// Prepare response array
+$response = [
+    'status' => 'error',
+    'inserted' => 0,
+    'error_row' => null,
+    'message' => ''
+];
 
-                    // $trans_date = "";
-                    // if (isset($Row[0])) {
-                    //     $excel_date = $Row[0];
-                    //     $date = date_create_from_format('!d/m/y', $excel_date);
-                    //     if ($date === false) {
-                    //         $date = date_create_from_format('!m/d/y', $excel_date);
-                    //     }
-                    //     if ($date === false) {
-                    //         $date = date_create_from_format('!m-d-y', $excel_date);
-                    //     }
-                    //     if ($date !== false) {
-                    //         $trans_date = $date->format('Y-m-d');
-                    //     }
-                    // }
-                    $trans_date = "";
-                    if (isset($Row[0])) {
-                        $excel_date = $Row[0];
-                        
-                        $date_formats = array(
-                            'Y-m-d',        // Year-Month-Day
-                            'd/m/Y',        // Day/Month/Year
-                            'm/d/Y',        // Month/Day/Year
-                            'd-m-Y',        // Day-Month-Year
-                            'm-d-Y',        // Month-Day-Year
-                            'Y/m/d',        // Year/Month/Day
-                            'd-m-y',        // Day-Month-Year (short year format)
-                            'm-d-y'         // Month-Day-Year (short year format)
-                        );
+// Check if file is uploaded
+if (!isset($_FILES["file"]["type"])) {
+    $response['message'] = 'File not received';
+    echo json_encode($response);
+    exit;
+}
 
-                        foreach ($date_formats as $date_format) {
-                            $date = date_create_from_format($date_format, $excel_date);
-                            if ($date !== false) {
-                                $trans_date = $date->format('Y-m-d');
-                                break;
-                            }
-                        }
-                    }
+// Allowed Excel MIME types
+$allowedFileType = [
+    'application/vnd.ms-excel',
+    'text/xls',
+    'text/xlsx',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+];
 
-                    $narration = "";
-                    if(isset($Row[1])) {
-                        $narration = $connect->quote($Row[1]);  
-                    }
+// Check file type
+if (!in_array($_FILES["file"]["type"], $allowedFileType)) {
+    $response['message'] = 'Invalid file type';
+    echo json_encode($response);
+    exit;
+}
 
-                    $trans_id = "";
-                    if(isset($Row[2])) {
-                        $trans_id = $connect->quote($Row[2]);  
-                    }
-                    
-                    $credit = "";
-                    if(isset($Row[3])) {
-                        $credit = $connect->quote($Row[3]);  
-                    }
-                    
-                    $debit = "";
-                    if(isset($Row[4])) {
-                        $debit = $connect->quote($Row[4]);  
-                    }
-                    
-                    $balance = "";
-                    if(isset($Row[5])) {
-                        $balance = $connect->quote($Row[5]);  
-                    }
-                    
-                    
-                    if($i==0 && $trans_date != "" && $trans_id != "" )
-                    { 
-                        $insert = $connect->query("INSERT INTO `bank_stmt`(`bank_id`, `trans_date`, `narration`,`trans_id`, `credit`, `debit`, `balance`, `insert_login_id`, `created_date`) VALUES ('$bank_id', '$trans_date', $narration, $trans_id, $credit, $debit, $balance, '$user_id', now() )");
-                    }
-                    
+// Move uploaded file
+$targetPath = '../../uploads/bank_stmt/' . time() . '_' . $_FILES['file']['name'];
+move_uploaded_file($_FILES['file']['tmp_name'], $targetPath);
+
+// Initialize Excel Reader
+$Reader = new SpreadsheetReader($targetPath);
+$sheetCount = count($Reader->sheets());
+
+// Initialize variables
+$inserted = 1;
+$excel_row_no = 0;
+
+// ⭐ Get the last balance for this bank (NEW)
+$last_balance_qry = $connect->query(" SELECT balance FROM bank_stmt   WHERE bank_id = '$bank_id' ORDER BY id DESC LIMIT 1 ");
+
+$running_balance = 0; // default opening balance
+if ($row = $last_balance_qry->fetch(PDO::FETCH_ASSOC)) {
+    $running_balance = floatval($row['balance']);
+}
+
+// Loop through all sheets
+for ($i = 0; $i < $sheetCount; $i++) {
+    $Reader->ChangeSheet($i);
+
+    foreach ($Reader as $Row) {
+        $excel_row_no++;
+
+        // Skip header or empty rows
+        if (empty($Row[0]) || stripos($Row[0], 'date') !== false) {
+            continue;
+        }
+
+        /* =============================== DATE & TIME HANDLING  =============================== */
+        $value = trim($Row[0]);
+        $dt = null;
+
+        // 1️⃣ Excel numeric date
+        if (is_numeric($value) && $value > 59) { 
+            $unixTimestamp = ($value - 25569) * 86400;
+            $dt = new DateTime("@$unixTimestamp");
+            $dt->setTimezone(new DateTimeZone('Asia/Kolkata'));
+        } else {
+            // 2️⃣ Detect MM/DD/YY or DD/MM/YYYY
+            $parts = preg_split('/[\/\-: ]/', $value);
+            if (count($parts) >= 3) {
+                $month = intval($parts[0]);
+                $day   = intval($parts[1]);
+                $year  = intval($parts[2]);
+
+                $hour = $parts[3] ?? 0;
+                $min  = $parts[4] ?? 0;
+
+                // Swap if month > 12
+                if ($month > 12) {
+                    $tmp = $month;
+                    $month = $day;
+                    $day = $tmp;
                 }
+
+                // Fix 2-digit year
+                if ($year < 100) $year += 2000;
+
+                $dt = DateTime::createFromFormat('Y-m-d H:i', "$year-$month-$day $hour:$min", new DateTimeZone('Asia/Kolkata'));
             }
         }
 
-        if($insert->rowCount() > 0) {
-            $message = 0; // if successfully inserted
+        // Skip invalid dates
+        if (!$dt) continue;
+
+        // Assign formats
+        $trans_date        = $dt->format('Y-m-d');        
+        $trans_time        = $dt->format('H:i');          
+        $trans_date_for_id  = $dt->format('dmY');   
+        $trans_datetime     = $dt->format('Y-m-d H:i');
+
+        /* =============================== OTHER VALUES =============================== */
+        $narration = isset($Row[1]) ? $connect->quote(trim($Row[1])) : "''";
+        $credit    = isset($Row[2]) ? floatval(str_replace(',', '', $Row[2])): 0;
+        $debit     = isset($Row[3]) ? floatval(str_replace(',', '', $Row[3])): 0;
+        $excel_balance = isset($Row[4]) ? floatval(str_replace(',', '', $Row[4])): 0;
+
+        if ($credit <= 0 && $debit <= 0) continue; // Skip zero entries
+
+        /* ===============================  BALANCE VALIDATION =============================== */
+        $expected_balance = $running_balance + $credit - $debit;
+
+        if (round($expected_balance, 2) != round($excel_balance, 2)) {
+            $response['status'] = 'balance_mismatch';
+            $response['inserted'] = $inserted;
+            $response['error_row'] = $excel_row_no;
+            $response['message'] = "Balance mismatch at row {$excel_row_no}. Expected {$expected_balance}, Excel shows {$excel_balance}";
+            echo json_encode($response);
+            exit;
         }
-        else{
-            $message = 1; // if insert query not working
+
+        /* =============================== TRANSACTION TYPE =============================== */
+        /* =============================== RUNNING NUMBER FOR TRANS ID (FIXED) =============================== */
+        $type = ($credit > 0) ? 'CR' : 'DB';
+
+        $run_qry = $connect->query("
+            SELECT  MAX(CAST(SUBSTRING_INDEX(trans_id, '-', -1) AS UNSIGNED)) AS last_no
+            FROM bank_stmt
+            WHERE bank_id = '$bank_id'
+            AND DATE(trans_date) = '$trans_date'
+            AND trans_id LIKE '{$bank_name}{$type}-%'
+        ");
+
+        $last_no = $run_qry->fetch(PDO::FETCH_ASSOC)['last_no'] ?? 0;
+        $run_no  = str_pad($last_no + 1, 3, '0', STR_PAD_LEFT);
+
+        $auto_trans_id = $bank_name . $type . '-' . $trans_date_for_id . '-' . $run_no;
+        $auto_trans_id = $connect->quote($auto_trans_id);
+
+
+        /* ===============================
+           INSERT INTO DATABASE
+        =============================== */
+        $transaction_amount = ($credit > 0) ? $credit : $debit;
+
+        $insert = $connect->query("
+            INSERT INTO bank_stmt (
+                bank_id, trans_date, narration, trans_id,
+                credit, debit, balance, transaction_amount,
+                insert_login_id, created_date
+            ) VALUES (
+                '$bank_id', '$trans_datetime', $narration, $auto_trans_id,
+                '$credit', '$debit', '$excel_balance',$transaction_amount ,
+                '$user_id', NOW()
+            )
+        ");
+
+        if ($insert) {
+            $inserted++;
+            $running_balance = $excel_balance; // Update running balance
         }
     }
-}else{
-    $message = 2; //if file is not sent
 }
 
-echo $message;
-
-// Close the database connection
+// All rows inserted successfully
+$response['status'] = 'success';
+$response['inserted'] = $inserted;
+$response['message'] = 'All rows inserted successfully';
+echo json_encode($response);
 $connect = null;
 ?>
-
-    
