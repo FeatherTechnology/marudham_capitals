@@ -39,20 +39,6 @@
 								</div>
 								<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
 									<div class="form-group">
-										<label for='from_date'>From Date</label><span class="text-danger">&nbsp;*</span>
-										<input type='date' id='from_date' name='from_date' class="form-control" tabindex='2'>
-										<span class="text-danger" style='display:none' id='from_dateCheck'>Please Select From Date</span>
-									</div>
-								</div>
-								<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
-									<div class="form-group">
-										<label for='to_date'>To Date</label><span class="text-danger">&nbsp;*</span>
-										<input type='date' id='to_date' name='to_date' class="form-control" tabindex='3'>
-										<span class="text-danger" style='display:none' id='to_dateCheck'>Please Select To Date</span>
-									</div>
-								</div>
-								<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
-									<div class="form-group">
 										<label for='to_date' style="visibility:hidden">To Date</label><br>
 										<button type="button" name="view_table" id="view_table" class="btn btn-primary" tabindex="4">View</button>
 									</div>
@@ -71,55 +57,11 @@
 				</div>
 				<div class="card-body">
 					<div class="row ">
-						<!-- <div class="col-9 "></div>
-						<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12 ">
-							<div class="form-group">
-								<label for='search_table'>Search</label>
-								<input type="search" class="form-control" id='search_table' name='search_table' >
-							</div>
-						</div> -->
-						
-						<div class="col-9"></div>
-						<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12 ">
-							<div class="form-group" style="text-align: right">
-								<button type="button" class="btn btn-primary" name="clear_all_bstmt" id="clear_all_bstmt">Clear All</button>
-							</div>
-						</div>
-
 						<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
 							<div class="table-container">
 
 								<div class="table-responsive">
-									<?php
-									$mscid=0;
-									if(isset($_GET['msc']))
-									{
-									$mscid=$_GET['msc'];
-									if($mscid==1)
-									{?>
-									<div class="alert alert-success" role="alert">
-										<div class="alert-text">Bank Clearance Added Successfully!</div>
-									</div> 
-									<?php
-									}
-									if($mscid==2)
-									{?>
-										<div class="alert alert-success" role="alert">
-										<div class="alert-text">Bank Clearance Updated Successfully!</div>
-									</div>
-									<?php
-									}
-									if($mscid==3)
-									{?>
-									<div class="alert alert-danger" role="alert">
-										<div class="alert-text">Bank Clearance Inactive Successfully!</div>
-									</div>
-									<?php
-									}
-									}
-									?>
 									<table id="bank_clearance_list" class="table custom-table">
-										
 									</table>
 								</div>
 							</div>

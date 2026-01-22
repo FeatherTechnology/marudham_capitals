@@ -48,7 +48,7 @@ while($row = $qry->fetch()){
                 <td><?php echo $records[$i]['from_bank_name'];?></td>
                 <td><?php echo $records[$i]['trans_id'];?></td>
                 <td><?php echo $records[$i]['remark'];?></td>
-                <td><?php echo moneyFormatIndia($records[$i]['amt']);?></td>
+                <td><?php echo $records[$i]['amt'];?></td>
                 <td>
                     <input type='button' id='' name='' class="btn btn-primary collect_btn" data-value = '<?php echo $records[$i]['id']; ?>' data-toggle="modal" data-target=".bexchange_modal" value='Receive' onclick="bexCollectBtnClick(this)">
                 </td>

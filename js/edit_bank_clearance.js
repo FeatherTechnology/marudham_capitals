@@ -1,28 +1,7 @@
 $(document).ready(function () {
 
-    $('#from_date').change(function () {
-        var fromDate = new Date($(this).val()); // take as date format
-        var toDate = new Date($('#to_date').val()); // take as date format, if nothing selected will de invalid date
-
-        if (fromDate > toDate) { // check if from date is greater than to date, if yes then remove to date
-            $('#to_date').val('');
-        }
-
-        $('#to_date').attr('min', $(this).val()); // setting minimum date for to date, so before start date will be disabled
-    });
-
-    $('#to_date').change(function () {
-        var fromDate = new Date($('#from_date').val());
-        var toDate = new Date($(this).val());
-
-        if (fromDate > toDate) { // if anyone enters to date manually in to date less than from date, it empty's the to date value
-            $(this).val('');
-        }
-    });
-
     $('#view_table').click(function () {
         getClearanceTable();
-
     })
 
     //Unbind or disable all other event listeners to avoid conflict
@@ -76,7 +55,7 @@ function getBankNames() {
 
 
 function validation() {
-    var bank_id = $('#bank_name').val(); var from_date = $('#from_date').val(); var to_date = $('#to_date').val();
+    var bank_id = $('#bank_name').val();
     var response = 0;
 
     function validateField(value, fieldId) {
@@ -91,243 +70,287 @@ function validation() {
 
     // validateField(ucl_trans_id, '#ucl_trans_id_exfCheck');
     validateField(bank_id, '#bank_nameCheck');
-    validateField(from_date, '#from_dateCheck');
-    validateField(to_date, '#to_dateCheck');
     return response;
 }
 
 
-function initializeDT() {
-    var bank_clearance_list = $('#bank_clearance_list').DataTable();
-    bank_clearance_list.destroy();
+// function initializeDT() {
+//     var bank_clearance_list = $('#bank_clearance_list').DataTable();
+//     bank_clearance_list.destroy();
 
-    // Declare table variable to store the DataTable instance
-    var bank_clearance_list = $('#bank_clearance_list').DataTable({
-        ...getStateSaveConfig('bank_clearance_list'),
-        "title": "Bank Clearance List",
-        'processing': true,
-        'iDisplayLength': 10,
-        "lengthMenu": [
-            [10, 25, 50, -1],
-            [10, 25, 50, "All"]
-        ],
-        "createdRow": function (row, data, dataIndex) {
-            $(row).find('td:first').html(dataIndex + 1);
-        },
-        "drawCallback": function (settings) {
-            this.api().column(0).nodes().each(function (cell, i) {
-                cell.innerHTML = i + 1;
-            });
-        },
-        dom: 'lBfrtip',
-        buttons: [{
-            extend: 'excel',
-        },
-        {
-            extend: 'colvis',
-            collectionLayout: 'fixed four-column',
-        }
-        ],
-    });
+//     // Declare table variable to store the DataTable instance
+//     var bank_clearance_list = $('#bank_clearance_list').DataTable({
+//         ...getStateSaveConfig('bank_clearance_list'),
+//         "title": "Bank Clearance List",
+//         'processing': true,
+//         'iDisplayLength': 10,
+//         "lengthMenu": [
+//             [10, 25, 50, -1],
+//             [10, 25, 50, "All"]
+//         ],
+//         "createdRow": function (row, data, dataIndex) {
+//             $(row).find('td:first').html(dataIndex + 1);
+//         },
+//         "drawCallback": function (settings) {
+//             this.api().column(0).nodes().each(function (cell, i) {
+//                 cell.innerHTML = i + 1;
+//             });
+//         },
+//         dom: 'lBfrtip',
+//         buttons: [{
+//             extend: 'excel',
+//         },
+//         {
+//             extend: 'colvis',
+//             collectionLayout: 'fixed four-column',
+//         }
+//         ],
+//     });
 
-    // Pass the table variable to the initColVisFeatures function
-    initColVisFeatures(bank_clearance_list, 'bank_clearance_list');
-}
+//     // Pass the table variable to the initColVisFeatures function
+//     initColVisFeatures(bank_clearance_list, 'bank_clearance_list');
+// }
 
-function tablesorting() { // for sorting table
-    var table = $("#bank_clearance_list");
-    var tbody = table.find("tbody");
-    var rows = tbody.find("tr").toArray();
-    var ascending = true;
+// function tablesorting() { // for sorting table
+//     var table = $("#bank_clearance_list");
+//     var tbody = table.find("tbody");
+//     var rows = tbody.find("tr").toArray();
+//     var ascending = true;
 
-    table.on("click", "th", function () {
-        var column = $(this).index();
+//     table.on("click", "th", function () {
+//         var column = $(this).index();
 
-        rows.sort(function (a, b) {
-            var aValue = $(a).find("td").eq(column).text().trim();
-            var bValue = $(b).find("td").eq(column).text().trim();
+//         rows.sort(function (a, b) {
+//             var aValue = $(a).find("td").eq(column).text().trim();
+//             var bValue = $(b).find("td").eq(column).text().trim();
 
-            if (column === 0) {
-                aValue = parseInt(aValue);
-                bValue = parseInt(bValue);
-            }
+//             if (column === 0) {
+//                 aValue = parseInt(aValue);
+//                 bValue = parseInt(bValue);
+//             }
 
-            if (ascending) {
-                if (aValue < bValue) return -1;
-                if (aValue > bValue) return 1;
-                return 0;
-            } else {
-                if (aValue > bValue) return -1;
-                if (aValue < bValue) return 1;
-                return 0;
-            }
-        });
+//             if (ascending) {
+//                 if (aValue < bValue) return -1;
+//                 if (aValue > bValue) return 1;
+//                 return 0;
+//             } else {
+//                 if (aValue > bValue) return -1;
+//                 if (aValue < bValue) return 1;
+//                 return 0;
+//             }
+//         });
 
-        tbody.empty().append(rows);
+//         tbody.empty().append(rows);
 
-        // Update serial numbers
-        tbody.find("tr").each(function (index) {
-            $(this).find("td:first").text(index + 1);
-        });
+//         // Update serial numbers
+//         tbody.find("tr").each(function (index) {
+//             $(this).find("td:first").text(index + 1);
+//         });
 
-        ascending = !ascending;
-    });
-}
+//         ascending = !ascending;
+//     });
+// }
 
 //function for click event when user clicks on a cash tally modes to get the ref codes
-function clrcatClickEvent() {
-    $('.clr_cat').change(function () {
-        var clr_cat = $(this).val();
-        var ref_id_box = $(this).parent().next().children();//represents ref id select box
-        if (clr_cat) {
-            var bank_id = $(this).prev().val();
-            var crdb = $(this).next().val();
-            var trans_id = $(this).parent().prev().prev().prev().prev().text();
-            var trans_amt = $(this).closest('tr').attr('data-crdr');
-            var trans_date = $(this).parent().prev().prev().prev().prev().prev().prev().text().trim();
+// function clrcatClickEvent() {
+//     $('.clr_cat').change(function () {
+//         var clr_cat = $(this).val();
+//         var ref_id_box = $(this).parent().next().children();//represents ref id select box
+//         if (clr_cat) {
+//             var bank_id = $(this).prev().val();
+//             var crdb = $(this).next().val();
+//             var trans_id = $(this).parent().prev().prev().prev().prev().text();
+//             var trans_amt = $(this).closest('tr').attr('data-crdr');
+//             var trans_date = $(this).parent().prev().prev().prev().prev().prev().prev().text().trim();
 
-            $.ajax({
-                url: 'accountsFile/bankclearance/getRefCodetoClear.php',
-                data: { 'clr_cat': clr_cat, 'bank_id': bank_id, 'crdb': crdb, 'trans_id': trans_id, 'trans_amt': trans_amt, 'trans_date': trans_date },
-                dataType: 'json',
-                type: 'post',
-                cache: false,
-                success: function (response) {
-                    ref_id_box.empty();
-                    ref_id_box.append("<option value=''>Select Ref ID</option>");
-                    $.each(response, function (ind, val) {
-                        ref_id_box.append("<option value='" + val['ref_code'] + "'>" + val['ref_code'] + "</option>")
-                    })
-                }
-            }); //AJAX END.
+//             $.ajax({
+//                 url: 'accountsFile/bankclearance/getRefCodetoClear.php',
+//                 data: { 'clr_cat': clr_cat, 'bank_id': bank_id, 'crdb': crdb, 'trans_id': trans_id, 'trans_amt': trans_amt, 'trans_date': trans_date },
+//                 dataType: 'json',
+//                 type: 'post',
+//                 cache: false,
+//                 success: function (response) {
+//                     ref_id_box.empty();
+//                     ref_id_box.append("<option value=''>Select Ref ID</option>");
+//                     $.each(response, function (ind, val) {
+//                         ref_id_box.append("<option value='" + val['ref_code'] + "'>" + val['ref_code'] + "</option>")
+//                     })
+//                 }
+//             }); //AJAX END.
 
-        } else {
-            ref_id_box.empty();
-            ref_id_box.append("<option value=''>Select Ref ID</option>");
-        }//ESLE END.
-    })
+//         } else {
+//             ref_id_box.empty();
+//             ref_id_box.append("<option value=''>Select Ref ID</option>");
+//         }//ESLE END.
+//     })
 
-    $('.ref-id').change(function () {
-        if ($(this).val() != '') { // only true if ref id choosen
+//     $('.ref-id').change(function () {
+//         if ($(this).val() != '') { // only true if ref id choosen
 
-            $(this).parent().next().children().hide();//hiding span uncleared text
-            $(this).parent().next().children().after('<input type="button" class="btn btn-primary clear_btn" value="Clear" id="" name="">')//adding new button after span
+//             $(this).parent().next().children().hide();//hiding span uncleared text
+//             $(this).parent().next().children().after('<input type="button" class="btn btn-primary clear_btn" value="Clear" id="" name="">')//adding new button after span
 
-            $(this).parent().prev().children().attr('disabled', true)//disabling clear category dropdown
-            $(this).attr('disabled', true)//disabling ref_id dropdown
+//             $(this).parent().prev().children().attr('disabled', true)//disabling clear category dropdown
+//             $(this).attr('disabled', true)//disabling ref_id dropdown
 
-            $('.clear_btn').off('click');//turning off existing click event
-            $('.clear_btn').click(function () {
-                var clear_btn = $(this)
-                var bank_stmt_id = $(this).parent().next().val();// to get bank statement table if which is stored inside hidden input
-                $.ajax({
-                    url: 'accountsFile/bankclearance/clearTransaction.php',
-                    data: { 'bank_stmt_id': bank_stmt_id },
-                    type: 'post',
-                    cache: false,
-                    success: function (response) {
-                        if (response == 0) {
-                            clear_btn.prev().show();
-                            clear_btn.prev().text('Cleared');
-                            clear_btn.prev().addClass('text-success');
-                            clear_btn.prev().removeClass('text-danger');
-                            clear_btn.hide();
-                            getUnclearTotal();// to reset unclear total amounts
-                        } else {
-                            Swal.fire({
-                                title: 'Not Cleared',
-                                text: 'Error While Submitting',
-                                icon: 'error',
-                                showConfirmButton: true,
-                                confirmButtonColor: '#009688'
-                            })
-                        }
-                    }
-                })
-            })
-        }
-    })
+//             $('.clear_btn').off('click');//turning off existing click event
+//             $('.clear_btn').click(function () {
+//                 var clear_btn = $(this)
+//                 var bank_stmt_id = $(this).parent().next().val();// to get bank statement table if which is stored inside hidden input
+//                 $.ajax({
+//                     url: 'accountsFile/bankclearance/clearTransaction.php',
+//                     data: { 'bank_stmt_id': bank_stmt_id },
+//                     type: 'post',
+//                     cache: false,
+//                     success: function (response) {
+//                         if (response == 0) {
+//                             clear_btn.prev().show();
+//                             clear_btn.prev().text('Cleared');
+//                             clear_btn.prev().addClass('text-success');
+//                             clear_btn.prev().removeClass('text-danger');
+//                             clear_btn.hide();
+//                             getUnclearTotal();// to reset unclear total amounts
+//                         } else {
+//                             Swal.fire({
+//                                 title: 'Not Cleared',
+//                                 text: 'Error While Submitting',
+//                                 icon: 'error',
+//                                 showConfirmButton: true,
+//                                 confirmButtonColor: '#009688'
+//                             })
+//                         }
+//                     }
+//                 })
+//             })
+//         }
+//     })
 
-    $('#clear_all_bstmt').click(function (event) {
-        event.preventDefault();
-        let bankStmt = [];
+//     $('#clear_all_bstmt').click(function (event) {
+//         event.preventDefault();
+//         let bankStmt = [];
 
-        $("#bank_clearance_list tbody tr").each(function () {
-            let type = $(this).data("type");
-            let transId = $(this).data("trans-id");
-            let crdr = $(this).data("crdr");
-            let bankStmtId = $(this).data("bank-stmt-id");
+//         $("#bank_clearance_list tbody tr").each(function () {
+//             let type = $(this).data("type");
+//             let transId = $(this).data("trans-id");
+//             let crdr = $(this).data("crdr");
+//             let bankStmtId = $(this).data("bank-stmt-id");
 
-            bankStmt.push({
-                type: type,
-                trans_id: transId,
-                cr_dr: crdr,
-                bank_stmt_id: bankStmtId
-            });
-        });
+//             bankStmt.push({
+//                 type: type,
+//                 trans_id: transId,
+//                 cr_dr: crdr,
+//                 bank_stmt_id: bankStmtId
+//             });
+//         });
 
-        let bankId = $('#bank_name').val(); // Debugging
-        $.post('accountsFile/bankclearance/clearAllTransaction.php', { bank_id: bankId, bank_stmt: bankStmt }, function (response) {
-            if (response.status == '1') {
-                alert('Transaction are cleared successfully.');
-                getClearanceTable();
-            } else {
-                alert('Failed to clear Transaction.');
-            }
+//         let bankId = $('#bank_name').val(); // Debugging
+//         $.post('accountsFile/bankclearance/clearAllTransaction.php', { bank_id: bankId, bank_stmt: bankStmt }, function (response) {
+//             if (response.status == '1') {
+//                 alert('Transaction are cleared successfully.');
+//                 getClearanceTable();
+//             } else {
+//                 alert('Failed to clear Transaction.');
+//             }
 
-        }, 'json');
-    });
+//         }, 'json');
+//     });
 
-}
+// }
 
-function getUnclearTotal() {
-    var unclear_credit = 0;
-    var unclear_debit = 0;
-    $('.clr-status').each(function () {
-        var clr_status = $(this).text();
-        if (clr_status == 'Unclear') {
-            var credit = $(this).parent().prev().prev().prev().prev().prev().text(); // credit amount
-            var debit = $(this).parent().prev().prev().prev().prev().text(); // debit amount
-            unclear_credit += parseInt(credit) || 0;
-            unclear_debit += parseInt(debit) || 0;
-        }
-    })
-    unclear_credit = moneyFormatIndia(unclear_credit)
-    unclear_debit = moneyFormatIndia(unclear_debit)
-    $('#ucl_credit').text(unclear_credit).css('font-weight', 'bold');
-    $('#ucl_debit').text(unclear_debit).css('font-weight', 'bold');
-}
+// function getUnclearTotal() {
+//     var unclear_credit = 0;
+//     var unclear_debit = 0;
+//     $('.clr-status').each(function () {
+//         var clr_status = $(this).text();
+//         if (clr_status == 'Unclear') {
+//             var credit = $(this).parent().prev().prev().prev().prev().prev().text(); // credit amount
+//             var debit = $(this).parent().prev().prev().prev().prev().text(); // debit amount
+//             unclear_credit += parseInt(credit) || 0;
+//             unclear_debit += parseInt(debit) || 0;
+//         }
+//     })
+//     unclear_credit = moneyFormatIndia(unclear_credit)
+//     unclear_debit = moneyFormatIndia(unclear_debit)
+//     $('#ucl_credit').text(unclear_credit).css('font-weight', 'bold');
+//     $('#ucl_debit').text(unclear_debit).css('font-weight', 'bold');
+// }
 
 function getClearanceTable() {
     if (validation() == 0) {
-        var bank_id = $('#bank_name').val(); var from_date = $('#from_date').val(); var to_date = $('#to_date').val();
+
+        var bank_id = $('#bank_name').val();
+
         $.ajax({
             url: 'accountsFile/bankclearance/ajaxBankClearanceFetch.php',
-            data: { 'bank_id': bank_id, 'from_date': from_date, 'to_date': to_date },
+            data: { bank_id: bank_id },
             type: 'post',
             cache: false,
             success: function (response) {
-                if (response.includes('Given Date Has No Statements!')) {
+
+                if (response.includes('No Statements')) {
+
                     Swal.fire({
                         title: response,
-                        text: 'Please Try Different Dates',
                         icon: 'warning',
                         showConfirmButton: true,
                         confirmButtonColor: '#009688'
-                    })
+                    });
+
                     $('.bank_clr_table').hide();
-                    return false;
+                    return;
+
                 } else {
+
                     $('.bank_clr_table').show();
-                    $('#bank_clearance_list').empty();
-                    $('#bank_clearance_list').html(response);
-                    // initializeDT();
-                    // tablesorting();
+
+                    // Clear & inject table content
+                    $('#bank_clearance_list').empty().html(response);
+
+                    // 🔥 DESTROY existing DataTable (VERY IMPORTANT)
+                    if ($.fn.DataTable.isDataTable('#bank_clearance_list')) {
+                        $('#bank_clearance_list').DataTable().destroy();
+                    }
+
+                    // 🔥 INITIALIZE DataTable
+                    var bank_clearance_list = $('#bank_clearance_list').DataTable({
+                        // ...getStateSaveConfig('bank_clearance_list'),
+                        processing: true,
+                        pageLength: 10,
+                        lengthMenu: [
+                            [10, 25, 50, -1],
+                            [10, 25, 50, "All"]
+                        ],
+                        order: [[1, 'asc']], // change index if needed
+                        createdRow: function (row, data, dataIndex) {
+                            $('td:eq(0)', row).html(dataIndex + 1);
+                        },
+                        drawCallback: function () {
+                            this.api().column(0).nodes().each(function (cell, i) {
+                                cell.innerHTML = i + 1;
+                            });
+                        },
+                        dom: 'lBfrtip',
+                        buttons: [{
+                                extend: 'excel',
+                                action: function(e, dt, button, config) {
+                                    var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                                    var dynamic = curDateJs('Bank_Transation_report'); // or any base
+                                    config.title = dynamic; // for versions that use title as filename
+                                    config.filename = dynamic; // for html5 filename
+                                    defaultAction.call(this, e, dt, button, config);
+                                }
+                            },
+                            {
+                                extend: 'colvis',
+                                collectionLayout: 'fixed four-column',
+                            }
+                        ],
+                    });
+                    
+                    // Pass the table variable to the initColVisFeatures function
+                    initColVisFeatures(bank_clearance_list, 'bank_clearance_list');
                 }
             }
-        }).then(function () {
-            clrcatClickEvent();
-            getUnclearTotal();
-        })
+        });
     }
 }
