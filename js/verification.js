@@ -1146,23 +1146,29 @@ $(document).ready(function () {
         dataType: "json",
         cache: false,
         success: function (result) {
-        var delresult = result.includes("Deleted");
-        if (delresult) {
-              Swal.fire({
-                    title: 'Feedback Name Deleted...!',
-                    icon: 'success',
-                    showConfirmButton: true,
-                    confirmButtonColor: '#009688'
-                });
-              cusfeedbacklist();
-        }else{
-              Swal.fire({
-                title: 'Error Occures',
-                icon: 'error',
-                showConfirmButton: true,
-                confirmButtonColor: '#009688'
-              });
-        }
+          if (result === "DELETED") {
+            Swal.fire({
+              title: 'Feedback Label Deleted!',
+              icon: 'success',
+              confirmButtonColor: '#009688'
+            });
+            cusfeedbacklist();
+
+          } else if (result === "USED") {
+            Swal.fire({
+              title: 'Already Used!',
+              text: 'This feedback label is already used in Customer Feedback.',
+              icon: 'warning',
+              confirmButtonColor: '#009688'
+            });
+
+          } else {
+            Swal.fire({
+              title: 'Error Occurred!',
+              icon: 'error',
+              confirmButtonColor: '#009688'
+            });
+          }
         },
       });
     }
@@ -1173,6 +1179,8 @@ $(document).ready(function () {
 
   $(document).on("click", "#add_cus_feedback", function () {
     cusfeedbacklist();
+    $("#feedbackname").val('');
+    $("#fedbackname_id").val('');
   });
 
   $(document).on("click", "#submit_feedback_lable", function () {
@@ -7077,35 +7085,35 @@ function submitfeedbackname() {
       type: "POST",
       cache: false,
       success: function (response) {
-                if (response.includes('Inserted')) {
-                    Swal.fire({
-                        title: 'Feedback Name Inserted...!',
-                        icon: 'success',
-                        showConfirmButton: true,
-                        confirmButtonColor: '#009688'
-                    });
-                } else if (response.includes(' Updated')) {
-                    Swal.fire({
-                        title: 'Feedback Name Updated...!',
-                        icon: 'success',
-                        showConfirmButton: true,
-                        confirmButtonColor: '#009688'
-                    });
-                } else if(response.includes('Already')){
-                    Swal.fire({
-                        title: 'Feedback Name Already Existed',
-                        icon: 'error',
-                        showConfirmButton: true,
-                        confirmButtonColor: '#009688'
-                    });
-                }else if(response.includes('Failed')){
-                    Swal.fire({
-                        title: 'Error Occures',
-                        icon: 'error',
-                        showConfirmButton: true,
-                        confirmButtonColor: '#009688'
-                    });
-                }
+        if (response.includes('Inserted')) {
+          Swal.fire({
+            title: 'Feedback Label Inserted...!',
+            icon: 'success',
+            showConfirmButton: true,
+            confirmButtonColor: '#009688'
+          });
+        } else if (response.includes(' Updated')) {
+          Swal.fire({
+            title: 'Feedback Label Updated...!',
+            icon: 'success',
+            showConfirmButton: true,
+            confirmButtonColor: '#009688'
+          });
+        } else if (response.includes('Already')) {
+          Swal.fire({
+            title: 'Feedback Label Already Existed',
+            icon: 'error',
+            showConfirmButton: true,
+            confirmButtonColor: '#009688'
+          });
+        } else if (response.includes('Failed')) {
+          Swal.fire({
+            title: 'Error Occures',
+            icon: 'error',
+            showConfirmButton: true,
+            confirmButtonColor: '#009688'
+          });
+        }
         $("#feedbackname").val('');
         $("#fedbackname_id").val('');
         cusfeedbacklist();
