@@ -44,6 +44,9 @@ if (isset($_POST['chequeRemark'])) {
 if (isset($_POST['transaction_id'])) {
     $transaction_id = $_POST['transaction_id'];
 }
+if (isset($_POST['trans_date'])) {
+    $trans_date = $_POST['trans_date'];
+}
 if (isset($_POST['transaction_value'])) {
     $transaction_value = $_POST['transaction_value'];
 }
@@ -65,7 +68,7 @@ if (isset($_POST['bank_clr_trans_amnt'])) {
 
 $qry = $connect->query("
     INSERT INTO loan_issue 
-    (req_id, cus_id, issued_to, issued_mode, payment_type, bank_id, cheque_no, cheque_value, cheque_remark, transaction_id, transaction_value, transaction_remark, balance_amount, loan_amt, net_cash, status, insert_login_id, created_date)
+    (req_id, cus_id, issued_to, issued_mode, payment_type, bank_id, cheque_no, cheque_value, cheque_remark, transaction_id, transaction_date, transaction_value, transaction_remark, balance_amount, loan_amt, net_cash, status, insert_login_id, created_date)
     VALUES (
         '$req_id',
         '$cus_id',
@@ -77,6 +80,7 @@ $qry = $connect->query("
         '$chequeValue',
         '$chequeRemark',
         '$transaction_id',
+        '$trans_date',
         '$transaction_value',
         '$transaction_remark',
         '$balance',

@@ -1103,61 +1103,61 @@ function validation() {
     multipleSelectSort(agentMultiselect, '#agentforstaff');
     multipleSelectSort(vergroupMultiselect, '#ver_group');
 
-
     let requireGroup = false;
     let requireLine = false;
     let requireFollowup = false;
 
     const screenCategoryMap = {
 
-    /* ---------------- LINE ONLY ---------------- */
-    collection: { line: true },
-    closed: { line: true },
-    finance_insight: { line: true },
+        /* ---------------- LINE ONLY ---------------- */
+        collection: { line: true },
+        closed: { line: true },
+        finance_insight: { line: true },
 
-    closed_report: { line: true },
-    collection_report: { line: true },
-    loan_issue_report: { line: true },
-    in_closed_report: { line: true },
-    due_list_report: { line: true },
-    customer_status_report: { line: true },
-    confirmation_followup_report: { line: true },
+        closed_report: { line: true },
+        collection_report: { line: true },
+        loan_issue_report: { line: true },
+        in_closed_report: { line: true },
+        due_list_report: { line: true },
+        customer_status_report: { line: true },
+        confirmation_followup_report: { line: true },
 
-    principal_interest_report: { line: true },
-    balance_report: { line: true },
-    no_due_pay_report: { line: true },
+        principal_interest_report: { line: true },
+        balance_report: { line: true },
+        no_due_pay_report: { line: true },
 
-    intrest_ledger_report: { line: true },
-    intrest_loan_issue_report: { line: true },
-    intrest_closed_report: { line: true },
-    intrest_collection_report: { line: true },
+        intrest_ledger_report: { line: true },
+        intrest_loan_issue_report: { line: true },
+        intrest_closed_report: { line: true },
+        intrest_collection_report: { line: true },
 
-    /* ---------------- GROUP ONLY ---------------- */
-    verification: { group: true },
-    approval: { group: true },
-    acknowledgement: { group: true },
-    loan_issue: { group: true },
-    accounts_loan_issue: { group: true },
+        /* ---------------- GROUP ONLY ---------------- */
+        verification: { group: true },
+        approval: { group: true },
+        acknowledgement: { group: true },
+        loan_issue: { group: true },
+        accounts_loan_issue: { group: true },
 
-    request: { group: true },
-    request_list_access: { group: true },
-    update: { group: true },
+        request: { group: true },
+        request_list_access: { group: true },
+        update: { group: true },
 
-    cancel_revoke_report: { group: true },
-    request_report: { group: true },
-    /* ---------------- BOTH REQUIRED ---------------- */
-    cash_tally: { line: true, group: true }
-};
+        cancel_revoke_report: { group: true },
+        request_report: { group: true },
+
+        /* ---------------- BOTH REQUIRED ---------------- */
+        cash_tally: { line: true, group: true }
+    };
 
 
    $('.screen-validations:checked').each(function () {
-    let id = this.id;
+        let id = this.id;
 
-    if (screenCategoryMap[id]) {
-        if (screenCategoryMap[id].line) requireLine = true;
-        if (screenCategoryMap[id].group) requireGroup = true;
-    }
-});
+        if (screenCategoryMap[id]) {
+            if (screenCategoryMap[id].line) requireLine = true;
+            if (screenCategoryMap[id].group) requireGroup = true;
+        }
+    });
 
     let nocCheck = $('#noc, #noc_handover').is(':checked');
     let nocScreensChecked = $('#noc_handover_report, #noc_replace').is(':checked');
@@ -1168,6 +1168,7 @@ function validation() {
         if (nocMapping === '2') requireLine = true;
         if (nocMapping === '3') requireFollowup = true;
     } 
+
     let promotionChecked = $('#promotion_activity').is(':checked');
     let promotionMapping = $('#promotion_activity_mapping_access').val();
 
@@ -1194,31 +1195,19 @@ function validation() {
         $('#lineCheck').hide();
     }
 
-    let dueFollowupChecked = $('#due_followup').is(':checked');
     let followupSort = multipleSelectSort(dueFollowupLines, '#due_follup_line_id');
-
-    if (
-        // Followup required by screen / mapping
-        (requireFollowup && followupSort == 0)
-
-        // Checkbox checked but no lines selected
-        || (dueFollowupChecked && followupSort == 0)
-
-    ) {
-        $('.duefollowupCheck').show();
-        validation = false;
-    } else {
-        $('.duefollowupCheck').hide();
-    }
-
     let confFollowupChecked = $('#conf_followup').is(':checked');
+    let dueFollowupChecked = $('#due_followup').is(':checked');
+
     if (
         // Followup required by screen / mapping
         (requireFollowup && followupSort == 0)
-
+        
         // Checkbox checked but no lines selected
         || (confFollowupChecked && followupSort == 0)
 
+        // Checkbox checked but no lines selected
+        || (dueFollowupChecked && followupSort == 0)
     ) {
         $('.duefollowupCheck').show();
         validation = false;
@@ -1286,7 +1275,6 @@ function validation() {
         $('#nocCheck').show();
         validation = false;
     }
-
 
     if (role == '1') {
         $('#roleCheck').hide();
@@ -1397,27 +1385,27 @@ function validation() {
     var report_access = $('#report_access').val();
     var reportmoduleChecked = $('#reportmodule').is(':checked');
     if(reportmoduleChecked) {
-    // Count how many main reports are selected
-    let mainReportsChecked = $('#work_report_module:checked, #monitor_report_module:checked, #analysis_report_module:checked, #accounts_report_module:checked').length;
+        // Count how many main reports are selected
+        let mainReportsChecked = $('#work_report_module:checked, #monitor_report_module:checked, #analysis_report_module:checked, #accounts_report_module:checked').length;
 
-    if(mainReportsChecked === 0) {
-        // None selected, show error
-        $('.work_report_module').show(); 
-        $('.monitor_report_module').show(); 
-        $('.analysis_report_module').show(); 
-        $('.accounts_report_module').show(); 
-        validation = false;
+        if(mainReportsChecked === 0) {
+            // None selected, show error
+            $('.work_report_module').show(); 
+            $('.monitor_report_module').show(); 
+            $('.analysis_report_module').show(); 
+            $('.accounts_report_module').show(); 
+            validation = false;
+        } else {
+            // At least one selected, hide error
+            $('.work_report_module').hide(); 
+            $('.monitor_report_module').hide(); 
+            $('.analysis_report_module').hide(); 
+            $('.accounts_report_module').hide(); 
+        }
     } else {
-        // At least one selected, hide error
-         $('.work_report_module').hide(); 
-        $('.monitor_report_module').hide(); 
-        $('.analysis_report_module').hide(); 
-        $('.accounts_report_module').hide(); 
+        // reportmodule not checked, hide error
+        $('.reportCheck').hide();
     }
-} else {
-    // reportmodule not checked, hide error
-    $('.reportCheck').hide();
-}
 
     // Case 1: Checkbox checked but dropdown empty
     if (reportmodule.checked && report_access == '') {
@@ -1434,6 +1422,7 @@ function validation() {
     } else {
         $('.reportCheck').hide();
     }
+
     // Array of main reports with their sub-checkbox classes and error spans
     var sections = [
         {main: '#work_report_module', subClass: '.work-checkbox', errorSpan: $('.workreport')},
@@ -1441,6 +1430,7 @@ function validation() {
         {main: '#analysis_report_module', subClass: '.analysis-checkbox', errorSpan: $('.analysisreport')},
         {main: '#accounts_report_module', subClass: '.acounts-checkbox', errorSpan: $('.accountsreport')}
     ];
+
     sections.forEach(function(section) {
         if($(section.main).is(':checked')) {
             // Check if at least one sub-checkbox is checked
@@ -1457,12 +1447,12 @@ function validation() {
 
     // validation for Home Access
     var home_access = $('#home_access').val();
-        if (home_access == '') {
-        $('#HomeAccessCheck').show();
-        validation = false;
-        } else {
-            $('#HomeAccessCheck').hide();
-        }        
+    if (home_access == '') {
+    $('#HomeAccessCheck').show();
+    validation = false;
+    } else {
+        $('#HomeAccessCheck').hide();
+    }        
 
     // validtaion for promotion activity
     var promotion_activity = document.querySelector('#promotion_activity');
@@ -1493,7 +1483,7 @@ function validation() {
         $('#screenMappingCheck').hide();
     }
 
-return validation;
+    return validation;
 }
 
 //Edit Screen Functionalities

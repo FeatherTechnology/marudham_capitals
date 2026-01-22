@@ -157,7 +157,12 @@ $(document).ready(function () {
     })
 
     $('#bank_id').change(function(){
-        $('#transaction_id, #bank_clr_bank_id, #bank_clr_trans_amnt').val('');
+        $('#transaction_id, #trans_date, #bank_clr_bank_id, #bank_clr_trans_amnt').val('');
+    });
+
+    //Transaction id validation
+    $("#transaction_id").keydown(function () { //clear transaction date if changes in trans id becuase if by chance changing trans id after gets trans date means it take while a time to reflect new date in mean time able to submit with old date.  
+        $('#trans_date').val('');
     });
 
     $("#transaction_id").blur(async function () {
@@ -234,6 +239,7 @@ $(document).ready(function () {
             let chequeValue = $('#chequeValue').val().replace(/,/g, '');
             let chequeRemark = $('#chequeRemark').val();
             let transaction_id = $('#transaction_id').val();
+            let trans_date = $('#trans_date').val();
             let transaction_value = $('#transaction_value').val().replace(/,/g, '');
             let transactionRemark = $('#transaction_remark').val();
             let bank_id = $('#bank_id').val();
@@ -257,6 +263,7 @@ $(document).ready(function () {
                     "chequeValue": chequeValue,
                     "chequeRemark": chequeRemark,
                     "transaction_id": transaction_id,
+                    "trans_date": trans_date,
                     "transaction_value": transaction_value,
                     "transaction_remark": transactionRemark,
                     "bank_id": bank_id,
@@ -1393,6 +1400,7 @@ function loanIssueSumitValidation() {
     var chequeVal = $('#chequeValue').val();
     var chequeRemark = $('#chequeRemark').val();
     var transactionID = $('#transaction_id').val();
+    var transDate = $('#trans_date').val();
     var transactionVal = $('#transaction_value').val();
     var transactionRemark = $('#transaction_remark').val();
     var bank_id = $('#bank_id').val();
@@ -1425,6 +1433,14 @@ function loanIssueSumitValidation() {
         isValid = false;
     } else {
         $('#transact_id').hide();
+    }
+
+    if (transDate == '') {
+        event.preventDefault();
+        $('#transdateCheck').show();
+        isValid = false;
+    } else {
+        $('#transdateCheck').hide();
     }
 
     // Cheque
@@ -1494,5 +1510,5 @@ function loanIssueSumitValidation() {
 
 //Span Hide
 function hideCheckSpan() {
-    $('#cheque_num').hide(); $('#cheque_val').hide(); $('#cheque_remark').hide(); $('#transact_id').hide(); $('#transact_val').hide(); $('#transact_remark').hide(); $('#pay_type').hide(); $('#cash_amnt').hide(); $('#cash_guarentor').hide(); $('#val_check').hide(); $('#bank_idCheck').hide();
+    $('#cheque_num, #cheque_val, #cheque_remark, #transact_id, #transdateCheck, #transact_val, #transact_remark, #pay_type, #cash_amnt, #cash_guarentor, #val_check, #bank_idCheck').hide();
 }

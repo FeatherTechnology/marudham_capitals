@@ -911,8 +911,15 @@ if (sizeof($getLoanCalculation) > 0) {
                                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                             <div class="form-group">
                                                 <label for="disabledInput">Transaction ID</label>
-                                                <input type="text" class="form-control" id="transaction_id" name="transaction_id" tabindex="57">
+                                                <input type="text" class="form-control" id="transaction_id" name="transaction_id" tabindex="54">
                                                 <span class="text-danger" style="display: none;" id="transact_id"> Please Enter Transaction ID </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                                            <div class="form-group">
+                                                <label for="disabledInput">Transaction Date</label>&nbsp;<span class="text-danger">*</span>
+                                                <input type="date" class="form-control" id="trans_date" name="trans_date" value='' tabindex='55' readonly>
+                                                <span class="text-danger" id='transdateCheck' style="display: none;">Need Transaction Date<span>
                                             </div>
                                         </div>
                                     </div>
@@ -921,7 +928,7 @@ if (sizeof($getLoanCalculation) > 0) {
                                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 checque" style="display:none">
                                             <div class="form-group">
                                                 <label for="disabledInput">Cheque number</label>
-                                                <input type="number" class="form-control" id="chequeno" name="chequeno" tabindex="54">
+                                                <input type="number" class="form-control" id="chequeno" name="chequeno" tabindex="56">
                                                 <span class="text-danger" style="display: none;" id="cheque_num"> Please Enter Cheque Number </span>
                                             </div>
                                         </div>
@@ -929,7 +936,7 @@ if (sizeof($getLoanCalculation) > 0) {
                                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 checque" style="display:none">
                                             <div class="form-group">
                                                 <label for="disabledInput">Cheque Value</label>
-                                                <input type="text" class="form-control" id="chequeValue" name="chequeValue" tabindex="55" oninput="validateInputNumber(this,'withOutDot')">
+                                                <input type="text" class="form-control" id="chequeValue" name="chequeValue" tabindex="57" oninput="validateInputNumber(this,'withOutDot')">
                                                 <span class="text-danger" style="display: none;" id="cheque_val"> Please Enter Cheque Value </span>
                                             </div>
                                         </div>
@@ -937,7 +944,7 @@ if (sizeof($getLoanCalculation) > 0) {
                                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 checque" style="display:none">
                                             <div class="form-group">
                                                 <label for="disabledInput">Cheque Remark</label>
-                                                <input type="text" class="form-control" id="chequeRemark" name="chequeRemark" tabindex="56">
+                                                <input type="text" class="form-control" id="chequeRemark" name="chequeRemark" tabindex="58">
                                                 <span class="text-danger" style="display: none;" id="cheque_remark"> Please Enter Cheque Remark </span>
                                             </div>
                                         </div>
@@ -947,7 +954,7 @@ if (sizeof($getLoanCalculation) > 0) {
                                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 transaction" style="display:none">
                                             <div class="form-group">
                                                 <label for="disabledInput">Transaction Value </label>
-                                                <input type="text" class="form-control" id="transaction_value" name="transaction_value" tabindex="58" oninput="validateInputNumber(this,'withOutDot')">
+                                                <input type="text" class="form-control" id="transaction_value" name="transaction_value" tabindex="59" oninput="validateInputNumber(this,'withOutDot')">
                                                 <span class="text-danger" style="display: none;" id="transact_val"> Please Enter Transaction Value </span>
                                             </div>
                                         </div>
@@ -955,7 +962,7 @@ if (sizeof($getLoanCalculation) > 0) {
                                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 transaction" style="display:none">
                                             <div class="form-group">
                                                 <label for="disabledInput">Transaction Remark </label>
-                                                <input type="text" class="form-control" id="transaction_remark" name="transaction_remark" tabindex="59">
+                                                <input type="text" class="form-control" id="transaction_remark" name="transaction_remark" tabindex="60">
                                                 <span class="text-danger" style="display: none;" id="transact_remark"> Please Enter Transaction Remark </span>
                                             </div>
                                         </div>
@@ -963,7 +970,7 @@ if (sizeof($getLoanCalculation) > 0) {
                                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 balance" style="display:none">
                                             <div class="form-group">
                                                 <label for="disabledInput">Balance Amount </label>
-                                                <input type="text" class="form-control" id="balance" name="balance" readonly tabindex='60'>
+                                                <input type="text" class="form-control" id="balance" name="balance" readonly tabindex='61'>
                                             </div>
                                         </div>
                                     </div>
@@ -975,7 +982,7 @@ if (sizeof($getLoanCalculation) > 0) {
                     <!-- Submit Button Start -->
                     <div class="col-md-12 ">
                         <div class="text-right">
-                            <button type="submit" name="submit_accountsloanIssue" id="submit_accountsloanIssue" class="btn btn-primary" value="Submit" tabindex="61"><span class="icon-check"></span>&nbsp;Submit</button>
+                            <button type="submit" name="submit_accountsloanIssue" id="submit_accountsloanIssue" class="btn btn-primary" value="Submit" tabindex="62"><span class="icon-check"></span>&nbsp;Submit</button>
                         </div>
                     </div>
                     <!-- Submit Button End -->
