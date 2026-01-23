@@ -2204,18 +2204,35 @@
 
         //to validate input and enter only number/ moneyformat works only text type so validating here instead of number type
         function validateInputNumber(e, screen) {
-            let val = $(e).val();
+            let val = e.value;   // no jQuery lag
 
-            if (screen === 'withOutDot') { //Collection track to insert one round off so not allowed dot
-                // Remove all non-digit characters
+            if (screen === 'withOutDot') {
                 val = val.replace(/[^0-9]/g, '');
 
             } else if (screen === 'withDot') {
-                val = val.replace(/[^0-9.]/g, ''); // Only numbers + dot
-                val = val.replace(/(\..*)\./g, '$1'); // allow only one dot
 
-            } else if (screen === 'alphaNumeric') {
-                val = val.replace(/[^A-Za-z0-9]/g, ''); // ONLY A-Z, a-z, 0-9
+                // allow numbers and dot
+                val = val.replace(/[^0-9.]/g, '');
+
+                // allow only ONE dot
+                let firstDot = val.indexOf('.');
+                if (firstDot !== -1) {
+                    val =
+                        val.substring(0, firstDot + 1) +
+                        val.substring(firstDot + 1).replace(/\./g, '');
+                }
+
+                // prefix 0 if starts with dot
+                if (val === '.') {
+                    val = '0.';
+                }
+
+                // limit to 2 decimals ONLY if decimals exist
+                if (val.includes('.') && val.split('.')[1] !== '') {
+                    let parts = val.split('.');
+                    parts[1] = parts[1].slice(0, 2);
+                    val = parts.join('.');
+                }
             }
 
             // ENFORCE MAXLENGTH MANUALLY
@@ -2224,8 +2241,7 @@
                 val = val.slice(0, max);
             }
 
-            // Update the field with only numeric value
-            $(e).val(val);
+            e.value = val;
         }
 
         // To download Excel file

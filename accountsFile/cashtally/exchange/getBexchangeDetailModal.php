@@ -81,7 +81,7 @@ $connect = null;
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                 <div class='form-group'>
                     <label for='amt'>Amount</label>
-                    <input type="text" class="form-control" id= 'amt' name='amt' value='<?php echo moneyFormatIndia($amt) ?>' readonly>
+                    <input type="text" class="form-control" id= 'amt' name='amt' value='<?php echo $amt ?>' readonly>
                 </div>
             </div>
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
