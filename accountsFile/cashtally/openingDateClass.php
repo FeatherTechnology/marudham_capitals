@@ -48,8 +48,6 @@ class OpeningDateClass
                 UNION ALL
                 SELECT MAX(DATE(created_date)) AS latest_date FROM ct_cr_cash_deposit WHERE insert_login_id = '$user_id'
                 UNION ALL
-                SELECT MAX(DATE(created_date)) AS latest_date FROM ct_bank_collection WHERE insert_login_id = '$user_id'
-                UNION ALL
                 SELECT MAX(DATE(created_date)) AS latest_date FROM ct_cr_bdeposit WHERE insert_login_id = '$user_id'
                 UNION ALL
                 SELECT MAX(DATE(created_date)) AS latest_date FROM ct_cr_bel WHERE insert_login_id = '$user_id'
@@ -74,8 +72,6 @@ class OpeningDateClass
                 SELECT MAX(DATE(created_date)) AS latest_date FROM ct_db_bexpense WHERE insert_login_id = '$user_id'
                 UNION ALL
                 SELECT MAX(DATE(created_date)) AS latest_date FROM ct_db_binvest WHERE insert_login_id = '$user_id'
-                UNION ALL
-                SELECT MAX(DATE(created_date)) AS latest_date FROM ct_db_bissued WHERE insert_login_id = '$user_id'
                 UNION ALL
                 SELECT MAX(DATE(created_date)) AS latest_date FROM ct_db_bag WHERE insert_login_id = '$user_id'
             ) AS AllTransactionDates

@@ -138,26 +138,46 @@ if ($bank_qry->num_rows > 0) {
 										</div>
 									</div>
 
-									<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12" style="max-width: 200px;">
+									<!-- <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12" style="max-width: 200px;">
 										<div class="form-group">
 											<label class="lable-style" id='hand_opening'></label><br>
-											<input type='hidden' id='untrkd_ids_op' name='untrkd_ids_op' value='<?php $untrkd0 = '';
+											<input type='hidden' id='untrkd_ids_op' name='untrkd_ids_op' value='<?php /*$untrkd0 = '';
 																												if (isset($bank_name_arr)) {
 																													for ($i = 0; $i < sizeof($bank_name_arr); $i++) {
 																														$untrkd0 .= 'untrkd0' . $i . ',';
 																													}
 																												}
-																												echo rtrim($untrkd0, ','); ?>'>
-											<?php if (isset($bank_name_arr)) {
+																												echo rtrim($untrkd0, ',');*/ ?>'>
+											<?php /*if (isset($bank_name_arr)) {
 												for ($i = 0; $i < sizeof($bank_name_arr); $i++) { ?>
 													<label class="lable-style" id='bank_opening<?php echo $i; ?>'></label>&nbsp;<label class="lable-style untrkd_op" id='<?php echo 'untrkd0' . $i; ?>'>(0)</label><br>
 											<?php }
-											} ?>
+											} */?>
 											<label class="lable-style" id='agent_opening'></label><br><br>
 											<hr>
 											<label class="lable-style" id='opening_balance'></label>
 										</div>
+									</div> -->
+									<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12" style="max-width: 200px;">
+										<div class="form-group">
+
+											<label class="lable-style" id="hand_opening"></label><br>
+
+											<?php if (isset($bank_name_arr)) {
+												for ($i = 0; $i < sizeof($bank_name_arr); $i++) { ?>
+													<label class="lable-style" id="bank_opening<?php echo $i; ?>"></label><br>
+											<?php }
+											} ?>
+
+											<label class="lable-style" id="agent_opening"></label><br><br>
+
+											<hr>
+
+											<label class="lable-style" id="opening_balance"></label>
+
+										</div>
 									</div>
+
 								</div>
 
 							</div>
@@ -179,14 +199,15 @@ if ($bank_qry->num_rows > 0) {
 											<input type="radio" id="hand_cash_radio" name="cash_type" value='0' />&emsp;<label class='radio-style'>Hand Cash</label>&emsp;
 										</div>
 									</div>
-									<?php  if (isset($bank_details) && $bank_details != null) {
+									<?php if (isset($bank_details) && $bank_details != null) {
 										for ($i = 0; $i < sizeof($bank_name_arr); $i++) {  ?>
 											<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12" style="max-width: 30%;">
 												<div class="form-group">
 													<input type="radio" id="bank_cash_radio" name="cash_type" value="<?php echo $bank_id_arr[$i]; ?>" class="bank_cash_radio" />&emsp;<label class='radio-style'><?php echo $bank_name_arr[$i]; ?></label>
 												</div>
-											</div> 
-									<?php  }}?>
+											</div>
+									<?php  }
+									} ?>
 									<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12">
 										<div class="form-group">
 											<!-- <button type="button" name="blnc_sheet_btn" id="blnc_sheet_btn" class="btn btn-primary" data-toggle='modal' data-target='.blncModal' onclick="hideAllCardsfunction()">Balance Sheet</button> -->
@@ -374,7 +395,7 @@ if ($bank_qry->num_rows > 0) {
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
 										<div class="text-right">
 											<button type="button" data-toggle="modal" data-target=".super_closing" id="super_closing" name="super_closing" class="btn btn-primary" onclick="getAllClosingBalance()" <?php if ($role_type != '12') { ?> style="display:none" <?php } ?>>All Closing</button>
-											<button type="button" data-toggle="modal" data-target=".addUntracked" id="addUntracked" name="addUntracked" class="btn btn-primary">Untracked</button>
+											<!-- <button type="button" data-toggle="modal" data-target=".addUntracked" id="addUntracked" name="addUntracked" class="btn btn-primary">Untracked</button> -->
 										</div>
 									</div>
 								</div>
@@ -408,25 +429,45 @@ if ($bank_qry->num_rows > 0) {
 										</div>
 									</div>
 
-									<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12" style="max-width: 200px;">
+									<!-- <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12" style="max-width: 200px;">
 										<div class="form-group">
 
-											<input type='hidden' id='untrkd_ids' name='untrkd_ids' value='<?php if (isset($bank_name_arr)) {
+											<input type='hidden' id='untrkd_ids' name='untrkd_ids' value='<?php /*if (isset($bank_name_arr)) {
 																												for ($i = 0; $i < sizeof($bank_name_arr); $i++) {
 																													echo 'untrkd' . $bank_id_arr[$i] . ',';
 																												}
-																											} ?>'>
+																											} */?>'>
 											<label class="lable-style" id='hand_closing'></label><br>
-											<?php if (isset($bank_name_arr)) {
+											<?php /*if (isset($bank_name_arr)) {
 												for ($i = 0; $i < sizeof($bank_name_arr); $i++) { ?>
 													<label class="lable-style" id='bank_closing<?php echo $i; ?>'></label>&nbsp;<label class="lable-style untrkd" id='<?php echo 'untrkd' . $bank_id_arr[$i]; ?>'>(0)</label><br>
 											<?php }
-											} ?>
+											} */?>
 											<label class="lable-style" id='agent_closing'></label><br><br>
 											<hr>
 											<label class="lable-style" id='closing_balance'></label>
 										</div>
+									</div> -->
+									<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12" style="max-width: 200px;">
+										<div class="form-group">
+
+											<label class="lable-style" id="hand_closing"></label><br>
+
+											<?php if (isset($bank_name_arr)) {
+												for ($i = 0; $i < sizeof($bank_name_arr); $i++) { ?>
+													<label class="lable-style" id="bank_closing<?php echo $i; ?>"></label><br>
+											<?php }
+											} ?>
+
+											<label class="lable-style" id="agent_closing"></label><br><br>
+
+											<hr>
+
+											<label class="lable-style" id="closing_balance"></label>
+
+										</div>
 									</div>
+
 								</div>
 
 							</div>

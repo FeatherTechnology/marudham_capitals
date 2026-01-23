@@ -320,41 +320,41 @@ $(document).ready(function () {
         }
     })
 
-    $('#addUntracked').click(function () {
-        $.ajax({
-            url: 'accountsFile/cashtally/contra/getBankDetails.php',
-            data: {},
-            dataType: 'json',
-            type: 'post',
-            cache: false,
-            success: function (response) {
-                $('#bank_id_untracked').empty()
-                $('#bank_id_untracked').append(`<option value=''>Select Bank Name</option>`)
-                for (var i = 0; i < response.length; i++) {
-                    $('#bank_id_untracked').append(`<option value='` + response[i]['bank_id'] + `'>` + response[i]['bank_name'] + `</option>`)
-                }
+    // $('#addUntracked').click(function () {
+    //     $.ajax({
+    //         url: 'accountsFile/cashtally/contra/getBankDetails.php',
+    //         data: {},
+    //         dataType: 'json',
+    //         type: 'post',
+    //         cache: false,
+    //         success: function (response) {
+    //             $('#bank_id_untracked').empty()
+    //             $('#bank_id_untracked').append(`<option value=''>Select Bank Name</option>`)
+    //             for (var i = 0; i < response.length; i++) {
+    //                 $('#bank_id_untracked').append(`<option value='` + response[i]['bank_id'] + `'>` + response[i]['bank_name'] + `</option>`)
+    //             }
 
-                $('#bank_id_untrackedCheck, #untracked_amtCheck').hide();
-            }
-        })
-    })
+    //             $('#bank_id_untrackedCheck, #untracked_amtCheck').hide();
+    //         }
+    //     })
+    // })
 
-    $('#submit_untracked').click(function () {
-        var bank_id = $('#bank_id_untracked').val(); var amt = $('#untracked_amt').val();
-        if (bank_id != '' && amt != '') {
-            $('#closeUntracked').trigger('click');
-            $('#bank_id_untracked').val(''); $('#untracked_amt').val('')
-            $('.untrkd').each(function () {
-                var valu = $(this).attr('id');
-                if (valu == 'untrkd' + bank_id) {
-                    $('#' + valu).text('(' + amt + ')')
-                }
-            })
-        } else {
-            if (bank_id == '') { $('#bank_id_untrackedCheck').show() } else { $('#bank_id_untrackedCheck').hide() }
-            if (amt == '') { $('#untracked_amtCheck').show() } else { $('#untracked_amtCheck').hide() }
-        }
-    })
+    // $('#submit_untracked').click(function () {
+    //     var bank_id = $('#bank_id_untracked').val(); var amt = $('#untracked_amt').val();
+    //     if (bank_id != '' && amt != '') {
+    //         $('#closeUntracked').trigger('click');
+    //         $('#bank_id_untracked').val(''); $('#untracked_amt').val('')
+    //         $('.untrkd').each(function () {
+    //             var valu = $(this).attr('id');
+    //             if (valu == 'untrkd' + bank_id) {
+    //                 $('#' + valu).text('(' + amt + ')')
+    //             }
+    //         })
+    //     } else {
+    //         if (bank_id == '') { $('#bank_id_untrackedCheck').show() } else { $('#bank_id_untrackedCheck').hide() }
+    //         if (amt == '') { $('#untracked_amtCheck').show() } else { $('#untracked_amtCheck').hide() }
+    //     }
+    // })
 
 })//Document ready END
 
@@ -388,6 +388,9 @@ function getOpeningDate() {
     })
 }
 
+ 
+
+
 function getOpeningBalance() {
     var op_date = $('#op_date').text();
     var bank_detail = $('#user_bank_details').val();
@@ -413,16 +416,16 @@ function getOpeningBalance() {
             })
 
             // add yseterday's closing untracked amount to today's untracted opening
-            if (response[0]['bank_untrkd'] != '' && response[0]['bank_untrkd'] != undefined) {
+            // if (response[0]['bank_untrkd'] != '' && response[0]['bank_untrkd'] != undefined) {
 
-                var untrkd_ids_op = $('#untrkd_ids_op').val().split(',');
-                var untrkd_op = response[0]['bank_untrkd'].split(','); var k = 0;
-                $.each(untrkd_ids_op, function (ind, val) {
+            //     var untrkd_ids_op = $('#untrkd_ids_op').val().split(',');
+            //     var untrkd_op = response[0]['bank_untrkd'].split(','); var k = 0;
+            //     $.each(untrkd_ids_op, function (ind, val) {
 
-                    $('#' + val).text('(' + untrkd_op[k] + ')')
-                    k++
-                })
-            }
+            //         $('#' + val).text('(' + untrkd_op[k] + ')')
+            //         k++
+            //     })
+            // }
 
             $('#agent_opening').text(moneyFormatIndia(response[0]['agent_opening']))
         }
@@ -440,7 +443,7 @@ function getClosingBalance() {
         dataType: 'json',
         cache: false,
         success: function (response) {
-            var closing = parseInt(response[0]['closing_balance']);
+            var closing = (response[0]['closing_balance']);
             $('#hand_closing').text(moneyFormatIndia(response[0]['hand_closing']))
             var i = 0;
             let bankCash = 0;
@@ -492,7 +495,7 @@ function submitCashTally(i) {
         $('#submit_cash_tally').off('click');
         $('#submit_cash_tally').click(function () {
             event.preventDefault();
-            if (getBankCollectionSubmit() == 0 && getIssuedSubmitCheck() == 0) {
+            // if (getBankCollectionSubmit() == 0 && getIssuedSubmitCheck() == 0) {
 
                 if (confirm('Are You sure to close this Day?')) {
 
@@ -513,15 +516,15 @@ function submitCashTally(i) {
                     }
                     bank_cl = bank_cl.slice(0, -1);
 
-                    var bank_untrkd = '';
-                    var untrkd_ids = $('#untrkd_ids').val().split(',');
-                    $.each(untrkd_ids, function (ind, val) {
-                        bank_untrkd += $('#' + val).text() + ',';
-                    })
-                    bank_untrkd = bank_untrkd.slice(0, -1);
+                    // var bank_untrkd = '';
+                    // var untrkd_ids = $('#untrkd_ids').val().split(',');
+                    // $.each(untrkd_ids, function (ind, val) {
+                    //     bank_untrkd += $('#' + val).text() + ',';
+                    // })
+                    // bank_untrkd = bank_untrkd.slice(0, -1);
 
                     var agent_cl = $('#agent_closing').text().replace(/,/g, '');
-                    var formtosend = { op_date: op_date, opening_bal: opening_bal, hand_op: hand_op, bank_op: bank_op, agent_op: agent_op, closing_bal: closing_bal, hand_cl: hand_cl, bank_cl, bank_untrkd: bank_untrkd, agent_cl: agent_cl };
+                    var formtosend = { op_date: op_date, opening_bal: opening_bal, hand_op: hand_op, bank_op: bank_op, agent_op: agent_op, closing_bal: closing_bal, hand_cl: hand_cl, bank_cl, agent_cl: agent_cl };
                     $.ajax({
                         url: 'accountsFile/cashtally/submitCashTally.php',
                         data: formtosend,
@@ -549,16 +552,16 @@ function submitCashTally(i) {
                 } else {
                     return false;
                 }
-            } else {
-                Swal.fire({
-                    title: 'Submittion Error',
-                    html: 'Please check: <br>1.Bank Collection <br> 2.Hand & Bank Issued<br> has submitted before Closing!',
-                    icon: 'error',
-                    showConfirmButton: true,
-                    confirmButtonColor: '#009688'
-                });
+            // } else {
+            //     Swal.fire({
+            //         title: 'Submittion Error',
+            //         html: 'Please check: <br>1.Bank Collection <br> 2.Hand & Bank Issued<br> has submitted before Closing!',
+            //         icon: 'error',
+            //         showConfirmButton: true,
+            //         confirmButtonColor: '#009688'
+            //     });
 
-            }
+            // }
         })
     } else {
         $('#submit_cash_tally').off('click');
@@ -638,21 +641,21 @@ function getFutureOpeningBalance() {
             })
 
             // add yseterday's closing untracked amount to today's untracted opening
-            if (response[0]['bank_untrkd'] != '' && response[0]['bank_untrkd'] != undefined) {
+            // if (response[0]['bank_untrkd'] != '' && response[0]['bank_untrkd'] != undefined) {
 
-                var untrkd_ids_op = $('#untrkd_ids_op').val().split(',');
-                var untrkd_op = response[0]['bank_untrkd'].split(','); var k = 0;
-                $.each(untrkd_ids_op, function (ind, val) {
+            //     var untrkd_ids_op = $('#untrkd_ids_op').val().split(',');
+            //     var untrkd_op = response[0]['bank_untrkd'].split(','); var k = 0;
+            //     $.each(untrkd_ids_op, function (ind, val) {
 
-                    $('#' + val).text('(' + untrkd_op[k] + ')')
-                    k++
-                })
-            }
-            //remove closing date's untracked amount to zero on furture date
-            var untrkd_ids = $('#untrkd_ids').val().split(',');
-            $.each(untrkd_ids, function (ind, val) {
-                $('#' + val).text('(0)');
-            })
+            //         $('#' + val).text('(' + untrkd_op[k] + ')')
+            //         k++
+            //     })
+            // }
+            // //remove closing date's untracked amount to zero on furture date
+            // var untrkd_ids = $('#untrkd_ids').val().split(',');
+            // $.each(untrkd_ids, function (ind, val) {
+            //     $('#' + val).text('(0)');
+            // })
             //hide untracked adding button when future date is opening date
             $('#addUntracked').hide();
             $('#agent_opening').text(response[0]['agent_opening'])

@@ -190,11 +190,11 @@ function calculateClosingForBS() {
     let credit = 0; let debit = 0;
 
     $('.balance-sheet-card').find('tbody tr').each(function () { //included opening balance also for credit total//only removed closing balance while summarizing debit amount for closing bal calculation
-        let credit_val = $(this).find('td:nth-child(2)').text() ? $(this).find('td:nth-child(2)').text() : '0';
-        credit = credit + parseInt(credit_val.replaceAll(',', ''));
-        
-        let debit_val = $(this).find('td:nth-child(3)').text() ? $(this).find('td:nth-child(3)').text() : '0';
-        debit = debit + parseInt(debit_val.replaceAll(',', ''));
+       let credit_val = $(this).find('td:nth-child(2)').text() || '0';
+        credit += parseFloat(credit_val.replaceAll(',', '')) || 0;
+
+        let debit_val = $(this).find('td:nth-child(3)').text() || '0';
+        debit += parseFloat(debit_val.replaceAll(',', '')) || 0;
     })
     // console.log("🚀 ~ credit:", credit)
     // console.log("🚀 ~ debit:", debit)
@@ -203,6 +203,9 @@ function calculateClosingForBS() {
     // console.log("🚀 ~ calculate ClosingForBS ~ closing_balance:", closing_balance)
     // debit = debit + clBal;//included closing balance also for debit total
     let difference = credit - debit;
+    credit = Number(credit.toFixed(2));
+    debit = Number(debit.toFixed(2));
+    difference = Number(difference.toFixed(2));
 
     $('.balance-sheet-card').find('tfoot tr:first td:nth-child(2)').text(moneyFormatIndia(credit));
     $('.balance-sheet-card').find('tfoot tr:first td:nth-child(3)').text(moneyFormatIndia(debit));
@@ -366,14 +369,17 @@ function calculateClosingForBenefitCheck() {
 
     $('.benefits-check-card').find('tbody tr').each(function () {
         //this will take rows from investment till end of tr's
-        let credit_val = ($(this).find('td:nth-child(2)').text() != '') ? $(this).find('td:nth-child(2)').text() : '0';
-        credit = credit + parseInt(credit_val.replaceAll(',', ''));
+         let credit_val = $(this).find('td:nth-child(2)').text() || '0';
+        credit += parseFloat(credit_val.replaceAll(',', '')) || 0;
 
-        let debit_val = $(this).find('td:nth-child(3)').text() ? $(this).find('td:nth-child(3)').text() : '0';
-        debit = debit + parseInt(debit_val.replaceAll(',', ''));
+        let debit_val = $(this).find('td:nth-child(3)').text() || '0';
+        debit += parseFloat(debit_val.replaceAll(',', '')) || 0;
     })
 
     let difference = debit - credit;
+     credit = Number(credit.toFixed(2));
+    debit = Number(debit.toFixed(2));
+    difference = Number(difference.toFixed(2));
 
     $('.benefits-check-card').find('tfoot tr:first td:nth-child(2)').text(moneyFormatIndia(credit));
     $('.benefits-check-card').find('tfoot tr:first td:nth-child(3)').text(moneyFormatIndia(debit));

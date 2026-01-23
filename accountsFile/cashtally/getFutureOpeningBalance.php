@@ -64,53 +64,61 @@ $op_date = date('Y-m-d',strtotime($_POST['op_date']. '-1 day'));
     $bank_details_arr = explode(',',$bank_detail);
     $i=0; $bank_opening_all = 0;
         foreach($bank_details_arr as $val){
-            $bankCreditQry = $connect->query("SELECT
-                SUM(amt) AS bank_credit
-                FROM (
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_cash_deposit WHERE date(created_date) = '$op_date' and to_bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
-                    UNION ALL
-                    (SELECT COALESCE(SUM(credited_amt), 0) AS amt FROM ct_bank_collection WHERE date(created_date) = '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
-                    UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bdeposit WHERE date(created_date) = '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
-                    UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bel WHERE date(created_date) = '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
-                    UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bexchange WHERE date(created_date) = '$op_date' and to_bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
-                    UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_binvest WHERE date(created_date) = '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
-                    UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_boti WHERE date(created_date) = '$op_date' and to_bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
-                ) AS Bank_Credit_Opening
-            ");
+               $bankQry = $connect->query("SELECT balance FROM bank_stmt WHERE bank_id = '$val' AND DATE(trans_date) <= '$op_date' ORDER BY trans_date DESC,id DESC LIMIT 1 ;");
+            // $bankCreditQry = $connect->query("SELECT
+            //     SUM(amt) AS bank_credit
+            //     FROM (
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_cash_deposit WHERE date(created_date) = '$op_date' and to_bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            //         UNION ALL
+            //         (SELECT COALESCE(SUM(credited_amt), 0) AS amt FROM ct_bank_collection WHERE date(created_date) = '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            //         UNION ALL
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bdeposit WHERE date(created_date) = '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            //         UNION ALL
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bel WHERE date(created_date) = '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            //         UNION ALL
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bexchange WHERE date(created_date) = '$op_date' and to_bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            //         UNION ALL
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_binvest WHERE date(created_date) = '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            //         UNION ALL
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_boti WHERE date(created_date) = '$op_date' and to_bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            //     ) AS Bank_Credit_Opening
+            // ");
 
-            $bankCredit = $bankCreditQry->fetch()['bank_credit'];
+            // $bankCredit = $bankCreditQry->fetch()['bank_credit'];
 
-            $bankDebitQry = $connect->query("SELECT
-                SUM(amt) AS bank_debit
-                FROM (
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_cash_withdraw WHERE date(created_date) = '$op_date' and from_bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
-                    UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bdeposit WHERE date(created_date) = '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
-                    UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bel WHERE date(created_date) = '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
-                    UNION ALL
-                    -- (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_exf WHERE date(created_date) = '$op_date' and to_bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
-                    -- UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bexchange WHERE date(created_date) = '$op_date' and from_acc_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
-                    UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bexpense WHERE date(created_date) = '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
-                    UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_binvest WHERE date(created_date) = '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
-                    UNION ALL
-                    (SELECT COALESCE(SUM(netcash), 0) AS amt FROM ct_db_bissued WHERE date(created_date) = '$op_date' and li_bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
-                ) AS Bank_Credit_Opening
-            ");
+            // $bankDebitQry = $connect->query("SELECT
+            //     SUM(amt) AS bank_debit
+            //     FROM (
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_cash_withdraw WHERE date(created_date) = '$op_date' and from_bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            //         UNION ALL
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bdeposit WHERE date(created_date) = '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            //         UNION ALL
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bel WHERE date(created_date) = '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            //         UNION ALL
+            //         -- (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_exf WHERE date(created_date) = '$op_date' and to_bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            //         -- UNION ALL
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bexchange WHERE date(created_date) = '$op_date' and from_acc_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            //         UNION ALL
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bexpense WHERE date(created_date) = '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            //         UNION ALL
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_binvest WHERE date(created_date) = '$op_date' and bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            //         UNION ALL
+            //         (SELECT COALESCE(SUM(netcash), 0) AS amt FROM ct_db_bissued WHERE date(created_date) = '$op_date' and li_bank_id = '$val' and insert_login_id = '$user_id' ORDER BY created_date DESC LIMIT 1)
+            //     ) AS Bank_Credit_Opening
+            // ");
 
-            $bankDebit = $bankDebitQry->fetch()['bank_debit'];
+            // $bankDebit = $bankDebitQry->fetch()['bank_debit'];
             
-            $records[$i]['bank_opening'] = intVal($bankCredit) - intVal($bankDebit) ;
-            $bank_opening_all = $bank_opening_all + $records[$i]['bank_opening'];
-            $i++;
+            // $records[$i]['bank_opening'] = intVal($bankCredit) - intVal($bankDebit) ;
+            // $bank_opening_all = $bank_opening_all + $records[$i]['bank_opening'];
+            // $i++;
+        $row = $bankQry->fetch(PDO::FETCH_ASSOC);
+
+        $opening_balance = ($row && isset($row['balance'])) ? (float)$row['balance'] : 0;
+        $records[$i]['bank_opening'] = $opening_balance;
+        $bank_opening_all += $opening_balance;
+
+        $i++;
         }
 
 
@@ -199,15 +207,24 @@ $op_date = date('Y-m-d',strtotime($_POST['op_date']. '-1 day'));
 
     $records[0]['agent_opening'] = $agent_hand_op + $agent_bank_op + $agent_CL_op ;
 
-    $records[0]['opening_balance'] = $records[0]['hand_opening'] + $bank_opening_all + $records[0]['agent_opening'];
+   
+     $opening_total = $records[0]['hand_opening'] + $bank_opening_all;
+
+        if (floor($opening_total) == $opening_total) {
+            // No decimal part
+            $records[0]['opening_balance'] = number_format($opening_total, 0, '.', '');
+        } else {
+            // Has decimal part
+            $records[0]['opening_balance'] = number_format($opening_total, 2, '.', '');
+        }
 
     
-    $qry = $connect->query("SELECT bank_untrkd from cash_tally where date(created_date) = '$op_date' and insert_login_id = '$user_id' ");
-    if($qry->rowCount() > 0){
-        $records[0]['bank_untrkd'] = $qry->fetch()['bank_untrkd'];
-    }else{
-        $records[0]['bank_untrkd'] = '';
-    }
+    // $qry = $connect->query("SELECT bank_untrkd from cash_tally where date(created_date) = '$op_date' and insert_login_id = '$user_id' ");
+    // if($qry->rowCount() > 0){
+    //     $records[0]['bank_untrkd'] = $qry->fetch()['bank_untrkd'];
+    // }else{
+    //     $records[0]['bank_untrkd'] = '';
+    // }
 
     echo json_encode($records);
 
