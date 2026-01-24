@@ -369,54 +369,9 @@ function getOpeningBalance($connect, $op_date, $bank_detail)
     foreach ($bank_detail as $val) {
         $bankNameQry = $connect->query("SELECT bank_name FROM bank_creation WHERE id = '$val' ");
         $bank_name = $bankNameQry->fetchColumn();
-
-        // Bank Credit
-        $bankCreditQry = $connect->query("SELECT
-            SUM(amt) AS bank_credit
-            FROM (
-                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_cash_deposit WHERE date(created_date) < '$op_date' AND to_bank_id = '$val' )
-                UNION ALL
-                (SELECT COALESCE(SUM(credited_amt), 0) AS amt FROM ct_bank_collection WHERE date(created_date) < '$op_date' AND bank_id = '$val' )
-                UNION ALL
-                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bdeposit WHERE date(created_date) < '$op_date' AND bank_id = '$val' )
-                UNION ALL
-                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bel WHERE date(created_date) < '$op_date' AND bank_id = '$val' )
-                UNION ALL
-                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bexchange WHERE date(created_date) < '$op_date' AND to_bank_id = '$val' )
-                UNION ALL
-                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_binvest WHERE date(created_date) < '$op_date' AND bank_id = '$val' )
-                UNION ALL
-                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_boti WHERE date(created_date) < '$op_date' AND to_bank_id = '$val' )
-                UNION ALL
-                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bag WHERE date(created_date) < '$op_date' AND bank_id = '$val' )
-            ) AS Bank_Credit_Opening
-        ");
-        $bankCredit = $bankCreditQry->fetch()['bank_credit'];
-
-        // Bank Debit
-        $bankDebitQry = $connect->query("SELECT
-            SUM(amt) AS bank_debit
-            FROM (
-                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_cash_withdraw WHERE date(created_date) < '$op_date' AND from_bank_id = '$val' )
-                UNION ALL
-                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bdeposit WHERE date(created_date) < '$op_date' AND bank_id = '$val' )
-                UNION ALL
-                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bel WHERE date(created_date) < '$op_date' AND bank_id = '$val' )
-                UNION ALL
-                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bexchange WHERE date(created_date) < '$op_date' AND from_acc_id = '$val' )
-                UNION ALL
-                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bexpense WHERE date(created_date) < '$op_date' AND bank_id = '$val' )
-                UNION ALL
-                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_binvest WHERE date(created_date) < '$op_date' AND bank_id = '$val' )
-                UNION ALL
-                (SELECT COALESCE(SUM(netcash), 0) AS amt FROM ct_db_bissued WHERE date(created_date) < '$op_date' AND li_bank_id = '$val' )
-                UNION ALL 
-                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bag WHERE date(created_date) < '$op_date' AND bank_id = '$val' )
-            ) AS Bank_debit_Opening
-        ");
-        $bankDebit = $bankDebitQry->fetch()['bank_debit'];
-
-        $bank_opening = intval($bankCredit) - intval($bankDebit);
+         $bankQry = $connect->query("SELECT balance FROM bank_stmt WHERE bank_id = '$val' AND DATE(trans_date) <= '$op_date' ORDER BY trans_date DESC,id DESC LIMIT 1 ;");
+         $row = $bankQry->fetch(PDO::FETCH_ASSOC);
+        $bank_opening = ($row && isset($row['balance'])) ? (float)$row['balance'] : 0;
 
         $record['banks'][] = [
             'bank_id' => $val,
@@ -498,9 +453,9 @@ function getClosingBalance($connect, $closing_date, $bank_detail, $till_now_date
 
 FROM bank_creation bn
 
-LEFT JOIN (SELECT bank_id, SUM(CASE WHEN created_date = '$closing_date' THEN credited_amt END) AS collection_on_date FROM ct_bank_collection WHERE 1 GROUP BY bank_id ) bc_on           ON bc_on.bank_id = bn.id
+LEFT JOIN (SELECT bank_id, SUM(CASE WHEN DATE(created_date) = '$closing_date' THEN total_paid_track END) AS collection_on_date FROM collection WHERE 1 GROUP BY bank_id ) bc_on           ON bc_on.bank_id = bn.id
 
-LEFT JOIN ( SELECT li_bank_id AS bank_id, SUM(CASE WHEN created_date = '$closing_date' THEN netcash END) AS loan_issue_on_date FROM ct_db_bissued WHERE 1 GROUP BY li_bank_id ) bi_on ON bi_on.bank_id = bn.id
+LEFT JOIN ( SELECT bank_id, SUM(CASE WHEN DATE(created_date) = '$closing_date' THEN COALESCE(cheque_value, 0) + COALESCE(transaction_value, 0) END) AS loan_issue_on_date FROM loan_issue WHERE 1 GROUP BY bank_id ) bi_on ON bi_on.bank_id = bn.id
 
 LEFT JOIN ( SELECT bank_id, SUM(CASE WHEN created_date = '$closing_date' THEN amt END) AS ag_db_amt FROM ct_db_bag WHERE 1 GROUP BY bank_id) db_on ON db_on.bank_id = bn.id
 
@@ -532,9 +487,9 @@ LEFT JOIN ( SELECT bank_id, SUM(CASE WHEN created_date = '$closing_date' THEN am
 LEFT JOIN ( SELECT to_bank_id AS bank_id, SUM(CASE WHEN created_date = '$closing_date' THEN amt END) AS bank_other_income FROM ct_cr_boti WHERE 1 GROUP BY to_bank_id ) boti_on ON boti_on.bank_id = bn.id
 
 -- cumulative subqueries
-LEFT JOIN ( SELECT bank_id, COALESCE(SUM(credited_amt),0) AS total_collection FROM ct_bank_collection  WHERE 1 AND DATE(created_date) BETWEEN '$till_now_date 00:00:00 ' AND '$closing_date 23:59:59' AND bank_id IN ($bank_detail)  GROUP BY bank_id ) total_coll      ON total_coll.bank_id = bn.id
+LEFT JOIN ( SELECT bank_id, COALESCE(SUM(total_paid_track),0) AS total_collection FROM collection  WHERE 1 AND DATE(created_date) BETWEEN '$till_now_date 00:00:00 ' AND '$closing_date 23:59:59' AND bank_id IN ($bank_detail)  GROUP BY bank_id ) total_coll      ON total_coll.bank_id = bn.id
 
-LEFT JOIN ( SELECT li_bank_id AS bank_id, COALESCE(SUM(netcash),0) AS total_loan_issued FROM ct_db_bissued WHERE 1 AND DATE(created_date) BETWEEN '$till_now_date 00:00:00 ' AND '$closing_date 23:59:59'AND li_bank_id IN ($bank_detail) GROUP BY li_bank_id ) total_loan  ON total_loan.bank_id = bn.id
+LEFT JOIN ( SELECT bank_id, COALESCE(SUM(COALESCE(cheque_value, 0) + COALESCE(transaction_value, 0)),0) AS total_loan_issued FROM loan_issue WHERE 1 AND DATE(created_date) BETWEEN '$till_now_date 00:00:00 ' AND '$closing_date 23:59:59'AND bank_id IN ($bank_detail) GROUP BY bank_id ) total_loan  ON total_loan.bank_id = bn.id
 
 LEFT JOIN ( SELECT bank_id, COALESCE(SUM(amt),0) AS ag_db_amt_upto_date FROM ct_db_bag WHERE 1 AND DATE(created_date) BETWEEN '$till_now_date 00:00:00 ' AND '$closing_date 23:59:59'AND bank_id IN ($bank_detail)  GROUP BY bank_id ) total_agdb ON total_agdb.bank_id = bn.id
 
@@ -560,26 +515,33 @@ ORDER BY bn.id;
 
 function moneyFormatIndia($num)
 {
-    $num = (int)$num;
-    $isNegative = false;
+    // 🔹 FIX: handle -0 / 0 / 0.00
+    if ((float)$num == 0) {
+        return '0';
+    }
 
+    $isNegative = false;
     if ($num < 0) {
         $isNegative = true;
         $num = abs($num);
     }
 
     $numStr = (string)$num;
-    $len = strlen($numStr);
+    $parts = explode('.', $numStr);
+    $intPart = $parts[0];
+    $decPart = isset($parts[1]) ? '.' . $parts[1] : '';
+
+    $len = strlen($intPart);
     if ($len <= 3) {
-        $formatted = $numStr;
+        $formatted = $intPart;
     } else {
-        $lastThree = substr($numStr, -3);
-        $rest = substr($numStr, 0, -3);
+        $lastThree = substr($intPart, -3);
+        $rest = substr($intPart, 0, -3);
         $rest = preg_replace("/\B(?=(\d{2})+(?!\d))/", ",", $rest);
         $formatted = $rest . "," . $lastThree;
     }
 
-    return $isNegative ? '-' . $formatted : $formatted;
+    return ($isNegative ? '-' : '') . $formatted . $decPart;
 }
 
 
