@@ -283,7 +283,8 @@ $(document).ready(function () {
         var accountsmodule = document.querySelector('#accountsmodule');
         checkbox(checkboxesToEnable, accountsmodule);
         if (!accountsmodule.checked) {
-            $('.bank_details').hide()
+            $('.bank_details').hide();
+            $('.bnk_clr_upl_acc').hide();
         }
     });
 
@@ -376,6 +377,14 @@ $(document).ready(function () {
             $('.bank_details').show()
         } else {
             $('.bank_details').hide()
+        }
+    });
+    $('#bank_clearance').click(function () {
+        var bank_clearance = document.querySelector('#bank_clearance');
+        if (bank_clearance.checked) {
+            $('.bnk_clr_upl_acc_div').show()
+        } else {
+            $('.bnk_clr_upl_acc_div').hide()
         }
     });
 
@@ -566,6 +575,12 @@ $(function () {
             $('.promotion_activity_div').show()
         }else{
             $('.promotion_activity_div').hide()
+        }
+        var promotionActivity_screen = document.querySelector('#bank_clearance');
+        if (promotionActivity_screen.checked) {
+            $('.bnk_clr_upl_acc_div').show()
+        }else{
+            $('.bnk_clr_upl_acc_div').hide()
         }
 
         var mastermodule = document.getElementById('mastermodule');
@@ -1254,6 +1269,16 @@ function validation() {
             $('#proCheck').hide(); 
         }  
     }
+    var isbankClearanceChecked = $('#bank_clearance').is(':checked');
+    if(isbankClearanceChecked){
+    var bnk_clr_upl_acc = $('#bnk_clr_upl_acc').val();
+        if (bnk_clr_upl_acc == '') {  
+            $('.bankclearanceuploadCheck').show();
+            validation = false; 
+        } else { 
+            $('.bankclearanceuploadCheck').hide(); 
+        }  
+    }
   
     var nocmodule = document.querySelector('#nocmodule');
     let nocChecked = $('#noc, #noc_handover').is(':checked');
@@ -1361,6 +1386,10 @@ function validation() {
     var cash_tally = document.querySelector('#cash_tally');
     if (!cash_tally.checked) {
         $('#bank_details').val('')
+    }
+    var bank_clearance = document.querySelector('#bank_clearance');
+    if (!bank_clearance.checked) {
+        $('#bnk_clr_upl_acc').val('')
     }
 
     var update = document.querySelector('#update');

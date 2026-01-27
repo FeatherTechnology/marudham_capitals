@@ -1,16 +1,23 @@
-<!-- Page header start -->
+<?php
+
+$getUser = $userObj->getUser($mysqli, $_SESSION['userid']);
+if (sizeof($getUser) > 0) {
+	$bnk_clr_upl_acc = $getUser['bnk_clr_upl_acc'];
+}
+?><!-- Page header start -->
 <br><br>
 <div class="page-header">
     <div style="background-color:#009688; width:100%; padding:12px; color: #ffff; font-size: 20px; border-radius:5px;">
 		Marudham Capitals -  Bank Clearance List 
 	</div>
 </div><br>
+<?php if ($bnk_clr_upl_acc == '0') { ?>
 <div class="text-right" style="margin-right: 25px;">
     <a href="bank_clearance">
         <button type="button" class="btn btn-primary"><span class="icon-add"></span>&nbsp; Add Bank Clearance</button>
     <!-- <button type="button" class="btn btn-primary"><span class="icon-border_color"></span>&nbsp Edit Employee Master</button> -->
     </a>
-</div><br><br>
+</div><br><br> <?php } ?>
 <!-- Page header end -->
 
 <!-- Main container start -->

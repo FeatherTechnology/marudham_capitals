@@ -1533,8 +1533,8 @@ if ($opening_bal != '') {
         const sheetValue = <?php echo json_encode($sheet_type); ?>;
 
         // Declare table variable to store the DataTable instance
-        var blncSheetTable = $('#blncSheetTable').DataTable({
-            ...getStateSaveConfig('blncSheetTable'),
+         $('#blncSheetTable').DataTable({
+            // ...getStateSaveConfig('blncSheetTable'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -1560,7 +1560,7 @@ if ($opening_bal != '') {
         });
 
         // Pass the table variable to the initColVisFeatures function
-        initColVisFeatures(blncSheetTable, 'blncSheetTable');
+        // initColVisFeatures(blncSheetTable, 'blncSheetTable');
     });
 </script>
 

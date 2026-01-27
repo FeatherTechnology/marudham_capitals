@@ -72,6 +72,7 @@ $due_followup_lines='';
 $cash_tally_admin = '';
 $bank_details = '';
 $bank_clearance = '';
+$bnk_clr_upl_acc = '';
 $finance_insight = '';
 $accounts_loan_issue = '';
 $followupmodule = '';
@@ -245,6 +246,7 @@ if($idupd>0)
 			$cash_tally_admin          		     = $getUser['cash_tally_admin'];
 			$bank_details          		     = $getUser['bank_details'];
 			$bank_clearance          		     = $getUser['bank_clearance'];
+			$bnk_clr_upl_acc          		     = $getUser['bnk_clr_upl_acc'];
 			$finance_insight          		     = $getUser['finance_insight'];
 			$accounts_loan_issue          		     = $getUser['accounts_loan_issue'];
 			$followupmodule          		     = $getUser['followupmodule'];
@@ -1074,6 +1076,17 @@ if($idupd>0)
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($bank_clearance==0){ echo'checked'; }} ?> tabindex="57" class="accounts-checkbox screen-validations" id="bank_clearance" name="bank_clearance" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="bank_clearance">Bank Clearance</label>
+                            </div>
+                        </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 bnk_clr_upl_acc_div"  style='display:none'>
+                            <div class="custom-control custom-checkbox">
+                                <label class="custom-control-label" for="cash_tally">Bank Clearance Upload Access</label>
+                                <select class='form-control' id='bnk_clr_upl_acc' name='bnk_clr_upl_acc'>
+									<option value="">Select Bank Clearance Upload Access</option>
+									<option value="0" <?php if($bnk_clr_upl_acc == '0') echo 'selected'; ?>>Yes</option>
+									<option value="1" <?php if($bnk_clr_upl_acc == '1') echo 'selected'; ?>>No</option>
+								</select>
+								<span class='text-danger bankclearanceuploadCheck' style="display:none">Please Select Upload Access</span>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">

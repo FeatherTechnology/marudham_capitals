@@ -67,8 +67,14 @@ $connect = null;
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                 <div class='form-group'>
                     <label for='trans_id'>Transaction ID</label>
-                    <input type="text" class="form-control" id= 'trans_id' name='trans_id'  placeholder="Enter Transaction ID">
+                    <input type="text" class="form-control" id= 'trans_id' name='trans_id'  placeholder="Enter Transaction ID" onblur="checkTransactionCommon({transInput: this, type: 'credit',  bankId: $('input[name=cash_type]:checked').val(),dateField: '#trans_date'})">
                     <span class="text-danger" id="trans_idCheck" style="display:none">Please Enter Transaction ID</span>
+                </div>
+            </div>
+             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
+                <div class="form-group">
+                    <label for="trans_date">Transaction Date</label><span class='text-danger'>&nbsp;*</span>
+                    <input type="text" id="trans_date" name="trans_date" class="form-control" placeholder="Transaction Date" readonly >
                 </div>
             </div>
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
