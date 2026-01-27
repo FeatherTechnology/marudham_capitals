@@ -24,43 +24,6 @@ $(document).ready(function () {
             }
 
             submitUpload();
-
-
-            // $.ajax({
-            //     url: 'accountsFile/bankclearance/checkExcelforOverwrite.php',
-            //     data: area,
-            //     type: 'post',
-            //     contentType: false,
-            //     cache: false,
-            //     processData: false,
-            //     success: function (response) {
-
-                    // if (response == 0) {
-                        // submitUpload();
-            //         }
-            //         else if (response == 1) {
-            //             Swal.fire({
-            //                 title: 'Your Statement Has existing transaction Dates!',
-            //                 text: 'Do you want to overwrite?',
-            //                 icon: 'question',
-            //                 showConfirmButton: true,
-            //                 showCancelButton: true,
-            //                 confirmButtonColor: '#009688',
-            //                 cancelButtonColor: '#cc4444',
-            //                 cancelButtonText: 'No',
-            //                 confirmButtonText: 'Yes'
-            //             }).then(function (result) {
-            //                 if (result.isConfirmed) {
-            //                     removeAndSubmitUpload();
-            //                 }
-            //             })
-            //         }
-            //         else {
-            //             warningSwal('Error', 'Error occured when uploading');
-            //         }
-            //     }
-            // });
-
         } else {
             $('#bank_id_uploadCheck').show();
             return false;
@@ -264,49 +227,6 @@ function submitUpload() {
         }
     });
 }
-
-
-// OVERWRITE & UPLOAD
-// function removeAndSubmitUpload() {
-
-//     var file_data = $('#file').prop('files')[0];
-//     var bank_id = $('#bank_id_upload').val();
-//     var bank_short_name = $('#bank_id_upload option:selected').data('short');
-
-//     var area = new FormData();
-//     area.append('file', file_data);
-//     area.append('bank_id', bank_id);
-//     area.append('bank_short_name', bank_short_name);
-
-//     $.ajax({
-//         url: 'accountsFile/bankclearance/removeAndSubmitUpload.php',
-//         type: 'POST',
-//         data: area,
-//         dataType: 'json',
-//         contentType: false,
-//         cache: false,
-//         processData: false,
-//         beforeSend: function () {
-//             $('#bank_id_upload, #file, #submit_stmt_upload').prop("disabled", true);
-//         },
-//         success: function (res) {
-
-//             if (res.status === 'success') {
-//                 Swal.fire({
-//                     title: 'Statement Uploaded!',
-//                     icon: 'success',
-//                     confirmButtonColor: '#009688'
-//                 }).then(() => location.reload());
-//             } else {
-//                 warningSwal('Upload Failed', res.message || 'Error while overwriting');
-//             }
-//         },
-//         complete: function () {
-//             $('#bank_id_upload, #file, #submit_stmt_upload').prop("disabled", false);
-//         }
-//     });
-// }
-
 
 // ALERT HELPERS
 function warningSwal(title, text) {

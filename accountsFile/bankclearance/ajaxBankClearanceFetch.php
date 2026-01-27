@@ -14,7 +14,7 @@ $totalc = 0;
 $totald = 0;
 
 
-$qry = $connect->query("SELECT * FROM bank_stmt WHERE insert_login_id = '$user_id' and bank_id = '$bank_id' and clr_status = 0 ORDER BY id ASC"); // clr status 0 means uncleared transactions
+$qry = $connect->query("SELECT * FROM bank_stmt WHERE bank_id = '$bank_id' and clr_status = 0 ORDER BY id ASC"); // clr status 0 means uncleared transactions
 if($qry->rowCount() > 0){
     //if statements are present in that particular dates then show it in table view
     ?>

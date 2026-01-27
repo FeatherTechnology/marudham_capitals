@@ -1194,13 +1194,6 @@ function receivecdBtnClick(bdep_id1) {
                                 showConfirmButton: true,
                                 confirmButtonColor: '#009688'
                             })
-                        } else if (response.includes('Error')) {
-                            Swal.fire({
-                                title: response,
-                                icon: 'error',
-                                showConfirmButton: true,
-                                confirmButtonColor: '#009688'
-                            });
                         } else if (response.includes('Already')) {
                             Swal.fire({
                                 title: response,
@@ -1215,6 +1208,13 @@ function receivecdBtnClick(bdep_id1) {
                                 icon: 'warning',
                                 confirmButtonColor: '#009688'
                             });
+                        }else{
+                           Swal.fire({
+                                title: response,
+                                icon: 'error',
+                                showConfirmButton: true,
+                                confirmButtonColor: '#009688'
+                            }); 
                         }
                         $('#closeCdModal').trigger('click');
                         getClosingBalance();
@@ -1267,8 +1267,14 @@ function getCashWithdrawalDetails() {
         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
             <div class="form-group">
                 <label for="trans_id_cwd">Transaction ID</label>
-                <input type="text" id="trans_id_cwd" name="trans_id_cwd" class="form-control" placeholder="Enter Transaction ID">
+                <input type="text" id="trans_id_cwd" name="trans_id_cwd" class="form-control" placeholder="Enter Transaction ID"onblur="checkTransactionCommon({transInput: this, type: 'debit',  bankId: $('input[name=cash_type]:checked').val(),dateField: '#trans_date'})">
                 <span class="text-danger" id='trans_id_cwdCheck' style="display:none">Please Enter Transaction ID</span>
+            </div>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
+            <div class="form-group">
+                <label for="trans_date">Transaction Date</label><span class='text-danger'>&nbsp;*</span>
+                <input type="text" id="trans_date" name="trans_date" class="form-control" placeholder="Transaction Date" readonly >
             </div>
         </div>
         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
@@ -1916,8 +1922,14 @@ function getBankExchangeInputs() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
         <div class="form-group">
             <label for="trans_id_bex">Transaction ID</label>
-            <input type="text" id="trans_id_bex" name="trans_id_bex" class="form-control" placeholder="Enter Transaction ID">
+            <input type="text" id="trans_id_bex" name="trans_id_bex" class="form-control" placeholder="Enter Transaction ID" onblur="checkTransactionCommon({transInput: this, type: 'debit',  bankId: $('input[name=cash_type]:checked').val(),dateField: '#trans_date'})">
             <span id="trans_id_bexCheck" class="text-danger" style="display:none">Please Enter Transaction ID </span>
+        </div>
+    </div>
+     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
+        <div class="form-group">
+            <label for="trans_date">Transaction Date</label><span class='text-danger'>&nbsp;*</span>
+            <input type="text" id="trans_date" name="trans_date" class="form-control" placeholder="Transaction Date" readonly >
         </div>
     </div>
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
@@ -2246,8 +2258,14 @@ function getBotherincomeDetails() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
         <div class="form-group">
             <label for="trans_id">Transaction ID</label>
-            <input type='text' id="trans_id" name="trans_id" class="form-control" placeholder="Enter Transaction ID">
+            <input type='text' id="trans_id" name="trans_id" class="form-control" placeholder="Enter Transaction ID" onblur="checkTransactionCommon({transInput: this, type: 'credit',  bankId: $('input[name=cash_type]:checked').val(),dateField: '#trans_date'})">
             <span id='trans_idCheck' class="text-danger" style="display:none">Please Enter Transaction ID</span>
+        </div>
+    </div>
+     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
+        <div class="form-group">
+            <label for="trans_date">Transaction Date</label><span class='text-danger'>&nbsp;*</span>
+            <input type="text" id="trans_date" name="trans_date" class="form-control" placeholder="Transaction Date" readonly >
         </div>
     </div>
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
@@ -2302,6 +2320,8 @@ function getBotherincomeDetails() {
                             showConfirmButton: true,
                             confirmButtonColor: '#009688'
                         });
+                    getBotherincomeDetails();
+                    getClosingBalance();
                     } else if (response.includes('Mismatched')) {
                         Swal.fire({
                             title: response,
@@ -2316,8 +2336,6 @@ function getBotherincomeDetails() {
                             confirmButtonColor: '#009688'
                         });
                     }
-                    getBotherincomeDetails();
-                    getClosingBalance();
                 }
             })
         }
@@ -2828,8 +2846,14 @@ function bexpenseModalBtnClick() {
                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
                         <div class="form-group">
                             <label for="trans_id_bexp">Transaction ID</label><span class='text-danger'>&nbsp;*</span>
-                            <input type='text' id="trans_id_bexp" name="trans_id_bexp" class="form-control" placeholder="Enter Transaction ID">
+                            <input type='text' id="trans_id_bexp" name="trans_id_bexp" class="form-control" placeholder="Enter Transaction ID" onblur="checkTransactionCommon({transInput: this, type: 'debit',  bankId: $('input[name=cash_type]:checked').val(),dateField: '#trans_date'})">
                             <span id='trans_id_bexpCheck' class="text-danger" style="display:none">Please Enter Transaction ID</span>
+                        </div>
+                    </div>
+                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
+                        <div class="form-group">
+                            <label for="trans_date">Transaction Date</label><span class='text-danger'>&nbsp;*</span>
+                            <input type="text" id="trans_date" name="trans_date" class="form-control" placeholder="Transaction Date" readonly >
                         </div>
                     </div>
                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
@@ -2948,6 +2972,10 @@ function bexpenseModalBtnClick() {
                                 showConfirmButton: true,
                                 confirmButtonColor: '#009688'
                             });
+                            getBexpenseTable();
+                            $('#closebexpModal').trigger('click');
+                            getClosingBalance();
+                            
                         } else if (response.includes('Mismatched')) {
                             Swal.fire({
                                 title: response,
@@ -2962,9 +2990,6 @@ function bexpenseModalBtnClick() {
                                 confirmButtonColor: '#009688'
                             });
                         }
-                        getBexpenseTable();
-                        $('#closebexpModal').trigger('click');
-                        getClosingBalance();
                     }
                 })
             }
@@ -3231,8 +3256,14 @@ function getCBinvDetails() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
         <div class="form-group">
             <label for="trans_id_binv">Transaction ID</label><span class="text-danger">&nbsp;*</span>
-            <input type="text" id="trans_id_binv" name="trans_id_binv" class="form-control" placeholder="Enter Transaction ID">
+            <input type="text" id="trans_id_binv" name="trans_id_binv" class="form-control" placeholder="Enter Transaction ID" onblur="checkTransactionCommon({transInput: this, type: 'credit',  bankId: $('input[name=cash_type]:checked').val(),dateField: '#trans_date'})">
             <span id='trans_id_binvCheck' class="text-danger" style="display:none">Please Enter Transaction ID</span>
+        </div>
+    </div>
+     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
+        <div class="form-group">
+            <label for="trans_date">Transaction Date</label><span class='text-danger'>&nbsp;*</span>
+            <input type="text" id="trans_date" name="trans_date" class="form-control" placeholder="Transaction Date" readonly >
         </div>
     </div>
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
@@ -3342,8 +3373,14 @@ function getDBinvDetails() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
         <div class="form-group">
             <label for="trans_id_binv">Transaction ID</label><span class="text-danger">&nbsp;*</span>
-            <input type="text" id="trans_id_binv" name="trans_id_binv" class="form-control" placeholder="Enter Transaction ID">
+            <input type="text" id="trans_id_binv" name="trans_id_binv" class="form-control" placeholder="Enter Transaction ID" onblur="checkTransactionCommon({transInput: this, type: 'debit',  bankId: $('input[name=cash_type]:checked').val(),dateField: '#trans_date'})">
             <span id='trans_id_binvCheck' class="text-danger" style="display:none">Please Enter Transaction ID</span>
+        </div>
+    </div>
+     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
+        <div class="form-group">
+            <label for="trans_date">Transaction Date</label><span class='text-danger'>&nbsp;*</span>
+            <input type="text" id="trans_date" name="trans_date" class="form-control" placeholder="Transaction Date" readonly >
         </div>
     </div>
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
@@ -3671,8 +3708,14 @@ function getCBDepDetails() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
         <div class="form-group">
             <label for="trans_id_bdeposit">Transaction ID</label><span class="text-danger">&nbsp;*</span>
-            <input type="text" id="trans_id_bdeposit" name="trans_id_bdeposit" class="form-control" placeholder="Enter Transaction ID">
+            <input type="text" id="trans_id_bdeposit" name="trans_id_bdeposit" class="form-control" placeholder="Enter Transaction ID" onblur="checkTransactionCommon({transInput: this, type: 'credit',  bankId: $('input[name=cash_type]:checked').val(),dateField: '#trans_date'})">
             <span id='trans_id_bdepositCheck' class="text-danger" style="display:none">Please Enter Transaction ID</span>
+        </div>
+    </div>
+    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
+        <div class="form-group">
+            <label for="trans_date">Transaction Date</label><span class='text-danger'>&nbsp;*</span>
+            <input type="text" id="trans_date" name="trans_date" class="form-control" placeholder="Transaction Date" readonly >
         </div>
     </div>
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
@@ -3781,8 +3824,14 @@ function getDBDepDetails() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
         <div class="form-group">
             <label for="trans_id_bdeposit">Transaction ID</label><span class="text-danger">&nbsp;*</span>
-            <input type="text" id="trans_id_bdeposit" name="trans_id_bdeposit" class="form-control" placeholder="Enter Transaction ID">
+            <input type="text" id="trans_id_bdeposit" name="trans_id_bdeposit" class="form-control" placeholder="Enter Transaction ID" onblur="checkTransactionCommon({transInput: this, type: 'debit',  bankId: $('input[name=cash_type]:checked').val(),dateField: '#trans_date'})">
             <span id='trans_id_bdepositCheck' class="text-danger" style="display:none">Please Enter Transaction ID</span>
+        </div>
+    </div>
+    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
+        <div class="form-group">
+            <label for="trans_date">Transaction Date</label><span class='text-danger'>&nbsp;*</span>
+            <input type="text" id="trans_date" name="trans_date" class="form-control" placeholder="Transaction Date" readonly >
         </div>
     </div>
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
@@ -4107,8 +4156,14 @@ function getCBelDetails() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
         <div class="form-group">
             <label for="trans_id_bel">Transaction ID</label><span class="text-danger">&nbsp;*</span>
-            <input type="text" id="trans_id_bel" name="trans_id_bel" class="form-control" placeholder="Enter Transaction ID">
+            <input type="text" id="trans_id_bel" name="trans_id_bel" class="form-control" placeholder="Enter Transaction ID" onblur="checkTransactionCommon({transInput: this, type: 'credit',  bankId: $('input[name=cash_type]:checked').val(),dateField: '#trans_date'})">
             <span id='trans_id_belCheck' class="text-danger" style="display:none">Please Enter Transaction ID</span>
+        </div>
+    </div>
+    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
+        <div class="form-group">
+            <label for="trans_date">Transaction Date</label><span class='text-danger'>&nbsp;*</span>
+            <input type="text" id="trans_date" name="trans_date" class="form-control" placeholder="Transaction Date" readonly >
         </div>
     </div>
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
@@ -4216,8 +4271,14 @@ function getDBelDetails() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
         <div class="form-group">
             <label for="trans_id_bel">Transaction ID</label><span class="text-danger">&nbsp;*</span>
-            <input type="text" id="trans_id_bel" name="trans_id_bel" class="form-control" placeholder="Enter Transaction ID">
+            <input type="text" id="trans_id_bel" name="trans_id_bel" class="form-control" placeholder="Enter Transaction ID" onblur="checkTransactionCommon({transInput: this, type: 'debit',  bankId: $('input[name=cash_type]:checked').val(),dateField: '#trans_date'})">
             <span id='trans_id_belCheck' class="text-danger" style="display:none">Please Enter Transaction ID</span>
+        </div>
+    </div>
+     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
+        <div class="form-group">
+            <label for="trans_date">Transaction Date</label><span class='text-danger'>&nbsp;*</span>
+            <input type="text" id="trans_date" name="trans_date" class="form-control" placeholder="Transaction Date" readonly >
         </div>
     </div>
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
@@ -4534,8 +4595,14 @@ function getExfDetails() {
                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
                         <div class="form-group">
                             <label for="trans_id_exf">Transaction ID</label><span class='text-danger'>&nbsp;*</span>
-                            <input type="text" id="trans_id_exf" name="trans_id_exf" class="form-control" placeholder="Enter Transaction ID">
+                            <input type="text" id="trans_id_exf" name="trans_id_exf" class="form-control" placeholder="Enter Transaction ID" onblur="checkTransactionCommon({transInput: this, type: 'debit',  bankId: $('input[name=cash_type]:checked').val(),dateField: '#trans_date'})">
                             <span id='trans_id_exfCheck' class="text-danger" style="display:none">Please Enter Transaction ID</span>
+                        </div>
+                    </div>
+                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
+                        <div class="form-group">
+                            <label for="trans_date">Transaction Date</label><span class='text-danger'>&nbsp;*</span>
+                            <input type="text" id="trans_date" name="trans_date" class="form-control" placeholder="Transaction Date" readonly >
                         </div>
                     </div>
                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
@@ -4631,7 +4698,7 @@ function getExfDetails() {
                             icon: 'warning',
                             confirmButtonColor: '#009688'
                         });
-                    } else if (response.includes('Error')) {
+                    } else {
                         Swal.fire({
                             title: response,
                             icon: 'error',
@@ -4867,8 +4934,14 @@ function getCBagDetails() {
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
                 <div class="form-group">
                     <label for="trans_id_ag">Transaction ID</label><span class='text-danger'>&nbsp;*</span>
-                    <input type="text" id="trans_id_ag" name="trans_id_ag" class="form-control" placeholder="Enter Transaction ID">
+                    <input type="text" id="trans_id_ag" name="trans_id_ag" class="form-control" placeholder="Enter Transaction ID" onblur="checkTransactionCommon({transInput: this, type: 'credit',  bankId: $('input[name=cash_type]:checked').val(),dateField: '#trans_date'})">
                     <span id='trans_id_agCheck' class="text-danger" style="display:none">Please Enter Transaction ID</span>
+                </div>
+            </div>
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
+                <div class="form-group">
+                    <label for="trans_date">Transaction Date</label><span class='text-danger'>&nbsp;*</span>
+                    <input type="text" id="trans_date" name="trans_date" class="form-control" placeholder="Transaction Date" readonly >
                 </div>
             </div>
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
@@ -4970,8 +5043,14 @@ function getDBagDetails() {
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
                 <div class="form-group">
                     <label for="trans_id_ag">Transaction ID</label><span class='text-danger'>&nbsp;*</span>
-                    <input type="text" id="trans_id_ag" name="trans_id_ag" class="form-control" placeholder="Enter Transaction ID">
+                    <input type="text" id="trans_id_ag" name="trans_id_ag" class="form-control" placeholder="Enter Transaction ID"onblur="checkTransactionCommon({transInput: this, type: 'debit',  bankId: $('input[name=cash_type]:checked').val(),dateField: '#trans_date'})">
                     <span id='trans_id_agCheck' class="text-danger" style="display:none">Please Enter Transaction ID</span>
+                </div>
+            </div>
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
+                <div class="form-group">
+                    <label for="trans_date">Transaction Date</label><span class='text-danger'>&nbsp;*</span>
+                    <input type="text" id="trans_date" name="trans_date" class="form-control" placeholder="Transaction Date" readonly >
                 </div>
             </div>
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
@@ -5067,37 +5146,36 @@ function validateHandCash(amt) {
 
 //this function will check the amount entered were lesser or equal to hand closing balance
 function validateBankCash(amt) {
-    var cash_type = $('input[name=cash_type]:checked').val(); // selected bank ID
+
+    var radios = $('input[name=cash_type]');
+    var selected = $('input[name=cash_type]:checked');
+
+    if (!selected.length) return true;
+
+    // 🔑 Get index of selected radio
+    var index = radios.index(selected) - 1;
+
+    if (index === -1) {
+        console.error('Bank index not found');
+        return true;
+    }
+
     var entered_amt = parseFloat(amt.value) || 0;
 
-    if (cash_type) {
-        // Extract bank IDs from hidden input
-        var raw_ids = $('#untrkd_ids').val().split(',');
-        var bank_ids = raw_ids.filter(id => id.trim() !== '').map(id => id.replace('untrkd', ''));
-        // Find the index of the selected bank ID
-        var index = bank_ids.indexOf(cash_type);
-        if (index === -1) {
-            console.error("Bank ID not found");
-            return true; // allow by default
-        }
-        // Get the label with ID: bank_closing{index}
-        var label = $('#bank_closing' + index);
-        var bank_closing_label = label.text().replace(/,/g, '');
-        var bank_closing = parseFloat(bank_closing_label) || 0;
-
-        //untrkd_label removed from adding bank_closing because bank closing getting negative value, reason is validating by adding both but showing seperate bank and untrack.  
-        // var untrkdLabel = $('#untrkd' + cash_type);
-        // var bank_closing_untrkd_label = untrkdLabel.text().replace(/\D/g, '');
-        // var untrkd_label = parseInt(bank_closing_untrkd_label) || 0;
-
-        let bankClosing = bank_closing; 
-
-        if (entered_amt > bankClosing) {
-            alert('Enter Lesser Amount !');
-            $(amt).val('');
-            return false;
-        }
+    var label = $('#bank_closing' + index);
+    if (!label.length) {
+        console.error('Bank closing not found for index:', index);
+        return true;
     }
+
+    var bank_closing = parseFloat(label.text().replace(/,/g, '')) || 0;
+
+    if (entered_amt > bank_closing) {
+        alert('Enter Lesser Amount!');
+        $(amt).val('');
+        return false;
+    }
+
     return true;
 }
 
@@ -5207,3 +5285,25 @@ function agBValidation() {// same validation for both credit and debit
 
 
 /////////////////////////////////////////////////////// Agent End ///////////////////////////////////////////////////////////////////////
+async function checkTransactionCommon(options) {
+
+    const { transInput, type,  bankId, dateField } = options;
+
+    let transId = transInput.value.trim();
+
+    try {
+        let response = await checkBankTransactionDetails( type,  bankId, transId,'');
+
+        if (!response.status) {
+            alert(response.message);
+            transInput.value = '';
+            return;
+        }
+
+        $(dateField).val(response.data.trans_date.split('-').reverse().join('-'));
+
+    } catch (err) {
+        alert('Error checking transaction');
+        transInput.value = '';
+    }
+}
