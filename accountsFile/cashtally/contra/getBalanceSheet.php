@@ -109,8 +109,8 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
             $tabBody .= '</tr>';
 
             //Store credit and debit for total
-            $creditSum = $creditSum + intVal($row['Credit']);
-            $debitSum = $debitSum + intVal($row['Debit']);
+            $creditSum = $creditSum + floatval($row['Credit']);
+            $debitSum = $debitSum + floatval($row['Debit']);
             $i++;
         }
     } else {
@@ -180,8 +180,9 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
             $tabBody .= '</tr>';
 
             //Store credit and debit for total
-            $creditSum = $creditSum + intVal($row['Credit']);
-            $debitSum = $debitSum + intVal($row['Debit']);
+
+            $creditSum = $creditSum + floatval($row['Credit']);
+            $debitSum = $debitSum + floatval($row['Debit']);
             $i++;
         }
         $difference = $creditSum - $debitSum;
@@ -238,7 +239,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
             $tabBody .= '</tr>';
 
             //Store credit and debit for total
-            $creditSum = $creditSum + intVal($row['Credit']);
+            $creditSum = $creditSum + floatval($row['Credit']);
             $i++;
         }
     } else {
@@ -293,7 +294,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
             $tabBody .= '</tr>';
 
             //Store credit and debit for total
-            $debitSum = $debitSum + intVal($row['Debit']);
+            $debitSum = $debitSum + floatval($row['Debit']);
             $i++;
         }
     } else {
@@ -348,7 +349,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
             $tabBody .= '</tr>';
 
             //Store credit and debit for total
-            $debitSum = $debitSum + intVal($row['Debit']);
+            $debitSum = $debitSum + floatval($row['Debit']);
             $i++;
         }
 
@@ -442,7 +443,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 $agqry = $connect->query("SELECT name from name_detail_creation where name_id = '$name_id'");
                 $inv_name = $agqry->fetch()['name'] ?? '';
 
-                $difference1 = intVal($row['Credit']) - intVal($row['Debit']);
+                $difference1 = floatval($row['Credit']) - floatval($row['Debit']);
                 $closing_bal = $difference1 + $op_bal;
                 $c_bal += $closing_bal;
 
@@ -519,8 +520,8 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
             $tabBody .= '</tr>';
 
             //Store credit and debit for total
-            $creditSum = $creditSum + intVal($row['Credit']);
-            $debitSum = $debitSum + intVal($row['Debit']);
+            $creditSum = $creditSum + floatval($row['Credit']);
+            $debitSum = $debitSum + floatval($row['Debit']);
             $i++;
         }
         $difference = $creditSum - $debitSum;
@@ -617,7 +618,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 $agqry = $connect->query("SELECT name from name_detail_creation where name_id = '$name_id'");
                 $dep_name = $agqry->fetch()['name'] ?? '';
 
-                $difference1 = intVal($row['Credit']) - intVal($row['Debit']);
+                $difference1 = floatval($row['Credit']) - floatval($row['Debit']);
                 $closing_bal = $difference1 + $op_bal;
                 $c_bal += $closing_bal;
 
@@ -827,8 +828,8 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
             $tabBody .= '</tr>';
 
             //Store credit and debit for total
-            $creditSum = $creditSum + intVal($row['Credit']);
-            $debitSum = $debitSum + intVal($row['Debit']);
+            $creditSum = $creditSum + floatval($row['Credit']);
+            $debitSum = $debitSum + floatval($row['Debit']);
             $i++;
         }
         $difference = $creditSum - $debitSum;
@@ -925,7 +926,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
                 $agqry = $connect->query("SELECT name from name_detail_creation where name_id = '$name_id'");
                 $el_name = $agqry->fetch()['name'] ?? '';
 
-                $difference1 = intVal($row['Credit']) - intVal($row['Debit']);
+                $difference1 = floatval($row['Credit']) - floatval($row['Debit']);
                 $closing_bal = $difference1 + $op_bal;
                 $c_bal += $closing_bal;
 
@@ -1134,8 +1135,8 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
             $tabBody .= '</tr>';
 
             //Store credit and debit for total
-            $creditSum = $creditSum + intVal($row['Credit']);
-            $debitSum = $debitSum + intVal($row['Debit']);
+            $creditSum = $creditSum + floatval($row['Credit']);
+            $debitSum = $debitSum + floatval($row['Debit']);
             $i++;
         }
         $difference = $creditSum - $debitSum;
@@ -1189,7 +1190,7 @@ if ($sheet_type == 1) { //1 Means contra balance sheet
             $tabBody .= '</tr>';
 
             //Store credit and debit for total
-            $debitSum = $debitSum + intVal($row['Debit']);
+            $debitSum = $debitSum + floatval($row['Debit']);
             $i++;
         }
     } else {
@@ -1566,36 +1567,35 @@ if ($opening_bal != '') {
 
 <?php
 //Format number in Indian Format
-function moneyFormatIndia($num1)
+function moneyFormatIndia($num)
 {
-    if ($num1 < 0) {
-        $num = str_replace("-", "", $num1);
-    } else {
-        $num = $num1;
-    }
-    $explrestunits = "";
-    if (strlen($num) > 3) {
-        $lastthree = substr($num, strlen($num) - 3, strlen($num));
-        $restunits = substr($num, 0, strlen($num) - 3);
-        $restunits = (strlen($restunits) % 2 == 1) ? "0" . $restunits : $restunits;
-        $expunit = str_split($restunits, 2);
-        for ($i = 0; $i < sizeof($expunit); $i++) {
-            if ($i == 0) {
-                $explrestunits .= (int) $expunit[$i] . ",";
-            } else {
-                $explrestunits .= $expunit[$i] . ",";
-            }
-        }
-        $thecash = $explrestunits . $lastthree;
-    } else {
-        $thecash = $num;
+    // 🔹 FIX: handle -0 / 0 / 0.00
+    if ((float)$num == 0) {
+        return '0';
     }
 
-    if ($num1 < 0 && $num1 != '') {
-        $thecash = "-" . $thecash;
+    $isNegative = false;
+    if ($num < 0) {
+        $isNegative = true;
+        $num = abs($num);
     }
 
-    return $thecash;
+    $numStr = (string)$num;
+    $parts = explode('.', $numStr);
+    $intPart = $parts[0];
+    $decPart = isset($parts[1]) ? '.' . $parts[1] : '';
+
+    $len = strlen($intPart);
+    if ($len <= 3) {
+        $formatted = $intPart;
+    } else {
+        $lastThree = substr($intPart, -3);
+        $rest = substr($intPart, 0, -3);
+        $rest = preg_replace("/\B(?=(\d{2})+(?!\d))/", ",", $rest);
+        $formatted = $rest . "," . $lastThree;
+    }
+
+    return ($isNegative ? '-' : '') . $formatted . $decPart;
 }
 
 
