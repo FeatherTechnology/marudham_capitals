@@ -5645,28 +5645,26 @@ function getLoanHistory() {
         $("#loanHistoryDiv").html(response);
       },
     }).then(function () {
-      $(".due-chart").click(function () {
+     $(document).on("click", ".due-chart", function () {
         var req_id = $(this).data("reqid");
         var cus_id = $(this).data("cusid");
         dueChartList(req_id, cus_id);
       });
-      $(".penalty-chart").click(function () {
+      $(document).on("click", ".penalty-chart", function () {
         var req_id = $(this).data("reqid");
         var cus_id = $(this).data("cusid");
         penaltyChartList(req_id, cus_id);
       });
-      $(".collcharge-chart").click(function () {
+      $(document).on("click", ".collcharge-chart", function () {
         var req_id = $(this).data("reqid");
         collectionChargeChartList(req_id);
       });
-      $(".loansummary-chart").click(function () {
+      $(document).on("click", ".loansummary-chart", function () {
         var req_id = $(this).data("reqid");
         var cus_id = $(this).data("cusid");
         loanSummaryList(req_id, cus_id);
       });
-      $(".commitment-chart")
-        .off("click")
-        .click(function () {
+     $(document).on("click", ".commitment-chart", function () {
           //Commitment chart
           let req_id = $(this).data("reqid");
           let cus_id = $(this).data("cusid");

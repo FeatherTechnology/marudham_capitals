@@ -33,11 +33,13 @@ getDetails($connect, $where);
 function getDetails($connect, $where)
 {
     // Issued
-    $qry = $connect->query("SELECT SUM(amt) as amt FROM (
-        SELECT netcash as amt FROM ct_db_hissued WHERE $where
+  $qry = $connect->query("SELECT SUM(amt) AS amt FROM (
+        SELECT netcash AS amt FROM ct_db_hissued WHERE $where
         UNION ALL
-        SELECT netcash as amt FROM ct_db_bissued WHERE $where
-    ) AS combined_table");
+        SELECT COALESCE(cheque_value, 0) + COALESCE(transaction_value, 0) AS amt FROM loan_issue WHERE $where
+    ) AS combined_table
+");
+
 
     $row = $qry->fetch();
     $issued = $row['amt'] ?? 0;

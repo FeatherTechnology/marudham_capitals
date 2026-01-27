@@ -67,58 +67,65 @@ class ClosingBalanceClass
         $bank_closing_all = 0;
         foreach ($bank_details_arr as $val) {
             
-            $bankCreditQry = $this->db->query("SELECT
-                SUM(amt) AS bank_credit
-                FROM (
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_cash_deposit WHERE date(created_date) <= '$closing_date' and to_bank_id = '$val' $user_where)
-                    UNION ALL
-                    (SELECT COALESCE(SUM(credited_amt), 0) AS amt FROM ct_bank_collection WHERE date(created_date) <= '$closing_date' and bank_id = '$val' $user_where)
-                    UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bdeposit WHERE date(created_date) <= '$closing_date' and bank_id = '$val' $user_where)
-                    UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bel WHERE date(created_date) <= '$closing_date' and bank_id = '$val' $user_where)
-                    UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bexchange WHERE date(created_date) <= '$closing_date' and to_bank_id = '$val' $user_where)
-                    UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_binvest WHERE date(created_date) <= '$closing_date' and bank_id = '$val' $user_where)
-                    UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_boti WHERE date(created_date) <= '$closing_date' and to_bank_id = '$val' $user_where)
-                    UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bag WHERE date(created_date) <= '$closing_date' AND bank_id = '$val' $user_where)
-                ) AS Bank_Credit_Closing
-            ");
+            $bankQry = $this->db->query("SELECT balance FROM bank_stmt WHERE bank_id = '$val' AND date(trans_date) <= '$closing_date' ORDER BY trans_date DESC,id DESC LIMIT 1 ;");
+            // $bankCreditQry = $this->db->query("SELECT
+            //     SUM(amt) AS bank_credit
+            //     FROM (
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_cash_deposit WHERE date(created_date) <= '$closing_date' and to_bank_id = '$val' $user_where)
+            //         UNION ALL
+            //         (SELECT COALESCE(SUM(credited_amt), 0) AS amt FROM ct_bank_collection WHERE date(created_date) <= '$closing_date' and bank_id = '$val' $user_where)
+            //         UNION ALL
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bdeposit WHERE date(created_date) <= '$closing_date' and bank_id = '$val' $user_where)
+            //         UNION ALL
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bel WHERE date(created_date) <= '$closing_date' and bank_id = '$val' $user_where)
+            //         UNION ALL
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bexchange WHERE date(created_date) <= '$closing_date' and to_bank_id = '$val' $user_where)
+            //         UNION ALL
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_binvest WHERE date(created_date) <= '$closing_date' and bank_id = '$val' $user_where)
+            //         UNION ALL
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_boti WHERE date(created_date) <= '$closing_date' and to_bank_id = '$val' $user_where)
+            //         UNION ALL
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bag WHERE date(created_date) <= '$closing_date' AND bank_id = '$val' $user_where)
+            //     ) AS Bank_Credit_Closing
+            // ");
 
-            $bankCredit = $bankCreditQry->fetch()['bank_credit'];
+            // $bankCredit = $bankCreditQry->fetch()['bank_credit'];
 
-            $bankDebitQry = $this->db->query("SELECT
-                SUM(amt) AS bank_debit
-                FROM (
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_cash_withdraw WHERE date(created_date) <= '$closing_date' and from_bank_id = '$val' $user_where)
-                    UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bdeposit WHERE date(created_date) <= '$closing_date' and bank_id = '$val' $user_where)
-                    UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bel WHERE date(created_date) <= '$closing_date' and bank_id = '$val' $user_where)
-                    UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bexchange WHERE date(created_date) <= '$closing_date' and from_acc_id = '$val' $user_where)
-                    UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bexpense WHERE date(created_date) <= '$closing_date' and bank_id = '$val' $user_where)
-                    UNION ALL
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_binvest WHERE date(created_date) <= '$closing_date' and bank_id = '$val' $user_where)
-                    UNION ALL
-                    (SELECT COALESCE(SUM(netcash), 0) AS amt FROM ct_db_bissued WHERE date(created_date) <= '$closing_date' and li_bank_id = '$val' $user_where)
-                    UNION ALL 
-                    (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bag WHERE date(created_date) <= '$closing_date' and bank_id = '$val'  $user_where)
-                ) AS Bank_debit_Closing
-            ");
+            // $bankDebitQry = $this->db->query("SELECT
+            //     SUM(amt) AS bank_debit
+            //     FROM (
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_cash_withdraw WHERE date(created_date) <= '$closing_date' and from_bank_id = '$val' $user_where)
+            //         UNION ALL
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bdeposit WHERE date(created_date) <= '$closing_date' and bank_id = '$val' $user_where)
+            //         UNION ALL
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bel WHERE date(created_date) <= '$closing_date' and bank_id = '$val' $user_where)
+            //         UNION ALL
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bexchange WHERE date(created_date) <= '$closing_date' and from_acc_id = '$val' $user_where)
+            //         UNION ALL
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bexpense WHERE date(created_date) <= '$closing_date' and bank_id = '$val' $user_where)
+            //         UNION ALL
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_binvest WHERE date(created_date) <= '$closing_date' and bank_id = '$val' $user_where)
+            //         UNION ALL
+            //         (SELECT COALESCE(SUM(netcash), 0) AS amt FROM ct_db_bissued WHERE date(created_date) <= '$closing_date' and li_bank_id = '$val' $user_where)
+            //         UNION ALL 
+            //         (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bag WHERE date(created_date) <= '$closing_date' and bank_id = '$val'  $user_where)
+            //     ) AS Bank_debit_Closing
+            // ");
 
-            $bankDebit = $bankDebitQry->fetch()['bank_debit'];
+            // $bankDebit = $bankDebitQry->fetch()['bank_debit'];
 
-            if ($bankCredit == 0 && $bankDebit == 0) {
-                $records[$i]['bank_closing'] = 0;
-            } else {
-                $records[$i]['bank_closing'] = intVal($bankCredit) - intVal($bankDebit);
-                $bank_closing_all = $bank_closing_all + $records[$i]['bank_closing'];
-            }
+            // if ($bankCredit == 0 && $bankDebit == 0) {
+            //     $records[$i]['bank_closing'] = 0;
+            // } else {
+            //     $records[$i]['bank_closing'] = intVal($bankCredit) - intVal($bankDebit);
+            //     $bank_closing_all = $bank_closing_all + $records[$i]['bank_closing'];
+            // }
+            $row = $bankQry->fetch(PDO::FETCH_ASSOC);
+
+            $closing_balance = ($row && isset($row['balance'])) ? (float)$row['balance'] : 0;
+            $records[$i]['bank_closing'] = $closing_balance;
+            $bank_closing_all += $closing_balance;
+
             $i++;
         }
 
@@ -222,7 +229,15 @@ class ClosingBalanceClass
         $records[0]['hand_closing'] = $records[0]['hand_closing'] - $agent_hand_op; //this will subract the hand debited amount for the agent with hand closing cash
         //this will subract the bank debited amount for the agent with bank closing cash
 
-        $records[0]['closing_balance'] = $records[0]['hand_closing'] + $bank_closing_all;
+         $closing_total = $records[0]['hand_closing'] + $bank_closing_all;
+
+        if (floor($closing_total) == $closing_total) {
+            // No decimal part
+            $records[0]['closing_balance'] = number_format($closing_total, 0, '.', '');
+        } else {
+            // Has decimal part
+            $records[0]['closing_balance'] = number_format($closing_total, 2, '.', '');
+        }
 
         return $records;
     }
@@ -360,32 +375,41 @@ class ClosingBalanceClass
         return $agent_closing;
     }
 
-    function moneyFormatIndia($num)
-    {
-        $isNegative = false;
-        if ($num < 0) {
-            $isNegative = true;
-            $num = abs($num);
-        }
-
-        $explrestunits = "";
-        if (strlen((string)$num) > 3) {
-            $lastthree = substr((string)$num, -3);
-            $restunits = substr((string)$num, 0, -3);
-            $restunits = (strlen($restunits) % 2 == 1) ? "0" . $restunits : $restunits;
-            $expunit = str_split($restunits, 2);
-            foreach ($expunit as $index => $value) {
-                if ($index == 0) {
-                    $explrestunits .= (int)$value . ",";
-                } else {
-                    $explrestunits .= $value . ",";
-                }
-            }
-            $thecash = $explrestunits . $lastthree;
-        } else {
-            $thecash = $num;
-        }
-
-        return $isNegative ? "-" . $thecash : $thecash;
+function moneyFormatIndia($num)
+{
+    $isNegative = false;
+    if ($num < 0) {
+        $isNegative = true;
+        $num = abs($num);
     }
+
+    // 🔹 Split integer & decimal part (minimal addition)
+    $numStr = (string)$num;
+    $parts = explode('.', $numStr);
+    $intPart = $parts[0];
+    $decPart = isset($parts[1]) ? '.' . $parts[1] : '';
+
+    $explrestunits = "";
+    if (strlen($intPart) > 3) {
+        $lastthree = substr($intPart, -3);
+        $restunits = substr($intPart, 0, -3);
+        $restunits = (strlen($restunits) % 2 == 1) ? "0" . $restunits : $restunits;
+        $expunit = str_split($restunits, 2);
+
+        foreach ($expunit as $index => $value) {
+            if ($index == 0) {
+                $explrestunits .= (int)$value . ",";
+            } else {
+                $explrestunits .= $value . ",";
+            }
+        }
+
+        $thecash = $explrestunits . $lastthree . $decPart;
+    } else {
+        $thecash = $intPart . $decPart;
+    }
+
+    return $isNegative ? "-" . $thecash : $thecash;
+}
+
 }
