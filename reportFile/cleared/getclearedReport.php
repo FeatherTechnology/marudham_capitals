@@ -5,6 +5,7 @@ session_start();
 $user_id = $_SESSION['userid'];
 
 $to_date = date('Y-m-d', strtotime($_POST['to_date']));
+$from_date = date('Y-m-d', strtotime($_POST['from_date']));
 
 $column = array(
     'bs.id',
@@ -31,14 +32,13 @@ FROM
     bank_stmt bs
     LEFT JOIN bank_creation bc ON bs.bank_id = bc.id
 WHERE 
-    DATE(bs.trans_date) <= '$to_date'
-    AND (
-        bs.clr_status = '0' OR (bs.clr_status = '1' AND bs.updated_date > '$to_date 23:59:59')
-    )";
+      DATE(bs.trans_date) BETWEEN '$from_date' AND '$to_date'
+    AND bs.clr_status = '1'";
+    
 
 if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {
-        $query .= " and (bs.bank_name LIKE '%" . $_POST['search'] . "%' OR
+        $query .= " and (bc.bank_name LIKE '%" . $_POST['search'] . "%' OR
             bs.trans_date LIKE '%" . $_POST['search'] . "%' OR
             bs.narration LIKE '%" . $_POST['search'] . "%' OR
             bs.trans_id LIKE '%" . $_POST['search'] . "%' OR
@@ -78,13 +78,13 @@ foreach ($result as $row) {
     $sub_array   = array();
     $sub_array[] = $sno;
     $sub_array[] = $row['bank_name'];
-    $sub_array[] = date('d-m-Y', strtotime($row['trans_date']));
+    $sub_array[] = date('d-m-Y H:i', strtotime($row['trans_date']));
     $sub_array[] = $row['narration'] ?? '';
     $sub_array[] = $row['trans_id'];
     $sub_array[] = moneyFormatIndia($row['credit'] ?? '');
     $sub_array[] = moneyFormatIndia($row['debit'] ?? '');
     $sub_array[] = moneyFormatIndia($row['balance'] ?? '');
-    $sub_array[] = 'Unclear';
+    $sub_array[] = 'Cleared';
 
     $data[]      = $sub_array;
     $sno = $sno + 1;

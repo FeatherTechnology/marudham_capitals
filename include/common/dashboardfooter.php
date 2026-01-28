@@ -2717,8 +2717,8 @@ function moneyFormatIndia(num) {
         <script src="js/promotion_activity_report.js"></script>
     <?php }
 
-    if ($current_page == 'uncleared_report') { ?>
-        <script src="js/uncleared_report.js"></script>
+    if ($current_page == 'cleared_report') { ?>
+        <script src="js/cleared_report.js"></script>
     <?php }
 
     if ($current_page == 'work_count_report') { ?>

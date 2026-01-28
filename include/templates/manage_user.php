@@ -112,7 +112,7 @@ $due_followup_customer_count_report = '';
 $commitment_report = '';
 $customer_status_report = '';
 $promotion_activity_report = '';
-$uncleared_report = '';
+$cleared_report = '';
 $events_report = '';
 $area_loan_count_report = '';
 $work_count_report = '';
@@ -288,7 +288,7 @@ if($idupd>0)
 			$commitment_report  = $getUser['commitment_report'];
 			$customer_status_report  = $getUser['customer_status_report'];
 			$promotion_activity_report  = $getUser['promotion_activity_report'];
-			$uncleared_report  = $getUser['uncleared_report'];
+			$cleared_report  = $getUser['cleared_report'];
 			$events_report  = $getUser['events_report'];
 			$area_loan_count_report  = $getUser['area_loan_count_report'];
 			$work_count_report  = $getUser['work_count_report'];
@@ -1363,8 +1363,8 @@ if($idupd>0)
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($uncleared_report==0){ echo'checked'; }} ?> tabindex="89" class="acounts-checkbox    screen-validations" id="uncleared_report" name="uncleared_report" disabled>&nbsp;&nbsp;
-                                <label class="custom-control-label" for="uncleared_report">Uncleared</label>
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($cleared_report==0){ echo'checked'; }} ?> tabindex="89" class="acounts-checkbox    screen-validations" id="cleared_report" name="cleared_report" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="cleared_report">Cleared</label>
                             </div>
 						
                         </div>

@@ -555,9 +555,9 @@ if (isset($getuserdetails['download_access'])) {
 				<?php include "include/templates/customer_status_report.php" ?>
 			<?php } else ?>
 
-			<!-- uncleared_report -->
-			<?php if ($current_page == 'uncleared_report') { ?>
-				<?php include "include/templates/uncleared_report.php" ?>
+			<!-- cleared_report -->
+			<?php if ($current_page == 'cleared_report') { ?>
+				<?php include "include/templates/cleared_report.php" ?>
 			<?php } else ?>
 
 			<!-- Events Report -->
