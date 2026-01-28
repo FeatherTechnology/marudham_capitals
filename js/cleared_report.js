@@ -1,21 +1,31 @@
 $(document).ready(function () {
+ $('#from_date').change(function(){
+        const fromDate = $(this).val();
+        const toDate = $('#to_date').val();
+        $('#to_date').attr('min', fromDate);
 
-    //uncleared_report_table 
+         // Check if from_date is greater than to_date
+        if (toDate && fromDate > toDate) {
+            $('#to_date').val(''); // Clear the invalid value
+        }
+    });
+    //cleared_report_table 
     $('#reset_btn').click(function () {
-        unclearedReportTable();
+        clearedReportTable();
     })
 });
 
-function unclearedReportTable() {
+function clearedReportTable() {
+    let from_date = $('#from_date').val();
     let to_date = $('#to_date').val();
-    if (!to_date) {
-        swalError('Please Select Date!', 'To Date is required.');
+    if (!from_date ||!to_date) {
+        swalError('Please Select Date!', 'Both From and To Date are required.');
         return;
     }
-    $('#uncleared_report_table').DataTable().destroy();
+    $('#cleared_report_table').DataTable().destroy();
     // Declare table variable to store the DataTable instance
-    var uncleared_report_table = $('#uncleared_report_table').DataTable({
-        ...getStateSaveConfig('uncleared_report_table'),
+    var cleared_report_table = $('#cleared_report_table').DataTable({
+        ...getStateSaveConfig('cleared_report_table'),
         "order": [
             [0, "desc"]
         ],
@@ -23,20 +33,21 @@ function unclearedReportTable() {
         'serverSide': true,
         'serverMethod': 'post',
         'ajax': {
-            'url': 'reportFile/uncleared/getUnclearedReport.php',
+            'url': 'reportFile/cleared/getClearedReport.php',
             'data': function (data) {
                 var search = $('input[type=search]').val();
                 data.search = search;
                 data.to_date = $('#to_date').val();
+                data.from_date = $('#from_date').val();
             }
         },
         dom: 'lBfrtip',
         buttons: [{
             extend: 'excel',
-            title: "Uncleared Report List",
+            title: "Cleared Report List",
             action: function (e, dt, button, config) {
                 var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
-                var dynamic = curDateJs('Uncleared_Report'); // or any base
+                var dynamic = curDateJs('Cleared_Report'); // or any base
                 config.title = dynamic;      // for versions that use title as filename
                 config.filename = dynamic;   // for html5 filename
                 defaultAction.call(this, e, dt, button, config);
@@ -79,13 +90,13 @@ function unclearedReportTable() {
             });
         },
         'drawCallback': function () {
-            searchFunction('uncleared_report_table');
-            paginationFunction('uncleared_report_table');
+            searchFunction('cleared_report_table');
+            paginationFunction('cleared_report_table');
         }
     });
 
     // Pass the table variable to the initColVisFeatures function
-    initColVisFeatures(uncleared_report_table, 'uncleared_report_table');
+    initColVisFeatures(cleared_report_table, 'cleared_report_table');
 }
 
 function swalError(title, text) {
