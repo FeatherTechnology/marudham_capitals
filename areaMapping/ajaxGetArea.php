@@ -1,119 +1,81 @@
-<?php 
+<?php
 include('../ajaxconfig.php');
-$map='group';
-if (isset($_POST['map'])) {
-    $map = $_POST['map'];
+
+$map = $_POST['map'] ?? 'group';
+$area_id_upd = ($_POST['area_id_upd']) ? explode(',', $_POST['area_id_upd']) : [];
+
+/* Get all active areas */
+$areas = $connect->query("
+    SELECT area_id, area_name
+    FROM area_list_creation
+    WHERE status = 0
+")->fetchAll(PDO::FETCH_ASSOC);
+
+if (empty($areas)) {
+    echo json_encode([]);
+    exit;
 }
 
-$selectQry = "SELECT * FROM area_list_creation WHERE status= 0  ";
-$res = $connect->query($selectQry) or die("Error in Get All Records");
-$detailrecords = array();$j=0;
-$area_id = array();
+/* Get total ACTIVE sub-area count per area */
+$subAreaCount = $connect->query("
+    SELECT area_id_ref, COUNT(*) AS total_sub
+    FROM sub_area_list_creation
+    WHERE status = 0
+    GROUP BY area_id_ref
+")->fetchAll(PDO::FETCH_KEY_PAIR);
 
-if ($res->rowCount()>0)
-{
-    while($row = $res->fetchObject()){
-        $area_id      = $row->area_id;
-        $detailrecords[$j]['area_id']      = $row->area_id;
-        $detailrecords[$j]['area_name']    = $row->area_name;
+/* Get mapped sub-area count per area 
+If only check mapping area & sub area tables it return map id based record so $mappedSub >= $totalSub get true always. ex: $totalSub = 5, $totalSub = 111; but we need to check whether those 5 sub area are mapped or not. so using sub_area_list_creation table as JOIN
+*/
+if ($map === 'line') {
 
-        if($map == 'line'){
-            
-            $runQry = $connect->query("SELECT * From area_line_mapping where FIND_IN_SET($area_id,area_id) ");
-            $area_ids = array();
-            $sub_area_ids = array();
-            if($runQry->rowCount()>0){
-                while($ress = $runQry->fetch()){
-                    $area_ids[] = $ress['area_id'];
-                    $sub_area_ids[] = $ress['sub_area_id'];
-                    
-                }
-                $runQry1 = $connect->query("SELECT * FROM sub_area_list_creation where area_id_ref = $area_id and status=0");
-                if($runQry1->rowCount()<=0){
-                    $detailrecords[$j]['disabled'] = true;
-                }
-                $runQry = $connect->query("SELECT * FROM sub_area_list_creation where area_id_ref = $area_id and status=0");
-                $sub_area_all = array();
-                if($runQry->rowCount()>0){
-                    while($ress = $runQry->fetch()){
-                        $sub_area_all[] = $ress['sub_area_id'];
-                    }
-    
-                    //For removing values which are repeated inside array
-                    $mergedArray = [];
-                    foreach ($sub_area_ids as $element) {
-                        $mergedArray = array_merge($mergedArray, explode(",", $element));
-                    }
-                    $uniqueSubArray = array_unique($mergedArray);
-    
-                    //For all values are present in both or not
-                    $finalizeSub = array_diff($sub_area_all,$uniqueSubArray);
-                    if(empty($finalizeSub)){
-                        $detailrecords[$j]['disabled'] = true;
-                    }else{
-                        $detailrecords[$j]['disabled'] = false;
-                    }
-                }
-            }else{
-                $detailrecords[$j]['disabled'] = false;
-            }
+    $mapped = $connect->query("
+        SELECT alma.area_id, COUNT(DISTINCT almsa.sub_area_id) AS mapped_sub
+        FROM area_line_mapping_area alma
+        JOIN area_line_mapping_sub_area almsa
+            ON alma.line_map_id = almsa.line_map_id
+        JOIN sub_area_list_creation salc
+            ON salc.sub_area_id = almsa.sub_area_id
+            AND salc.area_id_ref = alma.area_id
+            AND salc.status = 0
+        GROUP BY alma.area_id
+    ")->fetchAll(PDO::FETCH_KEY_PAIR);
 
-        }else if($map == 'group'){
-            $runQry = $connect->query("SELECT * From area_group_mapping where FIND_IN_SET($area_id,area_id) ");
-            $area_ids = array();
-            $sub_area_ids = array();
-            if($runQry->rowCount()>0){
-                while($ress = $runQry->fetch()){
-                    $area_ids[] = $ress['area_id'];
-                    $sub_area_ids[] = $ress['sub_area_id'];
-                }
-                $runQry1 = $connect->query("SELECT * FROM sub_area_list_creation where area_id_ref = $area_id and status=0");
-                if($runQry1->rowCount()<=0){
-                    $detailrecords[$j]['disabled'] = true;
-                }
-                $runQry = $connect->query("SELECT * FROM sub_area_list_creation where area_id_ref = $area_id and status=0");
-                $sub_area_all = array();
-                if($runQry->rowCount()>0){
-                    while($ress = $runQry->fetch()){
-                        $sub_area_all[] = $ress['sub_area_id'];
-                    }
-    
-                    //For removing values which are repeated inside array
-                    $mergedArray = [];
-                    foreach ($sub_area_ids as $element) {
-                        $mergedArray = array_merge($mergedArray, explode(",", $element));
-                    }
-                    $uniqueSubArray = array_unique($mergedArray);
-    
-                    //For all values are present in both or not
-                    $finalizeSub = array_diff($sub_area_all,$uniqueSubArray);
-                    if(empty($finalizeSub)){
-                        $detailrecords[$j]['disabled'] = true;
-                    }else{
-                        $detailrecords[$j]['disabled'] = false;
-                    }
-                }
-            }else{
-                $detailrecords[$j]['disabled'] = false;
-            }
-        }
-        
+} else {
 
-        // $mergedArray = [];
-        // foreach ($area_ids as $element) {
-        //     $mergedArray = array_merge($mergedArray, explode(",", $element));
-        // }
-        // $uniqueArray = array_unique($mergedArray);
+    $mapped = $connect->query("
+        SELECT agma.area_id, COUNT(DISTINCT agmsa.sub_area_id) AS mapped_sub
+        FROM area_group_mapping_area agma
+        JOIN area_group_mapping_sub_area agmsa
+            ON agma.group_map_id = agmsa.group_map_id
+        JOIN sub_area_list_creation salc
+            ON salc.sub_area_id = agmsa.sub_area_id
+            AND salc.area_id_ref = agma.area_id
+            AND salc.status = 0
+        GROUP BY agma.area_id
+    ")->fetchAll(PDO::FETCH_KEY_PAIR);
+}
 
-        // print_r($uniqueArray);
-        
-        $j++;
+/* Build dropdown (ONLY enabled areas) */
+$response = [];
+
+foreach ($areas as $area) {
+
+    $area_id = $area['area_id'];
+
+    $totalSub  = $subAreaCount[$area_id] ?? 0;
+    $mappedSub = $mapped[$area_id] ?? 0;
+
+    // No sub-areas OR fully mapped → SKIP
+    if (($totalSub == 0 || $mappedSub >= $totalSub) && !in_array($area_id, $area_id_upd)) {
+        continue;
     }
- 
+
+    $response[] = [
+        'area_id'   => $area_id,
+        'area_name' => $area['area_name']
+    ];
 }
 
-echo json_encode($detailrecords);
-
-// Close the database connection
+echo json_encode($response);
 $connect = null;
-?>

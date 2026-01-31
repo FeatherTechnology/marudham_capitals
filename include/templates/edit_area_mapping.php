@@ -8,7 +8,6 @@
 <br><br>
 <!-- Page header end -->
 
-
 <!-- Main container start -->
 <div class="main-container">
 	<!-- Row start -->
@@ -23,16 +22,6 @@
 				<input type="radio" name="mapping_type" id="due_followup" value="duefollowup" <?php if(isset($_GET['type']) and $_GET['type'] == 'duefollowup') echo 'checked';?>></input><label for='due_followup' >&nbsp;&nbsp;Followup</label>
 			</div>
 		</div>
-		<!-- <div class="col-md-12 "> 
-			<div class="row">
-				<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12"></div>
-				<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-					<div class="form-group" style="text-align:center;">
-						<label >Search</label><input type="text" id="filter" name="filter" class='form-control' width="50px">
-					</div>
-				</div>
-			</div>
-		</div> -->
 		<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12"></div>
 		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 			<div class="table-container line_mapping" <?php if(isset($_GET['type']) and $_GET['type'] == 'line') {?> style="display:block"<?php }else{ ?> style="display:none"<?php } ?>>
@@ -50,7 +39,6 @@
 					$mscid=$_GET['msc'];
 					if($mscid==1)
 					{ ?>
-					<!-- <script>alert('Area Mapping Added Successfully!')</script> -->
 					<div class="alert alert-success" role="alert">
 						<div class="alert-text">Area Mapping Added Successfully!</div>
 					</div> 
@@ -58,7 +46,6 @@
 					}
 					if($mscid==2)
 					{?>
-					<!-- <script>alert('Area Mapping Updated Successfully!')</script> -->
 					<div class="alert alert-success" role="alert">
 						<div class="alert-text">Area Mapping Updated Successfully!</div>
 					</div>
@@ -66,7 +53,6 @@
 					}
 					if($mscid==3)
 					{?>
-					<!-- <script>alert('Area Mapping Inactive Successfully!')</script> -->
 					<div class="alert alert-danger" role="alert">
 						<div class="alert-text">Area Mapping Inactive Successfully!</div>
 					</div>
@@ -99,7 +85,6 @@
 						<button type="button" class="btn btn-primary"><span class="icon-add"></span>&nbsp; Add Group Mapping</button>
 					</a>
 				</div><br><br>
-				<!-- <div class='form-control' style="background-color:#009688;color:white;text-align:center;font-size:17px;border-radius:3px;">Group List</div><br> -->
 				<div class="table-responsive">
 					<?php
 					$mscid=0;
