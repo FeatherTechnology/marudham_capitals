@@ -65,13 +65,13 @@ function getBankNames() {
             $.each(response, function (index, val) {
 
                 $('#bank_name').append(
-                     '<option value="' + val.bank_id + '" data-short="'+ val.short_name +'">' +
+                     '<option value="' + val.id + '" data-short="'+ val.short_name +'">' +
                     val.bank_name +
                     '</option>'
                 );
 
                 $('#bank_id_upload').append(
-                    '<option value="' + val.bank_id + '" data-short="'+ val.short_name +'">' +
+                    '<option value="' + val.id + '" data-short="'+ val.short_name +'">' +
                     val.bank_name +
                     '</option>'
                 );
@@ -82,7 +82,7 @@ function getBankNames() {
                 $('#acc_no').val('');
 
                 $.each(response, function (index, val) {
-                    if (bank_id == val.bank_id) {
+                    if (bank_id == val.id) {
                         $('#acc_no').val(val.acc_no);
                     }
                 });

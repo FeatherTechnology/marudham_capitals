@@ -168,7 +168,7 @@ $(document).ready(function () {
     $("#transaction_id").blur(async function () {
         let bankId = $('#bank_id').val();
         if(!bankId){
-            alert("Kindly select Bank Name!"); 
+            swarlErrorAlert("Kindly select Bank Name!"); 
             return;
         }
         
@@ -181,21 +181,21 @@ $(document).ready(function () {
         }
         
         if(!transactionValue){
-            alert("Kindly Fill Value!"); 
+            swarlErrorAlert("Kindly Fill Value!"); 
             return;
         }
 
         let transId = $('#transaction_id').val();
         let response = await checkBankTransactionDetails('debit', bankId, transId, transactionValue);
         if (!response.status) {
-            alert(response.message);
+            swarlErrorAlert(response.message);
             $('#transaction_id').val('');
             return;
         }
 
         let alertStatus = response.data.alert_status;
         if(alertStatus){
-            alert(response.data.alert);
+            swarlErrorAlert(response.data.alert);
             $('#transaction_id').val('');
         }else{
             $('#trans_date').val(response.data.trans_date);
@@ -286,7 +286,14 @@ $(document).ready(function () {
                                 window.location.href = 'edit_accounts_loan_issue';
                             }
                         });
-                    }
+                    }else{
+                        Swal.fire({
+                            title: 'Error!',
+                            text :  result.response,
+                            icon : 'error',
+                            confirmButtonColor: '#cc4444'
+                        });
+                    };
                 },
                 error: function (error) {
                     Swal.fire({
@@ -1511,4 +1518,12 @@ function loanIssueSumitValidation() {
 //Span Hide
 function hideCheckSpan() {
     $('#cheque_num, #cheque_val, #cheque_remark, #transact_id, #transdateCheck, #transact_val, #transact_remark, #pay_type, #cash_amnt, #cash_guarentor, #val_check, #bank_idCheck').hide();
+}
+function swarlErrorAlert(response) {
+  Swal.fire({
+    title: response,
+    icon: "error",
+    confirmButtonText: "Ok",
+    confirmButtonColor: "#009688",
+  });
 }

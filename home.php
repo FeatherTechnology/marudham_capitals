@@ -540,6 +540,11 @@ if (isset($getuserdetails['download_access'])) {
 				<?php include "include/templates/day_end_report.php" ?>
 			<?php } else ?>
 
+			<!-- Cash Tally Activity Report -->
+			<?php if ($current_page == 'cash_tally_activity_report') { ?>
+				<?php include "include/templates/cash_tally_activity_report.php" ?>
+			<?php } else ?>
+
 			<!-- Commitment Report -->
 			<?php if ($current_page == 'commitment_report') { ?>
 				<?php include "include/templates/commitment_report.php" ?>

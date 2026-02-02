@@ -2705,6 +2705,10 @@ function moneyFormatIndia(num) {
         <script src="js/day_end_report.js"></script>
     <?php }
 
+    if ($current_page == 'cash_tally_activity_report') { ?>
+        <script src="js/cash_tally_activity_report.js"></script>
+    <?php }
+
     if ($current_page == 'commitment_report') { ?>
         <script src="js/commitment_report.js"></script>
     <?php }
