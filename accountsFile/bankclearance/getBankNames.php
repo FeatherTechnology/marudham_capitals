@@ -1,33 +1,22 @@
 <?php
 session_start();
-$user_id = $_SESSION['userid'];
 include("../../ajaxconfig.php");
+if (isset($_SESSION["userid"])) {
+    $user_id = $_SESSION["userid"];
+}
 
-$i=0;
-$records = array();
-
-$qry = $connect->query("SELECT bank_details from `user` where `user_id` = '$user_id' ");
-$values = $qry->fetch()['bank_details'];
-
-if($values != ''){
-
-    $bank_id_arr = explode(',',$values);
-
-    foreach ($bank_id_arr as $val){
-
-        $qry = $connect->query("SELECT id,bank_name,short_name,acc_no from bank_creation where id=$val");
+    $qry = $connect->query("SELECT bc.* FROM bank_creation bc JOIN user u ON FIND_IN_SET(bc.id, u.bank_access) > 0 WHERE u.user_id =  $user_id;");
+    $records = array();
+    if($qry->rowCount() > 0){
+        $i=0;
         while($row = $qry->fetch()){
-            $records[$i]['bank_id'] = $row['id'];
-            $records[$i]['bank_fullname'] = $row['bank_name'];
-            $records[$i]['acc_no'] = $row['acc_no'];
-            $records[$i]['bank_name'] = $row['short_name'] .' - '. substr($row['acc_no'],-5) ;
+            $records[$i]['id'] = $row['id'];
+            $records[$i]['bank_name'] = $row['bank_name'];
             $records[$i]['short_name'] = $row['short_name'];
             $i++;
         }
-    }
-}
-
-echo json_encode($records);
+    }	
+    echo json_encode($records);
 
 // Close the database connection
 $connect = null;

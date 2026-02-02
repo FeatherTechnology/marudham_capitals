@@ -269,10 +269,10 @@ function calculateClosingForBenefit() {
 
     $('.benefits-card').find('tbody tr').each(function () {
         let credit_val = $(this).find('td:nth-child(2)').text() ? $(this).find('td:nth-child(2)').text() : '0';
-        credit = credit + parseInt(credit_val.replaceAll(',', ''));
+        credit = credit + parseFloat(credit_val.replaceAll(',', ''));
 
         let debit_val = $(this).find('td:nth-child(3)').text() ? $(this).find('td:nth-child(3)').text() : '0';
-        debit = debit + parseInt(debit_val.replaceAll(',', ''));
+        debit = debit + parseFloat(debit_val.replaceAll(',', ''));
     })
 
     var difference = credit - debit;

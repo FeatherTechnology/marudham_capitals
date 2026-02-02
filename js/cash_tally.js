@@ -4528,11 +4528,12 @@ function getBelRefcode() {
         if (!confirm("Do you want delete Name Details?")) {
             return false;
         } else {
-            var name_id = $(this).attr('value');
+            var name_id = $(this).data('name_id');
+            var opt_for = $(this).data('opt_for');
             var c_obj = $(this).parents("tr");
             $.ajax({
                 url: 'accountsFile/cashtally/nameDetailModal/ajaxDeleteNameDetail.php',
-                data: { "name_id": name_id },
+                data: { "name_id": name_id , "opt_for":opt_for},
                 type: 'POST',
                 cache: false,
                 success: function (response) {

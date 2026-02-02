@@ -47,7 +47,7 @@ function getBankNames() {
             $('#bank_name').empty();
             $('#bank_name').append('<option value="">Select Bank Name</option>');
             $.each(response, function (index, val) {
-                $('#bank_name').append("<option value='" + val['bank_id'] + "'>" + val['bank_name'] + "</option>");
+                $('#bank_name').append("<option value='" + val['id'] + "'>" + val['bank_name'] + "</option>");
             })
         }
     });
@@ -119,7 +119,6 @@ function getClearanceTable() {
                             [10, 25, 50, -1],
                             [10, 25, 50, "All"]
                         ],
-                        order: [[1, 'asc']], // change index if needed
                         createdRow: function (row, data, dataIndex) {
                             $('td:eq(0)', row).html(dataIndex + 1);
                         },
@@ -127,6 +126,7 @@ function getClearanceTable() {
                             this.api().column(0).nodes().each(function (cell, i) {
                                 cell.innerHTML = i + 1;
                             });
+                            searchFunction('bank_clearance_list');
                         },
                         dom: 'lBfrtip',
                         buttons: [{

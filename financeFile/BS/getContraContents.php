@@ -60,8 +60,8 @@ function getDetails($connect, $where)
     $row = $qry->fetch();
     $cash_withdrawal = $row['amt'] ?? 0;
 
-    $response['credit_contra'] = intVal($bank_withdrawal) + intVal($cash_deposit);
-    $response['debit_contra'] = +intVal($bank_deposit) + intVal($cash_withdrawal);
+    $response['credit_contra'] = (float)$bank_withdrawal + (float)$cash_deposit;
+    $response['debit_contra'] = +(float)$bank_deposit + (float)$cash_withdrawal;
 
     $response['credit_contra'] = number_format($response['credit_contra'], 0, '', ',');
     $response['debit_contra'] = number_format($response['debit_contra'], 0, '', ',');
