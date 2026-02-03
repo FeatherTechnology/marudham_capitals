@@ -4,6 +4,11 @@ const branchMultiselect = new Choices('#branch_id1', {
     noChoicesText: 'Select Branch Name',
     allowHTML: true
 });
+const bankAccessMultiselect = new Choices('#bank_access', {
+    removeItemButton: true,
+    noChoicesText: 'Select Branch Access',
+    allowHTML: true
+});
 
 const agentMultiselect = new Choices('#agent1', {
     removeItemButton: true,
@@ -153,6 +158,22 @@ $(document).ready(function () {
         getGroupDropdown('ver_group_id','ver_group_id_upd',branch_id);
         getLineDropdown(branch_id);
         getdueFollupLineDropdown(branch_id);
+    });
+    $('#bank_access').change(function () {
+        var bank_access = bankAccessMultiselect.getValue();
+        var bank_details = '';
+        for (var i = 0; i < bank_access.length; i++) {
+            if (i > 0) {
+                bank_details += ',';
+            }
+            bank_details += bank_access[i].value;
+        }
+        var arr = bank_details.split(",");
+        arr.sort(function (a, b) { return a - b });
+        var sortedStr = arr.join(",");
+
+        $('#bank_access_id').val(sortedStr);
+
     });
 
     $('#bank_details1').change(function () {
@@ -519,6 +540,7 @@ $(function () {
         getdueFollupLineDropdown(branch_id_upd);
         getBankDetails();
         getProAccess();
+        getBankName();
 
         var update_screen = document.querySelector('#update');
         if (update_screen.checked) {
@@ -1048,6 +1070,39 @@ function getBankDetails() {
             $('#bank_details1').trigger('change');// trigger change event for updating once again from temp select box to hidden input
         }
     })
+}
+//Get Bank Name For Bank Access
+function getBankName() {
+    var bank_upd = $('#bank_access_id').val().split(',');
+    $.ajax({
+        url: 'manageUser/getBankDetails.php',
+        data: {},
+        dataType: 'json',
+        type: 'post',
+        cache: false,
+        success: function (response) {
+            bankAccessMultiselect.clearStore();
+            for (var i = 0; i < response.length; i++) {
+                var id = response[i]['id'];
+                var short_name = response[i]['short_name'];
+                var selected = '';
+                if (bank_upd != '') {
+                    for (var j = 0; j < bank_upd.length; j++) {
+                        if (bank_upd[j] == id) {
+                            selected = 'selected';
+                        }
+                    }
+                }
+                var items = [{
+                    value: id,
+                    label: short_name,
+                    selected: selected
+                }]
+                bankAccessMultiselect.setChoices(items);
+                bankAccessMultiselect.init();
+            }
+        }
+    });
 }
 
 //Get promotion access list

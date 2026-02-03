@@ -36,9 +36,8 @@ $opt_for = $_POST['opt_for'];
                         <a id="edit_name" value="<?php if (isset($ct["name_id"])) {
                                                         echo $ct["name_id"];
                                                     } ?>"><span class="icon-border_color"></span></a> &nbsp;
-                        <a id="delete_name" value="<?php if (isset($ct["name_id"])) {
-                                                        echo $ct["name_id"];
-                                                    } ?>"><span class='icon-trash-2'></span></a>
+                        <a id="delete_name" data-name_id="<?php 
+                            echo $ct['name_id'] ?? ''; ?>" data-opt_for="<?php echo $ct['opt_for'] ?? ''; ?>"> <span class="icon-trash-2"></span></a>
                     </td>
                 </tr>
         <?php }

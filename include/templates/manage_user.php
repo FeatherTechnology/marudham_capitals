@@ -16,6 +16,7 @@ $ag_name           = '';
 $staff_name           = '';
 $company_id           = '';
 $branch_id           = '';
+$bank_access           = '';
 $line_id           = '';
 $group_id           = '';
 $download_access = '';
@@ -108,6 +109,7 @@ $agent_report = '';
 $no_due_pay_report = '';
 $other_trans_report = '';
 $day_end_report = '';
+$cash_tally_activity_report = '';
 $due_followup_customer_count_report = '';
 $commitment_report = '';
 $customer_status_report = '';
@@ -181,6 +183,7 @@ if($idupd>0)
 			$staff_id          		     = $getUser['staff_id'];
 			$company_id          		     = $getUser['company_id'];
 			$branch_id          		     = $getUser['branch_id'];
+			$bank_access          		     = $getUser['bank_access'];
 			$ver_loan_cat          		     = $getUser['ver_loan_cat'];
 			$ver_group_id          		     = $getUser['ver_group_id'];
 			$app_loan_cat          		     = $getUser['app_loan_cat'];
@@ -284,6 +287,7 @@ if($idupd>0)
 			$no_due_pay_report          		     = $getUser['no_due_pay_report'];
 			$other_trans_report          		     = $getUser['other_trans_report'];
 			$day_end_report          		     = $getUser['day_end_report'];
+			$cash_tally_activity_report          		     = $getUser['cash_tally_activity_report'];
 			$due_followup_customer_count_report  = $getUser['due_followup_customer_count_report'];
 			$commitment_report  = $getUser['commitment_report'];
 			$customer_status_report  = $getUser['customer_status_report'];
@@ -527,7 +531,16 @@ if($idupd>0)
 											<span class="text-danger" style='display:none' id='BranchCheck'>Please select Branch Name</span>
                                         </div>	
                                     </div>
-									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12"></div>
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label for="bank_access">Bank Access</label>
+											<input type='hidden' class='form-control' id='bank_access_id' name='bank_access_id' value="<?php if(isset($bank_access)){echo $bank_access;}?>">
+                                            <select tabindex="9" type="text" class="form-control" id="bank_access" name="bank_access" multiple>
+												<option value="">Select Branch Access</option>
+											</select> 
+											<span class="text-danger" style='display:none' id='bankAccessCheck'>Please select Bank Access</span>
+                                        </div>	
+                                    </div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                                         <div class="form-group">
                                             <label for="group1">Group Name</label>&nbsp;<span class="text-danger">*</span>
@@ -1359,6 +1372,12 @@ if($idupd>0)
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($day_end_report==0){ echo'checked'; }} ?> tabindex="88" class="acounts-checkbox    screen-validations" id="day_end_report" name="day_end_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="day_end_report">Day End</label>
+                            </div>
+                        </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($cash_tally_activity_report==0){ echo'checked'; }} ?> tabindex="88" class="acounts-checkbox    screen-validations" id="cash_tally_activity_report" name="cash_tally_activity_report" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="cash_tally_activity_report">Cash Tally Activity</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">

@@ -41,27 +41,27 @@ $(document).ready(function () {
  $("#trans_id").blur(async function () {
    let bankId = $('#bank_id').val();
     if(!bankId){
-      alert("Kindly select Bank Name!"); 
+      swarlErrorAlert("Kindly select Bank Name!"); 
       return;
     }
     
     let totalPaidTrack = $('#total_paid_track').val() != '' ? $('#total_paid_track').val().replace(/,/g, '') : 0;
     if(!totalPaidTrack){
-      alert("Kindly Fill Collection Track!"); 
+      swarlErrorAlert("Kindly Fill Collection Track!"); 
       return;
     }
 
     let transId = $('#trans_id').val();
     let response = await checkBankTransactionDetails('credit', bankId, transId, totalPaidTrack);
     if (!response.status) {
-      alert(response.message);
+      swarlErrorAlert(response.message);
       $('#trans_id').val('');
       return;
     }
 
     let alertStatus = response.data.alert_status;
     if(alertStatus){
-      alert(response.data.alert);
+      swarlErrorAlert(response.data.alert);
       $('#trans_id').val('');
     }else{
       $('#trans_date').val(response.data.trans_date);
@@ -992,7 +992,7 @@ function getChequeNoList() {
 
 function getBankNames() {
     $.ajax({
-        url: 'manageUser/getBankDetails.php',
+        url: 'accountsFile/bankclearance/getBankNames.php',
         data: {},
         dataType: 'json',
         type: 'post',

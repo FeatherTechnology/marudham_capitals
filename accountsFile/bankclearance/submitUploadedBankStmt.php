@@ -9,9 +9,8 @@ function parseExcelDate($value)
     if (empty($value)) return null;
 
     $value = trim($value);
-    $value = preg_replace('/[^\x20-\x7E]/', '', $value);
 
-    /* 1️⃣ Excel numeric date */
+    /* 1️⃣ Excel numeric date (best case) */
     if (is_numeric($value) && $value > 59) {
         $unixTimestamp = ($value - 25569) * 86400;
         $dt = new DateTime("@$unixTimestamp");
@@ -19,28 +18,21 @@ function parseExcelDate($value)
         return $dt;
     }
 
-    /* 2️⃣ String date */
-    $parts = preg_split('/[\/\-: ]/', $value);
-    if (count($parts) < 3) return null;
-
-    $day   = str_pad($parts[0], 2, '0', STR_PAD_LEFT);
-    $month = str_pad($parts[1], 2, '0', STR_PAD_LEFT);
-    $year  = $parts[2];
-
-    // ⭐ Fix 2-digit year
-    if (strlen($year) == 2) {
-        $year = ($year <= 50) ? '20' . $year : '19' . $year;
-    }
-
-    $hour = str_pad($parts[3] ?? '00', 2, '0', STR_PAD_LEFT);
-    $min  = str_pad($parts[4] ?? '00', 2, '0', STR_PAD_LEFT);
-
-    return DateTime::createFromFormat(
-        'Y-m-d H:i',
-        "$year-$month-$day $hour:$min",
+    /* 2️⃣ ISO string date (yyyy-mm-dd hh:mm:ss) */
+    $dt = DateTime::createFromFormat(
+        'Y-m-d H:i:s',
+        $value,
         new DateTimeZone('Asia/Kolkata')
     );
+
+    if ($dt !== false) {
+        return $dt;
+    }
+
+    // ❌ Reject ambiguous formats
+    return null;
 }
+
 /* =============================== END DATE PARSER =============================== */
 
 // POST data

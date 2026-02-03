@@ -49,7 +49,7 @@ function getDetails($connect, $where)
     $row = $qry->fetch();
     $ag_issued = $row['amt'] ?? 0;
 
-    $response['issued'] = intval($issued) + intval($ag_issued);
+    $response['issued'] = (float)$issued + (float)$ag_issued;
 
     // Expense
     $qry = $connect->query("SELECT SUM(amt) as amt FROM (
@@ -61,7 +61,7 @@ function getDetails($connect, $where)
     $row = $qry->fetch();
     $expense = $row['amt'] ?? 0;
 
-    $response['expense'] = intval($expense);
+    $response['expense'] = (float)$expense;
 
     $response['issued'] = moneyFormatIndia($response['issued']);
     $response['expense'] = moneyFormatIndia($response['expense']);
@@ -72,31 +72,34 @@ function getDetails($connect, $where)
 //Format number in Indian Format
 function moneyFormatIndia($num)
 {
-    $isNegative = false;
-    if ($num < 0) {
-        $isNegative = true;
-        $num = abs($num);
+    $isNegative = ($num < 0);
+    $num = abs((string)$num);
+
+    // Split integer & decimal part
+    $decimal = '';
+    if (strpos($num, '.') !== false) {
+        [$num, $decimal] = explode('.', $num, 2);
+        $decimal = '.' . substr($decimal, 0, 2);
     }
 
-    $explrestunits = "";
-    if (strlen((string)$num) > 3) {
-        $lastthree = substr((string)$num, -3);
-        $restunits = substr((string)$num, 0, -3);
-        $restunits = (strlen($restunits) % 2 == 1) ? "0" . $restunits : $restunits;
+    if (strlen($num) > 3) {
+        $lastthree = substr($num, -3);
+        $restunits = substr($num, 0, -3);
+        $restunits = (strlen($restunits) % 2 == 1) ? '0' . $restunits : $restunits;
+
         $expunit = str_split($restunits, 2);
-        foreach ($expunit as $index => $value) {
-            if ($index == 0) {
-                $explrestunits .= (int)$value . ",";
-            } else {
-                $explrestunits .= $value . ",";
-            }
+        $explrestunits = '';
+
+        foreach ($expunit as $i => $value) {
+            $explrestunits .= ($i == 0 ? (int)$value : $value) . ',';
         }
-        $thecash = $explrestunits . $lastthree;
+
+        $formatted = $explrestunits . $lastthree;
     } else {
-        $thecash = $num;
+        $formatted = $num;
     }
 
-    return $isNegative ? "-" . $thecash : $thecash;
+    return ($isNegative ? '-' : '') . $formatted . $decimal;
 }
 
 // Close the database connection

@@ -6,7 +6,7 @@ $opt_for = $_POST['opt_for'];
 $i = 0;
 $records = array();
 
-$qry = $connect->query("SELECT * from name_detail_creation WHERE opt_for = '$opt_for'");
+$qry = $connect->query("SELECT * from name_detail_creation WHERE opt_for = '$opt_for' AND status != 1");
 while ($row = $qry->fetch()) {
     $records[$i]['name_id'] = $row['name_id'];
     $records[$i]['name'] = $row['name'];
