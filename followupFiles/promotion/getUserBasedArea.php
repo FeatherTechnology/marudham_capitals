@@ -1,67 +1,72 @@
 <?php
 include('../../ajaxconfig.php');
 @session_start();
-$user_id = $_SESSION['userid'];
+
+$user_id = $_SESSION['userid'] ?? 0;
+$area_id = $_POST['area_id'] ?? '';
 
 $detailrecords = [];
-$area_id  = $_POST['area_id'];
 
-if ($user_id && $area_id ==" ") {
+/* ========================================================= CASE 1: Area not selected → Load areas based on user access ========================================================= */
+if ($user_id && empty(trim($area_id))) {
 
-    // Step 1: Get user's mapped lines
-    $sql = $connect->prepare("SELECT promotion_activity_mapping_access, line_id, due_followup_lines, group_id FROM user WHERE user_id = ?");
-    $sql->execute([$user_id]);
-    $user = $sql->fetch(PDO::FETCH_ASSOC);
+    // Fetch user access details
+    $stmt = $connect->prepare("
+        SELECT promotion_activity_mapping_access, group_id, line_id, due_followup_lines
+        FROM user
+        WHERE user_id = ?
+    ");
+    $stmt->execute([$user_id]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user) {
+
+        // Decide table & column based on access type
         if ($user['promotion_activity_mapping_access'] == 1) {
-            $user_ids = explode(',', $user['group_id']);
-            $table = 'area_group_mapping';
+            $ids   = array_filter(explode(',', $user['group_id']));
+            $table = 'area_group_mapping_area';
+            $col   = 'group_map_id';
+
         } elseif ($user['promotion_activity_mapping_access'] == 2) {
-            $user_ids = explode(',', $user['line_id']);
-            $table = 'area_line_mapping';
+            $ids   = array_filter(explode(',', $user['line_id']));
+            $table = 'area_line_mapping_area';
+            $col   = 'line_map_id';
+
         } elseif ($user['promotion_activity_mapping_access'] == 3) {
-            $user_ids = explode(',', $user['due_followup_lines']);
-            $table = 'area_duefollowup_mapping';
+            $ids   = array_filter(explode(',', $user['due_followup_lines']));
+            $table = 'area_duefollowup_mapping_area';
+            $col   = 'duefollowup_map_id';
         }
 
-        $user_ids = array_map('trim', $user_ids);
-        if (!empty($user_ids)) {
-            $ids_string = implode(',', $user_ids);
+        if (!empty($ids)) {
+            $placeholders = implode(',', array_fill(0, count($ids), '?'));
 
-            // Step 2: Fetch all relevant lines for the user
-            $sql2 = $connect->query("SELECT * FROM $table WHERE  map_id IN ($ids_string)");
+            // ✅ Single optimized query
+            $sql = " SELECT DISTINCT a.area_id, a.area_name FROM $table m JOIN area_list_creation a ON a.area_id = m.area_id WHERE m.$col IN ($placeholders) ORDER BY a.area_name ASC";
+            $stmt = $connect->prepare($sql);
+            $stmt->execute($ids);
 
-            while ($row = $sql2->fetch(PDO::FETCH_ASSOC)) {
-
-                // Step 3: Fetch area names from area_list_creation
-                if (!empty($row['area_id'])) {
-                    $area_ids_str = $row['area_id'];
-                    $sql_area = $connect->query("SELECT area_id, area_name FROM area_list_creation WHERE area_id IN ($area_ids_str)");
-
-                    while ($area = $sql_area->fetch(PDO::FETCH_ASSOC)) {
-                        $detailrecords[] = [
-                            'area_id' => $area['area_id'],
-                            'area_name' => $area['area_name']
-                        ];
-                    }
-                }
-            }
+            $detailrecords = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
     }
 }
-else{
- 
-    if (!empty($area_id)) {
-        $sql_sub = $connect->query("SELECT sub_area_id, sub_area_name FROM sub_area_list_creation WHERE area_id_ref IN ($area_id) AND status = 0 ORDER BY sub_area_name ASC");
-        while ($sub = $sql_sub->fetch(PDO::FETCH_ASSOC)) {
-            $detailrecords[] = [
-                'sub_area_id' => $sub['sub_area_id'],
-                'sub_area_name' => $sub['sub_area_name']
-            ];
-        }
-    }
 
+/* ========================================================= CASE 2: Area selected → Load sub-areas ========================================================= */
+else {
+
+    if (!empty($area_id)) {
+
+        $sql = "
+            SELECT sub_area_id, sub_area_name
+            FROM sub_area_list_creation
+            WHERE area_id_ref IN ($area_id)
+              AND status = 0
+            ORDER BY sub_area_name ASC
+        ";
+
+        $stmt = $connect->query($sql);
+        $detailrecords = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 
 echo json_encode($detailrecords);

@@ -3,55 +3,84 @@ session_start();
 class promotionListClass
 {
     public $sub_area_list = array();
-    public $accessType; 
-    public function __construct($connect)
-    {
-        $userid = $_SESSION["userid"];
+    public $accessType;
+    public function __construct($connect){
+    $userid = $_SESSION["userid"] ?? 0;
 
-        if ($userid != 1) {  // super admin bypass
-            $userQry = $connect->query("
-            SELECT group_id, line_id, due_followup_lines, promotion_activity_mapping_access 
-            FROM user 
-            WHERE user_id = $userid
-        ");
-            $rowuser = $userQry->fetch();
-
-              $this->accessType = $rowuser['promotion_activity_mapping_access'];
-            $sub_area_ids = [];
-
-            if ($this->accessType == 1) {
-                // 🔹 Group-based access
-                $group_ids = explode(',', $rowuser['group_id']);
-                foreach ($group_ids as $group) {
-                    $groupQry = $connect->query("SELECT sub_area_id FROM area_group_mapping WHERE map_id = $group");
-                    if ($row_sub = $groupQry->fetch()) {
-                        $sub_area_ids = array_merge($sub_area_ids, explode(',', $row_sub['sub_area_id']));
-                    }
-                }
-            } elseif ($this->accessType == 2) {
-                // 🔹 Line-based access
-                $line_ids = explode(',', $rowuser['line_id']);
-                foreach ($line_ids as $line) {
-                    $lineQry = $connect->query("SELECT sub_area_id FROM area_line_mapping WHERE map_id = $line");
-                    if ($row_line = $lineQry->fetch()) {
-                        $sub_area_ids = array_merge($sub_area_ids, explode(',', $row_line['sub_area_id']));
-                    }
-                }
-            } elseif ($this->accessType == 3) {
-                // 🔹 Due Followup-based access
-                $due_ids = explode(',', $rowuser['due_followup_lines']);
-                foreach ($due_ids as $due) {
-                    $dueQry = $connect->query("SELECT area_id FROM area_duefollowup_mapping WHERE map_id = $due");
-                    if ($row_due = $dueQry->fetch()) {
-                        $sub_area_ids = array_merge($sub_area_ids, explode(',', $row_due['area_id']));
-                    }
-                }
-            }
-            // Remove duplicates and store final list
-            $sub_area_ids = array_unique(array_filter($sub_area_ids));
-            $this->sub_area_list = implode(',', $sub_area_ids);
-        }
+    // Super admin bypass
+    if ($userid == 1) {
+        $this->sub_area_list = '';
+        return;
     }
+
+    // Fetch user access details
+    $stmt = $connect->prepare("
+        SELECT group_id, line_id, due_followup_lines, promotion_activity_mapping_access
+        FROM user
+        WHERE user_id = ?
+    ");
+    $stmt->execute([$userid]);
+    $rowuser = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$rowuser) {
+        $this->sub_area_list = '';
+        return;
+    }
+
+    $this->accessType = (int)$rowuser['promotion_activity_mapping_access'];
+    $ids = [];
+    $table = '';
+    $column = '';
+    $selectColumn = '';
+
+    /* =====================================Decide mapping table based on access===================================== */
+    if ($this->accessType == 1) {
+        // Group-based
+        $ids = array_filter(explode(',', $rowuser['group_id']));
+        $table = 'area_group_mapping_sub_area';
+        $column = 'group_map_id';
+        $selectColumn = 'sub_area_id';
+
+    } elseif ($this->accessType == 2) {
+        // Line-based
+        $ids = array_filter(explode(',', $rowuser['line_id']));
+        $table = 'area_line_mapping_sub_area';
+        $column = 'line_map_id';
+        $selectColumn = 'sub_area_id';
+
+    } elseif ($this->accessType == 3) {
+        // Due-followup based
+        $ids = array_filter(explode(',', $rowuser['due_followup_lines']));
+        $table = 'area_duefollowup_mapping_area';
+        $column = 'duefollowup_map_id';
+        $selectColumn = 'area_id';
+    }
+
+    if (empty($ids)) {
+        $this->sub_area_list = '';
+        return;
+    }
+
+    // Build placeholders
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+    // ✅ Single optimized query (NO LOOP)
+    $sql = "
+        SELECT DISTINCT $selectColumn
+        FROM $table
+        WHERE $column IN ($placeholders)
+    ";
+
+    $stmt = $connect->prepare($sql);
+    $stmt->execute(array_map('intval', $ids));
+
+    // Fetch directly as array
+    $sub_area_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+    // Final clean list
+    $this->sub_area_list = implode(',', array_unique($sub_area_ids));
+}
+
 
     function getdetails($connect, $type)
     {
@@ -75,18 +104,18 @@ class promotionListClass
             }
         } else {
 
-                 $sql = $connect->query("
+            $sql = $connect->query("
             SELECT req.*
             FROM request_creation req
             WHERE (req.cus_status >= 4 AND req.cus_status <= 9)
               AND (
-                    " . ($this->accessType == 3 
-                        ? "req.area" 
-                        : "req.sub_area") . " IN ($this->sub_area_list)
+                    " . ($this->accessType == 3
+                ? "req.area"
+                : "req.sub_area") . " IN ($this->sub_area_list)
                   OR 
-                    " . ($this->accessType == 3 
-                        ? "(SELECT area_confirm_area FROM acknowlegement_customer_profile WHERE req_id = req.req_id)" 
-                        : "(SELECT area_confirm_subarea FROM customer_profile WHERE req_id = req.req_id)") . " IN ($this->sub_area_list)
+                    " . ($this->accessType == 3
+                ? "(SELECT area_confirm_area FROM acknowlegement_customer_profile WHERE req_id = req.req_id)"
+                : "(SELECT area_confirm_subarea FROM customer_profile WHERE req_id = req.req_id)") . " IN ($this->sub_area_list)
               )
             GROUP BY req.cus_id
         ");

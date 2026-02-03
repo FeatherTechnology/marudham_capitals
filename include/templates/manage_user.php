@@ -121,6 +121,7 @@ $work_count_report = '';
 $noc_handover_report = '';
 $confirmation_count_report = '';
 $concern_report  = '';
+$partners_report  = '';
 $search_module = '';
 $search_screen = '';
 $bulk_upload_module = '';
@@ -299,6 +300,7 @@ if($idupd>0)
 			$noc_handover_report  = $getUser['noc_handover_report'];
 			$confirmation_count_report  = $getUser['confirmation_count_report'];
 			$concern_report   = $getUser['concern_report'];
+			$partners_report   = $getUser['partners_report'];
 			$search_module = $getUser['search_module'];
 			$search_screen = $getUser['search'];
 			$bulk_upload_module = $getUser['bulk_upload_module'];
@@ -1378,6 +1380,12 @@ if($idupd>0)
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($cash_tally_activity_report==0){ echo'checked'; }} ?> tabindex="88" class="acounts-checkbox    screen-validations" id="cash_tally_activity_report" name="cash_tally_activity_report" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="cash_tally_activity_report">Cash Tally Activity</label>
+                            </div>
+                        </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($partners_report==0){ echo'checked'; }} ?> tabindex="88" class="acounts-checkbox    screen-validations" id="partners_report" name="partners_report" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="partners_report">Partners</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">

@@ -63,31 +63,42 @@ function getDetials($connect, $where, $condition)
 
 function getSubareaList($connect, $user_id)
 {
-
-    if ($user_id != '') { //to get user's sub area id based on user's branch assigned
-
-        $userQry = $connect->query("SELECT line_id FROM USER WHERE user_id = $user_id ");
-        while ($rowuser = $userQry->fetch()) {
-            $line_id = $rowuser['line_id'];
-        }
-        $line_id = explode(',', $line_id);
-        $sub_area_list = array();
-        foreach ($line_id as $line) {
-            $groupQry = $connect->query("SELECT sub_area_id FROM area_line_mapping where map_id = $line ");
-            $row_sub = $groupQry->fetch();
-            $sub_area_list[] = $row_sub['sub_area_id'];
-        }
-        $sub_area_ids = array();
-        foreach ($sub_area_list as $subarray) {
-            $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
-        }
-        $sub_area_list = array();
-        $sub_area_list = implode(',', $sub_area_ids);
-    } else {
-        $sub_area_list = '';
+    if (empty($user_id)) {
+        return '';
     }
-    $condition = ($sub_area_list != '') ? " and FIND_IN_SET(iv.sub_area ,'" . $sub_area_list . "')" : '';
-    return $condition;
+
+    // Get line_ids assigned to the user
+    $stmt = $connect->prepare("SELECT line_id FROM user WHERE user_id = ?");
+    $stmt->execute([$user_id]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$row || empty($row['line_id'])) {
+        return '';
+    }
+
+    // convert line_ids to array of integers
+    $line_ids = array_map('intval', explode(',', $row['line_id']));
+    if (empty($line_ids)) return '';
+
+    // Build placeholders for IN clause
+    $placeholders = implode(',', array_fill(0, count($line_ids), '?'));
+
+    // Fetch sub_area_ids from normalized table
+    $stmt = $connect->prepare("
+        SELECT DISTINCT sub_area_id
+        FROM area_line_mapping_sub_area
+        WHERE line_map_id IN ($placeholders)
+    ");
+    $stmt->execute($line_ids);
+    $sub_area_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+    if (empty($sub_area_ids)) return '';
+
+    // Build safe placeholders for final condition
+    $placeholders_sub = implode(',', array_fill(0, count($sub_area_ids), '?'));
+    $GLOBALS['sub_area_params'] = $sub_area_ids; // store params for later prepared statement
+
+    return " AND iv.sub_area IN ($placeholders_sub)";
 }
 
 //Format number in Indian Format

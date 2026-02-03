@@ -78,30 +78,60 @@ class branchProcess
     }
 
     public function getSubAreaList($branch_id, $user_id)
-    {
-        $sub_area_list = array();
-
-        if ($branch_id == 0) {
-            $branch_list = $this->getBranchList($user_id);
-            foreach ($branch_list as $branch) {
-                $qry = $this->connect->query("SELECT sub_area_id FROM area_group_mapping WHERE branch_id = '" . $branch['branch_id'] . "'");
-                while ($row = $qry->fetch()) {
-                    $sub_area_list[] = $row['sub_area_id'];
-                }
-            }
-        } else {
-            $qry = $this->connect->query("SELECT sub_area_id FROM area_group_mapping WHERE branch_id = $branch_id");
-            while ($row = $qry->fetch()) {
-                $sub_area_list[] = $row['sub_area_id'];
-            }
-        }
-
-        $sub_area_ids = array();
-        foreach ($sub_area_list as $subarray) {
-            $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
-        }
-        $sub_area_list = implode(',', $sub_area_ids);
-
-        return !empty($sub_area_list) ? $sub_area_list : 'Error';
+{
+    if (empty($user_id)) {
+        return 'Error';
     }
+
+    // 1️⃣ Get group IDs based on branch
+    if ($branch_id == 0) {
+        // User branch access
+        $branches = $this->getBranchList($user_id);
+        if (empty($branches)) {
+            return 'Error';
+        }
+
+        $branch_ids = array_column($branches, 'branch_id');
+        $placeholders = implode(',', array_fill(0, count($branch_ids), '?'));
+
+        $stmt = $this->connect->prepare("   SELECT DISTINCT map_id FROM area_group_mapping WHERE branch_id IN ($placeholders) ");
+        $stmt->execute($branch_ids);
+    } else {
+        $stmt = $this->connect->prepare("  SELECT DISTINCT map_id FROM area_group_mapping  WHERE branch_id = ?  ");
+        $stmt->execute([$branch_id]);
+    }
+
+    $group_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    if (empty($group_ids)) {
+        return 'Error';
+    }
+
+    // 2️⃣ Get area IDs from normalized mapping table
+    $placeholders = implode(',', array_fill(0, count($group_ids), '?'));
+
+    $stmt = $this->connect->prepare(" SELECT DISTINCT area_id FROM area_group_mapping_area WHERE group_map_id IN ($placeholders) ");
+    $stmt->execute($group_ids);
+
+    $area_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    if (empty($area_ids)) {
+        return 'Error';
+    }
+
+    // 3️⃣ Get sub-area IDs
+    $placeholders = implode(',', array_fill(0, count($area_ids), '?'));
+
+    $stmt = $this->connect->prepare("
+ SELECT DISTINCT sub_area_id
+        FROM sub_area_list_creation
+        WHERE area_id_ref IN ($placeholders) AND status = 0
+    ");
+    $stmt->execute($area_ids);
+
+    $sub_area_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+    return !empty($sub_area_ids)
+        ? implode(',', array_unique($sub_area_ids))
+        : 'Error';
+}
+
 }

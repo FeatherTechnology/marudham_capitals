@@ -369,7 +369,7 @@ function getOpeningBalance($connect, $op_date, $bank_detail)
     foreach ($bank_detail as $val) {
         $bankNameQry = $connect->query("SELECT bank_name FROM bank_creation WHERE id = '$val' ");
         $bank_name = $bankNameQry->fetchColumn();
-         $bankQry = $connect->query("SELECT balance FROM bank_stmt WHERE bank_id = '$val' AND DATE(trans_date) <= '$op_date' ORDER BY trans_date DESC,id DESC LIMIT 1 ;");
+         $bankQry = $connect->query("SELECT balance FROM bank_stmt WHERE bank_id = '$val' AND DATE(trans_date) < '$op_date' ORDER BY trans_date DESC,id DESC LIMIT 1 ;");
          $row = $bankQry->fetch(PDO::FETCH_ASSOC);
         $bank_opening = ($row && isset($row['balance'])) ? (float)$row['balance'] : 0;
 
