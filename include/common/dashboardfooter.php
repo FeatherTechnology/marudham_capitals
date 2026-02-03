@@ -2749,6 +2749,10 @@ function moneyFormatIndia(num) {
         <script src="js/concern_report.js"></script>
     <?php }
 
+    if ($current_page == 'partners_report') { ?>
+        <script src="js/partners_report.js"></script>
+    <?php }
+
     if ($current_page == 'intrest_ledger_report') { ?>
         <script src="js/intrest_ledger_report.js"></script>
     <?php }

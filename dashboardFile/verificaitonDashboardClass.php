@@ -101,25 +101,40 @@ class verificaitonClass
 
     function getUserGroupBasedSubArea($connect, $user_id)
     {
-        $sub_area_list = array();
+        if (empty($user_id)) {
+            return '';
+        }
 
-        $userQry = $connect->query("SELECT * FROM USER WHERE user_id = $user_id ");
-        while ($rowuser = $userQry->fetch()) {
-            $group_id = $rowuser['group_id'];
-        }
-        $group_id = explode(',', $group_id);
-        foreach ($group_id as $group) {
-            $groupQry = $connect->query("SELECT * FROM area_group_mapping where map_id = $group ");
-            $row_sub = $groupQry->fetch();
-            $sub_area_list[] = $row_sub['sub_area_id'];
-        }
-        $sub_area_ids = array();
-        foreach ($sub_area_list as $subarray) {
-            $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
-        }
-        $sub_area_list = array();
-        $sub_area_list = implode(',', $sub_area_ids);
+        // 1. Get group IDs of user
+        $stmt = $connect->prepare("SELECT group_id FROM user WHERE user_id = ?");
+        $stmt->execute([$user_id]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return $sub_area_list;
+        if (!$row || empty($row['group_id'])) {
+            return '';
+        }
+
+        $group_ids = array_filter(explode(',', $row['group_id']));
+        if (empty($group_ids)) {
+            return '';
+        }
+
+        // 2. Prepare placeholders
+        $placeholders = implode(',', array_fill(0, count($group_ids), '?'));
+
+        // 3. Fetch sub_area_ids directly from normalized table
+        $stmt = $connect->prepare(" SELECT DISTINCT sub_area_id FROM area_group_mapping_sub_area
+        WHERE group_map_id IN ($placeholders) ");
+        $stmt->execute(array_map('intval', $group_ids));
+
+        // 4. Fetch all sub_area_ids as array
+        $sub_area_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        if (empty($sub_area_ids)) {
+            return '';
+        }
+
+        // 5. Return comma-separated list (if needed)
+        return implode(',', array_unique($sub_area_ids));
     }
 }

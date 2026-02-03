@@ -594,6 +594,11 @@ if (isset($getuserdetails['download_access'])) {
 			<?php if ($current_page == 'concern_report') { ?>
 				<?php include "include/templates/concern_report.php" ?>
 			<?php } else ?>
+
+			<!-- Partners report -->
+			<?php if ($current_page == 'partners_report') { ?>
+				<?php include "include/templates/partners_report.php" ?>
+			<?php } else ?>
 			
 			<!-- Intrest Ledger Report -->
 			<?php if ($current_page == 'intrest_ledger_report') { ?>

@@ -21,8 +21,8 @@ class collectionClass
         $today_paid = "SELECT COALESCE(sum(c.due_amt_track +  c.princ_amt_track + c.int_amt_track ),0) as paid from `collection` c JOIN acknowlegement_customer_profile cp ON cp.req_id = c.req_id where date(c.coll_date) = '$today' AND ( DATE(c.coll_date) = '$today' || DATE(c.trans_date) = '$today' )";
         $today_penalty = "SELECT COALESCE(sum(c.penalty_track), 0) as penalty from `collection` c JOIN acknowlegement_customer_profile cp ON cp.req_id = c.req_id where date(c.coll_date) = '$today' AND ( DATE(c.coll_date) = '$today' || DATE(c.trans_date) = '$today' )";
         $today_fine = "SELECT COALESCE(sum(c.coll_charge_track), 0) as fine from `collection` c JOIN acknowlegement_customer_profile cp ON cp.req_id = c.req_id where date(c.coll_date) = '$today' AND ( DATE(c.coll_date) = '$today' || DATE(c.trans_date) = '$today' )";
-        $today_handcash = "SELECT COALESCE(sum(c.due_amt_track + c.penalty_track + c.coll_charge_track), 0) as today_hand_paid from `collection` c  where date(c.coll_date) = '$today' AND ( c.trans_date ='0000-00-00' )";
-        $today_bankcash = "SELECT COALESCE(sum(c.due_amt_track + c.penalty_track + c.coll_charge_track), 0) as today_bank_paid from `collection` c  where date(c.coll_date) = '$today' AND ( c.trans_date !='0000-00-00' )";
+        $today_handcash = "SELECT COALESCE(sum(c.due_amt_track + c.penalty_track + c.coll_charge_track), 0) as today_hand_paid from `collection` c  JOIN acknowlegement_customer_profile cp ON cp.req_id = c.req_id where date(c.coll_date) = '$today' AND ( c.trans_date ='0000-00-00' )";
+        $today_bankcash = "SELECT COALESCE(sum(c.due_amt_track + c.penalty_track + c.coll_charge_track), 0) as today_bank_paid from `collection` c JOIN acknowlegement_customer_profile cp ON cp.req_id = c.req_id where date(c.coll_date) = '$today' AND ( c.trans_date !='0000-00-00' )";
 
         if (!empty($sub_area_list)) {
             $total_paid .= " AND ( CASE WHEN cp.area_confirm_subarea IS NOT NULL THEN cp.area_confirm_subarea IN ($sub_area_list) ELSE TRUE END )";
