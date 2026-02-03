@@ -66,56 +66,56 @@ if (isset($_POST['bank_clr_trans_amnt'])) {
     $bank_clr_trans_amnt = $_POST['bank_clr_trans_amnt'];
 }
 
-$qry = $connect->query("
-    INSERT INTO loan_issue 
-    (req_id, cus_id, issued_to, issued_mode, payment_type, bank_id, cheque_no, cheque_value, cheque_remark, transaction_id, transaction_date, transaction_value, transaction_remark, balance_amount, loan_amt, net_cash, status, insert_login_id, created_date)
-    VALUES (
-        '$req_id',
-        '$cus_id',
-        '$issue_to',
-        '$issued_mode',
-        '$payment_type',
-        '$bank_id',
-        '$chequeno',
-        '$chequeValue',
-        '$chequeRemark',
-        '$transaction_id',
-        '$trans_date',
-        '$transaction_value',
-        '$transaction_remark',
-        '$balance',
-        '$loan_amt_cal',
-        '$net_cash_cal',
-        '0',
-        '$userid',
-        NOW()
-    )
-");
+try {
+    // Begin transaction
+    $connect->beginTransaction();
 
-if (!empty($bank_clr_bank_id)) {
-    // Deduct paid amount
-    $amnt = (floatval($chequeValue) > 0) ? floatval($chequeValue) : floatval($transaction_value);
-    $bank_clr_trans_amnt -= $amnt;
+    $qry = $connect->query("
+        INSERT INTO loan_issue 
+        (req_id, cus_id, issued_to, issued_mode, payment_type, bank_id, cheque_no, cheque_value, cheque_remark, transaction_id, transaction_date, transaction_value, transaction_remark, balance_amount, loan_amt, net_cash, status, insert_login_id, created_date)
+        VALUES (
+            '$req_id',
+            '$cus_id',
+            '$issue_to',
+            '$issued_mode',
+            '$payment_type',
+            '$bank_id',
+            '$chequeno',
+            '$chequeValue',
+            '$chequeRemark',
+            '$transaction_id',
+            '$trans_date',
+            '$transaction_value',
+            '$transaction_remark',
+            '$balance',
+            '$loan_amt_cal',
+            '$net_cash_cal',
+            '0',
+            '$userid',
+            NOW()
+        )
+    ");
 
-    // Prevent negative balance
-    if ($bank_clr_trans_amnt < 0) {
-        $bank_clr_trans_amnt = 0;
+    if (!empty($bank_clr_bank_id)) {
+        // Deduct paid amount
+        $amnt = (floatval($chequeValue) > 0) ? floatval($chequeValue) : floatval($transaction_value);
+        $bank_clr_trans_amnt -= $amnt;
+
+        // Prevent negative balance
+        if ($bank_clr_trans_amnt < 0) {
+            $bank_clr_trans_amnt = 0;
+        }
+
+        $clr_sts = ($bank_clr_trans_amnt == 0) ? 1 : 0; //1 - cleared, 0 - uncleared
+        $query = $connect->prepare("UPDATE bank_stmt SET transaction_amount = ?, clr_status = ? WHERE id = ? ");
+
+        $query->execute([$bank_clr_trans_amnt, $clr_sts, $bank_clr_bank_id]);
     }
 
-    $clr_sts = ($bank_clr_trans_amnt == 0) ? 1 : 0; //1 - cleared, 0 - uncleared
-    $query = $connect->prepare("UPDATE bank_stmt SET transaction_amount = ?, clr_status = ? WHERE id = ? ");
+    $current_date = date('Y-m-d');
 
-    $query->execute([$bank_clr_trans_amnt, $clr_sts, $bank_clr_bank_id]);
-}
-
-$current_date = date('Y-m-d');
-
-//////////////////////////////////////////////////////////////////////////
-if (isset($_POST['balance']) && $_POST['balance'] == '0') {
-    try {
-        // Begin transaction
-        $connect->beginTransaction();
-
+    //////////////////////////////////////////////////////////////////////////
+    if (isset($_POST['balance']) && $_POST['balance'] == '0') {
         // Update various tables for the completed loan issue
         $connect->query("UPDATE request_creation SET cus_status = 14, updated_date = NOW(), update_login_id = $userid WHERE req_id = '$req_id'") or die('Error on Request Table');
         $connect->query("UPDATE customer_register SET cus_status = 14 WHERE req_ref_id = '$req_id'") or die('Error on Customer Table');
@@ -144,17 +144,18 @@ if (isset($_POST['balance']) && $_POST['balance'] == '0') {
         //Loan move to collection only if balance = 0, in loan issue once 
         $connect->query("INSERT INTO `document_track`(`req_id`, `cus_id`, `track_status`, `insert_login_id`, `created_date`)  VALUES('$req_id', '$cus_id', '1', '$userid', now() ) "); //Document track insert.
 
-        // Commit the transaction
-        $connect->commit();
-    } catch (Exception $e) {
-        // Rollback the transaction in case of error
-        $connect->rollBack();
-        $response = "Error: " . $e->getMessage();
-        exit;
     }
-}
+    
+    $response = 'Loan Issue Completed';
 
-$response = 'Loan Issue Completed';
+    // Commit the transaction
+    $connect->commit();
+
+} catch (Exception $e) {
+    // Rollback the transaction in case of error
+    $connect->rollBack();
+    $response = "Error: " . $e->getMessage();
+}
 
 // Return the response
 echo json_encode(["response" => $response]);
