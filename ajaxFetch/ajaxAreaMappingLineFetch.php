@@ -1,111 +1,147 @@
 <?php
-include('../ajaxconfig.php');
-@session_start();
+include '../ajaxconfig.php';
 
-if (isset($_SESSION["userid"])) {
-    $userid = $_SESSION["userid"];
-}
-
-$column = array(
+/* ---------- Column mapping (DataTables order) ---------- */
+$columns = [
     'alm.map_id',
     'alm.line_name',
     'c.company_name',
     'b.branch_name',
-    'alm.map_id',
-    'alm.map_id',
+    'a.area_names',
+    's.sub_area_names',
     'alm.status',
     'alm.status'
-);
+];
 
-$query = "SELECT alm.*, c.company_name, b.branch_name,
-        (SELECT GROUP_CONCAT(alc.area_name SEPARATOR ', ')
-        FROM area_list_creation alc
-        WHERE FIND_IN_SET(alc.area_id, alm.area_id) AND alc.status = 0) AS area_names,
-        (SELECT GROUP_CONCAT(salc.sub_area_name SEPARATOR ', ')
-        FROM sub_area_list_creation salc
-        WHERE FIND_IN_SET(salc.sub_area_id, alm.sub_area_id) AND salc.status = 0) AS sub_area_names
-        FROM area_line_mapping alm 
-        JOIN company_creation c ON c.company_id = alm.company_id
-        JOIN branch_creation b ON b.branch_id = alm.branch_id
-        WHERE 1 ";
+/* ---------- Base FROM + JOIN ---------- */
+$baseQuery = "
+    FROM area_line_mapping alm
+    JOIN company_creation c ON alm.company_id = c.company_id
+    JOIN branch_creation b ON alm.branch_id = b.branch_id
+    LEFT JOIN (
+        SELECT alma.line_map_id,
+               GROUP_CONCAT(alc.area_name ORDER BY alc.area_id SEPARATOR ', ') AS area_names
+        FROM area_line_mapping_area alma
+        JOIN area_list_creation alc ON alma.area_id = alc.area_id
+        GROUP BY alma.line_map_id
+    ) a ON alm.map_id = a.line_map_id
+    LEFT JOIN (
+        SELECT almsa.line_map_id,
+               GROUP_CONCAT(salc.sub_area_name ORDER BY salc.sub_area_id SEPARATOR ', ') AS sub_area_names
+        FROM area_line_mapping_sub_area almsa
+        JOIN sub_area_list_creation salc ON almsa.sub_area_id = salc.sub_area_id
+        GROUP BY almsa.line_map_id
+    ) s ON alm.map_id = s.line_map_id
+    WHERE 1=1
+";
 
-if (isset($_POST['search']) && $_POST['search'] != "") {
-    $search = $_POST['search'];
-    $query .= "AND (alm.line_name LIKE '%" . $search . "%'
-            OR c.company_name LIKE '%" . $search . "%'
-            OR b.branch_name LIKE '%" . $search . "%'
-            OR (SELECT GROUP_CONCAT(alc.area_name SEPARATOR ', ')
-                FROM area_list_creation alc
-                WHERE FIND_IN_SET(alc.area_id, alm.area_id) AND alc.status = 0) LIKE '%" . $search . "%'
-            OR (SELECT GROUP_CONCAT(salc.sub_area_name SEPARATOR ', ')
-                FROM sub_area_list_creation salc
-                WHERE FIND_IN_SET(salc.sub_area_id, alm.sub_area_id) AND salc.status = 0) LIKE '%" . $search . "%') ";
+/* ---------- Search ---------- */
+$params = [];
+if (!empty($_POST['search']['value'])) {
+    $search = '%' . $_POST['search']['value'] . '%';
+    $baseQuery .= "
+        AND (
+            alm.line_name LIKE :search
+            OR c.company_name LIKE :search
+            OR b.branch_name LIKE :search
+            OR a.area_names LIKE :search
+            OR s.sub_area_names LIKE :search
+        )
+    ";
+    $params[':search'] = $search;
 }
 
-if (isset($_POST['order'])) {
-    $query .= 'ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
-} else {
-    $query .= ' ';
+/* ---------- ORDER ---------- */
+$orderBy = '';
+if (isset($_POST['order'][0]['column'])) {
+    $colIndex = (int) $_POST['order'][0]['column'];
+    $dir = ($_POST['order'][0]['dir'] === 'desc') ? 'DESC' : 'ASC';
+
+    if (isset($columns[$colIndex])) {
+        $orderBy = " ORDER BY {$columns[$colIndex]} $dir ";
+    }
 }
 
-$query1 = '';
-
+/* ---------- Pagination ---------- */
+$limit = '';
 if ($_POST['length'] != -1) {
-    $query1 = 'LIMIT ' . $_POST['start'] . ', ' . $_POST['length'];
+    $limit = " LIMIT :start, :length ";
 }
 
-$statement = $connect->prepare($query);
-$statement->execute();
-$number_filter_row = $statement->rowCount();
-$statement = $connect->prepare($query . $query1);
-$statement->execute();
-$result = $statement->fetchAll();
-$data = array();
+/* ---------- Total records ---------- */
+$totalStmt = $connect->prepare("SELECT COUNT(*) FROM area_line_mapping");
+$totalStmt->execute();
+$recordsTotal = (int) $totalStmt->fetchColumn();
 
-$sno = 1;
-foreach ($result as $row) {
-    $sub_array   = array();
+/* ---------- Filtered records ---------- */
+$countStmt = $connect->prepare("SELECT COUNT(*) $baseQuery");
+$countStmt->execute($params);
+$recordsFiltered = (int) $countStmt->fetchColumn();
 
-    if ($sno != "") {
-        $sub_array[] = $sno;
-    }
+/* ---------- Data query ---------- */
+$dataQuery = "
+    SELECT 
+        alm.map_id,
+        alm.line_name,
+        c.company_name,
+        b.branch_name,
+        a.area_names,
+        s.sub_area_names,
+        alm.status
+    $baseQuery
+    $orderBy
+    $limit
+";
 
-    $sub_array[] = $row['line_name'];
-    $sub_array[] = $row["company_name"];
-    $sub_array[] = $row["branch_name"];
-    $sub_array[] = $row["area_names"];
-    $sub_array[] = $row["sub_area_names"];
+$dataStmt = $connect->prepare($dataQuery);
 
-
-    $status      = $row['status'];
-    if ($status == 1) {
-        $sub_array[] = "<span style='width: 144px;'><span class='kt-badge  kt-badge--danger kt-badge--inline kt-badge--pill'>Inactive</span></span>";
-    } else {
-        $sub_array[] = "<span style='width: 144px;'><span class='kt-badge  kt-badge--success kt-badge--inline kt-badge--pill'>Active</span></span>";
-    }
-
-    $id   = $row['map_id'];
-    $action = "<a href='area_mapping&upd=$id&type=line' title='Edit details'><span class='icon-border_color'></span></a>&nbsp;&nbsp; 
-	<a href='area_mapping&del=$id&type=line' title='Delete details' class='delete_area_mapping'><span class='icon-trash-2'></span></a>";
-
-    $sub_array[] = $action;
-    $data[]      = $sub_array;
-    $sno = $sno + 1;
+/* Bind search */
+foreach ($params as $key => $val) {
+    $dataStmt->bindValue($key, $val);
 }
 
-function count_all_data($connect)
-{
-    $query     = "SELECT * FROM area_line_mapping";
-    $statement = $connect->prepare($query);
-    $statement->execute();
-    return $statement->rowCount();
+/* Bind limit */
+if ($_POST['length'] != -1) {
+    $dataStmt->bindValue(':start', (int) $_POST['start'], PDO::PARAM_INT);
+    $dataStmt->bindValue(':length', (int) $_POST['length'], PDO::PARAM_INT);
 }
 
-$output = array(
-    'draw' => intval($_POST['draw']),
-    'recordsTotal' => count_all_data($connect),
-    'recordsFiltered' => $number_filter_row,
-    'data' => $data
-);
+$dataStmt->execute();
+$rows = $dataStmt->fetchAll(PDO::FETCH_ASSOC);
 
-echo json_encode($output);
+/* ---------- Build response ---------- */
+$data = [];
+$sno = $_POST['start'] + 1;
+
+foreach ($rows as $row) {
+
+    $statusBadge = ($row['status'] == 1)
+        ? "<span class='kt-badge kt-badge--danger kt-badge--pill'>Inactive</span>"
+        : "<span class='kt-badge kt-badge--success kt-badge--pill'>Active</span>";
+
+    $id = $row['map_id'];
+
+    $action = "
+        <a href='area_mapping&upd=$id&type=line' title='Edit details'><span class='icon-border_color'></span></a>
+        <a href='area_mapping&del=$id&type=line' class='delete_area_mapping' title='Delete details'><span class='icon-trash-2'></span></a>
+    ";
+
+    $data[] = [
+        $sno++,
+        $row['line_name'],
+        $row['company_name'],
+        $row['branch_name'],
+        $row['area_names'],
+        $row['sub_area_names'],
+        $statusBadge,
+        $action
+    ];
+}
+
+/* ---------- Output ---------- */
+echo json_encode([
+    "draw" => intval($_POST['draw']),
+    "recordsTotal" => $recordsTotal,
+    "recordsFiltered" => $recordsFiltered,
+    "data" => $data
+]);

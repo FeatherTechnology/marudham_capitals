@@ -5,8 +5,7 @@ include('../../ajaxconfig.php');
 $cus_id = $_POST['cus_id'];
 $req_id = $_POST['req_id'];
 
-$sql = $connect->query("SELECT a.*,b.fullname, CASE b.role WHEN 1 then 'Director' when 2 then 'Agent' when 3 then 'Staff' end as role FROM confirmation_followup a 
-        JOIN user b ON a.insert_login_id = b.user_id WHERE a.req_id = '$req_id'  ORDER BY a.id DESC "); //order by desc will show last entered data of confirmation table
+$sql = $connect->query("SELECT a.created_date, a.person_type, a.person_name, a.mobile, a.upload, a.status, a.sub_status, a.label, a.remark, b.fullname, CASE b.role WHEN 1 then 'Director' when 2 then 'Agent' when 3 then 'Staff' end as role FROM confirmation_followup a JOIN user b ON a.insert_login_id = b.user_id WHERE a.req_id = '$req_id'  ORDER BY a.id DESC "); //order by desc will show last entered data of confirmation table
 
 //this query will take Confirmation followup data from that table with username and user type according to inserted login id and using switch case in query for output
 
@@ -21,6 +20,7 @@ function getCustomer($connect, $cus_id)
     $cus_name = $result->fetch()['customer_name'];
     return $cus_name;
 }
+
 function getGarentor($connect, $req_id)
 {
     $query = "SELECT cp.guarentor_name, vfi.famname, vfi.relationship FROM customer_profile cp JOIN verification_family_info vfi ON cp.guarentor_name = vfi.id WHERE cp.req_id = '$req_id'";
@@ -45,9 +45,7 @@ function getFamilyMember($connect, $fam_id)
     $response = array("name" => $fam_name, "relationship" => $relationship);
     return $response;
 }
-
 ?>
-
 
 <table class="table custom-table" id='conf_follow_chart'>
     <thead>
@@ -62,12 +60,12 @@ function getFamilyMember($connect, $fam_id)
         <th>Sub Status</th>
         <th>Label</th>
         <th>Remark</th>
+        <th>User</th>
     </thead>
     <tbody>
         <?php while ($row =  $sql->fetch()) { ?>
             <tr>
-                <td><?php echo $sno;
-                    $sno++; ?></td>
+                <td><?php echo $sno++; ?></td>
                 <td><?php echo date('d-m-Y', strtotime($row['created_date'])); ?></td>
                 <td><?php echo $per_type_arr[$row['person_type']]; ?></td>
                 <td>
@@ -128,9 +126,9 @@ function getFamilyMember($connect, $fam_id)
                     <td><?php echo $row['label']; ?></td>
                     <td><?php echo $row['remark']; ?></td>
 
-                <?php }
-                ?>
+                <?php } ?>
 
+                    <td><?php echo $row['fullname']; ?></td>
             </tr>
         <?php } ?>
 
@@ -168,13 +166,6 @@ function getFamilyMember($connect, $fam_id)
     // Pass the table variable to the initColVisFeatures function
     initColVisFeatures(conf_follow_chart, 'conf_follow_chart');
 </script>
-<style>
-    @media (max-width: 598px) {
-        #loanFollowChartDiv {
-            overflow: auto;
-        }
-    }
-</style>
 
 <?php
 // Close the database connection

@@ -1544,258 +1544,573 @@ class admin
 	// Add Area Mapping for Line
 	public function addAreaMappingLine($mysqli, $userid)
 	{
-		if (isset($_POST['line_name'])) {
-			$line_name = $_POST['line_name'];
+		// Collect inputs safely
+		$line_name  = $_POST['line_name']  ?? '';
+		$company_id  = $_POST['company_id'] ?? '';
+		$branch_id   = $_POST['branch']     ?? '';
+		$area_ids    = array_map('intval',explode(',',$_POST['area'])) ?? [];
+		$sub_area_ids= array_map('intval',explode(',',$_POST['sub_area'])) ?? [];
+		$cus_count   = $_POST['cus_count1']  ?? 0;
+		$loan_count  = $_POST['loan_count1'] ?? 0;
+
+		// Start transaction
+		$mysqli->begin_transaction();
+
+		try {
+
+			/* 1️⃣ Insert group */
+			$stmt = $mysqli->prepare("
+				INSERT INTO area_line_mapping
+				(line_name, company_id, branch_id, cus_count, loan_count, insert_login_id, created_date)
+				VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+			");
+
+			$stmt->bind_param(
+				"siiiii",
+				$line_name,
+				$company_id,
+				$branch_id,
+				$cus_count,
+				$loan_count,
+				$userid
+			);
+
+			$stmt->execute();
+			$line_map_id = $stmt->insert_id;
+			$stmt->close();
+
+			/* 2️⃣ Insert areas */
+			if (!empty($area_ids)) {
+				$stmtArea = $mysqli->prepare("
+					INSERT INTO area_line_mapping_area (line_map_id, area_id)
+					VALUES (?, ?)
+				");
+
+				foreach ($area_ids as $area_id) {
+					$stmtArea->bind_param("ii", $line_map_id, $area_id);
+					$stmtArea->execute();
+				}
+				$stmtArea->close();
+			}
+
+			/* 3️⃣ Insert sub-areas */
+			if (!empty($sub_area_ids)) {
+				$stmtSub = $mysqli->prepare("
+					INSERT INTO area_line_mapping_sub_area (line_map_id, sub_area_id)
+					VALUES (?, ?)
+				");
+
+				foreach ($sub_area_ids as $sub_area_id) {
+					$stmtSub->bind_param("ii", $line_map_id, $sub_area_id);
+					$stmtSub->execute();
+				}
+				$stmtSub->close();
+			}
+
+			// Commit if everything is fine
+			$mysqli->commit();
+
+		} catch (Exception $e) {
+			// Rollback on any error
+			$mysqli->rollback();
+			throw $e;
 		}
-		if (isset($_POST['company_id'])) {
-			$company_id = $_POST['company_id'];
-		}
-		if (isset($_POST['branch'])) {
-			$branch_id = $_POST['branch'];
-		}
-		if (isset($_POST['area'])) {
-			$area_id = $_POST['area'];
-		}
-		$sub_area = '';
-		if (isset($_POST['sub_area'])) {
-			$sub_area = $_POST['sub_area'];
-		}
-		if (isset($_POST['cus_count1'])) {
-			$cus_count1 = $_POST['cus_count1'];
-		}
-		if (isset($_POST['loan_count1'])) {
-			$loan_count1 = $_POST['loan_count1'];
-		}
-		$insertQry = "INSERT INTO area_line_mapping(line_name, area_id, sub_area_id,company_id, branch_id, cus_count , loan_count, insert_login_id, created_date)
-		VALUES('" . strip_tags($line_name) . "','" . strip_tags($area_id) . "', '" . strip_tags($sub_area) . "', '" . strip_tags($company_id) . "','" . strip_tags($branch_id) . "', '" . strip_tags($cus_count1) . "', '" . strip_tags($loan_count1) . "', '" . strip_tags($userid) . "',current_timestamp() )";
-		$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
 	}
 
 	// Add Area Mapping for Line
 	public function addAreaMappingDuefollowup($mysqli, $userid)
 	{
-		if (isset($_POST['duefollowup_name'])) {
-			$duefollowup_name = $_POST['duefollowup_name'];
+		// Collect inputs safely
+		$duefollowup_name  = $_POST['duefollowup_name']  ?? '';
+		$company_id  = $_POST['company_id2'] ?? '';
+		$branch_id   = $_POST['branch2']     ?? '';
+		$area_ids    = array_map('intval',explode(',',$_POST['area2'])) ?? [];
+		$cus_count   = $_POST['cus_count']  ?? 0;
+		$loan_count  = $_POST['loan_count'] ?? 0;
+
+		// Start transaction
+		$mysqli->begin_transaction();
+
+		try {
+
+			/* 1️⃣ Insert group */
+			$stmt = $mysqli->prepare("
+				INSERT INTO area_duefollowup_mapping
+				(duefollowup_name, company_id, branch_id, cus_count, loan_count, insert_login_id, created_date)
+				VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+			");
+
+			$stmt->bind_param(
+				"siiiii",
+				$duefollowup_name,
+				$company_id,
+				$branch_id,
+				$cus_count,
+				$loan_count,
+				$userid
+			);
+
+			$stmt->execute();
+			$duefollowup_map_id = $stmt->insert_id;
+			$stmt->close();
+
+			/* 2️⃣ Insert areas */
+			if (!empty($area_ids)) {
+				$stmtArea = $mysqli->prepare("
+					INSERT INTO area_duefollowup_mapping_area (duefollowup_map_id, area_id)
+					VALUES (?, ?)
+				");
+
+				foreach ($area_ids as $area_id) {
+					$stmtArea->bind_param("ii", $duefollowup_map_id, $area_id);
+					$stmtArea->execute();
+				}
+				$stmtArea->close();
+			}
+
+			// Commit if everything is fine
+			$mysqli->commit();
+
+		} catch (Exception $e) {
+			// Rollback on any error
+			$mysqli->rollback();
+			throw $e;
 		}
-		if (isset($_POST['company_id2'])) {
-			$company_id = $_POST['company_id2'];
-		}
-		if (isset($_POST['branch2'])) {
-			$branch_id = $_POST['branch2'];
-		}
-		// if (isset($_POST['customer_status'])) {
-		// 	$customer_status = $_POST['customer_status'];
-		// }
-		// if (isset($_POST['loan_cat'])) {
-		// 	$loan_cat = $_POST['loan_cat'];
-		// }
-		// if (isset($_POST['dueline'])) {
-		// 	$line_name = $_POST['dueline'];
-		// }
-		if (isset($_POST['area2'])) {
-			$area_id = $_POST['area2'];
-		}
-		// $sub_area = '';
-		// if (isset($_POST['sub_area2'])) {
-		// 	$sub_area = $_POST['sub_area2'];
-		// }
-		if (isset($_POST['cus_count'])) {
-			$cus_count = $_POST['cus_count'];
-		}
-		if (isset($_POST['loan_count'])) {
-			$loan_count = $_POST['loan_count'];
-		}
-		$insertQry = "INSERT INTO area_duefollowup_mapping(duefollowup_name, area_id, cus_count, loan_count, company_id, branch_id, insert_login_id, created_date) VALUES('" . strip_tags($duefollowup_name) . "', '" . strip_tags($area_id) . "', '" . strip_tags($cus_count) . "', '" . strip_tags($loan_count) . "', '" . strip_tags($company_id) . "','" . strip_tags($branch_id) . "', '" . strip_tags($userid) . "', CURRENT_TIMESTAMP() )";
-		$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
 	}
+
 	// Add Area Mapping for Group
 	public function addAreaMappingGroup($mysqli, $userid)
 	{
-		if (isset($_POST['group_name'])) {
-			$group_name = $_POST['group_name'];
+		// Collect inputs safely
+		$group_name  = $_POST['group_name']  ?? '';
+		$company_id  = $_POST['company_id1'] ?? '';
+		$branch_id   = $_POST['branch1']     ?? '';
+		$area_ids    = array_map('intval',explode(',',$_POST['area1'])) ?? [];
+		$sub_area_ids= array_map('intval',explode(',',$_POST['sub_area1'])) ?? [];
+		$cus_count   = $_POST['cus_count2']  ?? 0;
+		$loan_count  = $_POST['loan_count2'] ?? 0;
+
+		// Start transaction
+		$mysqli->begin_transaction();
+
+		try {
+
+			/* 1️⃣ Insert group */
+			$stmt = $mysqli->prepare("
+				INSERT INTO area_group_mapping
+				(group_name, company_id, branch_id, cus_count, loan_count, insert_login_id, created_date)
+				VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+			");
+
+			$stmt->bind_param(
+				"siiiii",
+				$group_name,
+				$company_id,
+				$branch_id,
+				$cus_count,
+				$loan_count,
+				$userid
+			);
+
+			$stmt->execute();
+			$group_map_id = $stmt->insert_id;
+			$stmt->close();
+
+			/* 2️⃣ Insert areas */
+			if (!empty($area_ids)) {
+				$stmtArea = $mysqli->prepare("
+					INSERT INTO area_group_mapping_area (group_map_id, area_id)
+					VALUES (?, ?)
+				");
+
+				foreach ($area_ids as $area_id) {
+					$stmtArea->bind_param("ii", $group_map_id, $area_id);
+					$stmtArea->execute();
+				}
+				$stmtArea->close();
+			}
+
+			/* 3️⃣ Insert sub-areas */
+			if (!empty($sub_area_ids)) {
+				$stmtSub = $mysqli->prepare("
+					INSERT INTO area_group_mapping_sub_area (group_map_id, sub_area_id)
+					VALUES (?, ?)
+				");
+
+				foreach ($sub_area_ids as $sub_area_id) {
+					$stmtSub->bind_param("ii", $group_map_id, $sub_area_id);
+					$stmtSub->execute();
+				}
+				$stmtSub->close();
+			}
+
+			// Commit if everything is fine
+			$mysqli->commit();
+
+		} catch (Exception $e) {
+			// Rollback on any error
+			$mysqli->rollback();
+			throw $e;
 		}
-		if (isset($_POST['company_id1'])) {
-			$company_id = $_POST['company_id1'];
-		}
-		if (isset($_POST['branch1'])) {
-			$branch_id = $_POST['branch1'];
-		}
-		if (isset($_POST['area1'])) {
-			$area_id = $_POST['area1'];
-		}
-		$sub_area_id = '';
-		if (isset($_POST['sub_area1'])) {
-			$sub_area_id = $_POST['sub_area1'];
-		}
-		if (isset($_POST['cus_count2'])) {
-			$cus_count2 = $_POST['cus_count2'];
-		}
-		if (isset($_POST['loan_count2'])) {
-			$loan_count2 = $_POST['loan_count2'];
-		}
-		$insertQry = "INSERT INTO area_group_mapping(group_name, area_id, sub_area_id,company_id, branch_id, cus_count, loan_count, insert_login_id, created_date)
-		VALUES('" . strip_tags($group_name) . "','" . strip_tags($area_id) . "', '" . strip_tags($sub_area_id) . "','" . strip_tags($company_id) . "', '" . strip_tags($branch_id) . "', '" . strip_tags($cus_count2) . "', '" . strip_tags($loan_count2) . "', '" . strip_tags($userid) . "',current_timestamp() )";
-		$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
 	}
 
 	// Update Area Mapping Line
 	public function updateAreaMappingLine($mysqli, $id, $userid)
 	{
-		if (isset($_POST['line_name'])) {
-			$line_name = $_POST['line_name'];
+		$line_name   = $_POST['line_name']  ?? '';
+		$company_id   = (int) ($_POST['company_id'] ?? 0);
+		$branch_id    = (int) ($_POST['branch'] ?? 0);
+		$area_ids    = array_map('intval',explode(',',$_POST['area'])) ?? [];
+		$sub_area_ids= array_map('intval',explode(',',$_POST['sub_area'])) ?? [];
+		$cus_count    = (int) ($_POST['cus_count1'] ?? 0);
+		$loan_count   = (int) ($_POST['loan_count1'] ?? 0);
+
+		$mysqli->begin_transaction();
+
+		try {
+
+			/* 1️⃣ Update main group */
+			$stmt = $mysqli->prepare("
+				UPDATE area_line_mapping 
+				SET line_name = ?, company_id = ?, branch_id = ?, 
+					cus_count = ?, loan_count = ?, 
+					update_login_id = ?, updated_date = CURRENT_TIMESTAMP()
+				WHERE map_id = ?
+			");
+			$stmt->bind_param(
+				"siiiiii",
+				$line_name,
+				$company_id,
+				$branch_id,
+				$cus_count,
+				$loan_count,
+				$userid,
+				$id
+			);
+			$stmt->execute();
+			$stmt->close();
+
+			/* 2️⃣ Sync AREA mappings */
+			$mysqli->query("DELETE FROM area_line_mapping_area WHERE line_map_id = $id");
+
+			if (!empty($area_ids)) {
+				$stmtArea = $mysqli->prepare("
+					INSERT INTO area_line_mapping_area (line_map_id, area_id)
+					VALUES (?, ?)
+				");
+				foreach ($area_ids as $area_id) {
+					$stmtArea->bind_param("ii", $id, $area_id);
+					$stmtArea->execute();
+				}
+				$stmtArea->close();
+			}
+
+			/* 3️⃣ Sync SUB-AREA mappings */
+			$mysqli->query("DELETE FROM area_line_mapping_sub_area WHERE line_map_id = $id");
+
+			if (!empty($sub_area_ids)) {
+				$stmtSub = $mysqli->prepare("
+					INSERT INTO area_line_mapping_sub_area (line_map_id, sub_area_id)
+					VALUES (?, ?)
+				");
+				foreach ($sub_area_ids as $sub_area_id) {
+					$stmtSub->bind_param("ii", $id, $sub_area_id);
+					$stmtSub->execute();
+				}
+				$stmtSub->close();
+			}
+
+			$mysqli->commit();
+
+		} catch (Exception $e) {
+			$mysqli->rollback();
+			throw $e;
 		}
-		if (isset($_POST['company_id'])) {
-			$company_id = $_POST['company_id'];
-		}
-		if (isset($_POST['branch'])) {
-			$branch_id = $_POST['branch'];
-		}
-		if (isset($_POST['area'])) {
-			$area_id = $_POST['area'];
-		}
-		$sub_area_id = '';
-		if (isset($_POST['sub_area'])) {
-			$sub_area_id = $_POST['sub_area'];
-		}
-		if (isset($_POST['cus_count1'])) {
-			$cus_count1 = $_POST['cus_count1'];
-		}
-		if (isset($_POST['loan_count1'])) {
-			$loan_count1 = $_POST['loan_count1'];
-		}
-		$updateQry = "UPDATE area_line_mapping set line_name='" . strip_tags($line_name) . "', area_id='" . strip_tags($area_id) . "', 
-		sub_area_id='" . strip_tags($sub_area_id) . "', company_id='" . strip_tags($company_id) . "',branch_id= '" . strip_tags($branch_id) . "', 
-		cus_count='" . strip_tags($cus_count1) . "', loan_count='" . strip_tags($loan_count1) . "', update_login_id='" . strip_tags($userid) . "', 
-		updated_date = current_timestamp(), status=0 WHERE map_id = '" . $id . "' ";
-		$result = $mysqli->query($updateQry) or die("Error " . $mysqli->error);
 	}
 
 	// Update Area Mapping Line
 	public function updateAreaMappingDuefollowup($mysqli, $id, $userid)
 	{
-		if (isset($_POST['duefollowup_name'])) {
-			$duefollowup_name = $_POST['duefollowup_name'];
+		$duefollowup_name   = $_POST['duefollowup_name']  ?? '';
+		$company_id   = (int) ($_POST['company_id2'] ?? 0);
+		$branch_id    = (int) ($_POST['branch2'] ?? 0);
+		$area_ids    = array_map('intval',explode(',',$_POST['area2'])) ?? [];
+		$cus_count    = (int) ($_POST['cus_count'] ?? 0);
+		$loan_count   = (int) ($_POST['loan_count'] ?? 0);
+
+		$mysqli->begin_transaction();
+
+		try {
+
+			/* 1️⃣ Update main group */
+			$stmt = $mysqli->prepare("
+				UPDATE area_duefollowup_mapping 
+				SET duefollowup_name = ?, company_id = ?, branch_id = ?, 
+					cus_count = ?, loan_count = ?, 
+					update_login_id = ?, updated_date = CURRENT_TIMESTAMP()
+				WHERE map_id = ?
+			");
+			$stmt->bind_param(
+				"siiiiii",
+				$duefollowup_name,
+				$company_id,
+				$branch_id,
+				$cus_count,
+				$loan_count,
+				$userid,
+				$id
+			);
+			$stmt->execute();
+			$stmt->close();
+
+			/* 2️⃣ Sync AREA mappings */
+			$mysqli->query("DELETE FROM area_duefollowup_mapping_area WHERE duefollowup_map_id = $id");
+
+			if (!empty($area_ids)) {
+				$stmtArea = $mysqli->prepare("
+					INSERT INTO area_duefollowup_mapping_area (duefollowup_map_id, area_id)
+					VALUES (?, ?)
+				");
+				foreach ($area_ids as $area_id) {
+					$stmtArea->bind_param("ii", $id, $area_id);
+					$stmtArea->execute();
+				}
+				$stmtArea->close();
+			}
+
+			$mysqli->commit();
+
+		} catch (Exception $e) {
+			$mysqli->rollback();
+			throw $e;
 		}
-		if (isset($_POST['company_id2'])) {
-			$company_id = $_POST['company_id2'];
-		}
-		if (isset($_POST['branch2'])) {
-			$branch_id = $_POST['branch2'];
-		}
-		// if (isset($_POST['dueline'])) {
-		// 	$line_name = $_POST['dueline'];
-		// }
-		// if (isset($_POST['loan_cat'])) {
-		// 	$loan_cat = $_POST['loan_cat'];
-		// }
-		// if (isset($_POST['customer_status'])) {
-		// 	$customer_status = $_POST['customer_status'];
-		// }
-		if (isset($_POST['area2'])) {
-			$area_id = $_POST['area2'];
-		}
-		// $sub_area_id = '';
-		// if (isset($_POST['sub_area2'])) {
-		// 	$sub_area_id = $_POST['sub_area2'];
-		// }
-		if (isset($_POST['cus_count'])) {
-			$cus_count = $_POST['cus_count'];
-		}
-		if (isset($_POST['loan_count'])) {
-			$loan_count = $_POST['loan_count'];
-		}
-		$updateQry = "UPDATE area_duefollowup_mapping set duefollowup_name='" . strip_tags($duefollowup_name) . "', area_id='" . strip_tags($area_id) . "', cus_count='" . strip_tags($cus_count) . "', loan_count='" . strip_tags($loan_count) . "', company_id='" . strip_tags($company_id) . "', branch_id= '" . strip_tags($branch_id) . "', update_login_id='" . strip_tags($userid) . "', updated_date = current_timestamp(), status=0 WHERE map_id = '" . $id . "' ";
-		$result = $mysqli->query($updateQry) or die("Error " . $mysqli->error);
 	}
+
 	// Update Area Mapping Group
 	public function updateAreaMappingGroup($mysqli, $id, $userid)
 	{
-		if (isset($_POST['group_name'])) {
-			$group_name = $_POST['group_name'];
+		$group_name   = $_POST['group_name']  ?? '';
+		$company_id   = (int) ($_POST['company_id1'] ?? 0);
+		$branch_id    = (int) ($_POST['branch1'] ?? 0);
+		$area_ids    = array_map('intval',explode(',',$_POST['area1'])) ?? [];
+		$sub_area_ids= array_map('intval',explode(',',$_POST['sub_area1'])) ?? [];
+		$cus_count    = (int) ($_POST['cus_count2'] ?? 0);
+		$loan_count   = (int) ($_POST['loan_count2'] ?? 0);
+
+		$mysqli->begin_transaction();
+
+		try {
+
+			/* 1️⃣ Update main group */
+			$stmt = $mysqli->prepare("
+				UPDATE area_group_mapping 
+				SET group_name = ?, company_id = ?, branch_id = ?, 
+					cus_count = ?, loan_count = ?, 
+					update_login_id = ?, updated_date = CURRENT_TIMESTAMP()
+				WHERE map_id = ?
+			");
+			$stmt->bind_param(
+				"siiiiii",
+				$group_name,
+				$company_id,
+				$branch_id,
+				$cus_count,
+				$loan_count,
+				$userid,
+				$id
+			);
+			$stmt->execute();
+			$stmt->close();
+
+			/* 2️⃣ Sync AREA mappings */
+			$mysqli->query("DELETE FROM area_group_mapping_area WHERE group_map_id = $id");
+
+			if (!empty($area_ids)) {
+				$stmtArea = $mysqli->prepare("
+					INSERT INTO area_group_mapping_area (group_map_id, area_id)
+					VALUES (?, ?)
+				");
+				foreach ($area_ids as $area_id) {
+					$stmtArea->bind_param("ii", $id, $area_id);
+					$stmtArea->execute();
+				}
+				$stmtArea->close();
+			}
+
+			/* 3️⃣ Sync SUB-AREA mappings */
+			$mysqli->query("DELETE FROM area_group_mapping_sub_area WHERE group_map_id = $id");
+
+			if (!empty($sub_area_ids)) {
+				$stmtSub = $mysqli->prepare("
+					INSERT INTO area_group_mapping_sub_area (group_map_id, sub_area_id)
+					VALUES (?, ?)
+				");
+				foreach ($sub_area_ids as $sub_area_id) {
+					$stmtSub->bind_param("ii", $id, $sub_area_id);
+					$stmtSub->execute();
+				}
+				$stmtSub->close();
+			}
+
+			$mysqli->commit();
+
+		} catch (Exception $e) {
+			$mysqli->rollback();
+			throw $e;
 		}
-		if (isset($_POST['company_id1'])) {
-			$company_id = $_POST['company_id1'];
-		}
-		if (isset($_POST['branch1'])) {
-			$branch_id = $_POST['branch1'];
-		}
-		if (isset($_POST['area1'])) {
-			$area_id = $_POST['area1'];
-		}
-		$sub_area_id = '';
-		if (isset($_POST['sub_area1'])) {
-			$sub_area_id = $_POST['sub_area1'];
-		}
-		if (isset($_POST['cus_count2'])) {
-			$cus_count2 = $_POST['cus_count2'];
-		}
-		if (isset($_POST['loan_count2'])) {
-			$loan_count2 = $_POST['loan_count2'];
-		}
-		$updateQry = "UPDATE area_group_mapping set group_name='" . strip_tags($group_name) . "', area_id='" . strip_tags($area_id) . "', sub_area_id='" . strip_tags($sub_area_id) . "', company_id='" . strip_tags($company_id) . "',branch_id= '" . strip_tags($branch_id) . "', cus_count='" . strip_tags($cus_count2) . "',
-		loan_count='" . strip_tags($loan_count2) . "', update_login_id='" . strip_tags($userid) . "', updated_date	 = current_timestamp(), status=0 
-		WHERE map_id = '" . $id . "' ";
-		$result = $mysqli->query($updateQry) or die("Error " . $mysqli->error);
 	}
 
 	// Get Area Mapping
 	public function getAreaMappingLine($mysqli, $id)
 	{
-		$selectQry = "SELECT * FROM area_line_mapping WHERE map_id='" . mysqli_real_escape_string($mysqli, $id) . "' ";
-		$res = $mysqli->query($selectQry) or die("Error in Get All Records" . $mysqli->error);
-		$detailrecords = array();
-		if ($mysqli->affected_rows > 0) {
-			$row = $res->fetch_object();
-			$detailrecords['map_id']      = $row->map_id;
-			$detailrecords['line_name']    = $row->line_name;
-			$detailrecords['area_id']    = $row->area_id;
-			$detailrecords['sub_area_id']    = $row->sub_area_id;
-			$detailrecords['company_id']       = $row->company_id;
-			$detailrecords['branch_id']       = $row->branch_id;
-			$detailrecords['cus_count']       = $row->cus_count;
-			$detailrecords['loan_count']       = $row->loan_count;
+		$detailrecords = [];
+
+		/* 1️⃣ Get line details */
+		$stmt = $mysqli->prepare("
+			SELECT map_id, line_name, company_id, branch_id, cus_count, loan_count
+			FROM area_line_mapping
+			WHERE map_id = ?
+		");
+		$stmt->bind_param("i", $id);
+		$stmt->execute();
+		$res = $stmt->get_result();
+
+		if ($row = $res->fetch_assoc()) {
+			$detailrecords = $row;
 		}
+		$stmt->close();
+
+		/* 2️⃣ Get AREA IDs */
+		$stmt = $mysqli->prepare("
+			SELECT area_id
+			FROM area_line_mapping_area
+			WHERE line_map_id = ?
+		");
+		$stmt->bind_param("i", $id);
+		$stmt->execute();
+		$res = $stmt->get_result();
+
+		$area_ids = [];
+		while ($row = $res->fetch_assoc()) {
+			$area_ids[] = $row['area_id'];
+		}
+		$detailrecords['area_id'] = implode(',', $area_ids);
+		$stmt->close();
+
+		/* 3️⃣ Get SUB-AREA IDs */
+		$stmt = $mysqli->prepare("
+			SELECT sub_area_id
+			FROM area_line_mapping_sub_area
+			WHERE line_map_id = ?
+		");
+		$stmt->bind_param("i", $id);
+		$stmt->execute();
+		$res = $stmt->get_result();
+
+		$sub_area_ids = [];
+		while ($row = $res->fetch_assoc()) {
+			$sub_area_ids[] = $row['sub_area_id'];
+		}
+		$detailrecords['sub_area_id'] = implode(',', $sub_area_ids);
+		$stmt->close();
+
 		return $detailrecords;
 	}
 
 	// Get Area Mapping
 	public function getAreaMappingDuefollowup($mysqli, $id)
 	{
-		$selectQry = "SELECT * FROM area_duefollowup_mapping WHERE map_id='" . mysqli_real_escape_string($mysqli, $id) . "' ";
-		$res = $mysqli->query($selectQry) or die("Error in Get All Records" . $mysqli->error);
-		$detailrecords = array();
-		if ($mysqli->affected_rows > 0) {
-			$row = $res->fetch_object();
-			$detailrecords['map_id']      = $row->map_id;
-			$detailrecords['duefollowup_name']    = $row->duefollowup_name;
-			$detailrecords['loan_category_id']    = $row->loan_category_id;
-			$detailrecords['line_name']    = $row->line_name;
-			$detailrecords['area_id']    = $row->area_id;
-			$detailrecords['customer_status']    = $row->customer_status;
-			$detailrecords['cus_count']    = $row->cus_count;
-			$detailrecords['loan_count']    = $row->loan_count;
-			$detailrecords['company_id']       = $row->company_id;
-			$detailrecords['branch_id']       = $row->branch_id;
+		$detailrecords = [];
+
+		/* 1️⃣ Get line details */
+		$stmt = $mysqli->prepare("
+			SELECT map_id, duefollowup_name, company_id, branch_id, cus_count, loan_count
+			FROM area_duefollowup_mapping
+			WHERE map_id = ?
+		");
+		$stmt->bind_param("i", $id);
+		$stmt->execute();
+		$res = $stmt->get_result();
+
+		if ($row = $res->fetch_assoc()) {
+			$detailrecords = $row;
 		}
+		$stmt->close();
+
+		/* 2️⃣ Get AREA IDs */
+		$stmt = $mysqli->prepare("
+			SELECT area_id
+			FROM area_duefollowup_mapping_area
+			WHERE duefollowup_map_id = ?
+		");
+		$stmt->bind_param("i", $id);
+		$stmt->execute();
+		$res = $stmt->get_result();
+
+		$area_ids = [];
+		while ($row = $res->fetch_assoc()) {
+			$area_ids[] = $row['area_id'];
+		}
+		$detailrecords['area_id'] = implode(',', $area_ids);
+		$stmt->close();
+
 		return $detailrecords;
 	}
+
 	// Get Area Mapping
 	public function getAreaMappingGroup($mysqli, $id)
 	{
-		$selectQry = "SELECT * FROM area_group_mapping WHERE map_id='" . mysqli_real_escape_string($mysqli, $id) . "' ";
-		$res = $mysqli->query($selectQry) or die("Error in Get All Records" . $mysqli->error);
-		$detailrecords = array();
-		if ($mysqli->affected_rows > 0) {
-			$row = $res->fetch_object();
-			$detailrecords['map_id']      = $row->map_id;
-			$detailrecords['group_name']    = $row->group_name;
-			$detailrecords['area_id']    = $row->area_id;
-			$detailrecords['sub_area_id']    = $row->sub_area_id;
-			$detailrecords['company_id']       = $row->company_id;
-			$detailrecords['branch_id']       = $row->branch_id;
-			$detailrecords['cus_count']       = $row->cus_count;
-			$detailrecords['loan_count']       = $row->loan_count;
+		$detailrecords = [];
+
+		/* 1️⃣ Get group details */
+		$stmt = $mysqli->prepare("
+			SELECT map_id, group_name, company_id, branch_id, cus_count, loan_count
+			FROM area_group_mapping
+			WHERE map_id = ?
+		");
+		$stmt->bind_param("i", $id);
+		$stmt->execute();
+		$res = $stmt->get_result();
+
+		if ($row = $res->fetch_assoc()) {
+			$detailrecords = $row;
 		}
+		$stmt->close();
+
+		/* 2️⃣ Get AREA IDs */
+		$stmt = $mysqli->prepare("
+			SELECT area_id
+			FROM area_group_mapping_area
+			WHERE group_map_id = ?
+		");
+		$stmt->bind_param("i", $id);
+		$stmt->execute();
+		$res = $stmt->get_result();
+
+		$area_ids = [];
+		while ($row = $res->fetch_assoc()) {
+			$area_ids[] = $row['area_id'];
+		}
+		$detailrecords['area_id'] = implode(',', $area_ids);
+		$stmt->close();
+
+		/* 3️⃣ Get SUB-AREA IDs */
+		$stmt = $mysqli->prepare("
+			SELECT sub_area_id
+			FROM area_group_mapping_sub_area
+			WHERE group_map_id = ?
+		");
+		$stmt->bind_param("i", $id);
+		$stmt->execute();
+		$res = $stmt->get_result();
+
+		$sub_area_ids = [];
+		while ($row = $res->fetch_assoc()) {
+			$sub_area_ids[] = $row['sub_area_id'];
+		}
+		$detailrecords['sub_area_id'] = implode(',', $sub_area_ids);
+		$stmt->close();
+
 		return $detailrecords;
 	}
 

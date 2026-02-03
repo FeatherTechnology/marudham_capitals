@@ -37,7 +37,7 @@ function dT1() {
     // Declare table variable to store the DataTable instance
     var area_mapping_line_info = $('#area_mapping_line_info').DataTable({
         ...getStateSaveConfig('area_mapping_line_info'),
-        "order": [[0, "asc"]],
+        "order": [[0, "desc"]],
         'processing': true,
         'serverSide': true,
         'serverMethod': 'post',
