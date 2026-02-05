@@ -1025,6 +1025,26 @@ $('#doc_remarkcheck').hide();
         }
     });
     ////NOC replace status END//////
+    
+    ////NOC Document replace START//////
+    document
+    .getElementById('replace_doc_id')
+    .addEventListener('addItem', function (event) {
+
+        const { value, customProperties } = event.detail;
+
+        if (customProperties.nocstatus == '23') {
+            replaceDOCMultiselect.removeActiveItemsByValue(value);
+
+            Swal.fire({
+                title: 'Warning',
+                text : 'Kindly Complete NOC Handover before replace',
+                icon : 'error',
+                confirmButtonColor: '#cc4444'
+            });
+        }
+    });
+    ////NOC Document replace END//////
 
 });   ////////Document Ready End
 
@@ -1151,8 +1171,12 @@ function getDocumentIds(){
             response.forEach(element => {
                 items.push({
                     value: element.doc_id,
+                    nocstatus: element.cus_status,
                     label: element.doc_id,
-                    selected: replace_doc_id_upd.includes(element.doc_id)
+                    selected: replace_doc_id_upd.includes(element.doc_id),
+                    customProperties: {
+                        nocstatus: element.cus_status
+                    }
                 });
             });
 

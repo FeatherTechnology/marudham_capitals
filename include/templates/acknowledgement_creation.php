@@ -418,8 +418,8 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 	.replaceSwitch {
 		position: relative;
 		display: inline-block;
-		width: 80px;
-		height: 34px;
+		width: 135px;
+		height: 45px;
 		left: 10px;
 	}
 
@@ -444,10 +444,10 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 	.replaceSlider:before {
 		position: absolute;
 		content: "";
-		height: 26px;
-		width: 26px;
-		left: 4px;
-		bottom: 4px;
+		height: 36px;
+		width: 36px;
+		left: 5px;
+		bottom: 5px;
 		background-color: white;
 		-webkit-transition: .4s;
 		transition: .4s;
@@ -462,7 +462,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 	}
 
 	input:checked+.replaceSlider:before {
-		left: calc(100% - 31px);
+		left: calc(100% - 41px);
 		/* 36px knob + 5px padding */
 		transform: translateX(0);
 	}
@@ -482,15 +482,15 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 		position: absolute;
 		color: white;
 		font-weight: 600;
-		font-size: 14px;
-		left: 43px;
-		top: 9px;
+		font-size: 18px;
+		left: 86px;
+		top: 12px;
 	}
 
 	/* When Checked */
 	input:checked+.replaceSlider::after {
 		content: "YES";
-		left: 11px;
+		left: 22px;
 		/* text moves to left side when active */
 	}
 	/* Replace status design END */
@@ -1983,8 +1983,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 
 					<!-- Documents Status START-->
 					<div class="card" id="documents_status_card">
-						<div class="card-header"> Documents Status
-						</div>
+						<div class="card-header"> Documents Status </div>
 						<div class="card-body">
 							<div class="row">
 								<div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 col-12">
@@ -1999,15 +1998,16 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="doc_remark">Remarks</label><span class="required">&nbsp;*</span>
-										<textarea class="form-control" name="doc_remark" id="doc_remark" tabindex="52"> <?php if (isset($doc_remark)) {
-																																	echo $doc_remark;
-																																} ?> </textarea>
+										<textarea class="form-control" name="doc_remark" id="doc_remark" tabindex="52"> <?php if (isset($doc_remark)) {echo $doc_remark;} ?> </textarea>
 										<span class="text-danger" id="doc_remarkcheck"> Enter Remarks </span>
 									</div>
 								</div>
+							</div>
+							<br><br>
+							<div class="row">
 								<div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
-										<label for="replace_status"> Replace Status </label> <span class="required">&nbsp;*</span>
+										<label for="replace_status"> Replace Status </label> <span class="required">&nbsp;*</span> &nbsp;&nbsp;
 										<label class="replaceSwitch">
 											<input type="checkbox" name="replace_status" id="replace_status" value="0" tabindex="79" <?php if(isset($noc_replace_status) && $noc_replace_status == '0') echo 'checked'; ?> >
 											<span class="replaceSlider replaceRound"></span>
