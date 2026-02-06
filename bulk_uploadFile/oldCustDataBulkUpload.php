@@ -24,8 +24,11 @@ if (in_array($_FILES["excelFile"]["type"], $allowedFileType)) {
 
                 $data = $obj->fetchAllRowData($connect, $Row);
                 $data['req_code'] = $obj->getRequestCode($connect);
-                $data['doc_code'] = $obj->getDocumentCode($connect);
-                $data['loan_id'] = $obj->getLoanCode($connect);
+                // $data['doc_code'] = $obj->getDocumentCode($connect);
+                $data['autogen_cus_id'] = $obj->getAutoGenCusId($connect, $data['cus_id']);
+                $codes = $obj->getLoanCode($connect);
+                $data['loan_id'] = $codes['loan_id'];   // 101
+                $data['doc_id']  = $codes['doc_id'];    // DOC-101
                 $data['area_id'] = $obj->getAreaId($connect, $data['area']);
                 $data['sub_area_id'] = $obj->getSubAreaId($connect, $data['sub_area'], $data['area_id']);
                 $data['loan_cat_id'] = $obj->getLoanCategoryId($connect, $data['loan_category']);
@@ -40,7 +43,7 @@ if (in_array($_FILES["excelFile"]["type"], $allowedFileType)) {
 
                 $data['cus_status'] = '14';
                 if ($data['closed_status'] != '0') { //other than 0 means closed status is not empty in excel so need to change customer status to NOC
-                    $data['cus_status'] = '21'; //if then change the customer status to 21 for that request
+                    $data['cus_status'] = '24'; //if then change the customer status to 21 for that request
                 }
 
                 $err_columns = $obj->handleError($data);
