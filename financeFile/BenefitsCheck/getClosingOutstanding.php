@@ -1,6 +1,7 @@
 <?php
 
 include('../../ajaxconfig.php');
+include('../../moneyFormatIndia.php');
 
 $user_id = ($_POST['user_id'] != '') ? $_POST['user_id'] : '';
 if ($user_id != '') {
@@ -99,36 +100,6 @@ function getDetials($connect, $condition, $li_where, $to_date)
     $response['closing_outstanding'] = moneyFormatIndia($balance_amount);
 
     echo json_encode($response);
-}
-
-//Format number in Indian Format
-function moneyFormatIndia($num)
-{
-    $isNegative = false;
-    if ($num < 0) {
-        $isNegative = true;
-        $num = abs($num);
-    }
-
-    $explrestunits = "";
-    if (strlen((string)$num) > 3) {
-        $lastthree = substr((string)$num, -3);
-        $restunits = substr((string)$num, 0, -3);
-        $restunits = (strlen($restunits) % 2 == 1) ? "0" . $restunits : $restunits;
-        $expunit = str_split($restunits, 2);
-        foreach ($expunit as $index => $value) {
-            if ($index == 0) {
-                $explrestunits .= (int)$value . ",";
-            } else {
-                $explrestunits .= $value . ",";
-            }
-        }
-        $thecash = $explrestunits . $lastthree;
-    } else {
-        $thecash = $num;
-    }
-
-    return $isNegative ? "-" . $thecash : $thecash;
 }
 
 // Close the database connection

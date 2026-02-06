@@ -1,32 +1,32 @@
 <?php
-function moneyFormatIndia($num1) {
-    if($num1 < 0){
-        $num = str_replace("-","",$num1);
-    }else{
-        $num = $num1;
+function moneyFormatIndia($num)
+{
+    // 🔹 FIX: handle -0 / 0 / 0.00
+    if ((float)$num == 0) {
+        return '0';
     }
-    $explrestunits = "";
-    if (strlen($num) > 3) {
-        $lastthree = substr($num, strlen($num) - 3, strlen($num));
-        $restunits = substr($num, 0, strlen($num) - 3);
-        $restunits = (strlen($restunits) % 2 == 1) ? "0" . $restunits : $restunits;
-        $expunit = str_split($restunits, 2);
-        for ($i = 0; $i < sizeof($expunit); $i++) {
-            if ($i == 0) {
-                $explrestunits .= (int)$expunit[$i] . ",";
-            } else {
-                $explrestunits .= $expunit[$i] . ",";
-            }
-        }
-        $thecash = $explrestunits . $lastthree;
+
+    $isNegative = false;
+    if ($num < 0) {
+        $isNegative = true;
+        $num = abs($num);
+    }
+
+    $numStr = (string)$num;
+    $parts = explode('.', $numStr);
+    $intPart = $parts[0];
+    $decPart = isset($parts[1]) ? '.' . $parts[1] : '';
+
+    $len = strlen($intPart);
+    if ($len <= 3) {
+        $formatted = $intPart;
     } else {
-        $thecash = $num;
+        $lastThree = substr($intPart, -3);
+        $rest = substr($intPart, 0, -3);
+        $rest = preg_replace("/\B(?=(\d{2})+(?!\d))/", ",", $rest);
+        $formatted = $rest . "," . $lastThree;
     }
 
-    if($num1 < 0 && $num1 != ''){
-        $thecash = "-" . $thecash;
-    }
-
-    return $thecash;
+    return ($isNegative ? '-' : '') . $formatted . $decPart;
 }
 ?>

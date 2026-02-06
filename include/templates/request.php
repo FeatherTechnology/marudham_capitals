@@ -653,7 +653,7 @@ if ($idupd > 0) {
 							<label for="loan_amt">Loan Amount</label><span class="required">&nbsp;*</span>
 							<input type="text" class="form-control" id="loan_amt" name="loan_amt" readonly value='<?php if (isset($loan_amt)) {
 																														echo moneyFormatIndia($loan_amt);
-																													} ?>' tabindex='36'>
+																													} ?>' tabindex='36' oninput="validateInputNumber(this,'withOutDot')">
 							<span class="text-danger" style='display:none' id='loanamtCheck'>Please Enter Loan Amount</span>
 						</div>
 					</div>

@@ -40,13 +40,15 @@ if ($result->rowCount() > 0) {
     $records['message'] = "Existing";
 
     $subArea = $records['sub_area'];
-    $grpList = $connect->query("SELECT `group_name` FROM `area_group_mapping` WHERE find_in_set($subArea,`sub_area_id`)");
+    $grpList = $connect->query("SELECT agm.group_name FROM area_group_mapping_sub_area agmsa 
+        LEFT JOIN area_group_mapping agm ON agm.map_id = agmsa.group_map_id WHERE agmsa.sub_area_id = $subArea");
     if ($grpList->rowCount() > 0) {
         $grprow = $grpList->fetch();
         $records['grp_name'] = $grprow['group_name'];
     }
 
-    $lineList = $connect->query("SELECT `line_name` FROM `area_line_mapping` WHERE find_in_set($subArea,`sub_area_id`)");
+    $lineList = $connect->query("SELECT alm.line_name FROM area_line_mapping_sub_area almsa 
+        LEFT JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id WHERE almsa.sub_area_id = $subArea");
     if ($lineList->rowCount() > 0) {
         $linerow = $lineList->fetch();
         $records['line_name'] = $linerow['line_name'];

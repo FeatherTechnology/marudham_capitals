@@ -5,27 +5,9 @@ include('..\ajaxconfig.php');
 if (isset($_SESSION["userid"])) {
     $userid = $_SESSION["userid"];
 }
-if ($userid != 1) {
 
-    $userQry = $connect->query("SELECT * FROM USER WHERE user_id = $userid ");
-    while ($rowuser = $userQry->fetch()) {
-        $group_id = $rowuser['group_id'];
-    }
-    $group_id = explode(',', $group_id);
-    $sub_area_list = array();
-    foreach ($group_id as $group) {
-        $groupQry = $connect->query("SELECT * FROM area_group_mapping where map_id = $group ");
-        $row_sub = $groupQry->fetch();
-        $sub_area_list[] = $row_sub['sub_area_id'];
-    }
-    $sub_area_ids = array();
-    foreach ($sub_area_list as $subarray) {
-        $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
-    }
-    $sub_area_list = array();
-    $sub_area_list = implode(',', $sub_area_ids);
-}
-
+include('..\user_based_sub_area_Ids.php');
+$sub_area_list = getUserSubAreaList($connect, $userid, 'update');
 
 $column = array(
     'rc.req_id',
@@ -121,7 +103,10 @@ foreach ($result as $row) {
     $areaqry = $connect->query(" SELECT area_name FROM area_list_creation WHERE area_id = '". $row ['area'] ."'");
     $sub_array[] = $areaqry->fetch()['area_name'] ?? '';
 
-    $branchqry = $connect->query("SELECT bc.branch_name FROM area_group_mapping agm JOIN branch_creation bc ON agm.branch_id = bc.branch_id WHERE FIND_IN_SET('" . $row['area'] . "' , agm.area_id) ");
+    $branchqry = $connect->query("SELECT bc.branch_name FROM area_group_mapping_area agma 
+    JOIN area_group_mapping agm ON agm.map_id = agma.group_map_id
+    JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
+    WHERE agma.area_id = '". $row ['area'] ."'");
     $sub_array[] = $branchqry->fetch()['branch_name'] ?? '';
 
     $sub_array[] = $row['area_group'];

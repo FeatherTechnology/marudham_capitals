@@ -10,9 +10,11 @@ $query1 = $connect->query("SELECT cp.cus_id, cr.autogen_cus_id, cp.cus_name, cp.
     FROM customer_profile cp
     JOIN customer_register cr ON cp.cus_id = cr.cus_id 
     LEFT JOIN area_list_creation al ON cp.area_confirm_area = al.area_id 
-    LEFT JOIN sub_area_list_creation sl ON cp.area_confirm_subarea = sl.sub_area_id 
-    LEFT JOIN area_line_mapping alm ON FIND_IN_SET( sl.sub_area_id, alm.sub_area_id ) 
-    LEFT JOIN area_group_mapping agm ON FIND_IN_SET( sl.sub_area_id, agm.sub_area_id ) 
+    LEFT JOIN sub_area_list_creation sl ON cp.area_confirm_subarea = sl.sub_area_id
+    LEFT JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sl.sub_area_id
+    LEFT JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
+    LEFT JOIN area_group_mapping_sub_area agmsa ON agmsa.sub_area_id = sl.sub_area_id
+    LEFT JOIN area_group_mapping agm ON agm.map_id = agmsa.group_map_id
     LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id
     WHERE cp.cus_id = " . $cus_id . " ORDER BY cp.id DESC LIMIT 1");
 
@@ -21,8 +23,10 @@ $query2 = $connect->query("SELECT rc.cus_id, cr.autogen_cus_id, rc.cus_name, rc.
     JOIN customer_register cr ON rc.cus_id = cr.cus_id
     JOIN area_list_creation al ON rc.area = al.area_id
     JOIN sub_area_list_creation sl ON rc.sub_area = sl.sub_area_id
-    LEFT JOIN area_line_mapping alm ON FIND_IN_SET( rc.sub_area, alm.sub_area_id ) 
-    LEFT JOIN area_group_mapping agm ON FIND_IN_SET( sl.sub_area_id, agm.sub_area_id ) 
+    LEFT JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sl.sub_area_id
+    LEFT JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
+    LEFT JOIN area_group_mapping_sub_area agmsa ON agmsa.sub_area_id = sl.sub_area_id
+    LEFT JOIN area_group_mapping agm ON agm.map_id = agmsa.group_map_id 
     LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id
     WHERE rc.cus_id = '$cus_id' ORDER BY rc.req_id DESC LIMIT 1");
 

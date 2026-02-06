@@ -1,5 +1,6 @@
 <?php
 include('../../ajaxconfig.php');
+include('../../moneyFormatIndia.php');
 @session_start();
 
 if(isset($_SESSION['userid'])){ //fetch if user has cash tally admin access or not
@@ -39,10 +40,10 @@ if($qry->rowCount() > 0){
                 <td><?php echo date('d-m-Y H:i', strtotime($row['trans_date'])); ?></td>
                 <td><?php echo $row['narration'];?></td>
                 <td><?php echo $row['trans_id'];?></td>
-                <td><?php echo $row['credit'];?></td>
-                <td><?php echo $row['debit'];?></td>
-                <td><?php echo $row['balance'];?></td>
-                <td><?php echo $row['transaction_amount'];?></td>
+                <td><?php echo moneyFormatIndia($row['credit']);?></td>
+                <td><?php echo moneyFormatIndia($row['debit']);?></td>
+                <td><?php echo moneyFormatIndia($row['balance']);?></td>
+                <td><?php echo moneyFormatIndia($row['transaction_amount']);?></td>
             </tr>
         <?php 
             $i++; 

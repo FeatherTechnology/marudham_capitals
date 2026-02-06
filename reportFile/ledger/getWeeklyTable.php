@@ -1,6 +1,7 @@
 <?php
 session_start();
 include '../../ajaxconfig.php';
+include '../../moneyFormatIndia.php';
 
 $weekly_date = date('Y-m-d', strtotime($_POST['weekly_date']));
 
@@ -246,30 +247,6 @@ $weeks = generateWeeks($startDate, $endDate);
         initColVisFeatures(weekly_table, 'weekly_table');
     });
 </script>
-
-<?php
-function moneyFormatIndia($num)
-{
-    $explrestunits = "";
-    if (strlen($num) > 3) {
-        $lastthree = substr($num, strlen($num) - 3, strlen($num));
-        $restunits = substr($num, 0, strlen($num) - 3);
-        $restunits = (strlen($restunits) % 2 == 1) ? "0" . $restunits : $restunits;
-        $expunit = str_split($restunits, 2);
-        for ($i = 0; $i < sizeof($expunit); $i++) {
-            if ($i == 0) {
-                $explrestunits .= (int)$expunit[$i] . ",";
-            } else {
-                $explrestunits .= $expunit[$i] . ",";
-            }
-        }
-        $thecash = $explrestunits . $lastthree;
-    } else {
-        $thecash = $num;
-    }
-    return $thecash;
-}
-?>
 
 <?php
 // Function to get previous Monday and following Sunday based on input date

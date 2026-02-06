@@ -69,7 +69,7 @@ while ($userRow = $userQry->fetch()) {
     $fullname = $userRow['fullname'];
     $line_ids = array_filter(array_map('intval', explode(',', $userRow['due_followup_lines'])));
     $line_ids_str = implode(',', $line_ids);
-    $condition = "adm.map_id IN ($line_ids_str)";
+    $condition = "adfm.map_id IN ($line_ids_str)";
 
     $loan_category_data = [];
 
@@ -106,7 +106,8 @@ while ($userRow = $userQry->fetch()) {
                 LEFT JOIN customer_status cs ON ii.req_id = cs.req_id
                 JOIN area_list_creation al ON cp.area_confirm_area = al.area_id
                 LEFT JOIN closing_customer cc ON ii.req_id = cc.req_id
-                JOIN area_duefollowup_mapping adm ON FIND_IN_SET(al.area_id, adm.area_id)
+                JOIN area_duefollowup_mapping_area adfma ON adfma.area_id = al.area_id
+                JOIN area_duefollowup_mapping adfm ON adfm.map_id = adfma.duefollowup_map_id
                 WHERE 
                 alc.loan_category = $cat_id
                 AND $condition

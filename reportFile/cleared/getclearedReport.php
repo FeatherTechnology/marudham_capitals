@@ -1,6 +1,7 @@
 <?php
 
 include '../../ajaxconfig.php';
+include '../../moneyFormatIndia.php';
 session_start();
 $user_id = $_SESSION['userid'];
 
@@ -105,40 +106,6 @@ $output = array(
 );
 
 echo json_encode($output);
-function moneyFormatIndia($num)
-{
-    // Handle empty or non-numeric input
-    if ($num === null || $num === '' || !is_numeric($num)) {
-        return '0';
-    }
-
-    $num = round($num, 2); // optional, limit to 2 decimals if needed
-    $numParts = explode('.', $num);
-    $integerPart = $numParts[0];
-    $decimalPart = isset($numParts[1]) ? '.' . $numParts[1] : '';
-
-    // Handle numbers less than 1000 directly
-    if (strlen($integerPart) <= 3) {
-        return $integerPart . $decimalPart;
-    }
-
-    // Split last 3 digits
-    $lastThree = substr($integerPart, -3);
-    $restUnits = substr($integerPart, 0, -3);
-
-    // Add leading zero if odd length
-    $restUnits = (strlen($restUnits) % 2 == 1) ? '0' . $restUnits : $restUnits;
-    $expUnits = str_split($restUnits, 2);
-
-    $formatted = '';
-    foreach ($expUnits as $i => $unit) {
-        // remove leading zero for first group
-        $formatted .= ($i == 0 ? (int)$unit : $unit) . ',';
-    }
-
-    return $formatted . $lastThree . $decimalPart;
-}
-
 
 // Close the database connection
 $connect = null;

@@ -1,27 +1,28 @@
 <?php
-@session_start();
-include('..\ajaxconfig.php');
+session_start();
+include('../ajaxconfig.php');
+include('../moneyFormatIndia.php');
 
-if (isset($_SESSION["userid"])) {
-    $userid = $_SESSION["userid"];
-    $sql = $connect->query("SELECT ag_id FROM user where user_id = '$userid'");
-    $login_user_type = $sql->fetch()['ag_id'];
-    if ($login_user_type == null or $login_user_type == '') {
-        $login_user_type = 0;
-    }
-}
-if (isset($_SESSION["request_list_access"])) {
-    $request_list_access = $_SESSION["request_list_access"]; //if request_list_access is granted to the current user, they can access Whole request list
+/* ---------------- USER CONTEXT ---------------- */
+$userid = $_SESSION['userid'] ?? 0;
+$request_list_access = $_SESSION['request_list_access'] ?? 0;
+
+if ($userid) {
+    $stmt = $connect->prepare("SELECT role FROM user WHERE user_id = ?");
+    $stmt->execute([$userid]);
+    $login_user_type = $stmt->fetchColumn();
+    $stmt->closeCursor();
 }
 
-$column = array(
+/* ---------------- DATATABLE COLUMN MAP ---------------- */
+$column = [
     'rc.req_id',
     'rc.dor',
     'rc.cus_id',
     'cr.autogen_cus_id',
     'rc.cus_name',
     'bc.branch_name',
-    'ag.group_name',
+    'agm.group_name',
     'alm.line_name',
     'rc.mobile1',
     'a.area_name',
@@ -36,209 +37,185 @@ $column = array(
     'rc.cus_data',
     'rc.cus_status',
     'rc.req_id'
-);
+];
 
-$query = "SELECT rc.*, cr.autogen_cus_id, a.area_name, sa.sub_area_name, ag.group_name, bc.branch_name, alm.line_name,lcc.loan_category_creation_name
+/* ---------------- BASE QUERY ---------------- */
+$query = "SELECT DISTINCT
+    rc.req_id,
+    rc.dor,
+    rc.cus_id,
+    rc.cus_name,
+    rc.mobile1,
+    rc.sub_category,
+    rc.loan_amt,
+    rc.user_type,
+    rc.user_name,
+    rc.agent_id,
+    rc.responsible,
+    rc.cus_data,
+    rc.cus_status,
+
+    cr.autogen_cus_id,
+    a.area_name,
+    sa.sub_area_name,
+    agm.group_name,
+    bc.branch_name,
+    alm.line_name,
+    lcc.loan_category_creation_name,
+    ac.ag_name AS agent_name
+
     FROM request_creation rc
-    JOIN customer_register cr ON rc.cus_id = cr.cus_id
-    JOIN area_list_creation a ON rc.area = a.area_id
-    JOIN sub_area_list_creation sa ON rc.sub_area = sa.sub_area_id
-    JOIN area_group_mapping ag ON FIND_IN_SET(sa.sub_area_id, ag.sub_area_id)
-    JOIN branch_creation bc ON ag.branch_id = bc.branch_id
-    JOIN area_line_mapping alm ON FIND_IN_SET(sa.sub_area_id, alm.sub_area_id)
-    JOIN loan_category_creation lcc ON lcc.loan_category_creation_id = rc.loan_category
-    WHERE rc.status = 0 
-    AND (rc.cus_status NOT IN (4, 5, 6, 7, 8, 9) AND rc.cus_status < 14) 
-    AND rc.insert_login_id = '$userid' "; //hide if issued or revoked(after issued cus_status = 7 , request revoked = 8, verification revoked = 9)
-if ($userid == 1 or $request_list_access == 0) { //if request_list_access is granted to the current user
-    $query = "SELECT rc.*, cr.autogen_cus_id, a.area_name, sa.sub_area_name, ag.group_name, bc.branch_name, alm.line_name,lcc.loan_category_creation_name
-    FROM request_creation rc
-    JOIN customer_register cr ON rc.cus_id = cr.cus_id
-    JOIN area_list_creation a ON rc.area = a.area_id
-    JOIN sub_area_list_creation sa ON rc.sub_area = sa.sub_area_id
-    JOIN area_group_mapping ag ON FIND_IN_SET(sa.sub_area_id, ag.sub_area_id)
-    JOIN branch_creation bc ON ag.branch_id = bc.branch_id
-    JOIN area_line_mapping alm ON FIND_IN_SET(sa.sub_area_id, alm.sub_area_id)
-    JOIN loan_category_creation lcc ON lcc.loan_category_creation_id = rc.loan_category
-    WHERE rc.status = 0 
-    AND (rc.cus_status NOT IN (4, 5, 6, 7, 8, 9) AND rc.cus_status < 14) ";
-}
-if (isset($_POST['search']) && $_POST['search'] != "") {
+    LEFT JOIN agent_creation ac ON ac.ag_id = rc.agent_id
+    STRAIGHT_JOIN customer_register cr ON cr.cus_id = rc.cus_id
+    STRAIGHT_JOIN sub_area_list_creation sa ON sa.sub_area_id = rc.sub_area
+    STRAIGHT_JOIN area_group_mapping_sub_area agmsa ON agmsa.sub_area_id = sa.sub_area_id
+    STRAIGHT_JOIN area_group_mapping agm ON agm.map_id = agmsa.group_map_id
+    STRAIGHT_JOIN branch_creation bc ON bc.branch_id = agm.branch_id
+    STRAIGHT_JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sa.sub_area_id
+    STRAIGHT_JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
+    STRAIGHT_JOIN area_list_creation a ON a.area_id = rc.area
+    STRAIGHT_JOIN loan_category_creation lcc ON lcc.loan_category_creation_id = rc.loan_category
+    WHERE rc.status = 0 AND rc.cus_status < 14 AND rc.cus_status NOT IN (4,5,6,7,8,9)";
 
-    $query .= "AND ( rc.dor LIKE '%" . $_POST['search'] . "%'
-            OR rc.cus_id LIKE '%" . $_POST['search'] . "%'
-            OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%'
-            OR rc.cus_name LIKE '%" . $_POST['search'] . "%'
-            OR bc.branch_name LIKE '%" . $_POST['search'] . "%'
-            OR ag.group_name LIKE '%" . $_POST['search'] . "%'
-            OR alm.line_name LIKE '%" . $_POST['search'] . "%'
-            OR a.area_name LIKE '%" . $_POST['search'] . "%'
-            OR sa.sub_area_name LIKE '%" . $_POST['search'] . "%'
-            OR lcc.loan_category_creation_name LIKE '%" . $_POST['search'] . "%'
-            OR rc.sub_category LIKE '%" . $_POST['search'] . "%'
-            OR rc.loan_amt LIKE '%" . $_POST['search'] . "%'
-            OR rc.user_type LIKE '%" . $_POST['search'] . "%'
-            OR rc.responsible LIKE '%" . $_POST['search'] . "%'
-            OR rc.cus_data LIKE '%" . $_POST['search'] . "%')  ";
+/* user-level restriction */
+if (!($userid == 1 || $request_list_access == 0)) {
+    $query .= " AND rc.insert_login_id = '" . intval($userid) . "'";
 }
 
+/* ---------------- SEARCH ---------------- */
+if (!empty($_POST['search'])) {
+    $search = $_POST['search'];
+    $query .= " AND (
+        rc.dor LIKE '%$search%' OR
+        rc.cus_id LIKE '%$search%' OR
+        cr.autogen_cus_id LIKE '%$search%' OR
+        rc.cus_name LIKE '%$search%' OR
+        bc.branch_name LIKE '%$search%' OR
+        agm.group_name LIKE '%$search%' OR
+        alm.line_name LIKE '%$search%' OR
+        ac.ag_name LIKE '%$search%' OR
+        a.area_name LIKE '%$search%' OR
+        sa.sub_area_name LIKE '%$search%' OR
+        lcc.loan_category_creation_name LIKE '%$search%' OR
+        rc.sub_category LIKE '%$search%' OR
+        rc.loan_amt LIKE '%$search%' OR
+        rc.user_type LIKE '%$search%' OR
+        rc.responsible LIKE '%$search%' OR
+        rc.cus_data LIKE '%$search%'
+    )";
+}
+
+/* ---------------- ORDER ---------------- */
 if (isset($_POST['order'])) {
-    $query .= 'ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
-} else {
-    $query .= ' ';
+    $col = $column[$_POST['order'][0]['column']];
+    $dir = $_POST['order'][0]['dir'];
+    $query .= " ORDER BY $col $dir ";
 }
 
-$query1 = '';
-
+/* ---------------- PAGINATION ---------------- */
+$limit = '';
 if ($_POST['length'] != -1) {
-    $query1 = 'LIMIT ' . $_POST['start'] . ', ' . $_POST['length'];
+    $limit = " LIMIT " . intval($_POST['start']) . ", " . intval($_POST['length']);
 }
 
-$statement = $connect->prepare($query);
+/* ---------------- EXECUTE MAIN QUERY ---------------- */
+$stmt = $connect->prepare($query . $limit);
+$stmt->execute();
+$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt->closeCursor();
 
-$statement->execute();
+/* ---------------- COUNT FILTERED ---------------- */
+$stmt = $connect->prepare($query);
+$stmt->execute();
+$recordsFiltered = $stmt->rowCount();
+$stmt->closeCursor();
 
-$number_filter_row = $statement->rowCount();
+/* ---------------- COUNT TOTAL ---------------- */
+$stmt = $connect->prepare("SELECT COUNT(*) FROM request_creation");
+$stmt->execute();
+$recordsTotal = $stmt->fetchColumn();
+$stmt->closeCursor();
 
-$statement = $connect->prepare($query . $query1);
+/* ---------------- DATA FORMAT ---------------- */
+$data = [];
+$sno = intval($_POST['start']) + 1;
 
-$statement->execute();
-
-$result = $statement->fetchAll();
-
-$data = array();
-$sno = 1;
 foreach ($result as $row) {
-    $sub_array   = array();
 
-    $sub_array[] = $sno;
+    $sub = [];
 
-    $sub_array[] = date('d-m-Y', strtotime($row['dor']));
-
-    $sub_array[] = $row['cus_id'];
-    $sub_array[] = $row['autogen_cus_id'];
-    $sub_array[] = $row['cus_name'];
-
-    $sub_array[] = $row["branch_name"];
-    $sub_array[] = $row['group_name'];
-    $sub_array[] = $row['line_name'];
-    $sub_array[] = $row['mobile1'];
-    $sub_array[] = $row['area_name'];
-    $sub_array[] = $row['sub_area_name'];
-    $sub_array[] = $row["loan_category_creation_name"];
-    $sub_array[] = $row['sub_category'];
-
-    $sub_array[] = moneyFormatIndia($row['loan_amt']);
-    $sub_array[] = $row['user_type'];
-    $sub_array[] = $row['user_name'];
-
+    $sub[] = $sno++;
+    $sub[] = date('d-m-Y', strtotime($row['dor']));
+    $sub[] = $row['cus_id'];
+    $sub[] = $row['autogen_cus_id'];
+    $sub[] = $row['cus_name'];
+    $sub[] = $row['branch_name'];
+    $sub[] = $row['group_name'];
+    $sub[] = $row['line_name'];
+    $sub[] = $row['mobile1'];
+    $sub[] = $row['area_name'];
+    $sub[] = $row['sub_area_name'];
+    $sub[] = $row['loan_category_creation_name'];
+    $sub[] = $row['sub_category'];
+    $sub[] = moneyFormatIndia($row['loan_amt']);
+    $sub[] = $row['user_type'];
+    $sub[] = $row['user_name'];
+    $sub[] = $row['agent_name'] ?? '';
     $ag_id = $row['agent_id'];
-    if ($ag_id != '') {
+    $sub[] = ($row['responsible'] == '0') ? 'Yes' : (!empty($ag_id) && $row['responsible'] != '0' ? 'No' : '');
+    $sub[] = $row['cus_data'];
 
-        $qry = $connect->query("SELECT * FROM agent_creation where ag_id = $ag_id ");
-        $row1 = $qry->fetch();
-        $sub_array[] = $row1['ag_name'];
-    } else {
-        $sub_array[] = '';
-    }
-
-    if ($row['responsible'] == '0') {
-        $sub_array[] = 'Yes';
-    }else if (!empty($ag_id) && $row['responsible'] != '0') {
-        $sub_array[] = 'No';
-    } else {
-        $sub_array[] = '';
-    }
-
-    $sub_array[] = $row['cus_data'];
     $id = $row['req_id'];
     $cus_id = $row['cus_id'];
-
     $cus_status = $row['cus_status'];
+
     $status_messages = [
         '0' => "<button class='btn btn-outline-secondary sub_verification' value='$id' data-value='$cus_id'><span class='icon-arrow_forward'></span></button>",
         '1' => 'In Verification',
-        '10' => 'In Verification',
-        '11' => 'In Verification',
-        '12' => 'In Verification',
         '2' => 'In Approval',
         '3' => 'In Acknowledgement',
         '4' => 'Cancel - Request',
         '5' => 'Cancel - Verification',
         '6' => 'Cancel - Approval',
         '7' => 'Cancel - Acknowledgement',
+        '10' => 'In Verification',
+        '11' => 'In Verification',
+        '12' => 'In Verification',
         '13' => 'In Issue',
         '14' => 'Issued'
     ];
 
-    $sub_array[] = isset($status_messages[$cus_status]) ? $status_messages[$cus_status] : 'Unknown Status';
+    $sub[] = $status_messages[$cus_status] ?? 'Unknown Status';
 
+    $action = "<div class='dropdown'>
+        <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
+        <div class='dropdown-content'>";
 
-    $id = $row['req_id'];
-    $user_type = $row['user_type'];
-    $cus_id = $row['cus_id'];
-
-    $action = "<div class='dropdown' >
-    <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
-    <div class='dropdown-content'>";
     if ($cus_status == '0') {
         $action .= "<a href='request&upd=$id'>Edit Request</a>
-        <a href='#' data-reqId = '$id' class='cancelrequest'>Cancel Request</a>
-        <a href='#' data-reqId = '$id' class='revokerequest'>Revoke Request</a>";
+                    <a href='' data-reqId='$id' class='cancelrequest'>Cancel Request</a>
+                    <a href='' data-reqId='$id' class='revokerequest'>Revoke Request</a>";
     }
-    if ($cus_status == '4' or $cus_status == '5' or $cus_status == '6') {
+
+    if (in_array($cus_status, ['4', '5', '6'])) {
         $action .= "<a href='request&del=$id' class='removerequest'>Remove Request</a>";
     }
-    if ($login_user_type == 0 or $userid == 1) {
-        $action .= "<a href='' data-value ='" . $cus_id . "' data-value1 = '$id' class='customer-status' data-toggle='modal' data-target='.customerstatus'>Customer Status</a>";
+
+    if ($login_user_type != 2 || $userid == 1) { //role 2- Agent 
+        $action .= "<a href='' data-value='$cus_id' data-value1='$id' class='customer-status' data-toggle='modal' data-target='.customerstatus'>Customer Status</a>";
     }
 
     $action .= "</div></div>";
+    $sub[] = $action;
 
-    $sub_array[] = $action;
-    $data[]      = $sub_array;
-    $sno = $sno + 1;
+    $data[] = $sub;
 }
 
-//Format number in Indian Format
-function moneyFormatIndia($num)
-{
-    $explrestunits = "";
-    if (strlen($num) > 3) {
-        $lastthree = substr($num, strlen($num) - 3, strlen($num));
-        $restunits = substr($num, 0, strlen($num) - 3);
-        $restunits = (strlen($restunits) % 2 == 1) ? "0" . $restunits : $restunits;
-        $expunit = str_split($restunits, 2);
-        for ($i = 0; $i < sizeof($expunit); $i++) {
-            if ($i == 0) {
-                $explrestunits .= (int)$expunit[$i] . ",";
-            } else {
-                $explrestunits .= $expunit[$i] . ",";
-            }
-        }
-        $thecash = $explrestunits . $lastthree;
-    } else {
-        $thecash = $num;
-    }
-    return $thecash;
-}
+/* ---------------- RESPONSE ---------------- */
+echo json_encode([
+    "draw" => intval($_POST['draw']),
+    "recordsTotal" => $recordsTotal,
+    "recordsFiltered" => $recordsFiltered,
+    "data" => $data
+]);
 
-function count_all_data($connect)
-{
-    $query     = "SELECT * FROM request_creation";
-    $statement = $connect->prepare($query);
-    $statement->execute();
-    return $statement->rowCount();
-}
-
-$output = array(
-    'draw' => intval($_POST['draw']),
-    'recordsTotal' => count_all_data($connect),
-    'recordsFiltered' => $number_filter_row,
-    'data' => $data
-);
-
-echo json_encode($output);
-
-// Close the database connection
-$connect = null;

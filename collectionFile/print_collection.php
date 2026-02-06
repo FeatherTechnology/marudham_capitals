@@ -1,6 +1,7 @@
 <?php
 @session_start();
 include '../ajaxconfig.php';
+include '../moneyFormatIndia.php';
 
 if (isset($_POST["coll_id"])) {
     $coll_code_id = $_POST["coll_id"];
@@ -15,7 +16,10 @@ $sql = $connect->query("SELECT autogen_cus_id FROM customer_register WHERE cus_i
 $rowSql = $sql->fetch();
 $autogen_cus_id = $rowSql['autogen_cus_id'];
 
-$sql = $connect->query("SELECT alm.line_name, alc.area_name FROM `acknowlegement_customer_profile` cp JOIN area_line_mapping alm ON FIND_IN_SET(cp.area_confirm_subarea,alm.sub_area_id) JOIN area_list_creation alc ON cp.area_confirm_area = alc.area_id WHERE cp.req_id='" . strip_tags($req_id) . "'");
+$sql = $connect->query("SELECT alm.line_name, alc.area_name FROM `acknowlegement_customer_profile` cp 
+JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = cp.area_confirm_subarea 
+JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id 
+JOIN area_list_creation alc ON cp.area_confirm_area = alc.area_id WHERE cp.req_id='" . strip_tags($req_id) . "'");
 $rowSql = $sql->fetch();
 $line_name = $rowSql['line_name'];
 $area_name = $rowSql['area_name'];
@@ -195,28 +199,6 @@ $coll_modes = ['1' => 'Cash', '2' => 'Cheque', '3' => 'ECS', '4' => 'IMPS/NEFT/R
 </script>
 
 <?php
-function moneyFormatIndia($num)
-{
-    $explrestunits = "";
-    if (strlen($num) > 3) {
-        $lastthree = substr($num, strlen($num) - 3, strlen($num));
-        $restunits = substr($num, 0, strlen($num) - 3);
-        $restunits = (strlen($restunits) % 2 == 1) ? "0" . $restunits : $restunits;
-        $expunit = str_split($restunits, 2);
-        for ($i = 0; $i < sizeof($expunit); $i++) {
-            if ($i == 0) {
-                $explrestunits .= (int)$expunit[$i] . ",";
-            } else {
-                $explrestunits .= $expunit[$i] . ",";
-            }
-        }
-        $thecash = $explrestunits . $lastthree;
-    } else {
-        $thecash = $num;
-    }
-    return $thecash;
-}
-
 function getBalance($connect, $req_id, $collID)
 {
     $result = $connect->query("SELECT tot_amt_cal, principal_amt_cal FROM `acknowlegement_loan_calculation` WHERE req_id = $req_id ");

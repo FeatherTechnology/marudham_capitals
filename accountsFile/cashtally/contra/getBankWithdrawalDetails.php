@@ -2,6 +2,7 @@
 <?php
 session_start();
 include('../../../ajaxconfig.php');
+include('../../../moneyFormatIndia.php');
 
 $user_id = $_SESSION['userid'];
 $bankqry = $connect->query("SELECT `bank_details` FROM `user` WHERE `user_id`= $user_id");
@@ -90,30 +91,3 @@ $qry = $connect->query("SELECT bwed.*,bc.short_name,bc.acc_no from ct_db_cash_wi
         initColVisFeatures(bwdTable, 'bwdTable');
     });
 </script>
-
-<?php
-//Format number in Indian Format
-function moneyFormatIndia($num) {
-    $explrestunits = "";
-    if (strlen($num) > 3) {
-        $lastthree = substr($num, strlen($num) - 3, strlen($num));
-        $restunits = substr($num, 0, strlen($num) - 3);
-        $restunits = (strlen($restunits) % 2 == 1) ? "0" . $restunits : $restunits;
-        $expunit = str_split($restunits, 2);
-        for ($i = 0; $i < sizeof($expunit); $i++) {
-            if ($i == 0) {
-                $explrestunits .= (int)$expunit[$i] . ",";
-            } else {
-                $explrestunits .= $expunit[$i] . ",";
-            }
-        }
-        $thecash = $explrestunits . $lastthree;
-    } else {
-        $thecash = $num;
-    }
-    return $thecash;
-}
-
-// Close the database connection
-$connect = null;
-?>

@@ -3,6 +3,7 @@
 // $user_id = $_SESSION['userid'];
 
 include('../../../ajaxconfig.php');
+include('../../../moneyFormatIndia.php');
 
 // $bankqry = $connect->query("SELECT `bank_details` FROM `user` WHERE `user_id`= $user_id");
 // $bank_id = $bankqry->fetch()['bank_details'];
@@ -1566,38 +1567,6 @@ if ($opening_bal != '') {
 </script>
 
 <?php
-//Format number in Indian Format
-function moneyFormatIndia($num)
-{
-    // 🔹 FIX: handle -0 / 0 / 0.00
-    if ((float)$num == 0) {
-        return '0';
-    }
-
-    $isNegative = false;
-    if ($num < 0) {
-        $isNegative = true;
-        $num = abs($num);
-    }
-
-    $numStr = (string)$num;
-    $parts = explode('.', $numStr);
-    $intPart = $parts[0];
-    $decPart = isset($parts[1]) ? '.' . $parts[1] : '';
-
-    $len = strlen($intPart);
-    if ($len <= 3) {
-        $formatted = $intPart;
-    } else {
-        $lastThree = substr($intPart, -3);
-        $rest = substr($intPart, 0, -3);
-        $rest = preg_replace("/\B(?=(\d{2})+(?!\d))/", ",", $rest);
-        $formatted = $rest . "," . $lastThree;
-    }
-
-    return ($isNegative ? '-' : '') . $formatted . $decPart;
-}
-
 
 if ($sheet_type == 4) { //4 Means Expense Balance Sheet so show/hide view types
 

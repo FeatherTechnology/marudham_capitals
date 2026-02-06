@@ -16,7 +16,7 @@ $due_followup_lines = $userRow['due_followup_lines'];
 $promotion_activity_mapping_access = $userRow['promotion_activity_mapping_access'];
 
 if ($promotion_activity_mapping_access == 1) {
-    $condition = "ag.map_id IN ($group_id)";
+    $condition = "agm.map_id IN ($group_id)";
 } elseif ($promotion_activity_mapping_access == 2) {
     $condition = "alm.map_id IN ($line_id)";
 } elseif ($promotion_activity_mapping_access == 3) {
@@ -27,22 +27,27 @@ if ($promotion_activity_mapping_access == 1) {
 if ($role_type == 7 || $role_type == 3) {
     // Role 7 (Admin) and 3(Manager)→ See all records
     $sql = $connect->query("
-        SELECT ncp.cus_id,ncp.cus_name,ncp.mobile,ncp.insert_login_id,ncp.created_date,a.area_name,sa.sub_area_name,ag.group_name,alm.line_name FROM new_cus_promo ncp JOIN area_list_creation a ON ncp.area = a.area_id
+        SELECT ncp.cus_id,ncp.cus_name,ncp.mobile,ncp.insert_login_id,ncp.created_date,a.area_name,sa.sub_area_name,agm.group_name,alm.line_name FROM new_cus_promo ncp JOIN area_list_creation a ON ncp.area = a.area_id
         JOIN sub_area_list_creation sa ON ncp.sub_area = sa.sub_area_id
-        JOIN area_line_mapping alm ON FIND_IN_SET(a.area_id, alm.area_id)
-        JOIN area_group_mapping ag ON FIND_IN_SET(a.area_id, ag.area_id)
+        JOIN area_group_mapping_area agma ON agma.area_id = a.area_id
+        JOIN area_group_mapping agm ON agm.map_id = agma.group_map_id
+        JOIN area_line_mapping_area alma ON alma.area_id = a.area_id
+        JOIN area_line_mapping alm ON alm.map_id = alma.line_map_id
         WHERE ncp.cus_id NOT IN (SELECT cus_id FROM customer_register)
     ");
 } else {
     // Other roles → See only their own records
     $sql = $connect->query("
-        SELECT ncp.cus_id,ncp.cus_name,ncp.mobile,ncp.insert_login_id,ncp.created_date,a.area_name, sa.sub_area_name,ag.group_name,alm.line_name 
+        SELECT ncp.cus_id,ncp.cus_name,ncp.mobile,ncp.insert_login_id,ncp.created_date,a.area_name, sa.sub_area_name,agm.group_name,alm.line_name 
         FROM new_cus_promo ncp 
         JOIN area_list_creation a ON ncp.area = a.area_id
         JOIN sub_area_list_creation sa ON ncp.sub_area = sa.sub_area_id
-        JOIN area_line_mapping alm ON FIND_IN_SET(a.area_id, alm.area_id)
-        JOIN area_group_mapping ag ON FIND_IN_SET(a.area_id, ag.area_id)
-        LEFT JOIN area_duefollowup_mapping adfm ON FIND_IN_SET(a.area_id, adfm.area_id)
+        JOIN area_group_mapping_area agma ON agma.area_id = a.area_id
+        JOIN area_group_mapping agm ON agm.map_id = agma.group_map_id
+        JOIN area_line_mapping_area alma ON alma.area_id = a.area_id
+        JOIN area_line_mapping alm ON alm.map_id = alma.line_map_id
+        JOIN area_duefollowup_mapping_area adfma ON adfma.area_id = a.area_id
+        JOIN area_duefollowup_mapping adfm ON adfm.map_id = adfma.duefollowup_map_id
         WHERE ncp.cus_id NOT IN (SELECT cus_id FROM customer_register)
         AND $condition GROUP BY ncp.cus_id
     ");

@@ -1,32 +1,12 @@
 <?php
 session_start();
 include '../ajaxconfig.php';
+include '../moneyFormatIndia.php';
 
 if (isset($_SESSION["userid"])) {
     $user_id = $_SESSION["userid"];
 }
 
-function moneyFormatIndia($num)
-{
-    $explrestunits = "";
-    if (strlen($num) > 3) {
-        $lastthree = substr($num, strlen($num) - 3, strlen($num));
-        $restunits = substr($num, 0, strlen($num) - 3);
-        $restunits = (strlen($restunits) % 2 == 1) ? "0" . $restunits : $restunits;
-        $expunit = str_split($restunits, 2);
-        for ($i = 0; $i < sizeof($expunit); $i++) {
-            if ($i == 0) {
-                $explrestunits .= (int)$expunit[$i] . ",";
-            } else {
-                $explrestunits .= $expunit[$i] . ",";
-            }
-        }
-        $thecash = $explrestunits . $lastthree;
-    } else {
-        $thecash = $num;
-    }
-    return $thecash;
-}
 ?>
 <table class="table custom-table" id='collectionChargeListTable'>
     <thead>
@@ -85,12 +65,12 @@ function moneyFormatIndia($num)
     <tr>
         <td></td>
         <td></td>
-        <td><b><?php echo $charges; ?></b></td>
+        <td><b><?php echo moneyFormatIndia($charges); ?></b></td>
         <td></td>
         <td></td>
-        <td><b><?php echo $paid_amt; ?></b></td>
-        <td><b><?php echo $bal_amnt; ?></b></td>
-        <td><b><?php echo $charges_waiver; ?></b></td>
+        <td><b><?php echo moneyFormatIndia($paid_amt); ?></b></td>
+        <td><b><?php echo moneyFormatIndia($bal_amnt); ?></b></td>
+        <td><b><?php echo moneyFormatIndia($charges_waiver); ?></b></td>
     </tr>
 </table>
 

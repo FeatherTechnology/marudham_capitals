@@ -188,9 +188,15 @@ class getTrackTableDetails
     public function getBranchName($connect, $sub_area, $type)
     {
         if ($type == 'group') {
-            $qry = $connect->query("SELECT bc.branch_name from area_group_mapping agm LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id where FIND_IN_SET($sub_area,agm.sub_area_id)");
+            $qry = $connect->query("SELECT bc.branch_name from area_group_mapping_sub_area agmsa 
+            LEFT JOIN area_group_mapping agm ON agm.map_id = agmsa.group_map_id 
+            LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
+            where agmsa.sub_area_id = $sub_area");
         } else if ($type == 'line') {
-            $qry = $connect->query("SELECT bc.branch_name from area_line_mapping alm LEFT JOIN branch_creation bc ON alm.branch_id = bc.branch_id where FIND_IN_SET($sub_area,alm.sub_area_id)");
+            $qry = $connect->query("SELECT bc.branch_name from area_line_mapping_sub_area almsa 
+            LEFT JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id 
+            LEFT JOIN branch_creation bc ON alm.branch_id = bc.branch_id 
+            where almsa.sub_area_id = $sub_area");
         }
         $branch_name = $qry->fetch()['branch_name'];
         return $branch_name;

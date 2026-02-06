@@ -1,5 +1,6 @@
 <?php
 include('../../ajaxconfig.php');
+include('../../moneyFormatIndia.php');
 $user_id = ($_POST['user_id'] != '') ? $_POST['user_id'] : '';
 
 $type = $_POST['type'];
@@ -99,36 +100,6 @@ function getSubareaList($connect, $user_id)
     $GLOBALS['sub_area_params'] = $sub_area_ids; // store params for later prepared statement
 
     return " AND iv.sub_area IN ($placeholders_sub)";
-}
-
-//Format number in Indian Format
-function moneyFormatIndia($num)
-{
-    $isNegative = false;
-    if ($num < 0) {
-        $isNegative = true;
-        $num = abs($num);
-    }
-
-    $explrestunits = "";
-    if (strlen((string)$num) > 3) {
-        $lastthree = substr((string)$num, -3);
-        $restunits = substr((string)$num, 0, -3);
-        $restunits = (strlen($restunits) % 2 == 1) ? "0" . $restunits : $restunits;
-        $expunit = str_split($restunits, 2);
-        foreach ($expunit as $index => $value) {
-            if ($index == 0) {
-                $explrestunits .= (int)$value . ",";
-            } else {
-                $explrestunits .= $value . ",";
-            }
-        }
-        $thecash = $explrestunits . $lastthree;
-    } else {
-        $thecash = $num;
-    }
-
-    return $isNegative ? "-" . $thecash : $thecash;
 }
 
 // Close the database connection

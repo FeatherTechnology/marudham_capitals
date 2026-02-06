@@ -1,45 +1,34 @@
 <?php
 include('../ajaxconfig.php');
-@session_start();
+session_start();
 
-if (isset($_POST['talukselected'])) {
-    $taluk = $_POST['talukselected'];
-}
+$userid = $_SESSION['userid'] ?? '';
+$taluk  = $_POST['talukselected'] ?? '';
 
-if (isset($_SESSION["userid"])) {
-    $userid = $_SESSION["userid"];
-}
+// 1. Get user group IDs 
+$stmt = $connect->prepare("SELECT group_id FROM user WHERE status = 0 AND user_id = ?");
+$stmt->execute([$userid]);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$loan_category_arr = array();
+$groupIds = array_map('intval', explode(',', $user['group_id']));
+$placeholders = implode(',', array_fill(0, count($groupIds), '?'));
 
-$user_area = array();
+// 2. Get all allowed area IDs for those groups
+$stmt = $connect->prepare("SELECT DISTINCT agma.area_id FROM area_group_mapping_area agma
+    INNER JOIN area_group_mapping agm ON agma.group_map_id = agm.map_id
+    WHERE agm.status = 0 AND agm.map_id IN ($placeholders)");
+$stmt->execute($groupIds);
 
-$Qry = $connect->query("SELECT group_id FROM user WHERE status = 0 AND user_id = '" . $userid . "'"); //fetching group of current staff
-$run = $Qry->fetch();
-$user_group = explode(',', $run['group_id']);
+$allowedAreas = $stmt->fetchAll(PDO::FETCH_COLUMN);
+$areaPlaceholders = implode(',', array_fill(0, count($allowedAreas), '?'));
 
-foreach ($user_group as $group_id) {
+// 3. Fetch final areas directly (NO PHP FILTERING)
+$params = array_merge(["%$taluk%"], $allowedAreas);
 
-    $Qry = $connect->query("SELECT area_id FROM area_group_mapping WHERE status = 0  AND map_id = $group_id "); //fetching area id from group
-    $run = $Qry->fetch();
-    $user_area[] = explode(',', $run['area_id']);
-}
+$stmt = $connect->prepare("SELECT area_id, area_name FROM area_list_creation 
+    WHERE taluk LIKE ? AND status = 0 AND area_enable = 0 AND area_id IN ($areaPlaceholders)");
+$stmt->execute($params);
 
-$result = $connect->query("SELECT area_id, area_name FROM area_list_creation WHERE taluk LIKE '%" . $taluk . "%' AND status = 0 AND area_enable = 0");
+echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
 
-while ($row = $result->fetch()) {
-    $area_id = $row['area_id'];
-    $area_name = $row['area_name'];
-
-    for ($i = 0; $i < sizeof($user_area); $i++) {
-
-        if (in_array($area_id, $user_area[$i])) {
-            $loan_category_arr[] = array("area_id" => $area_id, "area_name" => $area_name);
-        }
-    }
-}
-
-echo json_encode($loan_category_arr);
-
-// Close the database connection
 $connect = null;

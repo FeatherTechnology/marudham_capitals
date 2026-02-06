@@ -6727,7 +6727,10 @@ class admin
 		$detailrecords['sub_area_name'] = $qry->fetch_assoc()['sub_area_name'];
 
 		// Getting Line Id, Branch ID, Branch Name
-		$qry = $mysqli->query("SELECT b.branch_id, b.branch_name, l.map_id, l.line_name AS area_line FROM branch_creation b JOIN area_line_mapping l ON l.branch_id = b.branch_id WHERE FIND_IN_SET(" . $detailrecords['area_confirm_subarea'] . ", l.sub_area_id) ");
+		$qry = $mysqli->query("SELECT b.branch_id, b.branch_name, l.map_id, l.line_name AS area_line FROM branch_creation b 
+		JOIN area_line_mapping l ON l.branch_id = b.branch_id 
+		JOIN area_line_mapping_sub_area almsa ON almsa.line_map_id = l.map_id 
+		WHERE almsa.sub_area_id = '" . $detailrecords['area_confirm_subarea'] . "' ");
 		$row = $qry->fetch_assoc();
 		$detailrecords['line_id'] = $row['map_id'];
 		$detailrecords['area_line'] = $row['area_line'];
@@ -7266,7 +7269,10 @@ class admin
 
 				// Getting Line Id, Branch ID, Branch Name
 				$areaconfirmsubarea = $detailrecords['area_confirm_subarea'] || $detailrecords['sub_area'];
-				$qry = $mysqli->query("SELECT b.branch_id, b.branch_name, l.map_id, l.line_name AS area_line FROM branch_creation b JOIN area_line_mapping l ON l.branch_id = b.branch_id WHERE FIND_IN_SET(" . $areaconfirmsubarea . ", l.sub_area_id) ");
+				$qry = $mysqli->query("SELECT b.branch_id, b.branch_name, l.map_id, l.line_name AS area_line FROM branch_creation b 
+				JOIN area_line_mapping l ON l.branch_id = b.branch_id
+				JOIN area_line_mapping_sub_area almsa ON almsa.line_map_id = l.map_id
+				WHERE almsa.sub_area_id = '" . $areaconfirmsubarea . "' ");
 				$row = $qry->fetch_assoc();
 				$detailrecords['line_id'] = $row['map_id'];
 				$detailrecords['line_name'] = $row['area_line'];
