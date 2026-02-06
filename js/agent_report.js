@@ -12,9 +12,7 @@ $(document).ready(function () {
     });
 
     //Agent Report Table
-    // var agent_report_table = 
     $('#reset_btn').click(function () {
-        // agent_report_table.ajax.reload();
         agentReportTable();
     })
 });
@@ -26,50 +24,76 @@ function agentReportTable() {
         "order": [
             [0, "desc"]
         ],
-        'processing': true,
-        'serverSide': true,
-        'serverMethod': 'post',
-        'ajax': {
-            'url': 'reportFile/agent/getAgentReport.php',
-            'data': function (data) {
-                var search = $('input[type=search]').val();
-                data.search = search;
-                data.from_date = $('#from_date').val();
-                data.to_date = $('#to_date').val();
-            }
-        },
-        dom: 'lBfrtip',
-        buttons: [{
-            extend: 'excel',
-            title: "Agent Report List",
-            action: function (e, dt, button, config) {
-                var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
-                var dynamic = curDateJs('Agent_Report'); // or any base
-                config.title = dynamic;      // for versions that use title as filename
-                config.filename = dynamic;   // for html5 filename
-                defaultAction.call(this, e, dt, button, config);
-            }
-        },
-        {
-            extend: 'colvis',
-            collectionLayout: 'fixed four-column',
-        }
-        ],
-        "lengthMenu": [
-            [10, 25, 50, -1],
-            [10, 25, 50, "All"]
-        ],
-        "footerCallback": function (row, data, start, end, display) {
-            var api = this.api();
+        processing: true,
+        serverSide: true,
+        serverMethod: 'post',
 
-            // Remove formatting to get integer data for summation
-            var intVal = function (i) {
-                return typeof i === 'string' ?
-                    i.replace(/[\$,]/g, '') * 1 :
-                    typeof i === 'number' ?
-                        i : 0;
+        ajax: {
+            url: 'reportFile/agent/getAgentReport.php',
+            data: function (d) {
+                var search = $('input[type=search]').val();
+                d.search = search;
+                d.from_date = $('#from_date').val();
+                d.to_date   = $('#to_date').val();
+            }
+        },
+
+        dom: 'lBfrtip',
+        buttons: [
+            {
+                extend: 'excel',
+                title: "Agent Report List",
+                action: function (e, dt, button, config) {
+                    let dynamic = curDateJs('Agent_Report');
+                    config.title = dynamic;
+                    config.filename = dynamic;
+                    $.fn.dataTable.ext.buttons.excelHtml5.action.call(
+                        this, e, dt, button, config
+                    );
+                }
+            },
+            {
+                extend: 'colvis',
+                collectionLayout: 'fixed four-column'
+            }
+        ],
+
+        lengthMenu: [[10, 25, 50, -1],[10, 25, 50, "All"]],
+
+        footerCallback: function (row, data, start, end, display) {
+
+            const api = this.api();
+            const json = api.ajax.json();
+
+            /* ---------------- OPENING BAL ---------------- */
+            let openingBal = 0;
+            if (json && json.opening_balance) {
+                openingBal = parseFloat(
+                    json.opening_balance.toString().replace(/,/g, '')
+                ) || 0;  
+            }
+            $('#opbal').text(openingBal.toLocaleString('en-IN', { minimumFractionDigits: 0 }));
+
+            /* ---------------- CLOSING BAL ---------------- */
+            let closingBal = 0;
+            if (json && json.closing_balance) {
+                closingBal = parseFloat(
+                    json.closing_balance.toString().replace(/,/g, '')
+                ) || 0;   
+            }
+            const closingRow = $(api.table().footer()).find('#closingRow');
+
+            closingRow.find('td:last').html('<b>' + closingBal.toLocaleString('en-IN', { minimumFractionDigits: 0 }) + '</b>');
+
+            /* ---------------- PARSER ---------------- */
+            const parseVal = (v) => {
+                if (typeof v === 'string') {
+                    return parseFloat(v.replace(/,/g, '')) || 0;
+                }
+                return v || 0;
             };
 
+            /* ---------------- TOTALS ---------------- */
             // Array of column indices to sum
             var columnsToSum = [ 4, 5, 6,7];
 
@@ -80,13 +104,13 @@ function agentReportTable() {
                     .column(colIndex)
                     .data()
                     .reduce(function (a, b) {
-                        return intVal(a) + intVal(b);
+                        return parseVal(a) + parseVal(b);
                     }, 0);
                 // Update footer for the current column
                 $(api.column(colIndex).footer()).html(`<b>` + total.toLocaleString() + `</b>`);
             });
         },
-        'drawCallback': function () {
+        drawCallback: function () {
             searchFunction('agent_report_table');
             paginationFunction('agent_report_table');
         }

@@ -20,13 +20,27 @@
 				<div class="card">
 					<div class="card-header">Agent Report</div>
 					<div class="card-body">
+
+						<div class="col-12">
+							<div class="row">
+								<div class="col-xl-5 col-lg-5 col-md-5 col-sm-5 col-12"></div>
+								<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12">
+									<div class="form-group">
+										<label for=''><b>Opening Balance: <span id="opbal">0</span></b></label>
+
+									</div>
+								</div>
+								<div class="col-xl-5 col-lg-5 col-md-5 col-sm-5 col-12"></div>
+							</div>
+						</div>
+
 						<div id="agent_table_div" class="table-divs" style="overflow-x: auto;">
 							<table id="agent_report_table" class="table custom-table">
 								<thead>
                                     <th>S.No</th>
                                     <th>Agent</th>
                                     <th>Date</th>
-                                    <th>Details/Name</th>
+                                    <th>Details / Name</th>
                                     <th>Coll Amount</th>
                                     <th>Net Cash</th>
                                     <th>Credit</th>
@@ -34,12 +48,19 @@
 								</thead>
 								<tbody></tbody>
 								<tfoot>
-									<tr>
-										<td colspan="4"></td>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td></td>
+									<!-- TOTAL ROW -->
+									<tr id="totalRow">
+										<td colspan="4" style="text-align:right; font-weight: bold;">Total:</td>
+										<td></td> <!-- Coll -->
+										<td></td> <!-- Net -->
+										<td></td> <!-- Credit -->
+										<td></td> <!-- Debit -->
+									</tr>
+
+									<!-- CLOSING BALANCE ROW -->
+									<tr id="closingRow">
+										<td colspan="4" style="text-align:right; font-weight: bold;">Closing Balance:</td>
+										<td colspan="4" style="text-align:center"></td>
 									</tr>
 								</tfoot>
 							</table>
