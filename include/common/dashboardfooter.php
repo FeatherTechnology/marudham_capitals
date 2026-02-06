@@ -1726,39 +1726,39 @@
             resetTimers(); // Reset again after AJAX completes
         });
 
-function moneyFormatIndia(num) {
-    var isNegative = false;
-    if (num < 0) {
-        isNegative = true;
-        num = Math.abs(num);
-    }
+        // function moneyFormatIndia(num) {
+        //     var isNegative = false;
+        //     if (num < 0) {
+        //         isNegative = true;
+        //         num = Math.abs(num);
+        //     }
 
-    // 🔹 Split decimal part (minimal addition)
-    num = num.toString();
-    var parts = num.split('.');
-    var intPart = parts[0];
-    var decPart = parts.length > 1 ? '.' + parts[1] : '';
+        //     // 🔹 Split decimal part (minimal addition)
+        //     num = num.toString();
+        //     var parts = num.split('.');
+        //     var intPart = parts[0];
+        //     var decPart = parts.length > 1 ? '.' + parts[1] : '';
 
-    var explrestunits = "";
-    if (intPart.length > 3) {
-        var lastthree = intPart.substr(intPart.length - 3);
-        var restunits = intPart.substr(0, intPart.length - 3);
-        restunits = (restunits.length % 2 == 1) ? "0" + restunits : restunits;
-        var expunit = restunits.match(/.{1,2}/g);
-        for (var i = 0; i < expunit.length; i++) {
-            if (i == 0) {
-                explrestunits += parseInt(expunit[i]) + ",";
-            } else {
-                explrestunits += expunit[i] + ",";
-            }
-        }
-        var thecash = explrestunits + lastthree + decPart;
-    } else {
-        var thecash = intPart + decPart;
-    }
+        //     var explrestunits = "";
+        //     if (intPart.length > 3) {
+        //         var lastthree = intPart.substr(intPart.length - 3);
+        //         var restunits = intPart.substr(0, intPart.length - 3);
+        //         restunits = (restunits.length % 2 == 1) ? "0" + restunits : restunits;
+        //         var expunit = restunits.match(/.{1,2}/g);
+        //         for (var i = 0; i < expunit.length; i++) {
+        //             if (i == 0) {
+        //                 explrestunits += parseInt(expunit[i]) + ",";
+        //             } else {
+        //                 explrestunits += expunit[i] + ",";
+        //             }
+        //         }
+        //         var thecash = explrestunits + lastthree + decPart;
+        //     } else {
+        //         var thecash = intPart + decPart;
+        //     }
 
-    return isNegative ? "-" + thecash : thecash;
-}
+        //     return isNegative ? "-" + thecash : thecash;
+        // }
 
         function searchFunction(table_name) {
             let DACC = <?php echo DACC; ?>;
@@ -2208,46 +2208,35 @@ function moneyFormatIndia(num) {
             return num;
         }
 
-        //to validate input and enter only number/ moneyformat works only text type so validating here instead of number type
         function validateInputNumber(e, screen) {
-            let val = e.value;   // no jQuery lag
+            let val = $(e).val();
 
-            if (screen === 'withOutDot') {
+            if (screen === 'withOutDot') { //Collection track to insert one round off so not allowed dot
+                // Remove all non-digit characters
                 val = val.replace(/[^0-9]/g, '');
 
             } else if (screen === 'withDot') {
-
-                // allow numbers and dot
+                // Allow only numbers and dot
                 val = val.replace(/[^0-9.]/g, '');
+                // Allow only one dot
+                val = val.replace(/(\..*)\./g, '$1');
 
-                // allow only ONE dot
-                let firstDot = val.indexOf('.');
-                if (firstDot !== -1) {
-                    val =
-                        val.substring(0, firstDot + 1) +
-                        val.substring(firstDot + 1).replace(/\./g, '');
-                }
-
-                // prefix 0 if starts with dot
-                if (val === '.') {
-                    val = '0.';
-                }
-
-                // limit to 2 decimals ONLY if decimals exist
-                if (val.includes('.') && val.split('.')[1] !== '') {
+                // Limit to 2 digits after decimal
+                if (val.includes('.')) {
                     let parts = val.split('.');
                     parts[1] = parts[1].slice(0, 2);
-                    val = parts.join('.');
+                    val = parts[0] + '.' + parts[1];
                 }
+            } else if (screen === 'alphaNumeric') {
+                val = val.replace(/[^A-Za-z0-9]/g, ''); // ONLY A-Z, a-z, 0-9
             }
-
             // ENFORCE MAXLENGTH MANUALLY
             const max = e.getAttribute('maxlength');
             if (max) {
                 val = val.slice(0, max);
             }
-
-            e.value = val;
+            // Update the field with only numeric value
+            $(e).val(val);
         }
 
         // To download Excel file
@@ -2298,7 +2287,7 @@ function moneyFormatIndia(num) {
 
         // <------------------------------------------------------ COLUMN VISIBILITY AND COLOR CHNAGE START -------------------------------------------------------->
 
-        
+
         function getStateSaveConfig(tableId) {
 
             return {
@@ -2397,8 +2386,13 @@ function moneyFormatIndia(num) {
         // <------------------------------------------------------ COLUMN VISIBILITY AND COLOR CHNAGE END -------------------------------------------------------->
 
         /////////////////////////////////////////////////////  Check Transaction Details START  //////////////////////////////////////////////////// 
-        function checkBankTransactionDetails(crdrType, bankId, transId, amount){
-            return $.post('accountsFile/bankclearance/getBankTransactionDetails.php', {crdrType, bankId, transId, amount}, null, 'json');
+        function checkBankTransactionDetails(crdrType, bankId, transId, amount) {
+            return $.post('accountsFile/bankclearance/getBankTransactionDetails.php', {
+                crdrType,
+                bankId,
+                transId,
+                amount
+            }, null, 'json');
         }
         /////////////////////////////////////////////////////  Check Transaction Details END  //////////////////////////////////////////////////// 
     </script>

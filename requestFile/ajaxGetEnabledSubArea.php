@@ -1,51 +1,33 @@
 <?php
 include('../ajaxconfig.php');
-@session_start();
+session_start();
 
-if (isset($_POST['area'])) {
-    $area = $_POST['area'];
-}
+$userid = $_SESSION['userid'] ?? '';
+$area   = $_POST['area'] ?? '';
 
-if (isset($_SESSION["userid"])) {
-    $userid = $_SESSION["userid"];
-}
+// 1. Get user group IDs
+$stmt = $connect->prepare("SELECT group_id FROM user WHERE status = 0 AND user_id = ?");
+$stmt->execute([$userid]);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$loan_category_arr = array();
+$groupIds = array_map('intval', explode(',', $user['group_id']));
+$groupPlaceholders = implode(',', array_fill(0, count($groupIds), '?'));
 
-$user_area = array();
+// 2. Get allowed sub-area IDs for those groups
+$stmt = $connect->prepare("SELECT DISTINCT agmsa.sub_area_id FROM area_group_mapping_sub_area agmsa
+    INNER JOIN area_group_mapping agm ON agmsa.group_map_id = agm.map_id
+    WHERE agm.status = 0 AND agm.map_id IN ($groupPlaceholders)");
+$stmt->execute($groupIds);
 
-$Qry = $connect->query("SELECT group_id FROM user WHERE status = 0 AND user_id = '" . $userid . "'"); //fetching group of current staff
-$run = $Qry->fetch();
-$user_group = explode(',', $run['group_id']);
+$allowedSubAreas = $stmt->fetchAll(PDO::FETCH_COLUMN);
+$subAreaPlaceholders = implode(',', array_fill(0, count($allowedSubAreas), '?'));
 
-foreach ($user_group as $group_id) {
+// 3. Fetch final sub-areas directly (no PHP filtering)
+$params = array_merge([$area], $allowedSubAreas);
 
-    $Qry = $connect->query("SELECT sub_area_id FROM area_group_mapping WHERE status = 0 AND map_id = $group_id "); //fetching area id from group
-    $run = $Qry->fetch();
-    $user_sub_area[] = explode(',', $run['sub_area_id']);
-}
+$stmt = $connect->prepare("SELECT sub_area_id, sub_area_name FROM sub_area_list_creation 
+    WHERE area_id_ref = ? AND status = 0 AND sub_area_enable = 0 AND sub_area_id IN ($subAreaPlaceholders)");
+$stmt->execute($params);
+echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
 
-$result = $connect->query("SELECT sub_area_id, sub_area_name FROM sub_area_list_creation WHERE area_id_ref = '" . $area . "' AND status = 0 AND sub_area_enable = 0");
-while ($row = $result->fetch()) {
-    $sub_area_id = $row['sub_area_id'];
-    $sub_area_name = $row['sub_area_name'];
-
-    for ($i = 0; $i < sizeof($user_sub_area); $i++) {
-
-        if (in_array($sub_area_id, $user_sub_area[$i])) {
-
-            // $checkQry=$connect->query("SELECT * FROM area_creation where status=0 and FIND_IN_SET($sub_area_id,sub_area)");
-            // if ($checkQry->num_rows>0){
-            //     $disabled = true;
-            // }else{$disabled=false;}
-            // $checkres = $checkQry->fetch();
-
-            $loan_category_arr[] = array("sub_area_id" => $sub_area_id, "sub_area_name" => $sub_area_name);
-        }
-    }
-}
-
-echo json_encode($loan_category_arr);
-
-// Close the database connection
 $connect = null;

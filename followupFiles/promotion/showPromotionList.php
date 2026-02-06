@@ -59,8 +59,10 @@ $areaColumn = ($accessType == 3)
         ) cs ON cs.cus_id = cr.cus_id 
         LEFT JOIN area_list_creation al ON cr.area_confirm_area = al.area_id 
         LEFT JOIN sub_area_list_creation sl ON cr.area_confirm_subarea = sl.sub_area_id 
-        LEFT JOIN area_group_mapping agm ON FIND_IN_SET(sl.sub_area_id, agm.sub_area_id) 
-        LEFT JOIN area_line_mapping alm ON FIND_IN_SET(sl.sub_area_id, alm.sub_area_id) 
+        LEFT JOIN area_group_mapping_sub_area agmsa ON agmsa.sub_area_id = sl.sub_area_id
+        LEFT JOIN area_group_mapping agm ON agm.map_id = agmsa.group_map_id 
+        LEFT JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sl.sub_area_id
+        LEFT JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id 
         LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
         LEFT JOIN new_promotion np ON np.cus_id = cs.cus_id AND np.created_date = (SELECT MAX(np1.created_date) FROM new_promotion np1 WHERE np1.cus_id = cs.cus_id)
         WHERE $areaColumn IN ($sub_area_list) AND NOT EXISTS ( SELECT 1 FROM closed_status cs2 WHERE cs2.cus_id = cr.cus_id AND cs2.closed_sts IN (2,3)) AND NOT EXISTS ( SELECT 1 FROM request_creation r WHERE r.cus_id = cs.cus_id AND ((r.cus_status IN (4,5,6,7,8,9)) OR r.cus_status <= 20)) ";

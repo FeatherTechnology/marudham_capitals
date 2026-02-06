@@ -7,61 +7,45 @@ if (isset($_SESSION['userid'])) {
     $user_id = $_SESSION['userid'];
 }
 
+$loan_agnt = "";
+
 if ($user_id != 1) {
 
-    $user_id = (int)$user_id;
-    $userQry = $connect->query("SELECT due_followup_lines, ag_id FROM USER WHERE user_id = $user_id ");
-    if ($rowuser = $userQry->fetch()) {
-        $due_followup_lines = explode(',', $rowuser['due_followup_lines']);
-        $ag_id = trim($rowuser['ag_id']);
-        $conditions = [];
+    $stmt = $connect->prepare("SELECT due_followup_lines, ag_id FROM user WHERE user_id = ?");
+    $stmt->execute([(int)$user_id]);
+    $rowuser = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        foreach ($due_followup_lines as $line) {
-            $line = (int)trim($line);
-            $lineQry = $connect->query("SELECT area_id FROM area_duefollowup_mapping WHERE map_id = $line");
+    if (!$rowuser) exit;
 
-            if ($row_sub = $lineQry->fetch()) {
-                $area_ids = array_filter(array_map('intval', explode(',', $row_sub['area_id'])));
-                // $loan_cat_ids = array_filter(array_map('intval', explode(',', $row_sub['loan_category_id'])));
-                // $line_ids = array_filter(array_map('intval', explode(',', $row_sub['line_name'])));
-                if (!empty($area_ids)) {
-                    $area_list = implode(',', $area_ids);
-                    // $loan_cat_list = implode(',', $loan_cat_ids);
-                    // $line_list = implode(',', $line_ids);
-                    $cnd = "(cp.area_confirm_area IN ($area_list))";
-                    // $cnd = "(cp.area_confirm_area IN ($area_list) AND alm.map_id IN ($line_list) AND iv.loan_category IN ($loan_cat_list))";
-                    $conditions[] = $cnd;
-                }
-            }
-        }
+    $line_ids = array_filter(array_map('intval', explode(',', $rowuser['due_followup_lines'])));
 
-        if (!empty($conditions)) {
-            $final_conditions = implode(' OR ', $conditions);
-            if (empty($ag_id)) {
-                $loan_agnt = " AND ($final_conditions)";
-            } else {
-                $loan_agnt = " AND iv.agent_id IN ($ag_id) AND ($final_conditions)";
-            }
-        } else {
-            // fallback if no valid mappings
-            $loan_agnt = " "; // return no records
-        }
+    if (!$line_ids) exit;
+
+    $placeholders = implode(',', array_fill(0, count($line_ids), '?'));
+
+    $areaStmt = $connect->prepare("SELECT DISTINCT area_id FROM area_duefollowup_mapping_area WHERE duefollowup_map_id IN ($placeholders)");
+    $areaStmt->execute($line_ids);
+    $area_ids = $areaStmt->fetchAll(PDO::FETCH_COLUMN);
+
+    if (!$area_ids) exit;
+
+    $loan_agnt .= " AND cp.area_confirm_area IN (" . implode(',', array_map('intval', $area_ids)) . ")";
+
+    if (!empty($rowuser['ag_id'])) {
+        $loan_agnt .= " AND iv.agent_id IN (" . implode(',', array_map('intval', explode(',', $rowuser['ag_id']))) . ")";
     }
 }
 
 $current_date = date('Y-m-d');
-
-$sub_status_mapping = '';
-if (isset($_POST['cus_sts'])) {
-    $sub_status_mapping = implode(',', $_POST['cus_sts']);
-}
+$cus_sts = isset($_POST['cus_sts']) ? $_POST['cus_sts'] : [];
+$sub_status_mapping = !empty($cus_sts) ? "'" . implode("','", $cus_sts) . "'" : '';
+$sub_status_url = !empty($cus_sts) ? implode(',', $cus_sts) : '';
 
 $commdate = isset($_POST['comm_date']) && !empty($_POST['comm_date']) ? $_POST['comm_date'] : '';
 $commitmentCondition = "";
 if (!empty($commdate) && $commdate != 1) {
     $commitmentCondition = " AND (c1.comm_date IS NOT NULL AND c1.comm_date != '0000-00-00')";
 }
-
 
 if (isset($_POST['comm_date'])) {
     $comm_date = $_POST['comm_date']; // Get the comm_date from the form
@@ -85,11 +69,33 @@ $searchValue = $_POST['search'];
 
 $data = [];
 
-$columns = ['cp.id', 'cp.cus_id', 'cr.autogen_cus_id', 'cp.cus_name', 'alc.area_name', 'salc.sub_area_name', 'bc.branch_name', 'alm.line_name', 'cp.mobile1', 'cs.sub_status', 'cp.id','cm.comm_err','cm.comm_date'];
+$columns = [
+    'cp.id',
+    'cp.cus_id',
+    'cr.autogen_cus_id',
+    'cp.cus_name',
+    'alc.area_name',
+    'salc.sub_area_name',
+    'bc.branch_name',
+    'alm.line_name',
+    'cp.mobile1',
+    'cs.sub_status',
+    'cp.id',
+    'cm.comm_err',
+    'cm.comm_date'
+];
 
 $orderDir = $_POST['order'][0]['dir'];
 $order = $columns[$_POST['order'][0]['column']] ? "ORDER BY " . $columns[$_POST['order'][0]['column']] . " $orderDir" : "";
-$search = $searchValue != '' ? "AND (ii.cus_id LIKE '%$searchValue%' OR cr.autogen_cus_id LIKE '%$searchValue%' OR cp.cus_name LIKE '%$searchValue%' OR alc.area_name LIKE '%$searchValue%' OR salc.sub_area_name LIKE '%$searchValue%' OR cp.mobile1 LIKE '%$searchValue%' OR cs.sub_status LIKE '%$searchValue%' )" : '';
+
+$search = $searchValue != '' ? "AND (
+ii.cus_id LIKE '%$searchValue%' OR 
+cr.autogen_cus_id LIKE '%$searchValue%' OR 
+cp.cus_name LIKE '%$searchValue%' OR 
+alc.area_name LIKE '%$searchValue%' OR 
+salc.sub_area_name LIKE '%$searchValue%' OR 
+cp.mobile1 LIKE '%$searchValue%' OR
+cs.sub_status LIKE '%$searchValue%' )" : '';
 
 $query = "SELECT
     cp.cus_id AS cp_cus_id,
@@ -107,20 +113,14 @@ FROM
     in_issue ii
 JOIN 
     customer_register cr ON ii.cus_id = cr.cus_id 
-JOIN acknowlegement_customer_profile cp ON
-    ii.req_id = cp.req_id
-JOIN customer_status cs ON
-    cp.req_id = cs.req_id
-JOIN area_list_creation alc ON
-    cp.area_confirm_area = alc.area_id
-JOIN sub_area_list_creation salc ON
-    cp.area_confirm_subarea = salc.sub_area_id
-JOIN area_line_mapping alm ON
-    FIND_IN_SET(alc.area_id, alm.area_id)
-JOIN branch_creation bc ON
-    alm.branch_id = bc.branch_id
-JOIN in_verification iv ON
-    cp.req_id = iv.req_id
+JOIN acknowlegement_customer_profile cp ON ii.req_id = cp.req_id
+JOIN customer_status cs ON cp.req_id = cs.req_id
+JOIN area_list_creation alc ON cp.area_confirm_area = alc.area_id
+JOIN sub_area_list_creation salc ON cp.area_confirm_subarea = salc.sub_area_id
+JOIN area_line_mapping_area alma ON alma.area_id = alc.area_id
+JOIN area_line_mapping alm ON alm.map_id = alma.line_map_id
+JOIN branch_creation bc ON alm.branch_id = bc.branch_id
+JOIN in_verification iv ON cp.req_id = iv.req_id
 LEFT JOIN (
     SELECT DISTINCT cus_id_loan
     FROM acknowlegement_loan_calculation
@@ -135,20 +135,24 @@ cm.cus_id = cp.cus_id
         WHERE c1.cus_id = cp.cus_id $commitmentCondition
     )
 WHERE
-    cs.payable_amnt > 0 AND ii.status = 0 AND ii.cus_status BETWEEN 14 AND 17 AND FIND_IN_SET(cs.sub_status,'$sub_status_mapping') $loan_agnt $search AND ack.cus_id_loan IS NOT NULL
+    cs.payable_amnt > 0 AND ii.status = 0 AND ii.cus_status BETWEEN 14 AND 17 
+    AND cs.sub_status IN ($sub_status_mapping) $loan_agnt $search AND ack.cus_id_loan IS NOT NULL
 GROUP BY
     ii.cus_id,
     cs.cus_id
 $order "; // 14 and 17 means collection entries, 17 removed from issue list
 //this will only take selected req_ids which is payable > 0
+
 $start = $_POST['start'] ?? 0;
 $length = $_POST['length'] ?? -1;
 if ($length != -1) {
     $query .= " LIMIT $start, $length";
 }
+
 $statement = $connect->prepare($query);
 $statement->execute();
 $result = $statement->fetchAll();
+
 $sno = 1;
 foreach ($result as $row) {
     $cus_id = $row['cp_cus_id'];
@@ -159,7 +163,7 @@ foreach ($result as $row) {
     $comm_date = '';
     $hint = '';
     $comm_err = '';
- 
+
     $qry1 = $connect->query("SELECT 
         cus_id, 
         MIN(CASE 
@@ -225,7 +229,7 @@ foreach ($result as $row) {
         $finalData['line'] = $row['line_name'],
         $finalData['mobile'] = $row['mobile1'],
         $finalData['status_priority'] = $cus_status,
-        $finalData['action'] = "<a href='ecs_followup&upd={$row['req_id']}&cusidupd=$cus_id&cussts=$sub_status_mapping&cummDate=$commdate' title='Edit details'><button class='btn btn-success' style='background-color:#009688;'>View Loans</button></a>",
+        $finalData['action'] = "<a href='ecs_followup&upd={$row['req_id']}&cusidupd=$cus_id&cussts=$sub_status_url&cummDate=$commdate' title='Edit details'><button class='btn btn-success' style='background-color:#009688;'>View Loans</button></a>",
         $finalData['comm_err'] = $comm_err,
         $finalData['comm_dat'] = $comm_date
     ];
@@ -261,21 +265,15 @@ function getFilteredRecords($connect, $data, $search, $sub_status_mapping, $loan
         $query = $connect->query(" SELECT COUNT(*) as total FROM ( SELECT cp.cus_id
         FROM
             in_issue ii
-        JOIN acknowlegement_customer_profile cp ON
-            ii.req_id = cp.req_id
-        JOIN customer_status cs ON
-            cp.req_id = cs.req_id
-        JOIN area_list_creation alc ON
-            cp.area_confirm_area = alc.area_id
-        JOIN sub_area_list_creation salc ON
-            cp.area_confirm_subarea = salc.sub_area_id
-        JOIN area_line_mapping alm ON
-            FIND_IN_SET(alc.area_id, alm.area_id)
-        JOIN branch_creation bc ON
-            alm.branch_id = bc.branch_id
-        JOIN in_verification iv ON
-            cp.req_id = iv.req_id
-       LEFT JOIN (
+        JOIN acknowlegement_customer_profile cp ON ii.req_id = cp.req_id
+        JOIN customer_status cs ON cp.req_id = cs.req_id
+        JOIN area_list_creation alc ON cp.area_confirm_area = alc.area_id
+        JOIN sub_area_list_creation salc ON cp.area_confirm_subarea = salc.sub_area_id
+        JOIN area_line_mapping_area alma ON alma.area_id = alc.area_id
+        JOIN area_line_mapping alm ON alm.map_id = alma.line_map_id
+        JOIN branch_creation bc ON alm.branch_id = bc.branch_id
+        JOIN in_verification iv ON cp.req_id = iv.req_id
+        LEFT JOIN (
             SELECT 
                 cus_id_loan
             FROM acknowlegement_loan_calculation
@@ -290,7 +288,8 @@ function getFilteredRecords($connect, $data, $search, $sub_status_mapping, $loan
                 WHERE c1.cus_id = cp.cus_id $commitmentCondition
             )
         WHERE
-            cs.payable_amnt > 0 AND FIND_IN_SET(cs.sub_status,'$sub_status_mapping') AND ii.status = 0 AND ii.cus_status BETWEEN 14 AND 17 $loan_agnt $search AND bad.cus_id_loan IS NULL
+            cs.payable_amnt > 0 AND cs.sub_status IN ($sub_status_mapping) 
+            AND ii.status = 0 AND ii.cus_status BETWEEN 14 AND 17 $loan_agnt $search AND bad.cus_id_loan IS NULL
         GROUP BY
             ii.cus_id,
             cs.cus_id ) as subquery");

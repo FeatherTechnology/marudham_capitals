@@ -6,49 +6,50 @@ if (isset($_SESSION["userid"])) {
     $userid = $_SESSION["userid"];
 }
 
-if ($userid != 1) {  // super admin bypass
-    $userQry = $connect->query("
-            SELECT group_id, line_id, due_followup_lines, noc_mapping_access
-            FROM user 
-            WHERE user_id = $userid
-        ");
-    $rowuser = $userQry->fetch();
+/* ================= USER ACCESS FILTER ================= */
+$sub_area_list = '';
+$colName = '';
 
-    $accessType = $rowuser['noc_mapping_access'];
-    $sub_area_ids = [];
+if ($userid != 1) {
 
-    if ($accessType == 1) {
-        // 🔹 Group-based access
-        $ids = explode(',', $rowuser['group_id']);
-        $column_name = "sub_area_id";
-        $table_name = "area_group_mapping";
+    $stmt = $connect->prepare("SELECT group_id, line_id, due_followup_lines, noc_mapping_access FROM user WHERE user_id = ?");
+    $stmt->execute([$userid]);
+    $rowuser = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    } elseif ($accessType == 2) {
-        // 🔹 Line-based access
-        $ids = explode(',', $rowuser['line_id']);
-        $column_name = "sub_area_id";
-        $table_name = "area_line_mapping";
-
-    } elseif ($accessType == 3) {
-        // 🔹 Due Followup-based access
-        $ids = explode(',', $rowuser['due_followup_lines']);
-        $column_name = "area_id";
-        $table_name = "area_duefollowup_mapping";
+    if (!$rowuser) {
+        echo json_encode([]);
+        exit;
     }
 
-    foreach ($ids as $id) {
-        $dueQry = $connect->query("SELECT $column_name FROM $table_name WHERE map_id = $id");
-        if ($row_due = $dueQry->fetchObject()) {
-            $sub_area_ids = array_merge($sub_area_ids, explode(',', $row_due->$column_name));
-        }
+    $accessMap = [
+        1 => ['group_id', 'area_group_mapping_sub_area', 'group_map_id', 'sub_area_id', 'cr.area_confirm_subarea'],
+        2 => ['line_id', 'area_line_mapping_sub_area', 'line_map_id', 'sub_area_id', 'cr.area_confirm_subarea'],
+        3 => ['due_followup_lines', 'area_duefollowup_mapping_area', 'duefollowup_map_id', 'area_id', 'cr.area_confirm_area']
+    ];
+
+    $accessType = (int)$rowuser['noc_mapping_access'];
+
+    if (!isset($accessMap[$accessType])) {
+        echo json_encode([]);
+        exit;
     }
 
-    // Remove duplicates and store final list
-    $sub_area_ids = array_unique(array_filter($sub_area_ids));
-    $sub_area_list = implode(',', $sub_area_ids);
-    $colName = ($accessType == 3)
-        ? "cr.area_confirm_area"          // Due Followup
-        : "cr.area_confirm_subarea";      // Group/Line
+    [$source, $table, $mapCol, $selCol, $filterCol] = $accessMap[$accessType];
+
+    $ids = array_filter(array_map('intval', explode(',', $rowuser[$source] ?? '')));
+
+    if (!$ids) {
+        echo json_encode([]);
+        exit;
+    }
+
+    $in = implode(',', array_fill(0, count($ids), '?'));
+
+    $stmt = $connect->prepare("SELECT DISTINCT $selCol FROM $table WHERE $mapCol IN ($in)");
+    $stmt->execute($ids);
+
+    $sub_area_list = implode(',', $stmt->fetchAll(PDO::FETCH_COLUMN));
+    $colName = $filterCol;
 }
 
 $column = array(
@@ -59,7 +60,7 @@ $column = array(
     'ac.area_name',
     'sa.sub_area_name',
     'bc.branch_name',
-    'al.line_name',
+    'alm.line_name',
     'cr.mobile1',
     'cs.updated_date',
     'cs.updated_date',
@@ -68,22 +69,24 @@ $column = array(
 );
 
 if ($userid == 1) {
-    $query = "SELECT cr.cus_id, cr.autogen_cus_id, cr.customer_name, ac.area_name, sa.sub_area_name, al.line_name, bc.branch_name, cr.mobile1
+    $query = "SELECT cr.cus_id, cr.autogen_cus_id, cr.customer_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cr.mobile1
     FROM closed_status cs 
     JOIN customer_register cr ON cs.cus_id = cr.cus_id
     JOIN area_list_creation ac ON cr.area_confirm_area = ac.area_id
     JOIN sub_area_list_creation sa ON cr.area_confirm_subarea = sa.sub_area_id
-    JOIN area_line_mapping al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
-    JOIN branch_creation bc ON al.branch_id = bc.branch_id
+    JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sa.sub_area_id
+    JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
+    JOIN branch_creation bc ON alm.branch_id = bc.branch_id
     WHERE cs.cus_sts = 23 "; // Only Issued and all lines not relying on sub area
 } else {
-    $query = "SELECT cr.cus_id, cr.autogen_cus_id, cr.customer_name, ac.area_name, sa.sub_area_name, al.line_name, bc.branch_name, cr.mobile1
+    $query = "SELECT cr.cus_id, cr.autogen_cus_id, cr.customer_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cr.mobile1
     FROM closed_status cs 
     JOIN customer_register cr ON cs.cus_id = cr.cus_id
     JOIN area_list_creation ac ON cr.area_confirm_area = ac.area_id
     JOIN sub_area_list_creation sa ON cr.area_confirm_subarea = sa.sub_area_id
-    JOIN area_line_mapping al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
-    JOIN branch_creation bc ON al.branch_id = bc.branch_id
+    JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sa.sub_area_id
+    JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
+    JOIN branch_creation bc ON alm.branch_id = bc.branch_id
     WHERE cs.cus_sts = 23 
         AND $colName IN ($sub_area_list) ";
 }
@@ -95,7 +98,7 @@ if (isset($_POST['search']) && $_POST['search'] != "") {
             OR cr.customer_name LIKE '%" . $_POST['search'] . "%'
             OR ac.area_name LIKE '%" . $_POST['search'] . "%'
             OR sa.sub_area_name LIKE '%" . $_POST['search'] . "%'
-            OR al.line_name LIKE '%" . $_POST['search'] . "%'
+            OR alm.line_name LIKE '%" . $_POST['search'] . "%'
             OR bc.branch_name LIKE '%" . $_POST['search'] . "%'
             OR cr.mobile1 LIKE '%" . $_POST['search'] . "%' ) ";
 }

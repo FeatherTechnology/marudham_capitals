@@ -37,9 +37,11 @@ $query = "SELECT dt.id, dt.req_id, dt.cus_id, dt.track_status, dt.insert_login_i
         JOIN customer_register cr ON dt.cus_id = cr.cus_id
         JOIN area_list_creation al ON cr.area = al.area_id
         JOIN sub_area_list_creation sal ON cr.sub_area = sal.sub_area_id
-        LEFT JOIN area_group_mapping agm ON FIND_IN_SET(cr.sub_area, agm.sub_area_id)
+        JOIN area_group_mapping_sub_area agmsa ON agmsa.sub_area_id = cr.sub_area
+        JOIN area_group_mapping agm ON agm.map_id = agmsa.group_map_id
         LEFT OUTER JOIN branch_creation bc ON agm.branch_id = bc.branch_id
-        LEFT OUTER JOIN area_line_mapping alm ON FIND_IN_SET(cr.sub_area, alm.sub_area_id)
+        JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = cr.sub_area
+        JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
         WHERE ( (dt.insert_login_id = $userid && dt.track_status <= 2) OR ($doc_rec_access = 0 && dt.track_status = 2) ) ";
 
 // Apply search filter

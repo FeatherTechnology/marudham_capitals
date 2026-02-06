@@ -6,49 +6,50 @@ if (isset($_SESSION["userid"])) {
     $userid = $_SESSION["userid"];
 }
 
-if ($userid != 1) {  // super admin bypass
-    $userQry = $connect->query("
-            SELECT group_id, line_id, due_followup_lines, noc_mapping_access
-            FROM user 
-            WHERE user_id = $userid
-        ");
-    $rowuser = $userQry->fetch();
+/* ================= USER ACCESS FILTER ================= */
+$sub_area_list = '';
+$colName = '';
 
-    $accessType = $rowuser['noc_mapping_access'];
-    $sub_area_ids = [];
+if ($userid != 1) {
 
-    if ($accessType == 1) {
-        // 🔹 Group-based access
-        $ids = explode(',', $rowuser['group_id']);
-        $column_name = "sub_area_id";
-        $table_name = "area_group_mapping";
+    $stmt = $connect->prepare("SELECT group_id, line_id, due_followup_lines, noc_mapping_access FROM user WHERE user_id = ?");
+    $stmt->execute([$userid]);
+    $rowuser = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    } elseif ($accessType == 2) {
-        // 🔹 Line-based access
-        $ids = explode(',', $rowuser['line_id']);
-        $column_name = "sub_area_id";
-        $table_name = "area_line_mapping";
-
-    } elseif ($accessType == 3) {
-        // 🔹 Due Followup-based access
-        $ids = explode(',', $rowuser['due_followup_lines']);
-        $column_name = "area_id";
-        $table_name = "area_duefollowup_mapping";
+    if (!$rowuser) {
+        echo json_encode([]);
+        exit;
     }
 
-    foreach ($ids as $id) {
-        $dueQry = $connect->query("SELECT $column_name FROM $table_name WHERE map_id = $id");
-        if ($row_due = $dueQry->fetchObject()) {
-            $sub_area_ids = array_merge($sub_area_ids, explode(',', $row_due->$column_name));
-        }
+    $accessMap = [
+        1 => ['group_id', 'area_group_mapping_sub_area', 'group_map_id', 'sub_area_id', 'cr.area_confirm_subarea'],
+        2 => ['line_id', 'area_line_mapping_sub_area', 'line_map_id', 'sub_area_id', 'cr.area_confirm_subarea'],
+        3 => ['due_followup_lines', 'area_duefollowup_mapping_area', 'duefollowup_map_id', 'area_id', 'cr.area_confirm_area']
+    ];
+
+    $accessType = (int)$rowuser['noc_mapping_access'];
+
+    if (!isset($accessMap[$accessType])) {
+        echo json_encode([]);
+        exit;
     }
 
-    // Remove duplicates and store final list
-    $sub_area_ids = array_unique(array_filter($sub_area_ids));
-    $sub_area_list = implode(',', $sub_area_ids);
-    $colName = ($accessType == 3)
-        ? "cr.area_confirm_area"          // Due Followup
-        : "cr.area_confirm_subarea";      // Group/Line
+    [$source, $table, $mapCol, $selCol, $filterCol] = $accessMap[$accessType];
+
+    $ids = array_filter(array_map('intval', explode(',', $rowuser[$source] ?? '')));
+
+    if (!$ids) {
+        echo json_encode([]);
+        exit;
+    }
+
+    $in = implode(',', array_fill(0, count($ids), '?'));
+
+    $stmt = $connect->prepare("SELECT DISTINCT $selCol FROM $table WHERE $mapCol IN ($in)");
+    $stmt->execute($ids);
+
+    $sub_area_list = implode(',', $stmt->fetchAll(PDO::FETCH_COLUMN));
+    $colName = $filterCol;
 }
 
 $column = array(
@@ -60,7 +61,7 @@ $column = array(
     'ac.area_name',
     'sa.sub_area_name',
     'bc.branch_name',
-    'al.line_name',
+    'alm.line_name',
     'cr.mobile1',
     'ii.id',
     'ii.id',
@@ -72,13 +73,14 @@ $column = array(
 //23 send NOC Handover
 //24 NOC Handovered.
 if ($userid == 1) {
-    $query = "SELECT cs.latest_date, cr.cus_id, cr.autogen_cus_id, cr.customer_name, ac.area_name, sa.sub_area_name, al.line_name, bc.branch_name, cr.mobile1
+    $query = "SELECT cs.latest_date, cr.cus_id, cr.autogen_cus_id, cr.customer_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cr.mobile1
     FROM in_issue ii 
     JOIN customer_register cr ON ii.cus_id = cr.cus_id
     JOIN area_list_creation ac ON cr.area_confirm_area = ac.area_id
     JOIN sub_area_list_creation sa ON cr.area_confirm_subarea = sa.sub_area_id
-    JOIN area_line_mapping al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
-    JOIN branch_creation bc ON al.branch_id = bc.branch_id
+    JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sa.sub_area_id
+    JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
+    JOIN branch_creation bc ON alm.branch_id = bc.branch_id
     LEFT JOIN (
         SELECT cs.cus_id, MAX(cs.created_date) AS latest_date
         FROM closed_status cs
@@ -94,13 +96,14 @@ if ($userid == 1) {
     WHERE ii.status = 0
         AND ii.cus_status IN (21,22,23) "; // Only Issued and all lines not relying on sub area
 } else {
-    $query = "SELECT cs.latest_date, cr.cus_id, cr.autogen_cus_id, cr.customer_name, ac.area_name, sa.sub_area_name, al.line_name, bc.branch_name, cr.mobile1
+    $query = "SELECT cs.latest_date, cr.cus_id, cr.autogen_cus_id, cr.customer_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cr.mobile1
     FROM in_issue ii 
     JOIN customer_register cr ON ii.cus_id = cr.cus_id
     JOIN area_list_creation ac ON cr.area_confirm_area = ac.area_id
     JOIN sub_area_list_creation sa ON cr.area_confirm_subarea = sa.sub_area_id
-    JOIN area_line_mapping al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
-    JOIN branch_creation bc ON al.branch_id = bc.branch_id
+    JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sa.sub_area_id
+    JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
+    JOIN branch_creation bc ON alm.branch_id = bc.branch_id
     LEFT JOIN (
         SELECT cs.cus_id, MAX(cs.created_date) AS latest_date
         FROM closed_status cs
@@ -126,7 +129,7 @@ if (isset($_POST['search']) && $_POST['search'] != "") {
             OR cr.customer_name LIKE '%" . $_POST['search'] . "%'
             OR ac.area_name LIKE '%" . $_POST['search'] . "%'
             OR sa.sub_area_name LIKE '%" . $_POST['search'] . "%'
-            OR al.line_name LIKE '%" . $_POST['search'] . "%'
+            OR alm.line_name LIKE '%" . $_POST['search'] . "%'
             OR bc.branch_name LIKE '%" . $_POST['search'] . "%'
             OR cr.mobile1 LIKE '%" . $_POST['search'] . "%' ) ";
 }
@@ -151,11 +154,26 @@ $statement->execute();
 
 $result = $statement->fetchAll();
 
+// 1. Fetch all cus_status grouped by customer
+$stsStmt = $connect->query("SELECT cus_id, GROUP_CONCAT(DISTINCT cus_status) AS statuses FROM in_issue WHERE cus_status BETWEEN 21 AND 23 GROUP BY cus_id");
+
+$statusMap = [];
+while ($row = $stsStmt->fetch(PDO::FETCH_ASSOC)) {
+    $statusMap[$row['cus_id']] = array_map('intval', explode(',', $row['statuses']));
+}
+
+// 2. Fetch pending receive_status once
+$resStmt = $connect->query("SELECT DISTINCT cus_id FROM noc WHERE receive_status = 0");
+
+$pendingReceive = $resStmt->fetchAll(PDO::FETCH_COLUMN);
+$pendingReceive = array_flip($pendingReceive); // for fast lookup
+
 $data = array();
 $sno = 1;
 foreach ($result as $row) {
     $sub_array   = array();
     $cus_id = $row['cus_id'];
+    $allStatus = $statusMap[$cus_id] ?? [];
 
     $sub_array[] = $sno++;
     $sub_array[] = $row['latest_date'] ? date('d-m-Y', strtotime($row['latest_date'])) : '';
@@ -168,22 +186,12 @@ foreach ($result as $row) {
     $sub_array[] = $row['line_name'];
     $sub_array[] = $row['mobile1'];
 
-    // Fetch all NOC statuses for this customer
-    $stsQry = $connect->query("SELECT cus_status FROM in_issue WHERE cus_id = '$cus_id' AND cus_status BETWEEN 21 AND 23 ");
-    $allStatus = $stsQry->fetchAll(PDO::FETCH_COLUMN);
-
-    if ((in_array(21, $allStatus) || in_array(22, $allStatus)) && !in_array(23, $allStatus)) { //21- IN-NOC, 22-NOC Completed.
+    if ((in_array(21, $allStatus) || in_array(22, $allStatus)) && !in_array(23, $allStatus)) {
         $noc_status = 'NOC';
-    } else if (in_array(23, $allStatus)) { //Move to Handover
-        // Fetch receive status
-        $res = $connect->query("SELECT receive_status FROM noc WHERE cus_id = '$cus_id' AND receive_status = 0 GROUP BY cus_id");
-        $rec = $res->fetchAll(PDO::FETCH_COLUMN); // 0-Pending or 1-Received
-
-        if (in_array(0, $rec)) {
-            $noc_status = "Pending";
-        } else {
-            $noc_status = "Completed";
-        }
+    } elseif (in_array(23, $allStatus)) {
+        $noc_status = isset($pendingReceive[$cus_id]) ? 'Pending' : 'Completed';
+    } else {
+        $noc_status = '';
     }
     $sub_array[] = $noc_status;
 

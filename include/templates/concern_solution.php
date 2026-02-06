@@ -276,7 +276,7 @@ if (isset($_POST['submit_concern_solution']) && $_POST['submit_concern_solution'
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="comdate">Concern Date </label><span class="required">&nbsp;*</span>
-                                        <input type="date" class="form-control" id="com_date" name="com_date" tabindex='16' value="<?php echo date('Y-m-d'); ?>" value="<?php if (isset($conDate)) echo $conDate; ?>" readonly>
+                                        <input type="date" class="form-control" id="com_date" name="com_date" tabindex='16' value="<?php if (isset($conDate)) echo $conDate; ?>" readonly>
                                     </div>
                                 </div>
 

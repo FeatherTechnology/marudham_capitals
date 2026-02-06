@@ -3,6 +3,7 @@ session_start();
 $user_id = $_SESSION['userid'];
 
 include('../../../ajaxconfig.php');
+include('../../../moneyFormatIndia.php');
 
 $i=0;$records = array();
 $qry = $connect->query("SELECT hex.*,us.fullname,us.role from ct_db_hexchange hex LEFT JOIN user us on us.user_id = hex.insert_login_id where hex.to_user_id = '$user_id' and received = 1 "); //1 means not received and 0 means already received
@@ -96,27 +97,3 @@ $connect = null;
         initColVisFeatures(hexCollectionTable, 'hexCollectionTable');
     });
 </script>
-
-<?php
-//Format number in Indian Format
-function moneyFormatIndia($num) {
-    $explrestunits = "";
-    if (strlen($num) > 3) {
-        $lastthree = substr($num, strlen($num) - 3, strlen($num));
-        $restunits = substr($num, 0, strlen($num) - 3);
-        $restunits = (strlen($restunits) % 2 == 1) ? "0" . $restunits : $restunits;
-        $expunit = str_split($restunits, 2);
-        for ($i = 0; $i < sizeof($expunit); $i++) {
-            if ($i == 0) {
-                $explrestunits .= (int)$expunit[$i] . ",";
-            } else {
-                $explrestunits .= $expunit[$i] . ",";
-            }
-        }
-        $thecash = $explrestunits . $lastthree;
-    } else {
-        $thecash = $num;
-    }
-    return $thecash;
-}
-?>

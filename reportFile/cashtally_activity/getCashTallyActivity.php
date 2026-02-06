@@ -1,6 +1,7 @@
 <?php
 session_start();
 include '../../ajaxconfig.php';
+include '../../moneyFormatIndia.php';
 
 if (isset($_POST['search_date']) && $_POST['search_date'] != '') {
     $search_date   = $_POST['search_date'];
@@ -235,25 +236,6 @@ function getUserWiseIssued($connect, $date, $login_id)
     ");
 
     return $qry->fetchAll(PDO::FETCH_ASSOC);
-}
-
-
-function moneyFormatIndia($num)
-{
-    if ((float)$num == 0) return '0';
-
-    $neg = $num < 0;
-    $num = abs($num);
-
-    $parts = explode('.', $num);
-    $int = $parts[0];
-    $dec = isset($parts[1]) ? '.' . $parts[1] : '';
-
-    if (strlen($int) > 3) {
-        $int = preg_replace("/\B(?=(\d{2})+(?!\d))/", ",", substr($int, 0, -3)) . "," . substr($int, -3);
-    }
-
-    return ($neg ? '-' : '') . $int . $dec;
 }
 
 $connect = null;

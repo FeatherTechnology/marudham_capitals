@@ -1,32 +1,13 @@
 <?php
 @session_start();
 include('..\ajaxconfig.php');
+include('..\user_based_sub_area_Ids.php');
 
 if (isset($_SESSION["userid"])) {
     $userid = $_SESSION["userid"];
 }
-if ($userid != 1) {
 
-    $userQry = $connect->query("SELECT * FROM USER WHERE user_id = $userid ");
-    while ($rowuser = $userQry->fetch()) {
-        $group_id = $rowuser['group_id'];
-        $line_id = $rowuser['line_id'];
-    }
-
-    $line_id = explode(',', $line_id);
-    $sub_area_list = array();
-    foreach ($line_id as $line) {
-        $lineQry = $connect->query("SELECT * FROM area_line_mapping where map_id = $line ");
-        $row_sub = $lineQry->fetch();
-        $sub_area_list[] = $row_sub['sub_area_id'];
-    }
-    $sub_area_ids = array();
-    foreach ($sub_area_list as $subarray) {
-        $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
-    }
-    $sub_area_list = array();
-    $sub_area_list = implode(',', $sub_area_ids);
-}
+$sub_area_list = getUserSubAreaList($connect, 'closed');
 
 $column = array(
     'cp.id',
@@ -37,46 +18,34 @@ $column = array(
     'ac.area_name',
     'sa.sub_area_name',
     'bc.branch_name',
-    'al.line_name',
+    'alm.line_name',
     'cp.mobile1',
     'cp.id'
 );
 
 if ($userid == 1) {
-    $query = 'SELECT cp.cus_id as cp_cus_id, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, al.line_name, bc.branch_name, cp.mobile1, ii.cus_id as ii_cus_id, ii.req_id,cc.closing_date
+    $query = 'SELECT cp.cus_id as cp_cus_id, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cp.mobile1, ii.cus_id as ii_cus_id, ii.req_id,cc.closing_date
     FROM acknowlegement_customer_profile cp 
     JOIN customer_register cr ON cp.cus_id = cr.cus_id
     JOIN in_issue ii ON cp.cus_id = ii.cus_id
     JOIN area_list_creation ac ON cp.area_confirm_area = ac.area_id
     JOIN sub_area_list_creation sa ON cp.area_confirm_subarea = sa.sub_area_id
-    JOIN (
-    SELECT DISTINCT 
-      sub_area_id, 
-      line_name,
-    branch_id
-    FROM 
-      area_line_mapping
-  ) al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
+    JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sa.sub_area_id
+    JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
     JOIN closing_customer cc ON cc.cus_id = cp.cus_id AND cc.closing_date = (SELECT MAX(cc1.closing_date) FROM closing_customer cc1 WHERE cc1.cus_id = cp.cus_id)
-    JOIN branch_creation bc ON al.branch_id = bc.branch_id
+    JOIN branch_creation bc ON alm.branch_id = bc.branch_id
     where ii.status = 0 and ii.cus_status = 20 '; // Only Issued and all lines not relying on sub area
 } else {
-    $query = "SELECT cp.cus_id as cp_cus_id, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, al.line_name, bc.branch_name, cp.mobile1, ii.cus_id as ii_cus_id, ii.req_id,cc.closing_date
+    $query = "SELECT cp.cus_id as cp_cus_id, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cp.mobile1, ii.cus_id as ii_cus_id, ii.req_id,cc.closing_date
     FROM acknowlegement_customer_profile cp 
     JOIN customer_register cr ON cp.cus_id = cr.cus_id
     JOIN in_issue ii ON cp.req_id = ii.req_id
     JOIN area_list_creation ac ON cp.area_confirm_area = ac.area_id
     JOIN sub_area_list_creation sa ON cp.area_confirm_subarea = sa.sub_area_id
-    JOIN (
-    SELECT DISTINCT 
-      sub_area_id, 
-      line_name,
-    branch_id
-    FROM 
-      area_line_mapping
-  ) al ON FIND_IN_SET(sa.sub_area_id, al.sub_area_id)
-   JOIN closing_customer cc ON cc.req_id = cp.req_id AND cc.closing_date = (SELECT MAX(cc1.closing_date) FROM closing_customer cc1 WHERE cc1.req_id = cp.req_id)
-    JOIN branch_creation bc ON al.branch_id = bc.branch_id
+    JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sa.sub_area_id
+    JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
+    JOIN closing_customer cc ON cc.req_id = cp.req_id AND cc.closing_date = (SELECT MAX(cc1.closing_date) FROM closing_customer cc1 WHERE cc1.req_id = cp.req_id)
+    JOIN branch_creation bc ON alm.branch_id = bc.branch_id
     where ii.status = 0 and ii.cus_status = 20 and cp.area_confirm_subarea IN ($sub_area_list) "; //show only issued customers within the same lines of user. 
 }
 
@@ -89,7 +58,7 @@ if (isset($_POST['search']) && $_POST['search'] != "") {
             OR ac.area_name LIKE '%" . $_POST['search'] . "%'
             OR sa.sub_area_name LIKE '%" . $_POST['search'] . "%'
             OR bc.branch_name LIKE '%" . $_POST['search'] . "%'
-            OR al.line_name LIKE '%" . $_POST['search'] . "%'
+            OR alm.line_name LIKE '%" . $_POST['search'] . "%'
             OR cc.closing_date LIKE '%" . $_POST['search'] . "%'
             OR cp.mobile1 LIKE '%" . $_POST['search'] . "%') ";
 }
@@ -117,28 +86,24 @@ $data = array();
 $sno = 1;
 foreach ($result as $row) {
     $sub_array   = array();
-
     $sub_array[] = $sno;
     $sub_array[] = date('d-m-Y', strtotime($row["closing_date"]));
     $sub_array[] = $row['cp_cus_id'];
     $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = $row['cus_name'];
-
     $sub_array[] = $row['area_name'];
     $sub_array[] = $row['sub_area_name'];
     $sub_array[] = $row["branch_name"];
     $sub_array[] = $row['line_name'];
-
     $sub_array[] = $row['mobile1'];
-   
 
     $cus_id = $row['cp_cus_id'];
     $id          = $row['req_id'];
     // When in_issue and closed status count is equal then move to noc button will be shown. //if multiple request completed the collection means then complete closed for one time only so we check whether the request closed submit or not.. Move to Noc button wil not be show until all closed status submit.
     $ii_cus_id          = $row['ii_cus_id'];
 
-    $ii_count = $connect->query("SELECT id FROM `in_issue` WHERE `cus_status` = '20' && `cus_id`='" . $ii_cus_id . "' ");
-    $ii_cnt = $ii_count->rowCount();
+    // $ii_count = $connect->query("SELECT id FROM `in_issue` WHERE `cus_status` = '20' && `cus_id`='" . $ii_cus_id . "' ");
+    // $ii_cnt = $ii_count->rowCount();
     $closed_sts_count = $connect->query("SELECT id FROM `closed_status` WHERE `cus_sts` ='20' && `cus_id`='" . $ii_cus_id . "'");
     $close_cnt = $closed_sts_count->rowCount();
 

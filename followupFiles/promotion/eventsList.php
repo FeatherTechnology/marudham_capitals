@@ -16,7 +16,7 @@ if ($user_id != '') {
     $promotion_activity_mapping_access = $userRow['promotion_activity_mapping_access'];
 
     if ($promotion_activity_mapping_access == 1) {
-        $condition = "ag.map_id IN ($group_id)";
+        $condition = "agm.map_id IN ($group_id)";
     } elseif ($promotion_activity_mapping_access == 2) {
         $condition = "alm.map_id IN ($line_id)";
     } elseif ($promotion_activity_mapping_access == 3) {
@@ -51,9 +51,12 @@ if ($user_id != '') {
         JOIN event_promotion ep ON ep.event_id = e.id
         JOIN event_areas ea ON ea.event_id = e.id
         JOIN area_list_creation al ON al.area_id = ea.event_area
-         JOIN area_line_mapping alm ON FIND_IN_SET(al.area_id, alm.area_id)
-        JOIN area_group_mapping ag ON FIND_IN_SET(al.area_id, ag.area_id)
-         JOIN area_duefollowup_mapping adfm ON FIND_IN_SET(al.area_id, adfm.area_id)
+        JOIN area_group_mapping_area agma ON agma.area_id = al.area_id
+        JOIN area_group_mapping agm ON agm.map_id = agma.group_map_id
+        JOIN area_line_mapping_area alma ON alma.area_id = al.area_id
+        JOIN area_line_mapping alm ON alm.map_id = alma.line_map_id
+        JOIN area_duefollowup_mapping_area adfma ON adfma.area_id = al.area_id
+        JOIN area_duefollowup_mapping adfm ON adfm.map_id = adfma.duefollowup_map_id
         WHERE $condition
         GROUP BY e.id
         ORDER BY e.id DESC; 

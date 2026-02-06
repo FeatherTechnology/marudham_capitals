@@ -7,38 +7,32 @@ if (isset($_SESSION['userid'])) {
     $user_id = $_SESSION['userid'];
 }
 
+$loan_agnt = "";
+
 if ($user_id != 1) {
 
-    $user_id = (int)$user_id;
-    $userQry = $connect->query("SELECT due_followup_lines, ag_id FROM USER WHERE user_id = $user_id ");
-    if ($rowuser = $userQry->fetch()) {
-        $due_followup_lines = explode(',', $rowuser['due_followup_lines']);
-        $ag_id = trim($rowuser['ag_id']);
-        $conditions = [];
+    $stmt = $connect->prepare("SELECT due_followup_lines, ag_id FROM user WHERE user_id = ?");
+    $stmt->execute([(int)$user_id]);
+    $rowuser = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        foreach ($due_followup_lines as $line) {
-            $line = (int)trim($line);
-            $lineQry = $connect->query("SELECT area_id FROM area_duefollowup_mapping WHERE map_id = $line");
+    if (!$rowuser) exit;
 
-            if ($row_sub = $lineQry->fetch()) {
-                $area_ids = array_filter(array_map('intval', explode(',', $row_sub['area_id'])));
-                if (!empty($area_ids)) {
-                    $area_list = implode(',', $area_ids);
-                    $conditions[] = "(cp.area_confirm_area IN ($area_list))";
-                }
-            }
-        }
+    $line_ids = array_filter(array_map('intval', explode(',', $rowuser['due_followup_lines'])));
 
-        if (!empty($conditions)) {
-            $final_conditions = implode(' OR ', $conditions);
-            if (empty($ag_id)) {
-                $loan_agnt = " AND ($final_conditions)";
-            } else {
-                $loan_agnt = " AND iv.agent_id IN ($ag_id) AND ($final_conditions)";
-            }
-        } else {
-            $loan_agnt = " "; // fallback
-        }
+    if (!$line_ids) exit;
+
+    $placeholders = implode(',', array_fill(0, count($line_ids), '?'));
+
+    $areaStmt = $connect->prepare("SELECT DISTINCT area_id FROM area_duefollowup_mapping_area WHERE duefollowup_map_id IN ($placeholders)");
+    $areaStmt->execute($line_ids);
+    $area_ids = $areaStmt->fetchAll(PDO::FETCH_COLUMN);
+
+    if (!$area_ids) exit;
+
+    $loan_agnt .= " AND cp.area_confirm_area IN (" . implode(',', array_map('intval', $area_ids)) . ")";
+
+    if (!empty($rowuser['ag_id'])) {
+        $loan_agnt .= " AND iv.agent_id IN (" . implode(',', array_map('intval', explode(',', $rowuser['ag_id']))) . ")";
     }
 }
 
@@ -71,7 +65,9 @@ $having = buildResponsibleHaving($res_sts);
 
 // ---------------------- other filters ----------------------
 $current_date = date('Y-m-d');
-$sub_status_mapping = isset($_POST['cus_sts']) ? implode(',', $_POST['cus_sts']) : '';
+$cus_sts = isset($_POST['cus_sts']) ? $_POST['cus_sts'] : [];
+$sub_status_mapping = !empty($cus_sts) ? "'" . implode("','", $cus_sts) . "'" : '';
+$sub_status_url = !empty($cus_sts) ? implode(',', $cus_sts) : '';
 
 // Commitment Date Filter
 $commdate = isset($_POST['comm_date']) && !empty($_POST['comm_date']) ? $_POST['comm_date'] : '';
@@ -102,7 +98,7 @@ if (isset($_POST['comm_date'])) {
 $searchValue = $_POST['search'] ?? '';
 $search = $searchValue != '' ? "AND (ii.cus_id LIKE '%$searchValue%' OR cr.autogen_cus_id LIKE '%$searchValue%' OR cp.cus_name LIKE '%$searchValue%' OR alc.area_name LIKE '%$searchValue%' OR salc.sub_area_name LIKE '%$searchValue%' OR cp.mobile1 LIKE '%$searchValue%' OR cs.sub_status LIKE '%$searchValue%')" : '';
 
-$columns = ['cp.id','cp.cus_id','cr.autogen_cus_id','cp.cus_name','alc.area_name','salc.sub_area_name','bc.branch_name','alm.line_name','cp.mobile1','cs.sub_status','cp.id','cs.last_paid_date','cs.current_month_paid','cm.comm_err','cm.hint','cm.remark','cm.comm_date'];
+$columns = ['cp.id', 'cp.cus_id', 'cr.autogen_cus_id', 'cp.cus_name', 'alc.area_name', 'salc.sub_area_name', 'bc.branch_name', 'alm.line_name', 'cp.mobile1', 'cs.sub_status', 'responsible_status', 'cp.id', 'cs.last_paid_date', 'cs.current_month_paid', 'cm.comm_err', 'cm.hint', 'cm.remark', 'cm.comm_date'];
 $orderDir = $_POST['order'][0]['dir'] ?? 'ASC';
 $orderColumnIndex = $_POST['order'][0]['column'] ?? 0;
 $order = "ORDER BY " . ($columns[$orderColumnIndex] ?? $columns[0]) . " $orderDir";
@@ -145,7 +141,8 @@ CASE
     JOIN customer_status cs ON cp.req_id = cs.req_id
     JOIN area_list_creation alc ON cp.area_confirm_area = alc.area_id
     JOIN sub_area_list_creation salc ON cp.area_confirm_subarea = salc.sub_area_id
-    JOIN area_line_mapping alm ON FIND_IN_SET(alc.area_id, alm.area_id)
+    JOIN area_line_mapping_area alma ON alma.area_id = alc.area_id
+    JOIN area_line_mapping alm ON alm.map_id = alma.line_map_id
     JOIN branch_creation bc ON alm.branch_id = bc.branch_id
     JOIN in_verification iv ON cp.req_id = iv.req_id
     LEFT JOIN acknowlegement_loan_calculation aklc ON aklc.req_id = ii.req_id AND aklc.collection_method = 4
@@ -154,7 +151,7 @@ CASE
     WHERE cs.payable_amnt > 0
     AND ii.status = 0
     AND ii.cus_status BETWEEN 14 AND 17
-    AND FIND_IN_SET(cs.sub_status, '$sub_status_mapping')
+    AND cs.sub_status IN ($sub_status_mapping)
     $loan_agnt
     $search
     AND aklc.req_id IS NULL
@@ -163,49 +160,49 @@ CASE
     $having
     $order";
 
-    // Pagination
-    $start = isset($_POST['start']) ? (int)$_POST['start'] : 0;
-    $length = isset($_POST['length']) ? (int)$_POST['length'] : -1;
-    if ($length != -1) {
-        $query .= " LIMIT $start, $length";
+// Pagination
+$start = isset($_POST['start']) ? (int)$_POST['start'] : 0;
+$length = isset($_POST['length']) ? (int)$_POST['length'] : -1;
+if ($length != -1) {
+    $query .= " LIMIT $start, $length";
+}
+
+// execute main query
+$statement = $connect->prepare($query);
+$statement->execute();
+$result = $statement->fetchAll();
+$sno = 1;
+$data = [];
+foreach ($result as $row) {
+    $cus_id = $row['cp_cus_id'];
+    $cus_name = $row['cus_name'];
+    $area_name = $row['area_name'];
+    $sub_area_name = $row['sub_area_name'];
+    $branch_name = '';
+    $comm_date = '';
+    $hint = '';
+    $comm_err = '';
+
+    switch ($row['last_paid_date']) {
+        case 1:
+            $last_paid_date = '1-10';
+            break;
+        case 2:
+            $last_paid_date = '11-15';
+            break;
+        case 3:
+            $last_paid_date = '16-20';
+            break;
+        case 4:
+            $last_paid_date = '21-25';
+            break;
+        case 5:
+            $last_paid_date = '26-30';
+            break;
+        default:
+            $last_paid_date = '';
+            break;
     }
-
-    // execute main query
-    $statement = $connect->prepare($query);
-    $statement->execute();
-    $result = $statement->fetchAll();
-    $sno = 1;
-    $data = [];
-    foreach ($result as $row) {
-        $cus_id = $row['cp_cus_id'];
-        $cus_name = $row['cus_name'];
-        $area_name = $row['area_name'];
-        $sub_area_name = $row['sub_area_name'];
-        $branch_name = '';
-        $comm_date = '';
-        $hint = '';
-        $comm_err = '';
-
-        switch ($row['last_paid_date']) {
-            case 1:
-                $last_paid_date = '1-10';
-                break;
-            case 2:
-                $last_paid_date = '11-15';
-                break;
-            case 3:
-                $last_paid_date = '16-20';
-                break;
-            case 4:
-                $last_paid_date = '21-25';
-                break;
-            case 5:
-                $last_paid_date = '26-30';
-                break;
-            default:
-                $last_paid_date = '';
-                break;
-        }
 
     $qry1 = $connect->query("SELECT 
         cus_id, 
@@ -246,13 +243,13 @@ CASE
         $qry1->closeCursor();
     }
 
-        $branch_name = $row['branch_name'];
-        $paid_status = ($row['current_month_paid'] == 1) ? 'Yes' : '';
-        $hint = $row['hint'];
-        $comm_err = ($row['comm_err'] == '1') ? 'Error' : (($row['comm_err'] == '2') ? 'Clear' : '');
-        $comm_date = (!empty($row['comm_date']) && $row['comm_date'] != '0000-00-00')
-            ? date('d-m-Y', strtotime($row['comm_date']))
-            : '';
+    $branch_name = $row['branch_name'];
+    $paid_status = ($row['current_month_paid'] == 1) ? 'Yes' : '';
+    $hint = $row['hint'];
+    $comm_err = ($row['comm_err'] == '1') ? 'Error' : (($row['comm_err'] == '2') ? 'Clear' : '');
+    $comm_date = (!empty($row['comm_date']) && $row['comm_date'] != '0000-00-00')
+        ? date('d-m-Y', strtotime($row['comm_date']))
+        : '';
 
     $data[] = [
         $finalData['sno'] = $sno,
@@ -266,7 +263,7 @@ CASE
         $finalData['mobile'] = $row['mobile1'],
         $finalData['status_priority'] = $cus_status,
         $finalData['responsible_status'] = $row['responsible_status'],
-        $finalData['action'] = "<a href='due_followup&upd={$row['req_id']}&cusidupd=$cus_id&cussts=$sub_status_mapping&cummDate=$commdate&res_sts=$res_sts' title='Edit details'><button class='btn btn-success' style='background-color:#009688;'>View Loans</button></a>",
+        $finalData['action'] = "<a href='due_followup&upd={$row['req_id']}&cusidupd=$cus_id&cussts=$sub_status_url&cummDate=$commdate&res_sts=$res_sts' title='Edit details'><button class='btn btn-success' style='background-color:#009688;'>View Loans</button></a>",
         $finalData['last_paid_date'] = $last_paid_date,
         $finalData['paid_status'] = $paid_status,
         $finalData['hint'] = $hint,
@@ -311,7 +308,8 @@ function getFilteredRecords($connect, $data, $search, $sub_status_mapping, $loan
     JOIN customer_status cs ON cp.req_id = cs.req_id
     JOIN area_list_creation alc ON cp.area_confirm_area = alc.area_id
     JOIN sub_area_list_creation salc ON cp.area_confirm_subarea = salc.sub_area_id
-    JOIN area_line_mapping alm ON FIND_IN_SET(alc.area_id, alm.area_id)
+    JOIN area_line_mapping_area alma ON alma.area_id = alc.area_id
+    JOIN area_line_mapping alm ON alm.map_id = alma.line_map_id
     JOIN branch_creation bc ON alm.branch_id = bc.branch_id
     JOIN in_verification iv ON cp.req_id = iv.req_id
     LEFT JOIN acknowlegement_loan_calculation aklc ON aklc.req_id = ii.req_id AND aklc.collection_method = 4
@@ -320,7 +318,7 @@ function getFilteredRecords($connect, $data, $search, $sub_status_mapping, $loan
     WHERE cs.payable_amnt > 0
     AND ii.status = 0
     AND ii.cus_status BETWEEN 14 AND 17
-    AND FIND_IN_SET(cs.sub_status, '$sub_status_mapping')
+    AND cs.sub_status IN ($sub_status_mapping)
     $loan_agnt
     $search
     AND aklc.req_id IS NULL

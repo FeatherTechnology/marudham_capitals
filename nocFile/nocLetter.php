@@ -1,6 +1,7 @@
 <?php
 session_start();
 include('../ajaxconfig.php');
+include('../moneyFormatIndia.php');
 
 $req_id = $_POST['req_id'];
 $cus_id = $_POST['cus_id'];
@@ -38,26 +39,6 @@ $loan_cat = $row['loan_cat_name'];
 $loan_amt = moneyFormatIndia($row['loan_amt']);
 $closed_date = date('d-m-Y',strtotime($row['closed_date']));
 
-function moneyFormatIndia($num) {
-    $explrestunits = "";
-    if (strlen($num) > 3) {
-        $lastthree = substr($num, strlen($num) - 3, strlen($num));
-        $restunits = substr($num, 0, strlen($num) - 3);
-        $restunits = (strlen($restunits) % 2 == 1) ? "0" . $restunits : $restunits;
-        $expunit = str_split($restunits, 2);
-        for ($i = 0; $i < sizeof($expunit); $i++) {
-            if ($i == 0) {
-                $explrestunits .= (int)$expunit[$i] . ",";
-            } else {
-                $explrestunits .= $expunit[$i] . ",";
-            }
-        }
-        $thecash = $explrestunits . $lastthree;
-    } else {
-        $thecash = $num;
-    }
-    return $thecash;
-}
 ?>
 <!DOCTYPE html>
 <html>
