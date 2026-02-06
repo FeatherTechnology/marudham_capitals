@@ -1171,7 +1171,6 @@ function getDocumentIds(){
             response.forEach(element => {
                 items.push({
                     value: element.doc_id,
-                    nocstatus: element.cus_status,
                     label: element.doc_id,
                     selected: replace_doc_id_upd.includes(element.doc_id),
                     customProperties: {
