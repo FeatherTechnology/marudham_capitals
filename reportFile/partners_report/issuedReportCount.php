@@ -2,6 +2,7 @@
 include '../../ajaxconfig.php';
 
 $to_date = $_POST['to_date'] ?? date('Y-m-d');
+$month_start = date('Y-m-01', strtotime($to_date)); 
 
 /* -----------------------------LOAN CATEGORIES ---------------------------- */
 $loanCats = $connect->query("
@@ -25,7 +26,7 @@ foreach ($loanCats as $cat) {
     /* ----------------------------- TODAY ISSUED----------------------------- */
     $todayQry = $connect->query("
         SELECT 
-            COUNT(li.req_id) AS cnt,
+            COUNT(DISTINCT li.req_id) AS cnt,
             SUM(
                 COALESCE(li.cash,0) +
                 COALESCE(li.cheque_value,0) +
@@ -42,7 +43,7 @@ foreach ($loanCats as $cat) {
     /* -----------------------------TILL NOW ISSUED----------------------------- */
     $tillQry = $connect->query("
         SELECT 
-            COUNT(li.req_id) AS cnt,
+            COUNT(DISTINCT li.req_id) AS cnt,
             SUM(
                 COALESCE(li.cash,0) +
                 COALESCE(li.cheque_value,0) +
@@ -52,7 +53,7 @@ foreach ($loanCats as $cat) {
         JOIN acknowlegement_loan_calculation alc 
             ON alc.req_id = li.req_id
         WHERE alc.loan_category = '$cat_id'
-          AND DATE(li.created_date) <= '$to_date'
+          AND DATE(li.created_date) BETWEEN '$month_start' AND '$to_date';
     ");
     $till = $tillQry->fetch(PDO::FETCH_ASSOC);
 

@@ -52,9 +52,9 @@ $statusObj = [
 
 $column = [
     'ii.loan_id',
-    'ag.group_name',
+    // 'ag.group_name',
     'alm.line_name',
-     'adm.duefollowup_name',
+    //  'adm.duefollowup_name',
     'ii.loan_id',
     'ad.doc_id',
     'ii.updated_date',
@@ -97,9 +97,9 @@ while ($row = $run->fetch()) {
 $req_id_list = implode(',', $req_id_list);
 
 $query = "SELECT 
-            ag.group_name,
+            -- ag.group_name,
             alm.line_name AS line,
-            adm.duefollowup_name,
+            -- adm.duefollowup_name,
             ii.loan_id,
             ad.doc_id,
             ii.updated_date AS loan_date,
@@ -151,10 +151,10 @@ $query = "SELECT
             area_list_creation al ON cp.area_confirm_area = al.area_id
         JOIN 
             sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
-        JOIN area_group_mapping ag ON FIND_IN_SET(sal.sub_area_id, ag.sub_area_id)
+        -- JOIN area_group_mapping ag ON FIND_IN_SET(sal.sub_area_id, ag.sub_area_id)
         JOIN 
             area_line_mapping alm ON FIND_IN_SET(sal.sub_area_id, alm.sub_area_id)
-        JOIN area_duefollowup_mapping adm ON FIND_IN_SET(al.area_id, adm.area_id)
+        -- JOIN area_duefollowup_mapping adm ON FIND_IN_SET(al.area_id, adm.area_id)
         JOIN 
             in_verification iv ON lc.req_id = iv.req_id
         LEFT JOIN 
@@ -213,9 +213,10 @@ if(isset($_POST['loan_cat'])){
 
 if (isset($_POST['search']) && $_POST['search'] != "") {
     $search = $_POST['search'];
-    $query .= " AND (ag.group_name LIKE '%$search%' OR
+    $query .= " AND (
+        -- ag.group_name LIKE '%$search%' OR
         alm.line_name LIKE '%$search%' OR
-        adm.duefollowup_name LIKE '%$search%' OR
+        -- adm.duefollowup_name LIKE '%$search%' OR
         ii.loan_id LIKE '%$search%' OR
         ad.doc_id LIKE '%$search%' OR
         ii.updated_date LIKE '%$search%' OR
@@ -313,9 +314,9 @@ foreach ($result as $row) {
     $fine = intval($row['fine']) - (intval($row['fine_track']) + intval($row['fine_waiver']));
 
     $sub_array[] = $sno;
-    $sub_array[] = $row['group_name'];
+    // $sub_array[] = $row['group_name'];
     $sub_array[] = $row['line'];
-    $sub_array[] = $row['duefollowup_name'];
+    // $sub_array[] = $row['duefollowup_name'];
     $sub_array[] = $row['loan_id'];
     $sub_array[] = $row['doc_id'];
     $sub_array[] = date('d-m-Y', strtotime($row['loan_date']));

@@ -5136,7 +5136,7 @@ function getDBagDetails() {
 //this function will check the amount entered were lesser or equal to hand closing balance
 function validateHandCash(amt) {
     let hand_cl = $('#hand_closing').text().replace(/,/g, '')
-    if (parseInt(hand_cl) <= parseInt(amt.value)) {
+    if (parseInt(hand_cl) < parseInt(amt.value)) {
         alert('Enter Lesser Amount !');
         $(amt).val('');
         return false;
