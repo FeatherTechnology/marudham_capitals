@@ -126,6 +126,11 @@ $bank_details = $getuser['bank_details'];
 										<td></td>
 									</tr>
 									<tr>
+										<td>Uncleared</td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
 										<td>Agent Closing Balance</td>
 										<td></td>
 										<td></td>
@@ -214,7 +219,7 @@ $bank_details = $getuser['bank_details'];
 										<td></td>
 									</tr>
 									<tr class='break'>
-										<td>Total Benefit</td>
+										<td>Net Benefit</td>
 										<td colspan="2"></td>
 									</tr>
 								</tfoot>
@@ -282,7 +287,7 @@ $bank_details = $getuser['bank_details'];
 										<td></td>
 									</tr>
 									<tr class='break'>
-										<td>Total Profit</td>
+										<td>Net Profit</td>
 										<td colspan="2"></td>
 									</tr>
 								</tfoot>
@@ -340,6 +345,11 @@ $bank_details = $getuser['bank_details'];
 									</tr>
 									<tr class='break'>
 										<td>Contra</td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td>Uncleared</td>
 										<td></td>
 										<td></td>
 									</tr>

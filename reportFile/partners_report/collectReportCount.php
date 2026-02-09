@@ -2,6 +2,7 @@
 include '../../ajaxconfig.php';
 
 $to_date = $_POST['to_date'] ?? date('Y-m-d');
+$month_start = date('Y-m-01', strtotime($to_date)); 
 
 /* -----------------------------LOAN CATEGORIES----------------------------- */
 $loanCats = $connect->query("
@@ -37,7 +38,7 @@ foreach ($loanCats as $cat) {
         JOIN acknowlegement_loan_calculation alc 
             ON cl.req_id = alc.req_id
         WHERE alc.loan_category = '$cat_id'
-          AND DATE(cl.coll_date) <= '$to_date'
+          AND DATE(cl.coll_date) BETWEEN '$month_start' AND '$to_date';
     ");
     $till_amt = (float)$tillQry->fetchColumn();
 

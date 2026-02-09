@@ -2,6 +2,7 @@
 include '../../ajaxconfig.php';
 
 $to_date = $_POST['to_date'] ?? date('Y-m-d');
+$month_start = date('Y-m-01', strtotime($to_date)); 
 
 $data = [];
 $sno = 1;
@@ -14,17 +15,17 @@ $total_debit  = 0;
 ========================== */
 $el_credit = (float)$connect->query("
     SELECT ROUND(COALESCE(SUM(amt),0), 2) FROM (
-        SELECT amt FROM ct_cr_hel WHERE DATE(created_date) <= '$to_date'
+        SELECT amt FROM ct_cr_hel WHERE DATE(created_date) BETWEEN '$month_start' AND '$to_date'
         UNION ALL
-        SELECT amt FROM ct_cr_bel WHERE DATE(created_date) <= '$to_date'
+        SELECT amt FROM ct_cr_bel WHERE DATE(created_date) BETWEEN '$month_start' AND '$to_date'
     ) x
 ")->fetchColumn();
 
 $el_debit = (float)$connect->query("
     SELECT ROUND(COALESCE(SUM(amt),0), 2) FROM (
-        SELECT amt FROM ct_db_hel WHERE DATE(created_date) <= '$to_date'
+        SELECT amt FROM ct_db_hel WHERE DATE(created_date) BETWEEN '$month_start' AND '$to_date'
         UNION ALL
-        SELECT amt FROM ct_db_bel WHERE DATE(created_date) <= '$to_date'
+        SELECT amt FROM ct_db_bel WHERE DATE(created_date) BETWEEN '$month_start' AND '$to_date'
     ) x
 ")->fetchColumn();
 
@@ -42,17 +43,17 @@ $total_debit  += $el_debit;
 /* ========================== INVESTMENT========================== */
 $inv_credit = (float)$connect->query("
     SELECT ROUND(COALESCE(SUM(amt),0), 2) FROM (   
-        SELECT amt FROM ct_cr_hinvest WHERE DATE(created_date) <= '$to_date'
+        SELECT amt FROM ct_cr_hinvest WHERE DATE(created_date) BETWEEN '$month_start' AND '$to_date'
         UNION ALL
-        SELECT amt FROM ct_cr_binvest WHERE DATE(created_date) <= '$to_date'
+        SELECT amt FROM ct_cr_binvest WHERE DATE(created_date) BETWEEN '$month_start' AND '$to_date'
     ) x
 ")->fetchColumn();
 
 $inv_debit = (float)$connect->query("
     SELECT ROUND(COALESCE(SUM(amt),0), 2) FROM (
-        SELECT amt FROM ct_db_hinvest WHERE DATE(created_date) <= '$to_date'
+        SELECT amt FROM ct_db_hinvest WHERE DATE(created_date) BETWEEN '$month_start' AND '$to_date'
         UNION ALL
-        SELECT amt FROM ct_db_binvest WHERE DATE(created_date) <= '$to_date'
+        SELECT amt FROM ct_db_binvest WHERE DATE(created_date) BETWEEN '$month_start' AND '$to_date'
     ) x
 ")->fetchColumn();
 
@@ -69,17 +70,17 @@ $total_debit  += $inv_debit;
 /* ==========================DEPOSIT========================== */
 $dep_credit = (float)$connect->query("
     SELECT ROUND(COALESCE(SUM(amt),0), 2) FROM (
-        SELECT amt FROM ct_cr_hdeposit WHERE DATE(created_date) <= '$to_date'
+        SELECT amt FROM ct_cr_hdeposit WHERE DATE(created_date) BETWEEN '$month_start' AND '$to_date'
         UNION ALL
-        SELECT amt FROM ct_cr_bdeposit WHERE DATE(created_date) <= '$to_date'
+        SELECT amt FROM ct_cr_bdeposit WHERE DATE(created_date) BETWEEN '$month_start' AND '$to_date'
     ) x
 ")->fetchColumn();
 
 $dep_debit = (float)$connect->query("
     SELECT ROUND(COALESCE(SUM(amt),0), 2) FROM (
-        SELECT amt FROM ct_db_hdeposit WHERE DATE(created_date) <= '$to_date'
+        SELECT amt FROM ct_db_hdeposit WHERE DATE(created_date) BETWEEN '$month_start' AND '$to_date'
         UNION ALL
-        SELECT amt FROM ct_db_bdeposit WHERE DATE(created_date) <= '$to_date'
+        SELECT amt FROM ct_db_bdeposit WHERE DATE(created_date) BETWEEN '$month_start' AND '$to_date'
     ) x
 ")->fetchColumn();
 
@@ -97,9 +98,9 @@ $total_debit  += $dep_debit;
 /* ==========================EXPENSE (DEBIT ONLY)========================== */
 $exp_debit = (float)$connect->query("
     SELECT ROUND(COALESCE(SUM(amt),0), 2) FROM (
-        SELECT amt FROM ct_db_hexpense WHERE DATE(created_date) <= '$to_date'
+        SELECT amt FROM ct_db_hexpense WHERE DATE(created_date) BETWEEN '$month_start' AND '$to_date'
         UNION ALL
-        SELECT amt FROM ct_db_bexpense WHERE DATE(created_date) <= '$to_date'
+        SELECT amt FROM ct_db_bexpense WHERE DATE(created_date) BETWEEN '$month_start' AND '$to_date'
     ) x
 ")->fetchColumn();
 

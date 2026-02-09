@@ -20,6 +20,8 @@ $handCredit = $connect->query("
         SELECT SUM(amt) FROM ct_cr_hel WHERE DATE(created_date) <= '$to_date'
         UNION ALL
         SELECT SUM(amt) FROM ct_cr_hdeposit WHERE DATE(created_date) <= '$to_date'
+        UNION ALL
+        SELECT SUM(amt) FROM ct_cr_bank_withdraw WHERE DATE(created_date) <= '$to_date'
     ) x
 ")->fetchColumn();
 

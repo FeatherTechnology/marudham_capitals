@@ -98,18 +98,25 @@ function BalanceSheetCalculations(type, from_date, to_date, month) {
 
         //to get opening balance
         let ajaxCall1 = $.post('financeFile/BS/getOpeningDate.php', args, function (response) {
-            let opBal = response[1][0]['opening_bal'];
-            let opAgBal = response[1][0]['opening_agent'];
-            $('.balance-sheet-card').find('tbody tr:first td:nth-child(2)').text(opBal) 
-            $('.balance-sheet-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(opAgBal) 
-            $('.benefits-check-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(opBal) //it will get the 2nd column value inside tbody // will take you to opening balance credit column
-            $('.benefits-check-card').find('tbody tr:nth-child(3) td:nth-child(2)').text(opAgBal) 
+            let opBal = response[1][0]['opening_balance'];
+            let opAgBal = response[1][0]['agent_opening'];
+            $('.balance-sheet-card').find('tbody tr:first td:nth-child(2)').text(moneyFormatIndia(opBal)) 
+            $('.balance-sheet-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(moneyFormatIndia(opAgBal)) 
+            $('.benefits-check-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(moneyFormatIndia(opBal)) //it will get the 2nd column value inside tbody // will take you to opening balance credit column
+            $('.benefits-check-card').find('tbody tr:nth-child(3) td:nth-child(2)').text(moneyFormatIndia(opAgBal)) 
             let clBal = response[0][0]?.closing_balance || 0;
             let agBal = response[0][0]?.agent_closing || 0;
-            $('.balance-sheet-card').find('tbody tr:nth-child(14) td:nth-child(3)').text(moneyFormatIndia(agBal));
-            $('.balance-sheet-card').find('tbody tr:nth-child(15) td:nth-child(3)').text(moneyFormatIndia(clBal));
-            $('.benefits-check-card').find('tbody tr:nth-child(10) td:nth-child(3)').text(moneyFormatIndia(agBal));//benefit check table also will have same Agent balance
-            $('.benefits-check-card').find('tbody tr:nth-child(11) td:nth-child(3)').text(moneyFormatIndia(clBal));//benefit check table also will have same closing balance
+            let unclearedCredit = response[2]?.uncleared_credit || 0;
+            let unclearedDebit  = response[2]?.uncleared_debit  || 0;
+            $('.balance-sheet-card').find('tbody tr:nth-child(15) td:nth-child(3)').text(moneyFormatIndia(agBal));
+            $('.balance-sheet-card').find('tbody tr:nth-child(16) td:nth-child(3)').text(moneyFormatIndia(clBal));
+            $('.benefits-check-card').find('tbody tr:nth-child(11) td:nth-child(3)').text(moneyFormatIndia(agBal));//benefit check table also will have same Agent balance
+            $('.benefits-check-card').find('tbody tr:nth-child(12) td:nth-child(3)').text(moneyFormatIndia(clBal));//benefit check table also will have same closing balance
+
+            $('.balance-sheet-card') .find('tbody tr:nth-child(14) td:nth-child(2)') .text(moneyFormatIndia(unclearedCredit));
+            $('.balance-sheet-card') .find('tbody tr:nth-child(14) td:nth-child(3)') .text(moneyFormatIndia(unclearedDebit));
+            $('.benefits-check-card').find('tbody tr:nth-child(9) td:nth-child(2)').text(moneyFormatIndia(unclearedCredit));
+            $('.benefits-check-card').find('tbody tr:nth-child(9) td:nth-child(3)').text(moneyFormatIndia(unclearedDebit));
 
         }, 'json')
 
@@ -344,7 +351,7 @@ function BenefitCheckCalculations(type, from_date, to_date, month) {
         }, 'json');
 
         let ajaxCall5 = $.post('financeFile/BenefitsCheck/getClosingOutstanding.php', args, function (response) {
-            $('.benefits-check-card').find('tbody tr:nth-child(9) td:nth-child(3)').text(response['closing_outstanding']) //it will get the 2nd column value inside tbody // will take you to opening outstanding credit column
+            $('.benefits-check-card').find('tbody tr:nth-child(10) td:nth-child(3)').text(response['closing_outstanding']) //it will get the 2nd column value inside tbody // will take you to opening outstanding credit column
         }, 'json');
 
         ajaxCalls.push(ajaxCall1, ajaxCall5);

@@ -13,6 +13,7 @@ if (isset($_SESSION["userid"])) {
             $records[$i]['id'] = $row['id'];
             $records[$i]['bank_name'] = $row['bank_name'];
             $records[$i]['short_name'] = $row['short_name'];
+            $records[$i]['acc_no'] = $row['acc_no'];
             $i++;
         }
     }	

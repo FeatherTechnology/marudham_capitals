@@ -508,6 +508,7 @@ $(document).ready(function () {
 $(function () {
 
     var user_id_upd = $('#user_id_upd').val();
+    getBankName();
     if (user_id_upd > 0) {
         var role_upd = $('#role_upd').val();
         var role_type_upd = $('#role_type_upd').val();
@@ -540,7 +541,6 @@ $(function () {
         getdueFollupLineDropdown(branch_id_upd);
         getBankDetails();
         getProAccess();
-        getBankName();
 
         var update_screen = document.querySelector('#update');
         if (update_screen.checked) {
