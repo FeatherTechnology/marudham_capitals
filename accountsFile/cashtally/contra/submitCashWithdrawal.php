@@ -32,7 +32,6 @@ try {
 
     $available_amt = floatval($chk['transaction_amount']);
     $bank_stmt_id  = $chk['id'];
-    $transaction_balance = $available_amt - $amt;
 
     /* ❌ AMOUNT VALIDATION */
     if ($amt > $available_amt) {
@@ -43,13 +42,7 @@ try {
     // GENERATE REF CODE
     $myStr = "WD";
 
-    $selectStmt = $connect->query("
-        SELECT ref_code 
-        FROM ct_db_cash_withdraw 
-        WHERE ref_code != '' 
-        ORDER BY id DESC 
-        LIMIT 1
-    ");
+    $selectStmt = $connect->query(" SELECT ref_code FROM ct_db_cash_withdraw WHERE ref_code != '' ORDER BY id DESC LIMIT 1 ");
 
     if ($selectStmt->rowCount() > 0) {
 
@@ -69,12 +62,8 @@ try {
     ////////////////////////
 
     /* ✅ INSERT CASH WITHDRAW */
-    $insStmt = $connect->prepare("
-        INSERT INTO ct_db_cash_withdraw  
-        (from_bank_id, ref_code, trans_id, cheque_no, remark, amt, insert_login_id, created_date)
-        VALUES
-        (:from_bank, :ref_code, :trans_id, :cheque, :remark, :amt, :user_id, :created_date)
-    ");
+    $insStmt = $connect->prepare(" INSERT INTO ct_db_cash_withdraw (from_bank_id, ref_code, trans_id, cheque_no, remark, amt, insert_login_id, created_date)
+        VALUES (:from_bank, :ref_code, :trans_id, :cheque, :remark, :amt, :user_id, :created_date) ");
 
     $insStmt->execute([
         ':from_bank'   => $from_bank,
@@ -98,28 +87,25 @@ try {
                             WHEN ROUND(:new_amount, 2) = 0 
                             THEN 1 
                             ELSE clr_status 
-                         END,
-            update_login_id = :user_id,
-            updated_date = NOW()
+                         END
         WHERE bank_id = :from_bank 
         AND trans_id = :trans_id
     ");
 
     $upStmt->execute([
         ':new_amount' => $new_amount,
-        ':user_id'    => $user_id,
         ':from_bank'  => $from_bank,
         ':trans_id'   => $trans_id
     ]);
        /* ✅ INSERT CLEARED HISTORY */
     $historyStmt = $connect->prepare("INSERT INTO cleared_bank_stmt_history
-        (bank_stmt_id, transaction_balance, screens, insert_login_id, created_date)
+        (bank_stmt_id, transaction_amount, type, screens, insert_login_id, created_date)
         VALUES
-        (:bank_stmt_id, :transaction_balance, 'Bank Cash Withdrawal', :user_id, NOW()) ");
+        (:bank_stmt_id, :amt, 2, 'Bank Cash Withdrawal', :user_id, NOW()) ");
 
     $historyStmt->execute([
         ':bank_stmt_id' => $bank_stmt_id,
-        ':transaction_balance' => $transaction_balance,
+        ':amt' => $amt,
         ':user_id' => $user_id
     ]);
 

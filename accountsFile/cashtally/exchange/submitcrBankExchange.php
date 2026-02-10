@@ -37,7 +37,6 @@ try {
 
     $available_amt = floatval($chk['transaction_amount']);
     $bank_stmt_id  = $chk['id'];
-    $transaction_balance = $available_amt - $amt;
 
     /* ❌ AMOUNT VALIDATION */
     if ($amt > $available_amt) {
@@ -57,8 +56,7 @@ try {
     ]);
 
     /* ✅ INSERT CREDIT EXCHANGE ENTRY */
-    $insertCreditStmt = $connect->prepare("
-        INSERT INTO ct_cr_bexchange 
+    $insertCreditStmt = $connect->prepare("INSERT INTO ct_cr_bexchange 
         (db_ref_id, from_bank_id, to_bank_id, from_user_id, to_user_id, ref_code, trans_id, remark, amt, insert_login_id, created_date)
         VALUES
         (:bex_id, :from_bank_id, :to_bank_id, :from_user_id, :to_user_id, :ref_code, :trans_id, :remark, :amt, :user_id, :created_date)
@@ -89,9 +87,7 @@ try {
                             WHEN ROUND(:new_amount, 2) = 0 
                             THEN 1 
                             ELSE clr_status 
-                         END,
-            update_login_id = :user_id,
-            updated_date = NOW()
+                         END
         WHERE bank_id = :bank_id 
         AND trans_id = :trans_id
     ");
@@ -105,13 +101,13 @@ try {
 
         /* ✅ INSERT CLEARED HISTORY */
     $historyStmt = $connect->prepare("INSERT INTO cleared_bank_stmt_history
-        (bank_stmt_id, transaction_balance, screens, insert_login_id, created_date)
+        (bank_stmt_id, transaction_amount, type, screens, insert_login_id, created_date)
         VALUES
-        (:bank_stmt_id, :transaction_balance, 'Bank Exchange CR', :user_id, NOW()) ");
+        (:bank_stmt_id, :amt, 1,'Bank Exchange CR', :user_id, NOW()) ");
 
     $historyStmt->execute([
         ':bank_stmt_id' => $bank_stmt_id,
-        ':transaction_balance' => $transaction_balance,
+        ':amt' => $amt,
         ':user_id' => $user_id
     ]); 
 

@@ -19,8 +19,6 @@ try {
 
     $connect->beginTransaction();
 
-    /* 🔍 CHECK AVAILABLE TRANSACTION AMOUNT */
-    // ⚠️ Condition kept exactly same: AND $sts > 0
     $chkStmt = $connect->prepare(" SELECT transaction_amount ,id  FROM bank_stmt  WHERE bank_id = :bank_id AND trans_id = :trans_id  AND $sts > 0 LIMIT 1 ");
 
     $chkStmt->execute([
@@ -37,7 +35,6 @@ try {
 
     $available_amt = floatval($chk['transaction_amount']);
     $bank_stmt_id  = $chk['id'];
-    $transaction_balance = $available_amt - $amt;
 
     /* ❌ AMOUNT VALIDATION */
     if ($amt > $available_amt) {
@@ -46,9 +43,7 @@ try {
     }
 
     /* ✅ INSERT CREDIT DEPOSIT */
-    $insStmt = $connect->prepare("
-        INSERT INTO ct_cr_bdeposit 
-        (bank_id, ref_code, trans_id, name_id, area, ident, remark, amt, insert_login_id, created_date)
+    $insStmt = $connect->prepare(" INSERT INTO ct_cr_bdeposit (bank_id, ref_code, trans_id, name_id, area, ident, remark, amt, insert_login_id, created_date)
         VALUES
         (:bank_id, :ref_code, :trans_id, :name_id, :area, :ident, :remark, :amt, :user_id, :created_date)
     ");
@@ -77,29 +72,26 @@ try {
                             WHEN ROUND(:new_amount, 2) = 0 
                             THEN 1 
                             ELSE clr_status 
-                         END,
-            update_login_id = :user_id,
-            updated_date = NOW()
+                         END
         WHERE bank_id = :bank_id
         AND trans_id = :trans_id
     ");
 
     $upStmt->execute([
         ':new_amount' => $new_amount,
-        ':user_id' => $user_id,
         ':bank_id' => $bank_id,
         ':trans_id' => $trans_id
     ]);
 
        /* ✅ INSERT CLEARED HISTORY */
     $historyStmt = $connect->prepare("INSERT INTO cleared_bank_stmt_history
-        (bank_stmt_id, transaction_balance, screens, insert_login_id, created_date)
+        (bank_stmt_id, transaction_amount, type, screens, insert_login_id, created_date)
         VALUES
-        (:bank_stmt_id, :transaction_balance, 'Bank Deposit CR', :user_id, NOW()) ");
+        (:bank_stmt_id, :amt, 1, 'Bank Deposit CR', :user_id, NOW()) ");
 
     $historyStmt->execute([
         ':bank_stmt_id' => $bank_stmt_id,
-        ':transaction_balance' => $transaction_balance,
+        ':amt' => $amt,
         ':user_id' => $user_id
     ]);
 
