@@ -44,7 +44,7 @@ $(document).ready(function () {
 
         if (verify == 'cus_profile') {
             $('#customer_profile').show(); $('#cus_document').hide(); $('#customer_loan_calc').hide();
-
+            customerProfileFunc();
         }
         if (verify == 'documentation') {
             $('#customer_profile').hide(); $('#cus_document').show(); $('#customer_loan_calc').hide();
@@ -68,6 +68,37 @@ $(document).ready(function () {
 
         }
     })
+
+    function customerProfileFunc() {
+
+        getImage(); // To show customer image when window onload.
+        resetFamDetails(); //Family Table List
+        resetPropertyinfoList() //Property Info List.
+        resetbankinfoList(); //Bank Info List.
+        resetkycinfoList(); //KYC Info List.
+        feedbackList(); // Feedback List.
+        getCustomerLoanCounts(); // to get customer loan details
+
+        var state_upd = $('#state_upd').val();
+        if (state_upd != '') {
+            getDistrictDropdown(state_upd);
+        }
+        var district_upd = $('#district_upd').val();
+        if (district_upd != '') {
+            getTalukDropdown(district_upd);
+        }
+        var taluk_upd = $('#taluk_upd').val();
+        if (taluk_upd != '') {
+            getTalukBasedArea(taluk_upd);
+        }
+        var area_upd = $('#area_upd').val();
+        if (area_upd != '') {
+            getAreaBasedSubArea(area_upd);
+        }
+
+        let agent_id = $('#agent_id').val();
+        getresponsiblecolumn(agent_id);
+    }
 
     ///Documentation 
 
@@ -1054,59 +1085,6 @@ $(function () {
     $('input').not('#int_rate, #due_period, #doc_charge, #proc_fee').attr('readonly', true);
     $('select').not('#choose_document, #mortgage_process, #endorsement_process, #replace_doc_id').attr('disabled', true);
 
-
-    getImage(); // To show customer image when window onload.
-
-    resetFamDetails(); //Family Table List
-
-    //  resetGroupDetails()    //Group Family Modal Table Reset 
-
-    resetPropertyinfoList() //Property Info List.
-
-    resetbankinfoList(); //Bank Info List.
-
-    resetkycinfoList(); //KYC Info List.
-
-    //Documentation
-    // getstaffCode(); // Atuo Generate Doc ID.
-    // resetsignInfo(); // Signed Doc info Reset.
-    // resetsigninfoList(); // Signed Doc List Reset.
-
-    // chequeinfoList(); // Cheque Info List.
-    // resetchequeInfo();
-
-    // resetgoldInfo(); // Gold Info Reset.
-    // goldinfoList(); // Gold Info List.
-
-    // resetdocInfo(); // Document Info Reset.
-    // docinfoList(); // Document Info List.
-
-    feedbackList(); // Feedback List.
-
-    verificationPerson() //Verification Person
-
-    getCustomerLoanCounts(); // to get customer loan details
-
-    fingerprintTable();//To Get family member's name are required for scanning fingerprint
-
-    var state_upd = $('#state_upd').val();
-    if (state_upd != '') {
-        getDistrictDropdown(state_upd);
-    }
-    var district_upd = $('#district_upd').val();
-    if (district_upd != '') {
-        getTalukDropdown(district_upd);
-    }
-    var taluk_upd = $('#taluk_upd').val();
-    if (taluk_upd != '') {
-        getTalukBasedArea(taluk_upd);
-    }
-    var area_upd = $('#area_upd').val();
-    if (area_upd != '') {
-        getAreaBasedSubArea(area_upd);
-    }
-
-
     $('.modalTable').DataTable({
         'processing': true,
         'iDisplayLength': 5,
@@ -1132,25 +1110,6 @@ $(function () {
         }
         ],
     });
-
-    // when Mortgage Doc is YES then Pending is UNCHECKED.
-    var docupd = $('#mortgage_document').val();
-
-    if (docupd == '0') {
-        // $('#pendingchk').removeAttr('checked');
-        $('#docUpd').show();
-    }
-
-    //When Endorsement Doc is YES then Pending is UNCHECKED.
-    var endocupd = $('#en_RC').val();
-
-    if (endocupd == '0') {
-        // $('#endorsependingchk').removeAttr('checked');
-        $('#RCdocUpd').show();
-    }
-
-    let agent_id = $('#agent_id').val();
-    getresponsiblecolumn(agent_id);
 });
 
 //Get document ids
@@ -2801,6 +2760,24 @@ async function getDocumentFunc() {
 
     await docinfoList(); // Document Info List.
 
+    fingerprintTable(); // Fingerprint Info List
+
+    // when Mortgage Doc is YES then Pending is UNCHECKED.
+    var docupd = $('#mortgage_document').val();
+
+    if (docupd == '0') {
+        // $('#pendingchk').removeAttr('checked');
+        $('#docUpd').show();
+    }
+
+    //When Endorsement Doc is YES then Pending is UNCHECKED.
+    var endocupd = $('#en_RC').val();
+
+    if (endocupd == '0') {
+        // $('#endorsependingchk').removeAttr('checked');
+        $('#RCdocUpd').show();
+    }
+
     let mort = ($('#mortgage_process').val() == '0') ? true : false;
     if (mort) {
         $('#mortgage_info_card').show();
@@ -2833,6 +2810,7 @@ async function getDocumentFunc() {
 function onLoadEditFunction() {//On load for Loan Calculation edit
     $('input#due_start_from').removeAttr('readonly');
     $('select#collection_method').removeAttr('disabled');
+    verificationPerson();
 }
 
 $('#Communitcation_to_cus').change(function () {

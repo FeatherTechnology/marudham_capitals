@@ -631,7 +631,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 					<!-- Family info START -->
 					<div class="card">
 						<div class="card-header">Family Info<span class="required">&nbsp;*</span><span style="font-weight:bold" class=""></span>
-							<button type="button" class="btn btn-primary" id="add_group" name="add_group" data-toggle="modal" data-target=".addGroup" style="padding: 5px 35px; float: right;" tabindex='20'><span class="icon-add"></span></button>
+							<button type="button" class="btn btn-primary" id="add_group" name="add_group" data-toggle="modal" data-target=".addGroup" style="padding: 5px 35px; float: right;" tabindex='20' onclick="resetFamInfo();"><span class="icon-add"></span></button>
 						</div>
 						<span class="text-danger" style='display:none' id='family_infoCheck'>Please Fill Family Info </span>
 						<div class="card-body">
@@ -1070,7 +1070,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 					<!-- Property info START -->
 					<div class="card">
 						<div class="card-header"> Property info <span style="font-weight:bold" class=""></span>
-							<button type="button" class="btn btn-primary" id="property_add" name="property_add" data-toggle="modal" data-target=".addproperty" style="padding: 5px 35px;  float: right; " onclick="propertyHolder()" tabindex='50'><span class="icon-add"></span></button>
+							<button type="button" class="btn btn-primary" id="property_add" name="property_add" data-toggle="modal" data-target=".addproperty" style="padding: 5px 35px;  float: right; " onclick="propertyHolder();resetpropertyInfo();" tabindex='50'><span class="icon-add"></span></button>
 						</div>
 						<span class="text-danger" style='display:none' id='property_infoCheck'>Please Fill Property Info </span>
 						<div class="card-body">
@@ -1105,7 +1105,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 					<!-- Bank info START -->
 					<div class="card">
 						<div class="card-header"> Bank info <span style="font-weight:bold" class=""></span>
-							<button type="button" class="btn btn-primary" id="bank_add" name="bank_add" data-toggle="modal" data-target=".addbank" style="padding: 5px 35px;  float: right;" tabindex='51'><span class="icon-add"></span></button>
+							<button type="button" class="btn btn-primary" id="bank_add" name="bank_add" data-toggle="modal" data-target=".addbank" style="padding: 5px 35px;  float: right;" tabindex='51' onclick="resetbankInfo();"><span class="icon-add"></span></button>
 						</div>
 						<span class="text-danger" style='display:none' id='bank_infoCheck'>Please Fill Bank Info </span>
 						<div class="card-body">
@@ -1143,7 +1143,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 					<!-- KYC info START -->
 					<div class="card">
 						<div class="card-header"> KYC info<span class="required">&nbsp;*</span><span style="font-weight:bold" class=""></span>
-							<button type="button" class="btn btn-primary" id="kyc_add" name="kyc_add" data-toggle="modal" data-target=".addkyc" style="padding: 5px 35px; float: right; " tabindex='52'><span class="icon-add"></span></button>
+							<button type="button" class="btn btn-primary" id="kyc_add" name="kyc_add" data-toggle="modal" data-target=".addkyc" style="padding: 5px 35px; float: right; " tabindex='52' onclick="resetkycInfo();"><span class="icon-add"></span></button>
 						</div>
 						<span class="text-danger" style='display:none' id='kyc_infoCheck'>Please Fill KYC Info </span>
 						<div class="card-body">
@@ -1285,7 +1285,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 							<hr>
 							<div class="row">
 								<div class="col-12">
-									<button type="button" class="btn btn-primary" id="add_cus_label" name="add_cus_label" data-toggle="modal" data-target=".addCusLabel" style="padding: 5px 35px; float: right;" tabindex="63"><span class="icon-add"></span></button>
+									<button type="button" class="btn btn-primary" id="add_cus_label" name="add_cus_label" data-toggle="modal" data-target=".addCusLabel" style="padding: 5px 35px; float: right;" tabindex="63" onclick="resetfeedback();"><span class="icon-add"></span></button>
 								</div>
 							</div> <br>
 
