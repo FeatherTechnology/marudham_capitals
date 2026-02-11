@@ -10,6 +10,7 @@ $column = array(
     'district',
     'mobile',
     'status',
+    'company_id'
 );
 
 $query = "SELECT * FROM company_creation ";
@@ -42,7 +43,7 @@ $query1 = '';
 if ($_POST['length'] != -1) {
     $query1 = 'LIMIT ' . $_POST['start'] . ', ' . $_POST['length'];
 }
-
+// echo $query;die;
 $statement = $connect->prepare($query);
 
 $statement->execute();

@@ -36,7 +36,6 @@ try {
 
     $available_amt = floatval($chk['transaction_amount']);
     $bank_stmt_id  = $chk['id'];
-    $transaction_balance = $available_amt - $amt;
 
     /* ❌ ENTERED AMOUNT EXCEEDS AVAILABLE */
     if ($amt > $available_amt) {
@@ -45,12 +44,9 @@ try {
     }
 
     /* ✅ INSERT BANK DEPOSIT */
-    $insStmt = $connect->prepare("
-        INSERT INTO ct_db_bdeposit 
-        (bank_id, ref_code, trans_id, name_id, area, ident, remark, amt, insert_login_id, created_date)
+    $insStmt = $connect->prepare(" INSERT INTO ct_db_bdeposit (bank_id, ref_code, trans_id, name_id, area, ident, remark, amt, insert_login_id, created_date)
         VALUES
-        (:bank_id, :ref_code, :trans_id, :name_id, :area, :ident, :remark, :amt, :user_id, :created_date)
-    ");
+        (:bank_id, :ref_code, :trans_id, :name_id, :area, :ident, :remark, :amt, :user_id, :created_date) ");
 
     $insStmt->execute([
         ':bank_id' => $bank_id,
@@ -76,28 +72,25 @@ try {
                             WHEN ROUND(:new_amount, 2) = 0 
                             THEN 1 
                             ELSE clr_status 
-                         END,
-            update_login_id = :user_id,
-            updated_date = NOW()
+                         END
         WHERE bank_id = :bank_id
         AND trans_id = :trans_id
     ");
 
     $upStmt->execute([
         ':new_amount' => $new_amount,
-        ':user_id' => $user_id,
         ':bank_id' => $bank_id,
         ':trans_id' => $trans_id
     ]);
        /* ✅ INSERT CLEARED HISTORY */
     $historyStmt = $connect->prepare("INSERT INTO cleared_bank_stmt_history
-        (bank_stmt_id, transaction_balance, screens, insert_login_id, created_date)
+        (bank_stmt_id, transaction_amount, type, screens, insert_login_id, created_date)
         VALUES
-        (:bank_stmt_id, :transaction_balance, 'Bank Deposit DB', :user_id, NOW()) ");
+        (:bank_stmt_id, :amt, 2, 'Bank Deposit DB', :user_id, NOW()) ");
 
     $historyStmt->execute([
         ':bank_stmt_id' => $bank_stmt_id,
-        ':transaction_balance' => $transaction_balance,
+        ':amt' => $amt,
         ':user_id' => $user_id
     ]);
     

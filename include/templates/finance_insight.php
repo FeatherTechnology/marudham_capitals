@@ -131,7 +131,12 @@ $bank_details = $getuser['bank_details'];
 										<td></td>
 									</tr>
 									<tr>
-										<td>Uncleared</td>
+										<td>Previous Uncleared</td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td>Current Uncleared</td>
 										<td></td>
 										<td></td>
 									</tr>
@@ -354,7 +359,12 @@ $bank_details = $getuser['bank_details'];
 										<td></td>
 									</tr>
 									<tr>
-										<td>Uncleared</td>
+										<td>Previous Uncleared</td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td>Current Uncleared</td>
 										<td></td>
 										<td></td>
 									</tr>

@@ -106,17 +106,24 @@ function BalanceSheetCalculations(type, from_date, to_date, month) {
             $('.benefits-check-card').find('tbody tr:nth-child(3) td:nth-child(2)').text(moneyFormatIndia(opAgBal)) 
             let clBal = response[0][0]?.closing_balance || 0;
             let agBal = response[0][0]?.agent_closing || 0;
-            let unclearedCredit = response[2]?.uncleared_credit || 0;
-            let unclearedDebit  = response[2]?.uncleared_debit  || 0;
-            $('.balance-sheet-card').find('tbody tr:nth-child(16) td:nth-child(3)').text(moneyFormatIndia(agBal));
-            $('.balance-sheet-card').find('tbody tr:nth-child(17) td:nth-child(3)').text(moneyFormatIndia(clBal));
-            $('.benefits-check-card').find('tbody tr:nth-child(11) td:nth-child(3)').text(moneyFormatIndia(agBal));//benefit check table also will have same Agent balance
-            $('.benefits-check-card').find('tbody tr:nth-child(12) td:nth-child(3)').text(moneyFormatIndia(clBal));//benefit check table also will have same closing balance
+            let previous_uncleared_credit = response[2]?.previous_uncleared_credit || 0;
+            let previous_uncleared_debit  = response[2]?.previous_uncleared_debit  || 0;
+            let current_uncleared_credit  = response[2]?.current_uncleared_credit  || 0;
+            let current_uncleared_debit  = response[2]?.current_uncleared_debit  || 0;
+            $('.balance-sheet-card').find('tbody tr:nth-child(17) td:nth-child(3)').text(moneyFormatIndia(agBal));
+            $('.balance-sheet-card').find('tbody tr:nth-child(18) td:nth-child(3)').text(moneyFormatIndia(clBal));
+            $('.benefits-check-card').find('tbody tr:nth-child(12) td:nth-child(3)').text(moneyFormatIndia(agBal));//benefit check table also will have same Agent balance
+            $('.benefits-check-card').find('tbody tr:nth-child(13) td:nth-child(3)').text(moneyFormatIndia(clBal));//benefit check table also will have same closing balance
 
-            $('.balance-sheet-card') .find('tbody tr:nth-child(15) td:nth-child(2)') .text(moneyFormatIndia(unclearedCredit));
-            $('.balance-sheet-card') .find('tbody tr:nth-child(15) td:nth-child(3)') .text(moneyFormatIndia(unclearedDebit));
-            $('.benefits-check-card').find('tbody tr:nth-child(9) td:nth-child(2)').text(moneyFormatIndia(unclearedCredit));
-            $('.benefits-check-card').find('tbody tr:nth-child(9) td:nth-child(3)').text(moneyFormatIndia(unclearedDebit));
+            $('.balance-sheet-card') .find('tbody tr:nth-child(15) td:nth-child(2)') .text(moneyFormatIndia(-previous_uncleared_credit));
+            $('.balance-sheet-card') .find('tbody tr:nth-child(15) td:nth-child(3)') .text(moneyFormatIndia(-previous_uncleared_debit));
+            $('.benefits-check-card').find('tbody tr:nth-child(9) td:nth-child(2)').text(moneyFormatIndia(previous_uncleared_credit));
+            $('.benefits-check-card').find('tbody tr:nth-child(9) td:nth-child(3)').text(moneyFormatIndia(previous_uncleared_debit));
+
+            $('.balance-sheet-card') .find('tbody tr:nth-child(16) td:nth-child(2)') .text(moneyFormatIndia(current_uncleared_credit));
+            $('.balance-sheet-card') .find('tbody tr:nth-child(16) td:nth-child(3)') .text(moneyFormatIndia(current_uncleared_debit));
+            $('.benefits-check-card').find('tbody tr:nth-child(10) td:nth-child(2)').text(moneyFormatIndia(current_uncleared_credit));
+            $('.benefits-check-card').find('tbody tr:nth-child(10) td:nth-child(3)').text(moneyFormatIndia(current_uncleared_debit));
 
         }, 'json')
 
@@ -358,7 +365,7 @@ function BenefitCheckCalculations(type, from_date, to_date, month) {
         }, 'json');
 
         let ajaxCall5 = $.post('financeFile/BenefitsCheck/getClosingOutstanding.php', args, function (response) {
-            $('.benefits-check-card').find('tbody tr:nth-child(10) td:nth-child(3)').text(response['closing_outstanding']) //it will get the 2nd column value inside tbody // will take you to opening outstanding credit column
+            $('.benefits-check-card').find('tbody tr:nth-child(11) td:nth-child(3)').text(response['closing_outstanding']) //it will get the 2nd column value inside tbody // will take you to opening outstanding credit column
         }, 'json');
 
         ajaxCalls.push(ajaxCall1, ajaxCall5);
