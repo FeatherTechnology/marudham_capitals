@@ -757,7 +757,17 @@ $(function () {
         getDocumentHistory();
 
     } else if (selectedArray.includes('1') && selectedArray.includes('2')) {
-        callCustomerProfileFunctn(); getDocumentHistory();
+
+        $('input[name="verification_type"]').on('change', function () {
+
+            if ($(this).val() === 'cus_profile') {
+                callCustomerProfileFunctn();
+            } 
+            else if ($(this).val() === 'documentation') {
+                getDocumentHistory();
+            }
+
+        });
 
     }
     nameFormatter('#cus_name');
