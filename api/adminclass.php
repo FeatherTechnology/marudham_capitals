@@ -6499,7 +6499,7 @@ class admin
 		$detailrecords = array();
 		$Qry = $mysqli->query("SELECT * FROM `acknowlegement_loan_calculation` WHERE req_id = '" . strip_tags($req_id) . "' ");
 		if ($mysqli->affected_rows > 0) {
-			while ($row = $Qry->fetch_assoc()) {
+				$row = $Qry->fetch_assoc();
 				$detailrecords['loan_cal_id'] = $row['loan_cal_id'];
 				// $detailrecords['req_id'] = $row['req_id'];
 				$detailrecords['cus_id_loan'] = $row['cus_id_loan'];
@@ -6542,7 +6542,9 @@ class admin
 				$detailrecords['verification_location'] = $row['verification_location'];
 				$detailrecords['verify_remark'] = $row['verify_remark'];
 				$detailrecords['cus_status'] = $row['cus_status'];
-			}
+
+				$collection_infoQry = $mysqli->query("SELECT collection_info from loan_calculation where sub_category = '" . $row['sub_category'] . "' ");
+				$detailrecords['collection_info'] = $collection_infoQry->fetch_assoc()['collection_info'];
 		}
 		return $detailrecords;
 	}
