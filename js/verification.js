@@ -5041,6 +5041,10 @@ $("#loan_category").change(function () {
 });
 
 $("#refresh_cal").click(function () {
+  runRefreshCalculation();
+});
+
+function runRefreshCalculation() {
   var customer_limit = parseFloat($("#customer_limit").val());
   var loan_amt = parseFloat($("#loan_amt").val().replace(/,/g, ''));
   var intrest_rate = $("#int_rate").val();
@@ -5051,37 +5055,35 @@ $("#refresh_cal").click(function () {
 
   if (loan_amt <= 0) {
     Swal.fire({
-      timerProgressBar: true,
-      timer: 2000,
-      title: 'Loan amount must be greater than zero',
-      icon: 'error',
+      title: "Warning!",
+      text: "Loan amount must be greater than zero",
+      icon: 'warning',
       showConfirmButton: true,
       confirmButtonColor: '#009688'
     });
-    return;
+    return false;
   }
 
   if (loan_amt > customer_limit) {
     Swal.fire({
-      timerProgressBar: true,
-      timer: 2000,
-      title: 'Customer limit exceeded..!',
-      icon: 'error',
+      title: 'Warning!',
+      text: 'Customer limit exceeded..!',
+      icon: 'warning',
       showConfirmButton: true,
       confirmButtonColor: '#009688'
     });
-    return;
+    return false;
   }
+
   if (intrest_rate == "" || doc_charge == "" || proc_fee == "" || due_period == "" || profit_method == "") {
     Swal.fire({
-      timerProgressBar: true,
-      timer: 2000,
-      title: 'Please Fill out Loan Info!',
-      icon: 'error',
+      title: 'Warning!',
+      text: 'Please Fill out Loan Info!',
+      icon: 'warning',
       showConfirmButton: true,
       confirmButtonColor: '#009688'
     });
-    return;
+    return false;
   }
 
   $(".int-diff").text("*");
@@ -5135,7 +5137,9 @@ $("#refresh_cal").click(function () {
       $('.emi_div').show();
     }
   }
-});
+
+  return true;
+};
 
 $("#day_scheme").change(function () {
   $("#due_start_from").val("");
@@ -5192,8 +5196,8 @@ $("#due_start_from").change(function () {
 
 $("#submit_loan_calculation").click(function () {
   $('#due_start_from').trigger('change');
-  $("#refresh_cal").trigger("click"); //For calculate once again if user missed to refresh calculation
-  if (loan_calc_validation()) {
+
+  if (loan_calc_validation() && runRefreshCalculation()) {
     let confirmAction = confirm("Are you sure you want to submit Loan Calculation?");
     if (!confirmAction) {
       event.preventDefault(); // Stop form submission if canceled
@@ -6723,14 +6727,6 @@ function loan_calc_validation() {
   var due_period = $("#due_period").val();
   var doc_charge = $("#doc_charge").val();
   var proc_fee = $("#proc_fee").val();
-  var loan_amt_cal = $("#loan_amt_cal").val();
-  var principal_amt_cal = $("#principal_amt_cal").val();
-  var int_amt_cal = $("#int_amt_cal").val();
-  var tot_amt_cal = $("#tot_amt_cal").val();
-  var due_amt_cal = $("#due_amt_cal").val();
-  var doc_charge_cal = $("#doc_charge_cal").val();
-  var proc_fee_cal = $("#proc_fee_cal").val();
-  var net_cash_cal = $("#net_cash_cal").val();
   var due_start_from = $("#due_start_from").val();
   var maturity_month = $("#maturity_month").val();
   var collection_method = $("#collection_method").val();
