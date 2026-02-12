@@ -98,6 +98,7 @@ if (sizeof($getLoanCalculation) > 0) {
         $due_start_from = $getLoanCalculation['due_start_from'];
         $maturity_month = $getLoanCalculation['maturity_month'];
         $collection_method = $getLoanCalculation['collection_method'];
+        $collection_info = $getLoanCalculation['collection_info'];
     }
 
    $emicheck = strpos($due_type_lc, 'Interest') === false; 
@@ -479,7 +480,7 @@ if (sizeof($getLoanCalculation) > 0) {
                                     <br><br>
                                 </div>
 
-                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 advance_yes" <?php if (isset($tot_value_lc) and $tot_value_lc == '') { ?>style="display: none;" <?php } ?>>
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" <?= ($collection_info == 'No') ? 'style="display:none;"' : '' ?>>
                                     <div class="form-group">
                                         <label for="disabledInput">Total Value</label>
                                         <input type="text" class="form-control" id="tot_value" name="tot_value" value='<?php if (isset($tot_value_lc)) {
@@ -490,7 +491,7 @@ if (sizeof($getLoanCalculation) > 0) {
                                     </div>
                                 </div>
 
-                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 advance_yes" <?php if (isset($ad_amt_lc) and $ad_amt_lc == '') { ?>style="display: none;" <?php } ?>>
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" <?= ($collection_info == 'No') ? 'style="display:none;"' : '' ?>>
                                     <div class="form-group">
                                         <label for="disabledInput">Advance Amount</label>
                                         <input type="text" class="form-control" id="ad_amt" name="ad_amt" value='<?php if (isset($ad_amt_lc)) {
