@@ -1,7 +1,7 @@
 <?php
-session_start();
 include('..\..\ajaxconfig.php');
 
+session_start();
 if(isset($_SESSION['userid'])){
     $userid = $_SESSION['userid'];
     $qry = $connect->query("SELECT cash_tally_admin from user where user_id = $userid");
@@ -9,45 +9,66 @@ if(isset($_SESSION['userid'])){
 }else{
     $admin_access = '1';
 }
+
 if(isset($_POST['mode'])){
     $mode = $_POST['mode'];
 }
 
-$records = array();
-$qry = "SELECT id,modes FROM cash_tally_modes where ";
+$qry = "SELECT * FROM cash_tally_modes where ";
 
-if($mode == 'handcredit'){
-    $qry .= "handcredit = 0 ";
-    if($admin_access == '1'){
-        $qry .= "and admin_access = 1 ";
-    }
-}else if($mode == 'bankcredit'){
-    $qry .= "bankcredit = 0 ";
-    if($admin_access == '1'){
-        $qry .= "and admin_access = 1 ";
-    }
-}else if($mode == 'handdebit'){
-    $qry .= "handdebit = 0 ";
-    if($admin_access == '1'){
-        $qry .= "and admin_access = 1 ";
-    }
-}
-else if($mode == 'bankdebit'){
-    $qry .= "bankdebit = 0 ";
-    if($admin_access == '1'){
-        $qry .= "and admin_access = 1 ";
-    }
+if($mode == 'hand'){
+    $qry .= "handcredit = 0 OR handdebit = 0 ";
+
+}else if($mode == 'bank'){
+    $qry .= "bankcredit = 0 OR bankdebit = 0 ";
+
 }
 
+if($admin_access == '1'){
+    $qry .= "AND admin_access = 1 ";
+}
 
+$cashtypes = $connect->query($qry)->fetchAll(PDO::FETCH_ASSOC);
 
-$run = $connect->query($qry);
-if($run->rowCount() > 0){
-    $i=0;
-    while($row = $run->fetch()){
-        $records[$i]['id'] = $row['id'];
-        $records[$i]['modes'] = $row['modes'];
-        $i++;
+$records = [];
+foreach ($cashtypes as $cashtype) {
+
+    if ($mode == 'hand') {
+
+        if ($cashtype['handcredit'] == 0) {
+            $records[] = [
+                'id' => $cashtype['id'],
+                'modes' => $cashtype['modes'],
+                'type' => 'credit'
+            ];
+        }
+
+        if ($cashtype['handdebit'] == 0) {
+            $records[] = [
+                'id' => $cashtype['id'],
+                'modes' => $cashtype['modes'],
+                'type' => 'debit'
+            ];
+        }
+    }
+
+    if ($mode == 'bank') {
+
+        if ($cashtype['bankcredit'] == 0) {
+            $records[] = [
+                'id' => $cashtype['id'],
+                'modes' => $cashtype['modes'],
+                'type' => 'credit'
+            ];
+        }
+
+        if ($cashtype['bankdebit'] == 0) {
+            $records[] = [
+                'id' => $cashtype['id'],
+                'modes' => $cashtype['modes'],
+                'type' => 'debit'
+            ];
+        }
     }
 }
 

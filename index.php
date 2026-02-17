@@ -26,7 +26,7 @@ if(isset($_POST['lusername'])) {
 	$username  = $_POST['lusername'];
 	$password  =  $_POST['lpassword'];
 
-	$qry     = "SELECT user_name, user_id, fullname, request_list_access FROM user WHERE user_name = '".$username."' AND user_password = '".$password."' and status = 0"; 
+	$qry     = "SELECT user_name, user_id, fullname, role, request_list_access FROM user WHERE user_name = '".$username."' AND user_password = '".$password."' and status = 0"; 
 	
 	$res = ($connect->query($qry)) or die("Error in Get All Records"); 
 	if ($res->rowCount() > 0){  
@@ -38,6 +38,7 @@ if(isset($_POST['lusername'])) {
 		$_SESSION['username']    = $result['user_name']; 
 		$_SESSION['userid']      = $result['user_id']; 
 		$_SESSION['fullname']    = $result['fullname']; 
+		$_SESSION['role']    	 = $result['role']; 
 		$_SESSION['request_list_access']    = $result['request_list_access']; 
 		?>
 		<script>location.href='<?php echo $HOSTPATH; ?>home_page';</script>  

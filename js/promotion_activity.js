@@ -1118,7 +1118,13 @@ function historyTableContents(cus_id, type, url) {
 
         $('#close_history_card').off('click').click(() => {
             let typevalue = $(".toggle-container .active").val();//this will show back active tab's contents
-            if (typevalue == 'Renewal') { $('.renewal_card').show(); }  if(typevalue == 'Re-active'){$('.re_active_card').show();}else { $('.repromotion_card').show(); }
+            if (typevalue == 'Renewal') { 
+                $('.renewal_card').show(); 
+            } else if(typevalue == 'Re-active'){
+                $('.re_active_card').show();
+            } else if(typevalue == 'Repromotion'){ 
+                $('.repromotion_card').show(); 
+            }
 
             $('.filter_card').show();
             $('.customer-status-card, .loan-history-card, .doc-history-card, #close_history_card').hide();

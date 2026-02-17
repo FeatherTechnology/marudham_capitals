@@ -4,11 +4,9 @@ $(document).ready(function () {
         hideAllCardsfunction();
         var cash_type = $('input[name=cash_type]:checked').val();
         if (cash_type == '0') {//hand cash
-            appendHandCreditDropdown();
-            appendHandDebitDropdown();
+            appendCreditDebitDropdown('hand');
         } else if (cash_type > 0) {//Bank cash
-            appendBankCreditDropdown();
-            appendBankDebitDropdown();
+            appendCreditDebitDropdown('bank');
         }
     })
 
@@ -25,7 +23,6 @@ $(document).ready(function () {
             $('#credit_type').val('');
         }
     })
-
 
     //Credit Type on change event
     $('#credit_type').change(function () {
@@ -100,10 +97,11 @@ $(document).ready(function () {
                 //8 Means Agent and cash type Bank cash
                 $('.ag_card').show();
                 getCBagDetails();
-            }
-
-
-
+            } else if (credit_type == 15 && cash_type == 0) {
+                // 15 means Waiver and cash type is hand cash
+                $('.waiver_card').show();
+                getWaiverDetails();
+            } 
         }
     })
 
@@ -388,13 +386,9 @@ function getOpeningDate() {
     })
 }
 
- 
-
-
 function getOpeningBalance() {
     var op_date = $('#op_date').text();
     var bank_detail = $('#user_bank_details').val();
-    var oldclosingbal = $('#oldclosingbal').val().replace(/,/g, '');
     var bank_detail_arr = $('#user_bank_details').val().split(',');
     $.ajax({
         url: 'accountsFile/cashtally/getOpeningBalance.php',
@@ -434,7 +428,6 @@ function getOpeningBalance() {
 
 function getClosingBalance() {
     var op_date = $('#op_date').text();
-    var opening_balance = $('#opening_balance').text()
     var bank_detail = $('#user_bank_details').val();
     $.ajax({
         url: 'accountsFile/cashtally/getClosingBalance.php',
@@ -459,9 +452,9 @@ function getClosingBalance() {
         }
     })
 }
+
 function getAllClosingBalance() {
     var op_date = $('#op_date').text();
-    var opening_balance = $('#opening_balance').text()
     var bank_detail = $('#all_bank_details').val();
     $.ajax({
         url: 'accountsFile/cashtally/getAllClosingBalance.php',
@@ -484,7 +477,7 @@ function getAllClosingBalance() {
 }
 
 function submitCashTally(i) {
-    // Assuming op_date is in the format "DD-MM-YYYY"
+
     let op_date_str = $('#op_date').text();
     let op_date_parts = op_date_str.split("-");
     let op_date = new Date(op_date_parts[2], op_date_parts[1] - 1, op_date_parts[0]);
@@ -492,87 +485,127 @@ function submitCashTally(i) {
     let currentDate = new Date();
 
     if (op_date <= currentDate) {
+
         $('#submit_cash_tally').off('click');
-        $('#submit_cash_tally').click(function () {
+
+        $('#submit_cash_tally').on('click', async function (event) {
+
             event.preventDefault();
-            // if (getBankCollectionSubmit() == 0 && getIssuedSubmitCheck() == 0) {
 
-                if (confirm('Are You sure to close this Day?')) {
+            try {
 
-                    var op_date = $('#op_date').text();
-                    var opening_bal = $('#opening_balance').text().replace(/,/g, '');
-                    var hand_op = $('#hand_opening').text().replace(/,/g, '');
-                    var bank_op = '';
-                    for (var j = 0; j < i; j++) {
-                        bank_op += $('#bank_opening' + j).text().replace(/,/g, '') + ',';
-                    }
-                    bank_op = bank_op.slice(0, -1);
-                    var agent_op = $('#agent_opening').text().replace(/,/g, '');
-                    var closing_bal = $('#closing_balance').text().replace(/,/g, '');
-                    var hand_cl = $('#hand_closing').text().replace(/,/g, '');
-                    var bank_cl = '';
-                    for (var j = 0; j < i; j++) {
-                        bank_cl += $('#bank_closing' + j).text().replace(/,/g, '') + ',';
-                    }
-                    bank_cl = bank_cl.slice(0, -1);
+                const isValid = await getHandWaiverAmountSubmit();
 
-                    // var bank_untrkd = '';
-                    // var untrkd_ids = $('#untrkd_ids').val().split(',');
-                    // $.each(untrkd_ids, function (ind, val) {
-                    //     bank_untrkd += $('#' + val).text() + ',';
-                    // })
-                    // bank_untrkd = bank_untrkd.slice(0, -1);
-
-                    var agent_cl = $('#agent_closing').text().replace(/,/g, '');
-                    var formtosend = { op_date: op_date, opening_bal: opening_bal, hand_op: hand_op, bank_op: bank_op, agent_op: agent_op, closing_bal: closing_bal, hand_cl: hand_cl, bank_cl, agent_cl: agent_cl };
-                    $.ajax({
-                        url: 'accountsFile/cashtally/submitCashTally.php',
-                        data: formtosend,
-                        type: 'post',
-                        cache: false,
-                        success: function (response) {
-                            if (response.includes('Successfully')) {
-                                Swal.fire({
-                                    title: response,
-                                    icon: 'success',
-                                    showConfirmButton: true,
-                                    confirmButtonColor: '#009688'
-                                })
-                                getOpeningDate();
-                            } else if (response.includes('Error')) {
-                                Swal.fire({
-                                    title: response,
-                                    icon: 'error',
-                                    showConfirmButton: true,
-                                    confirmButtonColor: '#009688'
-                                });
-                            }
-                        }
-                    })
-                } else {
-                    return false;
+                if (!isValid) {
+                    Swal.fire({
+                        title: 'Submission Warning',
+                        html: 'Please check: <br>1.Hand cash Waiver <br> has submitted before Closing!',
+                        icon: 'error',
+                        showConfirmButton: true,
+                        confirmButtonColor: '#009688'
+                    });
+                    return;
                 }
-            // } else {
-            //     Swal.fire({
-            //         title: 'Submittion Error',
-            //         html: 'Please check: <br>1.Bank Collection <br> 2.Hand & Bank Issued<br> has submitted before Closing!',
-            //         icon: 'error',
-            //         showConfirmButton: true,
-            //         confirmButtonColor: '#009688'
-            //     });
 
-            // }
-        })
+                if (!confirm('Are You sure to close this Day?')) {
+                    return;
+                }
+
+                let op_date = $('#op_date').text();
+                let opening_bal = $('#opening_balance').text().replace(/,/g, '');
+                let hand_op = $('#hand_opening').text().replace(/,/g, '');
+                let agent_op = $('#agent_opening').text().replace(/,/g, '');
+                let closing_bal = $('#closing_balance').text().replace(/,/g, '');
+                let hand_cl = $('#hand_closing').text().replace(/,/g, '');
+                let agent_cl = $('#agent_closing').text().replace(/,/g, '');
+
+                let bank_op = [];
+                let bank_cl = [];
+
+                for (let j = 0; j < i; j++) {
+                    bank_op.push($('#bank_opening' + j).text().replace(/,/g, ''));
+                    bank_cl.push($('#bank_closing' + j).text().replace(/,/g, ''));
+                }
+
+                let formtosend = {
+                    op_date,
+                    opening_bal,
+                    hand_op,
+                    bank_op: bank_op.join(','),
+                    agent_op,
+                    closing_bal,
+                    hand_cl,
+                    bank_cl: bank_cl.join(','),
+                    agent_cl
+                };
+
+                $.ajax({
+                    url: 'accountsFile/cashtally/submitCashTally.php',
+                    type: 'POST',
+                    data: formtosend,
+                    cache: false,
+                    success: function (response) {
+
+                        if (response.includes('Successfully')) {
+                            Swal.fire({
+                                title: response,
+                                icon: 'success',
+                                confirmButtonColor: '#009688'
+                            });
+                            getOpeningDate();
+                        } 
+                        else if (response.includes('Error')) {
+                            Swal.fire({
+                                title: response,
+                                icon: 'error',
+                                confirmButtonColor: '#009688'
+                            });
+                        }
+                    }
+                });
+
+            } catch (error) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Something went wrong. Please try again.',
+                    icon: 'error',
+                    confirmButtonColor: '#009688'
+                });
+            }
+
+        });
+
     } else {
-        $('#submit_cash_tally').off('click');
-        $('#submit_cash_tally').hide();
 
-        $('#hand_cash_radio , .bank_cash_radio').off('click')
-        $('#credit_type, #debit_type').off('change')
+        $('#submit_cash_tally').off('click').hide();
+        $('#hand_cash_radio , .bank_cash_radio').off('click');
+        $('#credit_type, #debit_type').off('change');
 
         getFutureOpeningBalance();
     }
 }
+
+function getHandWaiverAmountSubmit() {
+    return new Promise((resolve, reject) => {
+        let branch_id = $('#user_branch_id').val();
+        let op_date = $('#op_date').text();
+
+        $.ajax({
+            url: 'accountsFile/cashtally/getHandWaiverAmountSubmit.php',
+            type: 'POST',
+            data: { branch_id, op_date },
+            dataType: 'json',
+            success: function(response) {
+                let retval = (response[0].waiver_amt > 0) ? false : true;
+                resolve(retval);
+            },
+            error: function() {
+                reject(false);
+            }
+        });
+    });
+}
+
 
 function getBankCollectionSubmit() {
     var bank_id = $('#user_bank_details').val();
@@ -663,80 +696,23 @@ function getFutureOpeningBalance() {
     })
 }
 
-
-
-function appendHandCreditDropdown() {
-
+function appendCreditDebitDropdown(mode) {
     $.ajax({
         url: 'accountsFile/cashtally/getCashTallyDropdown.php',
-        data: { 'mode': 'handcredit' },
+        data: { 'mode': mode },
         dataType: 'json',
         type: 'post',
         cache: false,
         success: function (response) {
-
-            $('#credit_type').empty();
-            $('#credit_type').append("<option value=''>Select Credit Type</option>");
-            for (var i = 0; i < response.length; i++) {
-                $('#credit_type').append("<option value='" + response[i]['id'] + "'>" + response[i]['modes'] + "</option>");
-            }
-            sortDropdowns()
-
-        }
-    })
-
-}
-function appendHandDebitDropdown() {
-    $.ajax({
-        url: 'accountsFile/cashtally/getCashTallyDropdown.php',
-        data: { 'mode': 'handdebit' },
-        dataType: 'json',
-        type: 'post',
-        cache: false,
-        success: function (response) {
-
-            $('#debit_type').empty();
-            $('#debit_type').append("<option value=''>Select Debit Type</option>");
-            for (var i = 0; i < response.length; i++) {
-                $('#debit_type').append("<option value='" + response[i]['id'] + "'>" + response[i]['modes'] + "</option>");
-            }
-            sortDropdowns()
-        }
-    })
-}
-
-function appendBankCreditDropdown() {
-    $.ajax({
-        url: 'accountsFile/cashtally/getCashTallyDropdown.php',
-        data: { 'mode': 'bankcredit' },
-        dataType: 'json',
-        type: 'post',
-        cache: false,
-        success: function (response) {
-
-            $('#credit_type').empty();
-            $('#credit_type').append("<option value=''>Select Credit Type</option>");
-            for (var i = 0; i < response.length; i++) {
-                $('#credit_type').append("<option value='" + response[i]['id'] + "'>" + response[i]['modes'] + "</option>");
-            }
-            sortDropdowns()
-        }
-    })
-}
-function appendBankDebitDropdown() {
-    $.ajax({
-        url: 'accountsFile/cashtally/getCashTallyDropdown.php',
-        data: { 'mode': 'bankdebit' },
-        dataType: 'json',
-        type: 'post',
-        cache: false,
-        success: function (response) {
-
-            $('#debit_type').empty();
-            $('#debit_type').append("<option value=''>Select Debit Type</option>");
-            for (var i = 0; i < response.length; i++) {
-                $('#debit_type').append("<option value='" + response[i]['id'] + "'>" + response[i]['modes'] + "</option>");
-            }
+            $('#credit_type').empty().append("<option value=''>Select Credit Type</option>");       
+            $('#debit_type').empty().append("<option value=''>Select Debit Type</option>");       
+            response.forEach(element => {
+                if(element.type =='credit'){
+                    $('#credit_type').append(`<option value='${element.id}'> ${element.modes}</option>`);
+                } else if(element.type =='debit'){
+                    $('#debit_type').append(`<option value='${element.id}'> ${element.modes}</option>`);
+                }
+            });
             sortDropdowns()
         }
     });
@@ -796,6 +772,8 @@ function hideAllCardsfunction() {
     $('#collectionTableDiv').empty();// empty the card fields when hiding
     $('#receiveAmtDiv').empty();// empty the Modal fields when hiding
 
+    $('.waiver_card').hide();
+
     $('.contra_card').hide();
     $('#contraTableDiv').empty();// empty the card fields when hiding
     $('#receivecdAmtDiv').empty();// empty the Modal fields when hiding
@@ -829,7 +807,6 @@ function hideAllCardsfunction() {
     $('.ag_card').hide();
     $('#agDiv').empty();//empy the card 
 }
-
 
 // //////////////////////////////////////////////////// Hand Collection //////////////////////////////////////////////// //
 function getCollectionDetails() {
@@ -919,24 +896,95 @@ function collectBtnClick(button) {
             }
         })
     })
-    // })
 }
 
-function closeReceiveModal() {
-    var user_branch_id = $('#user_branch_id').val();
+// ///////////////////////////////////////////////////// Hand Collection /////////////////////////////////////////////// //
+
+// //////////////////////////////////////////////////// Hand Waiver START//////////////////////////////////////////////// //
+function getWaiverDetails() {
+    var branch_id = $('#user_branch_id').val();
     var op_date = $('#op_date').text();
     $.ajax({
-        url: 'accountsFile/cashtally/getCollectionDetails.php',
-        data: { 'branch_id': user_branch_id, 'op_date': op_date },
+        url: 'accountsFile/cashtally/getWaiverDetails.php',
+        data: { branch_id, op_date },
         type: 'post',
         cache: false,
         success: function (response) {
-            $('#collectionTableDiv').empty();
-            $('#collectionTableDiv').html(response);
+            $('#waiverTableDiv').html(response);
         }
     })
 }
-// ///////////////////////////////////////////////////// Hand Collection /////////////////////////////////////////////// //
+
+function collectWaiverBtnClick(button) {
+    var user_id = $(button).data('value');
+    var branch_id = $(button).data('id');
+    var op_date = $('#op_date').text();
+    var user_branch_id = $('#user_branch_id').val();
+    var line_id = $(button).data('line');
+    $.ajax({
+        url: 'accountsFile/cashtally/receiveWaiverModal.php',
+        data: { user_id, branch_id, op_date, user_branch_id, line_id },
+        type: 'post',
+        cache: false,
+        success: function (response) {
+            $('#receiveWaiverDiv').html(response);
+        }
+    }).then(function () {
+        $('#submit_waiver').click(function () {
+            var formData = $('#waiver_rec_form').serializeArray(); // Serialize the form inputs to send all data
+            var op_date = $('#op_date').text();
+
+            // Append op_date to the formData array
+            formData.push({ name: 'op_date', value: op_date });
+
+            if ($('tot_waiver_rec').val() != '') {
+                $.ajax({
+                    url: 'accountsFile/cashtally/submitReceivedWaiver.php',
+                    data: formData,
+                    type: 'post',
+                    cache: false,
+                    success: function (response) {
+                        if (response.includes('Successfully')) {
+                            Swal.fire({
+                                title: response,
+                                icon: 'success',
+                                showConfirmButton: true,
+                                confirmButtonColor: '#009688'
+                            }).then(function (result) {
+                                if (result.isConfirmed) {
+                                    var user_id = $('#user_id_rec').val();
+                                    var branch_id = $('#branch_id_rec').val();
+                                    var op_date = $('#op_date').text();
+                                    var user_branch_id = $('#user_branch_id').val();
+                                    var line_id = $('#line_id_rec').val();
+                                    $.ajax({
+                                        url: 'accountsFile/cashtally/receiveWaiverModal.php',
+                                        data: { user_id, branch_id, op_date, user_branch_id, line_id },
+                                        type: 'post',
+                                        cache: false,
+                                        success: function (response) {
+                                            $('#receiveWaiverDiv').html(response);
+                                        }
+                                    })
+                                }
+                            })
+                        } else {
+                            Swal.fire({
+                                title: response,
+                                icon: 'error',
+                                showConfirmButton: true,
+                                confirmButtonColor: '#009688'
+                            });
+                        }
+                        getClosingBalance();
+                    }
+                });
+            }
+        });
+    });
+}
+
+// ///////////////////////////////////////////////////// Hand Waiver END /////////////////////////////////////////////// //
 
 
 // ///////////////////////////////////////////////////// Bank Collection /////////////////////////////////////////////// //
@@ -1347,9 +1395,7 @@ function getCashWithdrawalDetails() {
         cache: false,
         success: function (response) {
             $('#from_bank_cwd').empty()
-            // $('#from_bank_cwd').append(`<option value=''>Select Bank Name</option>`)
             for (var i = 0; i < response.length; i++) {
-                // $('#from_bank_cwd').append(`<option value='`+response[i]['bank_id']+`'>`+response[i]['bank_name']+`</option>`)
                 if (bank_id == response[i]['bank_id']) {
                     $('#from_bank_id_cwd').val(response[i]['bank_id'])
                     $('#from_bank_cwd').val(response[i]['bank_fullname'])
@@ -1975,18 +2021,6 @@ function getBankExchangeInputs() {
             for (var i = 1; i < response.length; i++) {
                 $('#to_bank_bex').append("<option value='" + response[i]['to_bank_id'] + "'>" + response[i]['to_bank_name'] + "</option>");
             }
-            //to fetch user name based on to bank id selected
-            // $('#to_bank_bex').change(function () {
-            //     var to_bank_id = $(this).val();
-            //     if (to_bank_id != '') {
-            //         for (var i = 1; i < response.length; i++) {
-            //             if (to_bank_id == response[i]['bank_user_id']) {
-            //                 $('#user_id_bex').val(response[i]['bank_user_id'])
-            //                 $('#user_name_bex').val(response[i]['bank_user_name'])
-            //             }
-            //         }
-            //     }
-            // })
         }
     }).then(function () {
         $('#submit_bex').click(function () {
@@ -2656,6 +2690,23 @@ function hexpenseModalBtnClick() {
         }, 'json');
 
     }).then(function () {
+        $('#cat_hexp').change(function(){ //requirement changed: waiver category is inactive, insert waiver expenses while waiver received. 
+            let cat = $(this).val();
+            if(cat == 16){ //Waiver. if category selected as waiver then show directly the amount have to expenses as readonly in amount input.
+                let branch_id = $('#user_branch_id').val();
+                let op_date = $('#op_date').text();
+                $.post('accountsFile/cashtally/expense/getHandWaiverAmount.php', { branch_id, op_date}, function(response){
+                    $('#amt_hexp')
+                    .val(moneyFormatIndia(response[0].balance_waiver) ?? '')
+                    .attr('readonly', true);
+                }, 'json');
+            }else{
+                $('#amt_hexp')
+                    .val('')
+                    .attr('readonly', false);
+            }
+        });
+
         $('#submit_hexp').click(function () {
             if (hexpenseValidation() == 0) {
 
@@ -2710,8 +2761,6 @@ function hexpenseModalBtnClick() {
                 })
             }
         })
-
-
     })
 }
 
@@ -2737,7 +2786,6 @@ function hexpenseValidation() {
     validateField(remark_hexp, '#remark_hexpCheck');
     validateField(amt_hexp, '#amt_hexpCheck');
     return response;
-
 }
 
 
@@ -2994,8 +3042,6 @@ function bexpenseModalBtnClick() {
                 })
             }
         })
-
-
     })
 }
 
@@ -4559,9 +4605,7 @@ function getBelRefcode() {
 // //////////////////////////////////////////////////// Name Detail Adding Modal End //////////////////////////////////////////////////////// //
 
 
-
 /////////////////////////////////////////////////////// Excess Fund Start ///////////////////////////////////////////////////////////////////////
-
 
 //Bank expense modal btn click and submit btn click events
 function getExfDetails() {
@@ -4632,7 +4676,7 @@ function getExfDetails() {
 
     $('#exfDiv').empty();
     $('#exfDiv').html(appendTxt);
-    var bank_id = $('input[name=cash_type]:checked').val();
+    // var bank_id = $('input[name=cash_type]:checked').val();
 
 
     $.ajax({//For fetching Ref code
@@ -4712,7 +4756,6 @@ function getExfDetails() {
             })
         }
     })
-
 }
 
 // Validation for Bank Excess Fund
@@ -4736,7 +4779,6 @@ function exfValidation() {
     validateField(amt, '#amt_exfCheck');
     return response;
 }
-
 
 /////////////////////////////////////////////////////// Excess Fund End ///////////////////////////////////////////////////////////////////////
 
@@ -5082,7 +5124,6 @@ function getDBagDetails() {
 
     getAgentName('ag_id');
 
-
     $.ajax({//For fetching Ref code
         url: 'accountsFile/cashtally/agent/getagRefCode.php',
         data: {},
@@ -5288,12 +5329,12 @@ function agBValidation() {// same validation for both credit and debit
 /////////////////////////////////////////////////////// Agent End ///////////////////////////////////////////////////////////////////////
 async function checkTransactionCommon(options) {
 
-    const { transInput, type,  bankId, dateField } = options;
+    const { transInput, type, bankId, dateField } = options;
 
     let transId = transInput.value.trim();
 
     try {
-        let response = await checkBankTransactionDetails( type,  bankId, transId,'');
+        let response = await checkBankTransactionDetails(type, bankId, transId, '');
 
         if (!response.status) {
             alert(response.message);

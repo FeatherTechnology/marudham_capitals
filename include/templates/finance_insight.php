@@ -60,6 +60,11 @@ $bank_details = $getuser['bank_details'];
 										<td></td>
 										<td></td>
 									</tr>
+									<tr>
+										<td>Waiver</td>
+										<td></td>
+										<td></td>
+									</tr>
 									<!-- <tr>
 										<td>Principal Collection</td>
 										<td></td>

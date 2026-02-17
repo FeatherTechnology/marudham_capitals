@@ -1,5 +1,5 @@
 <?php
-include 'C:\inetpub\wwwroot\Marudham/ajaxconfig.php';
+include 'C:/inetpub/wwwroot/Marudham/ajaxconfig.php';
 
 // 1. Get all req_ids
 $qry = $connect->query("SELECT ii.req_id as cp_req_id FROM in_issue ii WHERE ii.status = 0 AND ii.cus_status BETWEEN 14 AND 17 ORDER BY ii.id ASC");

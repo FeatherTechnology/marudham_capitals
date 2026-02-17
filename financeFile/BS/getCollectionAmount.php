@@ -29,27 +29,18 @@ $response = array_map(function ($num) {
 
 echo json_encode($response);
 
-
 function getCollectionRecord($connect, $where)
 {
-
     $response = array();
-
-    $qry = $connect->query("SELECT SUM(due_amt_track) as due_amt_track, SUM(penalty_track) as penalty_track, SUM(coll_charge_track) as coll_charge_track FROM collection where $where ");
-    // $qry = $connect->query("SELECT SUM(amt) as total_collection from ( SELECT rec_amt as amt from ct_hand_collection where $where UNION ALL SELECT credited_amt as amt from ct_bank_collection where $where) as collection_amt ");
-
+    $qry = $connect->query("SELECT SUM(due_amt_track) as due_amt_track, SUM(penalty_track) as penalty_track, SUM(coll_charge_track) as coll_charge_track, SUM(pre_close_waiver) as pre_close_waiver FROM collection WHERE $where ");
 
     if ($qry->rowCount() > 0) {
         $row = $qry->fetch();
-        // $response['collection'] = intVal($row['due_amt_track'] ?? 0)  + intVal($row['princ_amt_track'] ?? 0)  + intVal($row['int_amt_track'] ?? 0) + intVal($row['penalty_track'] ?? 0) + intVal($row['coll_charge_track'] ?? 0);
-        // $response['collection'] = $row['total_collection'] ?? 0;
         $response['due_collection'] = $row['due_amt_track'] ?? 0;
-        // $response['princ_collection'] = $row['princ_amt_track'] ?? 0;
-        // $response['int_collection'] = $row['int_amt_track'] ?? 0;
         $response['penalty'] = $row['penalty_track'] ?? 0;
         $response['fine'] = $row['coll_charge_track'] ?? 0;
+        $response['pre_close_waiver'] = $row['pre_close_waiver'] ?? 0;
     }
-
     return $response;
 }
 
