@@ -259,6 +259,26 @@ if ($bank_qry->num_rows > 0) {
 				</div>
 				<!-- //////////////////////////////////////////////////////////// Collection Card ////////////////////////////////////////////////////////////////////////////-->
 
+				<!-- //////////////////////////////////////////////////////////// Waiver Card ////////////////////////////////////////////////////////////////////////////-->
+				<div class="card waiver_card" style='display:none'>
+					<div class="card-header" style='font-size:18px;font-weight:bold;'>Waiver</div>
+					<div class="card-body">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="row">
+
+									<div class="modal-body">
+										<div id="waiverTableDiv">
+										</div>
+									</div>
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- //////////////////////////////////////////////////////////// Waiver Card ////////////////////////////////////////////////////////////////////////////-->
+
 				<!-- //////////////////////////////////////////////////////////// Contra Card ////////////////////////////////////////////////////////////////////////////-->
 				<div class="card contra_card" style='display:none'>
 					<div class="card-header contra_card_header" style='font-size:18px;font-weight:bold;'>Contra</div>
@@ -499,7 +519,7 @@ if ($bank_qry->num_rows > 0) {
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
 				<h5 class="modal-title" id="myLargeModalLabel"> Receive Collection</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeReceiveModal()">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="getCollectionDetails()">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -509,12 +529,33 @@ if ($bank_qry->num_rows > 0) {
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeReceiveModal()">Close</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="getCollectionDetails()">Close</button>
 			</div>
 		</div>
 	</div>
 </div>
 <!-- /////////////////////////////////////////////////////////////////// Collection Modal END ////////////////////////////////////////////////////////////////////// -->
+
+<!-- /////////////////////////////////////////////////////////////////// Waiver Modal START ////////////////////////////////////////////////////////////////////// -->
+<div class="modal fade waiver_modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="myLargeModalLabel">Receive Waiver</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="getWaiverDetails()">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="receiveWaiverDiv"></div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="getWaiverDetails()">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /////////////////////////////////////////////////////////////////// Waiver Modal END ////////////////////////////////////////////////////////////////////// -->
 
 <!-- /////////////////////////////////////////////////////////////////// Credit Cash Deposit Modal START ////////////////////////////////////////////////////////////////////// -->
 <div class="modal fade cd_modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">

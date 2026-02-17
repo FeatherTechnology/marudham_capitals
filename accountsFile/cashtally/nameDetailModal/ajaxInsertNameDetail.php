@@ -21,7 +21,8 @@ $opt_for = $_POST['opt_for'];
 
 $nameCheck = '';
 $name_sts = '';
-$qry = $connect->query("SELECT * FROM name_detail_creation WHERE name = '$name' and opt_for = '$opt_for' ");
+$nameid = ($name_id > 0) ? "AND name_id != '$name_id'" : '';
+$qry = $connect->query("SELECT name, status FROM name_detail_creation WHERE name = '$name' and opt_for = '$opt_for' $nameid ");
 
 while ($row = $qry->fetch()) {
 	$nameCheck    = $row["name"];
