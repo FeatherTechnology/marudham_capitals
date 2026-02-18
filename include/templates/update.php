@@ -1064,11 +1064,9 @@ if (sizeof($getCustomerReg) > 0) {
 
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
-										<label for="cus_loan_limit"> Loan Limit </label> <span class="required">*</span>
-										<input type="text" class="form-control" name="cus_loan_limit" id="cus_loan_limit" oninput="validateInputNumber(this,'withOutDot')" placeholder="Enter Loan Limit" value="<?php if (isset($loan_limit)) {
-																																									echo moneyFormatIndia($loan_limit);
-																																								} ?>" tabindex="60">
-										<span class="text-danger" style='display:none' id='loanLimitCheck'>Please Enter Loan Limit </span>
+										<label for="cus_loan_limit"> Customer Limit </label> <span class="required">*</span>
+										<input type="text" class="form-control" name="cus_loan_limit" id="cus_loan_limit" oninput="validateInputNumber(this,'withOutDot')" placeholder="Enter Customer Limit" value="<?php if (isset($loan_limit)) { echo moneyFormatIndia($loan_limit);} ?>" tabindex="60">
+										<span class="text-danger" style='display:none' id='loanLimitCheck'>Please Enter Customer Limit </span>
 									</div>
 								</div>
 

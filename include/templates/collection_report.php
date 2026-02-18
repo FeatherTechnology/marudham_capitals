@@ -15,6 +15,12 @@
 			<div class="toggle-container col-12">
 				<input type="date" id='from_date' name='from_date' class="toggle-button" value=''>
 				<input type="date" id='to_date' name='to_date' class="toggle-button" value=''>
+				<select class="toggle-button" id='collection_type' name='collection_type'>
+                    <option value=''>Select Collection Type</option>
+                    <option value='1'>Cash</option>
+                    <option value='2'>Bank</option>
+                    <option value='3'>Overall</option>
+                </select>
 				<input type="button" id='reset_btn' name='reset_btn' class="toggle-button" style="background-color: #009688;color:white" value='Reload'>
 				<?php if (DACC != 1) { ?><input type="button" id='download_btn' name='download_btn' class="toggle-button" style="background-color: #009688;color:white" value='Download'>
 				<?php } ?>
@@ -27,9 +33,9 @@
 							<table id="collection_report_table" class="table custom-table">
 								<thead>
 									<th>S.No</th>
-									<!-- <th>Group</th> -->
+									<th>Group</th>
 									<th>Line</th>
-									<!-- <th>Followup</th> -->
+									<th>Followup</th>
 									<th>Loan ID</th>
 									<th>Loan Date</th>
 									<th>Aadhaar Number</th>
@@ -55,16 +61,16 @@
 									<th>Total Paid</th>
 									<th>Status</th>
 									<th>Sub Status</th>
+									<th>Pre Close Waiver</th>
+									<th>Penalty Waiver</th>
+									<th>Fine Waiver</th>
+									<th>Total Waiver</th>
 								</thead>
 								<tbody>
 								</tbody>
 								<tfoot>
 									<tr>
-										<td colspan="15"></td>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td></td>
+										<td colspan="21"></td>
 										<td></td>
 										<td></td>
 										<td></td>
@@ -72,6 +78,10 @@
 										<!-- <td></td>
 										<td></td> -->
 										<td colspan="2"></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
 									</tr>
 								</tfoot>
 							</table>

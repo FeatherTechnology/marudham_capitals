@@ -36,7 +36,7 @@ if (isset($_SESSION["userid"])) {
     $userid = $_SESSION["userid"];
 }
 
-$area_list = getUserSubAreaList($connect, 'confirmFollowUp');
+$area_list = getUserSubAreaList($connect, 'followup');
 
 $searchQuery = "";
 if ($searchValue != '') {

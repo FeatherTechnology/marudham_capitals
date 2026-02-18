@@ -5,14 +5,9 @@ include('..\moneyFormatIndia.php');
 include('..\user_based_sub_area_Ids.php');
 
 $userid = $_SESSION['userid'] ?? 0;
-$sub_area_list = getUserSubAreaList($connect, 'verification');
+$login_user_type = $_SESSION['role'] ?? 0;
 
-if ($userid) {
-    $stmt = $connect->prepare("SELECT role FROM user WHERE user_id = ?");
-    $stmt->execute([$userid]);
-    $login_user_type = $stmt->fetchColumn();
-    $stmt->closeCursor();
-}
+$sub_area_list = getUserSubAreaList($connect, 'group');
 
 if ($userid != 1) {
     $stmt = $connect->prepare("SELECT ver_loan_cat FROM user WHERE user_id = ?");
@@ -314,4 +309,3 @@ echo json_encode([
     "recordsFiltered"   => $recordsFiltered,
     "data"              => $data
 ]);
-
