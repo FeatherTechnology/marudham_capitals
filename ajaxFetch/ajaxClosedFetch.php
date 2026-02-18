@@ -7,7 +7,7 @@ if (isset($_SESSION["userid"])) {
     $userid = $_SESSION["userid"];
 }
 
-$sub_area_list = getUserSubAreaList($connect, 'closed');
+$sub_area_list = getUserSubAreaList($connect, 'line');
 
 $column = array(
     'cp.id',

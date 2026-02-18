@@ -7,7 +7,7 @@ if (isset($_SESSION["userid"])) {
     $userid = $_SESSION["userid"];
 }
 
-$sub_area_list = getUserSubAreaList($connect, 'collection');
+$sub_area_list = getUserSubAreaList($connect, 'line');
 
 if ($userid != 1) {
     $stmt = $connect->prepare("SELECT ag_id , role FROM user WHERE user_id = ?");

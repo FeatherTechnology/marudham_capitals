@@ -13,14 +13,27 @@ $(document).ready(function () {
     
     //Collection Report Table
     $('#reset_btn').click(function () {
+        const from_date = $('#from_date').val();
+        const to_date = $('#to_date').val();
+        if ((!from_date && to_date) || (from_date && !to_date)) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Missing Dates',
+                text: 'Please select both From and To dates.',
+                confirmButtonColor: '#009688'
+            });
+            return;
+        }
+
         collectionReportTable();
-    })
-     $('#download_btn').click(function () {
+    });
+
+    $('#download_btn').click(function () {
         const from_date = $('#from_date').val();
         const to_date = $('#to_date').val();
         const tableId = "collection_report_table"; // your table id
         const reportName = "Collection_Report";
-        if (!from_date || !from_date) {
+        if (!from_date || !to_date) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Missing Dates',
@@ -29,6 +42,7 @@ $(document).ready(function () {
             });
             return;
         }
+
         $.ajax({
             url: 'reportFile/collection/getCollectionReport.php',
             type: 'POST',
@@ -62,7 +76,6 @@ $(document).ready(function () {
             }
         });
     });
-
 });
 
 function collectionReportTable(){
@@ -79,10 +92,10 @@ function collectionReportTable(){
         'ajax': {
             'url': 'reportFile/collection/getCollectionReport.php',
             'data': function (data) {
-                var search = $('input[type=search]').val();
-                data.search = search;
+                data.search = $('input[type=search]').val();
                 data.from_date = $('#from_date').val();
                 data.to_date = $('#to_date').val();
+                data.collection_type = $('#collection_type').val();
             }
         },
         dom: 'lBfrtip',
@@ -118,7 +131,7 @@ function collectionReportTable(){
             };
 
             // Array of column indices to sum
-            var columnsToSum = [19, 20, 21, 22];
+            var columnsToSum = [21, 22, 23, 24, 27, 28, 29, 30];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {

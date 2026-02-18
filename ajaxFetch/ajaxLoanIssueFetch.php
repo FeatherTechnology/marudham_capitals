@@ -5,14 +5,9 @@ include('..\moneyFormatIndia.php');
 include('..\user_based_sub_area_Ids.php');
 
 $userid = $_SESSION['userid'] ?? 0;
-$sub_area_list = getUserSubAreaList($connect, 'loanissue');
+$login_user_type = $_SESSION['role'] ?? 0;
 
-if ($userid) {
-    $stmt = $connect->prepare("SELECT role FROM user WHERE user_id = ?");
-    $stmt->execute([$userid]);
-    $login_user_type = $stmt->fetchColumn();
-    $stmt->closeCursor();
-}
+$sub_area_list = getUserSubAreaList($connect, 'group');
 
 /* ---------------- DATATABLE COLUMN MAP ---------------- */
 $column = [

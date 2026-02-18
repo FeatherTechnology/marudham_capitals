@@ -7,7 +7,7 @@ if (isset($_SESSION["userid"])) {
 }
 
 include('..\user_based_sub_area_Ids.php');
-$sub_area_list = getUserSubAreaList($connect, 'update');
+$sub_area_list = getUserSubAreaList($connect, 'group');
 
 $column = array(
     'rc.req_id',
