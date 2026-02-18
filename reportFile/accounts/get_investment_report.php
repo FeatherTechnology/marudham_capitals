@@ -48,21 +48,21 @@ SELECT * FROM (
     SELECT cdb.created_date AS tdate, cdb.bank_id AS ctype, '' AS Credit, cdb.amt AS Debit, cdb.amt AS Amount, ndc.name 
         FROM ct_db_binvest cdb
         JOIN name_detail_creation ndc ON cdb.name_id = ndc.name_id
-        WHERE (DATE(cdb.created_date) >= '$from_date') AND (DATE(cdb.created_date) <= '$to_date') " . ($user_based != "" ? " AND cdh.insert_login_id = '$userid'" : "") . "
+        WHERE (DATE(cdb.created_date) >= '$from_date') AND (DATE(cdb.created_date) <= '$to_date') " . ($user_based != "" ? " AND cdb.insert_login_id = '$userid'" : "") . "
 
     UNION ALL 
 
     SELECT cch.created_date AS tdate, 'Hand Cash' AS ctype, cch.amt AS Credit, '' AS Debit, cch.amt AS Amount, ndc.name 
         FROM ct_cr_hinvest cch
         JOIN name_detail_creation ndc ON cch.name_id = ndc.name_id
-        WHERE (DATE(cch.created_date) >= '$from_date') AND (DATE(cch.created_date) <= '$to_date') " . ($user_based != "" ? " AND cdh.insert_login_id = '$userid'" : "") . "
+        WHERE (DATE(cch.created_date) >= '$from_date') AND (DATE(cch.created_date) <= '$to_date') " . ($user_based != "" ? " AND cch.insert_login_id = '$userid'" : "") . "
 
     UNION ALL 
 
     SELECT ccb.created_date AS tdate, ccb.bank_id AS ctype, ccb.amt AS Credit, '' AS Debit, ccb.amt AS Amount, ndc.name 
         FROM ct_cr_binvest ccb
         JOIN name_detail_creation ndc ON ccb.name_id = ndc.name_id
-        WHERE (DATE(ccb.created_date) >= '$from_date') AND (DATE(ccb.created_date) <= '$to_date') " . ($user_based != "" ? " AND cdh.insert_login_id = '$userid'" : "") . "
+        WHERE (DATE(ccb.created_date) >= '$from_date') AND (DATE(ccb.created_date) <= '$to_date') " . ($user_based != "" ? " AND ccb.insert_login_id = '$userid'" : "") . "
 ) AS sub
 ";
 

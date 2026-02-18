@@ -15,6 +15,7 @@
 			<div class="toggle-container col-12">
 				<input type="date" id='to_date' name='to_date' class="toggle-button" value=''>
 				<input type="button" id='reset_btn' name='reset_btn' class="toggle-button" style="background-color: #009688;color:white" value='Reload'>
+				<input type="button" id="print_btn" class="toggle-button" style="background-color: #009688;color:white;display:none;" value="Print">
 			</div>
 			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 				<div class="card">
@@ -44,7 +45,6 @@
 								<thead>
 									<tr>
 										<th>S.No</th>
-										<th>Collection</th>
 										<th>Loan Category</th>
 										<th>Today</th>
 										<th>Till Now</th>
@@ -65,7 +65,6 @@
 								<thead>
 									<tr>
 										<th>S.No</th>
-										<th>Loan Issue</th>
 										<th>Loan Category</th>
 										<th>Today Issued</th>
 										<th>Today Count</th>

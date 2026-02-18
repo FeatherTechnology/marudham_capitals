@@ -499,6 +499,7 @@ if ($bank_qry->num_rows > 0) {
 				<!-- Submit Button Start -->
 				<div class="col-md-12 ">
 					<div class="text-right">
+						<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#tableModal" onclick="circulartAmount()">  Circular Amount </button>
 						<button type="button" name="blnc_sheet_btn" id="blnc_sheet_btn" class="btn btn-primary" data-toggle='modal' data-target='.blncModal' onclick="hideAllCardsfunction()">Balance Sheet</button>
 						<button name="submit_cash_tally" id="submit_cash_tally" class="btn btn-primary" value="Submit">Submit</button>
 						<!-- <button type="reset" class="btn btn-outline-secondary" tabindex="20">Clear</button> -->
@@ -1036,3 +1037,29 @@ if ($bank_qry->num_rows > 0) {
 		</div>
 	</div>
 </div>
+
+<!-- circular amount model box  -->
+<div class="modal fade" id="tableModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="max-width:80%;">
+        <div class="modal-content" style="background-color: white">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Circular Amount</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="table-responsive" id="circular_amount_div">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- /////////////////////////////////////////////////////////////////// circular amount model end ////////////////////////////////////////////////////////////////////// -->

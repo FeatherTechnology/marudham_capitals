@@ -371,14 +371,6 @@ function getOpeningDate() {
         cache: false,
         success: function (response) {
             $('#op_date').text(response['opening_date']);
-            $('#opening_balance').text(response['opening_bal']);
-            $('#hand_opening').text(response['op_hand']);
-            $('#bank_opening').text(response['op_bank']);
-            $('#agent_opening').text(response['op_agent']);
-            $('#oldclosingbal').val(response['closing_bal']);
-            $('#hand_closing').text(response['cl_hand']);
-            $('#bank_closing').text(response['cl_bank']);
-            $('#agent_closing').text(response['cl_agent']);
         }
     }).then(function () {
         getOpeningBalance();
@@ -507,60 +499,45 @@ function submitCashTally(i) {
                     return;
                 }
 
-                if (!confirm('Are You sure to close this Day?')) {
-                    return;
-                }
-
+                let branch_id = $('#user_branch_id').val();
                 let op_date = $('#op_date').text();
-                let opening_bal = $('#opening_balance').text().replace(/,/g, '');
-                let hand_op = $('#hand_opening').text().replace(/,/g, '');
-                let agent_op = $('#agent_opening').text().replace(/,/g, '');
-                let closing_bal = $('#closing_balance').text().replace(/,/g, '');
-                let hand_cl = $('#hand_closing').text().replace(/,/g, '');
-                let agent_cl = $('#agent_closing').text().replace(/,/g, '');
-
-                let bank_op = [];
-                let bank_cl = [];
-
-                for (let j = 0; j < i; j++) {
-                    bank_op.push($('#bank_opening' + j).text().replace(/,/g, ''));
-                    bank_cl.push($('#bank_closing' + j).text().replace(/,/g, ''));
-                }
-
-                let formtosend = {
-                    op_date,
-                    opening_bal,
-                    hand_op,
-                    bank_op: bank_op.join(','),
-                    agent_op,
-                    closing_bal,
-                    hand_cl,
-                    bank_cl: bank_cl.join(','),
-                    agent_cl
-                };
 
                 $.ajax({
-                    url: 'accountsFile/cashtally/submitCashTally.php',
+                    url: 'accountsFile/cashtally/circularAmount.php',
                     type: 'POST',
-                    data: formtosend,
-                    cache: false,
+                    data: {
+                        branch_id: branch_id,
+                        op_date: op_date
+                    },
                     success: function (response) {
 
-                        if (response.includes('Successfully')) {
+                        let tempDiv = $('<div>').html(response);
+                        let grandTotal = tempDiv.find('tfoot tr:last td:last').text().trim();
+
+                        if (!grandTotal) {
                             Swal.fire({
-                                title: response,
-                                icon: 'success',
-                                confirmButtonColor: '#009688'
-                            });
-                            getOpeningDate();
-                        } 
-                        else if (response.includes('Error')) {
-                            Swal.fire({
-                                title: response,
+                                title: 'Error',
+                                text: 'Unable to calculate Circular Balance',
                                 icon: 'error',
                                 confirmButtonColor: '#009688'
                             });
+                            return;
                         }
+
+                        // 🔹 STEP 2: Confirm with Circular Balance
+                        Swal.fire({
+                            title: 'Confirm Day Closing',
+                            html: `<b>Circular Balance : ₹ ${grandTotal}</b><br><br>Are you sure to close this day?`,
+                            icon: 'info',
+                            showCancelButton: true,
+                            confirmButtonText: 'Confirm & Submit',
+                            cancelButtonText: 'Cancel',
+                            confirmButtonColor: '#009688'
+                        }).then((result) => {
+
+                            if (!result.isConfirmed) return;
+                            CashTallysubmit(i);
+                        });
                     }
                 });
 
@@ -1222,11 +1199,11 @@ function receivecdBtnClick(bdep_id1) {
         $('#submit_cd').off('click');
         $('#submit_cd').click(function () {
             var formData = $('#cr_cd_form').serializeArray(); // Serialize the form inputs to send all data
-            var op_date = $('#op_date').text();
+            var trans_date = $('#trans_date').val();
             var sts = 'credit';
 
             // Append op_date to the formData array
-            formData.push({ name: 'op_date', value: op_date },{name: 'sts', value: sts });
+            formData.push({ name: 'trans_date', value: trans_date },{name: 'sts', value: sts });
 
             if (cdValidation() == 0) {
                 $.ajax({
@@ -1359,7 +1336,7 @@ function getCashWithdrawalDetails() {
         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
             <div class="form-group">
                 <label for="amt_cwd">Amount</label>
-                <input type="text" id="amt_cwd" name="amt_cwd" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)" oninput="validateInputNumber(this,'withDot')">
+                <input type="text" id="amt_cwd" name="amt_cwd" class="form-control" placeholder="Enter Amount"  oninput="validateInputNumber(this,'withDot')">
                 <span class="text-danger" id='amt_cwdCheck' style="display:none">Please Enter Amount</span>
             </div>
         </div>
@@ -1413,10 +1390,10 @@ function getCashWithdrawalDetails() {
                 var cheque_cwd = $('#cheque_cwd').val();
                 var remark_cwd = $('#remark_cwd').val();
                 var amt_cwd = $('#amt_cwd').val();
-                var op_date = $('#op_date').text();
+                var trans_date = $('#trans_date').val();
                 $.ajax({
                     url: 'accountsFile/cashtally/contra/submitCashWithdrawal.php',
-                    data: { 'ref_code': ref_code_cwd, 'trans_id': trans_id_cwd, 'from_bank': from_bank_cwd, 'cheque': cheque_cwd, 'remark': remark_cwd, 'amt': amt_cwd, 'op_date': op_date ,'sts': 'debit' },
+                    data: { 'ref_code': ref_code_cwd, 'trans_id': trans_id_cwd, 'from_bank': from_bank_cwd, 'cheque': cheque_cwd, 'remark': remark_cwd, 'amt': amt_cwd, 'trans_date': trans_date ,'sts': 'debit' },
                     type: 'post',
                     cache: false,
                     success: function (response) {
@@ -1988,7 +1965,7 @@ function getBankExchangeInputs() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
         <div class="form-group">
             <label for="amt_bex">Amount</label>
-            <input type="text" id="amt_bex" name="amt_bex" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)" oninput="validateInputNumber(this,'withDot')">
+            <input type="text" id="amt_bex" name="amt_bex" class="form-control" placeholder="Enter Amount"  oninput="validateInputNumber(this,'withDot')">
             <span id="amt_bexCheck" class="text-danger" style="display:none">Please Enter Amount</span>
         </div>
     </div>
@@ -2026,8 +2003,8 @@ function getBankExchangeInputs() {
         $('#submit_bex').click(function () {
             if (bankExchangeValidation() != 1) {
                 var ref_code = $('#ref_code_bex').val(); var from_acc_id_bex = $('#from_acc_id_bex').val(); var from_acc_bex = $('#from_acc_bex').val(); var to_bank_bex = $('#to_bank_bex').val(); var trans_id_bex = $('#trans_id_bex').val(); var sts ='debit';
-                var user_id_bex = $('#user_id_bex').val(); var remark_bex = $('#remark_bex').val(); var amt_bex = $('#amt_bex').val(); var op_date = $('#op_date').text();
-                var formdata = { ref_code: ref_code, from_acc_id_bex: from_acc_id_bex, from_acc_bex: from_acc_bex, to_bank_bex: to_bank_bex, trans_id_bex: trans_id_bex, user_id_bex: user_id_bex, remark_bex: remark_bex, amt_bex: amt_bex, op_date: op_date, sts: sts };
+                var user_id_bex = $('#user_id_bex').val(); var remark_bex = $('#remark_bex').val(); var amt_bex = $('#amt_bex').val(); var trans_date = $('#trans_date').val();
+                var formdata = { ref_code: ref_code, from_acc_id_bex: from_acc_id_bex, from_acc_bex: from_acc_bex, to_bank_bex: to_bank_bex, trans_id_bex: trans_id_bex, user_id_bex: user_id_bex, remark_bex: remark_bex, amt_bex: amt_bex, trans_date: trans_date, sts: sts };
                 $.ajax({
                     url: 'accountsFile/cashtally/exchange/submitdbBankExchange.php',
                     data: formdata,
@@ -2118,10 +2095,10 @@ function bexCollectBtnClick(bex_id1) {
 
         $('#submit_bex').click(function () {
             var formdata = $('#cr_bex_form').serializeArray();
-            var op_date = $('#op_date').text();
+            var trans_date = $('#trans_date').val();
 
-            // Append op_date to the formData array
-            formdata.push({ name: 'op_date', value: op_date },
+            // Append trans_date to the formData array
+            formdata.push({ name: 'trans_date', value: trans_date },
                           { name: 'sts', value: 'credit' });
 
             if (bexValidation() != 1) {
@@ -2340,10 +2317,10 @@ function getBotherincomeDetails() {
     $('#submit_boti').click(function () {
         if (botiValidation() == 0) {
             var ref_code = $('#ref_code_boti').val(); var cat_info = $('#cat_info').val(); var trans_id = $('#trans_id').val(); var remark = $('#remark').val(); var amt = $('#amt').val();
-            var bank_id = $('input[name=cash_type]:checked').val(); var op_date = $('#op_date').text();
+            var bank_id = $('input[name=cash_type]:checked').val(); var trans_date = $('#trans_date').val();
             $.ajax({
                 url: 'accountsFile/cashtally/otherincome/submitBotherincome.php',
-                data: { 'bank_id': bank_id, 'ref_code': ref_code, 'cat_info': cat_info, 'trans_id': trans_id, 'remark': remark, 'amt': amt, 'op_date': op_date, 'sts': 'credit'},
+                data: { 'bank_id': bank_id, 'ref_code': ref_code, 'cat_info': cat_info, 'trans_id': trans_id, 'remark': remark, 'amt': amt, 'trans_date': trans_date, 'sts': 'credit'},
                 type: 'post',
                 cache: false,
                 success: function (response) {
@@ -2921,7 +2898,7 @@ function bexpenseModalBtnClick() {
                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
                         <div class="form-group">
                             <label for="amt_bexp">Amount</label><span class='text-danger'>&nbsp;*</span>
-                            <input type="text" id="amt_bexp" name="amt_bexp" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)" oninput="validateInputNumber(this,'withDot')">
+                            <input type="text" id="amt_bexp" name="amt_bexp" class="form-control" placeholder="Enter Amount"  oninput="validateInputNumber(this,'withDot')">
                             <span id='amt_bexpCheck' class="text-danger" style="display:none">Please Enter Amount</span>
                         </div>
                     </div>
@@ -2982,7 +2959,8 @@ function bexpenseModalBtnClick() {
 
                 var user_id = $('#user_id_bexp').val(); var username = $('#username_bexp').val(); var usertype = $('#usertype_bexp').val(); var ref_code = $('#ref_code_bexp').val(); var cat_bexp = $('#cat_bexp').val();
                 var bank_id = $('#bank_id_bexp').val(); var part_bexp = $('#part_bexp').val(); var vou_id_bexp = $('#vou_id_bexp').val(); var trans_id_bexp = $('#trans_id_bexp').val(); var rec_per_bexp = $('#rec_per_bexp').val(); var remark_bexp = $('#remark_bexp').val();
-                var amt_bexp = $('#amt_bexp').val(); var upd_bexp = $('#upd_bexp')[0].files[0]; var op_date = $('#op_date').text(); var sts = 'debit';
+                var amt_bexp = $('#amt_bexp').val(); var upd_bexp = $('#upd_bexp')[0].files[0]; var trans_date = $('#trans_date').val(); var sts = 'debit';
+                console.log("trans_date",trans_date);
 
                 var upload = $("#upd_bexp")[0];
                 var file = upload.files[0];
@@ -3001,7 +2979,7 @@ function bexpenseModalBtnClick() {
                 formData.append('rec_per', rec_per_bexp);
                 formData.append('remark', remark_bexp);
                 formData.append('amt', amt_bexp);
-                formData.append('op_date', op_date);
+                formData.append('trans_date', trans_date);
                 formData.append('sts', sts);
 
 
@@ -3345,11 +3323,11 @@ function getCBinvDetails() {
         if (await binvvalidation('cr') == 0) {
             var ref_code = $('#ref_code_binv').val(); var name = $('#name_binv').val(); var area = $('#area_binv').val(); var ident = $('#ident_binv').val();
             var trans_id = $('#trans_id_binv').val(); var remark = $('#remark_binv').val(); var amt = $('#amt_binv').val();
-            var bank_id = $('input[name=cash_type]:checked').val(); var op_date = $('#op_date').text(); var sts = 'credit';
+            var bank_id = $('input[name=cash_type]:checked').val(); var trans_date = $('#trans_date').val(); var sts = 'credit';
 
             $.ajax({
                 url: 'accountsFile/cashtally/investment/submitCBinvestment.php',
-                data: { 'bank_id': bank_id, 'ref_code': ref_code, 'trans_id': trans_id, 'name': name, 'area': area, 'ident': ident, 'remark': remark, 'amt': amt, 'op_date': op_date, 'sts': sts },
+                data: { 'bank_id': bank_id, 'ref_code': ref_code, 'trans_id': trans_id, 'name': name, 'area': area, 'ident': ident, 'remark': remark, 'amt': amt, 'trans_date': trans_date, 'sts': sts },
                 type: 'post',
                 cache: false,
                 success: function (response) {
@@ -3439,7 +3417,7 @@ function getDBinvDetails() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
         <div class="form-group">
             <label for="amt_binv">Amount</label><span class="text-danger">&nbsp;*</span>
-            <input type="text" id="amt_binv" name="amt_binv" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)" oninput="validateInputNumber(this,'withDot')">
+            <input type="text" id="amt_binv" name="amt_binv" class="form-control" placeholder="Enter Amount"  oninput="validateInputNumber(this,'withDot')">
             <span id='amt_binvCheck' class="text-danger" style="display:none">Please Enter Amount</span>
         </div>
     </div>
@@ -3462,11 +3440,11 @@ function getDBinvDetails() {
         if (await binvvalidation('db') == 0) {
             var ref_code = $('#ref_code_binv').val(); var name = $('#name_binv').val(); var area = $('#area_binv').val(); var ident = $('#ident_binv').val();
             var trans_id = $('#trans_id_binv').val(); var remark = $('#remark_binv').val(); var amt = $('#amt_binv').val();
-            var bank_id = $('input[name=cash_type]:checked').val(); var op_date = $('#op_date').text(); var sts = 'debit';
+            var bank_id = $('input[name=cash_type]:checked').val(); var trans_date = $('#trans_date').val(); var sts = 'debit';
 
             $.ajax({
                 url: 'accountsFile/cashtally/investment/submitDBinvestment.php',
-                data: { 'bank_id': bank_id, 'ref_code': ref_code, 'trans_id': trans_id, 'name': name, 'area': area, 'ident': ident, 'remark': remark, 'amt': amt, 'op_date': op_date, 'sts':sts },
+                data: { 'bank_id': bank_id, 'ref_code': ref_code, 'trans_id': trans_id, 'name': name, 'area': area, 'ident': ident, 'remark': remark, 'amt': amt, 'trans_date': trans_date, 'sts':sts },
                 type: 'post',
                 cache: false,
                 success: function (response) {
@@ -3796,11 +3774,11 @@ function getCBDepDetails() {
     $('#submit_bdeposit').click(async function () { //cr bank cash
         if (await bdepositvalidation('cr') == 0) {
             var ref_code = $('#ref_code_bdeposit').val(); var name = $('#name_bdeposit').val(); var area = $('#area_bdeposit').val(); var ident = $('#ident_bdeposit').val();
-            var trans_id = $('#trans_id_bdeposit').val(); var remark = $('#remark_bdeposit').val(); var amt = $('#amt_bdeposit').val(); var bank_id = $('input[name=cash_type]:checked').val(); var op_date = $('#op_date').text(); var sts ='credit';
+            var trans_id = $('#trans_id_bdeposit').val(); var remark = $('#remark_bdeposit').val(); var amt = $('#amt_bdeposit').val(); var bank_id = $('input[name=cash_type]:checked').val(); var trans_date = $('#trans_date').val(); var sts ='credit';
 
             $.ajax({
                 url: 'accountsFile/cashtally/deposit/submitCBdeposit.php',
-                data: { 'bank_id': bank_id, 'ref_code': ref_code, 'trans_id': trans_id, 'name': name, 'area': area, 'ident': ident, 'remark': remark, 'amt': amt, 'op_date': op_date, 'sts': sts},
+                data: { 'bank_id': bank_id, 'ref_code': ref_code, 'trans_id': trans_id, 'name': name, 'area': area, 'ident': ident, 'remark': remark, 'amt': amt, 'trans_date': trans_date, 'sts': sts},
                 type: 'post',
                 cache: false,
                 success: function (response) {
@@ -3890,7 +3868,7 @@ function getDBDepDetails() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
         <div class="form-group">
             <label for="amt_bdeposit">Amount</label><span class="text-danger">&nbsp;*</span>
-            <input type="text" id="amt_bdeposit" name="amt_bdeposit" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)" oninput="validateInputNumber(this,'withDot')">
+            <input type="text" id="amt_bdeposit" name="amt_bdeposit" class="form-control" placeholder="Enter Amount"  oninput="validateInputNumber(this,'withDot')">
             <span id='amt_bdepositCheck' class="text-danger" style="display:none">Please Enter Amount</span>
         </div>
     </div>
@@ -3912,11 +3890,11 @@ function getDBDepDetails() {
     $('#submit_bdeposit').click(async function () {  //dr bank cash
         if (await bdepositvalidation('db') == 0) {
             var ref_code = $('#ref_code_bdeposit').val(); var name = $('#name_bdeposit').val(); var area = $('#area_bdeposit').val(); var ident = $('#ident_bdeposit').val();
-            var trans_id = $('#trans_id_bdeposit').val(); var remark = $('#remark_bdeposit').val(); var amt = $('#amt_bdeposit').val(); var bank_id = $('input[name=cash_type]:checked').val(); var op_date = $('#op_date').text();
+            var trans_id = $('#trans_id_bdeposit').val(); var remark = $('#remark_bdeposit').val(); var amt = $('#amt_bdeposit').val(); var bank_id = $('input[name=cash_type]:checked').val(); var trans_date = $('#trans_date').val();
 
             $.ajax({
                 url: 'accountsFile/cashtally/deposit/submitDBdeposit.php',
-                data: { 'bank_id': bank_id, 'ref_code': ref_code, 'trans_id': trans_id, 'name': name, 'area': area, 'ident': ident, 'remark': remark, 'amt': amt, 'op_date': op_date, sts: 'debit' },
+                data: { 'bank_id': bank_id, 'ref_code': ref_code, 'trans_id': trans_id, 'name': name, 'area': area, 'ident': ident, 'remark': remark, 'amt': amt, 'trans_date': trans_date, sts: 'debit' },
                 type: 'post',
                 cache: false,
                 success: function (response) {
@@ -4243,11 +4221,11 @@ function getCBelDetails() {
 
     $('#submit_bel').click(async function () { //credit bank cash
         if (await belvalidation() == 0) {
-            var ref_code = $('#ref_code_bel').val(); var name = $('#name_bel').val(); var area = $('#area_bel').val(); var ident = $('#ident_bel').val(); var trans_id = $('#trans_id_bel').val(); var remark = $('#remark_bel').val(); var amt = $('#amt_bel').val(); var bank_id = $('input[name=cash_type]:checked').val(); var op_date = $('#op_date').text(); var sts = 'credit';
+            var ref_code = $('#ref_code_bel').val(); var name = $('#name_bel').val(); var area = $('#area_bel').val(); var ident = $('#ident_bel').val(); var trans_id = $('#trans_id_bel').val(); var remark = $('#remark_bel').val(); var amt = $('#amt_bel').val(); var bank_id = $('input[name=cash_type]:checked').val(); var trans_date = $('#trans_date').val(); var sts = 'credit';
 
             $.ajax({
                 url: 'accountsFile/cashtally/el/submitCBel.php',
-                data: { 'bank_id': bank_id, 'ref_code': ref_code, 'trans_id': trans_id, 'name': name, 'area': area, 'ident': ident, 'remark': remark, 'amt': amt, 'op_date': op_date, 'sts': sts },
+                data: { 'bank_id': bank_id, 'ref_code': ref_code, 'trans_id': trans_id, 'name': name, 'area': area, 'ident': ident, 'remark': remark, 'amt': amt, 'trans_date': trans_date, 'sts': sts },
                 type: 'post',
                 cache: false,
                 success: function (response) {
@@ -4337,7 +4315,7 @@ function getDBelDetails() {
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
         <div class="form-group">
             <label for="amt_bel">Amount</label><span class="text-danger">&nbsp;*</span>
-            <input type="text" id="amt_bel" name="amt_bel" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)" oninput="validateInputNumber(this,'withDot')">
+            <input type="text" id="amt_bel" name="amt_bel" class="form-control" placeholder="Enter Amount"  oninput="validateInputNumber(this,'withDot')">
             <span id='amt_belCheck' class="text-danger" style="display:none">Please Enter Amount</span>
         </div>
     </div>
@@ -4358,11 +4336,11 @@ function getDBelDetails() {
 
     $('#submit_bel').click(async function () { //debit bank cash
         if (await belvalidation() == 0) {
-            var ref_code = $('#ref_code_bel').val(); var name = $('#name_bel').val(); var area = $('#area_bel').val(); var ident = $('#ident_bel').val(); var trans_id = $('#trans_id_bel').val(); var remark = $('#remark_bel').val(); var amt = $('#amt_bel').val(); var bank_id = $('input[name=cash_type]:checked').val(); var op_date = $('#op_date').text(); var sts = 'debit';
+            var ref_code = $('#ref_code_bel').val(); var name = $('#name_bel').val(); var area = $('#area_bel').val(); var ident = $('#ident_bel').val(); var trans_id = $('#trans_id_bel').val(); var remark = $('#remark_bel').val(); var amt = $('#amt_bel').val(); var bank_id = $('input[name=cash_type]:checked').val(); var trans_date = $('#trans_date').val(); var sts = 'debit';
 
             $.ajax({
                 url: 'accountsFile/cashtally/el/submitDBel.php',
-                data: { 'bank_id': bank_id, 'ref_code': ref_code, 'trans_id': trans_id, 'name': name, 'area': area, 'ident': ident, 'remark': remark, 'amt': amt, 'op_date': op_date, 'sts':sts },
+                data: { 'bank_id': bank_id, 'ref_code': ref_code, 'trans_id': trans_id, 'name': name, 'area': area, 'ident': ident, 'remark': remark, 'amt': amt, 'trans_date': trans_date, 'sts':sts },
                 type: 'post',
                 cache: false,
                 success: function (response) {
@@ -4660,7 +4638,7 @@ function getExfDetails() {
                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
                         <div class="form-group">
                             <label for="amt_exf">Amount</label><span class='text-danger'>&nbsp;*</span>
-                            <input type="text" id="amt_exf" name="amt_exf" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)" oninput="validateInputNumber(this,'withDot')">
+                            <input type="text" id="amt_exf" name="amt_exf" class="form-control" placeholder="Enter Amount"  oninput="validateInputNumber(this,'withDot')">
                             <span id='amt_exfCheck' class="text-danger" style="display:none">Please Enter Amount</span>
                         </div>
                     </div>
@@ -4721,8 +4699,8 @@ function getExfDetails() {
         if (exfValidation() == 0) {
             var ucl_ref_code_exf = $('#ucl_ref_code_exf').val(); var ref_code_exf = $('#ref_code_exf').val();
             var trans_id_exf = $('#trans_id_exf').val(); var remark_exf = $('#remark_exf').val(); var amt_exf = $('#amt_exf').val();
-            var username_exf = $('#username_exf').val(); var usertype_exf = $('#usertype_exf').val(); var bank_id = $('input[name=cash_type]:checked').val(); var op_date = $('#op_date').text(); var sts = 'debit';
-            var formtosend = { bank_id: bank_id, username_exf: username_exf, usertype_exf: usertype_exf, ucl_ref_code_exf: ucl_ref_code_exf, ref_code_exf: ref_code_exf, trans_id_exf: trans_id_exf, remark_exf: remark_exf, amt_exf: amt_exf, op_date: op_date, sts:sts };
+            var username_exf = $('#username_exf').val(); var usertype_exf = $('#usertype_exf').val(); var bank_id = $('input[name=cash_type]:checked').val(); var trans_date = $('#trans_date').val(); var sts = 'debit';
+            var formtosend = { bank_id: bank_id, username_exf: username_exf, usertype_exf: usertype_exf, ucl_ref_code_exf: ucl_ref_code_exf, ref_code_exf: ref_code_exf, trans_id_exf: trans_id_exf, remark_exf: remark_exf, amt_exf: amt_exf, trans_date: trans_date, sts:sts };
             $.ajax({
                 url: 'accountsFile/cashtally/excessfund/submitExf.php',
                 data: formtosend,
@@ -5028,8 +5006,8 @@ function getCBagDetails() {
     $('#submit_ag').off('click');
     $('#submit_ag').click(function () {
         if (agBValidation() == 0) {
-            var ag_id = $('#ag_id').val(); var ref_code_ag = $('#ref_code_ag').val(); var trans_id_ag = $('#trans_id_ag').val(); var remark_ag = $('#remark_ag').val(); var amt_ag = $('#amt_ag').val(); var bank_id = $('input[name=cash_type]:checked').val(); var op_date = $('#op_date').text(); var sts = 'credit';
-            var formtosend = { ag_id: ag_id, bank_id: bank_id, ref_code: ref_code_ag, trans_id: trans_id_ag, remark: remark_ag, amt: amt_ag, op_date: op_date, sts: sts };
+            var ag_id = $('#ag_id').val(); var ref_code_ag = $('#ref_code_ag').val(); var trans_id_ag = $('#trans_id_ag').val(); var remark_ag = $('#remark_ag').val(); var amt_ag = $('#amt_ag').val(); var bank_id = $('input[name=cash_type]:checked').val(); var trans_date = $('#trans_date').val(); var sts = 'credit';
+            var formtosend = { ag_id: ag_id, bank_id: bank_id, ref_code: ref_code_ag, trans_id: trans_id_ag, remark: remark_ag, amt: amt_ag, trans_date: trans_date, sts: sts };
             $.ajax({
                 url: 'accountsFile/cashtally/agent/submitCBag.php',
                 data: formtosend,
@@ -5106,7 +5084,7 @@ function getDBagDetails() {
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
                 <div class="form-group">
                     <label for="amt_ag">Amount</label><span class='text-danger'>&nbsp;*</span>
-                    <input type="text" id="amt_ag" name="amt_ag" class="form-control" placeholder="Enter Amount" onkeyup="validateBankCash(this)" oninput="validateInputNumber(this,'withDot')">
+                    <input type="text" id="amt_ag" name="amt_ag" class="form-control" placeholder="Enter Amount" oninput="validateInputNumber(this,'withDot')">
                     <span id='amt_agCheck' class="text-danger" style="display:none">Please Enter Amount</span>
                 </div>
             </div>
@@ -5137,8 +5115,8 @@ function getDBagDetails() {
 
     $('#submit_ag').click(function () {
         if (agBValidation() == 0) {
-            var ag_id = $('#ag_id').val(); var ref_code_ag = $('#ref_code_ag').val(); var trans_id_ag = $('#trans_id_ag').val(); var remark_ag = $('#remark_ag').val(); var amt_ag = $('#amt_ag').val(); var bank_id = $('input[name=cash_type]:checked').val(); var op_date = $('#op_date').text(); var sts = 'debit'
-            var formtosend = { ag_id: ag_id, bank_id: bank_id, ref_code: ref_code_ag, trans_id: trans_id_ag, remark: remark_ag, amt: amt_ag, op_date: op_date, 'sts':sts };
+            var ag_id = $('#ag_id').val(); var ref_code_ag = $('#ref_code_ag').val(); var trans_id_ag = $('#trans_id_ag').val(); var remark_ag = $('#remark_ag').val(); var amt_ag = $('#amt_ag').val(); var bank_id = $('input[name=cash_type]:checked').val(); var trans_date = $('#trans_date').val(); var sts = 'debit'
+            var formtosend = { ag_id: ag_id, bank_id: bank_id, ref_code: ref_code_ag, trans_id: trans_id_ag, remark: remark_ag, amt: amt_ag, trans_date: trans_date, 'sts':sts };
             $.ajax({
                 url: 'accountsFile/cashtally/agent/submitDBag.php',
                 data: formtosend,
@@ -5187,39 +5165,39 @@ function validateHandCash(amt) {
 }
 
 //this function will check the amount entered were lesser or equal to hand closing balance
-function validateBankCash(amt) {
+// function validateBankCash(amt) {
 
-    var radios = $('input[name=cash_type]');
-    var selected = $('input[name=cash_type]:checked');
+//     var radios = $('input[name=cash_type]');
+//     var selected = $('input[name=cash_type]:checked');
 
-    if (!selected.length) return true;
+//     if (!selected.length) return true;
 
-    // 🔑 Get index of selected radio
-    var index = radios.index(selected) - 1;
+//     // 🔑 Get index of selected radio
+//     var index = radios.index(selected) - 1;
 
-    if (index === -1) {
-        console.error('Bank index not found');
-        return true;
-    }
+//     if (index === -1) {
+//         console.error('Bank index not found');
+//         return true;
+//     }
 
-    var entered_amt = parseFloat(amt.value) || 0;
+//     var entered_amt = parseFloat(amt.value) || 0;
 
-    var label = $('#bank_closing' + index);
-    if (!label.length) {
-        console.error('Bank closing not found for index:', index);
-        return true;
-    }
+//     var label = $('#bank_closing' + index);
+//     if (!label.length) {
+//         console.error('Bank closing not found for index:', index);
+//         return true;
+//     }
 
-    var bank_closing = parseFloat(label.text().replace(/,/g, '')) || 0;
+//     var bank_closing = parseFloat(label.text().replace(/,/g, '')) || 0;
 
-    if (entered_amt > bank_closing) {
-        alert('Enter Lesser Amount!');
-        $(amt).val('');
-        return false;
-    }
+//     if (entered_amt > bank_closing) {
+//         alert('Enter Lesser Amount!');
+//         $(amt).val('');
+//         return false;
+//     }
 
-    return true;
-}
+//     return true;
+// }
 
 //Validate credit and debit based on the names
 function validateNamedHandCash(name, amt, source, cash_type) {
@@ -5329,12 +5307,12 @@ function agBValidation() {// same validation for both credit and debit
 /////////////////////////////////////////////////////// Agent End ///////////////////////////////////////////////////////////////////////
 async function checkTransactionCommon(options) {
 
-    const { transInput, type, bankId, dateField } = options;
+    const { transInput, type,  bankId, dateField } = options;
 
     let transId = transInput.value.trim();
 
     try {
-        let response = await checkBankTransactionDetails(type, bankId, transId, '');
+        let response = await checkBankTransactionDetails( type,  bankId, transId,'');
 
         if (!response.status) {
             alert(response.message);
@@ -5348,4 +5326,79 @@ async function checkTransactionCommon(options) {
         alert('Error checking transaction');
         transInput.value = '';
     }
+}
+
+function CashTallysubmit(i) {
+
+    var op_date = $('#op_date').text();
+    var opening_bal = $('#opening_balance').text().replace(/,/g, '');
+    var hand_op = $('#hand_opening').text().replace(/,/g, '');
+
+    var bank_op = '';
+    for (var j = 0; j < i; j++) {
+        bank_op += $('#bank_opening' + j).text().replace(/,/g, '') + ',';
+    }
+    bank_op = bank_op.slice(0, -1);
+
+    var agent_op = $('#agent_opening').text().replace(/,/g, '');
+    var closing_bal = $('#closing_balance').text().replace(/,/g, '');
+    var hand_cl = $('#hand_closing').text().replace(/,/g, '');
+
+    var bank_cl = '';
+    for (var j = 0; j < i; j++) {
+        bank_cl += $('#bank_closing' + j).text().replace(/,/g, '') + ',';
+    }
+    bank_cl = bank_cl.slice(0, -1);
+
+    var agent_cl = $('#agent_closing').text().replace(/,/g, '');
+
+    var formtosend = {
+        op_date: op_date,
+        opening_bal: opening_bal,
+        hand_op: hand_op,
+        bank_op: bank_op,
+        agent_op: agent_op,
+        closing_bal: closing_bal,
+        hand_cl: hand_cl,
+        bank_cl: bank_cl,
+        agent_cl: agent_cl
+    };
+
+    $.ajax({
+        url: 'accountsFile/cashtally/submitCashTally.php',
+        data: formtosend,
+        type: 'post',
+        cache: false,
+        success: function (response) {
+            if (response.includes('Successfully')) {
+                Swal.fire({
+                    title: response,
+                    icon: 'success',
+                    confirmButtonColor: '#009688'
+                });
+                getOpeningDate();
+            } else {
+                Swal.fire({
+                    title: response,
+                    icon: 'error',
+                    confirmButtonColor: '#009688'
+                });
+            }
+        }
+    });
+}
+
+function circulartAmount() {
+    var user_branch_id = $('#user_branch_id').val();
+    var op_date = $('#op_date').text();
+    $.ajax({
+        url: 'accountsFile/cashtally/circularAmount.php',
+        data: { 'branch_id': user_branch_id, 'op_date': op_date },
+        type: 'post',
+        cache: false,
+        success: function (response) {
+            $('#circular_amount_div').empty();
+            $('#circular_amount_div').html(response);
+        }
+    })
 }

@@ -24,8 +24,7 @@ $row = $q->fetch();
 $access = $row['home_access']; // user access for upload
 
 
-$today = date("Y-m-d");
-$m = $connect->query("SELECT media_path FROM home_upload WHERE  DATE(upload_date)='$today'");
+$m = $connect->query(" SELECT media_path  FROM home_upload  WHERE upload_date >= DATE_SUB(NOW(), INTERVAL 24 HOUR) ORDER BY upload_date DESC LIMIT 1");
 $media_path = ($m->rowCount() > 0) ? $m->fetch()['media_path'] : "";
 ?>
 <!-- upload button -->

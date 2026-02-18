@@ -31,7 +31,7 @@ if ($userid != 1) {
         $sub_area_list = array();
         $sub_area_list = implode(',', $sub_area_ids);
 
-        $user_based = " AND cp.area_confirm_subarea IN ($sub_area_list) AND coll.insert_login_id = '$userid' ";
+        $user_based = " AND cp.area_confirm_subarea IN ($sub_area_list)";
     }
 }
 
