@@ -10,41 +10,103 @@ $trans_id = $_POST['trans_id'];
 $name_id  = $_POST['name'];
 $area     = $_POST['area'];
 $ident    = $_POST['ident'];
-$remark   = $_POST['remark'];
-$sts   = $_POST['sts'];
+$remark   = $_POST['remark'] ?? '';
+$sts      = $_POST['sts'];
 $amt      = floatval(str_replace(",", "", $_POST['amt']));
-$op_date  = date('Y-m-d', strtotime($_POST['op_date']));
+$trans_date = date('Y-m-d', strtotime($_POST['trans_date']));
 
-/* 🔍 CHECK AVAILABLE TRANSACTION AMOUNT */
-$chk = $connect->query("  SELECT transaction_amount FROM bank_stmt WHERE bank_id = '$bank_id' AND trans_id = '$trans_id' AND $sts > 0")->fetch(PDO::FETCH_ASSOC);
+try {
 
-if (!$chk) {
-    echo "Invalid Transaction Id";
-    exit;
-}
+    $connect->beginTransaction();
 
-$available_amt = floatval($chk['transaction_amount']);
+    $chkStmt = $connect->prepare(" SELECT transaction_amount,id FROM bank_stmt WHERE bank_id = :bank_id AND trans_id = :trans_id AND $sts > 0 LIMIT 1");
 
-/* ❌ AMOUNT VALIDATION */
-if ($amt > $available_amt) {
-    echo "Transaction Amount Mismatched";
-    exit;
-}
+    $chkStmt->execute([
+        ':bank_id' => $bank_id,
+        ':trans_id' => $trans_id
+    ]);
 
-/* ✅ INSERT INVESTMENT CREDIT */
-$qry = $connect->query("
-    INSERT INTO ct_cr_binvest
-    (bank_id, ref_code, trans_id, name_id, area, ident, remark, amt, insert_login_id, created_date)
-    VALUES
-    ('$bank_id','$ref_code','$trans_id','$name_id','$area','$ident','$remark','$amt','$user_id','$op_date')
-");
+    $chk = $chkStmt->fetch(PDO::FETCH_ASSOC);
 
-/* ✅ UPDATE BANK STATEMENT */
-$upqry = $connect->query(" UPDATE bank_stmt SET transaction_amount = $available_amt - '$amt',clr_status = CASE WHEN ROUND($available_amt - '$amt', 2) = 0 THEN 1 ELSE clr_status END, update_login_id = '$user_id', updated_date = NOW() WHERE bank_id = '$bank_id' AND trans_id = '$trans_id'");
+    if (!$chk) {
+        $connect->rollBack();
+        exit("Invalid Transaction Id");
+    }
 
-if ($qry && $upqry) {
+    $available_amt = floatval($chk['transaction_amount']);
+    $bank_stmt_id  = $chk['id'];
+    $transaction_balance = $available_amt - $amt;
+
+    /* ❌ AMOUNT VALIDATION */
+    if ($amt > $available_amt) {
+        $connect->rollBack();
+        exit("Transaction Amount Mismatched");
+    }
+
+    /* ✅ INSERT INVESTMENT CREDIT */
+    $insertStmt = $connect->prepare("
+        INSERT INTO ct_cr_binvest
+        (bank_id, ref_code, trans_id, name_id, area, ident, remark, amt, insert_login_id, created_date)
+        VALUES
+        (:bank_id, :ref_code, :trans_id, :name_id, :area, :ident, :remark, :amt, :user_id, :created_date)
+    ");
+
+    $insertStmt->execute([
+        ':bank_id' => $bank_id,
+        ':ref_code' => $ref_code,
+        ':trans_id' => $trans_id,
+        ':name_id' => $name_id,
+        ':area' => $area,
+        ':ident' => $ident,
+        ':remark' => $remark,
+        ':amt' => $amt,
+        ':user_id' => $user_id,
+        ':created_date' => $trans_date
+    ]);
+
+    /* ✅ UPDATE BANK STATEMENT */
+    $new_amount = $available_amt - $amt;
+
+    $updateStmt = $connect->prepare("
+        UPDATE bank_stmt 
+        SET 
+            transaction_amount = :new_amount,
+            clr_status = CASE 
+                            WHEN ROUND(:new_amount, 2) = 0 
+                            THEN 1 
+                            ELSE clr_status 
+                         END,
+            update_login_id = :user_id,
+            updated_date = NOW()
+        WHERE bank_id = :bank_id 
+        AND trans_id = :trans_id
+    ");
+
+    $updateStmt->execute([
+        ':new_amount' => $new_amount,
+        ':user_id' => $user_id,
+        ':bank_id' => $bank_id,
+        ':trans_id' => $trans_id
+    ]);
+
+        /* ✅ INSERT CLEARED HISTORY */
+    $historyStmt = $connect->prepare("INSERT INTO cleared_bank_stmt_history
+        (bank_stmt_id, transaction_balance, screens, insert_login_id, created_date)
+        VALUES
+        (:bank_stmt_id, :transaction_balance, 'Bank Investment CR', :user_id, NOW()) ");
+
+    $historyStmt->execute([
+        ':bank_stmt_id' => $bank_stmt_id,
+        ':transaction_balance' => $transaction_balance,
+        ':user_id' => $user_id
+    ]);  
+
+    $connect->commit();
     echo "Submitted Successfully";
-} else {
+
+} catch (Exception $e) {
+
+    $connect->rollBack();
     echo "Error While Submitting";
 }
 

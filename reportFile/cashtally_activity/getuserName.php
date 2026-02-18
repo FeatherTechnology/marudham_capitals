@@ -7,7 +7,7 @@ $qry = $connect->query("SELECT
         fullname, 
         user_id AS user_ids
     FROM user
-    WHERE cash_tally = 0 AND status = 0
+    WHERE cash_tally = 0 AND status = 0 And user_id !=1
     GROUP BY fullname
     ORDER BY fullname ASC
 ");

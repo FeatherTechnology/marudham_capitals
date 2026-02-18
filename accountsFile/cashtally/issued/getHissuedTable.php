@@ -10,21 +10,22 @@ $netcash = 0;
 $op_date = date('Y-m-d',strtotime($_POST['op_date']));
 
 
-// $qry = $connect->query("SELECT role,fullname FROM `user` where user_id= '$user_id' ");
-// $row = $qry->fetch_assoc();
-// $role = $row['role'];if($role == 1){$usertype = 'Director';}else if($role==3){$usertype = 'Staff';}
-// $username = $row['fullname'];
-
-
-$qry = $connect->query("SELECT req_id,sum(cash) as cash,issued_to,insert_login_id,created_date FROM `loan_issue` where (agent_id = '' or agent_id = null) and ((issued_mode = 1 and payment_type = '0') or (issued_mode = 0 and cash != '')) and date(created_date) = '$op_date' GROUP BY insert_login_id ");
+$qry = $connect->query("SELECT req_id,sum(cash) as cash,issued_to,insert_login_id,created_date FROM `loan_issue` where (agent_id = '' or agent_id = null) and ((issued_mode = 1 and payment_type = '0') or (issued_mode = 0 and cash != '')) and date(created_date) Between '2026-01-01 00:00:01'  AND '{$op_date} 23:59:59' GROUP BY insert_login_id ");
 while($row = $qry->fetch()){
+    
+    $created_date = date('Y-m-d', strtotime($row['created_date']));
+    $dbCheck = $connect->query(" SELECT COALESCE(SUM(netcash),0) AS inserted_sum FROM ct_db_hissued  WHERE li_user_id = '".$row['insert_login_id']."' AND created_date >= '$created_date'");
 
-    $dbCheck = $connect->query("SELECT * from ct_db_hissued where date(created_date) = '".date('Y-m-d',strtotime($row['created_date']))."' and li_user_id = '".$row['insert_login_id']."' ");
-    if($dbCheck->rowCount() == 0){ 
-        // to check whether created date of loan issue is already entered in hissued table. if done, no need to show bcoz submitted hissued no need to show in table
+        $dbRow = $dbCheck->fetch();
 
+        $insertedAmount = intval($dbRow['inserted_sum']);
+        $totalIssued    = intval($row['cash']);
+
+        $balance = $totalIssued - $insertedAmount;
+
+        if($balance > 0){
         // $netcash = $netcash + intVal($row['cash']);
-        $records[$i]['netcash'] = intVal($row['cash']);
+        $records[$i]['netcash'] = $balance;
         $records[$i]['issued_to'] = $row['issued_to'];
         $records[$i]['req_id'] = $row['req_id'];
         $records[$i]['user_id'] = $row['insert_login_id'];

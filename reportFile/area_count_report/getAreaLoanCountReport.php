@@ -28,8 +28,7 @@ if ($userid != 1) {
         }
         $sub_area_ids = array_unique(array_filter($sub_area_ids));
         if (!empty($sub_area_ids)) {
-            $user_filter = " AND cp.area_confirm_subarea IN (" . implode(',', $sub_area_ids) . ")
-                             AND coll.insert_login_id = '$userid' ";
+            $user_filter = " AND cp.area_confirm_subarea IN (" . implode(',', $sub_area_ids) . ") ";
         }
     }
 }

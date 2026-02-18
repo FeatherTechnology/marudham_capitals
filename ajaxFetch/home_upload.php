@@ -6,7 +6,7 @@ $userid = $_SESSION['userid'];
 
 if(isset($_FILES['home_upload'])){
 
-    $today = date("Y-m-d");
+    $today = date("Y-m-d H:i:s");
 
     // STEP 1: Delete old media for today
     $qry = $connect->query("SELECT media_path FROM home_upload ");

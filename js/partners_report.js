@@ -12,7 +12,110 @@ $(document).ready(function () {
         issuedReportCount(to_date)
         otherTransReport(to_date) 
         closingBalanceReport(to_date);
+        $('#print_btn').show();
     });
+
+   $('#print_btn').click(function () {
+
+    var rowCount = $('#partners_card table tbody tr').length;
+    if (rowCount === 0) {
+        alert('No data available to print.');
+        return;
+    }
+
+    var printContents = document.getElementById('partners_card').innerHTML;
+    var printWindow = window.open('', '', 'height=900,width=1200');
+
+    printWindow.document.write('<html><head><title>Partners Report</title>');
+
+    printWindow.document.write(`
+        <style>
+            @page {
+                size: A4 landscape;
+            }
+
+           body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                transform: scale(0.82);
+                transform-origin: top center;  
+            }
+
+            table {
+                border-collapse: collapse;
+                width: auto !important;          
+                max-width: 100%;
+                table-layout: auto;             
+            }
+
+            th, td {
+                border: 1px solid #000;
+                padding: 4px 6px;
+                font-size: 12px;
+                text-align: center;
+                white-space: nowrap;            
+            }
+
+            th:nth-child(2),
+            td:nth-child(2),
+            th:nth-child(3),
+            td:nth-child(3) {
+                text-align: centre;
+                white-space: normal;
+                min-width: 120px;
+            }
+
+            .card {
+                border: none;
+                page-break-inside: avoid;
+            }
+
+            hr {
+                margin: 6px 0;
+            }
+            .card-header {
+                font-weight: 800 !important;
+                font-size: 14px;
+                padding: 6px 4px;
+                text-align: left;
+                background: none !important;
+                border-bottom: 1px solid #000;
+            }
+
+            input, button {
+                display: none !important;
+            }
+        </style>
+    `);
+
+    printWindow.document.write('</head><body>');
+
+    /* 🔹 HEADER */
+    printWindow.document.write(`
+        <div style="text-align:center; margin-bottom:6px;">
+            <img src="img/logo.png" style="height:55px;">
+            <h3 style="margin:4px 0;">Marudham Capitals</h3>
+            <div style="font-weight:bold;">Partners Report</div>
+            <div style="font-weight:bold; margin-top:2px;">
+                Date :  ${$('#to_date').val().split('-').reverse().join('-')}
+            </div>
+        </div>
+        <hr>
+    `);
+
+    /* 🔹 CONTENT */
+    printWindow.document.write(printContents);
+
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+
+    printWindow.onload = function () {
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+    };
+});
 
 });
 
@@ -36,7 +139,7 @@ function openingBalanceReport(to_date) {
             const tableData = res.data;
 
             const columns = [
-                { data: 'sno', title: "S.No" },
+                { data: 'sno',width: "60px", title: "S.No" },
                 { data: 'opening_label', title: "Opening Balance" },
                 {
                     data: 'hand_cash',
@@ -56,7 +159,7 @@ function openingBalanceReport(to_date) {
                     data: 'total',
                     title: "Total",
                     render: function (data) {
-                        return moneyFormatIndia(data);
+                    return '<b style="font-weight:900;">' + moneyFormatIndia(data) + '</b>';
                     }
                 }
             ];
@@ -107,8 +210,7 @@ function issuedReportCount(to_date) {
 
             // DataTable Columns
             const columns = [
-                { data: 'sno', title: "S.No" },
-                { data: 'fullname', title: "Loan Issue" },
+                { data: 'sno', width: "60px", title: "S.No" },
                 { data: 'loan_category', title: "Loan Category" },
                 {
                     data: 'today_issued_amount',
@@ -148,7 +250,6 @@ function issuedReportCount(to_date) {
         <tr>
             <td></td>
             <td><b>Total</b></td>
-            <td></td>
             <td><b>${moneyFormatIndia(totalRow.today_issued_amount)}</b></td>
             <td><b>${totalRow.today_count}</b></td>
             <td><b>${moneyFormatIndia(totalRow.total_issued_amount)}</b></td>
@@ -182,8 +283,7 @@ function collectReportCount(to_date) {
             const tableData = res.data.slice(0, -1);
 
             const columns = [
-                { data: 'sno', title: "S.No" },
-                { data: 'fullname', title: "Collection" },
+                { data: 'sno', width: "60px", title: "S.No" },
                 { data: 'loan_category', title: "Loan Category" },
                 {
                     data: 'today',
@@ -218,7 +318,6 @@ function collectReportCount(to_date) {
                 <tr>
                     <td></td>
                     <td><b>Total</b></td>
-                    <td></td>
                     <td><b>${moneyFormatIndia(totalRow.today)}</b></td>
                     <td><b>${moneyFormatIndia(totalRow.till_now)}</b></td>
                 </tr>
@@ -251,7 +350,7 @@ function otherTransReport(to_date) {
             const tableData = res.data.slice(0, -1);
 
             const columns = [
-                { data: 'sno', title: "S.No" },
+                { data: 'sno', width: "60px", title: "S.No" },
                 { data: 'fullname', title: "Other Transaction" },
                 {
                     data: 'credit',
@@ -315,7 +414,7 @@ function closingBalanceReport(to_date) {
             const tableData = res.data;
 
             const columns = [
-                { data: 'sno', title: "S.No" },
+                { data: 'sno', width: "60px", title: "S.No" },
                 { data: 'closing_label', title: "Closing Balance" },
                 {
                     data: 'hand_cash',
@@ -335,7 +434,7 @@ function closingBalanceReport(to_date) {
                     data: 'total',
                     title: "Total",
                     render: function (data) {
-                        return moneyFormatIndia(data);
+                        return '<b style="font-weight:900;">' + moneyFormatIndia(data) + '</b>';
                     }
                 }
             ];
