@@ -888,6 +888,11 @@ if (sizeof($getUser) > 0) {
 										<a href="finance_insight"><i class='icon-card_travel'></i>Financial Insights</a>
 									</li>
 								<?php  } ?>
+								<?php if ($finance_insight == 0) { ?>
+									<li>
+										<a href="hand_cash_balance_sheet"><i class='icon-card_travel'></i>Hand Cash Balance Sheet</a>
+									</li>
+								<?php  } ?>
 								<?php if ($accounts_loan_issue == 0) { ?> 
 									<li>
 										<a href="edit_accounts_loan_issue"><i class='icon-wallet'></i>Loan Issue</a>
