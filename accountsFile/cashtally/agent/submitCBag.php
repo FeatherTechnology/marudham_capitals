@@ -17,9 +17,9 @@ $trans_date = date('Y-m-d', strtotime($_POST['trans_date']));
 try {
 
     $connect->beginTransaction();
-    
+
     $chkStmt = $connect->prepare("SELECT transaction_amount, id  FROM bank_stmt  WHERE bank_id = :bank_id  AND trans_id = :trans_id  AND $sts > 0 LIMIT 1 ");
-    
+
     $chkStmt->execute([
         ':bank_id' => $bank_id,
         ':trans_id' => $trans_id
@@ -34,7 +34,6 @@ try {
 
     $available_amt = floatval($chk['transaction_amount']);
     $bank_stmt_id  = $chk['id'];
-    $transaction_balance = $available_amt - $amt;
 
     if ($amt > $available_amt) {
         $connect->rollBack();
@@ -60,43 +59,29 @@ try {
     ]);
 
     /* ✅ UPDATE BANK STATEMENT */
-    $upStmt = $connect->prepare("
-        UPDATE bank_stmt 
-        SET 
-            transaction_amount = transaction_amount - :amt,
-            clr_status = CASE 
-                            WHEN ROUND(transaction_amount - :amt, 2) = 0 
-                            THEN 1 
-                            ELSE clr_status 
-                         END,
-            update_login_id = :user_id,
-            updated_date = NOW()
-        WHERE bank_id = :bank_id 
-        AND trans_id = :trans_id
-    ");
+    $upStmt = $connect->prepare(" UPDATE bank_stmt 
+        SET transaction_amount = transaction_amount - :amt,  clr_status = CASE WHEN ROUND(transaction_amount - :amt, 2) = 0 THEN 1 ELSE clr_status  END  WHERE bank_id = :bank_id AND trans_id = :trans_id ");
 
     $upStmt->execute([
         ':amt' => $amt,
-        ':user_id' => $user_id,
         ':bank_id' => $bank_id,
         ':trans_id' => $trans_id
     ]);
 
     /* ✅ INSERT CLEARED HISTORY */
     $historyStmt = $connect->prepare("INSERT INTO cleared_bank_stmt_history
-        (bank_stmt_id, transaction_balance, screens, insert_login_id, created_date)
+        (bank_stmt_id, transaction_amount, type, screens, insert_login_id, created_date)
         VALUES
-        (:bank_stmt_id, :transaction_balance, 'Bank Agent CR', :user_id, NOW()) ");
+        (:bank_stmt_id, :amt, 1,'Bank Agent CR', :user_id, NOW()) ");
 
     $historyStmt->execute([
         ':bank_stmt_id' => $bank_stmt_id,
-        ':transaction_balance' => $transaction_balance,
+        ':amt' => $amt,
         ':user_id' => $user_id
     ]);
 
     $connect->commit();
     echo "Submitted Successfully";
-
 } catch (Exception $e) {
 
     $connect->rollBack();
@@ -104,4 +89,3 @@ try {
 }
 
 $connect = null;
-?>

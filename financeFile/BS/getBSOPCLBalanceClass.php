@@ -6,26 +6,59 @@ class ClosingBalanceClass
     {
         $this->db = $connect;
     }
-    public function getUncleared($closing_date, $user_id)
+    public function getUncleared($op_date, $closing_date)
     {
-        $user_where = "";
-        $params = [
-            ':closing_date' => $closing_date
-        ];
+        // ---------- PREVIOUS (Before Opening Date) ----------
+        $prevStmtQry = $this->db->query("
+            SELECT 
+                COALESCE(SUM(credit),0) AS stmt_credit,
+                COALESCE(SUM(debit),0)  AS stmt_debit
+            FROM bank_stmt  
+            WHERE DATE(trans_date) < '$op_date'
+        ");
+        $prevStmt = $prevStmtQry->fetch(PDO::FETCH_ASSOC);
 
-        if (!empty($user_id)) {
-            $user_where = " AND insert_login_id = :user_id ";
-            $params[':user_id'] = $user_id;
-        }
+        $prevClearQry = $this->db->query("
+            SELECT 
+                COALESCE(SUM(CASE WHEN type = 1 THEN transaction_amount ELSE 0 END),0) AS clear_credit,
+                COALESCE(SUM(CASE WHEN type = 2 THEN transaction_amount ELSE 0 END),0) AS clear_debit
+            FROM cleared_bank_stmt_history
+            WHERE DATE(created_date) < '$op_date'
+        ");
 
-        $sql = "SELECT uncleared_credit, uncleared_debit FROM cash_tally WHERE  DATE(created_date) <= :closing_date $user_where ORDER by id DESC limit 1 ";
+        $prevClear = $prevClearQry->fetch(PDO::FETCH_ASSOC);
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute($params);
+        $previous_uncleared_credit = $prevStmt['stmt_credit'] - $prevClear['clear_credit'];
+        $previous_uncleared_debit  = $prevStmt['stmt_debit']  - $prevClear['clear_debit'];
 
-        return $stmt->fetch(PDO::FETCH_ASSOC) ?? [
-            'uncleared_credit' => 0,
-            'uncleared_debit'  => 0
+        // ---------- CURRENT (Between Opening & Closing Date) ----------
+        $currStmtQry = $this->db->query("
+            SELECT 
+                COALESCE(SUM(credit),0) AS stmt_credit,
+                COALESCE(SUM(debit),0)  AS stmt_debit
+            FROM bank_stmt  
+            WHERE DATE(trans_date) <='$closing_date'
+        ");
+        $currStmt = $currStmtQry->fetch(PDO::FETCH_ASSOC);
+
+        $currClearQry = $this->db->query("
+            SELECT 
+                COALESCE(SUM(CASE WHEN type = 1 THEN transaction_amount ELSE 0 END),0) AS clear_credit,
+                COALESCE(SUM(CASE WHEN type = 2 THEN transaction_amount ELSE 0 END),0) AS clear_debit
+            FROM cleared_bank_stmt_history
+            WHERE DATE(created_date) <= '$closing_date'
+        ");
+
+        $currClear = $currClearQry->fetch(PDO::FETCH_ASSOC);
+
+        $current_uncleared_credit = $currStmt['stmt_credit'] - $currClear['clear_credit'];
+        $current_uncleared_debit  = $currStmt['stmt_debit']  - $currClear['clear_debit'];
+
+        return [
+            'previous_uncleared_credit' => $previous_uncleared_credit ?? 0,
+            'previous_uncleared_debit'  => $previous_uncleared_debit ?? 0,
+            'current_uncleared_credit'  => $current_uncleared_credit ?? 0,
+            'current_uncleared_debit'   => $current_uncleared_debit ?? 0
         ];
     }
 
@@ -100,12 +133,12 @@ class ClosingBalanceClass
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-               
+
         //only for collections we need user ids of agents
         $qry = $this->db->query("SELECT ag_id FROM agent_creation WHERE 1");
         $agent_ids = $qry->fetchAll(PDO::FETCH_COLUMN);
         $ag_ids = implode(',', $agent_ids);
-        
+
         //get agent user id to get data for collection.
         $qry = $this->db->query("SELECT `user_id` FROM user WHERE FIND_IN_SET( `ag_id`, '$ag_ids')");
         $ag_user_ids = $qry->fetchAll(PDO::FETCH_COLUMN);
@@ -150,7 +183,7 @@ class ClosingBalanceClass
                 
             ) AS Agent_Credit_Closing
         ");
-  
+
         $agentCredit = $agentCreditQry->fetch()['agent_credit'];
 
         $agentDebitQry = $this->db->query("SELECT
@@ -189,7 +222,7 @@ class ClosingBalanceClass
         $agent_bank_op = intVal($agentDebit) - intVal($agentCredit);
 
         //
-        if ($agent_hand_op == 0 && $agent_bank_op == 0 && $agent_CL_op == 0 ) {
+        if ($agent_hand_op == 0 && $agent_bank_op == 0 && $agent_CL_op == 0) {
             $records[0]['agent_closing'] = 0;
         } else {
             $records[0]['agent_closing'] = $agent_hand_op + $agent_bank_op + $agent_CL_op;
@@ -198,7 +231,7 @@ class ClosingBalanceClass
         $records[0]['hand_closing'] = $records[0]['hand_closing'] - $agent_hand_op; //this will subract the hand debited amount for the agent with hand closing cash
         //this will subract the bank debited amount for the agent with bank closing cash
 
-         $closing_total = $records[0]['hand_closing'] + $bank_closing_all;
+        $closing_total = $records[0]['hand_closing'] + $bank_closing_all;
 
         if (floor($closing_total) == $closing_total) {
             // No decimal part
@@ -211,13 +244,13 @@ class ClosingBalanceClass
         return $records;
     }
 
-    public function getDetails($op_date, $bank_detail , $user_id)
-    { 
+    public function getDetails($op_date, $bank_detail, $user_id)
+    {
         $user_where = "";
         if ($user_id != '') {
             $user_where = "AND insert_login_id = '$user_id' ";
         }
-       
+
         $handCreditQry = $this->db->query("SELECT
             SUM(amt) AS hand_credits
             FROM (
@@ -279,20 +312,20 @@ class ClosingBalanceClass
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            
+
         //only for collections we need user ids of agents
         // $qry = $this->db->query("SELECT `agentforstaff` AS ag_id FROM user WHERE `user_id` = '$user_id'");
         $qry = $this->db->query("SELECT ag_id FROM agent_creation WHERE 1");
         $agent_ids = $qry->fetchAll(PDO::FETCH_COLUMN);
         $ag_ids = implode(',', $agent_ids);
-        
+
         //get agent user id to get data for collection.
         $qry = $this->db->query("SELECT `user_id` FROM user WHERE FIND_IN_SET( `ag_id`, '$ag_ids')");
         $ag_user_ids = $qry->fetchAll(PDO::FETCH_COLUMN);
         $ag_user_id = implode(',', $ag_user_ids);
         $ag_where = " AND FIND_IN_SET(cl.insert_login_id, '$ag_user_id') ";
 
-        
+
         $agentCollQry = $this->db->query("SELECT
             SUM(amt) AS agent_coll
             FROM (
@@ -383,7 +416,7 @@ class ClosingBalanceClass
 
         $records[0]['hand_opening'] = $records[0]['hand_opening'] - $agent_hand_op; //this will subract the hand debited amount for the agent with hand closing cash
 
-    
+
         $opening_total = $records[0]['hand_opening'] + $bank_opening_all;
 
         if (floor($opening_total) == $opening_total) {
@@ -396,41 +429,40 @@ class ClosingBalanceClass
         return $records;
     }
 
-function moneyFormatIndia($num)
-{
-    $isNegative = false;
-    if ($num < 0) {
-        $isNegative = true;
-        $num = abs($num);
-    }
-
-    // 🔹 Split integer & decimal part (minimal addition)
-    $numStr = (string)$num;
-    $parts = explode('.', $numStr);
-    $intPart = $parts[0];
-    $decPart = isset($parts[1]) ? '.' . $parts[1] : '';
-
-    $explrestunits = "";
-    if (strlen($intPart) > 3) {
-        $lastthree = substr($intPart, -3);
-        $restunits = substr($intPart, 0, -3);
-        $restunits = (strlen($restunits) % 2 == 1) ? "0" . $restunits : $restunits;
-        $expunit = str_split($restunits, 2);
-
-        foreach ($expunit as $index => $value) {
-            if ($index == 0) {
-                $explrestunits .= (int)$value . ",";
-            } else {
-                $explrestunits .= $value . ",";
-            }
+    function moneyFormatIndia($num)
+    {
+        $isNegative = false;
+        if ($num < 0) {
+            $isNegative = true;
+            $num = abs($num);
         }
 
-        $thecash = $explrestunits . $lastthree . $decPart;
-    } else {
-        $thecash = $intPart . $decPart;
+        // 🔹 Split integer & decimal part (minimal addition)
+        $numStr = (string)$num;
+        $parts = explode('.', $numStr);
+        $intPart = $parts[0];
+        $decPart = isset($parts[1]) ? '.' . $parts[1] : '';
+
+        $explrestunits = "";
+        if (strlen($intPart) > 3) {
+            $lastthree = substr($intPart, -3);
+            $restunits = substr($intPart, 0, -3);
+            $restunits = (strlen($restunits) % 2 == 1) ? "0" . $restunits : $restunits;
+            $expunit = str_split($restunits, 2);
+
+            foreach ($expunit as $index => $value) {
+                if ($index == 0) {
+                    $explrestunits .= (int)$value . ",";
+                } else {
+                    $explrestunits .= $value . ",";
+                }
+            }
+
+            $thecash = $explrestunits . $lastthree . $decPart;
+        } else {
+            $thecash = $intPart . $decPart;
+        }
+
+        return $isNegative ? "-" . $thecash : $thecash;
     }
-
-    return $isNegative ? "-" . $thecash : $thecash;
-}
-
 }

@@ -39,7 +39,7 @@ $records = $CBObj->getDetails( $op_date,  $bank_detail , $user_id);
 
 $getClosingBalForBS = $CBObj->getClosingBalance($closing_date, $bank_detail, $user_id);
 
-$getUnclearedForBS = $CBObj->getUncleared( $closing_date, $user_id); 
+$getUnclearedForBS = $CBObj->getUncleared( $op_date,$closing_date); 
 
 
 echo json_encode(array($getClosingBalForBS, $records,$getUnclearedForBS));

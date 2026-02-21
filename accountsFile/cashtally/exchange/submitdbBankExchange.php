@@ -34,7 +34,6 @@ try {
 
     $available_amt = floatval($chk['transaction_amount']);
     $bank_stmt_id  = $chk['id'];
-    $transaction_balance = $available_amt - $amt;
 
     /* ❌ ENTERED AMOUNT IS MORE */
     if ($amt > $available_amt) {
@@ -46,13 +45,7 @@ try {
 
     $myStr = "EXD";
 
-    $selectIC = $connect->prepare("
-        SELECT ref_code 
-        FROM ct_db_bexchange 
-        WHERE ref_code != '' 
-        ORDER BY id DESC 
-        LIMIT 1
-    ");
+    $selectIC = $connect->prepare(" SELECT ref_code FROM ct_db_bexchange WHERE ref_code != '' ORDER BY id DESC LIMIT 1");
 
     $selectIC->execute();
     $lastRow = $selectIC->fetch(PDO::FETCH_ASSOC);
@@ -72,12 +65,10 @@ try {
     /////////////////////////////////////////////////////////////////////////////////
 
     /* ✅ INSERT EXCHANGE ENTRY */
-    $insertStmt = $connect->prepare("
-        INSERT INTO ct_db_bexchange 
+    $insertStmt = $connect->prepare("INSERT INTO ct_db_bexchange 
         (ref_code, from_acc_id, to_bank_id, to_user_id, trans_id, remark, amt, insert_login_id, created_date)
         VALUES
-        (:ref_code, :from_acc_id, :to_bank_id, :to_user_id, :trans_id, :remark, :amt, :user_id, :created_date)
-    ");
+        (:ref_code, :from_acc_id, :to_bank_id, :to_user_id, :trans_id, :remark, :amt, :user_id, :created_date)");
 
     $insertStmt->execute([
         ':ref_code' => $ref_code,
@@ -102,29 +93,26 @@ try {
                             WHEN ROUND(:new_amount, 2) = 0 
                             THEN 1 
                             ELSE clr_status 
-                         END,
-            update_login_id = :user_id,
-            updated_date = NOW()
+                         END
         WHERE bank_id = :bank_id 
         AND trans_id = :trans_id
     ");
 
     $updateStmt->execute([
         ':new_amount' => $new_amount,
-        ':user_id' => $user_id,
         ':bank_id' => $from_acc_id,
         ':trans_id' => $trans_id
     ]);
 
     /* ✅ INSERT CLEARED HISTORY */
     $historyStmt = $connect->prepare("INSERT INTO cleared_bank_stmt_history
-        (bank_stmt_id, transaction_balance, screens, insert_login_id, created_date)
+        (bank_stmt_id, transaction_amount, type, screens, insert_login_id, created_date)
         VALUES
-        (:bank_stmt_id, :transaction_balance, 'Bank Exchange DB', :user_id, NOW()) ");
+        (:bank_stmt_id, :amt, 2, 'Bank Exchange DB', :user_id, NOW()) ");
 
     $historyStmt->execute([
         ':bank_stmt_id' => $bank_stmt_id,
-        ':transaction_balance' => $transaction_balance,
+        ':amt' => $amt,
         ':user_id' => $user_id
     ]);  
 

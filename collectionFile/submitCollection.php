@@ -318,6 +318,17 @@ try {
         $query = $connect->prepare("UPDATE bank_stmt SET transaction_amount = ?, clr_status = ? WHERE id = ? ");
 
         $query->execute([$bank_clr_trans_amnt, $clr_sts, $bank_clr_bank_id]);
+
+        $historyStmt = $connect->prepare("INSERT INTO cleared_bank_stmt_history
+            (bank_stmt_id, transaction_amount, type, screens, insert_login_id, created_date)
+            VALUES
+            (:bank_stmt_id, :amt, 1, 'Collection', :user_id, NOW()) ");
+
+        $historyStmt->execute([
+            ':bank_stmt_id' => $bank_clr_bank_id,
+            ':amt' => $total_paid_track,
+            ':user_id' => $userid
+        ]);
     }
 
     // $qry = $connect->query("SELECT customer_name, mobile1 from customer_register where req_ref_id = '$req_id' ");

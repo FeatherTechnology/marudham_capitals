@@ -38,7 +38,6 @@ try {
 
     $available_amt = floatval($chk['transaction_amount']);
     $bank_stmt_id  = $chk['id'];
-    $transaction_balance = $available_amt - $amt;
 
     /* ❌ AMOUNT VALIDATION */
     if ($amt > $available_amt) {
@@ -66,13 +65,7 @@ try {
     /* 🔁 GENERATE EXPENSE REFERENCE CODE */
     $myStr = "EXP";
 
-    $codeStmt = $connect->prepare("
-        SELECT ref_code 
-        FROM ct_db_bexpense 
-        WHERE ref_code != '' 
-        ORDER BY id DESC 
-        LIMIT 1
-    ");
+    $codeStmt = $connect->prepare(" SELECT ref_code FROM ct_db_bexpense  WHERE ref_code != '' ORDER BY id DESC LIMIT 1 ");
 
     $codeStmt->execute();
     $row = $codeStmt->fetch(PDO::FETCH_ASSOC);
@@ -84,13 +77,24 @@ try {
     } else {
         $ref_code = $myStr . "-100001";
     }
-
-    /* ✅ INSERT BANK EXPENSE */
-    $insertStmt = $connect->prepare("
-        INSERT INTO ct_db_bexpense
-        (username, usertype, ref_code, bank_id, cat, part, vou_id, trans_id, rec_per, remark, amt, upload, insert_login_id, created_date)
+        /* ✅ INSERT CLEARED HISTORY */
+    $historyStmt = $connect->prepare("INSERT INTO cleared_bank_stmt_history
+        (bank_stmt_id, transaction_amount, type, screens, insert_login_id, created_date)
         VALUES
-        (:username, :usertype, :ref_code, :bank_id, :cat, :part, :vou_id, :trans_id, :rec_per, :remark, :amt, :upload, :user_id, :created_date)
+        (:bank_stmt_id, :amt, 2, 'Bank Expense', :user_id, NOW()) ");
+
+    $historyStmt->execute([
+        ':bank_stmt_id' => $bank_stmt_id,
+        ':amt' => $amt,
+        ':user_id' => $user_id
+    ]);  
+    
+    $history_id = $connect->lastInsertId();
+    /* ✅ INSERT BANK EXPENSE */
+    $insertStmt = $connect->prepare("INSERT INTO ct_db_bexpense
+        (username, usertype, ref_code, bank_id, cat, part, vou_id, trans_id, rec_per, remark, amt, upload, bank_stmt_history_id, insert_login_id, created_date)
+        VALUES
+        (:username, :usertype, :ref_code, :bank_id, :cat, :part, :vou_id, :trans_id, :rec_per, :remark, :amt, :bank_stmt_history_id, :upload, :user_id, :created_date)
     ");
 
     $insertStmt->execute([
@@ -106,6 +110,7 @@ try {
         ':remark' => $remark,
         ':amt' => $amt,
         ':upload' => $upd,
+        ':bank_stmt_history_id' => $history_id,
         ':user_id' => $user_id,
         ':created_date' => $trans_date
     ]);
@@ -121,31 +126,16 @@ try {
                             WHEN ROUND(:new_amount, 2) = 0 
                             THEN 1 
                             ELSE clr_status 
-                         END,
-            update_login_id = :user_id,
-            updated_date = NOW()
+                         END
         WHERE bank_id = :bank_id 
         AND trans_id = :trans_id
     ");
 
     $updateStmt->execute([
         ':new_amount' => $new_amount,
-        ':user_id' => $user_id,
         ':bank_id' => $bank_id,
         ':trans_id' => $trans_id
     ]);
-
-        /* ✅ INSERT CLEARED HISTORY */
-    $historyStmt = $connect->prepare("INSERT INTO cleared_bank_stmt_history
-        (bank_stmt_id, transaction_balance, screens, insert_login_id, created_date)
-        VALUES
-        (:bank_stmt_id, :transaction_balance, 'Bank Expense', :user_id, NOW()) ");
-
-    $historyStmt->execute([
-        ':bank_stmt_id' => $bank_stmt_id,
-        ':transaction_balance' => $transaction_balance,
-        ':user_id' => $user_id
-    ]);  
 
     $connect->commit();
     echo "Submitted Successfully";
