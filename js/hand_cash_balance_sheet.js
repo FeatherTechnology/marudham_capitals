@@ -53,7 +53,7 @@ function getUserNames() {
     $.post('financeFile/getUsersName.php', function (response) {
         $('#by_user').append("<option value=''>Select User</option>")
         $.each(response, function (index, val) {
-            $('#by_user').append("<option value='" + val['user_id'] + "'>" + val['username'] + "</option> ");
+            $('#by_user').append("<option value='" + val['user_id'] + "' data-branch='" + val['branch_id'] + "'>" + val['username'] + "</option> ");
         });
     }, 'json');
 }
@@ -71,46 +71,53 @@ function BalanceSheetCalculations(type, from_date, to_date) {
             
         }
 
-        let args = { type, user_id };
+        branch_id = $('#userid option:selected').data('branch');
+        let args = { type, user_id, branch_id };
 
         if (type === 'day') {
             args.from_date = from_date;
             args.to_date = to_date;
+            args.branch_id = branch_id;
         }
 
         //to get Hand cash balance sheet
         $.post('accountsFile/HandCashBS/getHandCashBSDetails.php', args, function (response) {
+            
+            let coll_record = response.collection_record;
 
             //Opening balance
-            $('.balance-sheet-card').find('tbody tr:first td:nth-child(2)').text(response['hand_opening']);
+            $('.balance-sheet-card').find('tbody tr:first td:nth-child(2)').text(coll_record['hand_opening']);
 
             //Collection and Other income
-            $('.balance-sheet-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(response['due_collection']);
-            $('.balance-sheet-card').find('tbody tr:nth-child(3) td:nth-child(2)').text(response['pre_close_waiver']);
-            $('.balance-sheet-card').find('tbody tr:nth-child(4) td:nth-child(2)').text(response['penalty']);
-            $('.balance-sheet-card').find('tbody tr:nth-child(5) td:nth-child(2)').text(response['fine']);
-            $('.balance-sheet-card').find('tbody tr:nth-child(6) td:nth-child(2)').text(response['other_income']);
+            $('.balance-sheet-card').find('tbody tr:nth-child(2) td:nth-child(2)').text(coll_record['due_collection']);
+            $('.balance-sheet-card').find('tbody tr:nth-child(3) td:nth-child(2)').text(coll_record['pre_close_waiver']);
+            $('.balance-sheet-card').find('tbody tr:nth-child(4) td:nth-child(2)').text(coll_record['penalty']);
+            $('.balance-sheet-card').find('tbody tr:nth-child(5) td:nth-child(2)').text(coll_record['fine']);
+            $('.balance-sheet-card').find('tbody tr:nth-child(6) td:nth-child(2)').text(coll_record['other_income']);
 
             //Investment, Deposit, Exchange, EL and Contra
-            $('.balance-sheet-card').find('tbody tr:nth-child(7) td:nth-child(2)').text(response['cr_investment']);
-            $('.balance-sheet-card').find('tbody tr:nth-child(7) td:nth-child(3)').text(response['db_investment']);
-            $('.balance-sheet-card').find('tbody tr:nth-child(8) td:nth-child(2)').text(response['cr_deposit']);
-            $('.balance-sheet-card').find('tbody tr:nth-child(8) td:nth-child(3)').text(response['db_deposit']);
-            $('.balance-sheet-card').find('tbody tr:nth-child(9) td:nth-child(2)').text(response['cr_exchange']);
-            $('.balance-sheet-card').find('tbody tr:nth-child(9) td:nth-child(3)').text(response['db_exchange']);
-            $('.balance-sheet-card').find('tbody tr:nth-child(10) td:nth-child(2)').text(response['cr_el']);
-            $('.balance-sheet-card').find('tbody tr:nth-child(10) td:nth-child(3)').text(response['db_el']);
-            $('.balance-sheet-card').find('tbody tr:nth-child(11) td:nth-child(2)').text(response['credit_contra']);
-            $('.balance-sheet-card').find('tbody tr:nth-child(11) td:nth-child(3)').text(response['debit_contra']);
+            $('.balance-sheet-card').find('tbody tr:nth-child(7) td:nth-child(2)').text(coll_record['cr_investment']);
+            $('.balance-sheet-card').find('tbody tr:nth-child(7) td:nth-child(3)').text(coll_record['db_investment']);
+            $('.balance-sheet-card').find('tbody tr:nth-child(8) td:nth-child(2)').text(coll_record['cr_deposit']);
+            $('.balance-sheet-card').find('tbody tr:nth-child(8) td:nth-child(3)').text(coll_record['db_deposit']);
+            $('.balance-sheet-card').find('tbody tr:nth-child(9) td:nth-child(2)').text(coll_record['cr_exchange']);
+            $('.balance-sheet-card').find('tbody tr:nth-child(9) td:nth-child(3)').text(coll_record['db_exchange']);
+            $('.balance-sheet-card').find('tbody tr:nth-child(10) td:nth-child(2)').text(coll_record['cr_el']);
+            $('.balance-sheet-card').find('tbody tr:nth-child(10) td:nth-child(3)').text(coll_record['db_el']);
+            $('.balance-sheet-card').find('tbody tr:nth-child(11) td:nth-child(2)').text(coll_record['credit_contra']);
+            $('.balance-sheet-card').find('tbody tr:nth-child(11) td:nth-child(3)').text(coll_record['debit_contra']);
 
             //Issued, Agent and Expenses
-            $('.balance-sheet-card').find('tbody tr:nth-child(12) td:nth-child(3)').text(response['issued']);
-            $('.balance-sheet-card').find('tbody tr:nth-child(13) td:nth-child(2)').text(response['cr_agent']);
-            $('.balance-sheet-card').find('tbody tr:nth-child(13) td:nth-child(3)').text(response['db_agent']);
-            $('.balance-sheet-card').find('tbody tr:nth-child(14) td:nth-child(3)').text(response['expense']);
+            $('.balance-sheet-card').find('tbody tr:nth-child(12) td:nth-child(3)').text(coll_record['issued']);
+            $('.balance-sheet-card').find('tbody tr:nth-child(13) td:nth-child(2)').text(coll_record['cr_agent']);
+            $('.balance-sheet-card').find('tbody tr:nth-child(13) td:nth-child(3)').text(coll_record['db_agent']);
+            $('.balance-sheet-card').find('tbody tr:nth-child(14) td:nth-child(3)').text(coll_record['expense']);
 
+            //Circular Amount
+            $('.balance-sheet-card').find('tbody tr:nth-child(15) td:nth-child(3)').text(moneyFormatIndia(response['circular_amount']));
+            
             //Closing balance
-            $('.balance-sheet-card').find('tbody tr:nth-child(15) td:nth-child(3)').text(response['hand_closing']);
+            $('.balance-sheet-card').find('tbody tr:nth-child(16) td:nth-child(3)').text(coll_record['hand_closing']);
 
         }, 'json').done(function () {
             // This function will be executed when all Ajax calls are completed successfully

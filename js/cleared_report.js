@@ -1,5 +1,5 @@
 $(document).ready(function () {
- $('#from_date').change(function(){
+    $('#from_date').change(function(){
         const fromDate = $(this).val();
         const toDate = $('#to_date').val();
         $('#to_date').attr('min', fromDate);
@@ -9,10 +9,11 @@ $(document).ready(function () {
             $('#to_date').val(''); // Clear the invalid value
         }
     });
+
     //cleared_report_table 
     $('#reset_btn').click(function () {
         clearedReportTable();
-    })
+    });
 });
 
 function clearedReportTable() {
@@ -22,6 +23,7 @@ function clearedReportTable() {
         swalError('Please Select Date!', 'Both From and To Date are required.');
         return;
     }
+
     $('#cleared_report_table').DataTable().destroy();
     // Declare table variable to store the DataTable instance
     var cleared_report_table = $('#cleared_report_table').DataTable({
@@ -35,10 +37,9 @@ function clearedReportTable() {
         'ajax': {
             'url': 'reportFile/cleared/getClearedReport.php',
             'data': function (data) {
-                var search = $('input[type=search]').val();
-                data.search = search;
-                data.to_date = $('#to_date').val();
+                data.search = $('input[type=search]').val();
                 data.from_date = $('#from_date').val();
+                data.to_date = $('#to_date').val();
             }
         },
         dom: 'lBfrtip',

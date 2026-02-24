@@ -146,6 +146,11 @@ $bank_details = $getuser['bank_details'];
 										<td></td>
 									</tr>
 									<tr class='break'>
+										<td>Circular Amount</td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr class='break'>
 										<td>Total Closing Balance</td>
 										<td></td>
 										<td></td>

@@ -76,9 +76,9 @@ function getUserNames() {
     //get user name only who has access of cash tally
     $.post('financeFile/getUsersName.php', function (response) {
         $('#by_user').empty()
-        $('#by_user').append("<option value=''>Select User</option>")
+        $('#by_user').append("<option value='' data-branch=''>Select User</option>")
         $.each(response, function (index, val) {
-            $('#by_user').append("<option value='" + val['user_id'] + "'>" + val['username'] + "</option> ");
+            $('#by_user').append("<option value='" + val['user_id'] + "' data-branch='" + val['branch_id'] + "'>" + val['username'] + "</option> ");
         })
     }, 'json')
 }
@@ -89,9 +89,11 @@ function BalanceSheetCalculations(type, from_date, to_date, month) {
 
         var user_id = $('#by_user').val();
         var bankDetail = $('#bank_detail').val();
-        if (type == 'today') { var args = { 'type': 'today', 'user_id': user_id, 'bankDetail': bankDetail }; } else
-            if (type == 'day') { var args = { 'type': 'day', 'from_date': from_date, 'to_date': to_date, 'user_id': user_id, 'bankDetail': bankDetail }; } else
-                if (type == 'month') { var args = { 'type': 'month', 'month': month, 'user_id': user_id, 'bankDetail': bankDetail }; }
+        branch_id = $('#by_user option:selected').data('branch');
+
+        if (type == 'today') { var args = { 'type': 'today', 'user_id': user_id, 'bankDetail': bankDetail ,'branch_id' : branch_id }; } else
+            if (type == 'day') { var args = { 'type': 'day', 'from_date': from_date, 'to_date': to_date, 'user_id': user_id, 'bankDetail': bankDetail ,'branch_id' : branch_id }; } else
+                if (type == 'month') { var args = { 'type': 'month', 'month': month, 'user_id': user_id, 'bankDetail': bankDetail ,'branch_id' : branch_id}; }
 
         // Create an array to store all the Ajax calls
         let ajaxCalls = [];
@@ -110,8 +112,12 @@ function BalanceSheetCalculations(type, from_date, to_date, month) {
             let previous_uncleared_debit  = response[2]?.previous_uncleared_debit  || 0;
             let current_uncleared_credit  = response[2]?.current_uncleared_credit  || 0;
             let current_uncleared_debit  = response[2]?.current_uncleared_debit  || 0;
+            let circular_amount  = response[3];
+            
             $('.balance-sheet-card').find('tbody tr:nth-child(17) td:nth-child(3)').text(moneyFormatIndia(agBal));
-            $('.balance-sheet-card').find('tbody tr:nth-child(18) td:nth-child(3)').text(moneyFormatIndia(clBal));
+            $('.balance-sheet-card') .find('tbody tr:nth-child(18) td:nth-child(3)') .text(moneyFormatIndia(circular_amount));
+
+            $('.balance-sheet-card').find('tbody tr:nth-child(19) td:nth-child(3)').text(moneyFormatIndia(clBal));
             $('.benefits-check-card').find('tbody tr:nth-child(12) td:nth-child(3)').text(moneyFormatIndia(agBal));//benefit check table also will have same Agent balance
             $('.benefits-check-card').find('tbody tr:nth-child(13) td:nth-child(3)').text(moneyFormatIndia(clBal));//benefit check table also will have same closing balance
 

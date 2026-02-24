@@ -1,9 +1,10 @@
 <?php
 include('../../ajaxconfig.php');
+include(__DIR__ . '/getCircularAmount.php');
+$CBObj = new CircularAmountClass($connect); 
 
 $type = $_POST['type'];
 $userid = $_POST['user_id'] ?? ''; //for user based
-// $userid = ($_POST['user_id'] != '') ? " AND insert_login_id = '" . $_POST['user_id'] . "' " : ''; //for user based
 
 if ($type == 'today') {
     $from_date = date('Y-m-d');
@@ -13,6 +14,9 @@ if ($type == 'today') {
     $from_date = $_POST['from_date'];
     $to_date = date('Y-m-d', strtotime($_POST['to_date']. '+1 day'));
 }
+$branch_id = $_POST['branch_id'] ?? '1,2,3,4,5,6,7';
+
+$circular_amount = $CBObj->getCircularAmount( $from_date, $to_date, $branch_id, $userid);
 
 $response = getCollectionRecord($connect, $from_date, $to_date, $userid);
 
@@ -20,7 +24,12 @@ $response = array_map(function ($num) {
     return number_format(intVal($num), 0, '', ',');
 }, $response);
 
-echo json_encode($response);
+$final_response = [
+    'collection_record' => $response,
+    'circular_amount' => $circular_amount
+];
+
+echo json_encode($final_response);
 
 function getCollectionRecord($connect, $from_date, $to_date, $userid)
 {
@@ -124,16 +133,10 @@ function getCollectionRecord($connect, $from_date, $to_date, $userid)
         $response['debit_contra'] = (float)$bank_deposit;
 
     // Issued
-    $qry = $connect->query("SELECT SUM(net_cash) AS amt FROM loan_issue li JOIN in_issue ii ON li.req_id = ii.req_id WHERE ii.cus_status >= 14 AND cash !='' AND (ii.updated_date >= '$from_date' AND ii.updated_date < '$to_date') $ii_user_id");
+    $qry = $connect->query("SELECT SUM(cash) AS amt FROM loan_issue li JOIN in_issue ii ON li.req_id = ii.req_id WHERE ii.cus_status >= 14 AND (agent_id ='' OR agent_id = null) AND cash !='' AND (ii.updated_date >= '$from_date' AND ii.updated_date < '$to_date') $ii_user_id");
 
         $row = $qry->fetch();
         $issued = $row['amt'] ?? 0;
-
-    // $qry = $connect->query("SELECT COALESCE(SUM(cash), 0) AS amt FROM loan_issue WHERE $accWhereCndtn and (agent_id !='' or agent_id != null)");
-
-    //     $row = $qry->fetch();
-    //     $ag_issued = $row['amt'] ?? 0;
-
         $response['issued'] = (float)$issued;
 
     // Agent Credit

@@ -75,6 +75,7 @@ $bank_details = '';
 $bank_clearance = '';
 $bnk_clr_upl_acc = '';
 $finance_insight = '';
+$hand_cash_balance_sheet = '';
 $accounts_loan_issue = '';
 $followupmodule = '';
 $promotion_activity = '';
@@ -252,6 +253,7 @@ if($idupd>0)
 			$bank_clearance          		     = $getUser['bank_clearance'];
 			$bnk_clr_upl_acc          		     = $getUser['bnk_clr_upl_acc'];
 			$finance_insight          		     = $getUser['finance_insight'];
+			$hand_cash_balance_sheet          		     = $getUser['hand_cash_balance_sheet'];
 			$accounts_loan_issue          		     = $getUser['accounts_loan_issue'];
 			$followupmodule          		     = $getUser['followupmodule'];
 			$promotion_activity = $getUser['promotion_activity'];
@@ -1108,6 +1110,12 @@ if($idupd>0)
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($finance_insight==0){ echo'checked'; }} ?> tabindex="58" class="accounts-checkbox screen-validations" id="finance_insight" name="finance_insight" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="finance_insight">Financial Insights</label>
+                            </div>
+                        </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($hand_cash_balance_sheet==0){ echo'checked'; }} ?> tabindex="58" class="accounts-checkbox screen-validations" id="hand_cash_balance_sheet" name="hand_cash_balance_sheet" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="hand_cash_balance_sheet">Hand Cash Balance Sheet</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
