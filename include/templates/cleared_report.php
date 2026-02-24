@@ -33,6 +33,9 @@
 									<th>Debit</th>
 									<th>Balance</th>
 									<th>Status</th>
+									<th>Cleared date</th>
+									<th>Cleared User</th>
+									<th>Cleared Screen</th>
 								</thead>
 								<tbody></tbody>
 								<tfoot>
@@ -41,7 +44,7 @@
 										<td></td>
 										<td></td>
 										<td></td>
-										<td colspan="1"></td>
+										<td colspan="4"></td>
 									</tr>
 								</tfoot>
 							</table>

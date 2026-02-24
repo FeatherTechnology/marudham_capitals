@@ -1529,6 +1529,16 @@ function validation() {
         }
     });
 
+    //Hand cash balance sheet validation
+    let hcbs = $('#hand_cash_balance_sheet').is(':checked');
+    
+    if(hcbs && report_access ==''){
+        $('#reportAccessCheck').show();
+        validation = false;
+    } else {
+        $('#reportAccessCheck').hide();
+    }
+
     // validation for Home Access
     var home_access = $('#home_access').val();
     if (home_access == '') {

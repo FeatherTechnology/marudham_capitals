@@ -403,6 +403,10 @@ if (isset($getuserdetails['download_access'])) {
 			<?php if ($current_page == 'finance_insight') { ?>
 				<?php include "include/templates/finance_insight.php" ?>
 			<?php } else ?>
+
+			<?php if ($current_page == 'hand_cash_balance_sheet') { ?>
+				<?php include "include/templates/hand_cash_balance_sheet.php" ?>
+			<?php } else ?>
 			
 			<!--Accounts Loan Issue--->
 			<?php if ($current_page == 'edit_accounts_loan_issue') { ?>

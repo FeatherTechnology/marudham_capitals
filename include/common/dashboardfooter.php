@@ -2586,6 +2586,12 @@
     if ($current_page == 'finance_insight') { ?>
         <script src="js/finance_insight.js"></script>
     <?php }
+
+    //Hand Cash Balance Sheet
+    if ($current_page == 'hand_cash_balance_sheet') { ?>
+        <script src="js/hand_cash_balance_sheet.js"></script>
+    <?php }
+    
     // accounts loan Isue
     if ($current_page == 'edit_accounts_loan_issue') { ?>
         <script src="js/edit_accounts_loan_issue.js"></script>

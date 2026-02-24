@@ -10,6 +10,7 @@ $qry = $connect->query("SELECT * FROM user where user_id != '1' and cash_tally =
 while ($row = $qry->fetch()) {
     $response[$i]['user_id'] = $row['user_id'];
     $response[$i]['username'] = $row['fullname'];
+    $response[$i]['branch_id'] = $row['branch_id'];
     $i++;
 }
 

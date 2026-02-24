@@ -17,7 +17,7 @@ while($row = $qry->fetch()){
     $records[$i]['id'] = $row['id'];
     $records[$i]['username'] = $row['username'];
     $records[$i]['usertype'] = $row['usertype'];
-    // $records[$i]['cat'] = $row['cat'];
+    $records[$i]['cat'] = $row['cat'];
     $records[$i]['category'] = $row['category'];
     $records[$i]['part'] = $row['part'];
     $records[$i]['vou_id'] = $row['vou_id'];
@@ -69,7 +69,9 @@ $connect = null;
                     <a target='_blank' href='../../../uploads/expenseBill/'<?php echo $records[$i]['upload'];?>><?php echo $records[$i]['upload'];?></a>
                 </td> -->
                 <td>
-                    <span data-value='<?php echo $records[$i]['id']; ?>' title='Delete details' class='delete_hexp'><span class='icon-trash-2'></span></span>
+                    <?php if($records[$i]['cat'] != '16'){ //if waiver expenses means no action to delete bcuz waiver expenses insert directly from waiver modal. ?>
+                        <span data-value='<?php echo $records[$i]['id']; ?>' title='Delete details' class='delete_hexp'><span class='icon-trash-2'></span></span>
+                    <?php } ?>
                 </td>
                 
             </tr>
