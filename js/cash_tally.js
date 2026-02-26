@@ -2791,9 +2791,10 @@ function getBexpenseTable() {
                 var bexp_id = $(this).data('value');
                 var bank_id = $(this).data('bank_id');
                 var transation_id = $(this).data('trans_id');
+                var clr_his_id = $(this).data('clr_his_id');
                 $.ajax({
                     url: 'accountsFile/cashtally/expense/deletebexpense.php',
-                    data: { 'bexp_id': bexp_id ,'bank_id': bank_id,'transation_id':transation_id },
+                    data: { 'bexp_id': bexp_id ,'bank_id': bank_id,'transation_id':transation_id ,'clr_his_id' :clr_his_id },
                     type: 'post',
                     cache: false,
                     success: function (response) {

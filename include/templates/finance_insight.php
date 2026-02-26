@@ -25,7 +25,7 @@ $bank_details = $getuser['bank_details'];
 				<input type="button" class="toggle-button" data-toggle='modal' data-target='#dayModal' value='Day Wise'>
 				<input type="button" class="toggle-button" value='Today'>
 				<input type="button" class="toggle-button" data-toggle='modal' data-target='#monthModal' value='Month Wise'>
-				<select type="text" class="toggle-button" id='by_user' name='by_user'>
+				<select type="text" class="toggle-button" id='by_user' name='by_user' style="display: none;">    <!-- when we click the userwise it shows the wrong amount so tem rmve that -->
 					<option value=''>Select User</option>
 				</select>
 			</div>
@@ -140,7 +140,7 @@ $bank_details = $getuser['bank_details'];
 										<td></td>
 										<td></td>
 									</tr>
-									<tr>
+									<tr class='break'>
 										<td>Agent Closing Balance</td>
 										<td></td>
 										<td></td>
@@ -378,8 +378,13 @@ $bank_details = $getuser['bank_details'];
 										<td></td>
 										<td></td>
 									</tr>
-									<tr>
+									<tr class='break'>
 										<td>Agent Closing Balance</td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr class='break'>
+										<td>Circular Contra</td>
 										<td></td>
 										<td></td>
 									</tr>

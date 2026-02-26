@@ -84,6 +84,7 @@ function BalanceSheetCalculations(type, from_date, to_date) {
         $.post('accountsFile/HandCashBS/getHandCashBSDetails.php', args, function (response) {
             
             let coll_record = response.collection_record;
+            let circular_amt = response.circular_amount;
 
             //Opening balance
             $('.balance-sheet-card').find('tbody tr:first td:nth-child(2)').text(coll_record['hand_opening']);
@@ -114,8 +115,9 @@ function BalanceSheetCalculations(type, from_date, to_date) {
             $('.balance-sheet-card').find('tbody tr:nth-child(14) td:nth-child(3)').text(coll_record['expense']);
 
             //Circular Amount
-            $('.balance-sheet-card').find('tbody tr:nth-child(15) td:nth-child(3)').text(moneyFormatIndia(response['circular_amount']));
-            
+            $('.balance-sheet-card').find('tbody tr:nth-child(15) td:nth-child(3)').text(moneyFormatIndia(circular_amt['total_credit']));
+            $('.balance-sheet-card').find('tbody tr:nth-child(15) td:nth-child(2)').text(moneyFormatIndia(circular_amt['total_debit']));
+
             //Closing balance
             $('.balance-sheet-card').find('tbody tr:nth-child(16) td:nth-child(3)').text(coll_record['hand_closing']);
 

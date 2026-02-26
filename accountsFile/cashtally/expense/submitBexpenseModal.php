@@ -89,12 +89,12 @@ try {
         ':user_id' => $user_id
     ]);  
     
-    $history_id = $connect->lastInsertId();
+    $bankStmtHistoryId  = $connect->lastInsertId();
     /* ✅ INSERT BANK EXPENSE */
     $insertStmt = $connect->prepare("INSERT INTO ct_db_bexpense
         (username, usertype, ref_code, bank_id, cat, part, vou_id, trans_id, rec_per, remark, amt, upload, bank_stmt_history_id, insert_login_id, created_date)
         VALUES
-        (:username, :usertype, :ref_code, :bank_id, :cat, :part, :vou_id, :trans_id, :rec_per, :remark, :amt, :bank_stmt_history_id, :upload, :user_id, :created_date)
+        (:username, :usertype, :ref_code, :bank_id, :cat, :part, :vou_id, :trans_id, :rec_per, :remark, :amt, :upload, :bank_stmt_history_id, :user_id, :created_date)
     ");
 
     $insertStmt->execute([
@@ -110,7 +110,7 @@ try {
         ':remark' => $remark,
         ':amt' => $amt,
         ':upload' => $upd,
-        ':bank_stmt_history_id' => $history_id,
+        ':bank_stmt_history_id' => $bankStmtHistoryId ,
         ':user_id' => $user_id,
         ':created_date' => $trans_date
     ]);
