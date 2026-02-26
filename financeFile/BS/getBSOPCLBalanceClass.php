@@ -28,8 +28,8 @@ class ClosingBalanceClass
 
         $prevClear = $prevClearQry->fetch(PDO::FETCH_ASSOC);
 
-        $previous_uncleared_credit = $prevStmt['stmt_credit'] - $prevClear['clear_credit'];
-        $previous_uncleared_debit  = $prevStmt['stmt_debit']  - $prevClear['clear_debit'];
+        $previous_uncleared_credit = round($prevStmt['stmt_credit'] - $prevClear['clear_credit'], 2);
+        $previous_uncleared_debit  = round($prevStmt['stmt_debit']  - $prevClear['clear_debit'], 2);
 
         // ---------- CURRENT (Between Opening & Closing Date) ----------
         $currStmtQry = $this->db->query("
@@ -50,9 +50,9 @@ class ClosingBalanceClass
         ");
 
         $currClear = $currClearQry->fetch(PDO::FETCH_ASSOC);
-
-        $current_uncleared_credit = $currStmt['stmt_credit'] - $currClear['clear_credit'];
-        $current_uncleared_debit  = $currStmt['stmt_debit']  - $currClear['clear_debit'];
+        
+        $current_uncleared_credit = round($currStmt['stmt_credit'] - $currClear['clear_credit'], 2);
+        $current_uncleared_debit  = round($currStmt['stmt_debit']  - $currClear['clear_debit'], 2);
 
         return [
             'previous_uncleared_credit' => $previous_uncleared_credit ?? 0,

@@ -2,6 +2,7 @@
 include('../../../ajaxconfig.php');
 
 $bexp_id = $_POST['bexp_id'];
+$clr_his_id    = $_POST['clr_his_id'];
 
 /* 🔹 Get expense details */
 $expQry = $connect->query(" SELECT amt, bank_id, trans_id, upload FROM ct_db_bexpense WHERE id = '$bexp_id' ");
@@ -51,7 +52,9 @@ $updateBank = $connect->query(" UPDATE bank_stmt SET transaction_amount = '$newV
 /* 🔹 Delete expense record */
 $deleteExp = $connect->query("  DELETE FROM ct_db_bexpense   WHERE id = '$bexp_id'");
 
-if ($updateBank && $deleteExp) {
+$deleteTransHsty= $connect->query("  DELETE FROM cleared_bank_stmt_history   WHERE id = '$clr_his_id '");
+
+if ($updateBank && $deleteExp && $deleteTransHsty) {
     echo "Deleted Successfully";
 } else {
     echo "Error While Deleting";

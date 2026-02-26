@@ -112,19 +112,26 @@ function BalanceSheetCalculations(type, from_date, to_date, month) {
             let previous_uncleared_debit  = response[2]?.previous_uncleared_debit  || 0;
             let current_uncleared_credit  = response[2]?.current_uncleared_credit  || 0;
             let current_uncleared_debit  = response[2]?.current_uncleared_debit  || 0;
-            let circular_amount  = response[3];
+            let circularData  = response[3];
+
+            let total_credit   = circularData.total_credit || 0;
+            let total_debit   = circularData.total_debit || 0;
+            let total_withdraw  = circularData.total_withdraw || 0;
             
             $('.balance-sheet-card').find('tbody tr:nth-child(17) td:nth-child(3)').text(moneyFormatIndia(agBal));
-            $('.balance-sheet-card') .find('tbody tr:nth-child(18) td:nth-child(3)') .text(moneyFormatIndia(circular_amount));
+            $('.balance-sheet-card') .find('tbody tr:nth-child(18) td:nth-child(3)') .text(moneyFormatIndia(total_credit));
+            $('.balance-sheet-card') .find('tbody tr:nth-child(18) td:nth-child(2)') .text(moneyFormatIndia(total_debit));
+
+            $('.benefits-check-card').find('tbody tr:nth-child(13) td:nth-child(3)').text(moneyFormatIndia(total_withdraw));//benefit check table also will have same closing balance
 
             $('.balance-sheet-card').find('tbody tr:nth-child(19) td:nth-child(3)').text(moneyFormatIndia(clBal));
             $('.benefits-check-card').find('tbody tr:nth-child(12) td:nth-child(3)').text(moneyFormatIndia(agBal));//benefit check table also will have same Agent balance
-            $('.benefits-check-card').find('tbody tr:nth-child(13) td:nth-child(3)').text(moneyFormatIndia(clBal));//benefit check table also will have same closing balance
+            $('.benefits-check-card').find('tbody tr:nth-child(14) td:nth-child(3)').text(moneyFormatIndia(clBal));//benefit check table also will have same closing balance
 
             $('.balance-sheet-card') .find('tbody tr:nth-child(15) td:nth-child(2)') .text(moneyFormatIndia(-previous_uncleared_credit));
             $('.balance-sheet-card') .find('tbody tr:nth-child(15) td:nth-child(3)') .text(moneyFormatIndia(-previous_uncleared_debit));
-            $('.benefits-check-card').find('tbody tr:nth-child(9) td:nth-child(2)').text(moneyFormatIndia(previous_uncleared_credit));
-            $('.benefits-check-card').find('tbody tr:nth-child(9) td:nth-child(3)').text(moneyFormatIndia(previous_uncleared_debit));
+            $('.benefits-check-card').find('tbody tr:nth-child(9) td:nth-child(2)').text(moneyFormatIndia(-previous_uncleared_credit));
+            $('.benefits-check-card').find('tbody tr:nth-child(9) td:nth-child(3)').text(moneyFormatIndia(-previous_uncleared_debit));
 
             $('.balance-sheet-card') .find('tbody tr:nth-child(16) td:nth-child(2)') .text(moneyFormatIndia(current_uncleared_credit));
             $('.balance-sheet-card') .find('tbody tr:nth-child(16) td:nth-child(3)') .text(moneyFormatIndia(current_uncleared_debit));

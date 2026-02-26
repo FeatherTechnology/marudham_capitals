@@ -142,6 +142,12 @@ class CircularAmountClass
         $total_exchange = $this->getTotalExchange($user_id, $from_date, $to_date);
         $total_withdraw = $this->getTotalWithdraw($from_date, $to_date);
 
-        return ($total_balance + $total_exchange + $total_withdraw) - $total_issued;
+        $total_credit = $total_balance + $total_exchange + $total_withdraw ;
+
+    return [
+        'total_credit' => $total_credit,
+        'total_debit' => $total_issued,
+        'total_withdraw' => $total_withdraw
+    ];
     }
 }
