@@ -26,7 +26,7 @@ $columns = [
     'bc.branch_name',
     'agm.group_name',
     'alm.line_name',
-    'rc.mobile1',
+    'cr.mobile1',
     'rc.req_id',
     'rc.req_id',
     'rc.req_id'
@@ -48,7 +48,7 @@ if ($searchValue != '') {
                     OR bc.branch_name LIKE '%" . $searchValue . "%'
                     OR agm.group_name LIKE '%" . $searchValue . "%'
                     OR alm.line_name LIKE '%" . $searchValue . "%'
-                    OR rc.mobile1 LIKE '%" . $searchValue . "%')";
+                    OR cr.mobile1 LIKE '%" . $searchValue . "%')";
 }
 
 $orderQuery = " ORDER BY " . $columns[$orderColumnIndex] . " " . $orderDir;
@@ -58,7 +58,7 @@ $sql = "SELECT
     rc.updated_date,
     rc.cus_id,
     rc.cus_name,
-    rc.mobile1,
+    cr.mobile1,
     cr.autogen_cus_id,
     alc.area_name,
     salc.sub_area_name,

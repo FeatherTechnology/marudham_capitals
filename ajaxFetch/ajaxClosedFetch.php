@@ -19,12 +19,12 @@ $column = array(
     'sa.sub_area_name',
     'bc.branch_name',
     'alm.line_name',
-    'cp.mobile1',
+    'cr.mobile1',
     'cp.id'
 );
 
 if ($userid == 1) {
-    $query = 'SELECT cp.cus_id as cp_cus_id, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cp.mobile1, ii.cus_id as ii_cus_id, ii.req_id,cc.closing_date
+    $query = 'SELECT cp.cus_id as cp_cus_id, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cr.mobile1, ii.cus_id as ii_cus_id, ii.req_id,cc.closing_date
     FROM acknowlegement_customer_profile cp 
     JOIN customer_register cr ON cp.cus_id = cr.cus_id
     JOIN in_issue ii ON cp.cus_id = ii.cus_id
@@ -36,7 +36,7 @@ if ($userid == 1) {
     JOIN branch_creation bc ON alm.branch_id = bc.branch_id
     where ii.status = 0 and ii.cus_status = 20 '; // Only Issued and all lines not relying on sub area
 } else {
-    $query = "SELECT cp.cus_id as cp_cus_id, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cp.mobile1, ii.cus_id as ii_cus_id, ii.req_id,cc.closing_date
+    $query = "SELECT cp.cus_id as cp_cus_id, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cr.mobile1, ii.cus_id as ii_cus_id, ii.req_id,cc.closing_date
     FROM acknowlegement_customer_profile cp 
     JOIN customer_register cr ON cp.cus_id = cr.cus_id
     JOIN in_issue ii ON cp.req_id = ii.req_id
@@ -60,7 +60,7 @@ if (isset($_POST['search']) && $_POST['search'] != "") {
             OR bc.branch_name LIKE '%" . $_POST['search'] . "%'
             OR alm.line_name LIKE '%" . $_POST['search'] . "%'
             OR cc.closing_date LIKE '%" . $_POST['search'] . "%'
-            OR cp.mobile1 LIKE '%" . $_POST['search'] . "%') ";
+            OR cr.mobile1 LIKE '%" . $_POST['search'] . "%') ";
 }
 $query .= " GROUP BY ii.cus_id ";
 $query .= " ORDER BY cp.updated_date ASC ";

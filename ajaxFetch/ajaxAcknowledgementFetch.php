@@ -37,7 +37,7 @@ $column = [
     'bc.branch_name',
     'agm.group_name',
     'alm.line_name',
-    'v.mobile1',
+    'cr.mobile1',
     'a.area_name',
     'sa.sub_area_name',
     'lcc.loan_category_creation_name',
@@ -57,7 +57,7 @@ $query = "SELECT DISTINCT
     v.req_id, 
     v.cus_id,
     v.cus_name, 
-    v.mobile1, 
+    cr.mobile1, 
     v.sub_category, 
     v.loan_amt, 
     v.user_type, 
@@ -115,7 +115,7 @@ if (!empty($_POST['search'])) {
         agm.group_name LIKE '%$search%' OR
         alm.line_name LIKE '%$search%' OR
         a.area_name LIKE '%$search%' OR
-        v.mobile1 LIKE '%$search%' OR
+        cr.mobile1 LIKE '%$search%' OR
         ac.ag_name LIKE '%$search%' OR
         sa.sub_area_name LIKE '%$search%' OR
         lcc.loan_category_creation_name LIKE '%$search%' OR

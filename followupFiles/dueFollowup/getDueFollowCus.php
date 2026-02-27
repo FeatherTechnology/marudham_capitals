@@ -96,9 +96,9 @@ if (isset($_POST['comm_date'])) {
 }
 
 $searchValue = $_POST['search'] ?? '';
-$search = $searchValue != '' ? "AND (ii.cus_id LIKE '%$searchValue%' OR cr.autogen_cus_id LIKE '%$searchValue%' OR cp.cus_name LIKE '%$searchValue%' OR alc.area_name LIKE '%$searchValue%' OR salc.sub_area_name LIKE '%$searchValue%' OR cp.mobile1 LIKE '%$searchValue%' OR cs.sub_status LIKE '%$searchValue%')" : '';
+$search = $searchValue != '' ? "AND (ii.cus_id LIKE '%$searchValue%' OR cr.autogen_cus_id LIKE '%$searchValue%' OR cp.cus_name LIKE '%$searchValue%' OR alc.area_name LIKE '%$searchValue%' OR salc.sub_area_name LIKE '%$searchValue%' OR cr.mobile1 LIKE '%$searchValue%' OR cs.sub_status LIKE '%$searchValue%')" : '';
 
-$columns = ['cp.id', 'cp.cus_id', 'cr.autogen_cus_id', 'cp.cus_name', 'alc.area_name', 'salc.sub_area_name', 'bc.branch_name', 'alm.line_name', 'cp.mobile1', 'cs.sub_status', 'responsible_status', 'cp.id', 'cs.last_paid_date', 'cs.current_month_paid', 'cm.comm_err', 'cm.hint', 'cm.remark', 'cm.comm_date'];
+$columns = ['cp.id', 'cp.cus_id', 'cr.autogen_cus_id', 'cp.cus_name', 'alc.area_name', 'salc.sub_area_name', 'bc.branch_name', 'alm.line_name', 'cr.mobile1', 'cs.sub_status', 'responsible_status', 'cp.id', 'cs.last_paid_date', 'cs.current_month_paid', 'cm.comm_err', 'cm.hint', 'cm.remark', 'cm.comm_date'];
 $orderDir = $_POST['order'][0]['dir'] ?? 'ASC';
 $orderColumnIndex = $_POST['order'][0]['column'] ?? 0;
 $order = "ORDER BY " . ($columns[$orderColumnIndex] ?? $columns[0]) . " $orderDir";
@@ -112,7 +112,7 @@ $query = "SELECT
     salc.sub_area_name,
     bc.branch_name,
     alm.line_name,
-    cp.mobile1,
+    cr.mobile1,
     cs.last_paid_date,
     cs.current_month_paid,
     cm.hint,
