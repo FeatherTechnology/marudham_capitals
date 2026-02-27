@@ -117,14 +117,16 @@ function BalanceSheetCalculations(type, from_date, to_date, month) {
             let total_credit   = circularData.total_credit || 0;
             let total_debit   = circularData.total_debit || 0;
             let total_withdraw  = circularData.total_withdraw || 0;
+            let total_Waiver  = circularData.total_Waiver || 0;
             
             $('.balance-sheet-card').find('tbody tr:nth-child(17) td:nth-child(3)').text(moneyFormatIndia(agBal));
             $('.balance-sheet-card') .find('tbody tr:nth-child(18) td:nth-child(3)') .text(moneyFormatIndia(total_credit));
             $('.balance-sheet-card') .find('tbody tr:nth-child(18) td:nth-child(2)') .text(moneyFormatIndia(total_debit));
+            $('.balance-sheet-card') .find('tbody tr:nth-child(19) td:nth-child(3)') .text(moneyFormatIndia(total_Waiver));
 
             $('.benefits-check-card').find('tbody tr:nth-child(13) td:nth-child(3)').text(moneyFormatIndia(total_withdraw));//benefit check table also will have same closing balance
 
-            $('.balance-sheet-card').find('tbody tr:nth-child(19) td:nth-child(3)').text(moneyFormatIndia(clBal));
+            $('.balance-sheet-card').find('tbody tr:nth-child(20) td:nth-child(3)').text(moneyFormatIndia(clBal));
             $('.benefits-check-card').find('tbody tr:nth-child(12) td:nth-child(3)').text(moneyFormatIndia(agBal));//benefit check table also will have same Agent balance
             $('.benefits-check-card').find('tbody tr:nth-child(14) td:nth-child(3)').text(moneyFormatIndia(clBal));//benefit check table also will have same closing balance
 

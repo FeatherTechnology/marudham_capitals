@@ -145,8 +145,13 @@ $bank_details = $getuser['bank_details'];
 										<td></td>
 										<td></td>
 									</tr>
-									<tr class='break'>
+									<tr>
 										<td>Circular Amount</td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr class='break'>
+										<td>Circular Waiver</td>
 										<td></td>
 										<td></td>
 									</tr>

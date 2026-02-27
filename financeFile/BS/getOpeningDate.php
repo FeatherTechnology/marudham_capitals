@@ -15,13 +15,13 @@ $records = array();
 
 if ($type == 'today') {
 
-    $closing_date = date('Y-m-d');
-    $op_date = date('Y-m-d');
+    $closing_date = date('Y-m-d').' 23:59:59';
+    $op_date = date('Y-m-d') . ' 00:00:00';
 
 } else if ($type == 'day') {
 
-    $op_date = $_POST['from_date'];
-    $closing_date = $_POST['to_date'];
+    $op_date = $_POST['from_date']. ' 00:00:00';
+    $closing_date = $_POST['to_date'].' 23:59:59';
 
 } else if ($type == 'month') {
     
@@ -32,8 +32,8 @@ if ($type == 'today') {
     $month = date('m', strtotime($prevDate ));
     $year = date('Y', strtotime($prevDate));
 
-    $closing_date = date('Y-m-t', strtotime("$selectedMonth"));
-    $op_date = date('Y-m-01', strtotime("$selectedMonth"));
+    $closing_date = date('Y-m-t', strtotime("$selectedMonth")).' 23:59:59';
+    $op_date = date('Y-m-01', strtotime("$selectedMonth")). ' 00:00:00';
 
 }
 
