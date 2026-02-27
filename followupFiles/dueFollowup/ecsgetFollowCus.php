@@ -78,7 +78,7 @@ $columns = [
     'salc.sub_area_name',
     'bc.branch_name',
     'alm.line_name',
-    'cp.mobile1',
+    'cr.mobile1',
     'cs.sub_status',
     'cp.id',
     'cm.comm_err',
@@ -94,7 +94,7 @@ cr.autogen_cus_id LIKE '%$searchValue%' OR
 cp.cus_name LIKE '%$searchValue%' OR 
 alc.area_name LIKE '%$searchValue%' OR 
 salc.sub_area_name LIKE '%$searchValue%' OR 
-cp.mobile1 LIKE '%$searchValue%' OR
+cr.mobile1 LIKE '%$searchValue%' OR
 cs.sub_status LIKE '%$searchValue%' )" : '';
 
 $query = "SELECT
@@ -105,7 +105,7 @@ $query = "SELECT
     salc.sub_area_name,
     bc.branch_name,
     alm.line_name,
-    cp.mobile1,
+    cr.mobile1,
     cm.comm_err,
     cm.comm_date,
     ii.req_id

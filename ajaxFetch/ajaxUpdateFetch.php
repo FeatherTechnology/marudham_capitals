@@ -14,7 +14,7 @@ $column = array(
     'rc.cus_id',
     'cr.autogen_cus_id',
     'rc.cus_name',
-    'rc.mobile1',
+    'cr.mobile1',
     'cr.area_confirm_area',
     'rc.req_id',
     'cr.area_group',
@@ -38,7 +38,7 @@ if ($_POST["doc_sts"] != '') {
             AND rc.req_id = latest_doc.last_req_id AND rc.cus_status >= 13";
 }
 if ($userid == 1) {
-    $query = "SELECT rc.req_id, rc.cus_id, cr.autogen_cus_id, rc.cus_name, rc.mobile1, cr.area_confirm_area AS area, rc.cus_status, rc.cus_data, cr.area_group, cr.area_line 
+    $query = "SELECT rc.req_id, rc.cus_id, cr.autogen_cus_id, rc.cus_name, cr.mobile1, cr.area_confirm_area AS area, rc.cus_status, rc.cus_data, cr.area_group, cr.area_line 
     FROM request_creation rc
     JOIN customer_register cr ON rc.cus_id = cr.cus_id 
     INNER JOIN (
@@ -49,7 +49,7 @@ if ($userid == 1) {
     WHERE (rc.cus_data = 'Existing' AND rc.cus_status >= 1) OR (rc.cus_data = 'New' AND rc.cus_status > 13)";
 
 } else {
-    $query = "SELECT rc.req_id, rc.cus_id, cr.autogen_cus_id, rc.cus_name, rc.mobile1, cr.area_confirm_area AS area, rc.cus_status, rc.cus_data, cr.area_group, cr.area_line
+    $query = "SELECT rc.req_id, rc.cus_id, cr.autogen_cus_id, rc.cus_name, cr.mobile1, cr.area_confirm_area AS area, rc.cus_status, rc.cus_data, cr.area_group, cr.area_line
     FROM request_creation rc
     JOIN customer_register cr ON rc.cus_id = cr.cus_id 
     INNER JOIN ( SELECT cus_id, MAX(req_id) AS last_req_id FROM request_creation GROUP BY cus_id) latest ON rc.cus_id = latest.cus_id AND rc.req_id = latest.last_req_id $con
@@ -62,7 +62,7 @@ if (isset($_POST['search']) && $_POST['search'] != "") {
         AND (rc.cus_id LIKE '%" . $_POST['search'] . "%'
         OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%'
         OR rc.cus_name LIKE '%" . $_POST['search'] . "%'
-        OR rc.mobile1 LIKE '%" . $_POST['search'] . "%' )  ";
+        OR cr.mobile1 LIKE '%" . $_POST['search'] . "%' )  ";
 }
 
 if (isset($_POST['order'])) {
