@@ -55,6 +55,63 @@ class CircularAmountClass
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row['total_balance'] ?? 0;
     }
+    public function getTotalwaiver($from_date, $to_date, $branch_id)
+    {
+        $sql = "
+            WITH user_waiver AS (
+                SELECT
+                    c.insert_login_id AS user_id,
+                    SUM(CASE 
+                            WHEN c.coll_date >= :from_date 
+                            AND c.coll_date < :to_date
+                            THEN c.pre_close_waiver 
+                            ELSE 0 
+                        END) AS waiver_amt_today
+                FROM collection c
+                WHERE c.coll_mode = '1'
+                AND c.branch IN ($branch_id)
+                AND c.coll_date < :to_date
+                AND c.pre_close_waiver > 0
+                GROUP BY c.insert_login_id
+            ),
+            user_hand AS (
+                SELECT
+                    hw.user_id,
+                    SUM(CASE 
+                            WHEN hw.created_date >= :from_date 
+                            AND hw.created_date < :to_date
+                            THEN hw.rec_amt 
+                            ELSE 0 
+                        END) AS rec_amt_today
+                FROM ct_hand_waiver hw
+                WHERE hw.branch_id IN ($branch_id)
+                AND hw.created_date < :to_date
+                GROUP BY hw.user_id
+            )
+
+            SELECT 
+                SUM(
+                    (IFNULL(uw.waiver_amt_today,0) - IFNULL(uh.rec_amt_today,0))
+                ) AS total_preclose_balance
+            FROM user u
+            LEFT JOIN user_waiver uw ON uw.user_id = u.user_id
+            LEFT JOIN user_hand uh ON uh.user_id = u.user_id
+            WHERE u.user_id <> 1
+            AND (
+                    (IFNULL(uw.waiver_amt_today,0) - IFNULL(uh.rec_amt_today,0)) > 0
+                OR (uh.rec_amt_today > 0)
+                );
+        ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            ':from_date' => $from_date,
+            ':to_date' => $to_date
+        ]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row['total_preclose_balance'] ?? 0;
+    }
 
     public function getTotalIssued($from_date, $to_date)
     {
@@ -138,6 +195,7 @@ class CircularAmountClass
     public function getCircularAmount($from_date, $to_date, $branch_id, $user_id)
     {
         $total_balance = $this->getTotalBalance($from_date, $to_date, $branch_id);
+        $total_Waiver = $this->getTotalwaiver($from_date, $to_date, $branch_id);
         $total_issued = $this->getTotalIssued($from_date, $to_date);
         $total_exchange = $this->getTotalExchange($user_id, $from_date, $to_date);
         $total_withdraw = $this->getTotalWithdraw($from_date, $to_date);
@@ -147,7 +205,8 @@ class CircularAmountClass
     return [
         'total_credit' => $total_credit,
         'total_debit' => $total_issued,
-        'total_withdraw' => $total_withdraw
+        'total_withdraw' => $total_withdraw,
+        'total_Waiver'  => $total_Waiver
     ];
     }
 }

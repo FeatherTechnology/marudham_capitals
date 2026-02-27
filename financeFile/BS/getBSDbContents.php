@@ -34,23 +34,23 @@ getDetails($connect, $where);
 function getDetails($connect, $where)
 {
     // Issued
-  $qry = $connect->query("SELECT SUM(amt) AS amt FROM (
-        SELECT netcash AS amt FROM ct_db_hissued WHERE $where
-        UNION ALL
-        SELECT COALESCE(cheque_value, 0) + COALESCE(transaction_value, 0) AS amt FROM loan_issue WHERE $where
-    ) AS combined_table
-");
+//   $qry = $connect->query("SELECT SUM(amt) AS amt FROM (
+//         SELECT netcash AS amt FROM ct_db_hissued WHERE $where
+//         UNION ALL
+//         SELECT COALESCE(cheque_value, 0) + COALESCE(transaction_value, 0) AS amt FROM loan_issue WHERE $where
+//     ) AS combined_table
+// ");
 
+
+//     $row = $qry->fetch();
+//     $issued = $row['amt'] ?? 0;
+
+    $qry = $connect->query("SELECT COALESCE(SUM(COALESCE(cash, 0) + COALESCE(cheque_value, 0) + COALESCE(transaction_value, 0)), 0) AS amt FROM loan_issue WHERE $where ");
 
     $row = $qry->fetch();
     $issued = $row['amt'] ?? 0;
 
-    $qry = $connect->query("SELECT COALESCE(SUM(COALESCE(cash, 0) + COALESCE(cheque_value, 0) + COALESCE(transaction_value, 0)), 0) AS amt FROM loan_issue WHERE $where and (agent_id !='' or agent_id != null)");
-
-    $row = $qry->fetch();
-    $ag_issued = $row['amt'] ?? 0;
-
-    $response['issued'] = (float)$issued + (float)$ag_issued;
+    $response['issued'] = (float)$issued;
 
     // Expense
     $qry = $connect->query("SELECT SUM(amt) as amt FROM (
