@@ -31,7 +31,7 @@ $column = array(
 
 // Base query
 // 1- inserted, 2- send by issued user, 3- received by doc_rec_access user, 1- return.
-$query = "SELECT dt.id, dt.req_id, dt.cus_id, dt.track_status, dt.insert_login_id, dt.created_date, ad.doc_id, cr.autogen_cus_id, cr.customer_name, bc.branch_name, al.area_name, sal.sub_area_name, agm.group_name, alm.line_name, cr.sub_area, ad.noc_replace_status
+$query = "SELECT dt.id, dt.req_id, dt.cus_id, dt.track_status, dt.insert_login_id, dt.update_login_id, dt.created_date, ad.doc_id, cr.autogen_cus_id, cr.customer_name, bc.branch_name, al.area_name, sal.sub_area_name, agm.group_name, alm.line_name, cr.sub_area, ad.noc_replace_status
         FROM document_track dt
         JOIN acknowlegement_documentation ad ON dt.req_id = ad.req_id
         JOIN customer_register cr ON dt.cus_id = cr.cus_id
@@ -42,7 +42,7 @@ $query = "SELECT dt.id, dt.req_id, dt.cus_id, dt.track_status, dt.insert_login_i
         LEFT OUTER JOIN branch_creation bc ON agm.branch_id = bc.branch_id
         JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = cr.sub_area
         JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
-        WHERE ( (dt.insert_login_id = $userid && dt.track_status <= 2) OR ($doc_rec_access = 0 && dt.track_status = 2) ) ";
+        WHERE ( (dt.insert_login_id = $userid && dt.track_status <= 2) OR ($doc_rec_access = 0 && (dt.track_status = 2 || dt.track_status = 4)) ) ";
 
 // Apply search filter
 if (isset($_POST['search']) && $_POST['search'] != "") {
@@ -123,6 +123,9 @@ foreach ($result as $row) {
             // If received by same user → show main branch
             $doc_keeper_name = 'Main Branch';
         }
+    }else{
+        // If received show main branch
+        $doc_keeper_name = 'Main Branch';
     }
 
     // Fetch username only if needed
@@ -146,13 +149,16 @@ foreach ($result as $row) {
     // }
 
     $replace_doc_action =[];
-    if($row['noc_replace_status'] == '0'){ //ack - noc_replace_status => 0-YES/1-NO.
+    $replace_doc_reqid =[];
+    $noc_replace_status = $row['noc_replace_status'];
+    if($noc_replace_status == '0'){ //ack - noc_replace_status => 0-YES/1-NO.
         
         $qry = $connect->query("SELECT ad.req_id, dri.replace_doc_id FROM acknowlegement_documentation ad JOIN doc_replace_ids dri ON ad.doc_id = dri.replace_doc_id WHERE dri.req_id = '$req_id' ");
         while($replace_info = $qry->fetchObject()){
-            $replace_doc_action[] = "<a href='#' title='View Replace Doc' class='view-track' data-reqid='$replace_info->req_id' data-cusid='$cus_id' data-cusname='$cus_name'  data-toggle='modal' data-target='.viewDocModal'>$replace_info->replace_doc_id</a>";   
+            $replace_doc_reqid[] = $replace_info->req_id;
+            $replace_doc_action[] = "<a href='#' title='View Replace Doc' class='view-track' data-reqid='$replace_info->req_id' data-cusname='$cus_name' data-toggle='modal' data-target='.viewDocModal'>$replace_info->replace_doc_id</a>";   
         }
-    
+        $replace_doc_reqid[] = $req_id;
     }
 
     $sub_array[] = $replace_doc_action;
@@ -163,16 +169,22 @@ foreach ($result as $row) {
     <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
     <div class='dropdown-content'>";
 
-    $action .= "<a href='' title='View details' class='view-track' data-reqid='$req_id' data-cusid='$cus_id' data-cusname='$cus_name' data-toggle='modal' data-target='.viewDocModal'>View</a>";
+    $action .= "<a href='' title='View details' class='view-track' data-reqid='$req_id' data-cusname='$cus_name' data-toggle='modal' data-target='.viewDocModal'>View</a>";
 
     if ($track_status == '1' && $userid == $row['insert_login_id']) { //1 means submitted in issued and to be sent for receive.
-        $action .= "<a href='' title='Mark Documents Sent' class='send-track' data-id='$id' data-reqid='$req_id'>Mark as Sent</a>";
+        $action .= "<a href='' title='Mark Documents Sent' class='send-track' data-id='$id'>Mark as Sent</a>";
     }
 
     if ($doc_rec_access == '0' && $track_status == '2' && $userid != $row['insert_login_id']) { //2 means send by user to receive
         //show receive track when sent from user
-        $action .= "<a href='' title='Receive Documents' class='receive-track' data-id='$id' data-cusid='$cus_id' >Receive</a>";
-        $action .= "<a href='' title='Return Documents' class='return-track' data-id='$id' data-reqid='$req_id' >Return</a>";
+        $action .= "<a href='' title='Receive Documents' class='receive-track' data-id='$id' data-cusid='$cus_id' data-replace-status ='$noc_replace_status'>Receive</a>";
+        $action .= "<a href='' title='Return Documents' class='return-track' data-id='$id'>Return</a>";
+    }
+
+    if ($doc_rec_access == '0' && $track_status == '4' && $userid == $row['update_login_id']) { //4 means received but replace doc have to combine. after combine status = 3.
+        //show receive track when sent from user
+        $replace_doc_reqid = implode(',', $replace_doc_reqid);
+        $action .= "<a href='' title='Combine Documents' class='combine-doc' data-reqid='$replace_doc_reqid' data-cusname='$cus_name' data-multi-reqid= '1' data-current-req-id = '$req_id' data-toggle='modal' data-target='.viewDocModal'>Combine Doc</a>";
     }
 
     //Directly removed once received.

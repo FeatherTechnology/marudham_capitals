@@ -205,12 +205,45 @@ $(document).ready(function () {
             $('#customer_old_div').show();
             showCustomerOldData();
         }
-    })
+    });
 
+    //////// Customer Summary Submit START ////////
+    $('#submit_customer_summary').click(function(event){
+        event.preventDefault();
+        let customerSummaryData = {};
 
+        $('#customer_summary_card').find(':input[name]').each(function () {
+            customerSummaryData[this.name] = $(this).val();
+        });
 
-    ///Documentation 
+        let cusid = $('#cus_id').val();
+        customerSummaryData['cusid'] = cusid;
 
+        $.post('updateFile/update_customer_summary_submit.php', customerSummaryData, function(response){
+            if (response.includes('Successfully')) {
+                Swal.fire({
+                    title: 'Customer Summary Updated Successfully',
+                    icon: 'success',
+                    showConfirmButton: true,
+                    confirmButtonColor: '#009688'
+                }).then((result)=>{
+                    if(result.isConfirmed){
+                        window.location = 'update&upd='+cusid;
+                    }
+                });
+            } else if(response.includes('Failed')){
+                Swal.fire({
+                    title: 'Customer Summary Update Failed',
+                    icon: 'error',
+                    showConfirmButton: true,
+                    confirmButtonColor: '#009688'
+                });
+            }
+        }, 'json');
+    });
+    //////// Customer Summary Submit END ////////
+
+    ///Documentation
     $('#Propertyholder_type').change(function () {
         let type = $(this).val();
         let req_id = $('#req_id').val();
@@ -744,6 +777,33 @@ $(document).ready(function () {
 });   ////////Document Ready End
 
 $(function () {
+
+    $('.modalTable').DataTable({
+        'processing': true,
+        'iDisplayLength': 5,
+        "lengthMenu": [
+            [10, 25, 50, -1],
+            [10, 25, 50, "All"]
+        ],
+        "createdRow": function (row, data, dataIndex) {
+            $(row).find('td:first').html(dataIndex + 1);
+        },
+        "drawCallback": function (settings) {
+            this.api().column(0).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        },
+        dom: 'lBfrtip',
+        buttons: [{
+            extend: 'excel',
+        },
+        {
+            extend: 'colvis',
+            collectionLayout: 'fixed four-column',
+        }
+        ],
+    });
+    
     //  $('.icon-chevron-down1').parent().next('div').slideUp(); //To collapse all card on load
     let selectedScreens = $('#selected_screens').val();
 
@@ -849,32 +909,29 @@ function callCustomerProfileFunctn() {
         $('.spouse').hide();
     }
 
-    $('.modalTable').DataTable({
-        'processing': true,
-        'iDisplayLength': 5,
-        "lengthMenu": [
-            [10, 25, 50, -1],
-            [10, 25, 50, "All"]
-        ],
-        "createdRow": function (row, data, dataIndex) {
-            $(row).find('td:first').html(dataIndex + 1);
-        },
-        "drawCallback": function (settings) {
-            this.api().column(0).nodes().each(function (cell, i) {
-                cell.innerHTML = i + 1;
-            });
-        },
-        dom: 'lBfrtip',
-        buttons: [{
-            extend: 'excel',
-        },
-        {
-            extend: 'colvis',
-            collectionLayout: 'fixed four-column',
-        }
-        ],
-    });
+    let updateCPEditAccess = $('#update_cp_edit_access').val();
+    if(updateCPEditAccess !='2'){ //Overall
+        let form = $('form#cus_Profiles');
 
+        // inputs except inside customer_summary_card
+        form.find('input')
+            .not('#pic, #guarentorpic, #customer_summary_card input, #customer_summary_card textarea')
+            .prop('readonly', true);
+
+        // select and button except inside customer_summary_card
+        form.find('select, button')
+            .not('#customer_summary_card select, #customer_summary_card button, #back_btn')
+            .prop('disabled', true);
+
+        form.find('#pic, #guarentorpic')
+            .prop('disabled', true);
+    }
+
+    if(updateCPEditAccess =='1'){
+        $('#submit_customer_summary').show();
+    }else{
+        $('#submit_customer_summary').hide();
+    }
 }
 
 function callDocFunctn() {
@@ -3776,8 +3833,11 @@ function getFingerPrintDetails(cus_id, cus_name) {
         type: 'post',
         cache: false,
         success: function (html) {
-            $('.fingerprintTable').empty()
-            $('.fingerprintTable').html(html)
+            $('.fingerprintTable').html(html);
+            let updateCPEditAccess = $('#update_cp_edit_access').val();
+            if(updateCPEditAccess !='2'){ //Overall
+                $('.hand_selection, .scanBtn').attr('disabled', true);
+            }
 
             $('.scanBtn').click(function () {
                 var hand = $(this).prev().val();

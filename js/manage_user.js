@@ -195,12 +195,20 @@ $(document).ready(function () {
     $('#update_screen').change(function () {
         // Get values from multiselect and sort
         const screenList = updateScreen.getValue();
-        const screenSortedStr = screenList
-            .map(item => item.value)
+        const values = screenList.map(item => item.value);
+
+        const screenSortedStr = values
             .sort((a, b) => a - b)
             .join(',');
     
         $('#update_screen_id').val(screenSortedStr);
+
+        if(values.includes('1')){
+            $('.update_cp_edit_access_div').show();
+        }else{
+            $('#update_cp_edit_access').val('0');
+            $('.update_cp_edit_access_div').hide();
+        }
     });
 
     //modules checkbox events
@@ -550,6 +558,13 @@ $(function () {
                 selectedValues.forEach(value => {
                     updateScreen.setChoiceByValue(value.trim());
                 });
+
+                if(selectedValues.includes('1')){ //Customer Profile.
+                    $('.update_cp_edit_access_div').show();
+                }else{
+                    $('#update_cp_edit_access').val('0');
+                    $('.update_cp_edit_access_div').hide();
+                }
             }
 
             $('.update_screen_div').show()
@@ -1462,12 +1477,25 @@ function validation() {
         }else{
             $('.updateScreenCheck').hide();
         }
+
+        const values = update_screen.map(item => item.value);
+        let editAccess = $('#update_cp_edit_access').val();
+        if(values.includes('1') && editAccess =='0'){
+            $('.cpEditScreenCheck').show();
+            validation = false;
+        }else{
+            $('.cpEditScreenCheck').hide();
+        }
     }
 
     // validation for report
     var reportmodule = document.querySelector('#reportmodule');
     var report_access = $('#report_access').val();
     var reportmoduleChecked = $('#reportmodule').is(':checked');
+    
+    //Hand cash balance sheet validation
+    let hcbs = $('#hand_cash_balance_sheet').is(':checked');
+
     if(reportmoduleChecked) {
         // Count how many main reports are selected
         let mainReportsChecked = $('#work_report_module:checked, #monitor_report_module:checked, #analysis_report_module:checked, #accounts_report_module:checked').length;
@@ -1500,11 +1528,18 @@ function validation() {
     }
 
     // Case 2: Dropdown has value but checkbox not checked
-    if (!reportmodule.checked && report_access != '') {
+    if (!reportmodule.checked && report_access != '' && !hcbs) {
         $('.reportCheck').show();
         validation = false;
     } else {
         $('.reportCheck').hide();
+    }
+    
+    if(hcbs && report_access ==''){
+        $('#reportAccessCheck').show();
+        validation = false;
+    } else {
+        $('#reportAccessCheck').hide();
     }
 
     // Array of main reports with their sub-checkbox classes and error spans
@@ -1528,16 +1563,6 @@ function validation() {
             section.errorSpan.hide(); // Hide error if main report is not selected
         }
     });
-
-    //Hand cash balance sheet validation
-    let hcbs = $('#hand_cash_balance_sheet').is(':checked');
-    
-    if(hcbs && report_access ==''){
-        $('#reportAccessCheck').show();
-        validation = false;
-    } else {
-        $('#reportAccessCheck').hide();
-    }
 
     // validation for Home Access
     var home_access = $('#home_access').val();

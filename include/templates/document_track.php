@@ -45,7 +45,7 @@
 </div>
 <!-- Main container end -->
 <!-- /////////////////////////////////////////////////////////////////// View Document Modal START ////////////////////////////////////////////////////////////// -->
-<div class="modal fade viewDocModal " tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<div class="modal fade viewDocModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
@@ -60,7 +60,8 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="">Close</button>
+				<button type="button" class="btn btn-primary" id="combine_doc" style="display: none;" onclick="combineDocuments()">Combine Doc</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 			</div>
 		</div>
 	</div>

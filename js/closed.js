@@ -1,100 +1,96 @@
 $(document).ready(function () {
     /// noc_req_id = get particular line item request id becuase multiple request show in list against single customer.. the Customer is same but request is not so have to take particular req id to show details.
-    $('#submit_closed').click(function () {
+    $('#submit_closed').click(function (event) {
         if(validations()){
-        let confirmAction = confirm("Are you sure you want to submit Closed ?");
-        if (!confirmAction) {
-            event.preventDefault(); // Stop form submission if canceled
+            let confirmAction = confirm("Are you sure you want to submit Closed ?");
+            if (!confirmAction) {
+                event.preventDefault(); // Stop form submission if canceled
+                return false;
+            }
+        }else{
+            event.preventDefault(); 
             return false;
         }
-    }else{
-        event.preventDefault(); 
-        return false;
-    }
-
-    })
+    });
 
     ///Customer Feedback 
-    $("body").on("click", "#cus_feedback_edit", function () {
-        let id = $(this).attr('value');
+    // $("body").on("click", "#cus_feedback_edit", function () {
+    //     let id = $(this).attr('value');
 
-        $.ajax({
-            url: 'closedFile/loan_summary_edit.php',
-            type: 'POST',
-            data: { "id": id },
-            dataType: 'json',
-            cache: false,
-            success: function (result) {
+    //     $.ajax({
+    //         url: 'closedFile/loan_summary_edit.php',
+    //         type: 'POST',
+    //         data: { "id": id },
+    //         dataType: 'json',
+    //         cache: false,
+    //         success: function (result) {
 
-                $("#feedbackID").val(result['id']);
-                $("#feedback_label").val(result['feedback_label']);
-                $("#cus_feedback").val(result['cus_feedback']);
-                $("#feedback_remark").val(result['feedback_remark']);
+    //             $("#feedbackID").val(result['id']);
+    //             $("#feedback_label").val(result['feedback_label']);
+    //             $("#cus_feedback").val(result['cus_feedback']);
+    //             $("#feedback_remark").val(result['feedback_remark']);
 
-            }
-        });
+    //         }
+    //     });
 
-    });
+    // });
 
 
-    $("body").on("click", "#cus_feedback_delete", function () {
-        var isok = confirm("Do you want delete this Feedback?");
-        if (isok == false) {
-            return false;
-        } else {
-            var id = $(this).attr('value');
+    // $("body").on("click", "#cus_feedback_delete", function () {
+    //     var isok = confirm("Do you want delete this Feedback?");
+    //     if (isok == false) {
+    //         return false;
+    //     } else {
+    //         var id = $(this).attr('value');
 
-            $.ajax({
-                url: 'closedFile/loan_summary_delete.php',
-                type: 'POST',
-                data: { "id": id },
-                cache: false,
-                success: function (response) {
-                    var delresult = response.includes("Deleted");
-                    if (delresult) {
-                        $('#feedbackDeleteOk').show();
-                        setTimeout(function () {
-                            $('#feedbackDeleteOk').fadeOut('fast');
-                        }, 2000);
-                    }
-                    else {
+    //         $.ajax({
+    //             url: 'closedFile/loan_summary_delete.php',
+    //             type: 'POST',
+    //             data: { "id": id },
+    //             cache: false,
+    //             success: function (response) {
+    //                 var delresult = response.includes("Deleted");
+    //                 if (delresult) {
+    //                     $('#feedbackDeleteOk').show();
+    //                     setTimeout(function () {
+    //                         $('#feedbackDeleteOk').fadeOut('fast');
+    //                     }, 2000);
+    //                 }
+    //                 else {
 
-                        $('#feedbackDeleteNotOk').show();
-                        setTimeout(function () {
-                            $('#feedbackDeleteNotOk').fadeOut('fast');
-                        }, 2000);
-                    }
+    //                     $('#feedbackDeleteNotOk').show();
+    //                     setTimeout(function () {
+    //                         $('#feedbackDeleteNotOk').fadeOut('fast');
+    //                     }, 2000);
+    //                 }
 
-                    resetfeedback();
-                }
-            });
-        }
-    });
+    //                 resetfeedback();
+    //             }
+    //         });
+    //     }
+    // });
 
     //closed status
     $('#closed_Sts').change(function () {
         var sts = $(this).val();
-
         if (sts == '1') {
             $('#considerlevel').show();
         } else {
             $('#considerlevel').hide();
         }
-    })
+    });
 
     $('.commitment-chart').click(function () {//Commitment chart
         let req_id = $('#noc_req_id').val(); let cus_id = $('#cusidupd').val();
         $.post('followupFiles/dueFollowup/getCommitmentChart.php', { cus_id, req_id }, function (html) {
             $('#commChartDiv').empty().html(html);
         })
-    })
+    });
 
 })//Document Ready End
 
-
 //On Load Event
 $(function () {
-
     $('.noc_window').hide(); //Hide collection window at the starting
     $('#close_noc_card').hide();//Hide collection close button at the starting
     $('#submit_closed').hide();//Hide Submit button at the starting, because submit is only for collection
@@ -105,7 +101,7 @@ $(function () {
 
     var cus_pic = $('#cuspicupd').val();
     $('#imgshow').attr('src', 'uploads/request/customer/' + cus_pic);
-})
+});
 
 function OnLoadFunctions(req_id, cus_id) {
     //To get loan sub Status
@@ -165,7 +161,6 @@ function OnLoadFunctions(req_id, cus_id) {
                     checkDocumentsStatus(req_id, (result) => {
                         if (result === 'completed') {//this function will check if the particular loan is completed all the document upload
                             $('.loanlist_card').hide();
-                            $('.datachecking_card').hide();
                             $('.customersummary_card').hide();
                             $('.back-button').hide();
                             $('.noc_window').show();
@@ -174,8 +169,8 @@ function OnLoadFunctions(req_id, cus_id) {
 
                             $('#noc_req_id').val(req_id);
 
-                            resetfeedback(); //Reset Feedback Modal Table.
-                            feedbackList(); // Feedback List.
+                            // resetfeedback(); //Reset Feedback Modal Table.
+                            // feedbackList(); // Feedback List.
                         } else {//else prevent closing the document due to not completing documents
                             event.preventDefault();
                             alert('Please complete pending documents to Close!');
@@ -185,7 +180,6 @@ function OnLoadFunctions(req_id, cus_id) {
 
                 $('#close_noc_card').click(function () {
                     $('.loanlist_card').show();
-                    $('.datachecking_card').show();
                     $('.customersummary_card').show();
                     $('.back-button').show();
                     $('.noc_window').hide();
@@ -194,7 +188,7 @@ function OnLoadFunctions(req_id, cus_id) {
 
                     $('#closedStatusCheck, #considerLevelCheck, #remarkCheck').hide();
                     $('#closed_Sts, #closed_Sts_consider, #closed_Sts_remark').val('');
-                })
+                });
 
                 $('.due-chart').click(function () {
                     var nocreq_id = $('#noc_req_id').val();
@@ -229,7 +223,7 @@ function OnLoadFunctions(req_id, cus_id) {
                             })
                         })
                     });
-                })
+                });
 
                 $('.penalty-chart').click(function () {
                     var noc_req_id = $('#noc_req_id').val();
@@ -244,39 +238,23 @@ function OnLoadFunctions(req_id, cus_id) {
                             penaltyChartList(noc_req_id, cus_id); //To show Penalty List.
                         }
                     })
-                })
+                });
 
                 $('.coll-charge-chart').click(function () {
                     var noc_req_id = $('#noc_req_id').val();
                     collectionChargeChartList(noc_req_id) //To Show Fine Chart List
-                })
+                });
 
                 $('.coll-charge').click(function () {
                     var noc_req_id = $('#noc_req_id').val();
                     resetcollCharges(noc_req_id);  //Fine
-                })
-
-
-
+                });
             }
-        })
-
-
-        $.ajax({
-            // To Check Customer Guarentor History.
-            url: 'closedFile/getGuarentorData.php',
-            data: { 'cus_id': cus_id, 'pending_sts': pending_sts, 'od_sts': od_sts, 'due_nil_sts': due_nil_sts, 'closed_sts': closed_sts },
-            type: 'post',
-            cache: false,
-            success: function (response) {
-                $('#guarentor_checkDiv').empty()
-                $('#guarentor_checkDiv').html(response);
-            }
-        })
+        });
 
         getCustomerLoanCounts(); // to get customer summary details
         hideOverlay();//loader stop
-    }, 2000)
+    }, 2000);
 
 }//Auto Load function END
 
@@ -297,6 +275,7 @@ function getCustomerLoanCounts() {
     })
     getCustomerSummary();//to get income details
 }
+
 function getCustomerSummary() {
     let cus_id = $('#cusidupd').val()
     $.ajax({
@@ -327,7 +306,7 @@ function getCustomerSummary() {
                 $("#OldFeedbackTable").html(html);
                 $('#feedback_table').DataTable().destroy();
             }
-        })
+        });
     });
 }
 
@@ -397,6 +376,7 @@ function penaltyChartList(noc_req_id, cus_id) {
         }
     });//Ajax End.
 }
+
 //Collection Charge Chart List
 function collectionChargeChartList(noc_req_id) {
     $.ajax({
@@ -412,113 +392,113 @@ function collectionChargeChartList(noc_req_id) {
 }
 
 //Loan Summary Modal 
-$('#feedbacklabelCheck').hide(); $('#feedbackCheck').hide();
+// $('#feedbacklabelCheck').hide(); $('#feedbackCheck').hide();
 
 
-$(document).on("click", "#feedbackBtn", function () {
+// $(document).on("click", "#feedbackBtn", function () {
 
-    let nocreq_id = $('#noc_req_id').val();
-    let cusidupd = $('#cusidupd').val();
-    let feedback_label = $("#feedback_label").val();
-    let cus_feedback = $("#cus_feedback").val();
-    let feedback_remark = $("#feedback_remark").val();
-    let feedbackID = $("#feedbackID").val();
+//     let nocreq_id = $('#noc_req_id').val();
+//     let cusidupd = $('#cusidupd').val();
+//     let feedback_label = $("#feedback_label").val();
+//     let cus_feedback = $("#cus_feedback").val();
+//     let feedback_remark = $("#feedback_remark").val();
+//     let feedbackID = $("#feedbackID").val();
 
 
-    if (feedback_label != "" && cus_feedback != "" && nocreq_id != "") {
-        $.ajax({
-            url: 'closedFile/loan_summary_submit.php',
-            type: 'POST',
-            data: { "feedback_label": feedback_label, "cus_feedback": cus_feedback, "feedback_remark": feedback_remark, "feedbackID": feedbackID, "reqId": nocreq_id, "cusidupd": cusidupd },
-            cache: false,
-            success: function (response) {
+//     if (feedback_label != "" && cus_feedback != "" && nocreq_id != "") {
+//         $.ajax({
+//             url: 'closedFile/loan_summary_submit.php',
+//             type: 'POST',
+//             data: { "feedback_label": feedback_label, "cus_feedback": cus_feedback, "feedback_remark": feedback_remark, "feedbackID": feedbackID, "reqId": nocreq_id, "cusidupd": cusidupd },
+//             cache: false,
+//             success: function (response) {
 
-                var insresult = response.includes("Inserted");
-                var updresult = response.includes("Updated");
-                if (insresult) {
-                    $('#feedbackInsertOk').show();
-                    setTimeout(function () {
-                        $('#feedbackInsertOk').fadeOut('fast');
-                    }, 2000);
-                }
-                else if (updresult) {
-                    $('#feedbackUpdateok').show();
-                    setTimeout(function () {
-                        $('#feedbackUpdateok').fadeOut('fast');
-                    }, 2000);
-                }
-                else {
-                    $('#feedbackNotOk').show();
-                    setTimeout(function () {
-                        $('#feedbackNotOk').fadeOut('fast');
-                    }, 2000);
-                }
+//                 var insresult = response.includes("Inserted");
+//                 var updresult = response.includes("Updated");
+//                 if (insresult) {
+//                     $('#feedbackInsertOk').show();
+//                     setTimeout(function () {
+//                         $('#feedbackInsertOk').fadeOut('fast');
+//                     }, 2000);
+//                 }
+//                 else if (updresult) {
+//                     $('#feedbackUpdateok').show();
+//                     setTimeout(function () {
+//                         $('#feedbackUpdateok').fadeOut('fast');
+//                     }, 2000);
+//                 }
+//                 else {
+//                     $('#feedbackNotOk').show();
+//                     setTimeout(function () {
+//                         $('#feedbackNotOk').fadeOut('fast');
+//                     }, 2000);
+//                 }
 
-                resetfeedback();
-            }
-        });
+//                 resetfeedback();
+//             }
+//         });
 
-        $('#feedbacklabelCheck').hide(); $('#feedbackCheck').hide();
-    }
-    else {
+//         $('#feedbacklabelCheck').hide(); $('#feedbackCheck').hide();
+//     }
+//     else {
 
-        if (feedback_label == "") {
-            $('#feedbacklabelCheck').show();
-        } else {
-            $('#feedbacklabelCheck').hide();
-        }
+//         if (feedback_label == "") {
+//             $('#feedbacklabelCheck').show();
+//         } else {
+//             $('#feedbacklabelCheck').hide();
+//         }
 
-        if (cus_feedback == "") {
-            $('#feedbackCheck').show();
-        } else {
-            $('#feedbackCheck').hide();
-        }
+//         if (cus_feedback == "") {
+//             $('#feedbackCheck').show();
+//         } else {
+//             $('#feedbackCheck').hide();
+//         }
 
-    }
+//     }
 
-});
+// });
 
-function resetfeedback() {
-    let NOCReq_id = $('#noc_req_id').val();
-    $.ajax({
-        url: 'closedFile/loan_summary_reset.php',
-        type: 'POST',
-        data: { "reqId": NOCReq_id },
-        cache: false,
-        success: function (html) {
-            $("#feedbackTable").empty();
-            $("#feedbackTable").html(html);
+// function resetfeedback() {
+//     let NOCReq_id = $('#noc_req_id').val();
+//     $.ajax({
+//         url: 'closedFile/loan_summary_reset.php',
+//         type: 'POST',
+//         data: { "reqId": NOCReq_id },
+//         cache: false,
+//         success: function (html) {
+//             $("#feedbackTable").empty();
+//             $("#feedbackTable").html(html);
 
-            $("#feedback_label").val('');
-            $("#cus_feedback").val('');
-            $("#feedback_remark").val('');
-            $("#feedbackID").val('');
+//             $("#feedback_label").val('');
+//             $("#cus_feedback").val('');
+//             $("#feedback_remark").val('');
+//             $("#feedbackID").val('');
 
-        }
-    });
-}
+//         }
+//     });
+// }
 
-function feedbackList() {
-    let NOC_Req_id = $('#noc_req_id').val();
-    $.ajax({
-        url: 'closedFile/loan_summary_list.php',
-        type: 'POST',
-        data: { "reqId": NOC_Req_id },
-        cache: false,
-        success: function (html) {
-            $("#feedbackListTable").empty();
-            $("#feedbackListTable").html(html);
+// function feedbackList() {
+//     let NOC_Req_id = $('#noc_req_id').val();
+//     $.ajax({
+//         url: 'closedFile/loan_summary_list.php',
+//         type: 'POST',
+//         data: { "reqId": NOC_Req_id },
+//         cache: false,
+//         success: function (html) {
+//             $("#feedbackListTable").empty();
+//             $("#feedbackListTable").html(html);
 
-            $("#feedback_label").val('');
-            $("#cus_feedback").val('');
-            $("#feedback_remark").val('');
-            $("#feedbackID").val('');
+//             $("#feedback_label").val('');
+//             $("#cus_feedback").val('');
+//             $("#feedback_remark").val('');
+//             $("#feedbackID").val('');
 
-            $(".addloansummary").find(".modal-body span").not('.required').hide();
+//             $(".addloansummary").find(".modal-body span").not('.required').hide();
 
-        }
-    });
-}
+//         }
+//     });
+// }
 //Loan Summary Modal End
 
 function checkDocumentsStatus(req_id, callback) {

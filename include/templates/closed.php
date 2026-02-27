@@ -439,7 +439,7 @@ if (sizeof($getCustomerReg) > 0) {
 						</div>
 
 						<hr>
-						<div class="row">
+						<!-- <div class="row">
 							<div class="col-12">
 								<h5> Loan summary </h5>
 								<button type="button" class="btn btn-primary" id="add_cus_label" name="add_cus_label" data-toggle="modal" data-target=".addloansummary" style="padding: 5px 35px; float: right;"><span class="icon-add"></span></button>
@@ -465,7 +465,7 @@ if (sizeof($getCustomerReg) > 0) {
 								</div>
 							</div>
 						</div>
-						<hr>
+						<hr> -->
 
 						<div class="row">
 
@@ -650,7 +650,7 @@ if (sizeof($getCustomerReg) > 0) {
 </div>
 <!-- /////////////////////////////////////////////////////////////////// Fine Chart Modal END ////////////////////////////////////////////////////////////////////// -->
 <!-- Add Loan Summary Modal START -->
-<div class="modal fade addloansummary" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<!-- <div class="modal fade addloansummary" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
@@ -660,7 +660,6 @@ if (sizeof($getCustomerReg) > 0) {
 				</button>
 			</div>
 			<div class="modal-body">
-				<!-- alert messages -->
 				<div id="feedbackInsertOk" class="successalert"> Feedback Added Successfully
 					<span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
 				</div>
@@ -742,7 +741,7 @@ if (sizeof($getCustomerReg) > 0) {
 			</div>
 		</div>
 	</div>
-</div>
+</div> -->
 <!-- END  Add Loan Summary Modal -->
 
 <!-- Modal for Commitment Chart just view table   -->

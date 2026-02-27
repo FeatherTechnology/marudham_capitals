@@ -66,16 +66,12 @@ function callOnClickEvents() {
     });
 
     $('.view-track').click(function() {
-        var cus_id = $(this).data('cusid');
         var cus_name = $(this).data('cusname');
         var req_id = $(this).data('reqid');
         $.ajax({
             url: 'documentTrackFile/viewTrack.php',
             type: 'post',
-            data: {
-                'cus_id': cus_id,
-                "req_id": req_id
-            },
+            data: {},
             cache: false,
             success: function(html) {
                 $('#viewTrackDiv').empty();
