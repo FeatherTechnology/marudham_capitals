@@ -1027,7 +1027,7 @@ if($idupd>0)
                             <div class="custom-control custom-checkbox">
                                 <select class='form-control' name='update_cp_edit_access' id='update_cp_edit_access'>
 									<option value="0">Select Customer Profile Edit Access</option>
-									<option value="1" <?php if(isset($update_cp_edit_access) && $update_cp_edit_access == '1') echo 'selected'; ?>>Customer Summary</option>
+									<option value="1" <?php if(isset($update_cp_edit_access) && $update_cp_edit_access == '1') echo 'selected'; ?>>Customer Feedback</option>
 									<option value="2" <?php if(isset($update_cp_edit_access) && $update_cp_edit_access == '2') echo 'selected'; ?>>Overall Customer Profile</option>
 								</select>
 								<span class='text-danger cpEditScreenCheck' style="display:none">Please Select Customer Profile Edit Access</span>

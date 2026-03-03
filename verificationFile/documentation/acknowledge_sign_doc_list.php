@@ -11,6 +11,7 @@ include '../../ajaxconfig.php';
             <th> Relationship </th>
             <th> Count </th>
             <th> Uploads </th>
+            <th> ACTION </th>
         </tr>
     </thead>
     <tbody>
@@ -62,6 +63,9 @@ include '../../ajaxconfig.php';
 
                 <td> <?php echo $signedDoc['doc_Count']; ?></td>
                 <td><?php echo $doc_upd_name; ?></td>
+                <td>
+                    <a id="signed_doc_delete" value="<?php echo $id; ?>" data-screen="1"> <span class='icon-trash-2'></span> </a>
+                </td>
             </tr>
 
         <?php  } ?>

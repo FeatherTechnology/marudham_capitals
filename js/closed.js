@@ -13,63 +13,6 @@ $(document).ready(function () {
         }
     });
 
-    ///Customer Feedback 
-    // $("body").on("click", "#cus_feedback_edit", function () {
-    //     let id = $(this).attr('value');
-
-    //     $.ajax({
-    //         url: 'closedFile/loan_summary_edit.php',
-    //         type: 'POST',
-    //         data: { "id": id },
-    //         dataType: 'json',
-    //         cache: false,
-    //         success: function (result) {
-
-    //             $("#feedbackID").val(result['id']);
-    //             $("#feedback_label").val(result['feedback_label']);
-    //             $("#cus_feedback").val(result['cus_feedback']);
-    //             $("#feedback_remark").val(result['feedback_remark']);
-
-    //         }
-    //     });
-
-    // });
-
-
-    // $("body").on("click", "#cus_feedback_delete", function () {
-    //     var isok = confirm("Do you want delete this Feedback?");
-    //     if (isok == false) {
-    //         return false;
-    //     } else {
-    //         var id = $(this).attr('value');
-
-    //         $.ajax({
-    //             url: 'closedFile/loan_summary_delete.php',
-    //             type: 'POST',
-    //             data: { "id": id },
-    //             cache: false,
-    //             success: function (response) {
-    //                 var delresult = response.includes("Deleted");
-    //                 if (delresult) {
-    //                     $('#feedbackDeleteOk').show();
-    //                     setTimeout(function () {
-    //                         $('#feedbackDeleteOk').fadeOut('fast');
-    //                     }, 2000);
-    //                 }
-    //                 else {
-
-    //                     $('#feedbackDeleteNotOk').show();
-    //                     setTimeout(function () {
-    //                         $('#feedbackDeleteNotOk').fadeOut('fast');
-    //                     }, 2000);
-    //                 }
-
-    //                 resetfeedback();
-    //             }
-    //         });
-    //     }
-    // });
-
     //closed status
     $('#closed_Sts').change(function () {
         var sts = $(this).val();
@@ -86,6 +29,187 @@ $(document).ready(function () {
             $('#commChartDiv').empty().html(html);
         })
     });
+
+    $(document).on("click", "#feedbackBtn", function () {
+        let cus_id = $('#cus_id').val();
+        let feedback_label = $("#feedback_label").val();
+        let cus_feedback = $("#cus_feedback").val();
+        let feedback_remark = $("#feedback_remark").val();
+        let feedbackID = $("#feedbackID").val();
+
+
+        if (feedback_label != "" && cus_feedback != "" && cus_id != "") {
+            $.ajax({
+                url: 'updateFile/update_cus_feedback_submit.php',
+                type: 'POST',
+                data: { feedback_label, cus_feedback, feedback_remark, feedbackID, cus_id },
+                cache: false,
+                success: function (response) {
+
+                    var insresult = response.includes("Inserted");
+                    var updresult = response.includes("Updated");
+                    if (insresult) {
+                        $('#feedbackInsertOk').show();
+                        setTimeout(function () {
+                            $('#feedbackInsertOk').fadeOut('fast');
+                        }, 2000);
+                    }
+                    else if (updresult) {
+                        $('#feedbackUpdateok').show();
+                        setTimeout(function () {
+                            $('#feedbackUpdateok').fadeOut('fast');
+                        }, 2000);
+                    }
+                    else {
+                        $('#feedbackNotOk').show();
+                        setTimeout(function () {
+                            $('#feedbackNotOk').fadeOut('fast');
+                        }, 2000);
+                    }
+
+                    resetfeedback();
+                }
+            });
+
+            $('#feedbacklabelCheck, #feedbackCheck').hide();
+
+        } else {
+
+            if (feedback_label == "") {
+                $('#feedbacklabelCheck').show();
+            } else {
+                $('#feedbacklabelCheck').hide();
+            }
+
+            if (cus_feedback == "") {
+                $('#feedbackCheck').show();
+            } else {
+                $('#feedbackCheck').hide();
+            }
+        }
+    });
+
+    $("body").on("click", "#cus_feedback_edit", function () {
+        let id = $(this).attr('value');
+
+        $.ajax({
+            url: 'verificationFile/customer_feedback_edit.php',
+            type: 'POST',
+            data: { id },
+            dataType: 'json',
+            cache: false,
+            success: function (result) {
+
+                $("#feedbackID").val(result['id']);
+                $("#feedback_label").val(result['feedback_label']);
+                $("#cus_feedback").val(result['cus_feedback']);
+                $("#feedback_remark").val(result['feedback_remark']);
+
+            }
+        });
+
+    });
+
+    $("body").on("click", "#cus_feedback_delete", function () {
+        var isok = confirm("Do you want delete this Feedback?");
+        if (isok == false) {
+            return false;
+        } else {
+            var id = $(this).attr('value');
+
+            $.ajax({
+                url: 'verificationFile/customer_feedback_delete.php',
+                type: 'POST',
+                data: { id },
+                cache: false,
+                success: function (response) {
+                    var delresult = response.includes("Deleted");
+                    if (delresult) {
+                        $('#feedbackDeleteOk').show();
+                        setTimeout(function () {
+                            $('#feedbackDeleteOk').fadeOut('fast');
+                        }, 2000);
+                    }
+                    else {
+
+                        $('#feedbackDeleteNotOk').show();
+                        setTimeout(function () {
+                            $('#feedbackDeleteNotOk').fadeOut('fast');
+                        }, 2000);
+                    }
+
+                    resetfeedback();
+                }
+            });
+        }
+    });
+
+    $("body").on("click", "#feedback_edit", function () {
+    let id = $(this).attr("value");
+
+    $.ajax({
+      url: "verificationFile/get_feedback_edit.php",
+      type: "POST",
+      data: { id: id },
+      dataType: "json",
+      cache: false,
+      success: function (result) {
+        $("#fedbackname_id").val(result["id"]);
+        $("#feedbackname").val(result["feedback_name"]);
+      },
+    });
+  });
+
+  $("body").on("click", "#feedback_delete", function () {
+    let id = $(this).attr("value");
+    if (confirm('Do You want to delete this Feedback Name?')) {
+      $.ajax({
+        url: "verificationFile/delet_feedback_edit.php",
+        type: "POST",
+        data: { id: id },
+        dataType: "json",
+        cache: false,
+        success: function (result) {
+        if (result === "DELETED") {
+            Swal.fire({
+              title: 'Feedback Label Deleted!',
+              icon: 'success',
+              confirmButtonColor: '#009688'
+            });
+            cusfeedbacklist();
+
+          } else if (result === "USED") {
+            Swal.fire({
+              title: 'Already Used!',
+              text: 'This feedback label is already used in Customer Feedback.',
+              icon: 'warning',
+              confirmButtonColor: '#009688'
+            });
+
+          } else {
+            Swal.fire({
+              title: 'Error Occurred!',
+              icon: 'error',
+              confirmButtonColor: '#009688'
+            });
+          }
+        },
+      });
+    }
+  });
+
+  $(document).on("click", "#add_cus_label", function () {
+    getFeedbackLable();
+  });
+
+  $(document).on("click", "#add_cus_feedback", function () {
+    cusfeedbacklist();
+    $("#feedbackname, #fedbackname_id").val('');
+  });
+
+  $(document).on("click", "#submit_feedback_lable", function () {
+    submitfeedbackname();
+  });
 
 })//Document Ready End
 
@@ -169,8 +293,6 @@ function OnLoadFunctions(req_id, cus_id) {
 
                             $('#noc_req_id').val(req_id);
 
-                            // resetfeedback(); //Reset Feedback Modal Table.
-                            // feedbackList(); // Feedback List.
                         } else {//else prevent closing the document due to not completing documents
                             event.preventDefault();
                             alert('Please complete pending documents to Close!');
@@ -295,18 +417,7 @@ function getCustomerSummary() {
             $('#about_cus').val(response['about_customer'])
         }
     }).then(function () {
-
-        $.ajax({
-            url: 'verificationFile/customer_feedback_list.php',
-            type: 'POST',
-            data: { "cus_id": cus_id },
-            cache: false,
-            success: function (html) {
-                $("#OldFeedbackTable").empty();
-                $("#OldFeedbackTable").html(html);
-                $('#feedback_table').DataTable().destroy();
-            }
-        });
+        feedbackList();
     });
 }
 
@@ -371,7 +482,6 @@ function penaltyChartList(noc_req_id, cus_id) {
         type: 'post',
         cache: false,
         success: function (response) {
-            $('#penaltyChartTableDiv').empty()
             $('#penaltyChartTableDiv').html(response)
         }
     });//Ajax End.
@@ -385,121 +495,10 @@ function collectionChargeChartList(noc_req_id) {
         type: 'post',
         cache: false,
         success: function (response) {
-            $('#collectionChargeDiv').empty()
             $('#collectionChargeDiv').html(response)
         }
     });//Ajax End.
 }
-
-//Loan Summary Modal 
-// $('#feedbacklabelCheck').hide(); $('#feedbackCheck').hide();
-
-
-// $(document).on("click", "#feedbackBtn", function () {
-
-//     let nocreq_id = $('#noc_req_id').val();
-//     let cusidupd = $('#cusidupd').val();
-//     let feedback_label = $("#feedback_label").val();
-//     let cus_feedback = $("#cus_feedback").val();
-//     let feedback_remark = $("#feedback_remark").val();
-//     let feedbackID = $("#feedbackID").val();
-
-
-//     if (feedback_label != "" && cus_feedback != "" && nocreq_id != "") {
-//         $.ajax({
-//             url: 'closedFile/loan_summary_submit.php',
-//             type: 'POST',
-//             data: { "feedback_label": feedback_label, "cus_feedback": cus_feedback, "feedback_remark": feedback_remark, "feedbackID": feedbackID, "reqId": nocreq_id, "cusidupd": cusidupd },
-//             cache: false,
-//             success: function (response) {
-
-//                 var insresult = response.includes("Inserted");
-//                 var updresult = response.includes("Updated");
-//                 if (insresult) {
-//                     $('#feedbackInsertOk').show();
-//                     setTimeout(function () {
-//                         $('#feedbackInsertOk').fadeOut('fast');
-//                     }, 2000);
-//                 }
-//                 else if (updresult) {
-//                     $('#feedbackUpdateok').show();
-//                     setTimeout(function () {
-//                         $('#feedbackUpdateok').fadeOut('fast');
-//                     }, 2000);
-//                 }
-//                 else {
-//                     $('#feedbackNotOk').show();
-//                     setTimeout(function () {
-//                         $('#feedbackNotOk').fadeOut('fast');
-//                     }, 2000);
-//                 }
-
-//                 resetfeedback();
-//             }
-//         });
-
-//         $('#feedbacklabelCheck').hide(); $('#feedbackCheck').hide();
-//     }
-//     else {
-
-//         if (feedback_label == "") {
-//             $('#feedbacklabelCheck').show();
-//         } else {
-//             $('#feedbacklabelCheck').hide();
-//         }
-
-//         if (cus_feedback == "") {
-//             $('#feedbackCheck').show();
-//         } else {
-//             $('#feedbackCheck').hide();
-//         }
-
-//     }
-
-// });
-
-// function resetfeedback() {
-//     let NOCReq_id = $('#noc_req_id').val();
-//     $.ajax({
-//         url: 'closedFile/loan_summary_reset.php',
-//         type: 'POST',
-//         data: { "reqId": NOCReq_id },
-//         cache: false,
-//         success: function (html) {
-//             $("#feedbackTable").empty();
-//             $("#feedbackTable").html(html);
-
-//             $("#feedback_label").val('');
-//             $("#cus_feedback").val('');
-//             $("#feedback_remark").val('');
-//             $("#feedbackID").val('');
-
-//         }
-//     });
-// }
-
-// function feedbackList() {
-//     let NOC_Req_id = $('#noc_req_id').val();
-//     $.ajax({
-//         url: 'closedFile/loan_summary_list.php',
-//         type: 'POST',
-//         data: { "reqId": NOC_Req_id },
-//         cache: false,
-//         success: function (html) {
-//             $("#feedbackListTable").empty();
-//             $("#feedbackListTable").html(html);
-
-//             $("#feedback_label").val('');
-//             $("#cus_feedback").val('');
-//             $("#feedback_remark").val('');
-//             $("#feedbackID").val('');
-
-//             $(".addloansummary").find(".modal-body span").not('.required').hide();
-
-//         }
-//     });
-// }
-//Loan Summary Modal End
 
 function checkDocumentsStatus(req_id, callback) {
     let val;
@@ -512,3 +511,110 @@ function checkDocumentsStatus(req_id, callback) {
         callback(val);
     })
 }
+
+//Customer Feedback Modal 
+function resetfeedback() {
+    let cus_id = $('#cus_id').val();
+    $.ajax({
+        url: 'verificationFile/customer_feedback_reset.php',
+        type: 'POST',
+        data: { cus_id },
+        cache: false,
+        success: function (html) {
+            $("#feedbackTable").html(html);
+            $("#feedback_label, #cus_feedback, #feedback_remark, feedbackID").val('');
+        }
+    });
+}
+
+function feedbackList() {
+    let cus_id = $('#cus_id').val();
+    $.ajax({
+        url: 'verificationFile/customer_feedback_list.php',
+        type: 'POST',
+        data: { cus_id },
+        cache: false,
+        success: function (html) {
+            $("#feedbackListTable").html(html);
+            $("#feedback_label, #cus_feedback, #feedback_remark, feedbackID").val('');
+        }
+    });
+}
+
+function getFeedbackLable() {
+    $.post(
+        "verificationFile/getFeedbackLable.php",
+        function (data) {
+            $("#feedback_label") .empty() .append("<option value=''>Select Feedback Label</option>");
+
+            for (var i = 0; i < data.length; i++) {
+                var feedback_name = data[i]["feedback_name"];
+                var id = data[i]["id"];
+                $("#feedback_label").append( "<option value='" + id + "'>" + feedback_name + "</option>"
+                );
+            }
+        },
+        "json"
+    );
+}
+
+function cusfeedbacklist() {
+  $.ajax({
+    url: "verificationFile/getFeedbackList.php",
+    type: "POST",
+    cache: false,
+    success: function (html) {
+      $("#cus_feedbackListTable_div").html(html);
+    },
+  });
+}
+
+function submitfeedbackname() {
+ let feedbackname = $("#feedbackname").val();
+ let id = $("#fedbackname_id").val();
+
+  if (feedbackname != "") {
+    $.ajax({
+      url: "verificationFile/submitFeedbackName.php",
+      data: { feedbackname, id },
+      dataType: "json",
+      type: "POST",
+      cache: false,
+      success: function (response) {
+        if (response.includes('Inserted')) {
+            Swal.fire({
+                title: 'Feedback Label Inserted...!',
+                icon: 'success',
+                showConfirmButton: true,
+                confirmButtonColor: '#009688'
+            });
+        } else if (response.includes(' Updated')) {
+            Swal.fire({
+                title: 'Feedback Label Updated...!',
+                icon: 'success',
+                showConfirmButton: true,
+                confirmButtonColor: '#009688'
+            });
+        } else if(response.includes('Already')){
+            Swal.fire({
+                title: 'Feedback Label Already Existed',
+                icon: 'error',
+                showConfirmButton: true,
+                confirmButtonColor: '#009688'
+            });
+        }else if(response.includes('Failed')){
+            Swal.fire({
+                title: 'Error Occures',
+                icon: 'error',
+                showConfirmButton: true,
+                confirmButtonColor: '#009688'
+            });
+        }
+        $("#feedbackname, #fedbackname_id").val('');
+        cusfeedbacklist();
+      },
+    });
+
+  }
+}
+//Customer Feedback Modal End

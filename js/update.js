@@ -207,42 +207,6 @@ $(document).ready(function () {
         }
     });
 
-    //////// Customer Summary Submit START ////////
-    $('#submit_customer_summary').click(function(event){
-        event.preventDefault();
-        let customerSummaryData = {};
-
-        $('#customer_summary_card').find(':input[name]').each(function () {
-            customerSummaryData[this.name] = $(this).val();
-        });
-
-        let cusid = $('#cus_id').val();
-        customerSummaryData['cusid'] = cusid;
-
-        $.post('updateFile/update_customer_summary_submit.php', customerSummaryData, function(response){
-            if (response.includes('Successfully')) {
-                Swal.fire({
-                    title: 'Customer Summary Updated Successfully',
-                    icon: 'success',
-                    showConfirmButton: true,
-                    confirmButtonColor: '#009688'
-                }).then((result)=>{
-                    if(result.isConfirmed){
-                        window.location = 'update&upd='+cusid;
-                    }
-                });
-            } else if(response.includes('Failed')){
-                Swal.fire({
-                    title: 'Customer Summary Update Failed',
-                    icon: 'error',
-                    showConfirmButton: true,
-                    confirmButtonColor: '#009688'
-                });
-            }
-        }, 'json');
-    });
-    //////// Customer Summary Submit END ////////
-
     ///Documentation
     $('#Propertyholder_type').change(function () {
         let type = $(this).val();
@@ -914,23 +878,17 @@ function callCustomerProfileFunctn() {
         let form = $('form#cus_Profiles');
 
         // inputs except inside customer_summary_card
-        form.find('input')
-            .not('#pic, #guarentorpic, #customer_summary_card input, #customer_summary_card textarea')
+        form.find('input, textarea')
+            .not('#pic, #guarentorpic')
             .prop('readonly', true);
 
-        // select and button except inside customer_summary_card
+        // button except inside customer_summary_card
         form.find('select, button')
-            .not('#customer_summary_card select, #customer_summary_card button, #back_btn')
+            .not('#customer_summary_card button, #back_btn')
             .prop('disabled', true);
 
         form.find('#pic, #guarentorpic')
             .prop('disabled', true);
-    }
-
-    if(updateCPEditAccess =='1'){
-        $('#submit_customer_summary').show();
-    }else{
-        $('#submit_customer_summary').hide();
     }
 }
 

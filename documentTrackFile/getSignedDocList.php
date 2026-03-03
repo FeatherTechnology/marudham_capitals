@@ -9,14 +9,6 @@ if(isset($_POST['cus_name'])){
     $cus_name = $_POST['cus_name'];
 }
 
-$useINcondition = $_POST['useINcondition'] ?? 0;
-
-if($useINcondition =='1'){ //if combined then show current doc + replace doc in same table to combine in document track.
-    $condition = "a.req_id IN ($req_id)";
-} else{
-    $condition = "a.req_id = $req_id";
-}
-
 function getfamName($connect, $rel_id){
     $qry1=$connect->query("SELECT famname FROM `verification_family_info` where id = $rel_id");
     $run=$qry1->fetch();
@@ -24,7 +16,7 @@ function getfamName($connect, $rel_id){
 }
 
 function getGuarentorName($connect, $req_id){
-    $qry1=$connect->query("SELECT famname FROM `verification_family_info` b JOIN `acknowlegement_customer_profile` a ON a.guarentor_name = b.id WHERE $req_id");
+    $qry1=$connect->query("SELECT famname FROM `verification_family_info` b JOIN `acknowlegement_customer_profile` a ON a.guarentor_name = b.id WHERE a.req_id IN ($req_id)");
     $run=$qry1->fetch();
     return $run['famname'];
 }
@@ -44,7 +36,7 @@ function getGuarentorName($connect, $req_id){
     <tbody>
         <?php
         $i=1;
-        $qry = $connect->query("SELECT a.doc_name, a.sign_type, a.signType_relationship, b.upload_doc_name, a.doc_Count FROM `signed_doc_info` a LEFT JOIN signed_doc b ON a.id = b.signed_doc_id WHERE $condition ");
+        $qry = $connect->query("SELECT a.doc_name, a.sign_type, a.signType_relationship, b.upload_doc_name, a.doc_Count FROM `signed_doc_info` a LEFT JOIN signed_doc b ON a.id = b.signed_doc_id WHERE a.req_id IN ($req_id) ");
         while($row = $qry->fetch()){
             $rel_id = $row['signType_relationship'];
             $count = $row['doc_Count'];
@@ -53,7 +45,7 @@ function getGuarentorName($connect, $req_id){
             <tr>
                 <td><?php echo $i++;?></td>
                 <td>Signed Document</td>
-                <td><?php if($row['sign_type'] == '0'){echo 'Customer'; $name=$cus_name;}elseif($row['sign_type'] == '1'){echo 'Guarentor';$name = getGuarentorName($connect,$condition);}
+                <td><?php if($row['sign_type'] == '0'){echo 'Customer'; $name=$cus_name;}elseif($row['sign_type'] == '1'){echo 'Guarentor';$name = getGuarentorName($connect,$req_id);}
                             elseif($row['sign_type'] == '2'){echo 'Combined';}elseif($row['sign_type'] == '3'){echo 'Family Member'; $name = getfamName($connect,$rel_id);} ?></td>
                 <td><?php echo $name;?></td>
                 <td><?php echo $count;?></td>

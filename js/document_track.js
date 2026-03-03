@@ -1,4 +1,4 @@
-function getAllDocumentList(req_id, cus_name, useINcondition) {
+function getAllDocumentList(req_id, cus_name) {
     // To get the Customer details.
     $.post('collectionFile/getDueMethodName.php', { req_id }, function (response) {
         $('#myLargeModalLabel').text(`View Document ( Aadhaar Number : ${response.cus_id} | Cus ID : ${response.autogen_cus_id}  | Cus Name : ${response.cus_name}  | Loan ID : ${response.loan_id}  | DOC ID : ${response.doc_id} | Loan Category : ${response.loan_category} )`);
@@ -7,7 +7,7 @@ function getAllDocumentList(req_id, cus_name, useINcondition) {
     // To get the Signed Document List on Checklist
     $.ajax({
         url: 'documentTrackFile/getSignedDocList.php',
-        data: { req_id, cus_name, useINcondition },
+        data: { req_id, cus_name },
         type: 'post',
         cache: false,
         success: function (response) {
@@ -25,7 +25,7 @@ function getAllDocumentList(req_id, cus_name, useINcondition) {
     // To get the unused Cheque List on Checklist
     $.ajax({
         url: 'documentTrackFile/getChequeDocList.php',
-        data: { req_id, useINcondition },
+        data: { req_id },
         type: 'post',
         cache: false,
         success: function (response) {
@@ -43,7 +43,7 @@ function getAllDocumentList(req_id, cus_name, useINcondition) {
     // To get the Mortgage List on Checklist
     $.ajax({
         url: 'documentTrackFile/getMortgageList.php',
-        data: { req_id, useINcondition },
+        data: { req_id },
         type: 'post',
         cache: false,
         success: function (response) {
@@ -62,7 +62,7 @@ function getAllDocumentList(req_id, cus_name, useINcondition) {
     // To get the Endorsement List on Checklist
     $.ajax({
         url: 'documentTrackFile/getEndorsementList.php',
-        data: { req_id, useINcondition },
+        data: { req_id },
         type: 'post',
         cache: false,
         success: function (response) {
@@ -81,7 +81,7 @@ function getAllDocumentList(req_id, cus_name, useINcondition) {
     // To get the Gold List on Checklist
     $.ajax({
         url: 'documentTrackFile/getGoldList.php',
-        data: { req_id, useINcondition },
+        data: { req_id },
         type: 'post',
         cache: false,
         success: function (response) {
@@ -99,7 +99,7 @@ function getAllDocumentList(req_id, cus_name, useINcondition) {
     // To get the Document List on Checklist
     $.ajax({
         url: 'documentTrackFile/getDocumentList.php',
-        data: { req_id, useINcondition },
+        data: { req_id },
         type: 'post',
         cache: false,
         success: function (response) {

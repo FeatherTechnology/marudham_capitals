@@ -3480,6 +3480,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 								<select type="text" class="form-control" id="feedback_label" style="width: 330px;" name="feedback_label" tabindex='1'>
 									<option value=""> Select Feedback Label</option>
 								</select>
+								<span class="text-danger" id="feedbacklabelCheck" style='display:none'> Select Feedback Label</span>
 							</div>
 							<div style="padding: 20px 0px 0px 10px;  ">
 							    <button type="button" class="btn btn-primary" id="add_cus_feedback" name="add_cus_feedback" data-toggle="modal" data-target="#add_feedback_lable" style="display: <?= ($approvalaccess == 0 ? 'inline-block' : 'none'); ?>;" tabindex="2"><span class="icon-add"></span></button>

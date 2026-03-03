@@ -18,6 +18,7 @@ if (isset($_POST['req_id'])) {
             <th> Holder Name</th>
             <th> Relationship</th>
             <th> Document </th>
+            <th> ACTION </th>
         </tr>
     </thead>
     <tbody>
@@ -64,6 +65,9 @@ if (isset($_POST['req_id'])) {
                         }
                         $ii++;
                     } ?></td>
+                <td>
+                    <a id="doc_info_delete" value="<?php echo $row['id']; ?>" data-screen="1"> <span class='icon-trash-2'></span> </a>
+                </td>
             </tr>
 
         <?php  } ?>

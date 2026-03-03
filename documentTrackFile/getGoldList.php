@@ -6,14 +6,6 @@ if(isset($_POST['req_id'])){
     $req_id = $_POST['req_id'];
 }
 
-$useINcondition = $_POST['useINcondition'] ?? 0;
-
-if($useINcondition =='1'){ //if combined then show current doc + replace doc in same table to combine in document track.
-    $condition = "req_id IN ($req_id)";
-} else{
-    $condition = "req_id = $req_id";
-}
-
 function getfamName($connect,$rel_id){
     $qry1=$connect->query("SELECT famname FROM `verification_family_info` where id=$rel_id");
     $run=$qry1->fetch();
@@ -35,7 +27,7 @@ function getfamName($connect,$rel_id){
     <tbody>
         <?php
         $i=1;
-        $qry = $connect->query("SELECT gold_Count, gold_Weight, gold_Value, gold_type, Purity, gold_upload FROM `gold_info` WHERE $condition and used_status != '1' ");
+        $qry = $connect->query("SELECT gold_Count, gold_Weight, gold_Value, gold_type, Purity, gold_upload FROM `gold_info` WHERE req_id IN ($req_id) and used_status != '1' ");
         $cnt = 0;
         $weight = 0;
         $goldVal = 0;

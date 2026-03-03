@@ -4,14 +4,6 @@ if(isset($_POST['req_id'])){
     $req_id = $_POST['req_id'];
 }
 
-$useINcondition = $_POST['useINcondition'] ?? 0;
-
-if($useINcondition =='1'){ //if combined then show current doc + replace doc in same table to combine in document track.
-    $condition = "ac.req_id IN ($req_id)";
-} else{
-    $condition = "ac.req_id = $req_id";
-}
-
 function getfamName($connect,$rel_id){
     $qry1=$connect->query("SELECT famname FROM `verification_family_info` WHERE id=$rel_id");
     $run=$qry1->fetch();
@@ -32,7 +24,7 @@ function getfamName($connect,$rel_id){
         <?php
         $k=1;
             
-            $qry = $connect->query("SELECT ac.doc_name, ac.doc_type, ac.doc_upload, ac.doc_holder, ac.holder_name, ac.relation_name, fam.famname FROM document_info ac LEFT JOIN verification_family_info fam ON ac.relation_name = fam.id WHERE $condition ");
+            $qry = $connect->query("SELECT ac.doc_name, ac.doc_type, ac.doc_upload, ac.doc_holder, ac.holder_name, ac.relation_name, fam.famname FROM document_info ac LEFT JOIN verification_family_info fam ON ac.relation_name = fam.id WHERE ac.req_id IN ($req_id) ");
 
             while($row = $qry->fetch()){
                 $upd_arr = explode(',',$row['doc_upload']);

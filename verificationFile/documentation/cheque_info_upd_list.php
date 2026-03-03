@@ -13,6 +13,7 @@ include '../../ajaxconfig.php';
             <th> Cheque Count </th>
             <th> Cheque No </th>
             <th> Uploads </th>
+            <th> ACTION </th>
         </tr>
     </thead>
     <tbody>
@@ -69,6 +70,9 @@ include '../../ajaxconfig.php';
                 <td><?php echo $cheque["cheque_count"]; ?></td>
                 <td><?php echo rtrim($cheque_no, ','); ?></td>
                 <td><?php echo $doc_upd_name; ?></td>
+                <td>
+                    <a id="cheque_info_delete" value="<?php echo $cheque['id']; ?>" data-screen="1"> <span class='icon-trash-2'></span> </a>
+                </td>
 
             </tr>
 

@@ -1912,7 +1912,7 @@
                         $('#viewTrackDiv').html(html);
                     }
                 }).then(function() {
-                    getAllDocumentList(req_id, cus_name, useINcondition);
+                    getAllDocumentList(req_id, cus_name);
                 }); //then function end
             }); //click function end
 

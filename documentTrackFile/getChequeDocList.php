@@ -5,14 +5,6 @@ if(isset($_POST['req_id'])){
     $req_id = $_POST['req_id'];
 }
 
-$useINcondition = $_POST['useINcondition'] ?? 0;
-
-if($useINcondition =='1'){ //if combined then show current doc + replace doc in same table to combine in document track.
-    $condition = "a.req_id IN ($req_id)";
-} else{
-    $condition = "a.req_id = $req_id";
-}
-
 function getfamName($connect,$rel_id){
     $qry1=$connect->query("SELECT famname FROM `verification_family_info` where id=$rel_id");
     $run=$qry1->fetch();
@@ -34,7 +26,7 @@ function getfamName($connect,$rel_id){
     <tbody>
         <?php
         $i=1;
-        $qry = $connect->query("SELECT a.cheque_holder_type, a.cheque_holder_name, b.cheque_relation, b.chequebank_name, a.cheque_no FROM `cheque_no_list` a JOIN cheque_info b on a.cheque_table_id = b.id WHERE $condition ");
+        $qry = $connect->query("SELECT a.cheque_holder_type, a.cheque_holder_name, b.cheque_relation, b.chequebank_name, a.cheque_no FROM `cheque_no_list` a JOIN cheque_info b on a.cheque_table_id = b.id WHERE a.req_id IN ($req_id) ");
         while($row = $qry->fetch()){
 
             if(is_numeric($row['cheque_holder_name'])){
