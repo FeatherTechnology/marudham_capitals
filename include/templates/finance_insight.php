@@ -146,7 +146,22 @@ $bank_details = $getuser['bank_details'];
 										<td></td>
 									</tr>
 									<tr>
-										<td>Circular Amount</td>
+										<td>Circular Collection</td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td>Circular Issued</td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td>Circular Exchange</td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td>Circular Contra</td>
 										<td></td>
 										<td></td>
 									</tr>
@@ -388,8 +403,29 @@ $bank_details = $getuser['bank_details'];
 										<td></td>
 										<td></td>
 									</tr>
-									<tr class='break'>
+									<tr>
+										<td>Circular Collection</td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td>Circular Issued</td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td>Circular Exchange</td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
 										<td>Circular Contra</td>
+										<td></td>
+										<td></td>
+									</tr>
+
+									<tr class='break'>
+										<td>Circular Waiver</td>
 										<td></td>
 										<td></td>
 									</tr>
