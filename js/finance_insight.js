@@ -114,21 +114,51 @@ function BalanceSheetCalculations(type, from_date, to_date, month) {
             let current_uncleared_debit  = response[2]?.current_uncleared_debit  || 0;
             let circularData  = response[3];
 
-            let total_credit   = circularData.total_credit || 0;
-            let total_debit   = circularData.total_debit || 0;
-            let total_withdraw  = circularData.total_withdraw || 0;
-            let total_Waiver  = circularData.total_Waiver || 0;
+       
+            let cur_circ_withdraw  = circularData.cur_circ_withdraw || 0;
+            let cur_waiver  = circularData.cur_waiver || 0;
+            let cur_circ_exchange  = circularData.cur_circ_exchange || 0;
+            let cur_circ_coll  = circularData.cur_circ_coll || 0;
+            let cur_circ_issued  = circularData.cur_circ_issued || 0;
+
+            let pre_circ_coll  = circularData.pre_circ_coll || 0;
+            let pre_circ_issued  = circularData.pre_circ_issued || 0;
+            let pre_circ_exchange  = circularData.pre_circ_exchange || 0;
+            let pre_circ_withdraw  = circularData.pre_circ_withdraw || 0;
+            let pre_circ_Waiver  = circularData.pre_circ_Waiver || 0;
             
             $('.balance-sheet-card').find('tbody tr:nth-child(17) td:nth-child(3)').text(moneyFormatIndia(agBal));
-            $('.balance-sheet-card') .find('tbody tr:nth-child(18) td:nth-child(3)') .text(moneyFormatIndia(total_credit));
-            $('.balance-sheet-card') .find('tbody tr:nth-child(18) td:nth-child(2)') .text(moneyFormatIndia(total_debit));
-            $('.balance-sheet-card') .find('tbody tr:nth-child(19) td:nth-child(3)') .text(moneyFormatIndia(total_Waiver));
+            $('.balance-sheet-card') .find('tbody tr:nth-child(18) td:nth-child(3)') .text(moneyFormatIndia(cur_circ_coll));
+            $('.balance-sheet-card') .find('tbody tr:nth-child(19) td:nth-child(2)') .text(moneyFormatIndia(cur_circ_issued));
+            $('.balance-sheet-card') .find('tbody tr:nth-child(20) td:nth-child(3)') .text(moneyFormatIndia(cur_circ_exchange));
+            $('.balance-sheet-card') .find('tbody tr:nth-child(21) td:nth-child(3)') .text(moneyFormatIndia(cur_circ_withdraw));
+            $('.balance-sheet-card').find('tbody tr:nth-child(22) td:nth-child(2)').text(moneyFormatIndia(cur_waiver));
+            
+            $('.benefits-check-card').find('tbody tr:nth-child(13) td:nth-child(3)').text(moneyFormatIndia(cur_circ_coll));
+            $('.benefits-check-card').find('tbody tr:nth-child(14) td:nth-child(2)').text(moneyFormatIndia(cur_circ_issued));
+            $('.benefits-check-card').find('tbody tr:nth-child(15) td:nth-child(3)').text(moneyFormatIndia(cur_circ_exchange));
+            $('.benefits-check-card').find('tbody tr:nth-child(16) td:nth-child(3)').text(moneyFormatIndia(cur_circ_withdraw));
+            $('.benefits-check-card').find('tbody tr:nth-child(17) td:nth-child(2)').text(moneyFormatIndia(cur_waiver)); 
 
-            $('.benefits-check-card').find('tbody tr:nth-child(13) td:nth-child(3)').text(moneyFormatIndia(total_withdraw));//benefit check table also will have same closing balance
 
-            $('.balance-sheet-card').find('tbody tr:nth-child(20) td:nth-child(3)').text(moneyFormatIndia(clBal));
+            
+            $('.balance-sheet-card') .find('tbody tr:nth-child(18) td:nth-child(2)') .text(moneyFormatIndia(pre_circ_coll));
+            $('.balance-sheet-card') .find('tbody tr:nth-child(19) td:nth-child(3)') .text(moneyFormatIndia(pre_circ_issued));
+            $('.balance-sheet-card') .find('tbody tr:nth-child(20) td:nth-child(2)') .text(moneyFormatIndia(pre_circ_exchange));
+            $('.balance-sheet-card') .find('tbody tr:nth-child(21) td:nth-child(2)') .text(moneyFormatIndia(pre_circ_withdraw));
+            $('.balance-sheet-card').find('tbody tr:nth-child(22) td:nth-child(3)').text(moneyFormatIndia(pre_circ_Waiver));
+
+            $('.benefits-check-card').find('tbody tr:nth-child(13) td:nth-child(2)').text(moneyFormatIndia(pre_circ_coll));
+            $('.benefits-check-card').find('tbody tr:nth-child(14) td:nth-child(3)').text(moneyFormatIndia(pre_circ_issued));
+            $('.benefits-check-card').find('tbody tr:nth-child(15) td:nth-child(2)').text(moneyFormatIndia(pre_circ_exchange));
+            $('.benefits-check-card').find('tbody tr:nth-child(16) td:nth-child(2)').text(moneyFormatIndia(pre_circ_withdraw));
+            $('.benefits-check-card').find('tbody tr:nth-child(17) td:nth-child(3)').text(moneyFormatIndia(pre_circ_Waiver));
+            
+
+            // $('.balance-sheet-card').find('tbody tr:nth-child(23) td:nth-child(2)').text(moneyFormatIndia(pre_circ_coll));
+            $('.balance-sheet-card').find('tbody tr:nth-child(23) td:nth-child(3)').text(moneyFormatIndia(clBal));
             $('.benefits-check-card').find('tbody tr:nth-child(12) td:nth-child(3)').text(moneyFormatIndia(agBal));//benefit check table also will have same Agent balance
-            $('.benefits-check-card').find('tbody tr:nth-child(14) td:nth-child(3)').text(moneyFormatIndia(clBal));//benefit check table also will have same closing balance
+            $('.benefits-check-card').find('tbody tr:nth-child(18) td:nth-child(3)').text(moneyFormatIndia(clBal));
 
             $('.balance-sheet-card') .find('tbody tr:nth-child(15) td:nth-child(2)') .text(moneyFormatIndia(-previous_uncleared_credit));
             $('.balance-sheet-card') .find('tbody tr:nth-child(15) td:nth-child(3)') .text(moneyFormatIndia(-previous_uncleared_debit));
