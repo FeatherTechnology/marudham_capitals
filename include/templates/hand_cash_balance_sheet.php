@@ -20,11 +20,11 @@ $report_access = $getuser['report_access'];
 		<div class="row gutters" style="margin-left: 0;margin-right: 2px;">
 
 			<div class="toggle-container col-12">
-				<input type="button" class="toggle-button" data-toggle='modal' data-target='#dayModal' value='Day Wise'>
-				<input type="button" class="toggle-button" value='Today'>
 				<select type="text" class="toggle-button" id='by_user' name='by_user' <?php if($report_access == '1') echo "style='display: none'"; ?>>
 					<option value=''>Select User</option>
 				</select>
+				<input type="button" class="toggle-button" data-toggle='modal' data-target='#dayModal' value='Day Wise'>
+				<input type="button" class="toggle-button" value='Today'>
 			</div>
 
 			<div class="split-card col-12">
@@ -47,22 +47,12 @@ $report_access = $getuser['report_access'];
 										<td></td>
 									</tr>
 									<tr>
-										<td>Due Collection</td>
+										<td>Collection</td>
 										<td></td>
 										<td></td>
 									</tr>
 									<tr>
 										<td>Waiver</td>
-										<td></td>
-										<td></td>
-									</tr>
-									<tr>
-										<td>Penalty</td>
-										<td></td>
-										<td></td>
-									</tr>
-									<tr>
-										<td>Fine</td>
 										<td></td>
 										<td></td>
 									</tr>
@@ -112,16 +102,10 @@ $report_access = $getuser['report_access'];
 										<td></td>
 									</tr>
 									<tr class='break'>
-										<td>Circular Amount</td>
-										<td></td>
-										<td></td>
-									</tr>
-									<tr class='break'>
 										<td>Total Closing Balance</td>
 										<td></td>
 										<td></td>
 									</tr>
-
 								</tbody>
 								<tfoot>
 									<tr>

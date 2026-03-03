@@ -4,11 +4,6 @@ include('../ajaxconfig.php');
 if(isset($_POST['req_id'])){
     $req_id = $_POST['req_id'];
 }
-
-if(isset($_POST['cus_name'])){
-    $cus_name = $_POST['cus_name'];
-}
-
 ?>
 <table class="table custom-table" id='endorsementTable'>
     <thead>
@@ -21,8 +16,8 @@ if(isset($_POST['cus_name'])){
 
         <?php
         $i=1;
-        $qry = $connect->query("SELECT en_RC, en_Key FROM acknowlegement_documentation where req_id = $req_id");
-        $row = $qry->fetch();
+        $qry = $connect->query("SELECT en_RC, en_Key FROM acknowlegement_documentation WHERE req_id IN ($req_id)");
+        while($row = $qry->fetch()){
         if($row['en_RC'] == '0' ){
         ?>
             <tr>
@@ -37,7 +32,7 @@ if(isset($_POST['cus_name'])){
                 <td>Key</td>
             </tr>
 
-        <?php } ?>
+        <?php } }?>
 
     </tbody>
 </table>

@@ -3,6 +3,8 @@ require_once 'moneyFormatIndia.php';
 
 if (isset($_SESSION['userid'])) {
 	$userid = $_SESSION['userid'];
+
+	$approvalaccess = $userObj->getuser($mysqli, $userid)['approval'];
 }
 
 if (isset($_POST['submit_closed']) && $_POST['submit_closed'] != '') {
@@ -362,6 +364,11 @@ if (sizeof($getCustomerReg) > 0) {
 						</div>
 
 						<hr>
+						<div class="row">
+							<div class="col-12">
+								<button type="button" class="btn btn-primary" id="add_cus_label" name="add_cus_label" data-toggle="modal" data-target=".addCusLabel" style="padding: 5px 35px; float: right;" tabindex="61" onclick="resetfeedback();"><span class="icon-add"></span></button>
+							</div>
+						</div> <br>
 
 						<div class="row">
 							<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
@@ -438,33 +445,6 @@ if (sizeof($getCustomerReg) > 0) {
 							</div>
 						</div>
 
-						<hr>
-						<div class="row">
-							<div class="col-12">
-								<h5> Loan summary </h5>
-								<button type="button" class="btn btn-primary" id="add_cus_label" name="add_cus_label" data-toggle="modal" data-target=".addloansummary" style="padding: 5px 35px; float: right;"><span class="icon-add"></span></button>
-							</div>
-						</div> <br>
-
-						<div class="row">
-							<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-								<div class="form-group table-responsive" id="feedbackListTable">
-									<table class="table custom-table modalTable">
-										<thead>
-											<tr>
-												<th width="20%"> S.No </th>
-												<th> Feedback Label </th>
-												<th> Feedback </th>
-												<th> Remarks </th>
-											</tr>
-										</thead>
-										<tbody>
-
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</div>
 						<hr>
 
 						<div class="row">
@@ -649,12 +629,34 @@ if (sizeof($getCustomerReg) > 0) {
 	</div>
 </div>
 <!-- /////////////////////////////////////////////////////////////////// Fine Chart Modal END ////////////////////////////////////////////////////////////////////// -->
-<!-- Add Loan Summary Modal START -->
-<div class="modal fade addloansummary" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+
+<!-- Modal for Commitment Chart just view table   -->
+<div class="modal fade" id="commitmentChart" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-lg " role="document">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLongTitle">Commitment Chart</h5>
+				<button type="button" class="close" data-dismiss="modal" tabindex="1" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id='commChartDiv' style="overflow-x: auto;">
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-secondary" data-dismiss="modal" tabindex="2">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Add Customer Label Modal  START -->
+<div class="modal fade addCusLabel" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
-				<h5 class="modal-title" id="myLargeModalLabel"> Add Loan Summary </h5>
+				<h5 class="modal-title" id="">Add Customer Feedback </h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="feedbackList()">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -682,18 +684,25 @@ if (sizeof($getCustomerReg) > 0) {
 
 				<div class="row">
 
-					<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-						<div class="form-group">
-							<label for="feedbackLabel"> Feedback Label </label> <span class="required">&nbsp;*</span>
-							<input type="text" class="form-control" id="feedback_label" name="feedback_label" onkeydown="return /[a-z ]/i.test(event.key)" placeholder="Enter Feedback Label">
-							<span class="text-danger" id="feedbacklabelCheck"> Enter Feedback Label </span>
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+						<div class="form-group" style="display: flex; align-items: center;">
+							<div>
+								<label for="feedback_label"> Feedback Label </label> <span class="required">&nbsp;*</span>
+								<select type="text" class="form-control" id="feedback_label" style="width: 330px;" name="feedback_label" tabindex='1'>
+									<option value=""> Select Feedback Label</option>
+								</select>
+								<span class="text-danger" id="feedbacklabelCheck" style='display:none'> Select Feedback Label</span>
+							</div>
+							<div style="padding: 20px 0px 0px 10px;  ">
+							    <button type="button" class="btn btn-primary" id="add_cus_feedback" name="add_cus_feedback" data-toggle="modal" data-target="#add_feedback_lable" style="display: <?= ($approvalaccess == '0' ? 'inline-block' : 'none'); ?>;" tabindex="2"><span class="icon-add"></span></button>
+							</div>
 						</div>
 					</div>
 
-					<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
-							<label for="feedback "> Feedback Rating </label> <span class="required">&nbsp;*</span>
-							<select type="text" class="form-control" id="cus_feedback" name="cus_feedback">
+							<label for="cus_feedback"> Feedback </label> <span class="required">&nbsp;*</span>
+							<select type="text" class="form-control" id="cus_feedback" name="cus_feedback" tabindex='2'>
 								<option value=""> Select Feedback </option>
 								<option value="1"> Bad </option>
 								<option value="2"> Poor </option>
@@ -701,67 +710,106 @@ if (sizeof($getCustomerReg) > 0) {
 								<option value="4"> Good </option>
 								<option value="5"> Excellent </option>
 							</select>
-							<span class="text-danger" id="feedbackCheck"> Select Feedback </span>
+							<span class="text-danger" id="feedbackCheck" style='display:none'> Select Feedback </span>
 						</div>
 					</div>
 
-					<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12"></div>
+					<div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12">
 						<div class="form-group">
-							<label for="feedback_remark"> Remark </label>
-							<textarea class="form-control" name="feedback_remark" id="feedback_remark"></textarea>
+							<label for="feedback_remark"> Remarks </label>
+							<textarea class="form-control" name="feedback_remark" id="feedback_remark" tabindex='3'></textarea>
 						</div>
 					</div>
 
-					<div class="col-xl-12 col-lg-12 col-md-6 col-sm-6 col-12 text-right">
+					<div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12"></div>
+					<div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12">
 						<input type="hidden" name="feedbackID" id="feedbackID">
-						<label style="visibility:hidden"> Submit </label><br><br>
-						<button type="button" name="feedbackBtn" id="feedbackBtn" class="btn btn-primary"> Submit </button>
+						<button type="button" name="feedbackBtn" id="feedbackBtn" class="btn btn-primary" style="margin-top: 19px;" tabindex='4'> Submit </button>
 					</div>
 				</div>
 				</br>
-
 
 				<div id="feedbackTable" class="table-responsive">
 					<table class="table custom-table">
 						<thead>
 							<tr>
-								<th width="20%"> S.No </th>
+								<th width="50"> S.No </th>
+								<th > User Name </th>
+								<th> Created Date </th>
 								<th> Feedback Label </th>
 								<th> Feedback </th>
 								<th> ACTION </th>
 							</tr>
 						</thead>
-						<tbody>
-
-						</tbody>
+						<tbody></tbody>
 					</table>
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="feedbackList();">Close</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="feedbackList(); tabindex='6'">Close</button>
 			</div>
 		</div>
 	</div>
 </div>
-<!-- END  Add Loan Summary Modal -->
 
-<!-- Modal for Commitment Chart just view table   -->
-<div class="modal fade" id="commitmentChart" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="add_feedback_lable" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
 	<div class="modal-dialog modal-lg " role="document">
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLongTitle">Commitment Chart</h5>
-				<button type="button" class="close" data-dismiss="modal" tabindex="1" aria-label="Close">
+				<h5 class="modal-title" id="exampleModalLongTitle">Add Feedback Label  </h5>
+				<button type="button" class="close" data-dismiss="modal" tabindex="7" aria-label="Close" onclick="getFeedbackLable()">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
 			<div class="modal-body">
-				<div id='commChartDiv' style="overflow-x: auto;">
+				<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+					
+					<div class="card-body" style="height: 400px;">
+						<div class="row ">
+							<!--Fields -->
+							<div class="col-md-12 ">
+								<div class="row">
+									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-10 col-12"></div>
+									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-10 col-12">
+										<div class="form-group">
+											<label for="disabledInput">Feedback Label</label>&nbsp;<span class="text-danger"></span>
+											<input type="hidden" name="fedbackname_id" id="fedbackname_id">
+											<input type="text" tabindex="4" class="form-control" id="feedbackname" name="feedbackname" value="" placeholder="Enter Feedback Label">
+										</div>
+									</div>
+
+									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-10 col-12 d-flex align-items-center" style="margin-top: 20px;">
+										<div class="form-group">
+											<button type="submit" name="submit_feedback_lable" id="submit_feedback_lable" class="btn btn-primary" value="Submit" tabindex="5"><span class="icon-check"></span>&nbsp;Submit</button>
+										</div>
+									</div>
+								</div>
+								<br>
+							</div>
+							<div  class="col-md-12" id="cus_feedbackListTable_div">
+									<table class="table custom-table" id="cus_feedbackListTable">
+										<thead>
+											<tr>
+												<th width="50"> S.No </th>
+												<th> Feedback Label  </th>
+												<th> ACTION </th>
+											</tr>
+										</thead>
+										<tbody>
+
+										</tbody>
+									</table>
+							</div>
+						</div>
+					</div>
+					
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button class="btn btn-secondary" data-dismiss="modal" tabindex="2">Close</button>
+				<button class="btn btn-secondary" data-dismiss="modal" tabindex="6"  onclick="getFeedbackLable()">Close</button>
 			</div>
 		</div>
 	</div>
 </div>
+<!-- END  Add Customer Label Info Modal -->

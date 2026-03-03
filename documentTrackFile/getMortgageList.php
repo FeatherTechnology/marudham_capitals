@@ -4,11 +4,6 @@ include('../ajaxconfig.php');
 if(isset($_POST['req_id'])){
     $req_id = $_POST['req_id'];
 }
-
-if(isset($_POST['cus_name'])){
-    $cus_name = $_POST['cus_name'];
-}
-
 ?>
 <table class="table custom-table" id='mortgageTable'>
     <thead>
@@ -18,19 +13,17 @@ if(isset($_POST['cus_name'])){
         </tr>
     </thead>
     <tbody>
-
         <?php
-        $qry = $connect->query("SELECT mortgage_document, mortgage_document_pending, mortgage_document_used FROM acknowlegement_documentation WHERE req_id = $req_id ");
-        $row = $qry->fetch();
+        $i=1;
+        $qry = $connect->query("SELECT mortgage_document, mortgage_document_pending, mortgage_document_used FROM acknowlegement_documentation WHERE req_id IN ($req_id) ");
+        while($row = $qry->fetch()){
         if($row['mortgage_document'] == '0' && $row['mortgage_document_used'] != '1'){
         ?>
             <tr>
-                <td>1</td>
+                <td><?php echo $i++; ?></td>
                 <td>Mortgage Document</td>        
             </tr>
-            
-        <?php } ?>
-
+        <?php } }?>
     </tbody>
 </table>
 

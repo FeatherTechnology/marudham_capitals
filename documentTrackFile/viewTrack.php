@@ -1,17 +1,3 @@
-<?php
-session_start();
-$userid = $_SESSION['userid'];
-
-include '../ajaxconfig.php';
-
-if(isset($_POST['req_id'])){
-    $req_id = $_POST['req_id'];
-}
-if(isset($_POST['cus_id'])){
-    $cus_id = $_POST['cus_id'];
-}
-
-?>
 <style>
     .hr-line{
         position: relative;
@@ -21,7 +7,6 @@ if(isset($_POST['cus_id'])){
         background: black;
     }
 </style>
-
 
     <!-- NOC window -->
     <div class="card noc-card" >

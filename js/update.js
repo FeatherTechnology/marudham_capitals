@@ -205,12 +205,9 @@ $(document).ready(function () {
             $('#customer_old_div').show();
             showCustomerOldData();
         }
-    })
+    });
 
-
-
-    ///Documentation 
-
+    ///Documentation
     $('#Propertyholder_type').change(function () {
         let type = $(this).val();
         let req_id = $('#req_id').val();
@@ -744,6 +741,33 @@ $(document).ready(function () {
 });   ////////Document Ready End
 
 $(function () {
+
+    $('.modalTable').DataTable({
+        'processing': true,
+        'iDisplayLength': 5,
+        "lengthMenu": [
+            [10, 25, 50, -1],
+            [10, 25, 50, "All"]
+        ],
+        "createdRow": function (row, data, dataIndex) {
+            $(row).find('td:first').html(dataIndex + 1);
+        },
+        "drawCallback": function (settings) {
+            this.api().column(0).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        },
+        dom: 'lBfrtip',
+        buttons: [{
+            extend: 'excel',
+        },
+        {
+            extend: 'colvis',
+            collectionLayout: 'fixed four-column',
+        }
+        ],
+    });
+    
     //  $('.icon-chevron-down1').parent().next('div').slideUp(); //To collapse all card on load
     let selectedScreens = $('#selected_screens').val();
 
@@ -849,32 +873,23 @@ function callCustomerProfileFunctn() {
         $('.spouse').hide();
     }
 
-    $('.modalTable').DataTable({
-        'processing': true,
-        'iDisplayLength': 5,
-        "lengthMenu": [
-            [10, 25, 50, -1],
-            [10, 25, 50, "All"]
-        ],
-        "createdRow": function (row, data, dataIndex) {
-            $(row).find('td:first').html(dataIndex + 1);
-        },
-        "drawCallback": function (settings) {
-            this.api().column(0).nodes().each(function (cell, i) {
-                cell.innerHTML = i + 1;
-            });
-        },
-        dom: 'lBfrtip',
-        buttons: [{
-            extend: 'excel',
-        },
-        {
-            extend: 'colvis',
-            collectionLayout: 'fixed four-column',
-        }
-        ],
-    });
+    let updateCPEditAccess = $('#update_cp_edit_access').val();
+    if(updateCPEditAccess !='2'){ //Overall
+        let form = $('form#cus_Profiles');
 
+        // inputs except inside customer_summary_card
+        form.find('input, textarea')
+            .not('#pic, #guarentorpic')
+            .prop('readonly', true);
+
+        // button except inside customer_summary_card
+        form.find('select, button')
+            .not('#customer_summary_card button, #back_btn')
+            .prop('disabled', true);
+
+        form.find('#pic, #guarentorpic')
+            .prop('disabled', true);
+    }
 }
 
 function callDocFunctn() {
@@ -3776,8 +3791,11 @@ function getFingerPrintDetails(cus_id, cus_name) {
         type: 'post',
         cache: false,
         success: function (html) {
-            $('.fingerprintTable').empty()
-            $('.fingerprintTable').html(html)
+            $('.fingerprintTable').html(html);
+            let updateCPEditAccess = $('#update_cp_edit_access').val();
+            if(updateCPEditAccess !='2'){ //Overall
+                $('.hand_selection, .scanBtn').attr('disabled', true);
+            }
 
             $('.scanBtn').click(function () {
                 var hand = $(this).prev().val();

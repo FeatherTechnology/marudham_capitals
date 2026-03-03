@@ -47,8 +47,8 @@ if (isset($_POST['search'])) {
             bs.credit LIKE '%" . $_POST['search'] . "%' OR
             bs.debit LIKE '%" . $_POST['search'] . "%' OR
             bs.clr_status LIKE '%" . $_POST['search'] . "%' OR
-            u.fullname LIKE '%" . $_POST['search'] . "%' OR
-            cbsh.screens LIKE '%" . $_POST['search'] . "%' ) ";
+            a.cleared_user LIKE '%" . $_POST['search'] . "%' OR
+            a.cleared_screens LIKE '%" . $_POST['search'] . "%' ) ";
     }
 }
 

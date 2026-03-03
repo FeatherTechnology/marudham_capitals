@@ -1,7 +1,5 @@
 <?php
-include('../../ajaxconfig.php');
-include(__DIR__ . '/getCircularAmount.php');
-$CBObj = new CircularAmountClass($connect); 
+include "../../ajaxconfig.php";
 
 $type = $_POST['type'];
 $userid = $_POST['user_id'] ?? ''; //for user based
@@ -14,9 +12,6 @@ if ($type == 'today') {
     $from_date = $_POST['from_date'];
     $to_date = date('Y-m-d', strtotime($_POST['to_date']. '+1 day'));
 }
-$branch_id = $_POST['branch_id'] ?? '1,2,3,4,5,6,7';
-
-$circular_amount = $CBObj->getCircularAmount( $from_date, $to_date, $branch_id, $userid);
 
 $response = getCollectionRecord($connect, $from_date, $to_date, $userid);
 
@@ -24,21 +19,14 @@ $response = array_map(function ($num) {
     return number_format(intVal($num), 0, '', ',');
 }, $response);
 
-$final_response = [
-    'collection_record' => $response,
-    'circular_amount' => $circular_amount
-];
-
-echo json_encode($final_response);
+echo json_encode($response);
 
 function getCollectionRecord($connect, $from_date, $to_date, $userid)
 {
     $response = array();
     $user_id = ($userid !='') ? " AND insert_login_id = '$userid'" : '';
-    $ii_user_id = ($userid !='') ? " AND ii.insert_login_id = '$userid'" : '';
 
     //to date is added +1 day becuase not to use date function in query. if date() function in query it affect index. 
-    $collWhereCndtn = "AND (coll_date >= '$from_date' AND coll_date < '$to_date') $user_id";
     $accWhereCndtn = "(created_date >= '$from_date' AND created_date < '$to_date') $user_id";
     $accOPCndtn = "(created_date < '$from_date') $user_id";
     $accCLCndtn = "(created_date < '$to_date') $user_id";
@@ -47,13 +35,18 @@ function getCollectionRecord($connect, $from_date, $to_date, $userid)
     $response['hand_opening'] = getopclbal($connect, $accOPCndtn);
 
     //Collection
-    $qry = $connect->query("SELECT SUM(due_amt_track) as due_amt_track, SUM(penalty_track) as penalty_track, SUM(coll_charge_track) as coll_charge_track, SUM(pre_close_waiver) as pre_close_waiver FROM collection WHERE coll_mode = '1' $collWhereCndtn");
+    $qry = $connect->query("SELECT SUM(rec_amt) as rec_amt FROM ct_hand_collection WHERE $accWhereCndtn");
 
         $row = $qry->fetch();
-        $response['due_collection'] = $row['due_amt_track'] ?? 0;
-        $response['penalty'] = $row['penalty_track'] ?? 0;
-        $response['fine'] = $row['coll_charge_track'] ?? 0;
-        $response['pre_close_waiver'] = $row['pre_close_waiver'] ?? 0;
+        $due_collection = $row['rec_amt'] ?? 0;
+        $response['due_collection'] = (float)$due_collection;
+
+    //Waiver
+    $qry = $connect->query("SELECT SUM(rec_amt) as rec_amt FROM ct_hand_waiver WHERE $accWhereCndtn");
+
+        $row = $qry->fetch();
+        $pre_close_waiver = $row['rec_amt'] ?? 0;
+        $response['pre_close_waiver'] = $pre_close_waiver;
 
     // other income
     $qry = $connect->query("SELECT SUM(amt) as other_income FROM ct_cr_hoti WHERE $accWhereCndtn");
@@ -133,7 +126,7 @@ function getCollectionRecord($connect, $from_date, $to_date, $userid)
         $response['debit_contra'] = (float)$bank_deposit;
 
     // Issued
-    $qry = $connect->query("SELECT SUM(cash) AS amt FROM loan_issue li JOIN in_issue ii ON li.req_id = ii.req_id WHERE ii.cus_status >= 14 AND (agent_id ='' OR agent_id = null) AND cash !='' AND (ii.updated_date >= '$from_date' AND ii.updated_date < '$to_date') $ii_user_id");
+    $qry = $connect->query("SELECT SUM(netcash) AS amt FROM ct_db_hissued WHERE $accWhereCndtn");
 
         $row = $qry->fetch();
         $issued = $row['amt'] ?? 0;

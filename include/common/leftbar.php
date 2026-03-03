@@ -892,7 +892,7 @@ if (sizeof($getUser) > 0) {
 								<?php  } ?>
 								<?php if ($hand_cash_balance_sheet == 0) { ?>
 									<li>
-										<a href="hand_cash_balance_sheet"><i class='icon-card_travel'></i>Hand Cash Balance Sheet</a>
+										<a href="hand_cash_balance_sheet"><i class='icon-dollar-sign'></i>Hand Cash Balance Sheet</a>
 									</li>
 								<?php  } ?>
 								<?php if ($accounts_loan_issue == 0) { ?> 

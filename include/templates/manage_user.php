@@ -242,6 +242,7 @@ if($idupd>0)
 			$updatemodule 				= $getUser['updatemodule'];
 			$update_screen 				= $getUser['update_screen'];
 			$update_screen_id 				= $getUser['update_screen_id'];
+			$update_cp_edit_access 				= $getUser['update_cp_edit_access'];
 			$concernmodule          		     = $getUser['concernmodule'];
 			$concern_creation          		     = $getUser['concern_creation'];
 			$concern_solution          		     = $getUser['concern_solution'];
@@ -1020,6 +1021,16 @@ if($idupd>0)
 									<option value="2">Documentation</option>
 								</select>
 								<span class='text-danger updateScreenCheck' style="display:none">Please Select Update Screen</span>
+                            </div>
+                        </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 update_cp_edit_access_div" style='display:none;'>
+                            <div class="custom-control custom-checkbox">
+                                <select class='form-control' name='update_cp_edit_access' id='update_cp_edit_access'>
+									<option value="0">Select Customer Profile Edit Access</option>
+									<option value="1" <?php if(isset($update_cp_edit_access) && $update_cp_edit_access == '1') echo 'selected'; ?>>Customer Feedback</option>
+									<option value="2" <?php if(isset($update_cp_edit_access) && $update_cp_edit_access == '2') echo 'selected'; ?>>Overall Customer Profile</option>
+								</select>
+								<span class='text-danger cpEditScreenCheck' style="display:none">Please Select Customer Profile Edit Access</span>
                             </div>
                         </div>
 					</div>

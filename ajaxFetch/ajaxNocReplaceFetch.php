@@ -136,7 +136,7 @@ foreach ($result as $row) {
     $cus_sts = "<a href='' data-value ='" . $cus_id . "' class='customer-status' data-toggle='modal' data-target='.customerstatus'><span class='icon-eye' style='font-size: 12px;position: relative;top: 2px;'></span></a>";
     $sub_array[] = $cus_sts;
 
-    $sub_array[] = "<button class='btn btn-primary view-track' title='View details' data-reqid='$req_id' data-cusid='$cus_id' data-cusname='$cus_name' data-toggle='modal' data-target='.viewDocModal'>View</button>";
+    $sub_array[] = "<button class='btn btn-primary view-track' title='View details' data-reqid='$req_id' data-cusname='$cus_name' data-toggle='modal' data-target='.viewDocModal'>View</button>";
 
     $data[]      = $sub_array;
 }
