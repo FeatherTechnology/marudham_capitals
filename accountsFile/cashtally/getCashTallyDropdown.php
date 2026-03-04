@@ -17,10 +17,10 @@ if(isset($_POST['mode'])){
 $qry = "SELECT * FROM cash_tally_modes where ";
 
 if($mode == 'hand'){
-    $qry .= "handcredit = 0 OR handdebit = 0 ";
+    $qry .= "(handcredit = 0 OR handdebit = 0)";
 
 }else if($mode == 'bank'){
-    $qry .= "bankcredit = 0 OR bankdebit = 0 ";
+    $qry .= "(bankcredit = 0 OR bankdebit = 0) ";
 
 }
 

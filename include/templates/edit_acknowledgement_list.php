@@ -91,6 +91,7 @@ if (sizeof($getUser) > 0) {
 								<th>Agent Name</th>
 								<th>Responsible</th>
 								<th>Customer Data</th>
+								<th>FollowUp Date</th>
 								<th>Customer Status</th>
 								<th>Action</th>
 							</tr>

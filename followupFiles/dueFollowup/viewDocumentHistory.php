@@ -105,8 +105,10 @@ if(isset($_SESSION["userid"])){
                         // }else{
                             echo 'NOC Pending';
                         // }
-                    }else if($row['cus_status'] >= 22){
+                    } else if ($row['cus_status'] >= 22 && $row['cus_status'] <= 23) {
                         echo 'NOC Completed';
+                    } else if($row['cus_status'] >= 24){
+                        echo 'NOC Handovered';
                     }
                     ?>
             </td>

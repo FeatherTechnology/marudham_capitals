@@ -10,10 +10,11 @@ $login_user_type = $_SESSION['role'] ?? 0;
 $sub_area_list = getUserSubAreaList($connect, 'group');
 
 if ($userid != 1) {
-    $stmt = $connect->prepare("SELECT ack_loan_cat FROM user WHERE user_id = ?");
+    $stmt = $connect->prepare("SELECT ack_loan_cat , acknowledgement_access FROM user WHERE user_id = ?");
     $stmt->execute([$userid]);
     $rowuser = $stmt->fetch(PDO::FETCH_ASSOC);
     $ack_loan_cat = $rowuser['ack_loan_cat'] ?? 0;
+    $acknowledgement_access = $rowuser['acknowledgement_access'];
 }
 
 $stage_arr = [
@@ -48,6 +49,7 @@ $column = [
     'v.agent_id',
     'v.responsible',
     'v.cus_data',
+    'lf.follow_date',
     'v.cus_status',
     'v.status'
 ];
@@ -75,6 +77,7 @@ $query = "SELECT DISTINCT
     alm.line_name, 
     lcc.loan_category_creation_name,
     ac.ag_name AS agent_name,
+    lf.follow_date,
     u.fullname AS acknowledgement_user_name,
     CASE u.role
         WHEN 1 THEN 'Director'
@@ -96,6 +99,7 @@ $query = "SELECT DISTINCT
     JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sa.sub_area_id
     JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
     JOIN loan_category_creation lcc ON lcc.loan_category_creation_id = v.loan_category
+    LEFT JOIN loan_followup lf ON lf.cus_id = v.cus_id AND lf.follow_date = (SELECT MAX(lf1.follow_date) FROM loan_followup lf1 WHERE lf1.cus_id = v.cus_id)
     WHERE v.status = 0 and v.cus_status IN (3,13)";
 
 /* user-level restriction */
@@ -202,6 +206,7 @@ foreach ($result as $row) {
     $ag_id = $row['agent_id'];
     $sub[] = ($row['responsible'] == '0') ? 'Yes' : (!empty($ag_id) && $row['responsible'] != '0' ? 'No' : '');
     $sub[] = $row['cus_data'];
+    $sub[] = $row['follow_date'];
 
     $id         = $row['req_id'];
     $cus_id     = $row['cus_id'];
@@ -236,17 +241,26 @@ foreach ($result as $row) {
     <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
     <div class='dropdown-content'>";
 
-    if ($cus_status == '3') {
-        $action .= "<a href='acknowledgement_creation&upd=$id&pge=1' class='customer_profile' value='$id' > Edit Acknowledgement </a>";
-        $action .= "<a href='#' data-reqid = '$id' class='ack-cancel' value='$id' > Cancel </a>";
-        $action .= "<a class=' loan-follow-edit' data-cusid='" . $cus_id . "' data-stage='" . $stage_arr[$cus_status] . "' data-toggle='modal' data-target='#addLoanFollow'     value='Follow'><span>Followup </span></a>";
-        $action .= "<a class='loan-follow-chart' data-cusid='"  . $cus_id . "' data-toggle='modal' data-target='#loanFollowChartModal'><span> Followup Chart</span></a>";
-    } else if ($cus_status == '7') {
-        $action .= "<a href='acknowledgement_creation&rem=$id&pge=1' class='ack-remove' value='$id' > Remove </a>";
+    // Common buttons
+    $commonBtn = "<a class=' loan-follow-edit' data-cusid='" . $cus_id . "' data-stage='" . $stage_arr[$cus_status] . "' data-toggle='modal' data-target='#addLoanFollow'     value='Follow'><span> Followup </span></a>
+    <a class='loan-follow-chart' data-cusid='"  . $cus_id . "' data-toggle='modal' data-target='#loanFollowChartModal'><span> Followup Chart</span></a>";
+
+    if ($login_user_type != 2 || $userid == 1) {
+        $commonBtn .= "<a href='' data-value ='" . $cus_id . "' data-value1 = '$id' class='customer-status' data-toggle='modal' data-target='.customerstatus'> 
+        Customer Status </a>";
     }
 
-    if ($login_user_type != 2 or $userid == 1) {
-        $action .= "<a href='' data-value ='" . $cus_id . "' data-value1 = '$id' class='customer-status' data-toggle='modal' data-target='.customerstatus'>Customer Status</a>";
+    /* ---------------- MAIN LOGIC ---------------- */
+
+    if ($acknowledgement_access == 0 && $cus_status == '3') {
+        $action .= "<a href='acknowledgement_creation&upd=$id&pge=1' class='customer_profile' value='$id' > Edit Acknowledgement </a> 
+        <a href='#' data-reqid = '$id' class='ack-cancel' value='$id' > Cancel </a>";
+    } 
+
+    $action .= $commonBtn;
+
+    if ($cus_status == '7') {
+        $action .= "<a href='acknowledgement_creation&rem=$id&pge=1' class='ack-remove' value='$id' > Remove </a>";
     }
 
     $action  .= "</div></div>";
