@@ -223,6 +223,7 @@ if($idupd>0)
 			$approval          		     = $getUser['approval'];
 			$acknowledgementmodule          		     = $getUser['acknowledgementmodule'];
 			$acknowledgement          		     = $getUser['acknowledgement'];
+			$acknowledgement_access          		     = $getUser['acknowledgement_access'];
 			$loanissuemodule          		     = $getUser['loanissuemodule'];
 			$loan_issue          		     = $getUser['loan_issue'];
 			$collectionmodule          		     = $getUser['collectionmodule'];
@@ -847,6 +848,12 @@ if($idupd>0)
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($acknowledgement==0){ echo'checked'; }} ?> tabindex="36" class="acknowledgement-checkbox screen-validations" id="acknowledgement" name="acknowledgement" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="acknowledgement">Acknowledgement</label>
+                            </div>
+                        </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($acknowledgement_access==0){ echo'checked'; }} ?> tabindex="37" class="acknowledgement-checkbox screen-validations" id="acknowledgement_access" name="acknowledgement_access" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="acknowledgement_access">Acknowledgement Access</label>
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 ack_loancat_div" style='display:none;'>

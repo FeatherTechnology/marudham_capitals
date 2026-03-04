@@ -17,7 +17,7 @@ if ($_POST['length'] != -1) {
 
 $columns = [
     'rc.req_id',
-    'rc.updated_date',
+    'ii.updated_date',
     'rc.cus_id',
     'cr.autogen_cus_id',
     'rc.cus_name',
@@ -55,7 +55,7 @@ $orderQuery = " ORDER BY " . $columns[$orderColumnIndex] . " " . $orderDir;
 
 $sql = "SELECT 
     rc.req_id,
-    rc.updated_date,
+    ii.updated_date,
     rc.cus_id,
     rc.cus_name,
     cr.mobile1,
@@ -67,6 +67,7 @@ $sql = "SELECT
     alm.line_name
 FROM 
     request_creation rc
+LEFT JOIN in_issue ii ON rc.req_id = ii.req_id
 JOIN customer_register cr ON rc.cus_id = cr.cus_id
 JOIN acknowlegement_customer_profile acp ON rc.req_id = acp.req_id
 LEFT JOIN area_list_creation alc ON rc.area = alc.area_id

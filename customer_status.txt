@@ -1,0 +1,23 @@
+0  -  Request Creation
+1  -  Verification
+2  -  Approval
+3  -  Acknowlwdgement
+4  -  Cancel - Request
+5  -  Cancel - Verification
+6  -  Cancel - Approval
+7  -  Cancel - Acknowlwdgement
+8  -  Revoke - Request
+9  -  Revoke - Verification
+10 -  Verification - Customer Profile
+11 -  Verification - Documentation
+12 -  Verification - Loan Calculation
+13 -  Loan Issue
+14 -  Collection Sub Status - Current
+15 -  Collection Sub Status - Error
+16 -  Collection Sub Status - Legal
+17 -  Removed From The issue - Not in use
+20 -  Closed
+21 -  NOC
+22 -  NOC Completed
+23 -  NOC Completed - IN Handovered
+24 -  NOC Handovered

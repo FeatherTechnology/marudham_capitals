@@ -158,10 +158,15 @@ if (!empty($cusIds)) {
 
     $cusIdList = implode(',', array_map('intval', $cusIds));
 
-    $issueSql = "SELECT ii.cus_id, ii.cus_status, cs.created_date AS last_created_date
+    $issueSql = "SELECT ii.cus_id, ii.cus_status, COALESCE(cs.created_date, cc.closing_date) AS last_created_date
         FROM in_issue ii
         LEFT JOIN closed_status cs ON cs.req_id = ii.req_id 
-        WHERE ii.cus_id IN ($cusIdList) AND ii.cus_status >= 14";
+        LEFT JOIN (
+                SELECT req_id, MAX(closing_date) AS closing_date
+                FROM closing_customer
+                GROUP BY req_id
+            ) cc ON cc.req_id = ii.req_id
+        WHERE ii.cus_id IN ($cusIdList) AND ii.cus_status >= 14 ORDER BY ii.cus_status ASC";
 
     $stmt = $connect->query($issueSql);
 
@@ -234,6 +239,7 @@ foreach ($result as $row) {
                     } else {
                         $existing_type = 'Re-active';
                     }
+                    break;
                 }
             }
         }
