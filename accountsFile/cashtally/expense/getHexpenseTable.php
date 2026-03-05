@@ -1,19 +1,15 @@
 <?php
 session_start();
 $user_id = $_SESSION['userid'];
-
 include('../../../ajaxconfig.php');
+include "../../../moneyFormatIndia.php";
 
-
-$i=0;$records = array();
+$i=0;
+$records = array();
 $op_date = date('Y-m-d',strtotime($_POST['op_date']));
 
-
-
-$qry = $connect->query("SELECT hexp.*,excat.category from ct_db_hexpense hexp JOIN expense_category excat ON hexp.cat = excat.id where date(hexp.created_date) = '$op_date' and hexp.insert_login_id = '$user_id' ");
-//
+$qry = $connect->query("SELECT hexp.*, CONCAT(excat.exp_code ,'-', excat.category) AS category from ct_db_hexpense hexp JOIN expense_category excat ON hexp.cat = excat.id where date(hexp.created_date) = '$op_date' and hexp.insert_login_id = '$user_id' ");
 while($row = $qry->fetch()){
-
     $records[$i]['id'] = $row['id'];
     $records[$i]['username'] = $row['username'];
     $records[$i]['usertype'] = $row['usertype'];
@@ -26,13 +22,11 @@ while($row = $qry->fetch()){
     $records[$i]['amt'] = $row['amt'];
     $records[$i]['upload'] = $row['upload'];
     $i++;
-    
 }
 
 // Close the database connection
 $connect = null;
 ?>
-
 
 <table class="table custom-table" id='HexpenseTable'>
     <thead>
@@ -56,7 +50,6 @@ $connect = null;
         ?>
             <tr>
                 <td></td>
-                
                 <td><?php echo $records[$i]['usertype'];?></td>
                 <td><?php echo $records[$i]['username'];?></td>
                 <td><?php echo $records[$i]['category'];?></td>
@@ -124,37 +117,3 @@ $connect = null;
         initColVisFeatures(HexpenseTable, 'HexpenseTable');
     });
 </script>
-
-<?php
-//Format number in Indian Format
-function moneyFormatIndia($num1) {
-    if($num1 < 0){
-        $num = str_replace("-","",$num1);
-    }else{
-        $num = $num1;
-    }
-    $explrestunits = "";
-    if (strlen($num) > 3) {
-        $lastthree = substr($num, strlen($num) - 3, strlen($num));
-        $restunits = substr($num, 0, strlen($num) - 3);
-        $restunits = (strlen($restunits) % 2 == 1) ? "0" . $restunits : $restunits;
-        $expunit = str_split($restunits, 2);
-        for ($i = 0; $i < sizeof($expunit); $i++) {
-            if ($i == 0) {
-                $explrestunits .= (int)$expunit[$i] . ",";
-            } else {
-                $explrestunits .= $expunit[$i] . ",";
-            }
-        }
-        $thecash = $explrestunits . $lastthree;
-    } else {
-        $thecash = $num;
-    }
-
-    if($num1 < 0){
-        $thecash = "-" . $thecash;
-    }
-
-    return $thecash;
-}
-?>

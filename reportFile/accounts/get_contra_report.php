@@ -1,5 +1,6 @@
 <?php
 require "../../ajaxconfig.php";
+require "../../moneyFormatIndia.php";
 @session_start();
 
 $i = 0;
@@ -104,34 +105,10 @@ foreach ($result as $row) {
     $sub_array[] = $sno;
     $sub_array[] = date('d-m-Y', strtotime($row['tdate']));
     $sub_array[] =  $bname;
-    $sub_array[] = $row['Credit'];
-    $sub_array[] = $row['Debit'];
+    $sub_array[] = moneyFormatIndia($row['Credit']);
+    $sub_array[] = moneyFormatIndia($row['Debit']);
     $data[] = $sub_array;
     $sno++;
-}
-
-// Indian currency formatting (not used here but kept for future)
-function moneyFormatIndia($num1)
-{
-    if ($num1 < 0) {
-        $num = str_replace("-", "", $num1);
-    } else {
-        $num = $num1;
-    }
-    $explrestunits = "";
-    if (strlen($num) > 3) {
-        $lastthree = substr($num, -3);
-        $restunits = substr($num, 0, -3);
-        $restunits = (strlen($restunits) % 2 == 1) ? "0" . $restunits : $restunits;
-        $expunit = str_split($restunits, 2);
-        foreach ($expunit as $i => $unit) {
-            $explrestunits .= ($i == 0 ? (int)$unit : $unit) . ",";
-        }
-        $thecash = $explrestunits . $lastthree;
-    } else {
-        $thecash = $num;
-    }
-    return $num1 < 0 ? "-" . $thecash : $thecash;
 }
 
 // Count all data

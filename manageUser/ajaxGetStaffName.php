@@ -7,7 +7,7 @@ if(isset($_POST['role_type'])){
 
 $staffArr = array();
 
-$result=$connect->query("SELECT * FROM staff_creation where status=0 and staff_type = $role_type ");
+$result=$connect->query("SELECT staff_id, staff_name FROM staff_creation WHERE status = 0 AND staff_type = $role_type ");
 while( $row = $result->fetch()){
     $staff_id = $row['staff_id'];
     $staff_name = $row['staff_name'];

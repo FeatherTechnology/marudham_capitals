@@ -2658,7 +2658,7 @@ function hexpenseModalBtnClick() {
             $('#usertype_hexp').val(response[0]['user_type'])
 
             // Sort cat_hexp dropdown
-            sortDropdownAlphabetically("#cat_hexp");
+            // sortDropdownAlphabetically("#cat_hexp");
         }
     }).then(function () {
         //Auto Generate Voucher ID.
@@ -2952,7 +2952,7 @@ function bexpenseModalBtnClick() {
             $('#usertype_bexp').val(response[0]['user_type'])
 
             // Sort cat_bexp dropdown
-            sortDropdownAlphabetically("#cat_bexp");
+            // sortDropdownAlphabetically("#cat_bexp");
         }
     }).then(function () {
         $('#submit_bexp').click(function () {

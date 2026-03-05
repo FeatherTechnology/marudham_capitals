@@ -33,17 +33,63 @@ try {
 
     //Issue  Completed And Move to Collection = 14.
 
-    $connect->query("UPDATE request_creation SET cus_status = 14, updated_date = NOW(), update_login_id = $userid WHERE req_id = '" . $req_id . "' ") or die('Error on Request Table');
-    $connect->query("UPDATE customer_register SET cus_status = 14 WHERE req_ref_id = '" . $req_id . "' ") or die('Error on Customer Table');
-    $connect->query("UPDATE in_verification SET cus_status = 14, update_login_id = $userid WHERE req_id = '" . $req_id . "' ") or die('Error on inVerification Table');
-    $connect->query("UPDATE `in_approval` SET `cus_status`= 14, `update_login_id`= $userid WHERE req_id = '" . $req_id . "' ") or die('Error on in_approval Table');
-    $connect->query("UPDATE `in_acknowledgement` SET `cus_status`= 14, `update_login_id`= $userid, `updated_date`= NOW() WHERE req_id = '" . $req_id . "' ") or die('Error on in_acknowledgement Table');
-    $insertIssue = $connect->query("UPDATE `in_issue` SET `loan_id` = '$loan_id', `cus_status`= 14, `updated_date`=NOW(), `update_login_id` = $userid WHERE req_id = '" . $req_id . "' ") or die('Error on in_issue Table');
+    // Update request_creation
+    $stmt = $connect->prepare(
+        "UPDATE request_creation 
+         SET cus_status = 14, updated_date = NOW(), update_login_id = ? 
+         WHERE req_id = ?"
+    );
+    $stmt->execute([$userid, $req_id]);
+
+    // Update customer_register
+    $stmt = $connect->prepare(
+        "UPDATE customer_register 
+         SET cus_status = 14
+         WHERE req_ref_id = ?"
+    );
+    $stmt->execute([$req_id]);
+
+    // Update in_verification
+    $stmt = $connect->prepare(
+        "UPDATE in_verification 
+         SET cus_status = 14, update_login_id = ? 
+         WHERE req_id = ?"
+    );
+    $stmt->execute([$userid, $req_id]);
+
+    // Update in_approval
+    $stmt = $connect->prepare(
+        "UPDATE in_approval 
+         SET cus_status = 14, update_login_id = ?
+         WHERE req_id = ?"
+    );
+    $stmt->execute([$userid, $req_id]);
+
+    // Update in_acknowledgement
+    $stmt = $connect->prepare(
+        "UPDATE in_acknowledgement 
+         SET cus_status = 14, update_login_id = ?, updated_date = NOW()
+         WHERE req_id = ?"
+    );
+    $stmt->execute([$userid, $req_id]);
+
+    // Update in_issue
+    $stmt = $connect->prepare(
+        "UPDATE in_issue 
+         SET loan_id = ?, cus_status = 14, updated_date = NOW(), update_login_id = ? 
+         WHERE req_id = ?"
+    );
+    $stmt->execute([$loan_id, $userid, $req_id]);
 
     //Doc id will generate while Loan id generate because both id have to same for a customer.
     if($loan_id){
         $doc_id = "DOC-" . "$loan_id";
-        $connect->query("UPDATE acknowlegement_documentation SET doc_id = '$doc_id', update_login_id = $userid, updated_date = NOW() WHERE req_id = '" . $req_id . "' ") or die('Error on Acknowledgement documentation Table');
+        // Update acknowlegement_documentation
+        $stmt = $connect->prepare(
+            "UPDATE acknowlegement_documentation SET doc_id = ?, update_login_id = ?, updated_date = NOW()
+            WHERE req_id = ?"
+        );
+        $stmt->execute([$doc_id, $userid, $req_id]);
     }
     
     $qry = $connect->query("SELECT agent_id FROM in_verification WHERE req_id = $req_id ");
@@ -61,8 +107,12 @@ try {
         $net_cash = $row['net_cash_cal'];
 
         //insert query need to be places here and in cash tally issued should be edited as per this agent id. if agent id mentioned then no need to take that issued debit
-        $qry = $connect->query("INSERT INTO `loan_issue` (`req_id`, `cus_id`, `issued_to`, `agent_id`, `cash`, `balance_amount`, `loan_amt`, `net_cash`, `insert_login_id`,`created_date`) 
-        VALUES ('$req_id', '$cus_id', 'Agent', '$ag_id', '$net_cash', '0', '$loan_amt', '$net_cash', '$userid', NOW()) ");
+
+        // Insert into loan_issue
+        $stmt = $connect->prepare(
+            "INSERT INTO loan_issue (req_id, cus_id, issued_to, agent_id, cash, balance_amount, loan_amt, net_cash, insert_login_id, created_date) VALUES (?, ?, 'Agent', ?, ?, '0', ?, ?, ?, NOW())"
+        );
+        $stmt->execute([$req_id, $cus_id, $ag_id, $net_cash,  $loan_amt, $net_cash, $userid]);
     }
     
     if((strtotime($dueStartDate) > strtotime($current_date))){
@@ -73,10 +123,18 @@ try {
         
     }
 
-    $query = $connect->query(" INSERT INTO `customer_status`( `req_id`, `cus_id`, `sub_status`, `payable_amnt`, `bal_amnt`, `insert_login_id`, `created_date`) VALUES ('$req_id','$cus_id','Current','$cus_payable','$tot_amt_cal','$userid', '$current_date' ) ");
+    // Insert into customer_status
+    $stmt = $connect->prepare(
+        "INSERT INTO customer_status(req_id, cus_id, sub_status, payable_amnt, bal_amnt, insert_login_id, created_date) VALUES (?, ?, 'Current', ?, ?, ?, ?)"
+    );
+    $stmt->execute([$req_id, $cus_id, $cus_payable, $tot_amt_cal, $userid, $current_date]);
 
-    $connect->query("INSERT INTO `document_track`(`req_id`, `cus_id`, `track_status`, `insert_login_id`, `created_date`)  VALUES('$req_id', '$cus_id', '1', '$userid', NOW() ) "); //Document track insert.
-    
+    // Insert into document_track
+    $stmt = $connect->prepare(
+        "INSERT INTO document_track(req_id, cus_id, track_status, insert_login_id, created_date) VALUES(?, ?, '1', ?, NOW())"
+    );
+    $stmt->execute([$req_id, $cus_id, $userid]);
+
     // Commit transaction
     $connect->commit();
     $response = 'Loan Issue Completed';

@@ -7,7 +7,7 @@ if(isset($_POST['staff_id'])){
 
 $staffArr = array();
 
-$result=$connect->query("SELECT * FROM staff_creation where status=0 and staff_id = $staff_id ");
+$result=$connect->query("SELECT staff_code, staff_name, mail, company_id, department, team, designation FROM staff_creation WHERE staff_id = $staff_id");
 while( $row = $result->fetch()){
     
     $staff_code = $row['staff_code'];
@@ -15,7 +15,7 @@ while( $row = $result->fetch()){
     $mail = $row['mail'];
     
     $company_id = $row['company_id'];
-    $qry = "SELECT * From company_creation where company_id = $company_id and status = 0";
+    $qry = "SELECT company_name From company_creation where company_id = $company_id";
     $res = $connect->query($qry);
     $row1 = $res->fetch();
     $company_name = $row1['company_name'];

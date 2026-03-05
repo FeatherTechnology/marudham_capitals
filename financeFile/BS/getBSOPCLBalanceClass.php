@@ -432,41 +432,4 @@ class ClosingBalanceClass
         }
         return $records;
     }
-
-    function moneyFormatIndia($num)
-    {
-        $isNegative = false;
-        if ($num < 0) {
-            $isNegative = true;
-            $num = abs($num);
-        }
-
-        // 🔹 Split integer & decimal part (minimal addition)
-        $numStr = (string)$num;
-        $parts = explode('.', $numStr);
-        $intPart = $parts[0];
-        $decPart = isset($parts[1]) ? '.' . $parts[1] : '';
-
-        $explrestunits = "";
-        if (strlen($intPart) > 3) {
-            $lastthree = substr($intPart, -3);
-            $restunits = substr($intPart, 0, -3);
-            $restunits = (strlen($restunits) % 2 == 1) ? "0" . $restunits : $restunits;
-            $expunit = str_split($restunits, 2);
-
-            foreach ($expunit as $index => $value) {
-                if ($index == 0) {
-                    $explrestunits .= (int)$value . ",";
-                } else {
-                    $explrestunits .= $value . ",";
-                }
-            }
-
-            $thecash = $explrestunits . $lastthree . $decPart;
-        } else {
-            $thecash = $intPart . $decPart;
-        }
-
-        return $isNegative ? "-" . $thecash : $thecash;
-    }
 }

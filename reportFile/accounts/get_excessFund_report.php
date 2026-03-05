@@ -1,5 +1,6 @@
 <?php
 require "../../ajaxconfig.php";
+require "../../moneyFormatIndia.php";
 @session_start();
 
 $records = array();
@@ -91,7 +92,7 @@ foreach ($result as $row) {
     $sub_array[] = $row['ref_code'];;
     $sub_array[] = $row['remark'];
     $sub_array[] = $row['trans_id'];
-    $sub_array[] = $row['Debit'];
+    $sub_array[] = moneyFormatIndia($row['Debit']);
 
     $data[] = $sub_array;
 }

@@ -577,51 +577,6 @@
             });
             initColVisFeatures(bank_creation_table, 'bank_creation_table');
 
-            // Manage user datatable
-            var manage_user_table = $('#manage_user_table').DataTable({
-                ...getStateSaveConfig('manage_user_table'),
-                "order": [
-                    [0, "desc"]
-                ],
-                "displayStart": getDisplayStart('manage_user_table'),
-                'processing': true,
-                'serverSide': true,
-                'serverMethod': 'post',
-                'ajax': {
-                    'url': 'ajaxFetch/ajaxManageUserFetch.php',
-                    'data': function(data) {
-                        var search = $('input[type=search]').val();
-                        data.search = search;
-                    }
-                },
-                dom: 'lBfrtip',
-                buttons: [{
-                        extend: 'excel',
-                        title: "User List",
-                        action: function(e, dt, button, config) {
-                            var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
-                            var dynamic = curDateJs('User_List'); // or any base
-                            config.title = dynamic; // for versions that use title as filename
-                            config.filename = dynamic; // for html5 filename
-                            defaultAction.call(this, e, dt, button, config);
-                        }
-                    },
-                    {
-                        extend: 'colvis',
-                        collectionLayout: 'fixed four-column',
-                    }
-                ],
-                "lengthMenu": [
-                    [10, 25, 50, -1],
-                    [10, 25, 50, "All"]
-                ],
-                'drawCallback': function() {
-                    searchFunction('manage_user_table');
-                    paginationFunction('manage_user_table');
-                }
-            });
-            initColVisFeatures(manage_user_table, 'manage_user_table');
-
             // Documentation Mapping datatable
             var doc_mapping_table = $('#doc_mapping_table').DataTable({
                 ...getStateSaveConfig('doc_mapping_table'),
@@ -2460,6 +2415,10 @@
 
     if ($current_page == 'staff_creation') { ?>
         <script src="js/staff_creation.js"></script>
+    <?php }
+
+    if ($current_page == 'edit_manage_user') { ?>
+        <script src="js/edit_manage_user.js"></script>
     <?php }
 
     if ($current_page == 'manage_user') { ?>

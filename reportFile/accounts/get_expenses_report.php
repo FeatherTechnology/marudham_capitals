@@ -1,5 +1,6 @@
 <?php
 require "../../ajaxconfig.php";
+require "../../moneyFormatIndia.php";
 @session_start();
 
 $i = 0;
@@ -127,7 +128,7 @@ foreach ($result as $row) {
     $sub_array[] = $row['trans_id'];    // Blank for `hexp`, filled for `bexp`
     $sub_array[] = $row['rec_per'];
     $sub_array[] = $row['remark'];
-    $sub_array[] = $row['amt'];
+    $sub_array[] = moneyFormatIndia($row['amt']);
     $data[] = $sub_array;
 }
 
