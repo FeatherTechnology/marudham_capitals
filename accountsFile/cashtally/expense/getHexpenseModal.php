@@ -13,7 +13,7 @@ $records[0]['user_id'] = $row['user_id'];
 $records[0]['user_name'] = $row['fullname'];
 if($row['role'] == '1'){ $records[0]['user_type'] = 'Director'; }elseif( $row['role'] == '3'){ $records[0]['user_type'] = 'Staff'; }
 
-$qry = $connect->query("SELECT * from expense_category where status = 0");
+$qry = $connect->query("SELECT id, CONCAT(exp_code ,'-', category) AS category FROM expense_category WHERE status = 0 ORDER BY CAST(exp_code AS UNSIGNED) ASC");
 while($row = $qry->fetch()){
     $records[$i]['cat_id'] = $row['id'];
     $records[$i]['cat_name'] = $row['category'];

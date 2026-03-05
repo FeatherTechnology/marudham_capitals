@@ -1,8 +1,8 @@
 <?php
 session_start();
 $user_id = $_SESSION['userid'];
-
 include('../../../ajaxconfig.php');
+include "../../../moneyFormatIndia.php";
 
 $i=0;$records = array();
 $netcash = 0;
@@ -62,15 +62,8 @@ $connect = null;
         ?>
             <tr>
                 <td></td>
-                <!-- <td><?php echo $usertype;?></td> -->
                 <td><?php echo $records[$i]['usertype'];?></td>
-                
-                <!-- <td><?php echo $username;?></td> -->
                 <td><?php echo $records[$i]['username'];?></td>
-                
-                <!-- <td><?php echo $records[$i]['issued_to'];?></td> -->
-                
-                <!-- <td><?php echo moneyFormatIndia($netcash);  ?></td> -->
                 <td><?php echo moneyFormatIndia($records[$i]['netcash']);?></td>
                 <td width='300'><input type='text' class='form-control' readonly value='<?php echo moneyFormatIndia($records[$i]['netcash']);?>'></td>
                 <td>
@@ -126,37 +119,3 @@ $connect = null;
         initColVisFeatures(HissuedTable, 'HissuedTable');
     });
 </script>
-
-<?php
-//Format number in Indian Format
-function moneyFormatIndia($num1) {
-    if($num1 < 0){
-        $num = str_replace("-","",$num1);
-    }else{
-        $num = $num1;
-    }
-    $explrestunits = "";
-    if (strlen($num) > 3) {
-        $lastthree = substr($num, strlen($num) - 3, strlen($num));
-        $restunits = substr($num, 0, strlen($num) - 3);
-        $restunits = (strlen($restunits) % 2 == 1) ? "0" . $restunits : $restunits;
-        $expunit = str_split($restunits, 2);
-        for ($i = 0; $i < sizeof($expunit); $i++) {
-            if ($i == 0) {
-                $explrestunits .= (int)$expunit[$i] . ",";
-            } else {
-                $explrestunits .= $expunit[$i] . ",";
-            }
-        }
-        $thecash = $explrestunits . $lastthree;
-    } else {
-        $thecash = $num;
-    }
-
-    if($num1 < 0){
-        $thecash = "-" . $thecash;
-    }
-
-    return $thecash;
-}
-?>

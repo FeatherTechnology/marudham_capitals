@@ -133,6 +133,7 @@ $sms_module = '';
 $sms_generation = '';
 
 $agentNameList = $userObj->getagentNameList($mysqli);
+$sts = $_GET['sts'] ?? '0';
 
 if(isset($_POST['submit_manage_user']) && $_POST['submit_manage_user'] != '')
 {
@@ -140,12 +141,12 @@ if(isset($_POST['submit_manage_user']) && $_POST['submit_manage_user'] != '')
         $id = $_POST['id']; 	
 		$userObj->updateUser($mysqli,$id, $userid);  
     ?>
-	<script>location.href='<?php echo $HOSTPATH;  ?>edit_manage_user&msc=2';</script>
+	<script>location.href='<?php echo $HOSTPATH;  ?>edit_manage_user&msc=2&sts=<?= $sts ?>';</script>
     <?php	}
     else{   
 		$userObj->addUser($mysqli, $userid);   
         ?>
-    <script>location.href='<?php echo $HOSTPATH;  ?>edit_manage_user&msc=1';</script>
+    <script>location.href='<?php echo $HOSTPATH;  ?>edit_manage_user&msc=1&sts=<?= $sts ?>';</script>
         <?php
     }
 }
@@ -160,7 +161,7 @@ if($del>0)
 {
 	$userObj->deleteUser($mysqli,$del, $userid); 
 ?>
-	<script>location.href='<?php echo $HOSTPATH;  ?>edit_manage_user&msc=3';</script>
+	<script>location.href='<?php echo $HOSTPATH;  ?>edit_manage_user&msc=3&sts=<?= $sts ?>';</script>
 <?php	
 }
 
@@ -327,7 +328,7 @@ if($idupd>0)
 </div><br>
 <div class="text-right" style="margin-right: 25px;">
 	
-    <a href="edit_manage_user">
+    <a href="edit_manage_user&sts=<?= $sts ?>">
         <button type="button" class="btn btn-primary"><span class="icon-arrow-left"></span>&nbsp; Back</button>
     </a>
 </div><br><br>

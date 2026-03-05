@@ -1,18 +1,15 @@
 <?php
 session_start();
 $user_id = $_SESSION['userid'];
-
 include('../../../ajaxconfig.php');
 include('../../../moneyFormatIndia.php');
 
 $bank_id = $_POST['bank_id'];
-$i=0;$records = array();
-
+$i=0;
+$records = array();
 $op_date = date('Y-m-d',strtotime($_POST['op_date']));
 
-
-$qry = $connect->query("SELECT bexp.*,excat.category from ct_db_bexpense bexp JOIN expense_category excat ON bexp.cat = excat.id where date(bexp.created_date) = '$op_date' and bexp.bank_id = '$bank_id' and bexp.insert_login_id = '$user_id' ");
-//
+$qry = $connect->query("SELECT bexp.*, CONCAT(excat.exp_code ,'-', excat.category) AS category from ct_db_bexpense bexp JOIN expense_category excat ON bexp.cat = excat.id where date(bexp.created_date) = '$op_date' and bexp.bank_id = '$bank_id' and bexp.insert_login_id = '$user_id' ");
 while($row = $qry->fetch()){
 
     $records[$i]['id'] = $row['id'];
@@ -21,8 +18,7 @@ while($row = $qry->fetch()){
     $records[$i]['ref_code'] = $row['ref_code'];
     $records[$i]['bank_id']  = $row['bank_id'];   
     $records[$i]['trans_id'] = $row['trans_id']; 
-    $records[$i]['bank_stmt_history_id'] = $row['bank_stmt_history_id']; 
-    // $records[$i]['cat'] = $row['cat'];
+    $records[$i]['bank_stmt_history_id'] = $row['bank_stmt_history_id'];
     $records[$i]['category'] = $row['category'];
     $records[$i]['part'] = $row['part'];
     $records[$i]['vou_id'] = $row['vou_id'];
@@ -37,7 +33,6 @@ while($row = $qry->fetch()){
 // Close the database connection
 $connect = null;
 ?>
-
 
 <table class="table custom-table" id='BexpenseTable'>
     <thead>
@@ -61,8 +56,7 @@ $connect = null;
             for($i=0;$i<sizeof($records);$i++){
         ?>
             <tr>
-                <td></td>
-                
+                <td></td>  
                 <td><?php echo $records[$i]['usertype'];?></td>
                 <td><?php echo $records[$i]['username'];?></td>
                 <td><?php echo $records[$i]['ref_code'];?></td>

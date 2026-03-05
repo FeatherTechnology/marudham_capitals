@@ -16,6 +16,8 @@ $column = array(
     'u.user_id'
 );
 
+$status = $_POST['userStatus'] ?? '0';
+
 $query = "SELECT u.*,c.company_name,
     (SELECT GROUP_CONCAT(bc.branch_name SEPARATOR ', ')
     FROM branch_creation bc 
@@ -28,10 +30,10 @@ $query = "SELECT u.*,c.company_name,
     WHERE FIND_IN_SET(agm.map_id, u.group_id) AND agm.status = 0) AS group_names
     FROM user u
     JOIN company_creation c ON c.company_id = u.company_id
-    WHERE u.user_id != 1 ";
+    WHERE u.user_id != 1  AND u.status = '$status' ";
+
 if (isset($_POST['search']) && $_POST['search'] != "") {
-    $query .= "
-                and (u.role LIKE '%" . $_POST['search'] . "%'
+    $query .= "AND (u.role LIKE '%" . $_POST['search'] . "%'
                 OR u.role_type LIKE '%" . $_POST['search'] . "%'
                 OR u.fullname LIKE '%" . $_POST['search'] . "%'
                 OR u.user_name LIKE '%" . $_POST['search'] . "%'
@@ -116,8 +118,11 @@ foreach ($result as $row) {
     }
     $id          = $row['user_id'];
 
-    $action = "<a href='manage_user&upd=$id' title='Edit details'><span class='icon-border_color'></span></a>&nbsp;&nbsp; 
-    <a href='manage_user&del=$id' title='Edit details' class='delete_user'><span class='icon-trash-2'></span></a>";
+    $action = "<a href='manage_user&upd=$id&sts=$status' title='Edit details'><span class='icon-border_color'></span></a>&nbsp;&nbsp;";
+    
+    if($status == 0){
+        $action .= "<a href='manage_user&del=$id' title='Edit details' class='delete_user'><span class='icon-trash-2'></span></a>";
+    }
 
     $sub_array[] = $action;
     $data[]      = $sub_array;

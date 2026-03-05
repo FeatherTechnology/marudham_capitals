@@ -522,7 +522,7 @@ function resetfeedback() {
         cache: false,
         success: function (html) {
             $("#feedbackTable").html(html);
-            $("#feedback_label, #cus_feedback, #feedback_remark, feedbackID").val('');
+            $("#feedback_label, #cus_feedback, #feedback_remark, #feedbackID").val('');
         }
     });
 }
@@ -536,7 +536,7 @@ function feedbackList() {
         cache: false,
         success: function (html) {
             $("#feedbackListTable").html(html);
-            $("#feedback_label, #cus_feedback, #feedback_remark, feedbackID").val('');
+            $("#feedback_label, #cus_feedback, #feedback_remark, #feedbackID").val('');
         }
     });
 }
