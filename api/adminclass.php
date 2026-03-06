@@ -6686,7 +6686,7 @@ class admin
 					$row = $selectIC->fetch_assoc();
 					$loan_id = $row["loan_id"] ? $row["loan_id"] + 1 : 101;
 
-					if (!$mysqli->query("UPDATE in_issue SET loan_id = '$loan_id' WHERE req_id = '$req_id'")) {
+					if (!$mysqli->query("UPDATE in_issue SET loan_id = '$loan_id', updated_date = NOW(), update_login_id = '$userid' WHERE req_id = '$req_id'")) {
 						throw new Exception("Loan ID update failed: " . $mysqli->error);
 					}
 				} elseif ($issueresult && $issueresult->num_rows > 0) {

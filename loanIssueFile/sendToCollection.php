@@ -24,9 +24,12 @@ try {
         $row = $selectIC->fetch();
         $loan_id = $row["loan_id"] ? $row["loan_id"] + 1 : 101;
 
+        //if from account loan issue to loan issue moved then no need to change the updated date in in_issue becuz it is the loan date.
+        $in_issue_column = ", updated_date = NOW()";
     } elseif ($issueresult && $issueresult->rowCount() > 0) {
         $loan_row = $issueresult->fetch();
         $loan_id = $loan_row['loan_id'];
+        $in_issue_column = "";
     }
 
     //////////////////////////////////////////////////////////////////////////
@@ -76,7 +79,7 @@ try {
     // Update in_issue
     $stmt = $connect->prepare(
         "UPDATE in_issue 
-         SET loan_id = ?, cus_status = 14, updated_date = NOW(), update_login_id = ? 
+         SET loan_id = ?, cus_status = 14 $in_issue_column, update_login_id = ? 
          WHERE req_id = ?"
     );
     $stmt->execute([$loan_id, $userid, $req_id]);
