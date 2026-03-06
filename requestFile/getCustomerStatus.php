@@ -10,13 +10,24 @@ $screen = isset($_POST['screen']) ? $_POST['screen'] : '';
 
 $records = array();
 
-$result = $connect->query("SELECT req_id, dor, loan_category, sub_category, loan_amt, prompt_remark, cus_status FROM request_creation where cus_id = '" . strip_tags($cus_id) . "' ORDER BY created_date DESC ");
+$result = $connect->query("SELECT req.req_id, req.prompt_remark, req.cus_status, 
+    CASE WHEN req.cus_status >= 14 THEN ii.updated_date ELSE req.dor END AS `updated_date`,
+    CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.loan_category WHEN req.cus_status IN (3,13,14,15,16,17,20,21,22,23,24) THEN alc.loan_category ELSE req.loan_category END AS loan_category,
+    CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.sub_category WHEN req.cus_status IN (3,13,14,15,16,17,20,21,22,23,24) THEN alc.sub_category ELSE req.sub_category END AS sub_category,
+    CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.loan_amt WHEN req.cus_status IN (3,13,14,15,16,17,20,21,22,23,24) THEN alc.loan_amt ELSE req.loan_amt END AS loan_amt
+FROM request_creation req
+    LEFT JOIN customer_profile cp ON req.req_id = cp.req_id
+    LEFT JOIN verification_loan_calculation vlc ON req.req_id = vlc.req_id
+    LEFT JOIN acknowlegement_loan_calculation alc ON req.req_id = alc.req_id
+    LEFT JOIN in_issue ii ON req.req_id = ii.req_id
+    LEFT JOIN acknowlegement_documentation ad ON ii.req_id = ad.req_id
+    where req.cus_id = '" . strip_tags($cus_id) . "' ORDER BY req.created_date DESC");
 
 if ($result->rowCount() > 0) {
     $i = 0;
     while ($row = $result->fetch()) {
 
-        $records[$i]['dor'] = date('d-m-Y', strtotime($row['dor']));
+        $records[$i]['updated_date'] = date('d-m-Y', strtotime($row['updated_date']));
 
         $loan_category = $row['loan_category'];
         $req_id = $row['req_id'];
@@ -58,8 +69,8 @@ if ($result->rowCount() > 0) {
             $records[$i]['sub_status'] = 'Cancelled';
         } else
             if ($cus_status == '7') {
-            $records[$i]['status'] = 'Issue';
-            $records[$i]['sub_status'] = 'Issued';
+            $records[$i]['status'] = 'Acknowledgement';
+            $records[$i]['sub_status'] = 'Cancelled';
         } else
             if ($cus_status == '8') {
             $records[$i]['status'] = 'Request';
@@ -170,7 +181,7 @@ if ($result->rowCount() > 0) {
         <?php for ($i = 0; $i < sizeof($records); $i++) { ?>
             <tr>
                 <td><?php echo $i + 1; ?></td>
-                <td><?php echo $records[$i]['dor']; ?></td>
+                <td><?php echo $records[$i]['updated_date']; ?></td>
                 <td><?php echo $records[$i]['loan_category']; ?></td>
                 <td><?php echo $records[$i]['sub_category']; ?></td>
                 <td><?php echo $records[$i]['loan_amt']; ?></td>

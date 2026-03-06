@@ -7017,7 +7017,7 @@ class admin
 	function getConcernCreation($mysqli, $idupd, $userid)
 	{
 		$detailrecords = array();
-		$Qry = $mysqli->query("SELECT * FROM `concern_creation` WHERE id = '" . strip_tags($idupd) . "' ");
+		$Qry = $mysqli->query("SELECT cc.*, cdn.dep_name as to_dept_name FROM `concern_creation` cc LEFT JOIN concern_dept_name cdn ON cc.to_dept_name = cdn.id WHERE cc.id = '" . strip_tags($idupd) . "' ");
 		if ($mysqli->affected_rows > 0) {
 			$row = $Qry->fetch_assoc();
 			$detailrecords['id'] = $row['id'];

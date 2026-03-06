@@ -2,6 +2,10 @@
 session_start();
 include '../../ajaxconfig.php';
 include '../../moneyFormatIndia.php';
+include '../../accountsFile/cashtally/closingBalanceClass.php';
+$CBObj = new ClosingBalanceClass($connect); 
+
+$userid  = '';
 
 // $bank_details = '';
 
@@ -13,7 +17,7 @@ while ($row = $userQry->fetch()) {
 }
 
 sort($bank_ids);
-// $bank_details = implode(',', $bank_ids);
+$bank_details = implode(',', $bank_ids);
 
 
 if (isset($_POST['search_date']) && $_POST['search_date'] != '') {
@@ -24,6 +28,9 @@ if (isset($_POST['search_date']) && $_POST['search_date'] != '') {
 }
 
 $record = getOpeningBalance($connect, $full_date, $bank_ids);
+
+$clorecords = $CBObj->getClosingBalance($full_date, $bank_details, $userid); 
+$hand_closing = $clorecords[0]['hand_closing'];
 
 // Get hand opening
 $hand_opening_balance = $record['hand_opening'];
@@ -252,43 +259,18 @@ $expense_till_now = $h_till_now_hand_expense + $bank_total_expense;
             <td>Closing Balance</td>
             <td>
                 <?php
-                $hand_total = $hand_opening_balance +  $h_collection + $h_deposite + $h_exchange + $h_el +  $h_invest + $hand_other_income + $h_contra - ($h_issued) - (-$h_agent) -($h_hand_expense);
-                echo moneyFormatIndia($hand_total);
+                $hand_total = $hand_closing;
+                echo moneyFormatIndia($hand_closing);
                 ?>
             </td>
 
             <?php
             $grand_total = $hand_total;
-            foreach ($bankData as $index => $bank) {
-                $bank_total = 0;
-
-                // Opening Balance
-                $bank_opening = $record['banks'][$index]['bank_opening'] ?? 0;
-                $bank_total += $bank_opening;
-
-                // Income Side (additions)
-                $bank_total += $bank['collection_on_date'] ?? 0;
-                $bank_total += ($bank['cr_bdeposit_amt'] ?? 0) - ($bank['db_deposit_amt'] ?? 0);
-                $bank_total += ($bank['cr_bexchange'] ?? 0) - ($bank['db_bexchange'] ?? 0);
-                $bank_total += ($bank['cr_bel_amt_on_date'] ?? 0) - ($bank['db_bel_amt_on_date'] ?? 0);
-                $bank_total += ($bank['cr_binvest'] ?? 0) - ($bank['db_binvest'] ?? 0);
-                $bank_total += ($bank['cr_cash_deposit'] ?? 0) - ($bank['db_cash_withdraw'] ?? 0);
-                $bank_total += $bank['bank_other_income'] ?? 0;
-
-                // Expense Side (use conditional subtraction like hand_total)
-                $loan_issue = $bank['loan_issue_on_date'] ?? 0;
-                $bank_total -= $loan_issue;
-
-                $agent_diff = ($bank['ag_cr_amt'] ?? 0) - ($bank['ag_db_amt'] ?? 0);
-                $bank_total -= (-$agent_diff);
-
-                $bexpense = $bank['bexpense_amt'] ?? 0;
-                $bank_total -= $bexpense ;
-
+            foreach ($clorecords as $index => $bank) {
                 // Add to grand total
-                $grand_total += $bank_total;
+                $grand_total += $bank['bank_closing'] ;;
 
-                echo "<td>" . moneyFormatIndia($bank_total) . "</td>";
+                echo "<td>" . moneyFormatIndia($bank['bank_closing']) . "</td>";
             } ?>
             <td><?php echo moneyFormatIndia($grand_total); ?></td>
             <td></td>

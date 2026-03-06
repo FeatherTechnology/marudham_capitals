@@ -239,12 +239,17 @@ if (isset($_POST['submit_concern']) && $_POST['submit_concern'] != '') {
                                 </div> -->
 
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 dept">
-                                    <div class="form-group">
+                                    <div class="form-group" style="display: flex;">
+                                        <div style="width: 400px;">
                                         <label for="toname">Department Name </label> <span class="required">&nbsp;*</span>
                                         <select tabindex="15" type="text" class="form-control" id="to_dept_name" name="to_dept_name">
                                             <option value="">Select Department Name</option>
                                         </select>
                                         <span class="text-danger" style='display:none' id='todeptnameCheck'>Please Select Department Name</span>
+                                        </div>
+                                        <div style="margin-left: 20px;">
+                                            <button type="button" class="btn btn-primary" id="addDepNameBtn" name="addDepNameBtn" onclick="getConcernDeptNameList()" data-toggle="modal" data-target=".addConDepName" style="padding: 5px 35px; margin-top: 20px;" tabindex='16'><span class="icon-add"></span></button>
+                                        </div>
                                     </div>
                                 </div>
                                 <!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 team">
@@ -413,3 +418,54 @@ if (isset($_POST['submit_concern']) && $_POST['submit_concern'] != '') {
     </div>
 </div>
 <!--  Concern To Modal END-->
+
+<!-- Concern department name Modal Start -->
+<div class="modal fade addConDepName" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="background-color: white">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myLargeModalLabel">Add Department Name</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="getConcernDeptName()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12"></div>
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+                        <div class="form-group">
+                            <label class="label">Department Name</label>
+                            <input type="hidden" name="con_dep_name_id" id="con_dep_name_id">
+                            <input type="text" name="con_dep_name" id="con_dep_name" class="form-control" placeholder="Enter Department Name">
+                            <span class="text-danger" style='display:none' id='conDepNameCheck'>Please Enter Department Name</span>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                        <label class="label" style="visibility: hidden;">Submit</label><br>
+                        <button type="button" name="submitConDepName" id="submitConDepName" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+
+                <div id="conDepNameTableDiv">
+                    <table class="table custom-table" id="conDepNameTable">
+                        <thead>
+                            <tr>
+                                <th width="25">S.No</th>
+                                <th>Department Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="getConcernDeptName()">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--  Concern department name Modal END-->
