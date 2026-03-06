@@ -15,25 +15,26 @@ $column = array(
     'cc.raising_for',
     'cc.raising_for',
     'cc.cus_name',
-    'cc.to_dept_name',
+    'cdn.dep_name',
     'sc.staff_name',
     'cs.concern_subject',
     'cc.status',
     'cc.id'
 );
 
-$query = "SELECT cc.*,sc.staff_name,cs.concern_subject,ag.ag_name,u.fullname,ag.ag_code
+$query = "SELECT cc.*,sc.staff_name,cs.concern_subject,ag.ag_name,u.fullname,ag.ag_code,cdn.dep_name
     FROM concern_creation cc
      JOIN staff_creation sc ON sc.staff_id = COALESCE(NULLIF(cc.pass_to, ''), cc.staff_assign_to)
     JOIN concern_subject cs ON cc.com_sub = cs.concern_sub_id
     LEFT JOIN agent_creation ag ON cc.ag_name = ag.ag_id
     LEFT JOIN user u ON cc.insert_user_id = u.user_id
+    LEFT JOIN concern_dept_name cdn ON cc.to_dept_name = cdn.id
     WHERE cc.status != 2  && cc.insert_user_id = '" . strip_tags($userid) . "'"; // 
 
 if (isset($_POST['search']) && $_POST['search'] != "") {
     $query .= " AND (cc.com_code LIKE '%" . $_POST['search'] . "%' OR
             cc.com_date LIKE '%" . $_POST['search'] . "%' OR
-            cc.to_dept_name LIKE '%" . $_POST['search'] . "%' OR
+            cdn.dep_name LIKE '%" . $_POST['search'] . "%' OR
             sc.staff_name LIKE '%" . $_POST['search'] . "%' OR
             cs.concern_subject LIKE '%" . $_POST['search'] . "%') ";
 }
@@ -82,7 +83,7 @@ foreach ($result as $row) {
         $sub_array[] = isset($row['cus_id']) ? $row['cus_id'] : '';
         $sub_array[] = isset($row['cus_name']) ? $row['cus_name'] : '';
     }
-    $sub_array[] = isset($row['to_dept_name']) ? $row['to_dept_name'] : '';
+    $sub_array[] = isset($row['dep_name']) ? $row['dep_name'] : '';
     $sub_array[] = $row['staff_name'];
     $sub_array[] = $row['concern_subject'];
 

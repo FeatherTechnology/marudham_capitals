@@ -235,7 +235,135 @@ $(document).ready(function () {
     $('#submit_concern').click(function () {
         submitValidation();
     });
+    $(document).on('click', '.editDepName', function () {
 
+        var id = $(this).data('id');
+        var name = $(this).data('name');
+        $("#con_dep_name_id").val(id);
+        $("#con_dep_name").val(name);
+    });
+
+    $(document).on('click', '.deleteDepName', function () {
+            var id = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure you want to Delete',
+                icon: 'question',
+                showConfirmButton: true,
+                showCancelButton: true,
+                confirmButtonColor: '#009688',
+                cancelButtonColor: '#cc4444',
+                cancelButtonText: 'No',
+                confirmButtonText: 'Yes'
+            }).then(function(result) {
+                if (result.isConfirmed) {
+                    // AJAX call
+                    $.ajax({
+                        url: 'concernFile/deletDepName.php',
+                        type: 'POST',
+                        data: {
+                            "id": id
+                        },
+                        dataType: 'json',
+                        cache: false,
+                        success: function (result) {
+                            if (result.response.includes('Successfully')) {
+
+                                Swal.fire({
+                                    title: 'Deleted Successfully',
+                                    icon: 'success',
+                                    showConfirmButton: true,
+                                    confirmButtonColor: '#009688',
+                                    confirmButtonText: 'OK'
+                                }).then((swalResult) => {
+                                    if (swalResult.isConfirmed) {
+                                        getConcernDeptNameList();
+                                    }
+
+                                });
+
+                            } else if(result.response.includes('warning')) {
+
+                                Swal.fire({
+                                    title: 'warning!',
+                                    text: result.response,
+                                    icon: 'warning',
+                                    confirmButtonColor: '#009688'
+                                });
+
+                            } else {
+
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: result.response,
+                                    icon: 'error',
+                                    confirmButtonColor: '#009688'
+                                });
+
+                            }
+                        },
+                        error: function (error) {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Something went wrong while submitting loan issue.',
+                                icon: 'error',
+                                confirmButtonColor: '#cc4444'
+                            });
+                        }
+                    });
+                }
+            });
+    });
+
+    $(document).on("click", "#submitConDepName", function () {
+            var con_dep_name = $("#con_dep_name").val();
+            var con_dep_name_id = $("#con_dep_name_id").val();
+            if (con_dep_name != "") {
+                $.ajax({
+                    url: 'concernFile/submitConcernDepName.php',
+                    type: 'POST',
+                    data: { "con_dep_name": con_dep_name, "con_dep_name_id": con_dep_name_id },
+                    cache: false,
+                    success: function (response) {
+                        var insresult = response.includes("Added");
+                        var updresult = response.includes("Updated");
+                        if (insresult) {
+                             Swal.fire({
+                                    title: 'Department Name Added Succesfully..!',
+                                    icon: 'success',
+                                    showConfirmButton: true,
+                                    confirmButtonColor: '#009688',
+                                    confirmButtonText: 'OK'
+                            });
+                        } else if (updresult) {
+                           Swal.fire({
+                                    title: 'Department Name Updated Succesfully..!',
+                                    icon: 'success',
+                                    showConfirmButton: true,
+                                    confirmButtonColor: '#009688',
+                                    confirmButtonText: 'OK'
+                            });
+                        }
+                        else {
+                            Swal.fire({
+                                    title: 'Error While Submitting',
+                                    icon: 'error',
+                                    showConfirmButton: true,
+                                    confirmButtonColor: '#009688',
+                                    confirmButtonText: 'OK'
+                            })
+                        }
+                        $('#con_dep_name').val('');
+                        $("#con_dep_name_id").val('');
+                        getConcernDeptNameList();
+                    }
+                });
+                $("#conDepNameCheck").hide();
+            }
+            else {
+                $("#conDepNameCheck").show();
+            }
+        });
 
 }); //Document END.
 
@@ -410,13 +538,53 @@ function getConcernDeptName() {  // To show Department Name.
             let len = response.length;
             for (let i = 0; i < len; i++) {
                 let name = response[i]['deptName'];
-                $('#to_dept_name').append("<option value='" + name + "'> " + name + " </option>")
+                let id = response[i]['id'];
+                $('#to_dept_name').append("<option value='" + id + "'> " + name + " </option>")
             }
 
         }
     });
 }
+function getConcernDeptNameList() {  
 
+    var companyID = $('#company_id').val();
+
+    $.ajax({
+        url: 'concernFile/getConernDeptName.php',
+        type: 'POST',
+        data: { companyID: companyID },
+        dataType: 'json',
+        success: function (response) {
+
+            // Clear old rows
+            $('#conDepNameTable tbody').empty();
+
+            for (var i = 0; i < response.length; i++) {
+
+                $('#conDepNameTable tbody').append(
+                    "<tr>" +
+                        "<td>" + (i + 1) + "</td>" +
+                        "<td>" + response[i].deptName + "</td>" +
+                        "<td>" +
+
+                            "<span class='icon-border_color editDepName' " +
+                                "data-id='" + response[i].id + "' " +
+                                "data-name='" + response[i].deptName + "' " +
+                                "style='cursor:pointer; margin-right:10px;' " +
+                                "title='Edit'></span>" +
+
+                            "<span class='icon-trash-2 deleteDepName' " +
+                                "data-id='" + response[i].id + "' " +
+                                "style='cursor:pointer;' " +
+                                "title='Delete'></span>" +
+
+                        "</td>" +
+                    "</tr>"
+                );
+            }
+        }
+    });
+}
 function getconTeamName() {  // To show Team Name.
     var companyID = $('#company_id').val();
     $.ajax({
