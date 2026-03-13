@@ -3576,6 +3576,7 @@ $("#submit_verification").click(function (event) {
     }
   } else {
     event.preventDefault();
+    scrollToFirstError('#cus_Profiles');
     return false;
   }
 });
@@ -4831,6 +4832,7 @@ $("#submit_documentation").click(function () {
     }
   } else {
     event.preventDefault();
+    scrollToFirstError('#cus_doc'); 
     return false;
   }
 });
@@ -5205,6 +5207,7 @@ $("#submit_loan_calculation").click(function () {
     }
   } else {
     event.preventDefault();
+    scrollToFirstError('#cus_loancalc'); 
     return false;
   }
 

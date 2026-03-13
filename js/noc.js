@@ -72,6 +72,8 @@ $(document).ready(function () {
                     console.error(err);
                     alert("Something went wrong!");
                 });
+        }else{
+            scrollToFirstError('#noc_form');
         }
     });
 

@@ -584,7 +584,8 @@ function validateLineAreaMappingForm() {
             timer: 2000,
             title: 'Please Fill out Mandatory fields!',
             icon: 'error',
-            showConfirmButton: true
+            showConfirmButton: true,
+            confirmButtonColor: '#009688'
         });
         return false; // validation failed
     }

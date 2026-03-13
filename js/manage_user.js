@@ -512,7 +512,9 @@ $(document).ready(function () {
 					formEl.submit();
 				}
 			}
-		}
+		}else { 
+            scrollToFirstError('#manage_user_form');
+        }
 	});
 });
 

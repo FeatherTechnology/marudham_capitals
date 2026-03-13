@@ -10,6 +10,7 @@ $user_id = ($_POST['user_id'] != '') ? $_POST['user_id'] : '';
 if ($type == 'today') {
 
     $where = 'DATE(created_date) = CURRENT_DATE ';
+    $bank_where = " DATE(updated_date) = CURRENT_DATE ";
 
 } else if ($type == 'day') {
 
@@ -17,6 +18,7 @@ if ($type == 'today') {
     $to_date = $_POST['to_date'];
 
     $where = '(DATE(created_date) >= DATE("' . $from_date . '") && DATE(created_date) <= DATE("' . $to_date . '"))  ';
+    $bank_where = " (DATE(updated_date) >= DATE('" . $from_date . "') && DATE(updated_date) <= DATE('" . $to_date . "')) ";
 
 } else if ($type == 'month') {
 
@@ -24,20 +26,21 @@ if ($type == 'today') {
     $year = date('Y', strtotime($_POST['month']));
 
     $where = 'MONTH(created_date) = "' . $month . '" && YEAR(created_date) = "' . $year . '"  ';
+    $bank_where = " MONTH(updated_date) = '" . $month . "' && YEAR(updated_date) = '" . $year . "' ";
 
 }
 
 if ($user_id != '') {
     $where .= " && insert_login_id = '" . $user_id . "' ";
 } //for user based
-getDetails($connect, $where); //passing where clause as arg
+getDetails($connect, $where,$bank_where); //passing where clause as arg
 
-function getDetails($connect, $where)
+function getDetails($connect, $where,$bank_where)
 {
 
     // Investment Credit
     $qry = $connect->query("SELECT SUM(amt) as amt FROM (
-        SELECT amt FROM ct_cr_binvest WHERE $where 
+        SELECT amt FROM ct_cr_binvest WHERE $bank_where 
         UNION ALL
         SELECT amt FROM ct_cr_hinvest WHERE $where 
     ) AS combined_table");
@@ -49,7 +52,7 @@ function getDetails($connect, $where)
 
     // Investment Debit
     $qry = $connect->query("SELECT SUM(amt) as amt FROM (
-        SELECT amt FROM ct_db_binvest WHERE $where
+        SELECT amt FROM ct_db_binvest WHERE $bank_where 
         UNION ALL
         SELECT amt FROM ct_db_hinvest WHERE $where
     ) AS combined_table");
@@ -62,7 +65,7 @@ function getDetails($connect, $where)
 
     // Deposit Credit
     $qry = $connect->query("SELECT SUM(amt) as amt FROM (
-        SELECT amt FROM ct_cr_bdeposit WHERE $where
+        SELECT amt FROM ct_cr_bdeposit WHERE $bank_where 
         UNION ALL
         SELECT amt FROM ct_cr_hdeposit WHERE $where
         ) AS combined_table");
@@ -74,7 +77,7 @@ function getDetails($connect, $where)
 
     // Deposit Debit
     $qry = $connect->query("SELECT SUM(amt) as amt FROM (
-        SELECT amt FROM ct_db_bdeposit WHERE $where 
+        SELECT amt FROM ct_db_bdeposit WHERE $bank_where 
         UNION ALL
         SELECT amt FROM ct_db_hdeposit WHERE $where
     ) AS combined_table");
@@ -86,7 +89,7 @@ function getDetails($connect, $where)
 
     // EL Credit
     $qry = $connect->query("SELECT SUM(amt) as amt FROM (
-        SELECT amt FROM ct_cr_bel WHERE $where
+        SELECT amt FROM ct_cr_bel WHERE $bank_where 
         UNION ALL
         SELECT amt FROM ct_cr_hel WHERE $where
     ) AS combined_table");
@@ -98,7 +101,7 @@ function getDetails($connect, $where)
 
     // EL Debit
     $qry = $connect->query("SELECT SUM(amt) as amt FROM (
-        SELECT amt FROM ct_db_bel WHERE $where
+        SELECT amt FROM ct_db_bel WHERE $bank_where 
         UNION ALL
         SELECT amt FROM ct_db_hel WHERE $where
     ) AS combined_table");
@@ -110,7 +113,7 @@ function getDetails($connect, $where)
 
     // Exchange Credit
     $qry = $connect->query("SELECT SUM(amt) as amt FROM (
-        SELECT amt FROM ct_cr_bexchange WHERE $where
+        SELECT amt FROM ct_cr_bexchange WHERE $bank_where 
         UNION ALL
         SELECT amt FROM ct_cr_hexchange WHERE $where
     ) AS combined_table");
@@ -122,7 +125,7 @@ function getDetails($connect, $where)
 
     // Exchange Debit
     $qry = $connect->query("SELECT SUM(amt) as amt FROM (
-        SELECT amt FROM ct_db_bexchange WHERE $where
+        SELECT amt FROM ct_db_bexchange WHERE $bank_where 
         UNION ALL
         SELECT amt FROM ct_db_hexchange WHERE $where
     ) AS combined_table");
@@ -134,7 +137,7 @@ function getDetails($connect, $where)
 
     // Agent Credit
     $qry = $connect->query("SELECT SUM(amt) as amt FROM (
-        SELECT amt FROM ct_cr_bag WHERE $where
+        SELECT amt FROM ct_cr_bag WHERE $bank_where 
         UNION ALL
         SELECT amt FROM ct_cr_hag WHERE $where
     ) AS combined_table");
@@ -146,7 +149,7 @@ function getDetails($connect, $where)
 
     // Agent Debit
     $qry = $connect->query("SELECT SUM(amt) as amt FROM (
-        SELECT amt FROM ct_db_bag WHERE $where
+        SELECT amt FROM ct_db_bag WHERE $bank_where 
         UNION ALL
         SELECT amt FROM ct_db_hag WHERE $where
     ) AS combined_table");

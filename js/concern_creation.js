@@ -233,7 +233,10 @@ $(document).ready(function () {
 
     //Submit Validation 
     $('#submit_concern').click(function () {
-        submitValidation();
+        if (!submitValidation()) {
+        event.preventDefault();
+        scrollToFirstError('#concern_form'); // your form id
+    }
     });
     $(document).on('click', '.editDepName', function () {
 
@@ -282,7 +285,7 @@ $(document).ready(function () {
 
                                 });
 
-                            } else if(result.response.includes('warning')) {
+                            } else if(result.response.includes('already')) {
 
                                 Swal.fire({
                                     title: 'warning!',
@@ -724,10 +727,12 @@ function submitValidation() {
     // var com_priority = $('#com_priority').val();
     var role_type = $('#role_type').val();
     var staff_assign_to = $('#staff_assign_to').val();
+    var isValid = true;
 
     if (raising == '') {
         event.preventDefault();
         $('#raisingForCheck').show();
+        isValid = false;
     } else {
         $('#raisingForCheck').hide();
     }
@@ -736,18 +741,21 @@ function submitValidation() {
         if (staff_name == '') {
             event.preventDefault();
             $('#staffnameCheck').show();
+            isValid = false;
         } else {
             $('#staffnameCheck').hide();
         }
         if (staff_dept_name == '') {
             event.preventDefault();
             $('#staffdeptnameCheck').show();
+            isValid = false;
         } else {
             $('#staffdeptnameCheck').hide();
         }
         if (staff_team_name == '') {
             event.preventDefault();
             $('#staffteamnameCheck').show();
+            isValid = false;
         } else {
             $('#staffteamnameCheck').hide();
         }
@@ -757,6 +765,7 @@ function submitValidation() {
         if (ag_name == '') {
             event.preventDefault();
             $('#agentnameCheck').show();
+            isValid = false;
         } else {
             $('#agentnameCheck').hide();
         }
@@ -766,6 +775,7 @@ function submitValidation() {
         if (cus_id == '') {
             event.preventDefault();
             $('#cusIdCheck').show();
+            isValid = false;
         } else {
             $('#cusIdCheck').hide();
         }
@@ -788,6 +798,7 @@ function submitValidation() {
         if (to_dept_name == '') {
             event.preventDefault();
             $('#todeptnameCheck').show();
+            isValid = false;
         } else {
             $('#todeptnameCheck').hide();
         }
@@ -805,12 +816,14 @@ function submitValidation() {
     if (com_sub == '') {
         event.preventDefault();
         $('#concernsubCheck').show();
+        isValid = false;
     } else {
         $('#concernsubCheck').hide();
     }
     if (com_remark == '') {
         event.preventDefault();
         $('#comRemarkCheck').show();
+        isValid = false;
     } else {
         $('#comRemarkCheck').hide();
     }
@@ -829,14 +842,16 @@ function submitValidation() {
     if (role_type == '') {
         event.preventDefault();
         $('#roleTypeCheck').show();
+        isValid = false;
     } else {
         $('#roleTypeCheck').hide();
     }
     if (staff_assign_to == '') {
         event.preventDefault();
         $('#staffAssignCheck').show();
+        isValid = false;
     } else {
         $('#staffAssignCheck').hide();
     }
-
+    return isValid;
 }

@@ -2359,6 +2359,20 @@
             }, null, 'json');
         }
         /////////////////////////////////////////////////////  Check Transaction Details END  //////////////////////////////////////////////////// 
+        function scrollToFirstError(formId) {
+
+            let firstError = $(formId).find('span.text-danger:visible').filter(function () {
+
+                let txt = $(this).text().trim();
+                return txt !== '' && !txt.startsWith('*');
+            }).first();
+            
+            if (firstError.length) {
+                $('html, body').animate({
+                    scrollTop: firstError.closest('div').offset().top - 120
+                }, 500);
+            }
+        }
     </script>
 
     <?php

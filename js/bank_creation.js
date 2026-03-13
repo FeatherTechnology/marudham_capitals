@@ -31,7 +31,8 @@ $(document).ready(function () {
         if ( validations()) {
         let confirmAction = confirm("Are you sure you want to submit Bank Creation?");
         if (!confirmAction) {
-            event.preventDefault(); 
+            event.preventDefault();
+            scrollToFirstError('#bank_creation'); 
             return false;
         }
     } else {

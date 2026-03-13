@@ -210,6 +210,7 @@ $(document).ready(function () {
 
         // Run validation and only proceed if it passes
         if (!loanIssueSumitValidation()) {
+            scrollToFirstError('#cus_Profiles');
             return; // Exit if validation fails
         }
 

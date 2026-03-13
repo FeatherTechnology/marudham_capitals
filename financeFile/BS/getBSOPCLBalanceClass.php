@@ -204,7 +204,7 @@ class ClosingBalanceClass
         $agentCreditQry = $this->db->query("SELECT
             SUM(amt) AS agent_credit
             FROM (
-                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bag WHERE DATE(created_date) <= '$closing_date' AND FIND_IN_SET(ag_id,'$ag_ids') $user_where)
+                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bag WHERE DATE(updated_date) <= '$closing_date' AND FIND_IN_SET(ag_id,'$ag_ids') $user_where)
                 
             ) AS Agent_Credit_Closing
         ");
@@ -214,7 +214,7 @@ class ClosingBalanceClass
         $agentDebitQry = $this->db->query("SELECT
             SUM(amt) AS agent_debit
             FROM (
-                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bag WHERE DATE(created_date) <= '$closing_date' AND FIND_IN_SET(ag_id, '$ag_ids') $user_where)
+                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bag WHERE DATE(updated_date) <= '$closing_date' AND FIND_IN_SET(ag_id, '$ag_ids') $user_where)
                 
             ) AS Agent_Debit_Closing
         ");
@@ -394,7 +394,7 @@ class ClosingBalanceClass
         $agentCreditQry = $this->db->query("SELECT
             SUM(amt) AS agent_credit
             FROM (
-                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bag WHERE DATE(created_date) < '$op_date' AND FIND_IN_SET(ag_id,'$ag_ids') $user_where)
+                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_cr_bag WHERE DATE(updated_date) < '$op_date' AND FIND_IN_SET(ag_id,'$ag_ids') $user_where)
                 
             ) AS Agent_Credit_Opening
         ");
@@ -405,7 +405,7 @@ class ClosingBalanceClass
         $agentDebitQry = $this->db->query("SELECT
             SUM(amt) AS agent_debit
             FROM (
-                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bag WHERE DATE(created_date) < '$op_date' AND FIND_IN_SET(ag_id, '$ag_ids') $user_where)
+                (SELECT COALESCE(SUM(amt), 0) AS amt FROM ct_db_bag WHERE DATE(updated_date) < '$op_date' AND FIND_IN_SET(ag_id, '$ag_ids') $user_where)
                 
             ) AS Agent_Debit_Opening
         ");

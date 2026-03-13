@@ -216,6 +216,7 @@ $(document).ready(function () {
     } else {
       //if the validation false, re-enable the submit button
       submit_btn.removeAttr("disabled");
+      scrollToFirstError('#collectionForm');
     }
   });
 

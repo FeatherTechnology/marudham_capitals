@@ -9,6 +9,7 @@ $(document).ready(function () {
             }
         }else{
             event.preventDefault(); 
+            scrollToFirstError('#cus_Profiles');
             return false;
         }
     });
