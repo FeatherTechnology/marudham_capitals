@@ -7,25 +7,28 @@ $type = $_POST['type'];
 
 if ($type == 'today') {
     $where = " DATE(ii.updated_date) = CURRENT_DATE and ii.cus_status > 13 ";
+    $iiWhere = " DATE(li.created_date) = CURRENT_DATE";
 
 } else if ($type == 'day') {
     $from_date = $_POST['from_date'];
     $to_date = $_POST['to_date'];
 
     $where = " (DATE(ii.updated_date) >= DATE('$from_date') && DATE(ii.updated_date) <= DATE('$to_date')) and ii.cus_status > 13 ";
+    $iiWhere  = " (DATE(li.created_date) >= DATE('$from_date') && DATE(li.created_date) <= DATE('$to_date'))";
 
 } else if ($type == 'month') {
     $month = date('m', strtotime($_POST['month']));
     $year = date('Y', strtotime($_POST['month']));
 
     $where = " (MONTH(ii.updated_date) = '$month' && YEAR(ii.updated_date) = '$year') and ii.cus_status > 13 ";
+    $iiWhere = " (MONTH(li.created_date) = '$month' && YEAR(li.created_date) = '$year') ";
 }
 
 $condition = getSubareaList($connect, $user_id); //condition will be returned if user id selected
 
-getDetials($connect, $where, $condition);
+getDetials($connect, $where, $condition,$iiWhere);
 
-function getDetials($connect, $where, $condition)
+function getDetials($connect, $where, $condition,$iiWhere)
 {
     // >13 means entries moved to collection from issue
     //will show only interest amunt under user's branch not others also
@@ -33,8 +36,9 @@ function getDetials($connect, $where, $condition)
     $qry = $connect->query("SELECT COALESCE(SUM(alc.int_amt_cal), 0) AS int_amt_cal 
     FROM in_issue ii
     JOIN acknowlegement_loan_calculation alc ON ii.req_id = alc.req_id  
+    JOIN loan_issue li ON li.req_id = ii.req_id  
     JOIN in_verification iv ON ii.req_id = iv.req_id  
-    where due_type != 'Interest' AND $where $condition ");
+    where due_type != 'Interest' AND $iiWhere AND $where $condition ");
     $row = $qry->fetch();
     $benefit_amount = $row['int_amt_cal']; //interest amount
 

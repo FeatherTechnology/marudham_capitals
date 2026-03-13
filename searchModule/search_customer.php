@@ -28,26 +28,37 @@ if ($cusid != '') {
     $fam_sql = "SELECT id from verification_family_info WHERE famname LIKE '%$cus_name%' ";
 
 } else if ($mobile != '') {
-    $sql = "SELECT cus_id from customer_register WHERE mobile1 LIKE '%$mobile%' or mobile2 LIKE '%$mobile%' ";
+    $sql = "SELECT COALESCE(cr.cus_id, rc.cus_id) AS cus_id FROM request_creation rc LEFT JOIN customer_register cr 
+       ON cr.req_ref_id = rc.req_id WHERE cr.mobile1 LIKE '%$mobile%' OR cr.mobile2 LIKE '%$mobile%' OR rc.mobile1 LIKE '%$mobile%' OR rc.mobile2 LIKE '%$mobile%' LIMIT 1";
     $fam_sql = "SELECT id from verification_family_info WHERE relation_Mobile LIKE '%$mobile%' ";
 
 } else if ($area != '') {
-    $sql = "SELECT cr.cus_id from area_list_creation ac 
-        JOIN customer_register cr ON 
-        CASE 
-        WHEN (cr.area_confirm_area IS NOT NULL OR cr.area_confirm_area != '') THEN ac.area_id = cr.area_confirm_area 
-        ELSE ac.area_id = cr.area 
-        END
-        WHERE ac.area_name LIKE '%$area%' GROUP BY cr.cus_id ";
+    $sql = "SELECT DISTINCT cr.cus_id
+        FROM customer_register cr
+        LEFT JOIN request_creation rc ON rc.cus_id = cr.cus_id
+        JOIN area_list_creation ac
+            ON (
+                (cr.area_confirm_area IS NOT NULL AND cr.area_confirm_area != '' AND ac.area_id = cr.area_confirm_area)
+                OR
+                ((cr.area_confirm_area IS NULL OR cr.area_confirm_area = '') AND ac.area_id = cr.area)
+                OR (ac.area_id = rc.area)
+            )
+        WHERE ac.area_name LIKE '%$area%'; ";
 
 } else if ($sub_area != '') {
-    $sql = "SELECT cr.cus_id from sub_area_list_creation sac 
-        JOIN customer_register cr ON 
-        CASE 
-        WHEN (cr.area_confirm_subarea IS NOT NULL OR cr.area_confirm_subarea != '') THEN sac.sub_area_id = cr.area_confirm_subarea 
-        ELSE sac.sub_area_id = cr.sub_area
-        END
-        WHERE sac.sub_area_name LIKE '%$sub_area%' GROUP BY cr.cus_id ";
+    $sql = "SELECT DISTINCT cr.cus_id
+                FROM customer_register cr
+                LEFT JOIN request_creation rc ON rc.cus_id = cr.cus_id
+                JOIN sub_area_list_creation sac
+                ON (
+
+                    (cr.area_confirm_subarea IS NOT NULL AND cr.area_confirm_subarea != '' AND sac.sub_area_id = cr.area_confirm_subarea)
+                    OR
+                    ((cr.area_confirm_subarea IS NULL OR cr.area_confirm_subarea = '') AND sac.sub_area_id = cr.sub_area)
+                    
+                    OR (sac.sub_area_id = rc.sub_area)
+                )
+                WHERE sac.sub_area_name LIKE '%$sub_area%'; ";
 
 } else if ($loan_id != '') {
     $sql = "SELECT cus_id from in_issue where loan_id = '$loan_id' ";

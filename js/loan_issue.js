@@ -588,6 +588,7 @@ $(document).ready(function () {
             // run validation
             if (!loanIssueSumitValidation()) {
                 e.preventDefault();  // stop default submit until we finish everything
+                scrollToFirstError('#cus_Profiles'); 
                 return false;
             }
 

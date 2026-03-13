@@ -17,7 +17,10 @@ $(document).ready(function () {
     });
 
     $('#submit_concern_solution').click(function () {
-        solutionSubmitValidation();
+        if (!solutionSubmitValidation()){
+            event.preventDefault();
+            scrollToFirstError('#concern_form');
+        }
     });
 
     // $('#to_dept_name').change(function () { // To Staff list based on department
@@ -256,10 +259,12 @@ function solutionSubmitValidation() {
     var staff_assign_to = $('#staff_assign_to').val();
     var location = $('#location').val();
     var sol_participants = $('#sol_participants').val();
+    var isValid = true;
     if (pg_id != '1') {
         if (com == '') {
             event.preventDefault();
             $('#communicationCheck').show();
+            isValid = false;
         } else {
             $('#communicationCheck').hide();
         }
@@ -268,6 +273,7 @@ function solutionSubmitValidation() {
             if (upd == '') {
                 event.preventDefault();
                 $('#updCheck').show();
+                isValid = false;
             } else {
                 $('#updCheck').hide();
             }
@@ -275,6 +281,7 @@ function solutionSubmitValidation() {
             if (location == '') {
                 event.preventDefault();
                 $('#locationCheck').show();
+                isValid = false;
             } else {
                 $('#locationCheck').hide();
             }
@@ -283,12 +290,14 @@ function solutionSubmitValidation() {
         if (sol_participants == '') {
             event.preventDefault();
             $('#participantsCheck').show();
+            isValid = false;
         } else {
             $('#participantsCheck').hide();
         }
         if (solutionRemark == '') {
             event.preventDefault();
             $('#solutionRemarkCheck').show();
+            isValid = false;
         } else {
             $('#solutionRemarkCheck').hide();
         }
@@ -296,15 +305,18 @@ function solutionSubmitValidation() {
         if (role_type == '') {
             event.preventDefault();
             $('#roleTypeCheck').show();
+            isValid = false;
         } else {
             $('#roleTypeCheck').hide();
         }
         if (staff_assign_to == '') {
             event.preventDefault();
             $('#staffAssignCheck').show();
+            isValid = false;
         } else {
             $('#staffAssignCheck').hide();
         }
     }
+    return isValid;
 
 }
