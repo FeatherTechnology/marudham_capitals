@@ -491,6 +491,15 @@ if (sizeof($getUser) > 0) {
 								<input type="text" class='form-control' readonly name="promo_date" id="promo_date" tabindex="1" value='<?php echo date('d-m-Y'); ?>' />
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+								<label for="promo_type">Promotion Type</label><span class="required">&nbsp;*</span>
+								<select class="form-control" name="promo_type" id="promo_type">
+									<option value="">Select Promotion Type</option>
+									<option value="1">Direct</option>
+									<option value="2">Mobile</option>
+								</select>
+								<span class="text-danger" id='promo_typeCheck' style="display: none;">Please Select Promotion Type</span>
+							</div>
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<label for="promo_status">Status</label><span class="required">&nbsp;*</span>
 								<input type="text" name="promo_status" id="promo_status" class='form-control' placeholder="Enter Status" tabindex="2" readonly>
 								<span class="text-danger" id='promo_statusCheck' style="display: none;">Please Enter Status</span>

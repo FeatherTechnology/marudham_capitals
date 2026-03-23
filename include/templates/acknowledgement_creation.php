@@ -1,5 +1,6 @@
 <?php
 require_once 'moneyFormatIndia.php';
+$approvalaccess = $userObj->getuser($mysqli, $userid)['approval'];
 
 if (isset($_GET['upd'])) {
 	$idupd = $_GET['upd'];
@@ -1349,7 +1350,11 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 							</div>
 
 							<hr>
-							<br>
+							<div class="row">
+								<div class="col-12">
+									<button type="button" class="btn btn-primary" id="add_cus_label" name="add_cus_label" data-toggle="modal" data-target=".addCusLabel" style="padding: 5px 35px; float: right;" tabindex="63" onclick="resetfeedback();"><span class="icon-add"></span></button>
+								</div>
+							</div> <br>
 
 							<div class="row">
 								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
@@ -1397,7 +1402,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 		</form>
 	</div>
 	<!-- Customer Form End -->
-
+<div id="printcollection" style="display: none"></div>
 
 	<!--  ///////////////////////////////////////////////////////////////// Documentation  start ////////////////////////////////////////////////////////// -->
 	<div id="cus_document" style="display: none;">
@@ -1424,6 +1429,13 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 																			echo $submitted;
 																		} ?>">
 			<input type="hidden" name="replace_doc_id_upd" id="replace_doc_id_upd" value="<?php if (isset($noc_replace_doc_id)) {echo $noc_replace_doc_id;} ?>">
+			<input type="hidden" name="pending_sts" id="pending_sts" value="" />
+			<input type="hidden" name="od_sts" id="od_sts" value="" />
+			<input type="hidden" name="due_nil_sts" id="due_nil_sts" value="" />
+			<input type="hidden" name="closed_sts" id="closed_sts" value="" />
+			<input type="hidden" name="approvalaccess" id="approvalaccess" value="<?php if (isset($approvalaccess)) {
+																						echo $approvalaccess;
+																					} ?>" />
 
 			<!-- Row start -->
 			<div class="row gutters">
@@ -1509,7 +1521,23 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 						</div>
 					</div>
 					<!-- Documentations Info  End-->
+                    <!-- Document History START -->
+					<div class="card">
+						<div class="card-header"> Documents History
+							<button type="button" class="btn btn-primary" name="show_document_history" id="show_document_history" style="padding: 5px 35px;  float: right; " tabindex="9" onclick="getDocumentHistory()">Show Document History</button>
+							<button type="button" class="btn btn-primary" name="hide_document_history" id="hide_document_history" style="padding: 5px 35px;  float: right; display: none;" tabindex="10" >Hide Document History</button>
+						</div>
+						<div class="card-body">
+							<div class="row">
+								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+									<div class="form-group table-responsive" id="docHistoryDiv">
 
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Document History END -->
 					<!-- Choosing Document START -->
 					<div class="card">
 						<div class="card-header"> Documents</div>
@@ -2393,6 +2421,24 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 						</div>
 					</div>
 					<!-- ///////////////////////////////////////////////  Verification Info  END /////////////////////////////////////////////////////////// -->
+					 <!-- Loan History START -->
+					<div class="card">
+						<div class="card-header"> Loan History
+							<button type="button" class="btn btn-primary" name="show_loan_history" id="show_loan_history" style="padding: 5px 35px;  float: right;" tabindex="9" onclick="getLoanHistory()">Show Loan History</button>
+							<button type="button" class="btn btn-primary" name="hide_loan_history" id="hide_loan_history" style="padding: 5px 35px;  float: right; display: none;" tabindex="10" >Hide Loan History</button>
+
+						</div>
+						<div class="card-body">
+							<div class="row">
+								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+									<div class="form-group table-responsive" id="loanHistoryDiv">
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Loan History END -->
 
 					<!-- Loan Info Start -->
 					<div class="card">
@@ -3271,5 +3317,309 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 	</form>
 </div>
 <!-- END  Add Document Info Modal -->
+<!-- Add Customer Label Modal  START -->
+<div class="modal fade addCusLabel" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="myLargeModalLabel">Add Customer Feedback </h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="feedbackList()">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<!-- alert messages -->
+				<div id="feedbackInsertOk" class="successalert"> Feedback Added Successfully
+					<span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
+				</div>
 
+				<div id="feedbackUpdateok" class="successalert"> Feedback Updated Succesfully! <span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
+				</div>
+
+				<div id="feedbackNotOk" class="unsuccessalert"> Something Went Wrong! <span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
+				</div>
+
+				<div id="feedbackDeleteOk" class="unsuccessalert"> Feedback Deleted
+					<span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
+				</div>
+
+				<div id="feedbackDeleteNotOk" class="unsuccessalert"> Feedback not Deleted <span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
+				</div>
+
+				<br />
+
+				<div class="row">
+
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+						<div class="form-group" style="display: flex; align-items: center;">
+							<div>
+								<label for="feedback_label"> Feedback Label </label> <span class="required">&nbsp;*</span>
+								<select type="text" class="form-control" id="feedback_label" style="width: 330px;" name="feedback_label" tabindex='1'>
+									<option value=""> Select Feedback Label</option>
+								</select>
+								<span class="text-danger" id="feedbacklabelCheck" style='display:none'> Select Feedback Label</span>
+							</div>
+							<div style="padding: 20px 0px 0px 10px;  ">
+							    <button type="button" class="btn btn-primary" id="add_cus_feedback" name="add_cus_feedback" data-toggle="modal" data-target="#add_feedback_lable" style="display: <?= ($approvalaccess == 0 ? 'inline-block' : 'none'); ?>;" tabindex="2"><span class="icon-add"></span></button>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+						<div class="form-group">
+							<label for="cus_feedback"> Feedback </label> <span class="required">&nbsp;*</span>
+							<select type="text" class="form-control" id="cus_feedback" name="cus_feedback" tabindex='3'>
+								<option value=""> Select Feedback </option>
+								<option value="5"> Excellent </option>
+								<option value="4"> Good </option>
+								<option value="3"> Average </option>
+								<option value="2"> Poor </option>
+								<option value="1"> Bad </option>
+							</select>
+							<span class="text-danger" id="feedbackCheck"> Select Feedback </span>
+						</div>
+					</div>
+
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12"></div>
+					<div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12">
+						<div class="form-group">
+							<label for="feedback_remark"> Remarks </label>
+							<textarea class="form-control" name="feedback_remark" id="feedback_remark" tabindex='4'></textarea>
+						</div>
+					</div>
+
+					<div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12"></div>
+					<div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12">
+						<input type="hidden" name="feedbackID" id="feedbackID">
+						<button type="button" name="feedbackBtn" id="feedbackBtn" class="btn btn-primary" style="margin-top: 35px;" tabindex='5'> Submit </button>
+					</div>
+				</div>
+				</br>
+
+
+				<div id="feedbackTable">
+					<table class="table custom-table">
+						<thead>
+							<tr>
+								<th width="50"> S.No </th>
+								<th> Date</th>
+								<th> Feedback Label </th>
+								<th> Feedback </th>
+								<th> ACTION </th>
+							</tr>
+						</thead>
+						<tbody>
+
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="feedbackList();" tabindex='6'>Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- END  Add Customer Label Info Modal -->
+<!--  Add Customer Label Info Modal -->
+ <div class="modal fade" id="add_feedback_lable" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-lg " role="document">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLongTitle">Add Feedback Label  </h5>
+				<button type="button" class="close" data-dismiss="modal" tabindex="7" aria-label="Close" onclick="getFeedbackLable()">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+					
+					<div class="card-body" style="height: 400px;">
+						<div class="row ">
+							<!--Fields -->
+							<div class="col-md-12 ">
+								<div class="row">
+									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-10 col-12"></div>
+									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-10 col-12">
+										<div class="form-group">
+											<label for="disabledInput">Feedback Label</label>&nbsp;<span class="text-danger"></span>
+											<input type="hidden" name="fedbackname_id" id="fedbackname_id">
+											<input type="text" tabindex="4" class="form-control" id="feedbackname" name="feedbackname" value="" placeholder="Enter Feedback Label">
+										</div>
+									</div>
+
+									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-10 col-12 d-flex align-items-center" style="margin-top: 20px;">
+										<div class="form-group">
+											<button type="submit" name="submit_feedback_lable" id="submit_feedback_lable" class="btn btn-primary" value="Submit" tabindex="5"><span class="icon-check"></span>&nbsp;Submit</button>
+										</div>
+									</div>
+								</div>
+								<br>
+							</div>
+							<div  class="col-md-12" id="cus_feedbackListTable_div">
+									<table class="table custom-table" id="cus_feedbackListTable">
+										<thead>
+											<tr>
+												<th width="50"> S.No </th>
+												<th> Feedback Label </th>
+												<th> ACTION </th>
+											</tr>
+										</thead>
+										<tbody>
+
+										</tbody>
+									</table>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-secondary" data-dismiss="modal" tabindex="6"  onclick="getFeedbackLable()">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- END  Add Customer Label Info Modal -->
+ <!-- /////////////////////////////////////////////////////////////////// NOC Summary Modal START ////////////////////////////////////////////////////////////// -->
+<div class="modal fade noc-summary-modal " tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="myLargeModalLabel"> NOC Summary </h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="nocsummaryModal">
+
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /////////////////////////////////////////////////////////////////// NOC Summary Modal END ////////////////////////////////////////////////////////////////////// -->
+ <!-- /////////////////////////////////////////////////////////////////// Penalty Char Modal START ////////////////////////////////////////////////////////////////////// -->
+<div class="modal fade PenaltyChart" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="myLargeModalLabel"> Penalty Chart</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="penaltyChartTableDiv">
+
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /////////////////////////////////////////////////////////////////// Penalty Chart Modal END ////////////////////////////////////////////////////////////////////// -->
+<!-- /////////////////////////////////////////////////////////////////// Fine Chart Modal START ////////////////////////////////////////////////////////////// -->
+<div class="modal fade collectionChargeChart" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="myLargeModalLabel"> Fine Chart </h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="collectionChargeDiv">
+
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /////////////////////////////////////////////////////////////////// Fine Chart Modal END ////////////////////////////////////////////////////////////////////// -->
+
+<!-- /////////////////////////////////////////////////////////////////// Due Chart Modal START ////////////////////////////////////////////////////////////////////// -->
+<div class="modal fade DueChart" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content" style="background-color: white;">
+			<div class="modal-header">
+				<h5 class="modal-title" id="myLargeModalLabel"> Due Chart Icon</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="dueChartTableDiv">
+
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /////////////////////////////////////////////////////////////////// Due Chart Modal END ////////////////////////////////////////////////////////////////////// -->
+<!-- /////////////////////////////////////////////////////////////////// Loan Summary Modal START ////////////////////////////////////////////////////////////// -->
+<div class="modal fade loansummarychart" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="myLargeModalLabel"> Loan Summary </h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="loanSummaryDiv">
+
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /////////////////////////////////////////////////////////////////// Loan Summary Modal END ////////////////////////////////////////////////////////////////////// -->
+ <!-- /////////////////////////////////////////////////////////////////// Commitment chart Modal Start ////////////////////////////////////////////////////////////////////// -->
+
+<!-- Modal for Commitment Chart just view table   -->
+<div class="modal fade" id="commitmentChart" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-lg " role="document">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLongTitle">Commitment Chart</h5>
+				<button type="button" class="close" data-dismiss="modal" tabindex="1" aria-label="Close" onclick="$('#commChartDiv').empty();">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="container-fluid">
+
+					<div class="col-12">
+						<div class="row">
+							<div class="col-12" id='commChartDiv'></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-secondary" data-dismiss="modal" tabindex="2" onclick="$('#commChartDiv').empty();">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+ <!-- /////////////////////////////////////////////////////////////////// Commitment chart Modal End ////////////////////////////////////////////////////////////////////// -->
 <?php require_once __DIR__ . "/../common/fingerprintlibrary.php"; ?>
