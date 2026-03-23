@@ -1235,6 +1235,8 @@ function validation() {
 
         cancel_revoke_report: { group: true },
         request_report: { group: true },
+        verification_report: { group: true },
+        approval_report: { group: true },
 
         /* ---------------- BOTH REQUIRED ---------------- */
         cash_tally: { line: true, group: true }

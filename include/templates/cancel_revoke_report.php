@@ -43,6 +43,9 @@
                                     <th>Cust. Name</th>
                                     <th>Area</th>
                                     <th>Sub Area</th>
+                                    <th>Group</th>
+									<th>Line</th>
+									<th>Branch</th>
                                     <th>Loan Category</th>
                                     <th>Sub Category</th>
                                     <th>Loan Amount</th>
@@ -51,6 +54,7 @@
                                     <th>Agent</th>
                                     <th>Responsible</th>
                                     <th>Cust. Data</th>
+                                    <th>Existing Type</th>
                                     <th>Cancel/Revoke Date</th>
                                     <th>Cust. Status</th>
                                     <th>Remarks</th>
@@ -58,10 +62,10 @@
                                 <tbody></tbody>
                                 <tfoot>
                                     <tr>
-                                        <td colspan="10"></td>
+                                        <td colspan="13"></td>
                                         <td></td>
                                         <td></td>
-                                        <td colspan="7"></td>
+                                        <td colspan="8"></td>
                                     </tr>
                                 </tfoot>
                             </table>

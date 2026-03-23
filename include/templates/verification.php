@@ -775,6 +775,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 										<input type="text" class="form-control" name="cus_exist_type" id="cus_exist_type" value="<?php if (isset($cus_exist_type)) {
 																																		echo $cus_exist_type;
 																																	} ?>" readonly tabindex="25">
+										<span class="text-danger" style='display:none' id='cusExistTypeCheck'>Please Enter Exist Type</span>
 									</div>
 								</div>
 

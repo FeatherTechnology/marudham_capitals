@@ -469,6 +469,16 @@ if (isset($getuserdetails['download_access'])) {
 				<?php include "include/templates/request_report.php" ?>
 			<?php } else ?>
 
+			<!-- Verification Report -->
+			<?php if ($current_page == 'verification_report') { ?>
+				<?php include "include/templates/verification_report.php" ?>
+			<?php } else ?>
+
+			<!-- Verification Report -->
+			<?php if ($current_page == 'approval_report') { ?>
+				<?php include "include/templates/approval_report.php" ?>
+			<?php } else ?>
+
 			<!-- Cancel and Revoke  Report -->
 			<?php if ($current_page == 'cancel_revoke_report') { ?>
 				<?php include "include/templates/cancel_revoke_report.php" ?>

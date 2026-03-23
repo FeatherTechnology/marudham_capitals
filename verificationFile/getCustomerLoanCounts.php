@@ -7,10 +7,9 @@ if (isset($_POST['cus_id'])) {
 
 $records = array();
 
-$result = $connect->query("
-    SELECT ii.cus_status, cs.created_date AS last_created_date
+$result = $connect->query("SELECT ii.cus_status, cc.closing_date AS last_created_date
     FROM in_issue ii
-    LEFT JOIN closed_status cs ON cs.req_id = ii.req_id
+    LEFT JOIN closing_customer cc ON cc.req_id = ii.req_id
     WHERE ii.cus_id = '$cus_id' AND ii.cus_status >= 14
 ");
 

@@ -8,40 +8,34 @@ if (isset($_SESSION["userid"])) {
     $report_access = '2'; //if super Admin login use need to show overall.
 }
 
-$user_based = "";
+if (isset($_POST['loan_category'])) {
+    $loan_category = $_POST['loan_category'];
+}
 
+$loan_category_filter = '';
+
+if (isset($_POST['loan_category']) && $_POST['loan_category'] != '' && $_POST['loan_category'] != 'all') {
+    $loan_category_filter = " AND lc.loan_category = '$loan_category' ";
+}
+
+$user_based = '';
 if ($userid != 1) {
 
-    $userQry = $connect->query("SELECT line_id, report_access FROM USER WHERE user_id = $userid ");
+    $userQry = $connect->query("SELECT report_access FROM user WHERE user_id = $userid ");
     $rowuser = $userQry->fetch();
-    $line_id = $rowuser['line_id'];
     $report_access = $rowuser['report_access'];
 
-    if ($report_access == '1') {
-        $line_id = explode(',', $line_id);
-        $sub_area_list = array();
-        foreach ($line_id as $line) {
-            $lineQry = $connect->query("SELECT sub_area_id FROM area_line_mapping where map_id = $line ");
-            $row_sub = $lineQry->fetch();
-            $sub_area_list[] = $row_sub['sub_area_id'];
-        }
-        $sub_area_ids = array();
-        foreach ($sub_area_list as $subarray) {
-            $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
-        }
-        $sub_area_list = array();
-        $sub_area_list = implode(',', $sub_area_ids);
-
-        $user_based = " AND cp.area_confirm_subarea IN ($sub_area_list) AND ii.insert_login_id = '$userid' ";
+    if ($report_access == '1') { //Report access individual.
+        $user_based = " AND ii.insert_login_id = '$userid' ";
     }
 }
 
-$where = "";
+$where = "1=1";
 
 if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'] != '' && $_POST['to_date'] != '') {
-    $from_date = date('Y-m-d', strtotime($_POST['from_date']));
-    $to_date = date('Y-m-d', strtotime($_POST['to_date']));
-    $where  = " AND (date(ii.updated_date) >= '" . $from_date . "') AND (date(ii.updated_date) <= '" . $to_date . "') ";
+    $from_date = date('Y-m-d 00:00:00', strtotime($_POST['from_date']));
+    $to_date = date('Y-m-d 23:59:59', strtotime($_POST['to_date']));
+    $where = "AND ii.updated_date BETWEEN '$from_date' AND '$to_date'";
 }
 
 $where  .= $user_based;
@@ -57,9 +51,9 @@ $column = array(
     'fam.relationship',
     'al.area_name',
     'sal.sub_area_name',
-    'ag.group_name',
+    'agm.group_name',
     'alm.line_name',
-    'adm.duefollowup_name',
+    'adfm.duefollowup_name',
     'bc.branch_name',
     'lcc.loan_category_creation_name',
     'lc.sub_category',
@@ -82,6 +76,11 @@ $column = array(
     'lc.maturity_month',
     'vfi_received_by.famname',
     'vfi_received_by.relationship',
+    'u.role',
+    'u.fullname',
+    'cus_type',
+    'cp.cus_exist_type',
+    'cs.sub_status'
 );
 
 $query = "SELECT 
@@ -94,9 +93,9 @@ $query = "SELECT
         fam.relationship,
         al.area_name,
         sal.sub_area_name,
-        ag.group_name,
+        agm.group_name,
         alm.line_name,
-        adm.duefollowup_name,
+        adfm.duefollowup_name,
         bc.branch_name,
         lcc.loan_category_creation_name as loan_cat_name,
         lc.sub_category,
@@ -118,7 +117,17 @@ $query = "SELECT
         lc.maturity_month,
         li.relationship as rec_relationship,
         vfi_received_by.famname as received_by,
-        vfi_received_by.relationship as rel_name
+        vfi_received_by.relationship as rel_name,
+        u.fullname AS loan_issue_user_name,
+        CASE u.role
+            WHEN 1 THEN 'Director'
+            WHEN 2 THEN 'Agent'
+            WHEN 3 THEN 'Staff'
+            ELSE ''
+        END AS loan_issue_user_type,
+        cp.cus_type,
+        cp.cus_exist_type,
+        cs.sub_status
 
         FROM in_issue ii
         JOIN customer_register cr ON ii.cus_id = cr.cus_id
@@ -129,17 +138,23 @@ $query = "SELECT
         LEFT JOIN verification_family_info fam ON cp.guarentor_name = fam.id
         LEFT JOIN area_list_creation al ON cp.area_confirm_area = al.area_id
         LEFT JOIN sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
-        LEFT JOIN area_group_mapping ag ON FIND_IN_SET(sal.sub_area_id, ag.sub_area_id)
-        LEFT JOIN branch_creation bc ON ag.branch_id = bc.branch_id
-        LEFT JOIN area_line_mapping alm ON FIND_IN_SET(sal.sub_area_id, alm.sub_area_id)
-        LEFT JOIN area_duefollowup_mapping adm ON FIND_IN_SET(al.area_id, adm.area_id)
+        LEFT JOIN area_group_mapping_sub_area agmsa ON agmsa.sub_area_id = sal.sub_area_id
+        LEFT JOIN area_group_mapping agm ON agm.map_id = agmsa.group_map_id  
+        LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id
+        LEFT JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sal.sub_area_id
+        LEFT JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id 
+        LEFT JOIN area_duefollowup_mapping_area adfma ON adfma.area_id = al.area_id
+        LEFT JOIN area_duefollowup_mapping adfm ON adfm.map_id = adfma.duefollowup_map_id
         LEFT JOIN request_creation req ON ii.req_id = req.req_id
         LEFT JOIN loan_issue li ON li.req_id = ii.req_id
         LEFT JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
         LEFT JOIN agent_creation ac ON iv.agent_id = ac.ag_id
+        LEFT JOIN customer_status cs ON ii.req_id = cs.req_id
+        LEFT JOIN document_track dt ON dt.req_id = ii.req_id
+        LEFT JOIN user u ON u.user_id = dt.insert_login_id
         LEFT JOIN verification_family_info vfi_received_by ON li.relationship !='Customer' AND li.cash_guarentor_name = vfi_received_by.relation_aadhar AND li.cus_id = vfi_received_by.cus_id
 
-        WHERE ii.cus_status >= 14 AND lc.due_type != 'Interest'  
+        WHERE ii.cus_status >= 14 AND lc.due_type != 'Interest' $loan_category_filter 
         $where";
 
 if (isset($_POST['search'])) {
@@ -154,14 +169,16 @@ if (isset($_POST['search'])) {
             OR fam.relationship LIKE '%" . $_POST['search'] . "%' 
             OR al.area_name LIKE '%" . $_POST['search'] . "%' 
             OR sal.sub_area_name LIKE '%" . $_POST['search'] . "%' 
-            OR ag.group_name LIKE '%" . $_POST['search'] . "%' 
+            OR agm.group_name LIKE '%" . $_POST['search'] . "%' 
             OR alm.line_name LIKE '%" . $_POST['search'] . "%' 
-            OR adm.duefollowup_name LIKE '%" . $_POST['search'] . "%' 
+            OR adfm.duefollowup_name LIKE '%" . $_POST['search'] . "%' 
             OR bc.branch_name LIKE '%" . $_POST['search'] . "%' 
             OR lcc.loan_category_creation_name LIKE '%" . $_POST['search'] . "%' 
             OR lc.sub_category LIKE '%" . $_POST['search'] . "%' 
             OR ac.ag_name LIKE '%" . $_POST['search'] . "%' 
             OR iv.responsible LIKE '%" . $_POST['search'] . "%' 
+            OR cp.cus_type LIKE '%" . $_POST['search'] . "%' 
+            OR cp.cus_exist_type LIKE '%" . $_POST['search'] . "%' 
             OR ii.updated_date LIKE '%" . $_POST['search'] . "%') ";
     }
 }
@@ -193,27 +210,27 @@ $result = $statement->fetchAll();
 
 $data = array();
 $sno = 1;
-$paymentTypeArr = [ 0 => 'Cash', 1 => 'Cheque', 2 => 'Account Transfer' ];
+$paymentTypeArr = [0 => 'Cash', 1 => 'Cheque', 2 => 'Account Transfer'];
 
 foreach ($result as $row) {
-    $combinedPaymentType = explode(',',$row['combinedPaymentType']);
+    $combinedPaymentType = explode(',', $row['combinedPaymentType']);
 
-    $combinedtypeStr ='';
-    if(empty($row['ag_name'])){
+    $combinedtypeStr = '';
+    if (empty($row['ag_name'])) {
         // Convert each number to text
-        $combinedtype = array_map(function($pt) use ($paymentTypeArr) {
+        $combinedtype = array_map(function ($pt) use ($paymentTypeArr) {
             return $paymentTypeArr[$pt];
         }, $combinedPaymentType);
 
         // Join them into a single string "Cash, Account Transfer"
         $combinedtypeStr = implode(', ', $combinedtype);
     }
-    
+
     $bank_name = '';
     if (in_array('1', $combinedPaymentType) || in_array('2', $combinedPaymentType)) {
-        $qry = $connect->query("SELECT bank_id, created_date FROM loan_issue WHERE req_id = '".$row['req_id']."' AND payment_type != 0");
+        $qry = $connect->query("SELECT bank_id, created_date FROM loan_issue WHERE req_id = '" . $row['req_id'] . "' AND payment_type != 0");
         $qryfetch = $qry->fetch();
-        
+
         $bank_name = getBankName($qryfetch['bank_id'], $connect);
     }
 
@@ -261,13 +278,18 @@ foreach ($result as $row) {
         $sub_array[] = $row['received_by'];
         $sub_array[] = $row['rel_name'];
     }
+    $sub_array[] = $row['loan_issue_user_type'];
+    $sub_array[] = $row['loan_issue_user_name'];
+    $sub_array[] = $row['cus_type'];
+    $sub_array[] = $row['cus_exist_type'];
+    $sub_array[] = $row['sub_status'];
 
     $data[]      = $sub_array;
     $sno = $sno + 1;
 }
 
 $output = array(
-     'draw' => isset($_POST['draw']) ? intval($_POST['draw']) : 0, // ✅ safe for both table & download,
+    'draw' => isset($_POST['draw']) ? intval($_POST['draw']) : 0, // ✅ safe for both table & download,
     'recordsTotal' => count_all_data($connect),
     'recordsFiltered' => $number_filter_row,
     'data' => $data

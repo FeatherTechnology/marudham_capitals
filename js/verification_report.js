@@ -11,16 +11,16 @@ $(document).ready(function () {
         }
     });
 
-    //Request Report Table
+    //Verification Report Table
     $('#reset_btn').click(function () {
-        requestReportTable();
+        verificationReportTable();
     });
 });
 
-function requestReportTable() {
-    $('#request_report_table').DataTable().destroy();
-    var request_report_table = $('#request_report_table').DataTable({
-        ...getStateSaveConfig('request_report_table'),
+function verificationReportTable() {
+    $('#verification_report_table').DataTable().destroy();
+    var verification_report_table = $('#verification_report_table').DataTable({
+        ...getStateSaveConfig('verification_report_table'),
         "order": [
             [0, "asc"]
         ],
@@ -28,7 +28,7 @@ function requestReportTable() {
         'serverSide': true,
         'serverMethod': 'post',
         'ajax': {
-            'url': 'reportFile/request/getRequestReport.php',
+            'url': 'reportFile/verification/getVerificationReport.php',
             'data': function (data) {
                 var search = $('input[type=search]').val();
                 data.search = search;
@@ -39,10 +39,10 @@ function requestReportTable() {
         dom: 'lBfrtip',
         buttons: [{
             extend: 'excel',
-            title: "Request Report List",
+            title: "Verification Report List",
             action: function (e, dt, button, config) {
                 var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
-                var dynamic = curDateJs('Request_Report'); // or any base
+                var dynamic = curDateJs('Verification_Report'); // or any base
                 config.title = dynamic;      // for versions that use title as filename
                 config.filename = dynamic;   // for html5 filename
                 defaultAction.call(this, e, dt, button, config);
@@ -58,8 +58,8 @@ function requestReportTable() {
             [10, 25, 50, "All"]
         ],
         'drawCallback': function () {
-            searchFunction('request_report_table');
-            paginationFunction('request_report_table');
+            searchFunction('verification_report_table');
+            paginationFunction('verification_report_table');
         },
         "footerCallback": function (row, data, start, end, display) {
             var api = this.api();
@@ -92,5 +92,5 @@ function requestReportTable() {
     });
 
     // Pass the table variable to the initColVisFeatures function
-    initColVisFeatures(request_report_table, 'request_report_table');
+    initColVisFeatures(verification_report_table, 'verification_report_table');
 }

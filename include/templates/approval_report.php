@@ -2,17 +2,17 @@
 <br><br>
 <div class="page-header">
 	<div style="background-color:#009688; width:100%; padding:12px; color: #ffff; font-size: 20px; border-radius:5px;">
-		Marudham Capitals - Request Report
+		Marudham Capitals - Approval Report
 	</div>
 </div><br>
 
 <!-- Main container start -->
 <div class="main-container">
 	<!--form start-->
-	<form id="request_report_form" name="request_report_form" action="" method="post" enctype="multipart/form-data">
+	<form id="approval_report_form" name="approval_report_form" action="" method="post" enctype="multipart/form-data">
 
 
-		<div class="row gutters" id="request_card">
+		<div class="row gutters" id="approval_card">
 			<div class="toggle-container col-12">
 				<input type="date" id='from_date' name='from_date' class="toggle-button" value=''>
 				<input type="date" id='to_date' name='to_date' class="toggle-button" value=''>
@@ -20,14 +20,14 @@
 			</div>
 			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 				<div class="card">
-					<div class="card-header">Request Report</div>
+					<div class="card-header">Approval Report</div>
 					<div class="card-body">
-						<div id="request_table_div" class="table-divs" style="overflow-x: auto;">
-							<table id="request_report_table" class="table custom-table">
+						<div id="approval_table_div" class="table-divs" style="overflow-x: auto;">
+							<table id="approval_report_table" class="table custom-table">
 								<thead>
 									<th>S.No</th>
 									<th>Req. ID</th>
-									<th>Req. Date</th>
+									<th>Date</th>
 									<th>Aadhaar Number</th>
 									<th>Cust. ID</th>
 									<th>Cust. Name</th>
