@@ -99,9 +99,137 @@ $(document).ready(function () {
         let agent_id = $('#agent_id').val();
         getresponsiblecolumn(agent_id);
     }
+ $("body").on("click", "#feedback_edit", function () {
+    let id = $(this).attr("value");
+
+    $.ajax({
+      url: "verificationFile/get_feedback_edit.php",
+      type: "POST",
+      data: { id: id },
+      dataType: "json",
+      cache: false,
+      success: function (result) {
+        $("#fedbackname_id").val(result["id"]);
+        $("#feedbackname").val(result["feedback_name"]);
+      },
+    });
+  });
+
+  $("body").on("click", "#feedback_delete", function () {
+    let id = $(this).attr("value");
+    if (confirm('Do You want to delete this Feedback Name?')) {
+      $.ajax({
+        url: "verificationFile/delet_feedback_edit.php",
+        type: "POST",
+        data: { id: id },
+        dataType: "json",
+        cache: false,
+        success: function (result) {
+          if (result === "DELETED") {
+            Swal.fire({
+              title: 'Feedback Label Deleted!',
+              icon: 'success',
+              confirmButtonColor: '#009688'
+            });
+            cusfeedbacklist();
+
+          } else if (result === "USED") {
+            Swal.fire({
+              title: 'Already Used!',
+              text: 'This feedback label is already used in Customer Feedback.',
+              icon: 'warning',
+              confirmButtonColor: '#009688'
+            });
+
+          } else {
+            Swal.fire({
+              title: 'Error Occurred!',
+              icon: 'error',
+              confirmButtonColor: '#009688'
+            });
+          }
+        },
+      });
+    }
+  });
+
+  $(document).on("click", "#add_cus_label", function () {
+    $('#feedback_label').prop('disabled', false);
+    $('#cus_feedback').prop('disabled', false);
+    getFeedbackLable();
+  });
+
+  $(document).on("click", "#add_cus_feedback", function () {
+    cusfeedbacklist();
+    $('#feedbackname').prop('readonly', false);
+    $("#feedbackname").val('');
+    $("#fedbackname_id").val('');
+  });
+
+  $(document).on("click", "#submit_feedback_lable", function () {
+    submitfeedbackname();
+  });
+    ///Customer Feedback
+  $("body").on("click", "#cus_feedback_edit", function () {
+    let id = $(this).attr("value");
+
+    $.ajax({
+      url: "verificationFile/customer_feedback_edit.php",
+      type: "POST",
+      data: { id: id },
+      dataType: "json",
+      cache: false,
+      success: function (result) {
+        $("#feedbackID").val(result["id"]);
+        $("#feedback_label").val(result["feedback_label"]);
+        $("#cus_feedback").val(result["cus_feedback"]);
+        $("#feedback_remark").val(result["feedback_remark"]);
+      },
+    });
+  });
+
+  $("body").on("click", "#cus_feedback_delete", function () {
+    var isok = confirm("Do you want delete this Feedback?");
+    if (isok == false) {
+      return false;
+    } else {
+      var id = $(this).attr("value");
+
+      $.ajax({
+        url: "verificationFile/customer_feedback_delete.php",
+        type: "POST",
+        data: { id: id },
+        cache: false,
+        success: function (response) {
+          var delresult = response.includes("Deleted");
+          if (delresult) {
+            $("#feedbackDeleteOk").show();
+            setTimeout(function () {
+              $("#feedbackDeleteOk").fadeOut("fast");
+            }, 2000);
+          } else {
+            $("#feedbackDeleteNotOk").show();
+            setTimeout(function () {
+              $("#feedbackDeleteNotOk").fadeOut("fast");
+            }, 2000);
+          }
+
+          resetfeedback();
+        },
+      });
+    }
+  });
+
+
+ 
 
     ///Documentation 
-
+  $(document).on("click", "#hide_document_history", function () {
+    $("#docHistoryDiv").empty();
+    $("#show_document_history").show();
+    $("#hide_document_history").hide();
+  })
+ 
     // Signed Modal Doc Upload.
 
     $('#add_sign_doc').click(function () {
@@ -1692,6 +1820,90 @@ function getAreaBasedSubArea(area) {
         }
     });
 }
+//Customer Feedback Modal
+$("#feedbacklabelCheck").hide();
+$("#feedbackCheck").hide();
+
+$(document).on("click", "#feedbackBtn", function () {
+  let req_id = $("#req_id").val();
+  let cus_id = $("#cus_id").val();
+  let feedback_label = $("#feedback_label").val();
+  let cus_feedback = $("#cus_feedback").val();
+  let feedback_remark = $("#feedback_remark").val();
+  let feedbackID = $("#feedbackID").val();
+
+  if (feedback_label != "" && cus_feedback != "" && req_id != "") {
+    $.ajax({
+      url: "verificationFile/customer_feedback_submit.php",
+      type: "POST",
+      data: {
+        feedback_label: feedback_label,
+        cus_feedback: cus_feedback,
+        feedback_remark: feedback_remark,
+        feedbackID: feedbackID,
+        reqId: req_id,
+        cus_id: cus_id,
+      },
+      cache: false,
+      success: function (response) {
+        var insresult = response.includes("Inserted");
+        var updresult = response.includes("Updated");
+        if (insresult) {
+          $("#feedbackInsertOk").show();
+          setTimeout(function () {
+            $("#feedbackInsertOk").fadeOut("fast");
+          }, 2000);
+        } else if (updresult) {
+          $("#feedbackUpdateok").show();
+          setTimeout(function () {
+            $("#feedbackUpdateok").fadeOut("fast");
+          }, 2000);
+        } else {
+          $("#feedbackNotOk").show();
+          setTimeout(function () {
+            $("#feedbackNotOk").fadeOut("fast");
+          }, 2000);
+        }
+
+        resetfeedback();
+      },
+    });
+
+    $("#feedbacklabelCheck").hide();
+    $("#feedbackCheck").hide();
+  } else {
+    if (feedback_label == "") {
+      $("#feedbacklabelCheck").show();
+    } else {
+      $("#feedbacklabelCheck").hide();
+    }
+
+    if (cus_feedback == "") {
+      $("#feedbackCheck").show();
+    } else {
+      $("#feedbackCheck").hide();
+    }
+  }
+});
+
+function resetfeedback() {
+  let cus_id = $("#cus_id").val();
+  $.ajax({
+    url: "verificationFile/customer_feedback_reset.php",
+    type: "POST",
+    data: { cus_id: cus_id },
+    cache: false,
+    success: function (html) {
+      $("#feedbackTable").empty();
+      $("#feedbackTable").html(html);
+
+      $("#feedback_label").val("");
+      $("#cus_feedback").val("");
+      $("#feedbackID").val("");
+      $("#feedback_remark").val("");
+    },
+  });
+}
 
 //Customer Feedback Modal 
 function feedbackList() {
@@ -1710,6 +1922,88 @@ function feedbackList() {
             $("#feedbackID").val('');
         }
     });
+}
+
+function getFeedbackLable() {
+    $.post(
+        "verificationFile/getFeedbackLable.php",
+        function (data) {
+            $("#feedback_label") .empty() .append("<option value=''>Select Feedback Label</option>");
+
+            for (var i = 0; i < data.length; i++) {
+                var feedback_name = data[i]["feedback_name"];
+                var id = data[i]["id"];
+                $("#feedback_label").append( "<option value='" + id + "'>" + feedback_name + "</option>"
+                );
+            }
+        },
+        "json"
+    );
+}
+
+function cusfeedbacklist() {
+  $.ajax({
+    url: "verificationFile/getFeedbackList.php",
+    type: "POST",
+    cache: false,
+    success: function (html) {
+      $("#cus_feedbackListTable_div").empty();
+      $("#cus_feedbackListTable_div").html(html);
+    },
+  });
+}
+
+function submitfeedbackname() {
+ let feedbackname = $("#feedbackname").val();
+ let id = $("#fedbackname_id").val();
+
+  if (feedbackname != "") {
+    $.ajax({
+      url: "verificationFile/submitFeedbackName.php",
+      data: {
+        feedbackname: feedbackname,
+        id:id
+      },
+      dataType: "json",
+      type: "POST",
+      cache: false,
+      success: function (response) {
+        if (response.includes('Inserted')) {
+          Swal.fire({
+            title: 'Feedback Label Inserted...!',
+            icon: 'success',
+            showConfirmButton: true,
+            confirmButtonColor: '#009688'
+          });
+        } else if (response.includes(' Updated')) {
+          Swal.fire({
+            title: 'Feedback Label Updated...!',
+            icon: 'success',
+            showConfirmButton: true,
+            confirmButtonColor: '#009688'
+          });
+        } else if (response.includes('Already')) {
+          Swal.fire({
+            title: 'Feedback Label Already Existed',
+            icon: 'error',
+            showConfirmButton: true,
+            confirmButtonColor: '#009688'
+          });
+        } else if (response.includes('Failed')) {
+          Swal.fire({
+            title: 'Error Occures',
+            icon: 'error',
+            showConfirmButton: true,
+            confirmButtonColor: '#009688'
+          });
+        }
+        $("#feedbackname").val('');
+        $("#fedbackname_id").val('');
+        cusfeedbacklist();
+      },
+    });
+
+  }
 }
 //Customer Feedback Modal End
 
@@ -1754,6 +2048,86 @@ function onLoadDocEditFunction() {//On load for Loan Calculation edit
     $('input#gold_Weight').removeAttr('readonly');
     $('input#gold_Value').removeAttr('readonly');
 
+}
+function docHistoryTable() {
+  var cus_id = $("#cus_id_doc").val();
+  var req_id = $("#req_id").val();
+  $.ajax({
+    url: "verificationFile/documentation/docHistoryTable.php",
+    data: { cus_id: cus_id, req_id: req_id },
+    dataType: "json",
+    type: "post",
+    cache: false,
+    success: function (response) { },
+  });
+}
+
+function getDocumentHistory() {
+  $("#show_document_history").hide();
+  $("#hide_document_history").show();
+  let cus_id = $("#cus_id_doc").val();
+  let req_id = $("#req_id").val();
+  let cus_type = $("#cus_type").val();
+  //To get loan sub Status
+  var pending_arr = [];
+  var od_arr = [];
+  var due_nil_arr = [];
+  var closed_arr = [];
+  var balAmnt = [];
+  $.ajax({
+    url: "closedFile/resetCustomerStsForClosed.php",
+    data: { cus_id: cus_id },
+    dataType: "json",
+    type: "post",
+    cache: false,
+    success: function (response) {
+      if (cus_type == "Existing") {
+        if (response.length != 0) {//check json response is not empty
+          for (var i = 0; i < response["pending_customer"].length; i++) {
+            pending_arr[i] = response["pending_customer"][i];
+            od_arr[i] = response["od_customer"][i];
+            due_nil_arr[i] = response["due_nil_customer"][i];
+            closed_arr[i] = response["closed_customer"][i];
+            balAmnt[i] = response["balAmnt"][i];
+          }
+        }
+        var pending_sts = pending_arr.join(",");
+        $("#pending_sts").val(pending_sts);
+        var od_sts = od_arr.join(",");
+        $("#od_sts").val(od_sts);
+        var due_nil_sts = due_nil_arr.join(",");
+        $("#due_nil_sts").val(due_nil_sts);
+        var closed_sts = closed_arr.join(",");
+        $("#closed_sts").val(closed_sts);
+        balAmnt = balAmnt.join(",");
+      }
+    },
+  }).then(function () {
+    var pending_sts = $("#pending_sts").val();
+    var od_sts = $("#od_sts").val();
+    var due_nil_sts = $("#due_nil_sts").val();
+    var closed_sts = $("#closed_sts").val();
+    var bal_amt = balAmnt;
+    $.ajax({
+      //in this file, details gonna fetch by customer ID, Not by req id (Because we need all loans from customer)
+      url: "verificationFile/documentation/getDocumentHistory.php",
+      data: {
+        req_id: req_id,
+        cus_id: cus_id,
+        pending_sts: pending_sts,
+        od_sts: od_sts,
+        due_nil_sts: due_nil_sts,
+        closed_sts: closed_sts,
+        bal_amt: bal_amt,
+      },
+      type: "post",
+      cache: false,
+      success: function (response) {
+        $("#docHistoryDiv").empty();
+        $("#docHistoryDiv").html(response);
+      },
+    });
+  });
 }
 //Get DOC id 
 //Doc id will generate while Loan id generate because both id have to same for a customer.
@@ -2828,6 +3202,198 @@ async function getDocumentFunc() {
 
 
 //////////////////////////////////////////////////////////////////// Loan Calculation Functions Start ///////////////////////////////////////////////////////////////////////////////
+ $(document).on("click", "#hide_loan_history", function () {
+    $("#loanHistoryDiv").empty();
+    $("#show_loan_history").show();
+    $("#hide_loan_history").hide();
+  })
+  //loan history table contents get from closed file loan lists
+function getLoanHistory() {
+  $("#show_loan_history").hide();
+  $("#hide_loan_history").show();
+  let cus_id = $("#cus_id_loan").val();
+  let req_id = $("#req_id").val();
+  let cus_type = $("#cus_type").val();
+  //To get loan sub Status
+  var pending_arr = [];
+  var od_arr = [];
+  var due_nil_arr = [];
+  var closed_arr = [];
+  var balAmnt = [];
+  $.ajax({
+    url: "closedFile/resetCustomerStsForClosed.php",
+    data: { cus_id: cus_id },
+    dataType: "json",
+    type: "post",
+    cache: false,
+    success: function (response) {
+      if (cus_type == "Existing") {
+        if (response.length != 0) {//check json response is not empty
+          for (var i = 0; i < response["pending_customer"].length; i++) {
+            pending_arr[i] = response["pending_customer"][i];
+            od_arr[i] = response["od_customer"][i];
+            due_nil_arr[i] = response["due_nil_customer"][i];
+            closed_arr[i] = response["closed_customer"][i];
+            balAmnt[i] = response["balAmnt"][i];
+          }
+          var pending_sts = pending_arr.join(",");
+          $("#pending_sts").val(pending_sts);
+          var od_sts = od_arr.join(",");
+          $("#od_sts").val(od_sts);
+          var due_nil_sts = due_nil_arr.join(",");
+          $("#due_nil_sts").val(due_nil_sts);
+          var closed_sts = closed_arr.join(",");
+          $("#closed_sts").val(closed_sts);
+          balAmnt = balAmnt.join(",");
+        }
+      }
+    },
+  }).then(function () {
+    var pending_sts = $("#pending_sts").val();
+    var od_sts = $("#od_sts").val();
+    var due_nil_sts = $("#due_nil_sts").val();
+    var closed_sts = $("#closed_sts").val();
+    var bal_amt = balAmnt;
+    $.ajax({
+      //in this file, details gonna fetch by customer ID, Not by req id (Because we need all loans from customer)
+      url: "verificationFile/LoanCalculation/getLoanHistory.php",
+      data: {
+        req_id: req_id,
+        cus_id: cus_id,
+        pending_sts: pending_sts,
+        od_sts: od_sts,
+        due_nil_sts: due_nil_sts,
+        closed_sts: closed_sts,
+        bal_amt: bal_amt,
+      },
+      type: "post",
+      cache: false,
+      success: function (response) {
+        $("#loanHistoryDiv").empty();
+        $("#loanHistoryDiv").html(response);
+      },
+    }).then(function () {
+     $(document).on("click", ".due-chart", function () {
+        var req_id = $(this).data("reqid");
+        var cus_id = $(this).data("cusid");
+        dueChartList(req_id, cus_id);
+      });
+      $(document).on("click", ".penalty-chart", function () {
+        var req_id = $(this).data("reqid");
+        var cus_id = $(this).data("cusid");
+        penaltyChartList(req_id, cus_id);
+      });
+      $(document).on("click", ".collcharge-chart", function () {
+        var req_id = $(this).data("reqid");
+        collectionChargeChartList(req_id);
+      });
+      $(document).on("click", ".loansummary-chart", function () {
+        var req_id = $(this).data("reqid");
+        var cus_id = $(this).data("cusid");
+        loanSummaryList(req_id, cus_id);
+      });
+     $(document).on("click", ".commitment-chart", function () {
+          //Commitment chart
+          let req_id = $(this).data("reqid");
+          let cus_id = $(this).data("cusid");
+          $.post(
+            "followupFiles/dueFollowup/getCommitmentChart.php",
+            { cus_id, req_id },
+            function (html) {
+              $("#commChartDiv").empty().html(html);
+            }
+          );
+        });
+    });
+  });
+}
+//Due Chart List
+function dueChartList(req_id, cus_id) {
+  $.ajax({
+    url: "collectionFile/getDueChartList.php",
+    data: { req_id: req_id, cus_id: cus_id },
+    type: "post",
+    cache: false,
+    success: function (response) {
+      $("#dueChartTableDiv").empty();
+      $("#dueChartTableDiv").html(response);
+    },
+  }).then(function () {
+    // print function
+    $(".print_due_coll").off("click");
+    $(".print_due_coll").click(function () {
+      var id = $(this).attr("value");
+      Swal.fire({
+        title: "Print",
+        text: "Do you want to print this collection?",
+        // icon: 'question',
+        // showConfirmButton: true,
+        // confirmButtonColor: '#009688',
+        imageUrl: "img/printer.png",
+        imageWidth: 300,
+        imageHeight: 210,
+        imageAlt: "Custom image",
+        showCancelButton: true,
+        confirmButtonColor: "#009688",
+        cancelButtonColor: "#d33",
+        cancelButtonText: "No",
+        confirmButtonText: "Yes",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: "collectionFile/print_collection.php",
+            data: { coll_id: id },
+            type: "post",
+            cache: false,
+            success: function (html) {
+              $("#printcollection").html(html);
+            },
+          });
+        }
+      });
+    });
+  });
+}
+//Penalty Chart List
+function penaltyChartList(req_id, cus_id) {
+  $.ajax({
+    url: "collectionFile/getPenaltyChartList.php",
+    data: { req_id: req_id, cus_id: cus_id },
+    type: "post",
+    cache: false,
+    success: function (response) {
+      $("#penaltyChartTableDiv").empty();
+      $("#penaltyChartTableDiv").html(response);
+    },
+  }); //Ajax End.
+}
+//Collection Charge Chart List
+function collectionChargeChartList(req_id) {
+  $.ajax({
+    url: "collectionFile/getCollectionChargeList.php",
+    data: { req_id: req_id },
+    type: "post",
+    cache: false,
+    success: function (response) {
+      $("#collectionChargeDiv").empty();
+      $("#collectionChargeDiv").html(response);
+    },
+  }); //Ajax End.
+}
+//Loan Summary Chart List
+function loanSummaryList(req_id, cus_id) {
+  $.ajax({
+    url: "closedFile/loan_summary_list.php",
+    type: "POST",
+    data: { reqId: req_id },
+    cache: false,
+    success: function (html) {
+      $("#loanSummaryDiv").empty();
+      $("#loanSummaryDiv").html(html);
+      // $('#feedback_table1').DataTable().destroy();
+    },
+  });
+}
 function onLoadEditFunction() {//On load for Loan Calculation edit
     $('input#due_start_from').removeAttr('readonly');
     $('select#collection_method').removeAttr('disabled');
