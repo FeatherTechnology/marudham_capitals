@@ -11,6 +11,8 @@ $(document).ready(function () {
         }
     });
 
+    getLoanCategory();
+
     //Loan Report Table
     $('#reset_btn').click(function () {
         loanIssueReportTable();
@@ -18,13 +20,14 @@ $(document).ready(function () {
      $('#download_btn').click(function () {
         const from_date = $('#from_date').val();
         const to_date = $('#to_date').val();
+        let loan_category = $('#loan_category').val();
         const tableId = "loan_issue_report_table"; // your table id
         const reportName = "Loan_Issue_Report";
-        if (!from_date || !from_date) {
+        if (!from_date || !to_date || !loan_category) {
             Swal.fire({
                 icon: 'warning',
-                title: 'Missing Dates',
-                text: 'Please select both From and To dates before downloading.',
+                title: 'Missing Information',
+                text: 'Please select both From and To dates and a loan category before downloading.',
                 confirmButtonColor: '#009688'
             });
             return;
@@ -36,6 +39,7 @@ $(document).ready(function () {
             data: {
                 from_date: from_date,
                 to_date: to_date,
+                loan_category: loan_category,
                 download: 1
             },
             success: function (response) {
@@ -83,6 +87,7 @@ function loanIssueReportTable(){
                 data.search = search;
                 data.from_date = $('#from_date').val();
                 data.to_date = $('#to_date').val();
+                data.loan_category = $('#loan_category').val();
             }
         },
         dom: 'lBfrtip',
@@ -142,4 +147,22 @@ function loanIssueReportTable(){
 
     // Pass the table variable to the initColVisFeatures function
     initColVisFeatures(loan_issue_report_table, 'loan_issue_report_table');
+}
+
+function getLoanCategory() {
+    $.post('loancategoryFile/ajaxGetLoanCategory.php', {screen: 'loan_issue'}, function (response) {
+        
+        $('#loan_category').empty();
+        $('#loan_category').append("<option value=''>Select Loan Category</option>");
+
+        // Add "All" at last
+        $('#loan_category').append("<option value='all'>All</option>");
+        
+        $.each(response, function (index, val) {
+            $('#loan_category').append(
+                "<option value='" + val['loan_category_creation_id'] + "'>" + val['loan_category_creation_name'] + "</option>"
+            );
+        });
+
+    }, 'json');
 }

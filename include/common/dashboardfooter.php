@@ -2627,6 +2627,14 @@
         <script src="js/request_report.js"></script>
     <?php }
 
+    if ($current_page == 'verification_report') { ?>
+        <script src="js/verification_report.js"></script>
+    <?php }
+
+    if ($current_page == 'approval_report') { ?>
+        <script src="js/approval_report.js"></script>
+    <?php }
+
     if ($current_page == 'cancel_revoke_report') { ?>
         <script src="js/cancel_revoke_report.js"></script>
     <?php }

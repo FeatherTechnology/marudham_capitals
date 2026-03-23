@@ -70,7 +70,7 @@ function closedReportTable() {
             };
 
             // Array of column indices to sum
-            var columnsToSum = [13];
+            var columnsToSum = [15];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {

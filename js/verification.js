@@ -1336,7 +1336,7 @@ function getImage() {
     );
   }
 }
-
+  
 function getCustomerLoanCounts() {
   var cus_id = $("#cus_id").val();
   var cus_type = $("#cus_type").val();
@@ -3600,6 +3600,8 @@ function validation(event) {
   var guarentor_image = $("#guarentor_image").val();
   var guarentorpic = $("#guarentorpic").val();
   var area_cnfrm = $("#area_cnfrm").val();
+  var cus_type = $("#cus_type").val();
+  var cus_exist_type = $("#cus_exist_type").val();
   var cus_res_type = $("#cus_res_type").val();
   var cus_res_details = $("#cus_res_details").val();
   var cus_res_address = $("#cus_res_address").val();
@@ -3677,6 +3679,15 @@ function validation(event) {
     validation = false;
   } else {
     $("#whatsapp_noCheck").hide();
+  }
+  if(cus_type == "Existing"){
+    if (cus_exist_type == "") {
+      event.preventDefault();
+      $("#cusExistTypeCheck").show();
+      validation = false;
+    } else {
+      $("#cusExistTypeCheck").hide();
+    }
   }
   if (guarentor_name == "") {
     event.preventDefault();
