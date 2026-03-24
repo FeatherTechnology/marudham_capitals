@@ -7,19 +7,21 @@ if (isset($_SESSION["userid"])) {
 $id = 0;
 $typeofaccount;
 $companyName = $userObj->getCompanyName($mysqli);
+$sts = $_GET['sts'] ?? '0';
+
 if (isset($_POST['submit_staff_creation']) && $_POST['submit_staff_creation'] != '') {
 	if (isset($_POST['id']) && $_POST['id'] > 0 && is_numeric($_POST['id'])) {
 		$id = $_POST['id'];
 		$userObj->updateStaffCreation($mysqli, $id, $userid);
 ?>
 		<script>
-			location.href = '<?php echo $HOSTPATH;  ?>edit_staff_creation&msc=2';
+			location.href = '<?php echo $HOSTPATH;  ?>edit_staff_creation&msc=2&sts=<?= $sts ?>';
 		</script>
 	<?php	} else {
 		$userObj->addStaffCreation($mysqli, $userid);
 	?>
 		<script>
-			location.href = '<?php echo $HOSTPATH;  ?>edit_staff_creation&msc=1';
+			location.href = '<?php echo $HOSTPATH;  ?>edit_staff_creation&msc=1&sts=<?= $sts ?>';
 		</script>
 	<?php
 	}
@@ -35,7 +37,7 @@ if ($del > 0) {
 	//die;
 	?>
 	<script>
-		location.href = '<?php echo $HOSTPATH;  ?>edit_staff_creation&msc=3';
+		location.href = '<?php echo $HOSTPATH;  ?>edit_staff_creation&msc=3&sts=<?= $sts ?>';
 	</script>
 <?php
 }
@@ -81,7 +83,7 @@ if ($idupd > 0) {
 	</div>
 </div><br>
 <div class="text-right" style="margin-right: 25px;">
-	<a href="edit_staff_creation">
+	<a href="edit_staff_creation&sts=<?= $sts ?>">
 		<button type="button" class="btn btn-primary"><span class="icon-arrow-left"></span>&nbsp; Back</button>
 	</a>
 </div><br><br>
@@ -137,7 +139,7 @@ if ($idupd > 0) {
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
-											<label for="disabledInput">Address</label>
+											<label for="disabledInput">Address</label>&nbsp;<span class="text-danger">*</span>
 											<input type="text" class="form-control" id="address" name="address" value="<?php if (isset($address)) echo $address; ?>" placeholder="Enter Address" tabindex="5">
 										</div>
 									</div>

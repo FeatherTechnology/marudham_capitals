@@ -340,6 +340,10 @@ $(document).ready(function () {
         var reportmodule = document.querySelector('#monitor_report_module');
         checkbox(monitorcheckboxes, reportmodule);
 
+        const countcheckboxes = document.querySelectorAll("input.count-checkbox");
+        var reportmodule = document.querySelector('#count_report_module');
+        checkbox(countcheckboxes, reportmodule);
+
         const analysischeckboxes = document.querySelectorAll("input.analysis-checkbox ");
         var reportmodule = document.querySelector('#analysis_report_module');
         checkbox(analysischeckboxes, reportmodule);
@@ -358,6 +362,12 @@ $(document).ready(function () {
     $("#monitor_report_module").on("change", function () {
         const checkboxesToEnable = document.querySelectorAll("input.monitor-checkbox ");
         var reportmodule = document.querySelector('#monitor_report_module');
+        checkbox(checkboxesToEnable, reportmodule);
+    });
+
+    $("#count_report_module").on("change", function () {
+        const checkboxesToEnable = document.querySelectorAll("input.count-checkbox");
+        var reportmodule = document.querySelector('#count_report_module');
         checkbox(checkboxesToEnable, reportmodule);
     });
 
@@ -644,6 +654,7 @@ $(function () {
         var reportmodule = document.getElementById('reportmodule');
         var work_report_module = document.getElementById('work_report_module');
         var monitor_report_module = document.getElementById('monitor_report_module');
+        var countReportModule = document.getElementById('count_report_module');
         var analysis_report_module = document.getElementById('analysis_report_module');
         var accounts_report_module = document.getElementById('accounts_report_module');
         // var reportmodule_intrest = document.getElementById('reportmodule_intrest');
@@ -670,6 +681,7 @@ $(function () {
         if (reportmodule.checked) { const checkboxesToEnable = document.querySelectorAll("input.report-checkbox"); checkbox(checkboxesToEnable, reportmodule); }
         if (work_report_module.checked) { const checkboxesToEnable = document.querySelectorAll("input.work-checkbox"); checkbox(checkboxesToEnable, work_report_module); }
         if (monitor_report_module.checked) { const checkboxesToEnable = document.querySelectorAll("input.monitor-checkbox "); checkbox(checkboxesToEnable, monitor_report_module); }
+        if (countReportModule.checked) { const checkboxesToEnable = document.querySelectorAll("input.count-checkbox "); checkbox(checkboxesToEnable, countReportModule); }
         if (analysis_report_module.checked) { const checkboxesToEnable = document.querySelectorAll("input.analysis-checkbox "); checkbox(checkboxesToEnable, analysis_report_module); }
         if (accounts_report_module.checked) { const checkboxesToEnable = document.querySelectorAll("input.acounts-checkbox "); checkbox(checkboxesToEnable, accounts_report_module); }
         // if (reportmodule_intrest.checked) { const checkboxesToEnable = document.querySelectorAll("input.intrest-report-checkbox"); checkbox(checkboxesToEnable, reportmodule_intrest); }
@@ -1506,54 +1518,48 @@ function validation() {
 
     if(reportmoduleChecked) {
         // Count how many main reports are selected
-        let mainReportsChecked = $('#work_report_module:checked, #monitor_report_module:checked, #analysis_report_module:checked, #accounts_report_module:checked').length;
+        let mainReportsChecked = $('.report-checkbox:checked').length;
 
         if(mainReportsChecked === 0) {
             // None selected, show error
-            $('.work_report_module').show(); 
-            $('.monitor_report_module').show(); 
-            $('.analysis_report_module').show(); 
-            $('.accounts_report_module').show(); 
+            $('.select_report_module').show(); 
             validation = false;
         } else {
             // At least one selected, hide error
-            $('.work_report_module').hide(); 
-            $('.monitor_report_module').hide(); 
-            $('.analysis_report_module').hide(); 
-            $('.accounts_report_module').hide(); 
+            $('.select_report_module').hide();
         }
     } else {
         // reportmodule not checked, hide error
         $('.reportCheck').hide();
     }
 
-    // Case 1: Checkbox checked but dropdown empty
-    if (reportmodule.checked && report_access == '') {
-        $('#reportAccessCheck').show();
-        validation = false;
-    } else {
-        $('#reportAccessCheck').hide();
+    let showReportAccessError = false;
+
+    // Case 1: report module Checkbox checked but dropdown empty
+    if ((reportmodule.checked || hcbs) && report_access == '') {
+        showReportAccessError = true;
     }
 
     // Case 2: Dropdown has value but checkbox not checked
-    if (!reportmodule.checked && report_access != '' && !hcbs) {
+    if (report_access != '' && !reportmodule.checked && !hcbs) {
         $('.reportCheck').show();
         validation = false;
     } else {
         $('.reportCheck').hide();
     }
-    
-    if(hcbs && report_access ==''){
+
+    if (showReportAccessError) {
         $('#reportAccessCheck').show();
         validation = false;
     } else {
         $('#reportAccessCheck').hide();
-    }
+    }    
 
     // Array of main reports with their sub-checkbox classes and error spans
     var sections = [
         {main: '#work_report_module', subClass: '.work-checkbox', errorSpan: $('.workreport')},
         {main: '#monitor_report_module', subClass: '.monitor-checkbox', errorSpan: $('.monitorreport')},
+        {main: '#count_report_module', subClass: '.count-checkbox', errorSpan: $('.countreport')},
         {main: '#analysis_report_module', subClass: '.analysis-checkbox', errorSpan: $('.analysisreport')},
         {main: '#accounts_report_module', subClass: '.acounts-checkbox', errorSpan: $('.accountsreport')}
     ];

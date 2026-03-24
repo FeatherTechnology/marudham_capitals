@@ -449,6 +449,25 @@ if (sizeof($getLoanCalculation) > 0) {
 					</div>
 					<!-- Guarentor END -->
 
+					<!-- Loan History START -->
+					<div class="card">
+						<div class="card-header"> Loan History
+							<button type="button" class="btn btn-primary" name="show_loan_history" id="show_loan_history" style="padding: 5px 35px;  float: right;" tabindex="9" onclick="getLoanHistory()">Show Loan History</button>
+							<button type="button" class="btn btn-primary" name="hide_loan_history" id="hide_loan_history" style="padding: 5px 35px;  float: right; display: none;" tabindex="10" >Hide Loan History</button>
+
+						</div>
+						<div class="card-body">
+							<div class="row">
+								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+									<div class="form-group table-responsive" id="loanHistoryDiv">
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Loan History END -->
+
 					<!-- Loan Info START -->
 					<div class="card">
 						<div class="card-header">Loan Info <span style="font-weight:bold" class=""></span></div>
@@ -995,6 +1014,8 @@ if (sizeof($getLoanCalculation) > 0) {
 	<!-- Form End -->
 </div>
 
+<div id="printcollection" style="display: none"></div>
+
 <!-- Add Bank info Modal  START -->
 <div class="modal fade addbank" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
@@ -1107,5 +1128,125 @@ if (sizeof($getLoanCalculation) > 0) {
 	</div>
 </div>
 <!-- END  Add Bank Info Modal -->
+
+<!-- /////////////////////////////////////////////////////////////////// Due Chart Modal START ////////////////////////////////////////////////////////////////////// -->
+<div class="modal fade DueChart" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content" style="background-color: white;">
+			<div class="modal-header">
+				<h5 class="modal-title" id="myLargeModalLabel"> Due Chart Icon</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="dueChartTableDiv">
+
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /////////////////////////////////////////////////////////////////// Due Chart Modal END ////////////////////////////////////////////////////////////////////// -->
+
+<!-- /////////////////////////////////////////////////////////////////// Penalty Char Modal START ////////////////////////////////////////////////////////////////////// -->
+<div class="modal fade PenaltyChart" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="myLargeModalLabel"> Penalty Chart</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="penaltyChartTableDiv">
+
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /////////////////////////////////////////////////////////////////// Penalty Chart Modal END ////////////////////////////////////////////////////////////////////// -->
+
+<!-- /////////////////////////////////////////////////////////////////// Fine Chart Modal START ////////////////////////////////////////////////////////////// -->
+<div class="modal fade collectionChargeChart" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="myLargeModalLabel"> Fine Chart </h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="collectionChargeDiv">
+
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /////////////////////////////////////////////////////////////////// Fine Chart Modal END ////////////////////////////////////////////////////////////////////// -->
+
+<!-- /////////////////////////////////////////////////////////////////// Commitment chart Modal Start ////////////////////////////////////////////////////////////////////// -->
+<div class="modal fade" id="commitmentChart" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-lg " role="document">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLongTitle">Commitment Chart</h5>
+				<button type="button" class="close" data-dismiss="modal" tabindex="1" aria-label="Close" onclick="$('#commChartDiv').empty();">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="container-fluid">
+
+					<div class="col-12">
+						<div class="row">
+							<div class="col-12" id='commChartDiv'></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-secondary" data-dismiss="modal" tabindex="2" onclick="$('#commChartDiv').empty();">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /////////////////////////////////////////////////////////////////// Commitment chart Modal END ////////////////////////////////////////////////////////////////////// -->
+
+<!-- /////////////////////////////////////////////////////////////////// Loan Summary Modal START ////////////////////////////////////////////////////////////// -->
+<div class="modal fade loansummarychart" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="myLargeModalLabel"> Loan Summary </h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="loanSummaryDiv">
+
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /////////////////////////////////////////////////////////////////// Loan Summary Modal END ////////////////////////////////////////////////////////////////////// -->
 
 <?php require_once __DIR__ . "/../common/fingerprintlibrary.php"; ?>

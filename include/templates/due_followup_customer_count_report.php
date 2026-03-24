@@ -2,7 +2,7 @@
 <br><br>
 <div class="page-header">
     <div style="background-color:#009688; width:100%; padding:12px; color: #ffff; font-size: 20px; border-radius:5px;">
-        Marudham Capitals - Due Summary
+        Marudham Capitals - Back Office Summary
     </div>
 
 </div><br>
@@ -21,7 +21,7 @@
             </div>
             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="card">
-                    <div class="card-header">Due Summary</div>
+                    <div class="card-header">Back Office Summary</div>
                     <div class="card-body">
                         <div id="due_followup_customer_count_report_table_div" class="table-divs" style="overflow-x: auto;">
                             <table id="due_followup_customer_count_report_table" class="table custom-table">

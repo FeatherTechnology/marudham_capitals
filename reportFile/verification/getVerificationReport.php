@@ -25,7 +25,7 @@ $where = "1=1";
 if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'] != '' && $_POST['to_date'] != '') {
     $from_date = date('Y-m-d 00:00:00', strtotime($_POST['from_date']));
     $to_date = date('Y-m-d 23:59:59', strtotime($_POST['to_date']));
-    $where = "vlc.create_date BETWEEN '$from_date' AND '$to_date'";
+    $where = "ia.created_date BETWEEN '$from_date' AND '$to_date'";
 }
 
 $where  .= $user_based;
@@ -60,14 +60,14 @@ $statusLabels = [
 $column = [
     'vlc.req_id',
     'req.req_code',
-    'vlc.create_date',
+    'ia.created_date',
     'vlc.cus_id_loan',
     'cr.autogen_cus_id',
     'vlc.cus_name_loan',
     'al.area_name',
     'sal.sub_area_name',
-    'agm.group_name',
     'alm.line_name',
+    'agm.group_name',
     'bc.branch_name',
     'lcc.loan_category_creation_name',
     'vlc.sub_category',
@@ -85,8 +85,9 @@ $column = [
 /* ---------- Base Query ---------- */
 $baseQuery = "FROM verification_loan_calculation vlc
             LEFT JOIN request_creation req ON req.req_id = vlc.req_id
+            LEFT JOIN in_approval ia ON ia.req_id = vlc.req_id
             LEFT JOIN customer_profile cp ON cp.req_id = vlc.req_id
-            LEFT JOIN user u ON u.user_id = vlc.insert_login_id
+            LEFT JOIN user u ON u.user_id = ia.insert_login_id
             JOIN customer_register cr ON vlc.cus_id_loan = cr.cus_id
             JOIN area_list_creation al ON cr.area_confirm_area = al.area_id
             JOIN sub_area_list_creation sal ON cr.area_confirm_subarea = sal.sub_area_id
@@ -109,8 +110,8 @@ if (isset($_POST['search'])) {
                 vlc.cus_name LIKE '%" . $_POST['search'] . "%' OR
                 al.area_name LIKE '%" . $_POST['search'] . "%' OR
                 sal.sub_area_name LIKE '%" . $_POST['search'] . "%' OR
-                agm.group_name LIKE '%" . $_POST['search'] . "%' OR
                 alm.line_name LIKE '%" . $_POST['search'] . "%' OR
+                agm.group_name LIKE '%" . $_POST['search'] . "%' OR
                 bc.branch_name LIKE '%" . $_POST['search'] . "%' OR
                 lcc.loan_category_creation_name LIKE '%" . $_POST['search'] . "%' OR
                 vlc.sub_category LIKE '%" . $_POST['search'] . "%' OR
@@ -148,14 +149,14 @@ $recordsFiltered = (int) $countStmt->fetchColumn();
 /* ---------- Data query ---------- */
 $dataQuery = "SELECT 
         req.req_code,
-        vlc.create_date,
+        ia.created_date,
         vlc.cus_id_loan,
         cr.autogen_cus_id,
         vlc.cus_name_loan,
         al.area_name,
         sal.sub_area_name,
-        agm.group_name,
         alm.line_name,
+        agm.group_name,
         bc.branch_name,
         lcc.loan_category_creation_name,
         vlc.sub_category,
@@ -188,14 +189,14 @@ foreach ($result as $row) {
     $sub_array   = array();
     $sub_array[] = $sno++;
     $sub_array[] = $row['req_code'];
-    $sub_array[] = date('d-m-Y', strtotime($row['create_date']));
+    $sub_array[] = date('d-m-Y', strtotime($row['created_date']));
     $sub_array[] = $row['cus_id_loan'];
     $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = $row['cus_name_loan'];
     $sub_array[] = $row['area_name'];
     $sub_array[] = $row['sub_area_name'];
-    $sub_array[] = $row['group_name'];
     $sub_array[] = $row['line_name'];
+    $sub_array[] = $row['group_name'];
     $sub_array[] = $row['branch_name'];
     $sub_array[] = $row['loan_category_creation_name'];
     $sub_array[] = $row['sub_category'];

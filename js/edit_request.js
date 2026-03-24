@@ -4,8 +4,40 @@ $(document).ready(function () {
 
     $('.closeModal').click(function () {
         $('#cusHistoryTable tbody').empty();
-    })
+    });
 
+    // Request Actions
+    $(document).on("click", '.cancelrequest', function () {
+        var remark = prompt("Do you want to Cancel this Request?");
+        if (remark != null) {
+            $.post('requestFile/changeRequestState.php', { req_id: $(this).data('reqid'), state: 'cancel', remark, screen: 'request' }, function (data) {
+                if (data.includes('Success')) {
+                    successSwal('Cancelled!', 'Request has been Cancelled.');
+                } else {
+                    warningSwal('Error!', 'Something went wrong.');
+                }
+            })
+            return true;
+        } else {
+            return false;
+        }
+    });
+    
+    $(document).on("click", '.revokerequest', function () {
+        var remark = prompt("Do you want to Revoke this Request?");
+        if (remark != null) {
+            $.post('requestFile/changeRequestState.php', { req_id: $(this).data('reqid'), state: 'revoke', remark, screen: 'request' }, function (data) {
+                if (data.includes('Success')) {
+                    successSwal('Revoked!', 'Request has been Revoked.');
+                } else {
+                    warningSwal('Error!', 'Something went wrong.');
+                }
+            })
+            return true;
+        } else {
+            return false;
+        }
+    });
 
 });//document ready end
 function callOnClickEvents() {
@@ -100,38 +132,6 @@ function callOnClickEvents() {
                     $('#loanSummaryTable').html(response);
                 }
             })
-        });
-
-        // Request Actions
-        $(document).on("click", '.cancelrequest', function () {
-            var remark = prompt("Do you want to Cancel this Request?");
-            if (remark != null) {
-                $.post('requestFile/changeRequestState.php', { req_id: $(this).data('reqid'), state: 'cancel', remark, screen: 'request' }, function (data) {
-                    if (data.includes('Success')) {
-                        successSwal('Cancelled!', 'Request has been Cancelled.');
-                    } else {
-                        warningSwal('Error!', 'Something went wrong.');
-                    }
-                })
-                return true;
-            } else {
-                return false;
-            }
-        });
-        $(document).on("click", '.revokerequest', function () {
-            var remark = prompt("Do you want to Revoke this Request?");
-            if (remark != null) {
-                $.post('requestFile/changeRequestState.php', { req_id: $(this).data('reqid'), state: 'revoke', remark, screen: 'request' }, function (data) {
-                    if (data.includes('Success')) {
-                        successSwal('Revoked!', 'Request has been Revoked.');
-                    } else {
-                        warningSwal('Error!', 'Something went wrong.');
-                    }
-                })
-                return true;
-            } else {
-                return false;
-            }
         });
 
     }, 500);

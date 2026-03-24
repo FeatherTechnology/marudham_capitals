@@ -71,15 +71,6 @@ $(document).ready(function () {
 
 });
 
-
-function swalError(title, text) {
-    Swal.fire({
-        icon: 'error',
-        title: title,
-        text: text,
-        confirmButtonColor: '#f27474',
-    })
-}
 /////////////////////////////////////////////////////////Contra Report
 function contraReportTable() {
     $('#contra_table').DataTable().destroy();

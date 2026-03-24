@@ -487,51 +487,6 @@
             });
             initColVisFeatures(agent_creation_table, 'agent_creation_table');
 
-            // Staff Creation datatable
-            var staff_creation_table = $('#staff_creation_table').DataTable({
-                ...getStateSaveConfig('staff_creation_table'),
-                "order": [
-                    [0, "desc"]
-                ],
-                "displayStart": getDisplayStart('staff_creation_table'),
-                'processing': true,
-                'serverSide': true,
-                'serverMethod': 'post',
-                'ajax': {
-                    'url': 'ajaxFetch/ajaxStaffCreationFetch.php',
-                    'data': function(data) {
-                        var search = $('input[type=search]').val();
-                        data.search = search;
-                    }
-                },
-                dom: 'lBfrtip',
-                buttons: [{
-                        extend: 'excel',
-                        title: "Staff List",
-                        action: function(e, dt, button, config) {
-                            var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
-                            var dynamic = curDateJs('Staff_List'); // or any base
-                            config.title = dynamic; // for versions that use title as filename
-                            config.filename = dynamic; // for html5 filename
-                            defaultAction.call(this, e, dt, button, config);
-                        }
-                    },
-                    {
-                        extend: 'colvis',
-                        collectionLayout: 'fixed four-column',
-                    }
-                ],
-                "lengthMenu": [
-                    [10, 25, 50, -1],
-                    [10, 25, 50, "All"]
-                ],
-                'drawCallback': function() {
-                    searchFunction('staff_creation_table');
-                    paginationFunction('staff_creation_table');
-                }
-            });
-            initColVisFeatures(staff_creation_table, 'staff_creation_table');
-
             //Bank Creation Table
             var bank_creation_table = $('#bank_creation_table').DataTable({
                 ...getStateSaveConfig('bank_creation_table'),
@@ -2373,6 +2328,17 @@
                 }, 500);
             }
         }
+
+        ///////////////////////////////// swal alert START///////////////////////////////////
+        function swalError(title, text) {
+            Swal.fire({
+                icon: 'error',
+                title: title,
+                text: text,
+                confirmButtonColor: '#009688',
+            });
+        }
+        ///////////////////////////////// swal alert END///////////////////////////////////
     </script>
 
     <?php
@@ -2425,6 +2391,10 @@
 
     if ($current_page == 'agent_creation') { ?>
         <script src="js/agent_creation.js"></script>
+    <?php }
+
+    if ($current_page == 'edit_staff_creation') { ?>
+        <script src="js/edit_staff_creation.js"></script>
     <?php }
 
     if ($current_page == 'staff_creation') { ?>
@@ -2731,8 +2701,28 @@
         <script src="js/noc_handover_report.js"></script>
     <?php }
 
+    if ($current_page == 'request_count_report') { ?>
+        <script src="js/request_count_report.js"></script>
+    <?php }
+
+    if ($current_page == 'verification_count_report') { ?>
+        <script src="js/verification_count_report.js"></script>
+    <?php }
+
+      if ($current_page == 'approval_count_report') { ?>
+        <script src="js/approval_count_report.js"></script>
+    <?php }
+
+    if ($current_page == 'promotion_count_report') { ?>
+        <script src="js/promotion_count_report.js"></script>
+    <?php }
+
     if ($current_page == 'confirmation_count_report') { ?>
         <script src="js/confirmation_count_report.js"></script>
+    <?php }
+
+    if ($current_page == 'duefollowup_count_report') { ?>
+        <script src="js/duefollowup_count_report.js"></script>
     <?php }
 
     if ($current_page == 'concern_report') { ?>

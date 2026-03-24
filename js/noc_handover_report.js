@@ -13,16 +13,14 @@ $(document).ready(function () {
 
     //Loan Report Table
     $('#reset_btn').click(function () {
-            let from_date = $('#from_date').val();
-            let to_date = $('#to_date').val();
-            if (!from_date || !to_date) {
-                swalError('Please Select All Fields!', 'All fields are required.');
-                return;
-            }
-            nocHandoverReportTable()
-        })
-   
-
+        let from_date = $('#from_date').val();
+        let to_date = $('#to_date').val();
+        if (!from_date || !to_date) {
+            swalError('Please Select All Fields!', 'All fields are required.');
+            return;
+        }
+        nocHandoverReportTable()
+    });
 });
 
 function nocHandoverReportTable(){
@@ -89,12 +87,4 @@ function nocHandoverReportTable(){
 
     // Pass the table variable to the initColVisFeatures function
     initColVisFeatures(noc_handover_report_table, 'noc_handover_report_table');
-}
-function swalError(title, text) {
-    Swal.fire({
-        icon: 'error',
-        title: title,
-        text: text,
-        confirmButtonColor: '#009688',
-    });
 }

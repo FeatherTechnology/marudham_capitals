@@ -37,7 +37,7 @@ $(document).ready(function () {
 
             $('.close').trigger('click');//it will close modal
         } else {
-            swalError('Please Fill Dates!', 'error');
+            swalError('Warning', 'Please Fill Dates!');
             event.preventDefault();
         }
     })
@@ -59,7 +59,7 @@ $(document).ready(function () {
 
             $('.close').trigger('click');//it will close modal
         } else {
-            swalError('Please Choose Month!', 'error');
+            swalError('Warning', 'Please Choose Month!');
             event.preventDefault();
         }
     })
@@ -470,16 +470,6 @@ function clearAllContents() {
     $('.profit-card').find('tbody tr').each(function () {
         $(this).find('td:nth-child(2)').text('')
         $(this).find('td:nth-child(3)').text('')
-    })
-}
-
-//alert message
-function swalError(title, icon) {
-    Swal.fire({
-        title: title,
-        icon: icon,
-        showConfirmButton: true,
-        confirmButtonColor: '#009688'
     })
 }
 

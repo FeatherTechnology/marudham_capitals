@@ -5711,20 +5711,6 @@ function dueChartList(req_id, cus_id) {
             cache: false,
             success: function (html) {
               $("#printcollection").html(html);
-              // Get the content of the div element
-              var content = $("#printcollection").html();
-
-              // Create a new window
-              var w = window.open();
-
-              // Write the content to the new window
-              $(w.document.body).html(content);
-
-              // Print the new window
-              w.print();
-
-              // Close the new window
-              w.close();
             },
           });
         }

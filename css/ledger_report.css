@@ -44,6 +44,11 @@
     outline: none;
 }
 
+/* Ensure grouped header borders are visible (previously done inline) */
+#promotion_count_report_table thead th {
+    border: 1px solid #ffffff !important;
+}
+
 @media (max-width:590px){
     .date-button{
         margin-top: 0;

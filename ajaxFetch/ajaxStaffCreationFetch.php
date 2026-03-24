@@ -16,52 +16,89 @@ $column = array(
     'sc.status'
 );
 
-$query = "SELECT sc.*,stc.staff_type_name,c.company_name 
+$status = $_POST['staffStatus'] ?? '0';
+$search = $_POST['search'] ?? '';
+
+$params = [':status' => $status];
+
+$base_query = "
 FROM staff_creation sc
-JOIN staff_type_creation stc ON stc.staff_type_id = sc.staff_type and stc.status = 0
-JOIN company_creation c ON c.company_id =  sc.company_id WHERE 1 ";
-if (isset($_POST['search']) && $_POST['search'] != "") {
+JOIN staff_type_creation stc 
+    ON stc.staff_type_id = sc.staff_type 
+    AND stc.status = 0
+JOIN company_creation c 
+    ON c.company_id = sc.company_id
+WHERE sc.status = :status
+";
 
-    $query .= "AND
-            (sc.staff_code LIKE '%" . $_POST['search'] . "%'
-            OR sc.staff_name LIKE '%" . $_POST['search'] . "%'
-            OR stc.staff_type_name LIKE '%" . $_POST['search'] . "%'
-            OR sc.place LIKE '%" . $_POST['search'] . "%'
-            OR c.company_name LIKE '%" . $_POST['search'] . "%'
-            OR sc.department LIKE '%" . $_POST['search'] . "%'
-            OR sc.team LIKE '%" . $_POST['search'] . "%'
-            OR sc.designation LIKE '%" . $_POST['search'] . "%') ";
+if (!empty($search)) {
+
+    $base_query .= " AND (
+        sc.staff_code LIKE :search
+        OR sc.staff_name LIKE :search
+        OR stc.staff_type_name LIKE :search
+        OR sc.place LIKE :search
+        OR c.company_name LIKE :search
+        OR sc.department LIKE :search
+        OR sc.team LIKE :search
+        OR sc.designation LIKE :search
+    )";
+
+    $params[':search'] = "%$search%";
 }
+
+# ---------- COUNT QUERY ----------
+$count_query = "SELECT COUNT(*) $base_query";
+
+$statement = $connect->prepare($count_query);
+$statement->execute($params);
+$number_filter_row = $statement->fetchColumn();
+
+
+# ---------- ORDER ----------
+$order_query = "";
 if (isset($_POST['order'])) {
-    $query .= 'ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
-} else {
-    $query .= ' ';
+    $col = $column[$_POST['order'][0]['column']];
+    $dir = $_POST['order'][0]['dir'];
+    $order_query = " ORDER BY $col $dir ";
 }
 
-$query1 = '';
-
+# ---------- LIMIT ----------
+$limit_query = "";
 if ($_POST['length'] != -1) {
-    $query1 = 'LIMIT ' . $_POST['start'] . ', ' . $_POST['length'];
+    $limit_query = " LIMIT " . intval($_POST['start']) . ", " . intval($_POST['length']);
 }
+
+
+# ---------- MAIN QUERY ----------
+$query = "
+SELECT 
+    sc.staff_id,
+    sc.staff_code,
+    sc.staff_name,
+    stc.staff_type_name,
+    sc.place,
+    c.company_name,
+    sc.department,
+    sc.team,
+    sc.designation,
+    sc.status
+$base_query
+$order_query
+$limit_query
+";
 
 $statement = $connect->prepare($query);
+$statement->execute($params);
 
-$statement->execute();
-
-$number_filter_row = $statement->rowCount();
-
-$statement = $connect->prepare($query . $query1);
-
-$statement->execute();
-
-$result = $statement->fetchAll();
+$result = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 $data = array();
 $sno = 1;
 foreach ($result as $row) {
     $sub_array   = array();
 
-    $sub_array[] = $sno;
+    $sub_array[] = $sno++;
 
     $sub_array[] = $row['staff_code'];
     $sub_array[] = $row['staff_name'];
@@ -81,20 +118,19 @@ foreach ($result as $row) {
     }
     $id          = $row['staff_id'];
 
-    $action = "<a href='staff_creation&upd=$id' title='Edit details'><span class='icon-border_color'></span></a>&nbsp;&nbsp; 
-    <a href='staff_creation&del=$id' title='Edit details' class='delete_staff'><span class='icon-trash-2'></span></a>";
+    $action = "<a href='staff_creation&upd=$id&sts=$status' title='Edit details'><span class='icon-border_color'></span></a>&nbsp;&nbsp;";
+
+    if ($status == 0) {
+        $action .= "<a href='staff_creation&del=$id' title='Delete details' class='delete_staff'><span class='icon-trash-2'></span></a>";
+    }
 
     $sub_array[] = $action;
     $data[]      = $sub_array;
-    $sno = $sno + 1;
 }
 
 function count_all_data($connect)
 {
-    $query     = "SELECT * FROM staff_creation";
-    $statement = $connect->prepare($query);
-    $statement->execute();
-    return $statement->rowCount();
+    return $connect->query("SELECT COUNT(*) FROM staff_creation")->fetchColumn();
 }
 
 $output = array(

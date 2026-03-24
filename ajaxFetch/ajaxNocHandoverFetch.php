@@ -179,41 +179,23 @@ foreach ($result as $row) {
     // ---------------- ACTION BUTTON LOGIC ----------------
     $action = ""; // default
 
-    if ($receive_status == 0) {
-
-        // Status pending → show Send to everyone
-        $action = "<div class='dropdown'>
+    $action = "<div class='dropdown'>
             <button class='btn btn-outline-secondary'>
                 <i class='fa'>&#xf107;</i>
             </button>
-            <div class='dropdown-content'>
-                <a href='' title='Receive details' 
-                class='receive-noc'
-                data-cusid='$cus_id'>Receive</a>
-            </div>
-        </div>";
+            <div class='dropdown-content'>";
+
+    // Status Completed → only show button to the person who received
+    if ($receive_by == $userid) {
+
+        $action .= "<a href='noc_handover&cusidupd=$cus_id' title='NOC handover'>Handover</a>";
 
     } else {
 
-        // Status Completed → only show button to the person who received
-        if ($receive_by == $userid) {
-
-            $action = "<div class='dropdown'>
-                <button class='btn btn-outline-secondary'>
-                    <i class='fa'>&#xf107;</i>
-                </button>
-                <div class='dropdown-content'>
-                    <a href='noc_handover&cusidupd=$cus_id' 
-                    title='NOC handover'>Handover</a>
-                </div>
-            </div>";
-
-        } else {
-
-            // Hide action from all other users
-            $action = "<span class='text-muted'></span>";
-        }
+        $action .= "<a href='' title='Receive details' class='receive-noc' data-cusid='$cus_id'>Receive</a>";
     }
+
+    $action .= "</div></div>";
 
     $sub_array[] = $action;
 
