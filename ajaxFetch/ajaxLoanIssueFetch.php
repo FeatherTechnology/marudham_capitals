@@ -238,10 +238,12 @@ foreach ($result as $row) {
                 $action .= "<a href=''class='iss-remove' data-value='$id' > Remove </a>";
             }
 
-            if ($login_user_type == 0 or $userid == 1) {
+            if ($login_user_type != 2 or $userid == 1) { // show only director, Admin || super admin user.
                 $action .= "<a href='' data-value ='" . $cus_id . "' data-value1 = '$id' class='customer-status' data-toggle='modal' data-target='.customerstatus'>Customer Status</a>";
             }
         }
+             
+        $action .= "<a href='' data-value ='" . $cus_id . "' class='customer-summary' data-toggle='modal' data-target='.customersummary'>Customer Summary</a>";
 
         $action .= "</div></div>";
     }

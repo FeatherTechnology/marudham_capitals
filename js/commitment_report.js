@@ -95,12 +95,3 @@ function commitmentReportTable() {
     // Pass the table variable to the initColVisFeatures function
     initColVisFeatures(commitment_report_table, 'commitment_report_table');
 }
-
-function swalError(title, text) {
-    Swal.fire({
-        icon: 'error',
-        title: title,
-        text: text,
-        confirmButtonColor: '#009688',
-    });
-}

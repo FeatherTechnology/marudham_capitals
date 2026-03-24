@@ -1,9 +1,42 @@
-
 // Document is ready
 $(document).ready(function () {
     $('.closeModal').click(function () {
         $('#cusHistoryTable tbody').empty();
-    })
+    });
+    
+    // Verification list Actions
+    $(document).on("click", '.cancelverification', function () {
+        var remark = prompt("Do you want to Cancel this Verification?");
+        if (remark != null) {
+            $.post('requestFile/changeRequestState.php', { req_id: $(this).data('reqid'), state: 'cancel', remark, screen: 'verification' }, function (data) {
+                if (data.includes('Success')) {
+                    successSwal('Cancelled!', 'Verification has been Cancelled.');
+                } else {
+                    warningSwal('Error!', 'Something went wrong.');
+                }
+            })
+            return true;
+        } else {
+            return false;
+        }
+    });
+
+    $(document).on("click", '.revokeverification', function () {
+        var remark = prompt("Do you want to Revoke this Verification?");
+        if (remark != null) {
+            $.post('requestFile/changeRequestState.php', { req_id: $(this).data('reqid'), state: 'revoke', remark, screen: 'verification' }, function (data) {
+                if (data.includes('Success')) {
+                    successSwal('Revoked!', 'Verification has been Revoked.');
+                } else {
+                    warningSwal('Error!', 'Something went wrong.');
+                }
+            })
+            return true;
+        } else {
+            return false;
+        }
+    });
+
 });//document ready end
 
 function callOnClickEvents() {
@@ -91,38 +124,6 @@ function callOnClickEvents() {
             }
         });
 
-        // Verification list Actions
-        $(document).on("click", '.cancelverification', function () {
-            var remark = prompt("Do you want to Cancel this Verification?");
-            if (remark != null) {
-                $.post('requestFile/changeRequestState.php', { req_id: $(this).data('reqid'), state: 'cancel', remark, screen: 'verification' }, function (data) {
-                    if (data.includes('Success')) {
-                        successSwal('Cancelled!', 'Verification has been Cancelled.');
-                    } else {
-                        warningSwal('Error!', 'Something went wrong.');
-                    }
-                })
-                return true;
-            } else {
-                return false;
-            }
-        });
-        $(document).on("click", '.revokeverification', function () {
-            var remark = prompt("Do you want to Revoke this Verification?");
-            if (remark != null) {
-                $.post('requestFile/changeRequestState.php', { req_id: $(this).data('reqid'), state: 'revoke', remark, screen: 'verification' }, function (data) {
-                    if (data.includes('Success')) {
-                        successSwal('Revoked!', 'Verification has been Revoked.');
-                    } else {
-                        warningSwal('Error!', 'Something went wrong.');
-                    }
-                })
-                return true;
-            } else {
-                return false;
-            }
-        });
-
         //Request info tab
         $('.request-info').off('click').click(function () {
             let req_id = $(this).data('reqid');
@@ -195,6 +196,7 @@ function callresetCustomerStatus(cus_id) {
         }
     });
 }
+
 function warningSwal(title, text) {
     Swal.fire({
         title: title,

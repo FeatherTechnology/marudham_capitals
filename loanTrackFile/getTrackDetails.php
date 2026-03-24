@@ -31,18 +31,17 @@ class getTrackTableDetails
         if ($cus_status != '') {
 
             // Request
-            $qry = $connect->query("SELECT cus_id,sub_area,insert_login_id,created_date,update_login_id,updated_date from request_creation where req_id = $req_id");
+            $qry = $connect->query("SELECT sub_area, insert_login_id, created_date, update_login_id, updated_date FROM request_creation WHERE req_id = $req_id");
             if ($qry->rowCount() > 0) {
                 $row = $qry->fetch();
-                $cus_id = $row['cus_id'];
                 $branch = $this->getBranchName($connect, $row['sub_area'], 'group');
-                $data[] = $this->getTrackDetails($connect, 'Request', $row['created_date'], $row['insert_login_id'], $branch);
+                $data[] = $this->getTrackDetails($connect, 'Request', $row['created_date'], $row['insert_login_id'], $branch,'');
 
                 // ✅ If customer canceled at Request stage
                 if ($cus_status == 4) {
-                    $data[] = $this->getTrackDetails($connect, 'Request - Cancel', $row['updated_date'], $row['update_login_id'], $branch);
+                    $data[] = $this->getTrackDetails($connect, 'Request - Cancel', $row['updated_date'], $row['update_login_id'], $branch,'');
                 } else if ($cus_status == 8) {  // Revoke
-                    $data[] = $this->getTrackDetails($connect, 'Request - Revoke', $row['updated_date'], $row['update_login_id'], $branch);
+                    $data[] = $this->getTrackDetails($connect, 'Request - Revoke', $row['updated_date'], $row['update_login_id'], $branch,'');
                 }
             }
 
@@ -51,40 +50,40 @@ class getTrackTableDetails
             if ($qry->rowCount() > 0) {
                 $row = $qry->fetch();
                 $branch = $this->getBranchName($connect, $row['sub_area'], 'group');
-                $data[] = $this->getTrackDetails($connect, 'Customer Profile', $row['created_date'], $row['insert_login_id'], $branch);
+                $data[] = $this->getTrackDetails($connect, 'Customer Profile', $row['created_date'], $row['insert_login_id'], $branch,'');
             }
 
             // Documentation
             $qry = $connect->query("SELECT insert_login_id,created_date from verification_documentation where req_id = $req_id");
             if ($qry->rowCount() > 0) {
                 $row = $qry->fetch();
-                $data[] = $this->getTrackDetails($connect, 'Documentation', $row['created_date'], $row['insert_login_id'], $branch);
+                $data[] = $this->getTrackDetails($connect, 'Documentation', $row['created_date'], $row['insert_login_id'], $branch,'');
             }
 
             // Loan Calculation
             $qry = $connect->query("SELECT insert_login_id,create_date from verification_loan_calculation where req_id = $req_id");
             if ($qry->rowCount() > 0) {
                 $row = $qry->fetch();
-                $data[] = $this->getTrackDetails($connect, 'Loan Calculation', $row['create_date'], $row['insert_login_id'], $branch);
+                $data[] = $this->getTrackDetails($connect, 'Loan Calculation', $row['create_date'], $row['insert_login_id'], $branch,'');
             }
             // Verification Cancel / Revoke
             if ($cus_status == 5) {
-                $data[] = $this->getTrackDetails($connect, 'Verification - Cancel', $updated_date, $update_login_id, $branch);
+                $data[] = $this->getTrackDetails($connect, 'Verification - Cancel', $updated_date, $update_login_id, $branch,'');
             } else if ($cus_status == 9) {
-                $data[] = $this->getTrackDetails($connect, 'Verification - Revoke', $updated_date, $update_login_id, $branch);
+                $data[] = $this->getTrackDetails($connect, 'Verification - Revoke', $updated_date, $update_login_id, $branch,'');
             } else if ($cus_status == 6) { //Appoval - Cancel
-                $data[] = $this->getTrackDetails($connect, 'Approval - Cancel', $updated_date, $update_login_id, $branch);
+                $data[] = $this->getTrackDetails($connect, 'Approval - Cancel', $updated_date, $update_login_id, $branch,'');
             }
 
             // Approval
             $qry = $connect->query("SELECT inserted_user,inserted_date from in_acknowledgement where req_id = $req_id");
             if ($qry->rowCount() > 0) {
                 $row = $qry->fetch();
-                $data[] = $this->getTrackDetails($connect, 'Approval', $row['inserted_date'], $row['inserted_user'], $branch);
+                $data[] = $this->getTrackDetails($connect, 'Approval', $row['inserted_date'], $row['inserted_user'], $branch,'');
             }
             // Acknowledgment Cancel
             if ($cus_status == 7) { 
-                $data[] = $this->getTrackDetails($connect, 'Acknowledgment - Cancel', $updated_date, $update_login_id, $branch);
+                $data[] = $this->getTrackDetails($connect, 'Acknowledgment - Cancel', $updated_date, $update_login_id, $branch,'');
             }
             // Acknowledgment
             $qry = $connect->query("SELECT inserted_user,inserted_date from in_issue where req_id = $req_id");
@@ -93,14 +92,14 @@ class getTrackTableDetails
                 $qry1 = $connect->query("SELECT area_confirm_subarea as sub_area from acknowlegement_customer_profile where req_id = $req_id");
                 $sub_area_id = $qry1->fetch()['sub_area'];
                 $branch = $this->getBranchName($connect, $sub_area_id, 'group');
-                $data[] = $this->getTrackDetails($connect, 'Acknowledgment', $row['inserted_date'], $row['inserted_user'], $branch);
+                $data[] = $this->getTrackDetails($connect, 'Acknowledgment', $row['inserted_date'], $row['inserted_user'], $branch,'');
             }
 
             // Loan Issue
             $qry = $connect->query("SELECT insert_login_id,created_date from loan_issue where req_id = $req_id order by `id` DESC LIMIT 1"); //limit 1 desc because that table will have multiple lines for single customer, so last would be the correct one
             if ($qry->rowCount() > 0) {
                 $row = $qry->fetch();
-                $data[] = $this->getTrackDetails($connect, 'Loan Issue', $row['created_date'], $row['insert_login_id'], $branch);
+                $data[] = $this->getTrackDetails($connect, 'Loan Issue', $row['created_date'], $row['insert_login_id'], $branch,'');
             }
 
             // Closed
@@ -108,22 +107,25 @@ class getTrackTableDetails
             if ($qry->rowCount() > 0) {
                 $row = $qry->fetch();
                 $branch = $this->getBranchName($connect, $sub_area_id, 'line');
-                $data[] = $this->getTrackDetails($connect, 'Closed', $row['created_date'], $row['insert_login_id'], $branch);
+                $data[] = $this->getTrackDetails($connect, 'Closed', $row['created_date'], $row['insert_login_id'], $branch,'');
             }
 
             // NOC
-            $qry = $connect->query("SELECT insert_login_id,created_date from noc where req_id = $req_id");
+            $qry = $connect->query("SELECT receive_by, insert_login_id, created_date from noc where req_id = $req_id");
             if ($qry->rowCount() > 0) {
                 $row = $qry->fetch();
                 $branch = $this->getBranchName($connect, $sub_area_id, 'line');
-                $data[] = $this->getTrackDetails($connect, 'NOC', $row['created_date'], $row['insert_login_id'], $branch);
+                $data[] = $this->getTrackDetails($connect, 'NOC', $row['created_date'], $row['insert_login_id'], $branch,'');
             }
+
            // NOC Handover
-            $qry = $connect->query("SELECT update_login_id,updated_date from noc where req_id = $req_id AND cus_status = 24");
+            $qry = $connect->query("SELECT received_user, created_date FROM noc_receive_user WHERE req_id = $req_id ORDER BY id ASC");
             if ($qry->rowCount() > 0) {
-                $row = $qry->fetch();
                 $branch = $this->getBranchName($connect, $sub_area_id, 'line');
-                $data[] = $this->getTrackDetails($connect, 'NOC Handover', $row['updated_date'], $row['update_login_id'], $branch);
+                while($stmt = $qry->fetch()){
+                    $noc_received_issame = ($row['receive_by'] == $stmt['received_user']) ? '1' : '0'; //if receive_by and received_user is same then show action btn otherwise no need.
+                    $data[] = $this->getTrackDetails($connect, 'NOC Handover', $stmt['created_date'], $stmt['received_user'], $branch, $noc_received_issame);
+                }
             }
         }
 
@@ -160,7 +162,7 @@ class getTrackTableDetails
         </table>
 <?php
     }
-    public function getTrackDetails($connect, $stage, $date, $user_id, $branch)
+    public function getTrackDetails($connect, $stage, $date, $user_id, $branch, $noc_received_issame)
     {
         $req_id = $_POST['req_id'] ?? '';
         $user_id = $connect->quote($user_id);
@@ -180,7 +182,7 @@ class getTrackTableDetails
         if ($stage == 'Loan Issue') {
             $response['action'] = "<input type='button' class='btn btn-primary stage-detail' value='View' data-toggle='modal' data-target='#stageDetails' data-req_id='" . $req_id . "' data-stage='li'>";
         }
-        if ($stage == 'NOC Handover') {
+        if ($stage == 'NOC Handover' && $noc_received_issame =='1') {
             $response['action'] = "<input type='button' class='btn btn-primary stage-detail' value='View' data-toggle='modal' data-target='#stageDetails' data-req_id='" . $req_id . "' data-stage='noc'>";
         }
         return $response;

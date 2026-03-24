@@ -24,7 +24,7 @@ $(document).ready(function () {
             $('.close').trigger('click');//it will close modal
         } else {
             event.preventDefault();
-            swalError('Please Fill Dates!', 'error');
+            swalError('Warning', 'Please Fill Dates!');
         }
     });
 
@@ -121,7 +121,7 @@ function BalanceSheetCalculations(type, from_date, to_date) {
         }).fail(function (err) {
             reject(err); // In case of error
             clearAllContents();
-            swalError('Something Went Wrong', 'error');
+            swalError('Error', 'Something Went Wrong');
         });
     });
 }
@@ -146,16 +146,6 @@ function calculateClosingForBS() {
     $('.balance-sheet-card').find('tfoot tr:first td:nth-child(2)').text(moneyFormatIndia(credit));
     $('.balance-sheet-card').find('tfoot tr:first td:nth-child(3)').text(moneyFormatIndia(debit));
     $('.balance-sheet-card').find('tfoot tr:last td:nth-child(2)').text(moneyFormatIndia(difference));
-}
-
-//alert message
-function swalError(title, icon) {
-    Swal.fire({
-        title: title,
-        icon: icon,
-        showConfirmButton: true,
-        confirmButtonColor: '#009688'
-    })
 }
 
 // to clear all contents

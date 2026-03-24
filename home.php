@@ -474,7 +474,7 @@ if (isset($getuserdetails['download_access'])) {
 				<?php include "include/templates/verification_report.php" ?>
 			<?php } else ?>
 
-			<!-- Verification Report -->
+			<!-- Approval Report -->
 			<?php if ($current_page == 'approval_report') { ?>
 				<?php include "include/templates/approval_report.php" ?>
 			<?php } else ?>
@@ -599,9 +599,34 @@ if (isset($getuserdetails['download_access'])) {
 				<?php include "include/templates/noc_handover_report.php" ?>
 			<?php } else ?>
 
+			<!-- Request Count report -->
+			<?php if ($current_page == 'request_count_report') { ?>
+				<?php include "include/templates/request_count_report.php" ?>
+			<?php } else ?>
+
+			<!-- Verification Count report -->
+			<?php if ($current_page == 'verification_count_report') { ?>
+				<?php include "include/templates/verification_count_report.php" ?>
+			<?php } else ?>
+
+			<!-- Approval Count report -->
+			<?php if ($current_page == 'approval_count_report') { ?>
+				<?php include "include/templates/approval_count_report.php" ?>
+			<?php } else ?>
+			
+			<!-- Promotion Count report -->
+			<?php if ($current_page == 'promotion_count_report') { ?>
+				<?php include "include/templates/promotion_count_report.php" ?>
+			<?php } else ?>
+
 			<!-- Confirmation Count report -->
 			<?php if ($current_page == 'confirmation_count_report') { ?>
 				<?php include "include/templates/confirmation_count_report.php" ?>
+			<?php } else ?>
+			
+			<!-- Due Followup Count report -->
+			<?php if ($current_page == 'duefollowup_count_report') { ?>
+				<?php include "include/templates/duefollowup_count_report.php" ?>
 			<?php } else ?>
 
 			<!-- Concern report -->

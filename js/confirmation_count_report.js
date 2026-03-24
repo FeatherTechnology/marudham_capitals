@@ -136,12 +136,3 @@ function confirmationReportCount(from_date, to_date, selected_user) {
         }
     });
 }
-
-function swalError(title, text) {
-    Swal.fire({
-        icon: 'error',
-        title: title,
-        text: text,
-        confirmButtonColor: '#009688',
-    });
-}

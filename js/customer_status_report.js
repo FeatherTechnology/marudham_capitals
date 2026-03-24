@@ -590,11 +590,3 @@ function odReportCount(search_date, type, line, selected_user, group_map, due_fo
         }
     });
 }
-function swalError(title, text) {
-    Swal.fire({
-        icon: 'error',
-        title: title,
-        text: text,
-        confirmButtonColor: '#009688',
-    });
-}

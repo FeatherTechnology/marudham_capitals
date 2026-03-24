@@ -20,6 +20,9 @@
 
 				<div class="table-responsive">
 					<?php
+					//for loan limit access, checking if user has approval screen access
+					$approvalaccess = $userObj->getuser($mysqli, $userid)['approval'];
+
 					$mscid = 0;
 					if (isset($_GET['msc'])) {
 						$mscid = $_GET['msc'];
@@ -123,6 +126,268 @@
 		</div>
 	</div>
 </div>
+
+<!-- Add Customer Summary Modal -->
+<div class="modal fade customersummary" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="summaryTitle">Customer Summary</h5>
+				<button type="button" class="close closeCusModal" data-dismiss="modal" aria-label="Close">
+					<span>&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<br />
+
+				<input type="hidden" id="summary_cus_id">
+
+				<div id="cus_summary_div"> <!-- Customer Summary Div START-->
+					<div class="row">
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+							<div class="form-group">
+								<label for="cus_how_know"> How to Know </label>
+								<input type="text" class="form-control" name="cus_how_know" id="cus_how_know" readonly>
+							</div>
+						</div>
+
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+							<div class="form-group">
+								<label for="cus_loan_count"> Loan Counts </label>
+								<input type="text" class="form-control" name="cus_loan_count" id="cus_loan_count" readonly>
+							</div>
+						</div>
+
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+							<div class="form-group">
+								<label for="cus_frst_loanDate"> First Loan Date </label>
+								<input type="text" class="form-control" name="cus_frst_loanDate" id="cus_frst_loanDate" readonly>
+							</div>
+						</div>
+
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+							<div class="form-group">
+								<label for="cus_travel_cmpy"> Travel with Company </label>
+								<input type="text" class="form-control" name="cus_travel_cmpy" id="cus_travel_cmpy" readonly>
+							</div>
+						</div>
+					</div>
+
+					<hr>
+
+					<div class="row">
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+							<div class="form-group">
+								<label for="cus_monthly_income"> Monthly Income </label>
+								<input type="text" class="form-control" name="cus_monthly_income" id="cus_monthly_income" readonly>
+							</div>
+						</div>
+
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+							<div class="form-group">
+								<label for="cus_other_income"> Other Income </label>
+								<input type="text" class="form-control" name="cus_other_income" id="cus_other_income" readonly>
+							</div>
+						</div>
+
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+							<div class="form-group">
+								<label for="cus_support_income"> Support Income </label>
+								<input type="text" class="form-control" name="cus_support_income" id="cus_support_income" readonly>
+							</div>
+						</div>
+
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+							<div class="form-group">
+								<label for="cus_Commitment"> Commitment </label>
+								<input type="text" class="form-control" name="cus_Commitment" id="cus_Commitment" readonly>
+							</div>
+						</div>
+
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+							<div class="form-group">
+								<label for="cus_monDue_capacity"> Monthly Due Capacity </label>
+								<input type="text" class="form-control" name="cus_monDue_capacity" id="cus_monDue_capacity" readonly>
+							</div>
+						</div>
+
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+							<div class="form-group">
+								<label for="cus_loan_limit"> Customer Limit </label>
+								<input type="text" class="form-control" name="cus_loan_limit" id="cus_loan_limit" readonly>
+							</div>
+						</div>
+					</div>
+
+					<hr>
+					<div class="row">
+						<div class="col-12">
+							<button class="btn btn-primary" id="add_cus_label" style="padding: 5px 35px; float: right;" onclick="resetfeedback();getFeedbackLable();"><span class="icon-add"></span></button>
+						</div>
+					</div> <br>
+
+					<div class="row">
+						<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+							<div class="form-group" id="feedbackListTable">
+								<table class="table custom-table modalTable">
+									<thead>
+										<tr>
+											<th width="50"> S.No </th>
+											<th> User Name </th>
+											<th> Created Date </th>
+											<th> Feedback Label </th>
+											<th> Feedback </th>
+											<th> Remarks </th>
+										</tr>
+									</thead>
+									<tbody></tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+
+					<hr>
+
+					<div class="row">
+						<div class="col-xl-4 col-lg-6 col-md-8 col-sm-12 col-12">
+							<div class="form-group">
+								<label for="about_cus"> About Customer </label>
+								<textarea class="form-control" name="about_cus" id="about_cus" readonly></textarea>
+							</div>
+						</div>
+					</div>
+				</div><!-- Customer Summary Div END-->
+
+				<div id="cus_feedback_div" style="display: none;"> <!-- Customer Feedback Div START-->
+					<!-- alert messages -->
+					<div id="feedbackInsertOk" class="successalert"> Feedback Added Successfully <span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span></div>
+
+					<div id="feedbackUpdateok" class="successalert"> Feedback Updated Succesfully! <span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span></div>
+
+					<div id="feedbackNotOk" class="unsuccessalert"> Something Went Wrong! <span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span></div>
+
+					<div id="feedbackDeleteOk" class="unsuccessalert"> Feedback Deleted <span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span></div>
+
+					<div id="feedbackDeleteNotOk" class="unsuccessalert"> Feedback not Deleted <span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span></div>
+
+					<div class="row">
+						<div class="col-sm-11 col-md-11 col-lg-11 col-xl-11 col-12"></div>
+						<div class="col-sm-1 col-md-1 col-lg-1 col-xl-1 col-12">
+							<button class="btn btn-primary" id='close_cus_label' onclick="feedbackList()">Back</button>
+						</div>
+
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+							<div class="form-group" style="display: flex; align-items: center;">
+								<div>
+									<label for="feedback_label"> Feedback Label </label> <span class="required">&nbsp;*</span>
+									<select type="text" class="form-control" id="feedback_label" style="width: 330px;" name="feedback_label" tabindex='1'>
+										<option value=""> Select Feedback Label</option>
+									</select>
+									<span class="text-danger" id="feedbacklabelCheck" style='display:none'> Select Feedback Label</span>
+								</div>
+								<div style="padding: 20px 0px 0px 10px;  ">
+									<button class="btn btn-primary" id="add_cus_feedback" onclick="cusfeedbacklist()" style="display: <?= ($approvalaccess == 0 ? 'inline-block' : 'none'); ?>;"><span class="icon-add"></span></button>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+							<div class="form-group">
+								<label for="cus_feedback"> Feedback </label> <span class="required">&nbsp;*</span>
+								<select type="text" class="form-control" id="cus_feedback" name="cus_feedback" tabindex='2'>
+									<option value=""> Select Feedback </option>
+									<option value="1"> Bad </option>
+									<option value="2"> Poor </option>
+									<option value="3"> Average </option>
+									<option value="4"> Good </option>
+									<option value="5"> Excellent </option>
+								</select>
+								<span class="text-danger" id="feedbackCheck" style='display:none'> Select Feedback </span>
+							</div>
+						</div>
+
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12"></div>
+						<div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12">
+							<div class="form-group">
+								<label for="feedback_remark"> Remarks </label>
+								<textarea class="form-control" name="feedback_remark" id="feedback_remark" tabindex='3'></textarea>
+							</div>
+						</div>
+
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+							<input type="hidden" name="feedbackID" id="feedbackID">
+							<button type="button" name="feedbackBtn" id="feedbackBtn" class="btn btn-primary" style="margin-top: 19px;" tabindex='4'> Submit </button>
+						</div>
+					</div>
+					</br>
+
+					<div id="feedbackTable" class="table-responsive">
+						<table class="table custom-table">
+							<thead>
+								<tr>
+									<th width="50"> S.No </th>
+									<th > User Name </th>
+									<th> Created Date </th>
+									<th> Feedback Label </th>
+									<th> Feedback </th>
+									<th> ACTION </th>
+								</tr>
+							</thead>
+							<tbody></tbody>
+						</table>
+					</div>
+				</div> <!-- Customer Feedback Div END-->
+				
+				<div id="feedback_label_div" style="display: none;"> <!-- Feedback label Div START-->
+					<div class="row">
+						<div class="col-sm-11 col-md-11 col-lg-11 col-xl-11 col-12"></div>
+						<div class="col-sm-1 col-md-1 col-lg-1 col-xl-1 col-12">
+							<button class="btn btn-primary" id='close_feedback_label' onclick="getFeedbackLable()">Back</button>
+						</div>
+
+						<div class="col-md-12">
+							<div class="row">
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-10 col-12"></div>
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-10 col-12">
+									<div class="form-group">
+										<label for="feedbackname">Feedback Label</label>&nbsp;<span class="text-danger"></span>
+										<input type="hidden" name="fedbackname_id" id="fedbackname_id">
+										<input type="text" tabindex="4" class="form-control" id="feedbackname" name="feedbackname" placeholder="Enter Feedback Label">
+									</div>
+								</div>
+
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-10 col-12 d-flex align-items-center" style="margin-top: 20px;">
+									<div class="form-group">
+										<button type="submit" name="submit_feedback_lable" id="submit_feedback_lable" class="btn btn-primary" value="Submit" tabindex="5"><span class="icon-check"></span>&nbsp;Submit</button>
+									</div>
+								</div>
+							</div>
+							<br>
+						</div>
+						<div class="col-md-12" id="cus_feedbackListTable_div">
+							<table class="table custom-table" id="cus_feedbackListTable">
+								<thead>
+									<tr>
+										<th width="50"> S.No </th>
+										<th> Feedback Label  </th>
+										<th> ACTION </th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+						</div>
+					</div>
+				</div> <!-- Feedback label Div END-->
+				
+			</div> <!-- Modal box modal-body END -->
+			
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary closeCusModal" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ///////////////////////////////////////////////  Customer Summary  END /////////////////////////////////////////////////////////// -->
 
 <!-- Loan Summary Modal -->
 <div class="modal fade loansummary" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">

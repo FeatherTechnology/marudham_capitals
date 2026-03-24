@@ -3,7 +3,25 @@
 $(document).ready(function () {
     $('.closeModal').click(function () {
         $('#cusHistoryTable tbody').empty();
-    })
+    });
+
+    // Acknowledgement list Actions
+    $(document).on("click", '.ack-cancel', function () {
+        var remark = prompt("Do you want to Cancel this Acknowledgement?");
+        if (remark != null) {
+            $.post('requestFile/changeRequestState.php', { req_id: $(this).data('reqid'), state: 'cancel', remark, screen: 'ack' }, function (data) {
+                if (data.includes('Success')) {
+                    successSwal('Cancelled!', 'Acknowledgement has been Cancelled.');
+                } else {
+                    warningSwal('Error!', 'Something went wrong.');
+                }
+            })
+            return true;
+        } else {
+            return false;
+        }
+    });
+
 });//document ready end
 
 
@@ -47,6 +65,7 @@ function callOnClickEvents() {
                 hideOverlay();
             }, 1000);
         });
+
         $('a.loan-summary').click(function () {
             var cus_id = $(this).data('value');
             var req_id = $(this).data('value1');
@@ -62,6 +81,7 @@ function callOnClickEvents() {
                 }
             })
         });
+
         $('.move_issue').click(function () {
             var req_id = $(this).val();
             var cus_id = $(this).data('cusid');
@@ -101,24 +121,6 @@ function callOnClickEvents() {
                 })
             }
         });
-
-        // Acknowledgement list Actions
-        $(document).on("click", '.ack-cancel', function () {
-            var remark = prompt("Do you want to Cancel this Acknowledgement?");
-            if (remark != null) {
-                $.post('requestFile/changeRequestState.php', { req_id: $(this).data('reqid'), state: 'cancel', remark, screen: 'ack' }, function (data) {
-                    if (data.includes('Success')) {
-                        successSwal('Cancelled!', 'Acknowledgement has been Cancelled.');
-                    } else {
-                        warningSwal('Error!', 'Something went wrong.');
-                    }
-                })
-                return true;
-            } else {
-                return false;
-            }
-        });
-
 
         $('.loan-follow-chart').off('click').click(function () {
             let cus_id = $(this).data('cusid');
@@ -186,6 +188,7 @@ function callresetCustomerStatus(cus_id) {
         }
     });
 }
+
 function warningSwal(title, text) {
     Swal.fire({
         title: title,

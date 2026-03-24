@@ -101,25 +101,44 @@ $(document).ready(function () {
     $('.mort_proc').hide();
     $('.endor_proc').hide();
 
-    $('#submit_noc_handover').click(function (event) {
+    $('#submit_noc_handover').click(async function (event) {
 
         event.preventDefault();
 
-        if (validations() == true) {
+        let isValid = await validations();
+
+        if (isValid === true) {
+
             let confirmAction = confirm("Are you sure you want to submit NOC Handover ?");
             if (!confirmAction) return;
 
-            Promise.all([
-                updateNocTable()
-            ]).then(() => {
-                $('#close-noc-card').trigger('click'); // now executes AFTER everything is updated
-            })
-            .catch(err => {
+            try {
+                let response = await updateNocTable();
+
+                if (response.status == "success") {
+                    await Swal.fire({
+                        title: 'Submitted',
+                        icon: 'success',
+                        confirmButtonColor: '#009688'
+                    });
+
+                    OnLoadFunctions();
+                    $('#close-noc-card').trigger('click');
+
+                } else {
+                    Swal.fire({
+                        title: 'Error While Submitting',
+                        icon: 'error',
+                        confirmButtonColor: '#009688'
+                    });
+                }
+
+            } catch (err) {
                 console.error(err);
                 alert("Something went wrong!");
-            });
+            }
 
-        }else{
+        } else {
             scrollToFirstError('#noc_form');
         }
     });
@@ -513,43 +532,53 @@ function OnLoadFunctions() {
 
 }//Auto Load function END
 
+async function validations() {
+    let res = true;
 
-function validations() {
-    var res = true;
-     var noc_member = $('#noc_member').val(); var mem_relation_name = $('#mem_relation_name').val(); var fingerprint = $('.scanBtn').attr('disabled');
+    let noc_member = $('#noc_member').val();
+    let mem_relation_name = $('#mem_relation_name').val();
+    let fingerprint = $('.scanBtn').attr('disabled');
+
+    // Case 1
     if (noc_member == '') {
-        $('.noc_memberCheck').show()
-        event.preventDefault();
+        $('.noc_memberCheck').show();
         res = false;
     } else {
-        $('.noc_memberCheck').hide()
+        $('.noc_memberCheck').hide();
     }
 
-    if (noc_member = '3' && mem_relation_name == '') {
-        $('.mem_relation_nameCheck').show()
-        event.preventDefault();
+    // Case 2
+    if (noc_member == '3' && mem_relation_name == '') {
+        $('.mem_relation_nameCheck').show();
         res = false;
     } else {
-        $('.mem_relation_nameCheck').hide()
+        $('.mem_relation_nameCheck').hide();
     }
 
+    //Case 3
     // if (fingerprint != 'disabled') {
     //     $('.scanBtnCheck').show()
-    //     event.preventDefault();
     //     res = false;
     // } else {
     //     $('.scanBtnCheck').hide()
     // }
 
-    
+    // Case 4 (AJAX validation)
+    let receiveCheck = await getReceiveUserDetails();
+    if (receiveCheck) {
+        res = false;
+        swalError('Warning', `You don't have access to submit`);
+    }
+
     return res;
 }
 
 function updateNocTable() {
 
-    let cusidupd = $('#cusidupd').val();
-    let req_id = $('#req_id').val();
-    let noc_date = $('#noc_date').val();
+    let formData = new FormData();
+    formData.append('req_id', $('#req_id').val());
+    formData.append('noc_member', $('#noc_member').val());
+
     let noc_member = $('#noc_member').val();
     let mem_name = ''; // Initialize mem_name variable
 
@@ -560,42 +589,26 @@ function updateNocTable() {
         mem_name = $('#mem_name').val();
     }
 
-    var formData = new FormData();
-    formData.append('cusidupd', cusidupd);
-    formData.append('req_id', req_id);
-    formData.append('noc_date', noc_date);
-    formData.append('noc_member', noc_member);
-    formData.append('mem_name', mem_name); // Append mem_name
-    // ⭐ Return the AJAX promise
+    formData.append('mem_name', mem_name);
+
     return $.ajax({
         url: 'nocFile/updateNocHandover.php',
         type: 'POST',
         data: formData,
         contentType: false,
         processData: false,
-        cache: false
-    }).then(function (response) {
+        dataType: 'json'
+    });
+}
 
-        if (response == "Success") {
-            Swal.fire({
-                title: 'Submitted',
-                icon: 'success',
-                showConfirmButton: true,
-                confirmButtonColor: '#009688'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    OnLoadFunctions();
-                }
-            });
-        } else {
-            Swal.fire({
-                title: 'Error While Submitting',
-                icon: 'error',
-                showConfirmButton: true,
-                confirmButtonColor: '#009688'
-            });
-        }
+function getReceiveUserDetails() {
+    let cusId = $('#cusidupd').val();
 
-        return response; // important for promise chain
+    return new Promise((resolve, reject) => {
+        $.post('nocFile/getReceiveUserDetails.php', { cusId }, function (response) {
+            resolve(response == 1 ? true : false);
+        }, 'json').fail(function () {
+            reject(false);
+        });
     });
 }

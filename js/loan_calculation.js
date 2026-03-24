@@ -53,7 +53,7 @@ $(document).ready(function () {
 			$('#profit_method').prop('required', true);
 
 			if ($("#overdue").val() === '') {
-				swalError("Warning", "Please enter Overdue Penalty %");
+				swalError("Warning", "Please enter Overdue Penalty");
 				$("#overdue").focus();
 				isValid = false;
 			}
@@ -216,13 +216,4 @@ function changePercentinput(docmin, docmax, document_charge_min, document_charge
 	$('#' + docmax).text('Max %');
 	$('#' + document_charge_min).attr('readonly', false);
 	$('#' + document_charge_max).attr('readonly', false);
-}
-
-function swalError(title, text) {
-	Swal.fire({
-		icon: 'warning',
-		title: title,
-		text: text,
-		confirmButtonColor: '#009688',
-	});
 }

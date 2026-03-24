@@ -48,8 +48,8 @@ include '../ajaxconfig.php';
 <script type="text/javascript">
     $(function() {
         // Declare table variable to store the DataTable instance
+        $('#feedback_table').DataTable().destroy();
         var feedback_table = $('#feedback_table').DataTable({
-            ...getStateSaveConfig('feedback_table'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -63,28 +63,22 @@ include '../ajaxconfig.php';
                 this.api().column(0).nodes().each(function(cell, i) {
                     cell.innerHTML = i + 1;
                 });
-                searchFunction('feedback_table');
             },
             dom: 'lBfrtip',
             buttons: [{
-                    extend: 'excel',
-                    action: function(e, dt, button, config) {
-                        var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
-                        var dynamic = curDateJs('Customer_feedback_info'); // or any base
-                        config.title = dynamic; // for versions that use title as filename
-                        config.filename = dynamic; // for html5 filename
-                        defaultAction.call(this, e, dt, button, config);
-                    }
-                },
-                {
+                extend: 'excel',
+                action: function(e, dt, button, config) {
+                    var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                    var dynamic = curDateJs('Customer_feedback_info'); // or any base
+                    config.title = dynamic; // for versions that use title as filename
+                    config.filename = dynamic; // for html5 filename
+                    defaultAction.call(this, e, dt, button, config);
+                }
+                }, {
                     extend: 'colvis',
                     collectionLayout: 'fixed four-column',
-                }
-            ],
+                }],
         });
-
-        // Pass the table variable to the initColVisFeatures function
-        initColVisFeatures(feedback_table, 'feedback_table');
     });
 </script>
 <?php

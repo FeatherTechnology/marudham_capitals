@@ -2,7 +2,25 @@
 $(document).ready(function () {
     $('.closeModal').click(function () {
         $('#cusHistoryTable tbody').empty();
-    })
+    });
+    
+    // Approval list Actions
+    $(document).on("click", '.cancelapproval', function () {
+        var remark = prompt("Do you want to Cancel this Approval?");
+        if (remark != null) {
+            $.post('requestFile/changeRequestState.php', { req_id: $(this).data('reqid'), state: 'cancel', remark, screen: 'approval' }, function (data) {
+                if (data.includes('Success')) {
+                    successSwal('Cancelled!', 'Approval has been Cancelled.');
+                } else {
+                    warningSwal('Error!', 'Something went wrong.');
+                }
+            })
+            return true;
+        } else {
+            return false;
+        }
+    });
+
 });//document ready end
 
 function callOnClickEvents() {
@@ -123,23 +141,6 @@ function callOnClickEvents() {
                 }
             }, 'json')
 
-        });
-
-        // Approval list Actions
-        $(document).on("click", '.cancelapproval', function () {
-            var remark = prompt("Do you want to Cancel this Approval?");
-            if (remark != null) {
-                $.post('requestFile/changeRequestState.php', { req_id: $(this).data('reqid'), state: 'cancel', remark, screen: 'approval' }, function (data) {
-                    if (data.includes('Success')) {
-                        successSwal('Cancelled!', 'Approval has been Cancelled.');
-                    } else {
-                        warningSwal('Error!', 'Something went wrong.');
-                    }
-                })
-                return true;
-            } else {
-                return false;
-            }
         });
 
         hideOverlay();

@@ -47,16 +47,6 @@ $(document).ready(function () {
 
 });
 
-//alert message
-function swalError(title, text) {
-    Swal.fire({
-        icon: 'error',
-        title: title,
-        text: text,
-        confirmButtonColor: '#009688',
-    })
-}
-
 function cancelRevokeTable() {
     // Destroy any existing DataTable instance
     $('#cancel_revoke_table').DataTable().destroy();

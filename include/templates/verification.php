@@ -2562,6 +2562,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 
 </div>
 
+<div id="printcollection" style="display: none"></div>
 
 <!-- Add Family Members Modal -->
 <div class="modal fade addGroup" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
