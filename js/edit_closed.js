@@ -1,6 +1,6 @@
-function setNOCButton() {
+$(document).ready(function () {
 
-    $('.Move_to_noc').click(function () {
+    $(document).on('click', '.Move_to_noc', function () {
         var cus_id = $(this).data('value');
         var req_id = $(this).data('id');
         if (confirm('Do You want to Move to NOC?')) {
@@ -29,6 +29,4 @@ function setNOCButton() {
             })
         }
     });
-}
-
-
+});
