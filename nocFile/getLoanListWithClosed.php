@@ -46,13 +46,13 @@ if (isset($_SESSION["userid"])) {
         background-color: #fafafa;
     }
 
-    .dropdown:hover .dropdown-content {
+    /* .dropdown:hover .dropdown-content {
         display: block;
-    }
+    } */
 
-    .dropdown:hover .dropbtn {
+    /* .dropdown:hover .dropbtn {
         background-color: #3E8E41;
-    }
+    } */
 
     .btn-outline-secondary {
         color: #383737;

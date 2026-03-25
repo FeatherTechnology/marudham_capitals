@@ -2653,6 +2653,10 @@
         <script src="js/no_due_pay_report.js"></script>
     <?php }
 
+    if ($current_page == 'branch_request_count_report') { ?>
+        <script src="js/branch_request_count_report.js"></script>
+    <?php }
+
     if ($current_page == 'other_transaction_report') { ?>
         <script src="js/other_transaction_report.js"></script>
     <?php }
@@ -2709,8 +2713,12 @@
         <script src="js/verification_count_report.js"></script>
     <?php }
 
-      if ($current_page == 'approval_count_report') { ?>
+    if ($current_page == 'approval_count_report') { ?>
         <script src="js/approval_count_report.js"></script>
+    <?php }
+
+    if ($current_page == 'loan_issued_count_report') { ?>
+        <script src="js/loan_issued_count_report.js"></script>
     <?php }
 
     if ($current_page == 'promotion_count_report') { ?>
