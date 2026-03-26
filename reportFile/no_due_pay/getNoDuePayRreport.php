@@ -9,29 +9,14 @@ if (isset($_SESSION["userid"])) {
 }
 
 $user_based = '';
-if ($userid != 1) {
+if ($userid && $userid != 1) {
+    $userQry = $connect->query("SELECT report_access FROM USER WHERE user_id = $userid");
+    $user = $userQry->fetch();
+    $report_access = $user['report_access'];
 
-    $userQry = $connect->query("SELECT line_id, report_access FROM USER WHERE user_id = $userid ");
-    $rowuser = $userQry->fetch();
-    $line_id = $rowuser['line_id'];
-    $report_access = $rowuser['report_access'];
-
-    if ($report_access == '1') { //Report access individual.
-        $line_id = explode(',', $line_id);
-        $sub_area_list = array();
-        foreach ($line_id as $line) {
-            $lineQry = $connect->query("SELECT sub_area_id FROM area_line_mapping WHERE map_id = $line ");
-            $row_sub = $lineQry->fetch();
-            $sub_area_list[] = $row_sub['sub_area_id'];
-        }
-        $sub_area_ids = array();
-        foreach ($sub_area_list as $subarray) {
-            $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
-        }
-        $sub_area_list = array();
-        $sub_area_list = implode(',', $sub_area_ids);
-
-        $user_based = " AND cp.area_confirm_subarea IN ($sub_area_list)";
+    if ($report_access =='1') {
+        $user_based = " AND req.insert_login_id = '$userid' ";
+        
     }
 }
 
@@ -126,7 +111,8 @@ JOIN area_list_creation al ON
     cp.area_confirm_area = al.area_id
 JOIN sub_area_list_creation sal ON
     cp.area_confirm_subarea = sal.sub_area_id
-JOIN area_line_mapping alm ON FIND_IN_SET(sal.sub_area_id, alm.sub_area_id)
+JOIN area_line_mapping_sub_area almsa ON sal.sub_area_id = almsa.sub_area_id
+JOIN area_line_mapping alm ON almsa.line_map_id = alm.map_id
         --  JOIN area_group_mapping ag ON FIND_IN_SET(sal.sub_area_id, ag.sub_area_id)
         --  JOIN area_duefollowup_mapping adm ON FIND_IN_SET(al.area_id, adm.area_id)
 JOIN acknowlegement_loan_calculation lc ON

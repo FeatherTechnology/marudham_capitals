@@ -33,9 +33,10 @@
 							<table id="collection_report_table" class="table custom-table">
 								<thead>
 									<th>S.No</th>
-									<th>Group</th>
 									<th>Line</th>
+									<th>Group</th>
 									<th>Followup</th>
+									<th>Branch</th>
 									<th>Loan ID</th>
 									<th>Loan Date</th>
 									<th>Aadhaar Number</th>
@@ -71,6 +72,7 @@
 								<tfoot>
 									<tr>
 										<td colspan="21"></td>
+										<td></td>
 										<td></td>
 										<td></td>
 										<td></td>

@@ -39,8 +39,8 @@
 									<th>Relationship</th>
 									<th>Area</th>
 									<th>Sub Area</th>
-									<th>Group</th>
 									<th>Line</th>
+									<th>Group</th>
 									<th>Followup</th>
 									<th>Branch</th>
 									<th>Loan Category</th>

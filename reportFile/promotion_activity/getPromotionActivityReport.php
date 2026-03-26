@@ -17,7 +17,7 @@ $id_list = implode(',', array_filter(explode(',', $user_ids), 'is_numeric'));
 if (!empty($id_list)) {
     $where .= " AND np.insert_login_id IN ($id_list) ";
 }
-
+$promo_type_arr = ['1'=>'Direct','2'=>'Mobile'];
 $column = array(
     'np.id',
     'np.cus_id',
@@ -28,9 +28,10 @@ $column = array(
     'COALESCE(cp.mobile1, ncp.mobile)',
     'COALESCE(al.area_name, ncp.area)',
     'COALESCE(sl.sub_area_name, ncp.sub_area)',
-    'bc.branch_name',
-    'agm.group_name',
     'alm.line_name',
+    'agm.group_name',
+    'bc.branch_name',
+    'np.promo_type',
     'np.status',
     'np.remark',
     'np.follow_date',
@@ -43,6 +44,7 @@ $query = "SELECT
     np.cus_id, 
     cp.autogen_cus_id,
     np.created_date, 
+    np.promo_type,
     np.status, 
     np.remark, 
     u.role,
@@ -68,10 +70,10 @@ LEFT JOIN
     area_list_creation al ON al.area_id = COALESCE(cp.area, ncp.area)
 LEFT JOIN 
     sub_area_list_creation sl ON   sl.sub_area_id = COALESCE(cp.sub_area, ncp.sub_area) 
-LEFT JOIN 
-    area_group_mapping agm ON FIND_IN_SET(sl.sub_area_id, agm.sub_area_id) 
-LEFT JOIN 
-    area_line_mapping alm ON FIND_IN_SET(sl.sub_area_id, alm.sub_area_id) 
+LEFT JOIN area_group_mapping_sub_area agmsa ON sl.sub_area_id = agmsa.sub_area_id
+LEFT JOIN area_group_mapping agm ON agmsa.group_map_id = agm.map_id
+LEFT JOIN area_line_mapping_sub_area almsa ON sl.sub_area_id = almsa.sub_area_id
+LEFT JOIN area_line_mapping alm ON almsa.line_map_id = alm.map_id
 LEFT JOIN 
     branch_creation bc ON agm.branch_id = bc.branch_id  
 
@@ -134,9 +136,10 @@ foreach ($result as $row) {
     $sub_array[] = $row['mobile1'];
     $sub_array[] = $row['area_name'];
     $sub_array[] = $row['sub_area_name'];
-    $sub_array[] = $row['branch_name'];
-    $sub_array[] = $row['group_name'];
     $sub_array[] = $row['line_name'];
+    $sub_array[] = $row['group_name'];
+    $sub_array[] = $row['branch_name'];   
+    $sub_array[] = $promo_type_arr[$row['promo_type']];   
     $sub_array[] = $row['status'];
     $sub_array[] = $row['remark'];
     $sub_array[] = date('d-m-Y', strtotime($row['follow_date']));

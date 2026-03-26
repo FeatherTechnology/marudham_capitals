@@ -25,8 +25,8 @@
 							<table id="closed_report_table" class="table custom-table">
 								<thead>
 									<th>S.No</th>
-									<th>Group</th>
 									<th>Line</th>
+									<th>Group</th>
 									<th>Branch</th>
 									<th>Loan ID</th>
 									<th>Doc ID</th>

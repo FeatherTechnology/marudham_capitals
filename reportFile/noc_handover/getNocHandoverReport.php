@@ -9,80 +9,18 @@ if (isset($_SESSION["userid"])) {
 
 $user_based = "";
 $where = "";
-
 /* ---------------- USER ACCESS ---------------- */
+$user_based = '';
 if ($userid != 1) {
-
-    $userQry = $connect->query("
-        SELECT group_id, line_id, due_followup_lines, report_access, noc_mapping_access 
-        FROM USER 
-        WHERE user_id = $userid
-    ");
+    $userQry = $connect->query("SELECT report_access FROM user WHERE user_id = $userid ");
     $rowuser = $userQry->fetch();
-
     $report_access = $rowuser['report_access'];
-    $accessType    = $rowuser['noc_mapping_access'];
-    $sub_area_ids  = [];
 
-    if ($report_access == '1') {
-
-        /* 🔹 GROUP BASED */
-        if ($accessType == 1) {
-            $group_ids = explode(',', $rowuser['group_id']);
-            foreach ($group_ids as $group) {
-                $groupQry = $connect->query("
-                    SELECT sub_area_id 
-                    FROM area_group_mapping 
-                    WHERE map_id = $group
-                ");
-                if ($row = $groupQry->fetch()) {
-                    $sub_area_ids = array_merge($sub_area_ids, explode(',', $row['sub_area_id']));
-                }
-            }
-        }
-
-        /* 🔹 LINE BASED */
-        elseif ($accessType == 2) {
-            $line_ids = explode(',', $rowuser['line_id']);
-            foreach ($line_ids as $line) {
-                $lineQry = $connect->query("
-                    SELECT sub_area_id 
-                    FROM area_line_mapping 
-                    WHERE map_id = $line
-                ");
-                if ($row = $lineQry->fetch()) {
-                    $sub_area_ids = array_merge($sub_area_ids, explode(',', $row['sub_area_id']));
-                }
-            }
-        }
-
-        /* 🔹 DUE FOLLOWUP BASED */
-        elseif ($accessType == 3) {
-            $due_ids = explode(',', $rowuser['due_followup_lines']);
-            foreach ($due_ids as $due) {
-                $dueQry = $connect->query("
-                    SELECT area_id 
-                    FROM area_duefollowup_mapping 
-                    WHERE map_id = $due
-                ");
-                if ($row = $dueQry->fetch()) {
-                    $sub_area_ids = array_merge($sub_area_ids, explode(',', $row['area_id']));
-                }
-            }
-        }
-
-        $sub_area_ids  = array_unique(array_filter($sub_area_ids));
-        $sub_area_list = implode(',', $sub_area_ids);
-
-        $colName = ($accessType == 3)
-            ? "cp.area_confirm_area"
-            : "cp.area_confirm_subarea";
-
-        if ($sub_area_list != '') {
-            $user_based = " AND $colName IN ($sub_area_list) ";
-        }
+    if ($report_access == '1') { //Report access individual.
+        $user_based = " AND nc.update_login_id = '$userid' ";
     }
 }
+
 
 /* ---------------- DATE FILTER ---------------- */
 if (!empty($_POST['from_date']) && !empty($_POST['to_date'])) {
@@ -107,6 +45,7 @@ $column = array(
     'al.area_name',
     'sal.sub_area_name',
     'alm.line_name',
+    'agm.group_name',
     'bc.branch_name',
     'nc.noc_handover_date',
     'nc.noc_id',
@@ -125,6 +64,7 @@ $query = "SELECT
         al.area_name,
         sal.sub_area_name,
         alm.line_name,
+        agm.group_name,
         bc.branch_name,
         nc.update_login_id,
         nc.noc_handover_date,
@@ -137,7 +77,10 @@ $query = "SELECT
         LEFT JOIN noc nc ON nc.req_id = ii.req_id
         LEFT JOIN area_list_creation al ON cp.area_confirm_area = al.area_id
         LEFT JOIN sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
-        LEFT JOIN area_line_mapping alm ON FIND_IN_SET(sal.sub_area_id, alm.sub_area_id)
+        LEFT JOIN area_group_mapping_sub_area agmsa ON sal.sub_area_id = agmsa.sub_area_id
+        LEFT JOIN area_group_mapping agm ON agmsa.group_map_id = agm.map_id
+        LEFT JOIN area_line_mapping_sub_area almsa ON sal.sub_area_id = almsa.sub_area_id
+        LEFT JOIN area_line_mapping alm ON almsa.line_map_id = alm.map_id
         JOIN branch_creation bc ON alm.branch_id = bc.branch_id
         LEFT JOIN request_creation req ON ii.req_id = req.req_id
         LEFT JOIN verification_family_info fam ON nc.noc_member ='3' AND nc.mem_name = fam.id AND nc.cus_id = fam.cus_id
@@ -157,6 +100,7 @@ if (isset($_POST['search'])) {
             OR al.area_name LIKE '%" . $_POST['search'] . "%' 
             OR sal.sub_area_name LIKE '%" . $_POST['search'] . "%' 
             OR alm.line_name LIKE '%" . $_POST['search'] . "%' 
+            OR agm.group_name LIKE '%" . $_POST['search'] . "%' 
             OR bc.branch_name LIKE '%" . $_POST['search'] . "%' 
             OR nc.noc_handover_date LIKE '%" . $_POST['search'] . "%') ";
     }
@@ -205,6 +149,7 @@ foreach ($result as $row) {
     $sub_array[] = $row['area_name'];
     $sub_array[] = $row['sub_area_name'];
     $sub_array[] = $row['line_name'];
+    $sub_array[] = $row['group_name'];
     $sub_array[] = $row['branch_name'];
     $sub_array[] = date('d-m-Y', strtotime($row['noc_handover_date']));
     $sub_array[] = $user_name;

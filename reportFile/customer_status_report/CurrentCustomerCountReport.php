@@ -48,7 +48,7 @@ if ($type == 1) {
 
     $line_str  = implode(',', $line);
     $condition = "alm.map_id IN ($line_str)";
-    $joinTable = "JOIN area_line_mapping alm ON FIND_IN_SET(al.area_id, alm.area_id)";
+    $joinTable = "JOIN area_line_mapping_area alma ON al.area_id = alma.area_id JOIN area_line_mapping alm ON alm.map_id = alma.line_map_id";
     $nameField = "alm.line_name";
 } else if ($type == 2) {
     // 🔹 User based
@@ -83,7 +83,8 @@ if ($type == 1) {
     }
     $line_id_str = implode(',', $line_ids);
     $condition   = "alm.map_id IN ($line_id_str)";
-    $joinTable   = "JOIN area_line_mapping alm ON FIND_IN_SET(al.area_id, alm.area_id)";
+    $joinTable   = "JOIN area_line_mapping_area alma ON al.area_id = alma.area_id
+    JOIN area_line_mapping alm ON alm.map_id = alma.line_map_id";
     $userName    = implode(', ', array_unique($display_names));
     $nameField   = "NULL";
 } else if ($type == 3) {
@@ -95,7 +96,8 @@ if ($type == 1) {
 
     $group_str  = implode(',', $group_map);
     $condition  = "ag.map_id IN ($group_str)";
-    $joinTable  = "JOIN area_group_mapping ag ON FIND_IN_SET(al.area_id, ag.area_id)";
+    $joinTable  = "JOIN area_group_mapping_area agma ON al.area_id = agma.area_id
+    JOIN area_group_mapping ag ON ag.map_id = agma.group_map_id";
     $nameField  = "ag.group_name";
 } else if ($type == 4) {
     if (empty($due_followup)) {
@@ -104,7 +106,8 @@ if ($type == 1) {
     }
 
     $due_followup_str = implode(',', $due_followup);
-    $joinTable = "JOIN area_duefollowup_mapping adm ON FIND_IN_SET(al.area_id, adm.area_id)";
+    $joinTable = "JOIN area_duefollowup_mapping_area adma ON al.area_id = adma.area_id
+    JOIN area_duefollowup_mapping adm ON adm.map_id = adma.duefollowup_map_id";
     // Condition only for line_ids
     $condition = "adm.map_id IN ($due_followup_str)";
     $nameField = "adm.duefollowup_name";
