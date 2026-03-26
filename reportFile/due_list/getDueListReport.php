@@ -3,51 +3,12 @@ session_start();
 include '../../ajaxconfig.php';
 include '../../moneyFormatIndia.php';
 
-if (isset($_SESSION["userid"])) {
-    $userid = $_SESSION["userid"];
-    $report_access = '2'; //Report Access Overall
-}
-
-$user_based = '';
-if ($userid != 1) {
-
-    $userQry = $connect->query("SELECT line_id, report_access FROM USER WHERE user_id = $userid ");
-    $rowuser = $userQry->fetch();
-    $line_id = $rowuser['line_id'];
-    $report_access = $rowuser['report_access'];
-
-    if ($report_access == '1') { //Report access individual.
-        $line_id = explode(',', $line_id);
-        $sub_area_list = array();
-        foreach ($line_id as $line) {
-            $lineQry = $connect->query("SELECT sub_area_id FROM area_line_mapping WHERE map_id = $line ");
-            $row_sub = $lineQry->fetch();
-            $sub_area_list[] = $row_sub['sub_area_id'];
-        }
-        $sub_area_ids = array();
-        foreach ($sub_area_list as $subarray) {
-            $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
-        }
-        $sub_area_list = array();
-        $sub_area_list = implode(',', $sub_area_ids);
-
-        $user_based = " AND cp.area_confirm_subarea IN ($sub_area_list) AND coll.insert_login_id = '$userid' ";
-    }
-}
-
-$where = "1";
-
 if (isset($_POST['to_date']) && $_POST['to_date'] != '') {
     $to_date = date('Y-m-d', strtotime($_POST['to_date']));
-    $where  = "(date(coll.coll_date) <= '" . $to_date . "') ";
-    $li_where  = "AND date(li.created_date) <= date('$to_date') AND balance_amount = '0' ";
 } else {
     $to_date = date('Y-m-d');
-    $where  = "(date(coll.coll_date) <= '" . $to_date . "') ";
-    $li_where  = "AND date(li.created_date) <= date('$to_date') AND balance_amount = '0' ";
 }
 
-$where  .= $user_based;
 
 $consider_lvl_arr = [1 => 'Bronze', 2 => 'Silver', 3 => 'Gold', 4 => 'Platinum', 5 => 'Diamond'];
 $statusObj = [
@@ -61,9 +22,10 @@ $statusObj = [
 
 $column = array(
     'ii.loan_id',
-    // 'ag.group_name',
     'alm.line_name',
-    // 'adm.duefollowup_name',
+    'agm.group_name',
+    'adm.duefollowup_name',
+    'bc.branch_name',
     'ii.loan_id',
     'ii.updated_date',
     'lc.due_start_from',
@@ -118,7 +80,7 @@ $qry = "SELECT req.req_id
             WHERE coll_date <= '$to_date' GROUP BY req_id 
         ) AS latest_collection ON li.req_id = latest_collection.req_id 
         LEFT JOIN collection c ON latest_collection.req_id = c.req_id AND latest_collection.max_coll_date = c.coll_date 
-        WHERE DATE(cc.closing_date) >= DATE('$to_date') AND DATE(li.created_date) <= DATE('$to_date') AND ( c.req_id IS NULL OR (c.bal_amt - c.due_amt_track) > 0 ) AND balance_amount = '0'";
+        WHERE DATE(cc.closing_date) >= DATE('$to_date') AND DATE(li.created_date) <= DATE('$to_date') AND ( c.req_id IS NULL OR (c.bal_amt - c.due_amt_track) > 0 ) AND balance_amount = '0'"; 
 
 $run = $connect->query($qry);
 $req_id_list = [];
@@ -128,44 +90,7 @@ while ($row = $run->fetch()) {
 $req_id_list = implode(',', $req_id_list);
 
 
-$query = "SELECT
-    ii.updated_date AS loan_date,
-    lc.maturity_month AS maturity_date,
-    lc.cus_id_loan,
-    cr.autogen_cus_id,
-    lc.cus_name_loan,
-    lc.loan_amt,
-    lc.due_amt_cal,
-    lc.due_period,
-    lc.tot_amt_cal,
-    lc.sub_category,
-    lc.due_start_from,
-    lc.due_method_scheme,
-    lc.due_method_calc,
-    cr.mobile1,
-    -- ag.group_name,
-    alm.line_name AS line,
-    --  adm.duefollowup_name,
-    ii.loan_id,
-    al.area_name,
-    sal.sub_area_name,
-    lcc.loan_category_creation_name AS loan_cat_name,
-    ac.ag_name,
-    iv.responsible,
-    cls.closed_sts,
-    cls.consider_level,
-    iv.cus_status,
-    ack.updated_date,
-    vfi.famname,
-    vfi.relationship,
-    vfi.relation_Mobile,
-    IFNULL(NULLIF(c.pending, ''), 0) AS pending,
-    IFNULL(NULLIF(c.payable_amt, ''), 0) AS payable_amt,
-    IFNULL(NULLIF(c.total_paid_track, ''), 0) AS total_paid_track,
-    IFNULL(NULLIF(c.due_amt_track, ''), 0) AS due_amt_track,
-    IFNULL(NULLIF(c.total_due_amt, ''), 0) AS total_due_amt,
-    IFNULL(NULLIF(c.bal_amt, ''), lc.tot_amt_cal) AS bal_amt,
-    IFNULL(NULLIF(c.coll_id, ''), 0) AS coll_id
+$baseQuery = "
 FROM
     acknowlegement_loan_calculation lc
 JOIN 
@@ -182,10 +107,13 @@ JOIN
     area_list_creation al ON cp.area_confirm_area = al.area_id
 JOIN 
     sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
-JOIN 
-    area_line_mapping alm ON FIND_IN_SET( sal.sub_area_id, alm.sub_area_id )
--- JOIN area_group_mapping ag ON FIND_IN_SET(sal.sub_area_id, ag.sub_area_id)
--- JOIN area_duefollowup_mapping adm ON FIND_IN_SET(al.area_id, adm.area_id)
+LEFT JOIN area_group_mapping_sub_area agmsa ON sal.sub_area_id = agmsa.sub_area_id
+LEFT JOIN area_group_mapping agm ON agmsa.group_map_id = agm.map_id
+LEFT JOIN area_line_mapping_sub_area almsa ON sal.sub_area_id = almsa.sub_area_id
+LEFT JOIN area_line_mapping alm ON almsa.line_map_id = alm.map_id
+LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id
+LEFT JOIN area_duefollowup_mapping_area adma ON al.area_id = adma.area_id
+LEFT JOIN area_duefollowup_mapping adm ON adma.duefollowup_map_id = adm.map_id
 JOIN 
     in_verification iv ON lc.req_id = iv.req_id
 JOIN 
@@ -218,7 +146,7 @@ WHERE
 
 if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {
-        $query .= " and (ii.loan_id LIKE '%" . $_POST['search'] . "%'
+        $baseQuery .= " and (ii.loan_id LIKE '%" . $_POST['search'] . "%'
                         OR ii.updated_date LIKE '%" . $_POST['search'] . "%'
                         OR lc.due_start_from LIKE '%" . $_POST['search'] . "%'
                         OR lc.maturity_month LIKE '%" . $_POST['search'] . "%'
@@ -228,9 +156,10 @@ if (isset($_POST['search'])) {
                         OR cr.mobile1 LIKE '%" . $_POST['search'] . "%'
                         OR al.area_name LIKE '%" . $_POST['search'] . "%'
                         OR sal.sub_area_name LIKE '%" . $_POST['search'] . "%'
-                        -- OR ag.group_name LIKE '%" . $_POST['search'] . "%' 
+                        OR agm.group_name LIKE '%" . $_POST['search'] . "%' 
                          OR alm.line_name LIKE '%" . $_POST['search'] . "%' 
-                        -- OR adm.duefollowup_name LIKE '%" . $_POST['search'] . "%' 
+                         OR bc.branch_name LIKE '%" . $_POST['search'] . "%' 
+                        OR adm.duefollowup_name LIKE '%" . $_POST['search'] . "%' 
                         OR lc.sub_category LIKE '%" . $_POST['search'] . "%'
                         OR ac.ag_name LIKE '%" . $_POST['search'] . "%'
                         OR iv.responsible LIKE '%" . $_POST['search'] . "%'
@@ -242,31 +171,76 @@ if (isset($_POST['search'])) {
                         OR lcc.loan_category_creation_name LIKE '%" . $_POST['search'] . "%') ";
     }
 }
+$orderBy = '';
 if (isset($_POST['order'])) {
-    $col = $column[$_POST['order'][0]['column']];
-    $dir = $_POST['order'][0]['dir'];
-    $query .= " ORDER BY CAST($col AS UNSIGNED) $dir ";
-} else {
-    $query .= " ";
+    $orderBy = " ORDER BY " . $column[$_POST['order']['0']['column']] . " " . $_POST['order']['0']['dir'];
 }
 
-$query1 = "";
-if ($_POST['length'] != -1) {
-    $query1 = " LIMIT " . $_POST['start'] . ", " . $_POST['length'];
+/* ---------- Pagination ---------- */
+$limit = '';
+if (!isset($_POST['download'])) {
+    if ($_POST['length'] != -1) {
+        $limit = " LIMIT " . $_POST['start'] . ", " . $_POST['length'];
+    }
 }
 
-$statement = $connect->prepare($query);
+/* ---------- Total records ---------- */
+$totalStmt = $connect->prepare("SELECT count(req_id) as count_result  FROM request_creation WHERE cus_status BETWEEN 14 AND 18 ");
+$totalStmt->execute();
+$recordsTotal = (int) $totalStmt->fetchColumn();
 
+/* ---------- Filtered records ---------- */
+$countStmt = $connect->prepare("SELECT COUNT(*) $baseQuery");
+$countStmt->execute();
+$recordsFiltered = (int) $countStmt->fetchColumn();
+
+/* ---------- Data query ---------- */
+$dataQuery = "SELECT
+    ii.updated_date AS loan_date,
+    lc.maturity_month AS maturity_date,
+    lc.cus_id_loan,
+    cr.autogen_cus_id,
+    lc.cus_name_loan,
+    lc.loan_amt,
+    lc.due_amt_cal,
+    lc.due_period,
+    lc.tot_amt_cal,
+    lc.sub_category,
+    lc.due_start_from,
+    lc.due_method_scheme,
+    lc.due_method_calc,
+    cr.mobile1,
+    agm.group_name,
+    alm.line_name AS line,
+    bc.branch_name,
+     adm.duefollowup_name,
+    ii.loan_id,
+    al.area_name,
+    sal.sub_area_name,
+    lcc.loan_category_creation_name AS loan_cat_name,
+    ac.ag_name,
+    iv.responsible,
+    cls.closed_sts,
+    cls.consider_level,
+    iv.cus_status,
+    ack.updated_date,
+    vfi.famname,
+    vfi.relationship,
+    vfi.relation_Mobile,
+    IFNULL(NULLIF(c.pending, ''), 0) AS pending,
+    IFNULL(NULLIF(c.payable_amt, ''), 0) AS payable_amt,
+    IFNULL(NULLIF(c.total_paid_track, ''), 0) AS total_paid_track,
+    IFNULL(NULLIF(c.due_amt_track, ''), 0) AS due_amt_track,
+    IFNULL(NULLIF(c.total_due_amt, ''), 0) AS total_due_amt,
+    IFNULL(NULLIF(c.bal_amt, ''), lc.tot_amt_cal) AS bal_amt,
+    IFNULL(NULLIF(c.coll_id, ''), 0) AS coll_id
+            $baseQuery
+            $orderBy
+            $limit
+        ";
+$statement = $connect->prepare($dataQuery);
 $statement->execute();
-
-$number_filter_row = $statement->rowCount();
-
-$statement = $connect->prepare($query . $query1);
-
-$statement->execute();
-
 $result = $statement->fetchAll();
-
 $data = array();
 $sno = 1;
 foreach ($result as $row) {
@@ -317,9 +291,11 @@ foreach ($result as $row) {
 
     $sub_array   = array();
     $sub_array[] = $sno;
-    // $sub_array[] = $row['group_name'];
+
     $sub_array[] = $row['line'];
-    // $sub_array[] = $row['duefollowup_name'];
+    $sub_array[] = $row['group_name'];
+    $sub_array[] = $row['duefollowup_name'];
+    $sub_array[] = $row['branch_name'];
     $sub_array[] = $row['loan_id'];
     $sub_array[] = date('d-m-Y', strtotime($row['loan_date']));
     $sub_array[] = date('d-m-Y', strtotime($row['due_start_from']));
@@ -378,17 +354,12 @@ foreach ($result as $row) {
     $sno = $sno + 1;
 }
 
-function count_all_data($connect)
-{
-    $query = $connect->query("SELECT count(req_id) as count_result  FROM request_creation WHERE cus_status BETWEEN 14 AND 18");
-    $statement = $query->fetch();
-    return intVal($statement['count_result']);
-}
+
 
 $output = array(
-    'draw' => intval($_POST['draw']),
-    'recordsTotal' => count_all_data($connect),
-    'recordsFiltered' => $number_filter_row,
+    'draw' => isset($_POST['draw']) ? intval($_POST['draw']) : 0, // ✅ safe for both table & download
+    'recordsTotal' => $recordsTotal,
+    'recordsFiltered' => $recordsFiltered,
     'data' => $data
 );
 

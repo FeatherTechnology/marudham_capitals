@@ -46,8 +46,8 @@ JOIN acknowlegement_customer_profile cp
     ON cf.req_id = cp.req_id
 JOIN area_list_creation al 
     ON cp.area_confirm_area = al.area_id
-JOIN area_line_mapping alm 
-    ON FIND_IN_SET(al.area_id, alm.area_id)
+JOIN area_line_mapping_area alma ON al.area_id = alma.area_id
+JOIN area_line_mapping alm ON alma.line_map_id = alm.map_id
 
 WHERE DATE(cf.created_date) BETWEEN '$from_date' AND '$to_date'
 GROUP BY alm.line_name

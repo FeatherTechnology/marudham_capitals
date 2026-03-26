@@ -52,8 +52,8 @@ $coll_location_arr = [
 
 $column = array(
     'cs.id',
-    'agm.group_name',
     'alm.line_name',
+    'agm.group_name',
     'bc.branch_name',
     'ii.loan_id',
     'ad.doc_id',
@@ -205,8 +205,8 @@ $sno = 1;
 foreach ($result as $row) {
     $sub_array   = array();
     $sub_array[] = $sno++;
-    $sub_array[] = $row['group_name'];
     $sub_array[] = $row['line'];
+    $sub_array[] = $row['group_name'];
     $sub_array[] = $row['branch_name'];
     $sub_array[] = $row['loan_id'];
     $sub_array[] = $row['doc_id'];

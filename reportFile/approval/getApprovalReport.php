@@ -65,8 +65,8 @@ $column = array(
     'alc.cus_name_loan',
     'al.area_name',
     'sal.sub_area_name',
-    'agm.group_name',
     'alm.line_name',
+    'agm.group_name',
     'bc.branch_name',
     'lcc.loan_category_creation_name',
     'alc.sub_category',
@@ -197,8 +197,8 @@ foreach ($result as $row) {
     $sub_array[] = $row['cus_name_loan'];
     $sub_array[] = $row['area_name'];
     $sub_array[] = $row['sub_area_name'];
-    $sub_array[] = $row['group_name'];
     $sub_array[] = $row['line_name'];
+    $sub_array[] = $row['group_name'];
     $sub_array[] = $row['branch_name'];
     $sub_array[] = $row['loan_category_creation_name'];
     $sub_array[] = $row['sub_category'];

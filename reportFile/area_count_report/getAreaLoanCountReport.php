@@ -1,7 +1,7 @@
 <?php
 session_start();
 include '../../ajaxconfig.php';
-
+include "../../user_based_sub_area_Ids.php";
 $userid = $_SESSION['userid'] ?? 0;
 $draw   = intval($_POST['draw'] ?? 1);
 
@@ -17,19 +17,9 @@ if ($userid != 1) {
     $userRow = $userQry->fetch(PDO::FETCH_ASSOC);
 
     if ($userRow && $userRow['report_access'] == '1') {
-        $line_ids = explode(',', $userRow['line_id']);
-        $sub_area_ids = [];
-        foreach ($line_ids as $line) {
-            $subQry = $connect->query("SELECT sub_area_id FROM area_line_mapping WHERE map_id = $line");
-            $subRow = $subQry->fetch(PDO::FETCH_ASSOC);
-            if (!empty($subRow['sub_area_id'])) {
-                $sub_area_ids = array_merge($sub_area_ids, explode(',', $subRow['sub_area_id']));
-            }
-        }
-        $sub_area_ids = array_unique(array_filter($sub_area_ids));
-        if (!empty($sub_area_ids)) {
-            $user_filter = " AND cp.area_confirm_subarea IN (" . implode(',', $sub_area_ids) . ") ";
-        }
+        $sub_area_list = getUserSubAreaList($connect, 'line');
+        $user_based = " AND cp.area_confirm_subarea IN ($sub_area_list) ";
+       
     }
 }
 
@@ -114,8 +104,10 @@ $sql = " SELECT
         JOIN in_issue ii ON lc.req_id = ii.req_id
         JOIN in_verification iv ON lc.req_id = iv.req_id
         JOIN area_list_creation al ON cp.area_confirm_area = al.area_id
-        LEFT JOIN area_line_mapping alm ON FIND_IN_SET(al.area_id, alm.area_id)
-        LEFT JOIN area_group_mapping agm ON FIND_IN_SET(al.area_id, agm.area_id)
+        JOIN area_line_mapping_area alma ON al.area_id = alma.area_id 
+        JOIN area_line_mapping alm ON alm.map_id = alma.line_map_id
+        JOIN area_group_mapping_area agma ON al.area_id = agma.area_id
+        JOIN area_group_mapping agm ON agm.map_id = agma.group_map_id
         LEFT JOIN (
             SELECT req_id, SUM(due_amt_track) AS total_due_amt
             FROM collection

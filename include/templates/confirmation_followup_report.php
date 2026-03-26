@@ -26,6 +26,8 @@
                                 <thead>
                                     <th>S.No</th>
                                     <th>Line</th>
+                                    <th>Group</th>
+                                    <th>Branch</th>
                                     <th>Loan ID</th>
                                     <th>Loan Date</th>
                                     <th>Aadhaar Number</th>
