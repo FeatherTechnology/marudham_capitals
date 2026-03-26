@@ -1,4 +1,3 @@
-
 // Document is ready
 $(document).ready(function () {
     $('.closeModal').click(function () {
@@ -226,19 +225,9 @@ $(document).ready(function () {
                 cache: false,
                 success: function (result) {
                     if (result.response.includes('Completed')) {
-                        Swal.fire({
-                            title: result.response,
-                            html: `<p style="font-size: 20px;"> The Loan ID is: <b>${result.loanid}</b><br> The Doc ID is: <b>${result.docid}</b> </p>`,
-                            icon: 'success',
-                            showConfirmButton: true,
-                            confirmButtonColor: '#009688',
-                            confirmButtonText: 'OK'
-                        }).then((swalResult) => {
-                            // Redirect only if user clicks OK
-                            if (swalResult.isConfirmed) {
-                                window.location = 'edit_loan_issue';
-                            }
-                        });
+                        successSwal(result.response, `<p style="font-size: 20px;"> The Loan ID is: <b>${result.loanid}</b><br> The Doc ID is: <b>${result.docid}</b> </p>`);
+                    } else {
+                        warningSwal('Error', result.message);
                     }
                 }
             })
@@ -257,28 +246,9 @@ $(document).ready(function () {
                 cache: false,
                 success: function (response) {
                     if (response.includes('Removed')) {
-                        Swal.fire({
-                            title: response,
-                            icon: 'success',
-                            showConfirmButton: true,
-                            confirmButtonColor: '#009688',
-                            confirmButtonText: 'OK'
-                        }).then((result) => {
-                            // Redirect only if OK is clicked
-                            if (result.isConfirmed) {
-                                window.location = 'edit_loan_issue';
-                            }
-                        });
-                    }
-                    else if (response.includes('Error')) {
-                        Swal.fire({
-                            timerProgressBar: true,
-                            timer: 2000,
-                            title: response,
-                            icon: 'error',
-                            showConfirmButton: true,
-                            confirmButtonColor: '#009688'
-                        });
+                        successSwal('Success', response);
+                    }else if (response.includes('Error')) {
+                        warningSwal('Error', response);
                     }
                 }
             })
@@ -287,17 +257,14 @@ $(document).ready(function () {
 
 });//document ready end
 
-
-
 function warningSwal(title, text) {
     Swal.fire({
         title: title,
         html: text,
         icon: 'warning',
-        showConfirmButton: false,
-        timerProgressBar: true,
-        timer: 2000,
-        allowOutsideClick: false
+        showConfirmButton: true,
+        confirmButtonColor: '#009688', // warning color (orange/yellow)
+        confirmButtonText: 'OK'
     });
 }
 
@@ -306,14 +273,15 @@ function successSwal(title, text) {
         title: title,
         html: text,
         icon: 'success',
-        showConfirmButton: false,
-        timerProgressBar: true,
-        timer: 2000,
-        allowOutsideClick: false
-    })
-    setTimeout(() => {
-        location.reload();
-    }, 2000);
+        showConfirmButton: true,
+        confirmButtonColor: '#009688', // your success green
+        confirmButtonText: 'OK'
+    }).then((result) => {
+        // Reload only if OK is clicked
+        if (result.isConfirmed) {
+            location.reload();
+        }
+    });
 }
 
 function getCustomerSummary(cus_id) {

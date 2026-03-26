@@ -1,4 +1,3 @@
-
 // Document is ready
 $(document).ready(function () {
 
@@ -7,7 +6,8 @@ $(document).ready(function () {
     });
 
     // Request Actions
-    $(document).on("click", '.cancelrequest', function () {
+    $(document).on("click", '.cancelrequest', function (event) {
+        event.preventDefault(); // Prevent the default action (if needed)
         var remark = prompt("Do you want to Cancel this Request?");
         if (remark != null) {
             $.post('requestFile/changeRequestState.php', { req_id: $(this).data('reqid'), state: 'cancel', remark, screen: 'request' }, function (data) {
@@ -23,7 +23,8 @@ $(document).ready(function () {
         }
     });
     
-    $(document).on("click", '.revokerequest', function () {
+    $(document).on("click", '.revokerequest', function (event) {
+        event.preventDefault(); // Prevent the default action (if needed)
         var remark = prompt("Do you want to Revoke this Request?");
         if (remark != null) {
             $.post('requestFile/changeRequestState.php', { req_id: $(this).data('reqid'), state: 'revoke', remark, screen: 'request' }, function (data) {

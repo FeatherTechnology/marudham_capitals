@@ -132,6 +132,7 @@ foreach ($result as $row) {
         case 2: $origin = 'new'; break;
         case 3: $origin = 'repromotion'; break;
         case 4: $origin = 'reactive'; break;
+        default: $origin = ''; break;
     }
 
     $key = "{$type}_{$status}_{$origin}";

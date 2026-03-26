@@ -1611,11 +1611,24 @@
                 event.preventDefault();
                 try {
                     var cus_id = $(this).data('value');
-                    var screen = $(this).data('screen'); // To show extra columns in acknowledgement screen
-                    showOverlay();
+                    var screen = $(this).data('screen') || ''; // To show extra columns in acknowledgement screen
+                    showOverlay(); //loader start
+
+                    //to get customer existing type
+                    if(screen =='request'){
+                        $.ajax({
+                            url: 'requestFile/getCustomerStatus1.php',
+                            data: { "cus_id": cus_id },
+                            type: 'post',
+                            cache: false,
+                            success: function (response) {
+                                $('#exist_type').val(response);
+                            }
+                        });
+                    }
 
                     // Wait here until the function COMPLETES
-                    let status = await callresetCustomerStatus(cus_id);
+                    let status = await callresetCustomerStatus(cus_id); //this function will give the customer's status like pending od current
 
                     let {
                         pending_sts,
@@ -1623,7 +1636,7 @@
                         due_nil_sts,
                         closed_sts,
                         bal_amt
-                    } = status;
+                    } = status; //take all the values from the function then send to customer status file to fetch details
 
                     $.ajax({
                         url: 'requestFile/getCustomerStatus.php',
@@ -1679,10 +1692,9 @@
             $(document).on('click', 'a.loan-summary', function (event) {
                 event.preventDefault();
                 var cus_id = $(this).data('value');
-                var req_id = $(this).data('value1');
                 $.ajax({
                     url: 'requestFile/getLoanSummary.php',
-                    data: { "cus_id": cus_id, "req_id": req_id },
+                    data: { "cus_id": cus_id },
                     type: 'post',
                     cache: false,
                     success: function (response) {

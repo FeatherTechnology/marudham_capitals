@@ -129,7 +129,7 @@ $sno = 1;
 foreach ($result as $row) {
     $sub_array   = array();
 
-    $sub_array[] = $sno;
+    $sub_array[] = $sno++;
     $sub_array[] = date('d-m-Y', strtotime($row['dor']));
     $sub_array[] = $row['cus_id'];
     $sub_array[] = $row['autogen_cus_id'];
@@ -184,50 +184,18 @@ foreach ($result as $row) {
     }
 
     $sub_array[] = $row['cus_data'];
-    $id = $row['req_id'];
-
-    $cus_status = $row['cus_status'];
-    $loan_issued = $connect->query("SELECT balance_amount FROM `loan_issue` WHERE req_id='$id' order by id desc LIMIT 1 ");
-    $loan_issued_db =  $loan_issued->fetch();
-
-    if (empty($ag_id)) { // only check balance amount if request is not on agent
-
-        if ($cus_status == '13') {
-
-            if (isset($loan_issued_db['balance_amount']) && $loan_issued_db['balance_amount'] == '0') {
-                $sub_array[] = "<button class='btn btn-outline-secondary complete_issue' value='$id'><span class = 'icon-arrow_forward'></span></button>";
-            } else {
-                $sub_array[] = 'In Issue';
-            }
-        } else if ($cus_status == '14') {
-            $sub_array[] = 'Issued';
-        }
-    } else { //else directly show move button to collection, then it will be taken care by cash tally screen
-        if ($cus_status == '14') {
-            $sub_array[] = 'Issued';
-        } else {
-            $sub_array[] = "<button class='btn btn-outline-secondary complete_issue' value='$id'><span class = 'icon-arrow_forward'></span></button>";
-        }
-    }
+    $sub_array[] = 'In Issue';
 
     $id = $row['req_id'];
 
-    $action = "<div class='dropdown'>
-    <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
-    <div class='dropdown-content'>";
+    $sub_array[] = "<div class='dropdown'>
+        <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
+        <div class='dropdown-content'>
+            <a href='accounts_loan_issue&upd=$id' class='customer_profile' value='$id' > Edit Loan Issue </a>
+            <a href='#' class='move_customer' data-id='$id'> Move to Loan Issue</a>
+        </div></div>";
 
-    if ($cus_status == '13' and empty($ag_id)) { // check whether agent id is empty, if yes then show edit button, so that only 'issued to customer' entries only can edit
-        $action .= "<a href='accounts_loan_issue&upd=$id' class='customer_profile' value='$id' > Edit Loan Issue </a>";
-    }
-
-    $action .= "<a href='#' class='move_customer' data-id='$id'> Move to Loan Issue</a>";
-
-
-    $action .= "</div></div>";
-
-    $sub_array[] = $action;
-    $data[]      = $sub_array;
-    $sno = $sno + 1;
+    $data[] = $sub_array;
 }
 
 /* ---------------- RESPONSE ---------------- */

@@ -242,11 +242,11 @@ foreach ($result as $row) {
     <div class='dropdown-content'>";
 
     // Common buttons
-    $commonBtn = "<a class=' loan-follow-edit' data-cusid='" . $cus_id . "' data-stage='" . $stage_arr[$cus_status] . "' data-toggle='modal' data-target='#addLoanFollow'     value='Follow'><span> Followup </span></a>
-    <a class='loan-follow-chart' data-cusid='"  . $cus_id . "' data-toggle='modal' data-target='#loanFollowChartModal'><span> Followup Chart</span></a>";
+    $commonBtn = "<a class='loan-follow-edit' data-cusid='" . $cus_id . "' data-stage='" . $stage_arr[$cus_status] . "' data-toggle='modal' data-target='#addLoanFollow'     value='Follow'><span> Followup </span></a>
+    <a class='loan-follow-chart' data-cusid='"  . $cus_id . "' data-toggle='modal' data-target='#loanFollowChartModal'><span> Followup Chart </span></a>";
 
     if ($login_user_type != 2 || $userid == 1) {
-        $commonBtn .= "<a href='' data-value ='" . $cus_id . "' data-value1 = '$id' class='customer-status' data-toggle='modal' data-target='.customerstatus'> 
+        $commonBtn .= "<a href='' data-value ='" . $cus_id . "' data-screen = 'acknowledgement' class='customer-status' data-toggle='modal' data-target='.customerstatus'> 
         Customer Status </a>";
     }
 

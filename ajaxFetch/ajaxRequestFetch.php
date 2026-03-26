@@ -196,7 +196,7 @@ foreach ($result as $row) {
     }
 
     if ($login_user_type != 2 || $userid == 1) { //role 2- Agent 
-        $action .= "<a href='' data-value='$cus_id' data-value1='$id' class='customer-status' data-toggle='modal' data-target='.customerstatus'>Customer Status</a>";
+        $action .= "<a href='' data-value='$cus_id' data-screen = 'request' class='customer-status' data-toggle='modal' data-target='.customerstatus'>Customer Status</a>";
     }
 
     $action .= "</div></div>";

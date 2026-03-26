@@ -84,7 +84,6 @@ $(document).ready(function () {
 
 });//document ready end
 
-
 function warningSwal(title, text) {
     Swal.fire({
         title: title,

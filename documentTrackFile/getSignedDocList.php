@@ -12,7 +12,7 @@ if(isset($_POST['cus_name'])){
 function getfamName($connect, $rel_id){
     $qry1=$connect->query("SELECT famname FROM `verification_family_info` where id = $rel_id");
     $run=$qry1->fetch();
-    return $run['famname'];
+    return $run['famname'] ?? '';
 }
 
 function getGuarentorName($connect, $req_id){
@@ -45,8 +45,7 @@ function getGuarentorName($connect, $req_id){
             <tr>
                 <td><?php echo $i++;?></td>
                 <td>Signed Document</td>
-                <td><?php if($row['sign_type'] == '0'){echo 'Customer'; $name=$cus_name;}elseif($row['sign_type'] == '1'){echo 'Guarentor';$name = getGuarentorName($connect,$req_id);}
-                            elseif($row['sign_type'] == '2'){echo 'Combined';}elseif($row['sign_type'] == '3'){echo 'Family Member'; $name = getfamName($connect,$rel_id);} ?></td>
+                <td><?php if($row['sign_type'] == '0'){echo 'Customer'; $name=$cus_name;}elseif($row['sign_type'] == '1'){echo 'Guarentor';$name = getGuarentorName($connect,$req_id);}elseif($row['sign_type'] == '2'){echo 'Combined';}elseif($row['sign_type'] == '3'){echo 'Family Member'; $name = getfamName($connect, $rel_id);} ?></td>
                 <td><?php echo $name;?></td>
                 <td><?php echo $count;?></td>
                 <td><a href='<?php echo 'uploads/verification/signed_doc/'.$row['upload_doc_name'];?>' target="_blank"><?php echo $row['upload_doc_name'];?></a></td>

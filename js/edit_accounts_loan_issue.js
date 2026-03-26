@@ -23,51 +23,9 @@ $(document).ready(function () {
                 removeLoanFromList(req_id);
             }
         });
-    })
-
-    $(document).on('click', '.iss-remove', function (event) {
-        event.preventDefault();
-        let req_id = $(this).data('value');
-        if (confirm('Do you want to Remove this Issue From the List?')) {
-            $.ajax({
-                url: 'loanIssueFile/removeIssue.php',
-                dataType: 'json',
-                type: 'post',
-                data: { 'req_id': req_id },
-                cache: false,
-                success: function (response) {
-                    if (response.includes('Removed')) {
-                        Swal.fire({
-                            title: response,
-                            icon: 'success',
-                            showConfirmButton: true,
-                            confirmButtonColor: '#009688',
-                            confirmButtonText: 'OK'
-                        }).then((result) => {
-                            // Redirect only if OK is clicked
-                            if (result.isConfirmed) {
-                                window.location = 'edit_loan_issue';
-                            }
-                        });
-                    }
-                    else if (response.includes('Error')) {
-                        Swal.fire({
-                            timerProgressBar: true,
-                            timer: 2000,
-                            title: response,
-                            icon: 'error',
-                            showConfirmButton: true,
-                            confirmButtonColor: '#009688'
-                        });
-                    }
-                }
-            })
-        }
-    })
+    });
   
 });//document ready end
-
-
 
 function removeLoanFromList(req_id) {
     $.ajax({
@@ -78,33 +36,13 @@ function removeLoanFromList(req_id) {
         cache: false,
         success: function (result) {
             if (result.status === 'success') {
-                Swal.fire({
-                    title: 'Success!',
-                    text: result.message,
-                    icon: 'success',
-                    confirmButtonColor: '#009688',
-                    timer: 1500, // Auto-close after 1.5 seconds
-                    showConfirmButton: false
-                }).then(function () {
-                    // Reload the page or remove the loan item from the list
-                    location.reload(); // Reload the page to update the list
-                });
+                successSwal('Success', result.message);
             } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: result.message,
-                    icon: 'error',
-                    confirmButtonColor: '#cc4444'
-                });
+                warningSwal('Error', result.message);
             }
         },
         error: function () {
-            Swal.fire({
-                title: 'Error!',
-                text: 'Something went wrong while moving the loan.',
-                icon: 'error',
-                confirmButtonColor: '#cc4444'
-            });
+            warningSwal('Error!', 'Something went wrong while moving the loan.');
         }
     });
 }
