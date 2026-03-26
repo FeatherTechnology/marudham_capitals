@@ -37,12 +37,8 @@ if (sizeof($getUser) > 0) {
 		Marudham Capitals - Acknowledgement List
 	</div>
 </div><br>
-
 <!-- Page header end -->
-<input type="hidden" id="pending_sts">
-<input type="hidden" id="od_sts">
-<input type="hidden" id="due_nil_sts">
-<input type="hidden" id="closed_sts">
+ 
 <!-- Main container start -->
 <div class="main-container">
 	<!-- Row start -->

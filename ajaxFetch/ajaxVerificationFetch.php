@@ -291,14 +291,14 @@ foreach ($result as $row) {
         $action .= "<a href='verification&upd=$id&pge=1' class='customer_profile' value='$id' >Edit Verification</a>
         <a href='#' data-reqid = '$id' class='cancelverification'>Cancel Verification</a>
         <a href='#' data-reqid = '$id' class='revokeverification'>Revoke Verification</a>";
-        $action .= "<a class=' loan-follow-edit' data-cusid='" . $cus_id . "' data-stage='" . $stage_arr[$cus_status] . "' data-toggle='modal' data-target='#addLoanFollow'     value='Follow'><span>Followup </span></a>";
-        $action .= "<a class='loan-follow-chart' data-cusid='"  . $cus_id . "' data-toggle='modal' data-target='#loanFollowChartModal'><span> Followup Chart</span></a>";
+        $action .= "<a class='loan-follow-edit' data-cusid='" . $cus_id . "' data-stage='" . $stage_arr[$cus_status] . "' data-toggle='modal' data-target='#addLoanFollow' value='Follow'><span>Followup</span></a>";
+        $action .= "<a class='loan-follow-chart' data-cusid='"  . $cus_id . "' data-toggle='modal' data-target='#loanFollowChartModal'><span>Followup Chart</span></a>";
     } elseif ($cus_status == '5') {
         $action .= "<a href='verification&del=$id'class='removeverification'>Remove Verification</a>";
     }
 
     if ($login_user_type != 2 or $userid == 1) {
-        $action .= "<a href='' data-value ='" . $cus_id . "' data-value1 = '$id' class='customer-status' data-toggle='modal' data-target='.customerstatus'>Customer Status</a>";
+        $action .= "<a href='' data-value ='" . $cus_id . "' class='customer-status' data-toggle='modal' data-target='.customerstatus'>Customer Status</a>";
         // $action .= "<a href='' data-value ='".$cus_id."' data-value1 = '$id' class='loan-summary' data-toggle='modal' data-target='.loansummary'>Loan Summary</a>";
     }
 

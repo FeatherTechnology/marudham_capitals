@@ -1,71 +1,5 @@
-function callOnClickEvents() {
-    $('a.customer-status').click(async function() {
-        try {
-            var cus_id = $(this).data('value');
-            showOverlay();
-
-            // Wait here until the function COMPLETES
-            let status = await callresetCustomerStatus(cus_id);
-
-            let {
-                pending_sts,
-                od_sts,
-                due_nil_sts,
-                closed_sts,
-                bal_amt
-            } = status;
-
-            $.ajax({
-                url: 'requestFile/getCustomerStatus.php',
-                type: 'POST',
-                data: {
-                    cus_id,
-                    pending_sts,
-                    od_sts,
-                    due_nil_sts,
-                    closed_sts,
-                    bal_amt
-                },
-                cache: false,
-                success: function(response) {
-                    $('#cusHistoryTable').empty().html(response);
-
-                    $('#cusHistoryTable tbody tr').each(function() {
-                        var val = $(this).find('td:nth-child(6)').text().trim();
-
-                        if (['Request', 'Verification', 'Approval', 'Acknowledgement', 'Issue'].includes(val)) {
-                            $(this).find('td:nth-child(6)').css({
-                                backgroundColor: 'rgba(240,0,0,0.8)',
-                                color: 'white',
-                                fontWeight: 'bolder'
-                            });
-                        } else if (val === 'Present') {
-                            $(this).find('td:nth-child(6)').css({
-                                backgroundColor: 'rgba(0,160,0,0.8)',
-                                color: 'white',
-                                fontWeight: 'bolder'
-                            });
-                        } else if (val === 'Closed') {
-                            $(this).find('td:nth-child(6)').css({
-                                backgroundColor: 'rgba(0,0,255,0.8)',
-                                color: 'white',
-                                fontWeight: 'bolder'
-                            });
-                        }
-                    });
-                },
-                complete: function() {
-                    hideOverlay();
-                }
-            });
-
-        } catch (err) {
-            console.error(err);
-            hideOverlay();
-        }
-    });
-
-    $('.view-track').click(function() {
+$(document).ready(function() {
+    $(document).on('click', '.view-track', function() {
         var cus_name = $(this).data('cusname');
         var req_id = $(this).data('reqid');
         $.ajax({
@@ -81,57 +15,7 @@ function callOnClickEvents() {
             getAllDocumentList(req_id, cus_name);
         }); //then function end
     });
-
-    function callresetCustomerStatus(cus_id) {
-        //To get loan sub Status
-        return new Promise((resolve, reject) => {
-            $.ajax({
-                url: 'collectionFile/resetCustomerStatus.php',
-                type: 'POST',
-                data: {
-                    'cus_id': cus_id
-                },
-                dataType: 'json',
-                cache: false,
-                success: function(response) {
-                    if (!response || response.length == 0) {
-                        resolve({
-                            pending_sts: "",
-                            od_sts: "",
-                            due_nil_sts: "",
-                            closed_sts: "",
-                            bal_amt: ""
-                        });
-                        return;
-                    }
-
-                    let pending_arr = response['pending_customer'] || [];
-                    let od_arr = response['od_customer'] || [];
-                    let due_nil_arr = response['due_nil_customer'] || [];
-                    let closed_arr = response['closed_customer'] || [];
-                    let balance_arr = response['balAmnt'] || [];
-
-                    let pending_sts = pending_arr.join(',');
-                    let od_sts = od_arr.join(',');
-                    let due_nil_sts = due_nil_arr.join(',');
-                    let closed_sts = closed_arr.join(',');
-                    let bal_amt = balance_arr.join(',');
-
-                    resolve({
-                        pending_sts,
-                        od_sts,
-                        due_nil_sts,
-                        closed_sts,
-                        bal_amt
-                    });
-                },
-                error: function(xhr, status, error) {
-                    reject(error);
-                }
-            });
-        });
-    }
-};
+});
 
 function getAllDocumentList(req_id, cus_name) {
     // To get the Customer details.

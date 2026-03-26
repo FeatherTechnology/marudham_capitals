@@ -1,10 +1,8 @@
 <?php
 include('../ajaxconfig.php');
+
 if (isset($_POST['cus_id'])) {
     $cus_id = $_POST['cus_id'];
-}
-if (isset($_POST['req_id'])) {
-    $req_id = $_POST['req_id'];
 }
 
 $records = array();
@@ -29,7 +27,6 @@ if ($result->rowCount() > 0) {
         $i++;
     }
 }
-
 ?>
 
 <thead>

@@ -53,51 +53,10 @@
     }
 </style>
 
-<script type="text/javascript">
-    $(document).ready(function() {
-        // Show/hide the Scroll to Top button based on the user's scroll position
-        $(window).scroll(function() {
-            if ($(this).scrollTop() > 100) {
-                $('#scrollToTopButton').fadeIn();
-            } else {
-                $('#scrollToTopButton').fadeOut();
-            }
-        });
-
-        // Smooth scroll to the top when the button is clicked
-        $('#scrollToTopButton').click(function() {
-            $('html, body').animate({
-                scrollTop: 0
-            }, 800);
-            return false;
-        });
-
-        // Event listener to hide the "Scroll to Top" button when any element with data-toggle='modal' is clicked
-        $(document).on('click', '[data-toggle="modal"]', function() {
-            hideScrollToTopButton();
-        });
-        // Function to hide the "Scroll to Top" button
-        function hideScrollToTopButton() {
-            $('#scrollToTopButton').fadeOut();
-        }
-
-        // Event listener to Show the "Scroll to Top" button when any element with data-dismiss='modal' is clicked
-        $(document).on('click', '[data-dismiss="modal"]', function() {
-            showScrollToTopButton();
-        });
-        // Function to show the "Scroll to Top" button if not visible
-        function showScrollToTopButton() {
-            $('#scrollToTopButton').fadeIn();
-        }
-
-
-    });
-</script>
 <?php $current_page = isset($_GET['page']) ? $_GET['page'] : null; ?>
 
 <!-- Required jQuery first, then Bootstrap Bundle JS -->
-<scripft src="js/jquery.min.js">
-    </script>
+    <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/moment.js"></script>
     <!-- <script src="js/jspdf.js"></script>
@@ -162,6 +121,42 @@
         }
 
         $(document).ready(function() {
+
+            // Show/hide the Scroll to Top button based on the user's scroll position
+            $(window).scroll(function() {
+                if ($(this).scrollTop() > 100) {
+                    $('#scrollToTopButton').fadeIn();
+                } else {
+                    $('#scrollToTopButton').fadeOut();
+                }
+            });
+
+            // Smooth scroll to the top when the button is clicked
+            $('#scrollToTopButton').click(function() {
+                $('html, body').animate({
+                    scrollTop: 0
+                }, 800);
+                return false;
+            });
+
+            // Event listener to hide the "Scroll to Top" button when any element with data-toggle='modal' is clicked
+            $(document).on('click', '[data-toggle="modal"]', function() {
+                hideScrollToTopButton();
+            });
+            // Function to hide the "Scroll to Top" button
+            function hideScrollToTopButton() {
+                $('#scrollToTopButton').fadeOut();
+            }
+
+            // Event listener to Show the "Scroll to Top" button when any element with data-dismiss='modal' is clicked
+            $(document).on('click', '[data-dismiss="modal"]', function() {
+                showScrollToTopButton();
+            });
+            // Function to show the "Scroll to Top" button if not visible
+            function showScrollToTopButton() {
+                $('#scrollToTopButton').fadeIn();
+            }
+
             var company_creation_table = $('#company_creation_table').DataTable({
                 ...getStateSaveConfig('company_creation_table'),
                 "order": [
@@ -610,7 +605,6 @@
                 'drawCallback': function() {
                     searchFunction('request_table');
                     paginationFunction('request_table');
-                    callOnClickEvents();
                 }
             });
             initColVisFeatures(request_table, 'request_table');
@@ -656,7 +650,6 @@
                 'drawCallback': function() {
                     searchFunction('verification_table');
                     paginationFunction('verification_table');
-                    callOnClickEvents();
                 }
             });
             initColVisFeatures(verification_table, 'verification_table');
@@ -702,7 +695,6 @@
                 'drawCallback': function() {
                     searchFunction('approval_table');
                     paginationFunction('approval_table');
-                    callOnClickEvents();
                 }
             });
             initColVisFeatures(approval_table, 'approval_table');
@@ -748,7 +740,6 @@
                 'drawCallback': function() {
                     searchFunction('acknowledge_table');
                     paginationFunction('acknowledge_table');
-                    callOnClickEvents();
                 }
             });
             initColVisFeatures(acknowledge_table, 'acknowledge_table');
@@ -794,7 +785,6 @@
                 'drawCallback': function() {
                     searchFunction('loanIssue_table');
                     paginationFunction('loanIssue_table');
-                    callOnClickEvents();
                 }
             });
             initColVisFeatures(loanIssue_table, 'loanIssue_table');
@@ -841,7 +831,6 @@
                 'drawCallback': function() {
                     searchFunction('accountsloanIssue_table');
                     paginationFunction('accountsloanIssue_table');
-                    callOnClickEvents();
                 }
             });
             initColVisFeatures(accountsloanIssue_table, 'accountsloanIssue_table');
@@ -887,7 +876,6 @@
                 'drawCallback': function() {
                     searchFunction('closed_table');
                     paginationFunction('closed_table');
-                    setNOCButton();
                 }
             });
             initColVisFeatures(closed_table, 'closed_table');
@@ -933,7 +921,6 @@
                 'drawCallback': function() {
                     searchFunction('noc_table');
                     paginationFunction('noc_table');
-                    callOnClickEvents();
                 }
             });
             initColVisFeatures(noc_table, 'noc_table');
@@ -979,7 +966,6 @@
                 'drawCallback': function() {
                     searchFunction('noc_handover_table');
                     paginationFunction('noc_handover_table');
-                    callOnClickEvents();
                 }
             });
             initColVisFeatures(noc_handover_table, 'noc_handover_table');
@@ -1113,7 +1099,6 @@
                 'drawCallback': function() {
                     searchFunction('noc_replace_table');
                     paginationFunction('noc_replace_table');
-                    callOnClickEvents();
                 }
             });
             initColVisFeatures(noc_replace_table, 'noc_replace_table');
@@ -1621,7 +1606,151 @@
             //         });
             // }, 6000);
 
+            // Centralized handler for showing customer status modal
+            $(document).on('click', 'a.customer-status', async function(event) {
+                event.preventDefault();
+                try {
+                    var cus_id = $(this).data('value');
+                    var screen = $(this).data('screen') || ''; // To show extra columns in acknowledgement screen
+                    showOverlay(); //loader start
+
+                    //to get customer existing type
+                    if(screen =='request'){
+                        $.ajax({
+                            url: 'requestFile/getCustomerStatus1.php',
+                            data: { "cus_id": cus_id },
+                            type: 'post',
+                            cache: false,
+                            success: function (response) {
+                                $('#exist_type').val(response);
+                            }
+                        });
+                    }
+
+                    // Wait here until the function COMPLETES
+                    let status = await callresetCustomerStatus(cus_id); //this function will give the customer's status like pending od current
+
+                    let {
+                        pending_sts,
+                        od_sts,
+                        due_nil_sts,
+                        closed_sts,
+                        bal_amt
+                    } = status; //take all the values from the function then send to customer status file to fetch details
+
+                    $.ajax({
+                        url: 'requestFile/getCustomerStatus.php',
+                        type: 'POST',
+                        data: {
+                            cus_id,
+                            pending_sts,
+                            od_sts,
+                            due_nil_sts,
+                            closed_sts,
+                            bal_amt,
+                            screen
+                        },
+                        cache: false,
+                        success: function(response) {
+                            $('#cusHistoryTable').empty().html(response);
+
+                            $('#cusHistoryTable tbody tr').each(function() {
+                                var val = $(this).find('td:nth-child(6)').text().trim();
+
+                                if (['Request', 'Verification', 'Approval', 'Acknowledgement', 'Issue'].includes(val)) {
+                                    $(this).find('td:nth-child(6)').css({
+                                        backgroundColor: 'rgba(240,0,0,0.8)',
+                                        color: 'white',
+                                        fontWeight: 'bolder'
+                                    });
+                                } else if (val === 'Present') {
+                                    $(this).find('td:nth-child(6)').css({
+                                        backgroundColor: 'rgba(0,160,0,0.8)',
+                                        color: 'white',
+                                        fontWeight: 'bolder'
+                                    });
+                                } else if (val === 'Closed') {
+                                    $(this).find('td:nth-child(6)').css({
+                                        backgroundColor: 'rgba(0,0,255,0.8)',
+                                        color: 'white',
+                                        fontWeight: 'bolder'
+                                    });
+                                }
+                            });
+                        },
+                        complete: function() {
+                            hideOverlay();
+                        }
+                    });
+
+                } catch (err) {
+                    console.error(err);
+                    hideOverlay();
+                }
+            });
+
+            $(document).on('click', 'a.loan-summary', function (event) {
+                event.preventDefault();
+                var cus_id = $(this).data('value');
+                $.ajax({
+                    url: 'requestFile/getLoanSummary.php',
+                    data: { "cus_id": cus_id },
+                    type: 'post',
+                    cache: false,
+                    success: function (response) {
+                        $('#loanSummaryTable').empty();
+                        $('#loanSummaryTable').html(response);
+                    }
+                })
+            });
+
+            $(document).on('click', '.loan-follow-chart', function () {
+                let cus_id = $(this).data('cusid');
+                $.post('followupFiles/loanFollowup/getLoanFollowupChart.php', { cus_id }, function (html) {
+                    $('#loanFollowChartDiv').empty().html(html);
+                })
+            });
+
         }); //Document Ready End
+
+        $(document).on('click', '.dropdown', function(event) {
+            var $target = $(event.target);
+
+            // If a link inside the dropdown content is clicked, let the browser handle it.
+            if ($target.closest('.dropdown-content').length) {
+                // But if it's a link with href='#', prevent default to avoid page jump.
+                if ($target.is('a[href="#"]')) {
+                    event.preventDefault();
+                }
+                return;
+            }
+
+            // This part runs if the dropdown toggle itself (not content) was clicked.
+            event.preventDefault();
+            event.stopPropagation(); // Prevent the document click handler from closing it immediately.
+
+            var $this = $(this);
+            if ($this.hasClass('active')) {
+                $this.removeClass('active');
+            } else {
+                $('.dropdown').removeClass('active');
+                $this.addClass('active');
+            }
+        });
+
+        // Close dropdowns when clicking anywhere else on the document.
+        $(document).on('click', function(event) {
+            if (!$(event.target).closest('.dropdown').length) {
+                $('.dropdown').removeClass('active');
+            }
+        });
+
+        $(document).on('click', '.logout-link', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            $('.dropdown').removeClass('active');
+            window.location.href = 'logout.php'; // Redirect to logout script
+        });
 
         ////////// Show Loader if ajax function is called inside anywhere in entire project  ////////
         $(document).ajaxStart(function() {
@@ -1635,6 +1764,33 @@
             hideOverlay();
             resetTimers(); // Reset again after AJAX completes
         });
+
+        // Centralized function to get customer loan status
+        function callresetCustomerStatus(cus_id) {
+			return new Promise((resolve, reject) => {
+				$.ajax({
+					url: 'collectionFile/resetCustomerStatus.php',
+					type: 'POST',
+					data: { 'cus_id': cus_id },
+					dataType: 'json',
+					cache: false,
+					success: function(response) {
+                        // Resolve with empty strings if response is empty, to prevent errors
+						const status = {
+							pending_sts: (response?.pending_customer || []).join(','),
+							od_sts: (response?.od_customer || []).join(','),
+							due_nil_sts: (response?.due_nil_customer || []).join(','),
+							closed_sts: (response?.closed_customer || []).join(','),
+							bal_amt: (response?.balAmnt || []).join(',')
+						};
+						resolve(status);
+					},
+					error: function(xhr, status, error) {
+						reject(error);
+					}
+				});
+			});
+		}
 
         function moneyFormatIndia(num) {
             var isNegative = false;
@@ -1683,32 +1839,6 @@
                 let table = $(`#${table_name}`).DataTable();
                 table.search(this.value).draw();
                 // }
-            });
-
-            $('.dropdown').click(function(event) {
-                let linkcheck = $('.dropdown .dropdown-content a').attr('href');
-                if (linkcheck == '#' || linkcheck == undefined) {
-                    event.preventDefault();
-                }
-                $('.dropdown').not(this).removeClass('active');
-                $(this).toggleClass('active');
-            });
-
-            $(document).click(function(event) {
-                var target = $(event.target);
-
-                // Close dropdown if clicking outside, but allow logout link to work
-                if (!target.closest('.dropdown').length) {
-                    $('.dropdown').removeClass('active');
-                }
-            });
-
-            $(document).on('click', '.logout-link', function(event) {
-                event.preventDefault();
-                event.stopPropagation();
-
-                $('.dropdown').removeClass('active');
-                window.location.href = 'logout.php'; // Redirect to logout script
             });
 
             // Check if DACC is 1 and hide Excel button if true

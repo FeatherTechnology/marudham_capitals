@@ -8,7 +8,7 @@ if(isset($_POST['req_id'])){
 function getfamName($connect,$rel_id){
     $qry1=$connect->query("SELECT famname FROM `verification_family_info` where id=$rel_id");
     $run=$qry1->fetch();
-    return $run['famname'];
+    return $run['famname'] ?? '';
 }
 ?>
 
@@ -28,13 +28,7 @@ function getfamName($connect,$rel_id){
         $i=1;
         $qry = $connect->query("SELECT a.cheque_holder_type, a.cheque_holder_name, b.cheque_relation, b.chequebank_name, a.cheque_no FROM `cheque_no_list` a JOIN cheque_info b on a.cheque_table_id = b.id WHERE a.req_id IN ($req_id) ");
         while($row = $qry->fetch()){
-
-            if(is_numeric($row['cheque_holder_name'])){
-                $qry1 = $connect->query("SELECT famname from verification_family_info where id = '".$row['cheque_holder_name']."' ");
-                $row1 = $qry1->fetch();
-                $holder_name = $row1['famname'];
-            }else{$holder_name = $row['cheque_holder_name'];}
-
+            $holder_name = (is_numeric($row['cheque_holder_name'])) ? getfamName($connect, $row['cheque_holder_name']) : $row['cheque_holder_name'];
         ?>
             <tr>
                 <td><?php echo $i++;?></td>
