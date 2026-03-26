@@ -107,7 +107,7 @@ if (isset($_POST['search'])) {
 
         $baseQuery .= " and (vlc.cus_id_loan LIKE '%" . $_POST['search'] . "%' OR
                 cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%' OR
-                vlc.cus_name LIKE '%" . $_POST['search'] . "%' OR
+                vlc.cus_name_loan LIKE '%" . $_POST['search'] . "%' OR
                 al.area_name LIKE '%" . $_POST['search'] . "%' OR
                 sal.sub_area_name LIKE '%" . $_POST['search'] . "%' OR
                 alm.line_name LIKE '%" . $_POST['search'] . "%' OR

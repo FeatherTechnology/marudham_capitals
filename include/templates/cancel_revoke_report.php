@@ -43,8 +43,8 @@
                                     <th>Cust. Name</th>
                                     <th>Area</th>
                                     <th>Sub Area</th>
+                                    <th>Line</th>
                                     <th>Group</th>
-									<th>Line</th>
 									<th>Branch</th>
                                     <th>Loan Category</th>
                                     <th>Sub Category</th>

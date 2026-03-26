@@ -35,9 +35,10 @@
                                     <th>Mobile Number</th>
                                     <th>Area</th>
                                     <th>Sub Area</th>
-                                    <th>Branch</th>
-                                    <th>Group</th>
                                     <th>Line</th>
+                                    <th>Group</th>
+                                    <th>Branch</th>
+                                    <th>Promotion Type</th>
                                     <th>Status</th>
                                     <th>Remark</th>
                                     <th>Follow Date</th>

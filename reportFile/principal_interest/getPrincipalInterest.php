@@ -13,29 +13,16 @@ $user_based = "";
 
 if ($userid != 1) {
 
-    $userQry = $connect->query("SELECT line_id, report_access FROM USER WHERE user_id = $userid ");
+    $userQry = $connect->query("SELECT report_access FROM user WHERE user_id = $userid ");
     $rowuser = $userQry->fetch();
-    $line_id = $rowuser['line_id'];
     $report_access = $rowuser['report_access'];
 
-    if($report_access =='1'){
-        $line_id = explode(',', $line_id);
-        $sub_area_list = array();
-        foreach ($line_id as $line) {
-            $lineQry = $connect->query("SELECT sub_area_id FROM area_line_mapping WHERE map_id = $line ");
-            $row_sub = $lineQry->fetch();
-            $sub_area_list[] = $row_sub['sub_area_id'];
-        }
-        $sub_area_ids = array();
-        foreach ($sub_area_list as $subarray) {
-            $sub_area_ids = array_merge($sub_area_ids, explode(',', $subarray));
-        }
-        $sub_area_list = array();
-        $sub_area_list = implode(',', $sub_area_ids);
-
-        $user_based = " AND cp.area_confirm_subarea IN ($sub_area_list) AND coll.insert_login_id = '$userid' ";
+    if ($report_access == '1') { //Report access individual.
+        
+        $user_based = "AND coll.insert_login_id = '$userid' ";
     }
 }
+
 
 $where = "1";
 
@@ -54,6 +41,8 @@ $role_arr = [1 => 'Director', 2 => 'Agent', 3 => 'Staff'];
 $column = array(
     'cp.id',
     'alm.line_name',
+    'agm.group_name',
+    'bc.branch_name',
     'ii.loan_id',
     'ii.updated_date',
     'coll.cus_id',
@@ -76,7 +65,9 @@ $column = array(
 );
 
 $query = "SELECT 
+            agm.group_name,
             alm.line_name AS line,
+            bc.branch_name,
             ii.loan_id,
             ii.updated_date AS loan_date,
             coll.cus_id,
@@ -114,7 +105,11 @@ $query = "SELECT
         JOIN in_issue ii ON coll.req_id = ii.req_id
         JOIN area_list_creation al ON cp.area_confirm_area = al.area_id
         JOIN sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
-        JOIN area_line_mapping alm ON FIND_IN_SET(al.area_id, alm.area_id)
+        JOIN area_group_mapping_sub_area agmsa ON sal.sub_area_id = agmsa.sub_area_id
+        JOIN area_group_mapping agm ON agmsa.group_map_id = agm.map_id
+        JOIN area_line_mapping_sub_area almsa ON sal.sub_area_id = almsa.sub_area_id
+        JOIN area_line_mapping alm ON almsa.line_map_id = alm.map_id
+        JOIN branch_creation bc ON agm.branch_id = bc.branch_id
         JOIN acknowlegement_loan_calculation lc ON coll.req_id = lc.req_id
         JOIN in_verification iv ON coll.req_id = iv.req_id
         JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
@@ -128,7 +123,9 @@ $query = "SELECT
 if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {
         $query .= " and (ii.loan_id LIKE '%" . $_POST['search'] . "%'
+                    OR agm.group_name LIKE '%" . $_POST['search'] . "%' 
                     OR alm.line_name LIKE '%" . $_POST['search'] . "%'
+                    OR bc.branch_name LIKE '%" . $_POST['search'] . "%'
                     OR ii.updated_date LIKE '%" . $_POST['search'] . "%'
                     OR coll.cus_id LIKE '%" . $_POST['search'] . "%'
                     OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%'
@@ -178,6 +175,8 @@ foreach ($result as $row) {
 
     $sub_array[] = $sno;
     $sub_array[] = $row['line'];
+    $sub_array[] = $row['group_name'];
+    $sub_array[] = $row['branch_name'];
     $sub_array[] = $row['loan_id'];
     $sub_array[] = date('d-m-Y', strtotime($row['loan_date']));
     $sub_array[] = $row['cus_id'];

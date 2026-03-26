@@ -206,7 +206,7 @@ foreach ($result as $row) {
     $ag_id = $row['agent_id'];
     $sub[] = ($row['responsible'] == '0') ? 'Yes' : (!empty($ag_id) && $row['responsible'] != '0' ? 'No' : '');
     $sub[] = $row['cus_data'];
-    $sub[] = $row['follow_date'];
+    $sub[] = !empty($row['follow_date']) ? date('d-m-Y', strtotime($row['follow_date'])) : '';
 
     $id         = $row['req_id'];
     $cus_id     = $row['cus_id'];

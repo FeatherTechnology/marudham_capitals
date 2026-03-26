@@ -123,7 +123,7 @@ $prevQuery = "
     LEFT JOIN in_issue ii ON ii.req_id = ia.req_id AND ii.cus_status >= 14
     LEFT JOIN customer_status cs ON ii.req_id = cs.req_id AND ii.cus_status >= 14
     WHERE ia.insert_login_id IN ($placeholders) 
-    AND DATE(vlc.create_date) < ?
+    AND DATE(ia.created_date) < ?
     AND NOT (req.cus_status IN (5,6,7,9) AND DATE(req.updated_date) < ?)
     AND NOT (ii.updated_date IS NOT NULL AND DATE(ii.updated_date) < ?)
 ";
@@ -145,7 +145,7 @@ $currentQuery = "
     LEFT JOIN in_issue ii ON ii.req_id = ia.req_id AND ii.cus_status >= 14
     LEFT JOIN customer_status cs ON ii.req_id = cs.req_id AND ii.cus_status >= 14
     WHERE ia.insert_login_id IN ($placeholders) 
-    AND DATE(vlc.create_date) BETWEEN ? AND ?
+    AND DATE(ia.created_date) BETWEEN ? AND ?
 ";
 
 $stmt = $connect->prepare($currentQuery);

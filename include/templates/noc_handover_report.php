@@ -33,6 +33,7 @@
 									<th>Area</th>
 									<th>Sub Area</th>
 									<th>Line</th>
+									<th>Group</th>
 									<th>Branch</th>
 									<th>Handover Date</th>
 									<th>User Name</th>
@@ -43,6 +44,7 @@
 								<tfoot>
 									<tr>
 										<td colspan="7"></td>
+										<td></td>
 										<td></td>
 										<td></td>
 										<td colspan="5"></td>

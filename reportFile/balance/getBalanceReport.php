@@ -11,22 +11,12 @@ $sub_area_list = '';
 $user_based = '';
 
 if ($userid && $userid != 1) {
-    $userQry = $connect->query("SELECT line_id, report_access FROM USER WHERE user_id = $userid");
+    $userQry = $connect->query("SELECT report_access FROM USER WHERE user_id = $userid");
     $user = $userQry->fetch();
     $report_access = $user['report_access'];
 
     if ($report_access =='1') {
-        $line_id = explode(',', $user['line_id']);
-        $sub_area_list = [];
-        foreach ($line_id as $line) {
-            $lineQry = $connect->query("SELECT sub_area_id FROM area_line_mapping WHERE map_id = $line");
-            while ($row = $lineQry->fetch()) {
-                $sub_area_list = array_merge($sub_area_list, explode(',', $row['sub_area_id']));
-            }
-        }
-        $sub_area_list = implode(',', array_unique($sub_area_list));
-
-        $user_based = " AND cp.area_confirm_subarea IN ($sub_area_list) AND req.insert_login_id = '$userid' ";
+        $user_based = " AND req.insert_login_id = '$userid' ";
         
     }
 }
@@ -94,7 +84,11 @@ $req_id_list = [];
 while ($row = $run->fetch()) {
     $req_id_list[] = $row['req_id'];
 }
-$req_id_list = implode(',', $req_id_list);
+if (!empty($req_id_list)) {
+    $req_id_list = implode(',', $req_id_list);
+} else {
+    $req_id_list = '0';
+}
 
 $query = "SELECT 
             -- ag.group_name,
@@ -152,8 +146,8 @@ $query = "SELECT
         JOIN 
             sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
         -- JOIN area_group_mapping ag ON FIND_IN_SET(sal.sub_area_id, ag.sub_area_id)
-        JOIN 
-            area_line_mapping alm ON FIND_IN_SET(sal.sub_area_id, alm.sub_area_id)
+        JOIN area_line_mapping_sub_area almsa ON sal.sub_area_id = almsa.sub_area_id
+        JOIN area_line_mapping alm ON almsa.line_map_id = alm.map_id
         -- JOIN area_duefollowup_mapping adm ON FIND_IN_SET(al.area_id, adm.area_id)
         JOIN 
             in_verification iv ON lc.req_id = iv.req_id
