@@ -6,15 +6,12 @@
 	<!-- Meta -->
 	<meta name="description" content="Feather Marudham Project">
 	<meta name="author" content="Feather Marudham Project">
-	<link rel="shortcut icon" href="img/fav.png" />
+	<link rel="shortcut icon" href="img/MC-Logo.png" />
 
 	<!-- Title -->
 	<title>Marudham Capitals </title>
 
-
-	<!-- *************
-		************ Common Css Files *************
-	************ -->
+	<!-- ************************* Common Css Files ************************* -->
 	<!-- Bootstrap css -->
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<!-- Icomoon Font Icons css -->
@@ -37,6 +34,7 @@
 
 	<!-- DateRange css -->
 	<link rel="stylesheet" href="vendor/daterange/daterange.css" />
+	
 	<!-- Datepicker css -->
 	<link rel="stylesheet" href="vendor/datepicker/css/classic.css" />
 	<link rel="stylesheet" href="vendor/datepicker/css/classic.date.css" />
