@@ -28,23 +28,7 @@ if (isset($getuserdetails['download_access'])) {
 <!doctype html>
 <html lang="en">
 
-<!-- downlaod customer excel div -->
-<div id="backup_customer" style="display:none"></div>
-<div id="accountdata" style="display:none"></div>
-<!-- end customer excel div -->
-
-<!-- Important -->
-<?php if ($current_page != 'vendorcreation' and $current_page != 'auction_details') { ?>
-	<?php include "include/common/dashboardhead.php" ?>
-<?php  } ?>
-
-
-<?php if ($current_page == 'vendorcreation') { ?>
-	<?php include "include/common/dashboardfinancedatatablehead.php" ?>
-<?php } ?>
-<?php if ($current_page == 'auction_details') { ?>
-	<?php include "include/common/dashboardfinancedatatablehead.php" ?>
-<?php } ?>
+<?php include "include/common/dashboardhead.php" ?>
 
 <body>
 	<!-- Page wrapper start -->
@@ -53,6 +37,7 @@ if (isset($getuserdetails['download_access'])) {
 		if ($_SESSION['userid'] == "") {
 			echo "<script>location.href='index.php'</script>";
 		}
+		
 		include "include/common/leftbar.php" ?>
 
 		<!-- Page content start  -->
