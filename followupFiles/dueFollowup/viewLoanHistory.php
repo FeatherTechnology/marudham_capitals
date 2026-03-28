@@ -128,20 +128,6 @@ if (isset($_SESSION["userid"])) {
 
     // Pass the table variable to the initColVisFeatures function
     initColVisFeatures(LoanHistTable, 'LoanHistTable');
-
-    $('.dropdown').unbind('click');
-    $('.dropdown').click(function(event) {
-        event.preventDefault();
-        $('.dropdown').not(this).removeClass('active');
-        $(this).toggleClass('active');
-    });
-
-    $(document).click(function(event) {
-        var target = $(event.target);
-        if (!target.closest('.dropdown').length) {
-            $('.dropdown').removeClass('active');
-        }
-    });
 </script>
 
 <?php

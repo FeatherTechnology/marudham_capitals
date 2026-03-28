@@ -69,7 +69,7 @@
 
 				<br>
 				<div class="table-responsive" id='dueFollwupDiv'>
-					<table id='due_followup_table' class="table custom-table">
+					<table id='ecs_followup_table' class="table custom-table">
 						<thead>
 							<tr>
 								<th width="50">S.No.</th>

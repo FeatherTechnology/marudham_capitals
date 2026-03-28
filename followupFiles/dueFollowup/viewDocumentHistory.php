@@ -228,20 +228,6 @@ function getDocumentStatus($connect,$req_id,$cus_id){
 ?>
 
 <script>
-    $('.dropdown').unbind('click');
-    $('.dropdown').click(function(event) {
-        event.preventDefault();
-        $('.dropdown').not(this).removeClass('active');
-        $(this).toggleClass('active');
-    });
-    
-    $(document).click(function(event) {
-        var target = $(event.target);
-        if (!target.closest('.dropdown').length) {
-            $('.dropdown').removeClass('active');
-        }
-    });
-
     $(document).on('click', '.noc-summary', function (e) {
         e.preventDefault();
         let req_id = $(this).data('reqid');

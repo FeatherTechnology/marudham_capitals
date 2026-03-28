@@ -207,32 +207,4 @@
 	</style>
 
 	<link rel="stylesheet" href="vendor/bs-select/bs-select.css" />
-	<script>
-		showOverlay();
-		window.addEventListener('load', function() {
-			hideOverlay();
-		});
-
-		// Function to add the overlay
-		function showOverlay() {
-			var overlayDiv = document.createElement('div');
-			overlayDiv.classList.add('overlay');
-			document.body.appendChild(overlayDiv);
-
-			var loaderDiv = document.createElement('div');
-			loaderDiv.classList.add('loader');
-			overlayDiv.appendChild(loaderDiv);
-
-			var overlayText = document.createElement('span');
-			overlayText.classList.add('overlay-text');
-			overlayText.innerText = 'Please Wait';
-			overlayDiv.appendChild(overlayText);
-		}
-
-		// Function to remove the overlay and clear the timer
-		function hideOverlay() {
-			var overlayDiv = document.querySelector('.overlay');
-			overlayDiv.remove();
-		}
-	</script>
 </head>

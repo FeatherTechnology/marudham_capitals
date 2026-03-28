@@ -161,21 +161,6 @@ include '../../moneyFormatIndia.php';
         initColVisFeatures(loanListTable, 'loanListTable');
     });
 
-    $('button').click(function() {
-        event.preventDefault();
-    })
-    $('.dropdown').click(function(event) {
-
-        $('.dropdown').not(this).removeClass('active');
-        $(this).toggleClass('active');
-    });
-
-    $(document).click(function(event) {
-        var target = $(event.target);
-        if (!target.closest('.dropdown').length) {
-            $('.dropdown').removeClass('active');
-        }
-    });
     $('.due-chart, .penalty-chart, .coll-charge-chart, .coll-charge, .add-commitment-chart, .commitment-chart').css('color', 'black');
 </script>
 

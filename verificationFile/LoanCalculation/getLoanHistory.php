@@ -203,19 +203,6 @@ if (isset($_POST["bal_amt"])) {
         ],
         'drawCallback': function() {
             searchFunction('loanListTable');
-            $('.dropdown').unbind('click');
-            $('.dropdown').click(function(event) {
-                event.preventDefault();
-                $('.dropdown').not(this).removeClass('active');
-                $(this).toggleClass('active');
-            });
-
-            $(document).click(function(event) {
-                var target = $(event.target);
-                if (!target.closest('.dropdown').length) {
-                    $('.dropdown').removeClass('active');
-                }
-            });
         }
     });
 
