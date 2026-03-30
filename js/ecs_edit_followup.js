@@ -43,12 +43,12 @@ function OnLoadFunctions(cusSts, comm_date) {
         return;
     }
 
-    $('#due_followup_table').DataTable().destroy();
-    var table = $('#due_followup_table').DataTable({
-        ...getStateSaveConfig('due_followup_table'),
+    $('#ecs_followup_table').DataTable().destroy();
+    var table = $('#ecs_followup_table').DataTable({
+        ...getStateSaveConfig('ecs_followup_table'),
         "order": [[0, "desc"]],
         "processing": true,
-        "displayStart": getDisplayStart('due_followup_table'),
+        "displayStart": getDisplayStart('ecs_followup_table'),
         "serverSide": true,
         "serverMethod": 'post',
         "ajax": {
@@ -89,18 +89,18 @@ function OnLoadFunctions(cusSts, comm_date) {
         "pagingType": "simple_numbers",
         "drawCallback": function () {
             enableDateColoring();
-            searchFunction('due_followup_table');
-            paginationFunction('due_followup_table');
+            searchFunction('ecs_followup_table');
+            paginationFunction('ecs_followup_table');
         }
     });
 
     // Pass the table variable to the initColVisFeatures function
-    initColVisFeatures(table, 'due_followup_table');
+    initColVisFeatures(table, 'ecs_followup_table');
 }
 
 function enableDateColoring() {
     //for coloring
-    $('#due_followup_table tbody tr').not('th').each(function () {
+    $('#ecs_followup_table tbody tr').not('th').each(function () {
         let tddate = $(this).find('td:eq(12)').text(); // Get the text content of the 12th td element (Follow date)
         let datecorrection = tddate.split("-").reverse().join("-").replaceAll(/\s/g, ''); // Correct the date format
         let values = new Date(datecorrection); // Create a Date object from the corrected date

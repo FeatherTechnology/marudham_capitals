@@ -261,19 +261,6 @@ function callresetCustomerStatus(cus_id, callback) {
 }
 
 function customerStatusOnClickEvents() {
-    $('.dropdown').off('click').click(function (event) {
-        event.preventDefault();
-        $('.dropdown').not(this).removeClass('active');
-        $(this).toggleClass('active');
-    });
-
-    $(document).off('click').click(function (event) {
-        var target = $(event.target);
-        if (!target.closest('.dropdown').length) {
-            $('.dropdown').removeClass('active');
-        }
-    });
-
     $('.personal-info').off('click').click(function () {
         let cus_id = $(this).data('cusid');
         $.post('followupFiles/promotion/getPersonalInfo.php', {

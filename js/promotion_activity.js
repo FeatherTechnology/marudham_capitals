@@ -930,11 +930,11 @@ function promotionListOnclick() {
         window.open('due_followup_info&upd=' + req_id + '&pgeView=1', '_blank');
     })
 
-    $('.customer-status, .loan-history, .doc-history').off('click').click(function () {
+    $('.customer-sts, .loan-history, .doc-history').off('click').click(function () {
         let cus_id = $(this).data('cusid');
         let type = $(this).attr('class');
         let url;
-        if (type == 'customer-status') {
+        if (type == 'customer-sts') {
             url = 'collectionFile/resetCustomerStatus.php';
         } else {
             url = 'closedFile/resetCustomerStsForClosed.php';
@@ -1039,7 +1039,7 @@ function historyTableContents(cus_id, type, url) {
         $('.re_active_card').hide();
         $('.repromotion_card').hide();
 
-        if (type == 'customer-status') {
+        if (type == 'customer-sts') {
 
             //for customer status
             $('.customer-status-card').show();

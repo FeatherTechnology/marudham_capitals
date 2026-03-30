@@ -45,8 +45,8 @@ if ($stage == 'lc') { //Loan Calculation, So show verification info
 
             $fam_qry = $connect->query("SELECT famname,relationship from verification_family_info where relation_aadhar = '" . strip_tags($row['cash_guarentor_name']) . "' ");
             $fam_row = $fam_qry->fetch();
-            $detail_arr['issued_to'] = $fam_row['famname'];
-            $detail_arr['relationship'] = $fam_row['relationship'];
+            $detail_arr['issued_to'] = $fam_row['famname'] ?? '';
+            $detail_arr['relationship'] = $fam_row['relationship'] ?? '';
         } elseif (!empty($row['agent_id'])) { //if issued to an agent, take agent name
 
             $ag_qry = $connect->query("SELECT ag_name from agent_creation where ag_id = '" . strip_tags($row['agent_id']) . "' ");
