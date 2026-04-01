@@ -99,6 +99,11 @@
 </div>
 
 <script>
+	
+	$(function() {
+		loadNotifications();
+	})
+
 	$(document).ready(function() {
 		$(document).on('click', '.receive-noc', function(event) {
 			event.preventDefault();

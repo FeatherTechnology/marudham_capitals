@@ -72,7 +72,7 @@
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
-			<div class="modal-body">			
+			<div class="modal-body">
 				<div id="updatedcusHistoryTable">
 					<table class="table custom-table" id="cusHistoryTable">
 						<thead>
@@ -98,6 +98,11 @@
 </div>
 
 <script>
+	
+	$(function() {
+		loadNotifications();
+	})
+
 	$(document).ready(function() {
 		$(document).on('click', '.remove-noc', function(event) {
 			event.preventDefault();

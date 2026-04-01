@@ -1960,14 +1960,14 @@
                 var req_id = $(this).data('reqid');
                 var useINcondition = $(this).data('multi-reqid') ?? '0';
                 var currentReqId = $(this).data('current-req-id');
-                if(useINcondition =='1'){
+                if (useINcondition == '1') {
                     $('#combine_doc')
-                    .attr('reqid', currentReqId)
-                    .show();
-                }else{
+                        .attr('reqid', currentReqId)
+                        .show();
+                } else {
                     $('#combine_doc')
-                    .removeAttr('reqid')
-                    .hide();
+                        .removeAttr('reqid')
+                        .hide();
                 }
 
                 $.ajax({
@@ -2473,12 +2473,12 @@
         /////////////////////////////////////////////////////  Check Transaction Details END  //////////////////////////////////////////////////// 
         function scrollToFirstError(formId) {
 
-            let firstError = $(formId).find('span.text-danger:visible').filter(function () {
+            let firstError = $(formId).find('span.text-danger:visible').filter(function() {
 
                 let txt = $(this).text().trim();
                 return txt !== '' && !txt.startsWith('*');
             }).first();
-            
+
             if (firstError.length) {
                 $('html, body').animate({
                     scrollTop: firstError.closest('div').offset().top - 120
@@ -2496,6 +2496,64 @@
             });
         }
         ///////////////////////////////// swal alert END///////////////////////////////////
+        /////////////////////////////////////Notification////////////////////////////
+        function loadNotifications() {
+            $.ajax({
+                url: 'ajaxFetch/notification.php',
+                type: 'GET',
+                dataType: 'json',
+                global: false,
+                success: function(res) {
+                    let totalTotal = 0;
+                    let html = `
+                <table style="width:100%; border-collapse: collapse;">
+                    <tr style="background:#f0f0f0;">
+                        <th style="padding:8px; border:1px solid #ddd;">Screen</th>
+                        <th style="padding:8px; border:1px solid #ddd;">Today</th>
+                        <th style="padding:8px; border:1px solid #ddd;">Total</th>
+                    </tr>
+            `;
+
+                const stages = [
+                {access: 'verification_access', today: 'verification_today', total: 'verification_total', name: 'Verification', ids: 'verification_ids', link: 'verification_list'},
+                {access: 'approval_access', today: 'approval_today', total: 'approval_total', name: 'Approval', ids: 'approval_ids', link: 'approval_list'},
+                {access: 'acknowledgement_access', today: 'acknowledgement_today', total: 'acknowledgement_total', name: 'Acknowledgement', ids: 'acknowledgement_ids', link: 'edit_acknowledgement_list'},
+                {access: 'loan_issue_access', today: 'loan_issue_today', total: 'loan_issue_total', name: 'Loan Issue', ids: 'loan_ids', link: 'edit_loan_issue'},
+                {access: 'accounts_loan_issue_access', today: 'accounts_loan_issue_today', total: 'accounts_loan_issue_total', name: 'Accounts Loan Issue', ids: 'ac_loan_ids', link: 'edit_accounts_loan_issue'},
+                {access: 'closed_access', today: 'closed_today', total: 'closed_total', name: 'Closed', ids: 'closed_ids', link: 'edit_closed'},
+                {access: 'noc_access', today: 'noc_today', total: 'noc_total', name: 'NOC', ids: 'noc_ids', link: 'edit_noc'},
+                {access: 'noc_handover_access', today: 'noc_handover_today', total: 'noc_handover_total', name: 'NOC Handover', ids: 'noc_handover_ids', link: 'edit_noc_handover'}
+            ];
+                    stages.forEach(stage => {
+                        if (res[stage.access] == 0) {
+                            totalTotal += parseInt(res[stage.total] || 0);
+                            html += `
+                        <tr>
+                            <td style="padding:8px; border:1px solid #ddd;">
+                                <a href="${stage.link}" 
+                                   title="${res[stage.ids]}" 
+                                   onclick="event.stopPropagation(); event.preventDefault(); window.location.href='${stage.link}';"
+                                   style="text-decoration:none; color:#333;">
+                                   ${stage.name}
+                                </a>
+                            </td>
+                            <td style="padding:8px; text-align:center; border:1px solid #ddd;">${res[stage.today] || 0}</td>
+                            <td style="padding:8px; text-align:center; border:1px solid #ddd;">${res[stage.total] || 0}</td>
+                        </tr>
+                    `;
+                        }
+                    });
+
+                    html += '</table>';
+                    $('.count-label').text(totalTotal);
+                    $('.header-notifications').html(html);
+                },
+                error: function() {
+                    console.log('Notification load failed');
+                }
+            });
+        }
+        //////////////////////////////////Notification///////////////////////////////////////////////
     </script>
 
     <?php
@@ -2700,7 +2758,7 @@
     if ($current_page == 'hand_cash_balance_sheet') { ?>
         <script src="js/hand_cash_balance_sheet.js"></script>
     <?php }
-    
+
     // accounts loan Isue
     if ($current_page == 'edit_accounts_loan_issue') { ?>
         <script src="js/edit_accounts_loan_issue.js"></script>

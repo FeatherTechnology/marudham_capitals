@@ -38,33 +38,33 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '.move_approval', function () {
-        var req_id = $(this).val();
-        if (confirm('Do You want to Send this for Approval?')) {
-            $.ajax({
-                url: 'verificationFile/sendToApproval.php',
-                dataType: 'json',
-                type: 'post',
-                data: { 'req_id': req_id, 'cus_id': $(this).data('cusid') },
-                cache: false,
-                success: function (response) {
-                    if (response.includes('Moved')) {
-                        Swal.fire({
-                            title: response,
-                            icon: 'success',
-                            showConfirmButton: true,
-                            confirmButtonColor: '#009688',
-                            confirmButtonText: 'OK'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                // Redirect only when OK is clicked
-                                window.location = 'verification_list';
-                            }
-                        });
+            var req_id = $(this).val();
+            if (confirm('Do You want to Send this for Approval?')) {
+                $.ajax({
+                    url: 'verificationFile/sendToApproval.php',
+                    dataType: 'json',
+                    type: 'post',
+                    data: { 'req_id': req_id, 'cus_id': $(this).data('cusid') },
+                    cache: false,
+                    success: function (response) {
+                        if (response.includes('Moved')) {
+                            Swal.fire({
+                                title: response,
+                                icon: 'success',
+                                showConfirmButton: true,
+                                confirmButtonColor: '#009688',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // Redirect only when OK is clicked
+                                    window.location = 'verification_list';
+                                }
+                            });
+                        }
                     }
-                }
-            })
-        }
-    });
+                })
+            }
+        });
 
     //Request info tab
     $(document).on('click', '.request-info', function () {
@@ -92,6 +92,10 @@ $(document).ready(function () {
     });
 
 });//document ready end
+
+$(function () {
+    loadNotifications();
+})
 
 function warningSwal(title, text) {
     Swal.fire({

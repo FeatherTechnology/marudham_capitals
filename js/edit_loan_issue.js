@@ -257,6 +257,10 @@ $(document).ready(function () {
 
 });//document ready end
 
+$(function () {
+    loadNotifications();
+})
+
 function warningSwal(title, text) {
     Swal.fire({
         title: title,
