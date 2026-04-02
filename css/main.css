@@ -9112,3 +9112,13 @@ i {
 table.dataTable thead .sorting {
   border: 1px solid #d9dee3;
 }
+
+/* Disable hover only for notification dropdown */
+#notifications + .dropdown-menu {
+  display: none;
+}
+
+/* Show only when Bootstrap adds .show (on click) */
+#notifications + .dropdown-menu.show {
+  display: block;
+}
