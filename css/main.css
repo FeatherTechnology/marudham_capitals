@@ -619,15 +619,32 @@ a.bg-pink:focus {
 .header-actions>li>a .count-label {
   position: absolute;
   top: 8px;
-  right: 5px;
-  width: 16px;
-  height: 16px;
-  line-height: 16px;
+  right: -2px;
+  min-width: 20px;          /* instead of fixed width */
+  height: 20px;
+  line-height: 20px;
   font-size: .6rem;
   font-weight: 600;
+    padding: 0 6px;   
   text-align: center;
   background: #009688;
-  border-bottom: 1px solid black;
+  color: #ffffff;
+  -webkit-border-radius: 30px;
+  -moz-border-radius: 30px;
+  border-radius: 30px;
+}
+.header-actions > li > a .count-label:empty {
+  position: absolute;
+  top: 8px;
+  right: 5px;
+  min-width: 20px;          /* instead of fixed width */
+  height: 20px;
+  line-height: 20px;
+  font-size: .6rem;
+  font-weight: 600;
+  padding: 0 6px;   
+  text-align: center;
+  background: #009688;
   color: #ffffff;
   -webkit-border-radius: 30px;
   -moz-border-radius: 30px;
@@ -725,6 +742,8 @@ ul.header-notifications li a {
   display: flex;
   align-items: center;
   flex-direction: row;
+  font-size: 16px;      /* increase text size */
+  font-weight: 500;     /* make it bold */
 }
 
 ul.header-notifications li a>.user-img {
@@ -9092,4 +9111,14 @@ i {
 
 table.dataTable thead .sorting {
   border: 1px solid #d9dee3;
+}
+
+/* Disable hover only for notification dropdown */
+#notifications + .dropdown-menu {
+  display: none;
+}
+
+/* Show only when Bootstrap adds .show (on click) */
+#notifications + .dropdown-menu.show {
+  display: block;
 }

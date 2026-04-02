@@ -31,12 +31,12 @@ $media_path = ($m->rowCount() > 0) ? $m->fetch()['media_path'] : "";
 <div class="container-fluid">
     <div class="d-flex justify-content-end align-items-center w-100">
 
-        <div class="dash-input-div" 
-             <?php if ($access == 1) { ?> style="display:none" <?php } ?>>
-            
-            <button type="button" 
-                    class="btn btn-primary"  style="width: 100px;"
-                    onclick="$('.uploadModal').modal('show');">
+        <div class="dash-input-div"
+            <?php if ($access == 1) { ?> style="display:none" <?php } ?>>
+
+            <button type="button"
+                class="btn btn-primary" style="width: 100px;"
+                onclick="$('.uploadModal').modal('show');">
                 Upload
             </button>
 
@@ -75,7 +75,7 @@ $media_path = ($m->rowCount() > 0) ? $m->fetch()['media_path'] : "";
 
 <!-- Add Upload Modal  START -->
 <div class="modal fade uploadModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-   <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content" style="background-color: white">
             <div class="modal-header">
                 <h5 class="modal-title" id="myLargeModalLabel">Add Upload</h5>
@@ -86,7 +86,7 @@ $media_path = ($m->rowCount() > 0) ? $m->fetch()['media_path'] : "";
             <div class="modal-body">
                 <!-- alert messages -->
                 <div class="row">
-                     <div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12">
+                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12">
                     </div>
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                         <div class="form-group">
@@ -110,6 +110,11 @@ $media_path = ($m->rowCount() > 0) ? $m->fetch()['media_path'] : "";
 </div>
 <!-- // submit upload -->
 <script>
+
+    $(function() {
+		loadNotifications();
+	})
+    
     $('#submit_upload').click(function() {
 
         // validation
@@ -141,7 +146,7 @@ $media_path = ($m->rowCount() > 0) ? $m->fetch()['media_path'] : "";
         });
 
     });
-// close Modal
+    // close Modal
     function closeChartsModal() {
         $('.uploadModal').modal('hide');
 

@@ -4,28 +4,32 @@ $(document).ready(function () {
     $('.closeModal').click(function () {
         $('#cusHistoryTable tbody').empty();
     })
-
+  
     $(document).on('click', '.move_customer', function(event) {
-        event.preventDefault(); // Prevent the default action (if needed)
-        let req_id = $(this).data('id');
-        Swal.fire({
-            title: 'Are you sure to move to Loan Issue?',
-            text: 'This action cannot be reverted!',
-            icon: 'question',
-            showConfirmButton: true,
-            showCancelButton: true,
-            confirmButtonColor: '#009688',
-            cancelButtonColor: '#cc4444',
-            cancelButtonText: 'No',
-            confirmButtonText: 'Yes'
-        }).then(function(result) {
-            if (result.isConfirmed) {
-                removeLoanFromList(req_id);
-            }
-        });
+            event.preventDefault(); // Prevent the default action (if needed)
+            let req_id = $(this).data('id');
+            Swal.fire({
+                title: 'Are you sure to move to Loan Issue?',
+                text: 'This action cannot be reverted!',
+                icon: 'question',
+                showConfirmButton: true,
+                showCancelButton: true,
+                confirmButtonColor: '#009688',
+                cancelButtonColor: '#cc4444',
+                cancelButtonText: 'No',
+                confirmButtonText: 'Yes'
+            }).then(function(result) {
+                if (result.isConfirmed) {
+                    removeLoanFromList(req_id);
+                }
+            });
     });
   
 });//document ready end
+
+$(function () {
+    loadNotifications();
+})
 
 function removeLoanFromList(req_id) {
     $.ajax({
