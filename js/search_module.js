@@ -102,50 +102,50 @@ $(document).ready(function () {
             var quality = 60; //(1 to 100) (recommended minimum 55)
             var timeout = 10; // seconds (minimum=10(recommended), maximum=60, unlimited=0)
             var res = CaptureFinger(quality, timeout);
+            let errorCode = res.data.ErrorCode;
             if (res.httpStaus) {
-                if (res.data.ErrorCode == "0") {
-                    $('#search_fingerprint').val(res.data.AnsiTemplate); // Take ansi template that is the unique id which is passed by sensor
+                if (errorCode == "0") {
+                    let fdata = res.data.AnsiTemplate;
+                    if(fdata){
+                        $('#search_fingerprint').val(fdata); // Take ansi template that is the unique id which is passed by sensor
+                    }else{
+                        alert("ANSI Template not received");
+                    }
                 }//Error codes and alerts below
-                else if (res.data.ErrorCode == -1307) {
+                else if (errorCode == -2027) {
                     alert('Connect Your Device');
-                
-                } else if (res.data.ErrorCode == -1140 || res.data.ErrorCode == 700) {
+                    
+                } else if (errorCode == -1140 || errorCode == 700) {
                     alert('Timeout');
-                
-                } else if (res.data.ErrorCode == 720) {
+                    
+                } else if (errorCode == 720) {
                     alert('Reconnect Device');
-                
-                } else if (res.data.ErrorCode == 730) {
+                    
+                } else if (errorCode == 2038) {
                     alert('Capture Finger Again');
-                
+                    
                 } else {
-                    alert('Error Code:' + res.data.ErrorCode);
-                
+                    alert(`Error: ${res.data.ErrorDescription} Error Code: ${errorCode}`);
+                    
                 }
             }
             else {
-                alert(res.err);
+                alert(res.ErrorDescription);
             }
 
-            //Verify the finger is matched with member name
-            
-            $.post("searchModule/getAllFingerprints.php", {}, function(data){
-                let search_fingerprint = $('#search_fingerprint').val()
-                if (data.fingerprints && data.fingerprints.length > 0) {
-                    let matchedCustomer = null;
-                    for (let i = 0; i < data.fingerprints.length; i++) {
-                        let stored = data.fingerprints[i].template;
-                        let res = VerifyFinger(stored, search_fingerprint);
-                        if (res.httpStaus && res.data.Status) {
-                            matchedCustomer = data.fingerprints[i];
-                            $('#fingerprint_person_id').val(matchedCustomer.cus_id);
-                            break;
-                        }
-                    }
-
-                    if (matchedCustomer) {
+            // Match fingerprint against stored templates via server-side exact search
+            let search_fingerprint = $('#search_fingerprint').val();
+            $.ajax({
+                url: "searchModule/searchByFingerprint.php",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify({ template: search_fingerprint }),
+                success: function (data) {
+                    if (data.matched) {
+                        $('#fingerprint_person_id').val(data.cus_id);
                         Swal.fire({
-                            title: `Fingerprint Matched: ${matchedCustomer.cus_name}`,
+                            title: `Fingerprint Matched: ${data.cus_name}`,
                             icon: 'success',
                             showConfirmButton: true,
                             confirmButtonColor: '#009688'
@@ -161,16 +161,8 @@ $(document).ready(function () {
                             confirmButtonColor: '#009688'
                         });
                     }
-                }else{
-                     Swal.fire({
-                        title: 'Error While getting Fingerprint',
-                        icon: 'error',
-                        showConfirmButton: true,
-                        confirmButtonColor: '#009688'
-                    });
                 }
-
-            },'json');
+            });
 
             hideOverlay();//loader stop
 
@@ -178,8 +170,11 @@ $(document).ready(function () {
 
     })//Scan button Onclick end
 
-})
+});
 
+$(function(){
+    mantraInitDevice(); //to initialize the fingerprint scanner.
+});
 
 function validate() {
     let response = true;

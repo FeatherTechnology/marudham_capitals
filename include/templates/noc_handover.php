@@ -570,12 +570,13 @@ if (sizeof($getCustomerReg) > 0) {
 								</div>
 								<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 									<div class="form-group">
-										<label for="ack_fingerprint">Acknowledgement</label><span class="required">&nbsp;*</span>
-										<input type="hidden" class="form-control" id="compare_finger" name="compare_finger" value='' readonly>
-										<input type="hidden" class="form-control" id="ack_fingerprint" name="ack_fingerprint" value='' readonly>
-										<input type="text" class="form-control" value='' readonly style="visibility:hidden;">
-										<button type="button" class='btn btn-success scanBtn' id="" name="" style='background-color:#009688;margin-top: -50px;width: auto;' onclick="event.preventDefault()" title='Put Your Thumb' tabindex='44'><i class="material-icons" id="icon-flipped">&#xe90d;</i>&nbsp;Scan</button>
-										<span class="text-danger scanBtnCheck" style="display:none">Please Scan fingerprint</span>
+										<label for="ack_fingerprint">Acknowledgement</label><span class="required">&nbsp;*</span> <span class="text-danger scanBtnCheck" style="display:none">Please Scan fingerprint</span>
+										<input type="hidden" id="compare_finger" name="compare_finger"><!--Already Store in Finger Print Table... when select fam name above the finger print will be shown here to compare. -->
+										<input type="hidden" id="ack_fingerprint" name="ack_fingerprint"> <!-- finger print value from Device when scanning.-->
+										<input type="hidden" id="fingerValidation" name="fingerValidation"> <!-- set val as 1 when finger Print Matching becuz to use for finger print validation if submit click.-->
+										<input type="text" class="form-control" style="visibility:hidden;">
+										<button type="button" class='btn btn-success scanBtn'  style='background-color:#009688;margin-top: -50px;width: auto;' onclick="event.preventDefault()" title='Put Your Thumb' tabindex='44'><i class="material-icons" id="icon-flipped">&#xe90d;</i>&nbsp;Scan</button> 
+										<span class="text-danger" id="hand_type" style="position: relative;top: -22px;"> </span>
 									</div>
 								</div>
 							</div>

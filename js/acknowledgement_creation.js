@@ -1253,6 +1253,8 @@ $(function () {
         }
         ],
     });
+
+    mantraInitDevice(); //to initialize the fingerprint scanner.
 });
 
 //Get document ids
@@ -1340,69 +1342,81 @@ function getCustomerLoanCounts() {
 }
 
 function fingerprintTable() {//To Get family member's name are required for scanning fingerprint
-    var req_id = $('#req_id').val();
     var cus_name = $('#cus_name').val();
     var cus_id = $('#cus_id_doc').val();
     $.ajax({
         url: 'verificationFile/getNamesForFingerprint.php',
-        data: { 'req_id': req_id, 'cus_name': cus_name, 'cus_id': cus_id },
+        data: { 'cus_name': cus_name, 'cus_id': cus_id },
         type: 'post',
         cache: false,
         success: function (html) {
-            $('.fingerprintTable').empty()
-            $('.fingerprintTable').html(html)
+            $('.fingerprintTable').html(html);
 
             $('.scanBtn').click(function () {
                 var hand = $(this).prev().val();
+                var name = $(this).parent().prev().find('input[id="name_print"]').val();
+                var adhar = $(this).parent().prev().prev().find('input[id="adhar_print"]').val();
                 if (hand == '') { //prevent if hand is not selected
                     $(this).prev().css('border-color', 'red');
                 } else {
-                    $(this).prev().css('border-color', '#009688')
-
+                    $(this).prev().css('border-color', '#009688');
                     showOverlay();//loader start
-
                     $(this).attr('disabled', true);
-
                     setTimeout(() => {
                         var quality = 60; //(1 to 100) (recommended minimum 55)
                         var timeout = 10; // seconds (minimum=10(recommended), maximum=60, unlimited=0)
                         var res = CaptureFinger(quality, timeout);
-                        console.log("~ file: acknowledgement_creation.js:934 ~ setTimeout ~ (res.data.ErrorCode:", res.data.ErrorCode);
+                        let errorCode = res.data.ErrorCode;
+                        console.log(`~ file: acknowledgement_creation.js:934 ~ setTimeout ~ (res.data.ErrorCode: ${errorCode}, res.data.ErrorDescription: ${res.data.ErrorDescription})`);
                         if (res.httpStaus) {
-                            if (res.data.ErrorCode == "0") {
-                                $(this).next().val(res.data.AnsiTemplate); // Take ansi template that is the unique id which is passed by sensor
-
+                            if (errorCode == "0") {
+                                let fdata = res.data.AnsiTemplate;
+                                if(fdata){
+                                    $(this).next().val(fdata); // Take ansi template that is the unique id which is passed by sensor
+                                    storeFingerprints(fdata, hand, adhar, name);//stores the current finger data in database
+                                }else{
+                                    alert("ANSI Template not received");
+                                }
                             }//Error codes and alerts below
-                            else if (res.data.ErrorCode == -1307) {
+                            else if (errorCode == -2027) {
                                 alert('Connect Your Device');
                                 $(this).removeAttr('disabled');
-                            } else if (res.data.ErrorCode == -1140 || res.data.ErrorCode == 700) {
+                            } else if (errorCode == -1140 || errorCode == 700) {
                                 alert('Timeout');
                                 $(this).removeAttr('disabled');
-                            } else if (res.data.ErrorCode == 720) {
+                            } else if (errorCode == 720) {
                                 alert('Reconnect Device');
                                 $(this).removeAttr('disabled');
-                            } else if (res.data.ErrorCode == 730) {
+                            } else if (errorCode == 2038) {
                                 alert('Capture Finger Again');
                                 $(this).removeAttr('disabled');
                             } else {
-                                alert('Error Code:' + res.data.ErrorCode);
+                                alert(`Error: ${res.data.ErrorDescription} Error Code: ${errorCode}`);
                                 $(this).removeAttr('disabled');
                             }
                         }
                         else {
-                            alert(res.err);
+                            alert(res.ErrorDescription);
                         }
                         // Hide the loading animation and remove blur effect from the body
                         hideOverlay();//loader stop
 
-                    }, 700)
+                    }, 700);
                 }
-            })
+            });
         }
-    })
+    });
+}
 
-
+function storeFingerprints(fdata, hand, cus_id, cus_name) {//stores the current finger data in database
+  $.post('updateFile/storeFingerprints.php', { 'fdata': fdata, 'hand': hand, 'cus_id': cus_id, 'cus_name': cus_name }, function (response) {
+    if (response.includes('Successfully')) {
+      Swal.fire({
+        title: response, icon: 'success', confirmButtonColor: '#009688'
+      });
+      $('#fingerValidation').val('1');
+    }
+  }, 'json')
 }
 
 function resetFamDetails() {
@@ -2868,8 +2882,8 @@ function docinfoList() {
 
 
 //Documentation Submit Validation
-$('#submit_documentation').click(function () {
-    if (doc_submit_validation()) {
+$('#submit_documentation').click(function (event) {
+    if (doc_submit_validation(event)) {
         let confirmAction = confirm("Are you sure you want to submit Documentation ?");
         if (!confirmAction) {
             event.preventDefault(); // Stop form submission if canceled
@@ -2882,7 +2896,7 @@ $('#submit_documentation').click(function () {
     }
 });
 
-function doc_submit_validation() {
+function doc_submit_validation(event) {
 
     var cus_id_doc = $('#cus_id_doc').val(); var mortgage_process = $('#mortgage_process').val(); var Propertyholder_type = $('#Propertyholder_type').val(); var doc_property_pype = $('#doc_property_pype').val(); var doc_property_measurement = $('#doc_property_measurement').val(); var doc_property_location = $('#doc_property_location').val(); var doc_property_value = $('#doc_property_value').val(); var endorsement_process = $('#endorsement_process').val(); var owner_type = $('#owner_type').val(); var vehicle_type = $('#vehicle_type').val(); var vehicle_process = $('#vehicle_process').val();
     var en_Company = $('#en_Company').val(); var en_Model = $('#en_Model').val();
@@ -2898,7 +2912,7 @@ function doc_submit_validation() {
     var doc_remark = $('#doc_remark').val().trim();
     let replaceStatusChecked = $('#replace_status').is(':checked'); 
     
-    // var fingerprint = $('#fingerprint').val(); var submitted = $('#submitted').val();
+    // var fingerprint = $('#fingerValidation').val(); var submitted = $('#submitted').val();
     
     var validation = true;
     
@@ -3134,6 +3148,7 @@ function doc_submit_validation() {
     // if (submitted == undefined || submitted == '' || submitted == null) {
     //     if (fingerprint == '') {
     //         event.preventDefault();
+    //         validation = false;
     //         $('.fingerSpan').show();
     //     } else {
     //         $('.fingerSpan').hide();

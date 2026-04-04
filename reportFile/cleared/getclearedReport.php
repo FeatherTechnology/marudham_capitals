@@ -4,6 +4,7 @@ include '../../moneyFormatIndia.php';
 
 $from_date = date('Y-m-d', strtotime($_POST['from_date']));
 $to_date = date('Y-m-d', strtotime($_POST['to_date']. ' +1 day'));
+$stmt_type = $_POST['stmt_type'] ?? '1';
 
 $column = array(
     'bs.id',
@@ -17,44 +18,178 @@ $column = array(
     'bs.clr_status',
     'a.cleared_date',
     'a.cleared_user',
-    'a.cleared_screens'
+    'a.cleared_screens',
+    'lc.loan_category'
 );
+
+$condition = ($stmt_type =='1') ? " AND bs.clr_status = '1' " : '';
 
 $based_query = "FROM 
     bank_stmt bs
     LEFT JOIN bank_creation bc ON bs.bank_id = bc.id
     LEFT JOIN (
-        SELECT 
-            cbsh.bank_stmt_id,
-            GROUP_CONCAT(cbsh.created_date ORDER BY cbsh.created_date SEPARATOR ', ') AS cleared_date,
-            GROUP_CONCAT(u.fullname ORDER BY cbsh.created_date SEPARATOR ', ') AS cleared_user,
-            GROUP_CONCAT(cbsh.screens ORDER BY cbsh.created_date SEPARATOR ', ') AS cleared_screens
-        FROM cleared_bank_stmt_history cbsh 
-        JOIN user u ON cbsh.insert_login_id = u.user_id 
-        WHERE cbsh.created_date < '$to_date'
-        GROUP BY cbsh.bank_stmt_id
-    ) a ON bs.id = a.bank_stmt_id
-WHERE 
-    bs.trans_date >= '$from_date' AND bs.trans_date < '$to_date'
-    AND bs.clr_status = '1'";  
+            SELECT 
+                cbsh.bank_stmt_id,
 
-if (isset($_POST['search'])) {
-    if ($_POST['search'] != "") {
-        $based_query .= " AND (bc.bank_name LIKE '%" . $_POST['search'] . "%' OR
-            bs.trans_date LIKE '%" . $_POST['search'] . "%' OR
-            bs.narration LIKE '%" . $_POST['search'] . "%' OR
-            bs.trans_id LIKE '%" . $_POST['search'] . "%' OR
-            bs.credit LIKE '%" . $_POST['search'] . "%' OR
-            bs.debit LIKE '%" . $_POST['search'] . "%' OR
-            bs.clr_status LIKE '%" . $_POST['search'] . "%' OR
-            a.cleared_user LIKE '%" . $_POST['search'] . "%' OR
-            a.cleared_screens LIKE '%" . $_POST['search'] . "%' ) ";
-    }
+                GROUP_CONCAT(DISTINCT DATE(cbsh.created_date) 
+                    ORDER BY DATE(cbsh.created_date) SEPARATOR ', ') AS cleared_date,
+
+                GROUP_CONCAT(DISTINCT u.fullname 
+                    ORDER BY u.fullname SEPARATOR ', ') AS cleared_user,
+
+                GROUP_CONCAT(DISTINCT cbsh.screens 
+                    ORDER BY cbsh.screens SEPARATOR ', ') AS cleared_screens
+
+            FROM cleared_bank_stmt_history cbsh
+            JOIN user u ON cbsh.insert_login_id = u.user_id
+            GROUP BY cbsh.bank_stmt_id
+        ) a ON bs.id = a.bank_stmt_id
+    LEFT JOIN (
+            SELECT trans_id, GROUP_CONCAT(DISTINCT cat) AS loan_category
+            FROM (
+
+                -- CREDIT TABLES
+                SELECT c.trans_id, lcc.loan_category_creation_name AS cat
+                FROM collection c 
+                JOIN loan_category_creation lcc ON c.loan_category = lcc.loan_category_creation_id 
+
+                UNION ALL
+
+                SELECT trans_id, category FROM ct_cr_boti
+
+                UNION ALL
+
+                SELECT ccrbexc.trans_id, bc.bank_name
+                FROM ct_cr_bexchange ccrbexc 
+                JOIN bank_creation bc ON ccrbexc.to_bank_id = bc.id
+
+                UNION ALL
+
+                SELECT ccrcd.trans_id, bc.bank_name
+                FROM ct_cr_cash_deposit ccrcd 
+                JOIN bank_creation bc ON ccrcd.to_bank_id = bc.id 
+
+                UNION ALL
+
+                SELECT ccrbag.trans_id, ac.ag_name
+                FROM ct_cr_bag ccrbag 
+                JOIN agent_creation ac ON ccrbag.ag_id = ac.ag_id 
+
+                UNION ALL
+
+                SELECT ccrbi.trans_id, ndc.name
+                FROM ct_cr_binvest ccrbi 
+                JOIN name_detail_creation ndc ON ccrbi.name_id = ndc.name_id 
+
+                UNION ALL
+
+                SELECT ccrbd.trans_id, ndc.name
+                FROM ct_cr_bdeposit ccrbd 
+                JOIN name_detail_creation ndc ON ccrbd.name_id = ndc.name_id 
+
+                UNION ALL
+
+                SELECT ccrel.trans_id, ndc.name
+                FROM ct_cr_bel ccrel 
+                JOIN name_detail_creation ndc ON ccrel.name_id = ndc.name_id 
+
+                -- DEBIT TABLES
+                UNION ALL
+
+                SELECT cdbbexc.trans_id, bc.bank_name
+                FROM ct_db_bexchange cdbbexc 
+                JOIN bank_creation bc ON cdbbexc.from_acc_id = bc.id
+
+                UNION ALL
+
+                SELECT cdbcw.trans_id, bc.bank_name
+                FROM ct_db_cash_withdraw cdbcw 
+                JOIN bank_creation bc ON cdbcw.from_bank_id = bc.id 
+
+                UNION ALL
+
+                SELECT cdbbag.trans_id, ac.ag_name
+                FROM ct_db_bag cdbbag 
+                JOIN agent_creation ac ON cdbbag.ag_id = ac.ag_id 
+
+                UNION ALL
+
+                SELECT cdbbi.trans_id, ndc.name
+                FROM ct_db_binvest cdbbi 
+                JOIN name_detail_creation ndc ON cdbbi.name_id = ndc.name_id 
+
+                UNION ALL
+
+                SELECT cdbbd.trans_id, ndc.name
+                FROM ct_db_bdeposit cdbbd 
+                JOIN name_detail_creation ndc ON cdbbd.name_id = ndc.name_id 
+
+                UNION ALL
+
+                SELECT cdbel.trans_id, ndc.name
+                FROM ct_db_bel cdbel 
+                JOIN name_detail_creation ndc ON cdbel.name_id = ndc.name_id 
+
+                UNION ALL
+
+                SELECT cdbexf.trans_id, bc.bank_name
+                FROM ct_db_exf cdbexf 
+                JOIN bank_creation bc ON cdbexf.bank_id = bc.id 
+
+                UNION ALL
+
+                SELECT li.transaction_id AS trans_id, lcc.loan_category_creation_name
+                FROM loan_issue li
+                JOIN acknowlegement_loan_calculation alc ON li.req_id = alc.req_id 
+                JOIN loan_category_creation lcc ON alc.loan_category = lcc.loan_category_creation_id 
+
+                UNION ALL
+
+                SELECT cdbexp.trans_id, ec.category
+                FROM ct_db_bexpense cdbexp 
+                JOIN expense_category ec ON cdbexp.cat = ec.id 
+
+            ) x
+            GROUP BY trans_id
+        ) lc ON bs.trans_id = lc.trans_id
+
+WHERE 
+    bs.trans_date >= ? AND bs.trans_date < ? $condition ";  
+
+$search = '';
+$params = [];
+
+if (!empty($_POST['search'])) {
+    $search = "%" . $_POST['search'] . "%";
+
+    $based_query .= " AND (
+        bc.bank_name LIKE ? OR
+        bs.trans_date LIKE ? OR
+        bs.narration LIKE ? OR
+        bs.trans_id LIKE ? OR
+        bs.credit LIKE ? OR
+        bs.debit LIKE ? OR
+        a.cleared_user LIKE ? OR
+        lc.loan_category LIKE ? OR
+        a.cleared_screens LIKE ?
+    )";
+
+    // push same search multiple times
+    $params = array_fill(0, 9, $search);
 }
 
 $orderby_query = "";
+
 if (isset($_POST['order'])) {
-    $orderby_query .= " ORDER BY " . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'];
+    $col_index = $_POST['order'][0]['column'];
+    $dir = $_POST['order'][0]['dir'];
+
+    // whitelist direction
+    $dir = ($dir === 'asc') ? 'ASC' : 'DESC';
+
+    if (isset($column[$col_index])) {
+        $orderby_query = " ORDER BY " . $column[$col_index] . " " . $dir;
+    }
 }
 
 $limit_query = "";
@@ -67,7 +202,7 @@ $totalStmt->execute();
 $recordsTotal = (int) $totalStmt->fetchColumn();
 
 $countStmt = $connect->prepare("SELECT COUNT(*) $based_query");
-$countStmt->execute();
+$countStmt->execute([$from_date, $to_date]);
 $recordsFiltered = (int) $countStmt->fetchColumn();
 
 $data_query = "SELECT 
@@ -81,12 +216,13 @@ $data_query = "SELECT
     bs.clr_status, 
     a.cleared_date, 
     a.cleared_user, 
-    a.cleared_screens
+    a.cleared_screens,
+    lc.loan_category
     $based_query
     $orderby_query
     $limit_query";
 $statement = $connect->prepare($data_query);
-$statement->execute();
+$statement->execute([$from_date, $to_date]);
 $result = $statement->fetchAll();
 
 $data = array();
@@ -109,14 +245,15 @@ foreach ($result as $row) {
     $sub_array[] = $row['bank_name'];
     $sub_array[] = date('d-m-Y H:i', strtotime($row['trans_date']));
     $sub_array[] = $row['narration'] ?? '';
-    $sub_array[] = $row['trans_id'];
+    $sub_array[] = $row['trans_id'] ?? '';
     $sub_array[] = moneyFormatIndia($row['credit'] ?? '');
     $sub_array[] = moneyFormatIndia($row['debit'] ?? '');
     $sub_array[] = moneyFormatIndia($row['balance'] ?? '');
-    $sub_array[] = 'Cleared';
+    $sub_array[] = ($row['clr_status'] == '1') ? 'Cleared' : 'UnCleared';
     $sub_array[] = $clearedDate;
     $sub_array[] = $row['cleared_user'] ?? '';
     $sub_array[] = $row['cleared_screens'] ?? '';
+    $sub_array[] = $row['loan_category'] ?? '';
 
     $data[]      = $sub_array;
 }
