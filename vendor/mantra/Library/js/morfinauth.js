@@ -1,5 +1,6 @@
-//var uri = "https://localhost:8030/morfinauth/"; //Secure
-var uri = "http://localhost:8030/morfinauth/"; //Non-Secure
+// Mantra MFS500 typically uses 8030 for HTTP and 8031 for HTTPS
+var protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
+var uri = protocol + "//localhost:" + (window.location.protocol === 'https:' ? "8031" : "8030") + "/morfinauth/";
 
 function GetMorFinAuthInfo(connectedDvc , clientKey) {
     var MorFinAuthRequest = {
@@ -41,33 +42,13 @@ function GetMorFinAuthKeyInfo(key) {
     return PostMorFinAuthClient("keyinfo", jsondata);
 }
 function CaptureFinger(quality, timeout) {
-    // Use same-origin proxy to avoid CORS/preflight issues with MorFinAuth service.
     var MorFinAuthRequest = {
         "Quality": quality,
         "TimeOut": timeout,
         "TemplateFormat": "ANSI",
         "ImageFormat": "BMP"
     };
-
-    var res;
-    $.support.cors = true;
-    var httpStaus = false;
-    $.ajax({
-        type: "POST",
-        async: false,
-        url: "include/common/morfinauth_proxy.php",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify(MorFinAuthRequest),
-        dataType: "json",
-        processData: false,
-        success: function (data) {
-            httpStaus = true;
-            res = { httpStaus: httpStaus, data: data };
-        },
-        error: function (jqXHR, ajaxOptions, thrownError) {
-            res = { httpStaus: httpStaus, err: getHttpError(jqXHR, thrownError) };
-        },
-    });
+    return PostMorFinAuthClient("capture", JSON.stringify(MorFinAuthRequest));
 
     // Normalize template field names across service versions.
     // Many MorFinAuth builds return ANSI template under Template / Biometrics[0].BiometricData, etc.
@@ -102,66 +83,17 @@ function VerifyFinger(ProbFMR, GalleryFMR, tmpFormat) {
         "GalleryTemplate": GalleryFMR,
         "TmpFormat": tmpFormat
     };
-
-    var res;
-    $.support.cors = true;
-    var httpStaus = false;
-    $.ajax({
-        type: "POST",
-        async: false,
-        url: "include/common/morfinauth_verify_proxy.php",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify(MorFinAuthRequest),
-        dataType: "json",
-        processData: false,
-        success: function (data) {
-            httpStaus = true;
-            res = { httpStaus: httpStaus, data: data };
-        },
-        error: function (jqXHR, ajaxOptions, thrownError) {
-            res = { httpStaus: httpStaus, err: getHttpError(jqXHR, thrownError) };
-        },
-    });
-    return res;
+    return PostMorFinAuthClient("verify", JSON.stringify(MorFinAuthRequest));
 }
 function MatchFinger(quality, timeout, GalleryFMR, tmpFormat) {
-
-    if (!tmpFormat) {
-        tmpFormat = "ANSI";
-    }
-
+    if (!tmpFormat) { tmpFormat = "ANSI"; }
     var MorFinAuthRequest = {
         "Quality": quality,
         "TimeOut": timeout,
         "GalleryTemplate": GalleryFMR,
         "TemplateFormat": tmpFormat   // ✅ FIXED
     };
-
-    var res;
-    $.support.cors = true;
-
-    $.ajax({
-        type: "POST",
-        async: false,
-        url: "include/common/morfinauth_match_proxy.php",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify(MorFinAuthRequest),
-        dataType: "json",
-        processData: false,
-
-        success: function (data) {
-            res = { httpStaus: true, data: data };
-        },
-
-        error: function (jqXHR, ajaxOptions, thrownError) {
-            res = {
-                httpStaus: false,
-                err: jqXHR.responseText || thrownError
-            };
-        }
-    });
-
-    return res;
+    return PostMorFinAuthClient("match", JSON.stringify(MorFinAuthRequest));
 }
 function GetImage(imgformat) {
     var MorFinAuthRequest = {

@@ -2666,6 +2666,7 @@
 
     if ($current_page == 'verification') { ?>
         <script src="js/verification.js"></script>
+        <script src="js/fingerprint_common.js"></script>
     <?php }
 
     if ($current_page == 'verification_list') { ?>
@@ -2683,6 +2684,7 @@
 
     if ($current_page == 'acknowledgement_creation') { ?>
         <script src="js/acknowledgement_creation.js"></script>
+        <script src="js/fingerprint_common.js"></script>
     <?php }
 
     //Loan Issue screen
@@ -2692,6 +2694,7 @@
 
     if ($current_page == 'loan_issue') { ?>
         <script src="js/loan_issue.js"></script>
+        <script src="js/fingerprint_common.js"></script>
     <?php }
 
     if ($current_page == 'edit_collection') { ?>
@@ -2708,6 +2711,7 @@
 
     if ($current_page == 'noc_handover') { ?>
         <script src="js/noc_handover.js"></script>
+        <script src="js/fingerprint_common.js"></script>
     <?php }
 
     //Closed
@@ -2756,6 +2760,7 @@
     //Update Screen
     if ($current_page == 'update') { ?>
         <script src="js/update.js"></script>
+        <script src="js/fingerprint_common.js"></script>
     <?php }
 
     //Cash Tally
@@ -3001,6 +3006,7 @@
 
     if ($current_page == 'search_module') { ?>
         <script src="js/search_module.js"></script>
+        <script src="js/fingerprint_common.js"></script>
     <?php }
 
     if ($current_page == 'bulk_upload') { ?>

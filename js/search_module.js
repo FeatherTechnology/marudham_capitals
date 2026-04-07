@@ -96,51 +96,14 @@ $(document).ready(function () {
 
     $('.scanBtn').click(function () {
 
-        showOverlay();//loader start
-
-        setTimeout(() => { //Set Timeout, because loadin animation will be intrupped by this capture event
-            var quality = 60; //(1 to 100) (recommended minimum 55)
-            var timeout = 10; // seconds (minimum=10(recommended), maximum=60, unlimited=0)
-            var res = CaptureFinger(quality, timeout);
-            let errorCode = res.data.ErrorCode;
-            if (res.httpStaus) {
-                if (errorCode == "0") {
-                    let fdata = res.data.AnsiTemplate;
-                    if(fdata){
-                        $('#search_fingerprint').val(fdata); // Take ansi template that is the unique id which is passed by sensor
-                    }else{
-                        alert("ANSI Template not received");
-                    }
-                }//Error codes and alerts below
-                else if (errorCode == -2027) {
-                    alert('Connect Your Device');
-                    
-                } else if (errorCode == -1140 || errorCode == 700) {
-                    alert('Timeout');
-                    
-                } else if (errorCode == 720) {
-                    alert('Reconnect Device');
-                    
-                } else if (errorCode == 2038) {
-                    alert('Capture Finger Again');
-                    
-                } else {
-                    alert(`Error: ${res.data.ErrorDescription} Error Code: ${errorCode}`);
-                    
-                }
-            }
-            else {
-                alert(res.ErrorDescription);
-            }
-
-            // Match fingerprint against stored templates via server-side exact search
-            let search_fingerprint = $('#search_fingerprint').val();
+        commonCaptureFinger((fdata) => {
+            $('#search_fingerprint').val(fdata);
             $.ajax({
                 url: "searchModule/searchByFingerprint.php",
                 type: "POST",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                data: JSON.stringify({ template: search_fingerprint }),
+                data: JSON.stringify({ template: fdata }),
                 success: function (data) {
                     if (data.matched) {
                         $('#fingerprint_person_id').val(data.cus_id);
@@ -163,12 +126,8 @@ $(document).ready(function () {
                     }
                 }
             });
-
-            hideOverlay();//loader stop
-
-        }, 700) //Timeout End
-
-    })//Scan button Onclick end
+        });
+    }); //Scan button Onclick end
 
 });
 

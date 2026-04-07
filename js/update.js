@@ -3807,63 +3807,18 @@ function getFingerPrintDetails(cus_id, cus_name) {
                     $(this).prev().css('border-color', 'red');
                 } else {
                     $(this).prev().css('border-color', '#009688');
-                    showOverlay();//loader start
-                    $(this).attr('disabled', true);
-
-                    setTimeout(() => {
-                        var quality = 60; //(1 to 100) (recommended minimum 55)
-                        var timeout = 10; // seconds (minimum=10(recommended), maximum=60, unlimited=0)
-                        var res = CaptureFinger(quality, timeout);
-                        let errorCode = res.data.ErrorCode;
-                        console.log(`🚀: ~ file: update.js:3818 ~ setTimeout ~ (res.data.ErrorCode: ${errorCode}, res.data.ErrorDescription: ${res.data.ErrorDescription})`);
-                        if (res.httpStaus) {
-                            if (errorCode == "0") {
-                                let fdata = res.data.AnsiTemplate;
-                                if(fdata){
-                                    $(this).next().val(fdata); // Take ansi template that is the unique id which is passed by sensor
-                                    storeFingerprints(fdata, hand, adhar, name);//stores the current finger data in database
-                                }else{
-                                    alert("ANSI Template not received");
-                                }
-                            }//Error codes and alerts below
-                            else if (errorCode == -2027) {
-                                alert('Connect Your Device');
-                                $(this).removeAttr('disabled');
-                            } else if (errorCode == -1140 || errorCode == 700) {
-                                alert('Timeout');
-                                $(this).removeAttr('disabled');
-                            } else if (errorCode == 720) {
-                                alert('Reconnect Device');
-                                $(this).removeAttr('disabled');
-                            } else if (errorCode == 2038) {
-                                alert('Capture Finger Again');
-                                $(this).removeAttr('disabled');
-                            } else {
-                                alert(`Error: ${res.data.ErrorDescription} Error Code: ${errorCode}`);
-                                $(this).removeAttr('disabled');
-                            }
-                        }
-                        else {
-                            alert(res.ErrorDescription);
-                        }
-                        // Hide the loading animation and remove blur effect from the body
-                        hideOverlay();//loader stop
-
-                    }, 700)
+                    var btn = $(this);
+                    btn.attr('disabled', true);
+                    commonCaptureFinger((fdata) => {
+                        btn.next().val(fdata);
+                        commonStoreFingerprint(fdata, hand, adhar, name);
+                    }, () => {
+                        btn.removeAttr('disabled');
+                    });
                 }
             })
         }
-    })
-
-    function storeFingerprints(fdata, hand, cus_id, cus_name) {//stores the current finger data in database
-        $.post('updateFile/storeFingerprints.php', { 'fdata': fdata, 'hand': hand, 'cus_id': cus_id, 'cus_name': cus_name }, function (response) {
-            if (response.includes('Successfully')) {
-                Swal.fire({
-                    title: response, icon: 'success', confirmButtonColor: '#009688'
-                })
-            }
-        }, 'json')
-    }
+    });
 }
 
 /************************ Signed Doc Modal Events ************************/

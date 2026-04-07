@@ -3,12 +3,16 @@ include '../../ajaxconfig.php';
 
 $from_date = $_POST['from_date'];
 $to_date   = $_POST['to_date'];
-$branch_id   = $_POST['branch_id'];
+$branch_id   = $_POST['branch_id'] ?? '0';
+$type   = $_POST['type'];
 
+$branchCondition = '';
 if($branch_id !='0'){
-    $branchCondition ="AND bc.branch_id = '$branch_id'";
-}else{
-    $branchCondition='';
+    if($type == '2'){ //branch
+        $branchCondition = " AND bc.branch_id = '$branch_id'";
+    } else if($type == '3'){ //group
+        $branchCondition = " AND agm.map_id = '$branch_id'";
+    }
 }
 
 /* ===================== USER FILTER ===================== */

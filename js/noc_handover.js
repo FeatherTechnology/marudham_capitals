@@ -14,7 +14,6 @@ $(document).ready(function () {
         var noc_member = parseInt($(this).val());
         var cus_id = $('#cusidupd').val();
         var req_id = $('#req_id').val();
-        let hand ='';
 
         //if Noc Member is Family member or Guarentor then get member names
         if (noc_member > 1) {
@@ -443,84 +442,22 @@ function OnLoadFunctions() {
                 var mem_name = $('#mem_relation_name').val() != '' ? $('#mem_relation_name').val() : $('#mem_name').val();
 
                 if (mem_name != '') {
-
-                    $(this).attr('disabled', true);
-                    showOverlay();//loader start
-
-                    setTimeout(() => { //Set Timeout, because loadin animation will be intrupped by this capture event
-                        var quality = 60; //(1 to 100) (recommended minimum 55)
-                        var timeout = 10; // seconds (minimum=10(recommended), maximum=60, unlimited=0)
-                        var res = CaptureFinger(quality, timeout);
-                        let errorCode = res.data.ErrorCode;
-                        console.log(`~ file: noc_handover.js:432 ~ setTimeout ~ (res.data.ErrorCode: ${errorCode}, res.data.ErrorDescription: ${res.data.ErrorDescription})`);
-                        if (res.httpStaus) {
-                            if (errorCode == "0") {
-                                let fdata = res.data.AnsiTemplate;
-                                if(fdata){
-                                    $('#ack_fingerprint').val(fdata); // Take ansi template that is the unique id which is passed by sensor
-                                }else{
-                                    alert("ANSI Template not received");
-                                }
-                            }//Error codes and alerts below
-                            else if (errorCode == -2027) {
-                                alert('Connect Your Device');
-                                $(this).removeAttr('disabled');
-                            } else if (errorCode == -1140 || errorCode == 700) {
-                                alert('Timeout');
-                                $(this).removeAttr('disabled');
-                            } else if (errorCode == 720) {
-                                alert('Reconnect Device');
-                                $(this).removeAttr('disabled');
-                            } else if (errorCode == 2038) {
-                                alert('Capture Finger Again');
-                                $(this).removeAttr('disabled');
-                            } else {
-                                alert(`Error: ${res.data.ErrorDescription} Error Code: ${errorCode}`);
-                                $(this).removeAttr('disabled');
-                            }
-                        }
-                        else {
-                            alert(res.ErrorDescription);
-                        }
-
-                        //Verify the finger is matched with member name using device-side match
-                        var compare_finger = $('#compare_finger').val();
-                            var matchResult = MatchFinger(quality, timeout, compare_finger, "ANSI");
-                            if (matchResult.httpStaus) {
-                                if (matchResult.data.Status) {
-                                    Swal.fire({
-                                        title: 'Fingerprint Matching',
-                                        icon: 'success',
-                                        showConfirmButton: true,
-                                        confirmButtonColor: '#009688'
-                                    });
-                                    $('#fingerValidation').val('1');
-                                    $('.scanBtn').attr('disabled', true);
-                                    $("#hand_type").text('Done').attr('class', 'text-success');
-                                } else {
-                                    if (matchResult.data.ErrorCode != "0") {
-                                        alert(matchResult.data.ErrorDescription);
-                                    } else {
-                                        Swal.fire({
-                                            title: 'Fingerprint Not Matching',
-                                            icon: 'error',
-                                            showConfirmButton: true,
-                                            confirmButtonColor: '#009688'
-                                        });
-
-                                        $('#fingerValidation').val('');
-                                        $(this).removeAttr('disabled');
-                                    }
-                                }
-                            } else {
-                                console.log(matchResult);
-                                alert(matchResult.err);
-                            }
-
-                            hideOverlay();//loader stop
-
-                    }, 700) //Timeout End
-
+                    var btn = $(this);
+                    btn.attr('disabled', true);
+                    var compare_finger = $('#compare_finger').val();
+                    commonCaptureFinger((fdata) => {
+                        $('#ack_fingerprint').val(fdata);
+                        commonMatchFinger(compare_finger, () => {
+                            $('#fingerValidation').val('1');
+                            btn.attr('disabled', true);
+                            $("#hand_type").text('Done').attr('class', 'text-success');
+                        }, () => {
+                            $('#fingerValidation').val('');
+                            btn.removeAttr('disabled');
+                        });
+                    }, () => {
+                        btn.removeAttr('disabled');
+                    });
                 } else {//If End
                     $('#noc_memberCheck').show();
                 }
@@ -574,7 +511,7 @@ async function validations() {
 
     let noc_member = $('#noc_member').val();
     let mem_relation_name = $('#mem_relation_name').val();
-    let fingerprint = $('#fingerValidation').val();
+    // let fingerprint = $('#fingerValidation').val();
 
     // Case 1
     if (noc_member == '') {
@@ -593,12 +530,12 @@ async function validations() {
     }
 
     //Case 3
-    if (fingerprint != '1') {
-        $('.scanBtnCheck').show();
-        res = false;
-    } else {
-        $('.scanBtnCheck').hide();
-    }
+    // if (fingerprint != '1') {
+    //     $('.scanBtnCheck').show();
+    //     res = false;
+    // } else {
+    //     $('.scanBtnCheck').hide();
+    // }
 
     // Case 4 (AJAX validation)
     let receiveCheck = await getReceiveUserDetails();
