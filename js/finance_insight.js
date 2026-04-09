@@ -1,4 +1,15 @@
 $(document).ready(function () {
+    $('#from_date').change(function () {
+        const fromDate = $(this).val();
+        const toDate = $('#to_date').val();
+        $('#to_date').attr('min', fromDate);
+
+        // Check if from_date is greater than to_date
+        if (toDate && fromDate > toDate) {
+            $('#to_date').val(''); // Clear the invalid value
+        }
+    });
+
     const toggleButtons = $(".toggle-button");
     toggleButtons.removeClass('active'); //initially make all buttons unchecked
     toggleButtons.on("click", function () {

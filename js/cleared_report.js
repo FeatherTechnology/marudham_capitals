@@ -19,8 +19,9 @@ $(document).ready(function () {
 function clearedReportTable() {
     let from_date = $('#from_date').val();
     let to_date = $('#to_date').val();
-    if (!from_date ||!to_date) {
-        swalError('Please Select Date!', 'Both From and To Date are required.');
+    let stmt_type = $('#stmt_type').val();
+    if (!from_date ||!to_date || !stmt_type) {
+        swalError('Warning', 'All Fields are required.');
         return;
     }
 
@@ -38,8 +39,9 @@ function clearedReportTable() {
             'url': 'reportFile/cleared/getClearedReport.php',
             'data': function (data) {
                 data.search = $('input[type=search]').val();
-                data.from_date = $('#from_date').val();
-                data.to_date = $('#to_date').val();
+                data.from_date = from_date;
+                data.to_date = to_date;
+                data.stmt_type = stmt_type;
             }
         },
         dom: 'lBfrtip',

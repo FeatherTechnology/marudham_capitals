@@ -148,12 +148,3 @@ function resetAllTables() {
     $("#issue_count_table tfoot").show();
     $("th, td").show();
 }
-
-function swalError(title, text) {
-    Swal.fire({
-        icon: 'error',
-        title: title,
-        text: text,
-        confirmButtonColor: '#009688',
-    });
-}

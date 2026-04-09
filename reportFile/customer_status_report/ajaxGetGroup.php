@@ -1,4 +1,5 @@
 <?php
+//also using in branch request count report
 include '../../ajaxconfig.php';
 
 $line_arr = array();

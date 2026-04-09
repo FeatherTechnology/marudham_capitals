@@ -1721,29 +1721,26 @@
         $(document).on('click', '.dropdown', function(event) {
             var $target = $(event.target);
 
-            // If a link inside the dropdown content is clicked, let the browser handle it.
+            // If clicking inside dropdown content
             if ($target.closest('.dropdown-content').length) {
-                // But if it's a link with href='#', prevent default to avoid page jump.
-                if ($target.is('a[href="#"]')) {
-                    event.preventDefault();
+                if ($target.is('a')) {
+                    let href = $target.attr('href');
+                    if (href === '#' || href === '') {
+                        event.preventDefault();
+                    }
                 }
                 return;
             }
 
-            // This part runs if the dropdown toggle itself (not content) was clicked.
+            // Toggle dropdown
             event.preventDefault();
-            event.stopPropagation(); // Prevent the document click handler from closing it immediately.
+            event.stopPropagation();
 
-            var $this = $(this);
-            if ($this.hasClass('active')) {
-                $this.removeClass('active');
-            } else {
-                $('.dropdown').removeClass('active');
-                $this.addClass('active');
-            }
+            $('.dropdown').not(this).removeClass('active');
+            $(this).toggleClass('active');
         });
 
-        // Close dropdowns when clicking anywhere else on the document.
+        // Close on outside click
         $(document).on('click', function(event) {
             if (!$(event.target).closest('.dropdown').length) {
                 $('.dropdown').removeClass('active');
@@ -2554,6 +2551,32 @@
             });
         }
         //////////////////////////////////Notification///////////////////////////////////////////////
+        
+        ////////////////////////////////// Mantra device initialize START //////////////////////////////////
+        function mantraInitDevice() {
+            const deviceList = GetConnectedDeviceList();
+
+            console.log("Connected Devices:", deviceList);
+
+            const desc = deviceList?.data?.ErrorDescription;
+
+            if (deviceList?.httpStaus && deviceList?.data?.ErrorCode == "0" && desc) {
+
+                const device = desc.split(":")[1]?.trim();
+
+                if (device) {
+                    console.log("Device Name:", device);
+                    const init = InitDevice(device, "");
+                    console.log("Init result:", init);
+                } else {
+                    console.error("Device not found in description");
+                }
+
+            } else {
+                console.error("Device not connected");
+            }
+        }
+        ////////////////////////////////// Mantra device initialize END //////////////////////////////////
     </script>
 
     <?php
@@ -2643,6 +2666,7 @@
 
     if ($current_page == 'verification') { ?>
         <script src="js/verification.js"></script>
+        <script src="js/fingerprint_common.js"></script>
     <?php }
 
     if ($current_page == 'verification_list') { ?>
@@ -2660,6 +2684,7 @@
 
     if ($current_page == 'acknowledgement_creation') { ?>
         <script src="js/acknowledgement_creation.js"></script>
+        <script src="js/fingerprint_common.js"></script>
     <?php }
 
     //Loan Issue screen
@@ -2669,6 +2694,7 @@
 
     if ($current_page == 'loan_issue') { ?>
         <script src="js/loan_issue.js"></script>
+        <script src="js/fingerprint_common.js"></script>
     <?php }
 
     if ($current_page == 'edit_collection') { ?>
@@ -2685,6 +2711,7 @@
 
     if ($current_page == 'noc_handover') { ?>
         <script src="js/noc_handover.js"></script>
+        <script src="js/fingerprint_common.js"></script>
     <?php }
 
     //Closed
@@ -2733,6 +2760,7 @@
     //Update Screen
     if ($current_page == 'update') { ?>
         <script src="js/update.js"></script>
+        <script src="js/fingerprint_common.js"></script>
     <?php }
 
     //Cash Tally
@@ -2978,6 +3006,7 @@
 
     if ($current_page == 'search_module') { ?>
         <script src="js/search_module.js"></script>
+        <script src="js/fingerprint_common.js"></script>
     <?php }
 
     if ($current_page == 'bulk_upload') { ?>
