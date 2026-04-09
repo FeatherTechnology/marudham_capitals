@@ -154,28 +154,33 @@ $based_query = "FROM
         ) lc ON bs.trans_id = lc.trans_id
 
 WHERE 
-    bs.trans_date >= ? AND bs.trans_date < ? $condition ";  
+    bs.trans_date >= :from_date AND bs.trans_date < :to_date $condition ";  
 
 $search = '';
 $params = [];
+// Add date params first
+$params = [
+    ':from_date' => $from_date,
+    ':to_date' => $to_date
+];
 
 if (!empty($_POST['search'])) {
     $search = "%" . $_POST['search'] . "%";
 
     $based_query .= " AND (
-        bc.bank_name LIKE ? OR
-        bs.trans_date LIKE ? OR
-        bs.narration LIKE ? OR
-        bs.trans_id LIKE ? OR
-        bs.credit LIKE ? OR
-        bs.debit LIKE ? OR
-        a.cleared_user LIKE ? OR
-        lc.loan_category LIKE ? OR
-        a.cleared_screens LIKE ?
+        bc.bank_name LIKE :search OR
+        bs.trans_date LIKE :search OR
+        bs.narration LIKE :search OR
+        bs.trans_id LIKE :search OR
+        bs.credit LIKE :search OR
+        bs.debit LIKE :search OR
+        a.cleared_user LIKE :search OR
+        lc.loan_category LIKE :search OR
+        a.cleared_screens LIKE :search
     )";
 
     // push same search multiple times
-    $params = array_fill(0, 9, $search);
+    $params[':search'] = $search;
 }
 
 $orderby_query = "";
@@ -202,7 +207,7 @@ $totalStmt->execute();
 $recordsTotal = (int) $totalStmt->fetchColumn();
 
 $countStmt = $connect->prepare("SELECT COUNT(*) $based_query");
-$countStmt->execute([$from_date, $to_date]);
+$countStmt->execute($params);
 $recordsFiltered = (int) $countStmt->fetchColumn();
 
 $data_query = "SELECT 
@@ -222,7 +227,7 @@ $data_query = "SELECT
     $orderby_query
     $limit_query";
 $statement = $connect->prepare($data_query);
-$statement->execute([$from_date, $to_date]);
+$statement->execute($params);
 $result = $statement->fetchAll();
 
 $data = array();
@@ -240,6 +245,10 @@ foreach ($result as $row) {
         $clearedDate = implode(', ', $formattedDates);
     }
 
+    $status = ($row['clr_status'] == '1') 
+                ? 'Cleared' 
+                : (($clearedDate == '') ? 'UnCleared' : 'Partial Cleared');
+
     $sub_array   = array();
     $sub_array[] = $sno++;
     $sub_array[] = $row['bank_name'];
@@ -249,7 +258,7 @@ foreach ($result as $row) {
     $sub_array[] = moneyFormatIndia($row['credit'] ?? '');
     $sub_array[] = moneyFormatIndia($row['debit'] ?? '');
     $sub_array[] = moneyFormatIndia($row['balance'] ?? '');
-    $sub_array[] = ($row['clr_status'] == '1') ? 'Cleared' : 'UnCleared';
+    $sub_array[] = $status;
     $sub_array[] = $clearedDate;
     $sub_array[] = $row['cleared_user'] ?? '';
     $sub_array[] = $row['cleared_screens'] ?? '';

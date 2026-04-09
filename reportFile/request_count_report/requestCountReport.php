@@ -256,7 +256,7 @@ function processRecord($r, &$counters, $baseCounter, $from_date, $to_date, $hist
             $counters['status']['total']++;
         }
         
-    } elseif ($baseCounter === 'request') {
+    } elseif ($baseCounter === 'request' || $baseCounter === 'previous') {
         $counters['process'][$type]++;
         $counters['process']['total']++;
     }

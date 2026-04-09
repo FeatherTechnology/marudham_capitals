@@ -17,7 +17,7 @@
 				<input type="date" id='to_date' name='to_date' class="toggle-button" value=''>
 				<select type="text" class="toggle-button" id='stmt_type' name='stmt_type'>
                     <option value=''>Select Type</option>
-                    <option value='0'>Bank Clearance</option>
+                    <option value='0'>Bank Statement</option>
                     <option value='1'>Cleared</option>
                 </select>
 				<input type="button" id='reset_btn' name='reset_btn' class="toggle-button" style="background-color: #009688;color:white" value='Search'>
