@@ -227,8 +227,6 @@ $(document).ready(function () {
         });
     });
 
-
-
     $('#cash_guarentor_name').change(function () { //Select Guarantor Name relationship will show in input.
 
         let famAdhaarNo = document.querySelector("#cash_guarentor_name").value;
@@ -241,112 +239,67 @@ $(document).ready(function () {
             var cus = '2';
         }
 
-        $.ajax({
-            url: 'loanIssueFile/getFamRelationship.php',
-            type: 'POST',
-            data: { "adhaarno": famAdhaarNo, "cus": cus, "cusId": cusId },
-            dataType: 'json',
-            cache: false,
-            success: function (result) {
+        $('#fingerValidation').val('');
 
-                $("#relationship").val(result['relation']);
-                $("#compare_finger").val(result['fpTemplate']);
-                if (result['hand'] == '1') {
-                    $('.scanBtn').removeAttr('disabled');
-                    var hand = "Put Your Left Thumb"
-                } else if (result['hand'] == '2') {
-                    $('.scanBtn').removeAttr('disabled');
-                    var hand = "Put Your Right Thumb"
-                } else {
-                    var hand = "Finger Print Not Registered";
-                    $('.scanBtn').attr('disabled', true);
+        if(famAdhaarNo !=''){
+            $.ajax({
+                url: 'loanIssueFile/getFamRelationship.php',
+                type: 'POST',
+                data: { "adhaarno": famAdhaarNo, "cus": cus, "cusId": cusId },
+                dataType: 'json',
+                cache: false,
+                success: function (result) {
+    
+                    $("#relationship").val(result['relation']);
+                    $("#compare_finger").val(result['fpTemplate']);
+                    if (result['hand'] == '1') {
+                        $('.scanBtn').removeAttr('disabled');
+                        var hand = "Put Your Left Thumb"
+                    } else if (result['hand'] == '2') {
+                        $('.scanBtn').removeAttr('disabled');
+                        var hand = "Put Your Right Thumb"
+                    } else {
+                        var hand = "Finger Print Not Registered";
+                        $('.scanBtn').attr('disabled', true);
+                    }
+                    $("#hand_type").text(hand).attr('class', 'text-danger');
                 }
-                $("#hand_type").text(hand).attr('class', 'text-danger');
+            });
 
-            }
-        });
-
+        } else{
+            $("#hand_type").text('');
+            $("#relationship").val('');
+            $("#compare_finger").val('');
+            $('.scanBtn').removeAttr('disabled');
+        }
     });
-
 
     $('.scanBtn').click(function () {
         var g_name = $('#cash_guarentor_name').val();
 
         if (g_name != '') {
-
-            $(this).attr('disabled', true);
-            showOverlay();//loader start
-
-            setTimeout(() => { //Set Timeout, because loadin animation will be intrupped by this capture event
-                var quality = 60; //(1 to 100) (recommended minimum 55)
-                var timeout = 10; // seconds (minimum=10(recommended), maximum=60, unlimited=0)
-                var res = CaptureFinger(quality, timeout);
-                if (res.httpStaus) {
-                    if (res.data.ErrorCode == "0") {
-                        $('#ack_fingerprint').val(res.data.AnsiTemplate); // Take ansi template that is the unique id which is passed by sensor
-                    }//Error codes and alerts below
-                    else if (res.data.ErrorCode == -1307) {
-                        alert('Connect Your Device');
-                        $(this).removeAttr('disabled');
-                    } else if (res.data.ErrorCode == -1140 || res.data.ErrorCode == 700) {
-                        alert('Timeout');
-                        $(this).removeAttr('disabled');
-                    } else if (res.data.ErrorCode == 720) {
-                        alert('Reconnect Device');
-                        $(this).removeAttr('disabled');
-                    } else if (res.data.ErrorCode == 730) {
-                        alert('Capture Finger Again');
-                        $(this).removeAttr('disabled');
-                    } else {
-                        alert('Error Code:' + res.data.ErrorCode);
-                        $(this).removeAttr('disabled');
-                    }
-                }
-                else {
-                    alert(res.err);
-                }
-
-                //Verify the finger is matched with member name
-                var compare_finger = $('#compare_finger').val()
-                var ack_fingerprint = $('#ack_fingerprint').val()
-                var res = VerifyFinger(compare_finger, ack_fingerprint)
-                if (res.httpStaus) {
-                    if (res.data.Status) {
-                        Swal.fire({
-                            title: 'Fingerprint Matching',
-                            icon: 'success',
-                            showConfirmButton: true,
-                            confirmButtonColor: '#009688'
-                        });
-                        $('#fingerValidation').val('1');
-                        $("#hand_type").text('Done').attr('class', 'text-success');
-                    } else {
-                        if (res.data.ErrorCode != "0") {
-                            alert(res.data.ErrorDescription);
-                        }
-                        else {
-                            Swal.fire({
-                                title: 'Fingerprint Not Matching',
-                                icon: 'error',
-                                showConfirmButton: true,
-                                confirmButtonColor: '#009688'
-                            });
-                            $(this).removeAttr('disabled');
-                        }
-                    }
-                } else {
-                    alert(res.err)
-                }
-
-                hideOverlay();//loader stop
-
-            }, 700) //Timeout End
-
+            var btn = $(this);
+            btn.attr('disabled', true);
+            var compare_finger = $('#compare_finger').val();
+            commonCaptureFinger((fdata) => {
+                $('#ack_fingerprint').val(fdata);
+                commonMatchFinger(compare_finger, () => {
+                    $('#fingerValidation').val('1');
+                    btn.attr('disabled', true);
+                    $("#hand_type").text('Done').attr('class', 'text-success');
+                }, () => {
+                    $('#fingerValidation').val('');
+                    btn.removeAttr('disabled');
+                });
+            }, () => {
+                btn.removeAttr('disabled');
+            });
         } else {//If End
             $('#cash_guarentor').show();
         }
 
     })//Scan button Onclick end
+
     function onLoadEditFunction() {//On load for Loan Calculation edit
         $('input#due_start_from').removeAttr('readonly');
         $('select#collection_method').removeAttr('disabled');
@@ -586,7 +539,7 @@ $(document).ready(function () {
 
         function proceedAfterCalc() {
             // run validation
-            if (!loanIssueSumitValidation()) {
+            if (!loanIssueSumitValidation(e)) {
                 e.preventDefault();  // stop default submit until we finish everything
                 scrollToFirstError('#cus_Profiles'); 
                 return false;
@@ -644,6 +597,7 @@ $(function () {
         getCustomerLoanCounts();// To Get loan existing type
     }, 1000);
 
+    mantraInitDevice(); //to initialize the fingerprint scanner.
 });
 
 
@@ -1639,7 +1593,7 @@ function checkBalance() {
 }
 
 //Submit Validation
-function loanIssueSumitValidation() {
+function loanIssueSumitValidation(event) {
     var issueMode = $('#issued_mode').val(); var paymenType = $('#payment_type').val(); var cash = $('#cash').val(); var guarentorName = $('#cash_guarentor_name').val();
     // var fingerMatch = $('#fingerValidation').val();
     var ag_id = $('#agent_id').val(); 
@@ -1702,6 +1656,7 @@ function loanIssueSumitValidation() {
 
             // if (fingerMatch != '1') {
             //     event.preventDefault();
+            //     validation = false;
             //     $('#finger_check').show();
             // } else {
             //     $('#finger_check').hide();

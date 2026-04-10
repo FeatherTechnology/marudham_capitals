@@ -14,6 +14,7 @@ $(document).ready(function () {
         var noc_member = parseInt($(this).val());
         var cus_id = $('#cusidupd').val();
         var req_id = $('#req_id').val();
+
         //if Noc Member is Family member or Guarentor then get member names
         if (noc_member > 1) {
             $.ajax({
@@ -29,14 +30,17 @@ $(document).ready(function () {
                         $('.mem_relation_name').hide();
                         $('#mem_relation_name').empty();
 
-                        $('#mem_id').val(response['guarentor_id'])
-                        $('#mem_name').val(response['guarentor_name'])
-                        $('#compare_finger').val(response['fingerprint'])
+                        $('#mem_id').val(response['guarentor_id'] ?? '');
+                        $('#mem_name').val(response['guarentor_name'] ?? '');
+                        $('#compare_finger').val(response['fingerprint'] ?? '');
+                        showHandText(response.hand ?? '');
+
                     } else if (noc_member == 3) {
                         //if Family member then show dropdown
                         $('.mem_relation_name').show();
                         $('.mem_name').hide();
                         $('#mem_name').val('');
+                        $("#hand_type").text('');
 
                         $('#mem_relation_name').empty();
                         $('#mem_relation_name').append("<option value=''>Select Member Name</option>")
@@ -69,10 +73,12 @@ $(document).ready(function () {
                 type: 'post',
                 cache: false,
                 success: function (response) {
-                    $('#compare_finger').val(response['fingerprint'])
+                    $('#compare_finger').val(response['fingerprint'] ?? '');
+                    showHandText(response.hand ?? '');
                 }
             })
         } else {
+            $("#hand_type").text('');
             $('.mem_name').hide();
             $('#mem_name').val('');
             $('.mem_relation_name').hide();
@@ -90,7 +96,8 @@ $(document).ready(function () {
             type: 'post',
             cache: false,
             success: function (response) {
-                $('#compare_finger').val(response['fingerprint'])
+                $('#compare_finger').val(response['fingerprint'] ?? '');
+                showHandText(response.hand ?? '');
             }
         }).error(function () {
             alert('Guarentor Fingerprint not Registered')
@@ -160,7 +167,24 @@ $(function () {
 
     var cus_pic = $('#cuspicupd').val();
     $('#imgshow').attr('src', 'uploads/request/customer/' + cus_pic);
-})
+
+    mantraInitDevice(); //to initialize the fingerprint scanner.
+});
+
+function showHandText(hand){
+    let handText;
+    if (hand == '1') {
+        $('.scanBtn').removeAttr('disabled');
+        handText = "Put Your Left Thumb"
+    } else if (hand == '2') {
+        $('.scanBtn').removeAttr('disabled');
+        handText = "Put Your Right Thumb"
+    } else {
+        $('.scanBtn').attr('disabled', true);
+        handText = "Finger Print Not Registered";
+    }
+    $("#hand_type").text(handText).attr('class', 'text-danger');
+}
 
 function OnLoadFunctions() {
     const cus_id = $('#cusidupd').val();
@@ -418,75 +442,25 @@ function OnLoadFunctions() {
                 var mem_name = $('#mem_relation_name').val() != '' ? $('#mem_relation_name').val() : $('#mem_name').val();
 
                 if (mem_name != '') {
-
-                    showOverlay();//loader start
-                    $(this).attr('disabled', true);
-
-                    setTimeout(() => { //Set Timeout, because loadin animation will be intrupped by this capture event
-                        var quality = 60; //(1 to 100) (recommended minimum 55)
-                        var timeout = 10; // seconds (minimum=10(recommended), maximum=60, unlimited=0)
-                        var res = CaptureFinger(quality, timeout);
-                        if (res.httpStaus) {
-                            if (res.data.ErrorCode == "0") {
-                                $('#ack_fingerprint').val(res.data.AnsiTemplate); // Take ansi template that is the unique id which is passed by sensor
-                            }//Error codes and alerts below
-                            else if (res.data.ErrorCode == -1307) {
-                                alert('Connect Your Device');
-                                $(this).removeAttr('disabled');
-                            } else if (res.data.ErrorCode == -1140 || res.data.ErrorCode == 700) {
-                                alert('Timeout');
-                                $(this).removeAttr('disabled');
-                            } else if (res.data.ErrorCode == 720) {
-                                alert('Reconnect Device');
-                                $(this).removeAttr('disabled');
-                            } else if (res.data.ErrorCode == 730) {
-                                alert('Capture Finger Again');
-                                $(this).removeAttr('disabled');
-                            } else {
-                                alert('Error Code:' + res.data.ErrorCode);
-                                $(this).removeAttr('disabled');
-                            }
-                        }
-                        else {
-                            alert(res.err);
-                        }
-
-                        //Verify the finger is matched with member name
-                        var compare_finger = $('#compare_finger').val()
-                        var ack_fingerprint = $('#ack_fingerprint').val()
-                        if (ack_fingerprint != '') {
-
-                            var res = VerifyFinger(compare_finger, ack_fingerprint)
-                            if (res.httpStaus) {
-                                if (res.data.Status) {
-                                    Swal.fire({
-                                        title: 'Fingerprint Matching',
-                                        icon: 'success',
-                                        showConfirmButton: true,
-                                        confirmButtonColor: '#009688'
-                                    });
-                                } else {
-                                    if (res.data.ErrorCode != "0") {
-                                        alert(res.data.ErrorDescription);
-                                    }
-                                    else {
-                                        Swal.fire({
-                                            title: 'Fingerprint Not Matching',
-                                            icon: 'error',
-                                            showConfirmButton: true,
-                                            confirmButtonColor: '#009688'
-                                        });
-                                        $(this).removeAttr('disabled');
-                                    }
-                                }
-                            } else {
-                                alert(res.err)
-                            }
-                        }
-                        hideOverlay();//loader stop
-                    }, 700) //Timeout End
-
-                }//If End
+                    var btn = $(this);
+                    btn.attr('disabled', true);
+                    var compare_finger = $('#compare_finger').val();
+                    commonCaptureFinger((fdata) => {
+                        $('#ack_fingerprint').val(fdata);
+                        commonMatchFinger(compare_finger, () => {
+                            $('#fingerValidation').val('1');
+                            btn.attr('disabled', true);
+                            $("#hand_type").text('Done').attr('class', 'text-success');
+                        }, () => {
+                            $('#fingerValidation').val('');
+                            btn.removeAttr('disabled');
+                        });
+                    }, () => {
+                        btn.removeAttr('disabled');
+                    });
+                } else {//If End
+                    $('#noc_memberCheck').show();
+                }
 
             })//Scan button Onclick end
 
@@ -537,7 +511,7 @@ async function validations() {
 
     let noc_member = $('#noc_member').val();
     let mem_relation_name = $('#mem_relation_name').val();
-    let fingerprint = $('.scanBtn').attr('disabled');
+    // let fingerprint = $('#fingerValidation').val();
 
     // Case 1
     if (noc_member == '') {
@@ -556,11 +530,11 @@ async function validations() {
     }
 
     //Case 3
-    // if (fingerprint != 'disabled') {
-    //     $('.scanBtnCheck').show()
+    // if (fingerprint != '1') {
+    //     $('.scanBtnCheck').show();
     //     res = false;
     // } else {
-    //     $('.scanBtnCheck').hide()
+    //     $('.scanBtnCheck').hide();
     // }
 
     // Case 4 (AJAX validation)

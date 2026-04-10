@@ -947,9 +947,9 @@ if (sizeof($getLoanCalculation) > 0) {
 
 										<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 											<div class="form-group">
-												<input type="hidden" class="form-control" id="compare_finger" name="compare_finger"> <!--Already Store in Finger Print Table... when select fam name above the finger print will be shown here to compare. -->
-												<input type="hidden" class="form-control" id="ack_fingerprint" name="ack_fingerprint"> <!-- finger print value from Device when scanning.-->
-												<input type="hidden" class="form-control" id="fingerValidation" name="fingerValidation"> <!-- set val as 1 when finger Print Matching becuz to use for finger print validation if submit click.-->
+												<input type="hidden" id="compare_finger" name="compare_finger"> <!--Already Store in Finger Print Table... when select fam name above the finger print will be shown here to compare. -->
+												<input type="hidden" id="ack_fingerprint" name="ack_fingerprint"> <!-- finger print value from Device when scanning.-->
+												<input type="hidden" id="fingerValidation" name="fingerValidation"> <!-- set val as 1 when finger Print Matching becuz to use for finger print validation if submit click.-->
 												<button type="button" class='btn btn-success scanBtn' style='background-color: #009688;margin-top: 19px;' onclick="event.preventDefault()" title='Put Your Thumb' tabindex='58'><i class="material-icons" id="icon-flipped"> &#xe90d; </i>&nbsp;Scan</button>
 												<span class="text-danger" id="hand_type" style="position: relative;top: 12px;"> </span>
 											</div>

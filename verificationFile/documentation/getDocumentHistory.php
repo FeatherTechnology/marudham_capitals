@@ -239,10 +239,10 @@ if (isset($_POST["bal_amt"])) {
                         <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
                         <div class='dropdown-content'>";
                     if ($row['cus_status'] > 20) { //if request goes to NOC then noc summary can be fetched
-                        $action .= "<a href='' class='noc-summary'  data-reqid='$ii_req_id' data-cusid='$cus_id' data-cusname='$cus_name' data-loanid='" . $row['loan_id'] . "' data-loancat='" . $row['loan_catrgory_name'] . "' data-docid='" . $row['doc_id'] . "' data-toggle='modal' data-target='.noc-summary-modal'>NOC Summary</a>";
+                        $action .= "<a href='#' class='noc-summary'  data-reqid='$ii_req_id' data-cusid='$cus_id' data-cusname='$cus_name' data-loanid='" . $row['loan_id'] . "' data-loancat='" . $row['loan_catrgory_name'] . "' data-docid='" . $row['doc_id'] . "' data-toggle='modal' data-target='.noc-summary-modal'>NOC Summary</a>";
                     }
                     if ($screen == 'update' && $row['cus_status'] <= 20) { //cus status <= 20 will allow only document statuses only to edit, not NOC
-                        $action .= "<a href='' class='edit-doc' data-reqid='$ii_req_id' data-cusid='$cus_id' data-cusname='$cus_name' data-docid='" . $row['doc_id'] . "' >Edit Documents</a>";
+                        $action .= "<a href='#' class='edit-doc' data-reqid='$ii_req_id' data-cusid='$cus_id' data-cusname='$cus_name' data-docid='" . $row['doc_id'] . "' >Edit Documents</a>";
                     }
                     $action .= "</div></div>";
                     echo $action;
