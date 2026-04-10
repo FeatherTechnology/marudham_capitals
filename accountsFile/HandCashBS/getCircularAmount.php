@@ -155,7 +155,7 @@ class CircularAmountClass
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            ':from_date_time' => $from_date . ' 00:00:00',
+            ':from_date_time' => '2026-01-01 00:00:00',
             ':to_date_time' => $to_date . ' 23:59:59'
         ]);
 
@@ -163,20 +163,17 @@ class CircularAmountClass
         return $row['cur_circ_issued'] ?? 0;
     }
 
-    public function getTotalExchange($user_id, $from_date, $to_date)
+    public function getTotalExchange($to_date)
     {
         $sql = "
             SELECT SUM(amt) AS cur_circ_exchange
             FROM ct_db_hexchange
-            WHERE to_user_id = :user_id
-            AND received = 1
-            AND created_date BETWEEN :from_date_time AND :to_date_time
+            WHERE received = 1
+            AND date(created_date) <= :to_date_time
         ";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            ':user_id' => $user_id,
-            ':from_date_time' => $from_date . ' 00:00:00',
             ':to_date_time' => $to_date . ' 23:59:59'
         ]);
 
@@ -190,12 +187,11 @@ class CircularAmountClass
             SELECT SUM(amt) AS cur_circ_withdraw
             FROM ct_db_cash_withdraw
             WHERE received = 1
-            AND created_date BETWEEN :from_date_time AND :to_date_time
+            AND date(created_date) <= :to_date_time
         ";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            ':from_date_time' => $from_date . ' 00:00:00',
             ':to_date_time' => $to_date . ' 23:59:59'
         ]);
 
@@ -296,7 +292,7 @@ class CircularAmountClass
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            ':from_date_time' => $prev_date_time . ' 00:00:00',
+            ':from_date_time' =>'2026-01-01 00:00:00',
             ':to_date_time' => $prev_date_time . ' 23:59:59'
         ]);
 
@@ -304,7 +300,7 @@ class CircularAmountClass
         return $row['pre_circ_issued'] ?? 0;
     }
 
-    public function getTotalpreExchange($user_id, $from_date)
+    public function getTotalpreExchange($from_date)
     {
 
     $prev_date_time = date('Y-m-d', strtotime($from_date . ' -1 day'));
@@ -312,15 +308,12 @@ class CircularAmountClass
         $sql = "
             SELECT SUM(amt) AS pre_circ_exchange
             FROM ct_db_hexchange
-            WHERE to_user_id = :user_id
-            AND received = 1
-            AND created_date BETWEEN :from_date_time AND :to_date_time
+            WHERE  received = 1
+            AND date(created_date) <= :to_date_time
         ";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            ':user_id' => $user_id,
-            ':from_date_time' => $prev_date_time . ' 00:00:00',
             ':to_date_time' => $prev_date_time . ' 23:59:59'
         ]);
 
@@ -335,12 +328,11 @@ class CircularAmountClass
             SELECT SUM(amt) AS pre_circ_withdraw
             FROM ct_db_cash_withdraw
             WHERE received = 1
-            AND created_date BETWEEN :from_date_time AND :to_date_time
+            AND date(created_date) <= :to_date_time
         ";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            ':from_date_time' => $prev_date_time . ' 00:00:00',
             ':to_date_time' => $prev_date_time . ' 23:59:59'
         ]);
 
@@ -415,12 +407,12 @@ class CircularAmountClass
         $cur_circ_coll = $this->getTotalBalance( $to_date, $branch_id);
         $cur_circ_waiver = $this->getTotalwaiver($from_date, $to_date, $branch_id);
         $cur_circ_issued = $this->getTotalIssued($from_date, $to_date);
-        $cur_circ_exchange = $this->getTotalExchange($user_id, $from_date, $to_date);
+        $cur_circ_exchange = $this->getTotalExchange($from_date);
         $cur_circ_withdraw = $this->getTotalWithdraw($from_date, $to_date);
 
         $pre_circ_issued = $this->getTotalPreIssued($from_date);
         $pre_circ_coll= $this->getTotalPreviousCollection($from_date, $branch_id);
-        $pre_circ_exchange = $this->getTotalpreExchange($user_id, $from_date);
+        $pre_circ_exchange = $this->getTotalpreExchange($from_date);
         $pre_circ_withdraw = $this->getTotalpreWithdraw($from_date);
         $pre_circ_Waiver = $this->getTotalprewaiver($from_date, $branch_id);
 
