@@ -96,56 +96,19 @@ $(document).ready(function () {
 
     $('.scanBtn').click(function () {
 
-        showOverlay();//loader start
-
-        setTimeout(() => { //Set Timeout, because loadin animation will be intrupped by this capture event
-            var quality = 60; //(1 to 100) (recommended minimum 55)
-            var timeout = 10; // seconds (minimum=10(recommended), maximum=60, unlimited=0)
-            var res = CaptureFinger(quality, timeout);
-            if (res.httpStaus) {
-                if (res.data.ErrorCode == "0") {
-                    $('#search_fingerprint').val(res.data.AnsiTemplate); // Take ansi template that is the unique id which is passed by sensor
-                }//Error codes and alerts below
-                else if (res.data.ErrorCode == -1307) {
-                    alert('Connect Your Device');
-                
-                } else if (res.data.ErrorCode == -1140 || res.data.ErrorCode == 700) {
-                    alert('Timeout');
-                
-                } else if (res.data.ErrorCode == 720) {
-                    alert('Reconnect Device');
-                
-                } else if (res.data.ErrorCode == 730) {
-                    alert('Capture Finger Again');
-                
-                } else {
-                    alert('Error Code:' + res.data.ErrorCode);
-                
-                }
-            }
-            else {
-                alert(res.err);
-            }
-
-            //Verify the finger is matched with member name
-            
-            $.post("searchModule/getAllFingerprints.php", {}, function(data){
-                let search_fingerprint = $('#search_fingerprint').val()
-                if (data.fingerprints && data.fingerprints.length > 0) {
-                    let matchedCustomer = null;
-                    for (let i = 0; i < data.fingerprints.length; i++) {
-                        let stored = data.fingerprints[i].template;
-                        let res = VerifyFinger(stored, search_fingerprint);
-                        if (res.httpStaus && res.data.Status) {
-                            matchedCustomer = data.fingerprints[i];
-                            $('#fingerprint_person_id').val(matchedCustomer.cus_id);
-                            break;
-                        }
-                    }
-
-                    if (matchedCustomer) {
+        commonCaptureFinger((fdata) => {
+            $('#search_fingerprint').val(fdata);
+            $.ajax({
+                url: "searchModule/searchByFingerprint.php",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify({ template: fdata }),
+                success: function (data) {
+                    if (data.matched) {
+                        $('#fingerprint_person_id').val(data.cus_id);
                         Swal.fire({
-                            title: `Fingerprint Matched: ${matchedCustomer.cus_name}`,
+                            title: `Fingerprint Matched: ${data.cus_name}`,
                             icon: 'success',
                             showConfirmButton: true,
                             confirmButtonColor: '#009688'
@@ -161,25 +124,16 @@ $(document).ready(function () {
                             confirmButtonColor: '#009688'
                         });
                     }
-                }else{
-                     Swal.fire({
-                        title: 'Error While getting Fingerprint',
-                        icon: 'error',
-                        showConfirmButton: true,
-                        confirmButtonColor: '#009688'
-                    });
                 }
+            });
+        });
+    }); //Scan button Onclick end
 
-            },'json');
+});
 
-            hideOverlay();//loader stop
-
-        }, 700) //Timeout End
-
-    })//Scan button Onclick end
-
-})
-
+$(function(){
+    mantraInitDevice(); //to initialize the fingerprint scanner.
+});
 
 function validate() {
     let response = true;

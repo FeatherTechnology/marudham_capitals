@@ -6083,18 +6083,18 @@ class admin
 			$en_Key = $_POST['en_Key'];
 		}
 
-		if (isset($_POST['adhar_print'])) {
-			$adhar_print = $_POST['adhar_print'];
-		}
-		if (isset($_POST['name_print'])) {
-			$name_print = $_POST['name_print'];
-		}
-		if (isset($_POST['fingerprint'])) {
-			$fingerprint = $_POST['fingerprint'];
-		}
-		if (isset($_POST['hand_selection'])) {
-			$hand = $_POST['hand_selection'];
-		}
+		// if (isset($_POST['adhar_print'])) {
+		// 	$adhar_print = $_POST['adhar_print'];
+		// }
+		// if (isset($_POST['name_print'])) {
+		// 	$name_print = $_POST['name_print'];
+		// }
+		// if (isset($_POST['fingerprint'])) {
+		// 	$fingerprint = $_POST['fingerprint'];
+		// }
+		// if (isset($_POST['hand_selection'])) {
+		// 	$hand = $_POST['hand_selection'];
+		// }
 
 		if (isset($_POST['doc_table_id'])) {
 			$doc_table_id = $_POST['doc_table_id'];
@@ -6181,22 +6181,22 @@ class admin
 			}
 
 			//iterate thru fingerprint array
-			for ($i = 0; $i < sizeof($fingerprint); $i++) {
-				// allow only if fingerprint has been entered
-				if ($fingerprint[$i] != '') {
-					//check whether this adhar number already have fingerprint
-					$qry = $mysqli->query("SELECT adhar_num from `fingerprints` where adhar_num='" . strip_tags($adhar_print[$i]) . "' ");
-					if ($qry->num_rows == 0) {
-						//insert finger prints as new values if not already exist
-						$qry = "INSERT INTO `fingerprints`(`adhar_num`, `name`,`hand`,`ansi_template`, `insert_user_id`, `created_date`) VALUES ('" . $adhar_print[$i] . "','" . $name_print[$i] . "','" . $hand[$i] . "','" . $fingerprint[$i] . "',$userid,now() ) ";
-						$result = $mysqli->query($qry) or die("Error " . $mysqli->error);
-					} else {
-						//update fingerprint at that adhar number if already exist
-						$qry = "UPDATE `fingerprints` SET `hand`='" . $hand[$i] . "',`ansi_template`='" . $fingerprint[$i] . "',`update_user_id`='$userid',`updated_date`= now() WHERE `adhar_num`='" . strip_tags($adhar_print[$i]) . "' ";
-						$result = $mysqli->query($qry) or die("Error " . $mysqli->error);
-					}
-				}
-			}
+			// for ($i = 0; $i < sizeof($fingerprint); $i++) {
+			// 	// allow only if fingerprint has been entered
+			// 	if ($fingerprint[$i] != '') {
+			// 		//check whether this adhar number already have fingerprint
+			// 		$qry = $mysqli->query("SELECT adhar_num from `fingerprints` where adhar_num='" . strip_tags($adhar_print[$i]) . "' ");
+			// 		if ($qry->num_rows == 0) {
+			// 			//insert finger prints as new values if not already exist
+			// 			$qry = "INSERT INTO `fingerprints`(`adhar_num`, `name`,`hand`,`ansi_template`, `insert_user_id`, `created_date`) VALUES ('" . $adhar_print[$i] . "','" . $name_print[$i] . "','" . $hand[$i] . "','" . $fingerprint[$i] . "',$userid,now() ) ";
+			// 			$result = $mysqli->query($qry) or die("Error " . $mysqli->error);
+			// 		} else {
+			// 			//update fingerprint at that adhar number if already exist
+			// 			$qry = "UPDATE `fingerprints` SET `hand`='" . $hand[$i] . "',`ansi_template`='" . $fingerprint[$i] . "',`update_user_id`='$userid',`updated_date`= now() WHERE `adhar_num`='" . strip_tags($adhar_print[$i]) . "' ";
+			// 			$result = $mysqli->query($qry) or die("Error " . $mysqli->error);
+			// 		}
+			// 	}
+			// }
 
 			// Commit the transaction
 			$mysqli->commit();

@@ -1,0 +1,7 @@
+ajaxconfig.php
+api/config-file.php
+api/iedit-config.php
+logout.php
+MonthlyCustomerStatusUpdate/monthly_auto_update.php
+updateCustomerStatusFile/updateCustomerStatus.php
+collectionFile/resetCustomerStatus.php

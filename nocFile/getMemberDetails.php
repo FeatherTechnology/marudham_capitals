@@ -14,12 +14,12 @@ if(isset($_POST['noc_member'])){
 $records = array();
 
 if($noc_member == 2){
-    $qry = $connect->query("SELECT cp.guarentor_name,fam.famname,fp.ansi_template FROM acknowlegement_customer_profile cp LEFT JOIN verification_family_info fam ON fam.id = cp.guarentor_name
-    LEFT JOIN fingerprints fp ON fam.relation_aadhar = fp.adhar_num WHERE cp.req_id='$req_id'");
+    $qry = $connect->query("SELECT cp.guarentor_name, fam.famname, fp.ansi_template, fp.hand FROM acknowlegement_customer_profile cp LEFT JOIN verification_family_info fam ON fam.id = cp.guarentor_name LEFT JOIN fingerprints fp ON fam.relation_aadhar = fp.adhar_num WHERE cp.req_id='$req_id'");
     $row = $qry->fetch();
     $records['guarentor_id'] = $row['guarentor_name'];
     $records['guarentor_name'] = $row['famname'];
     $records['fingerprint'] = $row['ansi_template'];
+    $records['hand'] = $row['hand'];
     
 }else if($noc_member == 3){
     $qry = $connect->query("SELECT * FROM verification_family_info WHERE cus_id = '$cus_id' ");

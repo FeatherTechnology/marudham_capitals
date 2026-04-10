@@ -31,15 +31,17 @@ $(document).ready(function () {
     printWindow.document.write(`
         <style>
             @page {
-                size: A4 landscape;
+                size: A4;
+                margin: 10mm;
             }
 
-           body {
-                font-family: Arial, sans-serif;
-                margin: 0;
-                padding: 0;
-                transform: scale(0.82);
-                transform-origin: top center;  
+            body {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .card:last-child {
+                flex-grow: 1;
             }
 
             table {
@@ -49,10 +51,18 @@ $(document).ready(function () {
                 table-layout: auto;             
             }
 
+            .card:last-child {
+                margin-bottom: 0;
+            }
+
+            table {
+                margin-bottom: 10px; /* reduce gap between tables */
+            }
+
             th, td {
                 border: 1px solid #000;
                 padding: 4px 6px;
-                font-size: 12px;
+                font-size: 16px;
                 text-align: center;
                 white-space: nowrap;            
             }
@@ -61,7 +71,7 @@ $(document).ready(function () {
             td:nth-child(2),
             th:nth-child(3),
             td:nth-child(3) {
-                text-align: centre;
+                text-align: center;
                 white-space: normal;
                 min-width: 120px;
             }
@@ -76,7 +86,7 @@ $(document).ready(function () {
             }
             .card-header {
                 font-weight: 800 !important;
-                font-size: 14px;
+                font-size: 16px;
                 padding: 6px 4px;
                 text-align: left;
                 background: none !important;
@@ -94,10 +104,10 @@ $(document).ready(function () {
     /* 🔹 HEADER */
     printWindow.document.write(`
         <div style="text-align:center; margin-bottom:6px;">
-            <img src="img/logo.png" style="height:55px;">
-            <h3 style="margin:4px 0;">Marudham Capitals</h3>
-            <div style="font-weight:bold;">Partners Report</div>
-            <div style="font-weight:bold; margin-top:2px;">
+            <img src="img/logo.png" style="height:100px;">
+            <h3 style="margin:4px 0;font-size:20px;">Marudham Capitals</h3>
+            <div style="font-weight:bold;font-size:20px;">Partners Report</div>
+            <div style="font-weight:bold; margin-top:2px; font-size:20px;">
                 Date :  ${$('#to_date').val().split('-').reverse().join('-')}
             </div>
         </div>
