@@ -37,8 +37,8 @@ $(document).ready(function () {
 $(function () {
     resetStaffTypeTable();
     getStaffTypeDropdown();
-    var staff_id_upd = $('#staff_id_upd').val();
-    if (staff_id_upd > 0) {
+    var id = $('#id').val();
+    if (id > 0) {
         var state_upd = $('#state_upd').val();
         var district_upd = $('#district_upd').val();
         getDistrictDropdown(state_upd);
