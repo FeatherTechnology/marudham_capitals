@@ -43,8 +43,7 @@ if ($type == 1) {
 
     $line_str  = implode(',', $line);
     $condition = "alm.map_id IN ($line_str)";
-    $joinTable = "JOIN area_line_mapping_area alma ON al.area_id = alma.area_id
-    JOIN area_line_mapping alm ON alm.map_id = alma.line_map_id";
+    $joinTable = " JOIN sub_area_list_creation al ON cp.area_confirm_subarea = al.sub_area_id JOIN area_line_mapping_sub_area alma ON al.sub_area_id = alma.sub_area_id JOIN area_line_mapping alm ON alm.map_id = alma.line_map_id";
     $nameField = "alm.line_name";
 } else if ($type == 2) {
     // 🔹 User based
@@ -54,11 +53,11 @@ if ($type == 1) {
     }
     $user_id_str = implode(',', $user_id);
 
-    $userQry = $connect->query("
-        SELECT user_id, fullname, line_id 
+    $userQry = $connect->query("SELECT user_id, fullname, line_id 
         FROM user 
         WHERE user_id IN ($user_id_str) AND status = 0
     ");
+
     $userRows = $userQry->fetchAll();
     if (empty($userRows)) {
         echo json_encode(["data" => []]);
@@ -77,12 +76,12 @@ if ($type == 1) {
         echo json_encode(["data" => []]);
         exit;
     }
-    $line_id_str    = implode(',', $line_ids);
-    $condition      = "alm.map_id IN ($line_id_str)";
-    $joinTable      = "JOIN area_line_mapping_area alma ON al.area_id = alma.area_id
+    $line_id_str = implode(',', $line_ids);
+    $condition   = "alm.map_id IN ($line_id_str)";
+    $joinTable   = "   JOIN sub_area_list_creation al ON cp.area_confirm_subarea = al.sub_area_id JOIN area_line_mapping_sub_area alma ON al.sub_area_id = alma.sub_area_id
     JOIN area_line_mapping alm ON alm.map_id = alma.line_map_id";
-    $userName       = implode(', ', array_unique($display_names));
-    $nameField      = "NULL";
+    $userName    = implode(', ', array_unique($display_names));
+    $nameField   = "NULL";
 } else if ($type == 3) {
     // 🔹 Group based
     if (empty($group_map)) {
@@ -92,7 +91,7 @@ if ($type == 1) {
 
     $group_str  = implode(',', $group_map);
     $condition  = "ag.map_id IN ($group_str)";
-    $joinTable  = "JOIN area_group_mapping_area agma ON al.area_id = agma.area_id
+    $joinTable  = "   JOIN sub_area_list_creation al ON cp.area_confirm_subarea = al.sub_area_id JOIN area_group_mapping_sub_area agma ON al.sub_area_id = agma.sub_area_id
     JOIN area_group_mapping ag ON ag.map_id = agma.group_map_id";
     $nameField  = "ag.group_name";
 } else if ($type == 4) {
@@ -102,10 +101,8 @@ if ($type == 1) {
     }
 
     $due_followup_str = implode(',', $due_followup);
-    $joinTable = "
-    JOIN area_duefollowup_mapping_area adma ON al.area_id = adma.area_id
-    JOIN area_duefollowup_mapping adm ON adm.map_id = adma.duefollowup_map_id
-";
+    $joinTable = "    JOIN area_list_creation al ON cp.area_confirm_area = al.area_id JOIN area_duefollowup_mapping_area adma ON al.area_id = adma.area_id
+    JOIN area_duefollowup_mapping adm ON adm.map_id = adma.duefollowup_map_id";
     // Condition only for line_ids
     $condition = "adm.map_id IN ($due_followup_str)";
     $nameField = "adm.duefollowup_name";
@@ -141,7 +138,7 @@ FROM customer_status cs4
 JOIN collection col ON cs4.req_id = col.req_id
 WHERE 
     cs4.sub_status = 'Due Nil'
-    AND col.coll_sub_status IN ('Current','Due Nil','Pending','OD')
+    AND col.coll_sub_status IN ('Current','Pending','OD')
     AND DATE_FORMAT(col.coll_date, '%Y-%m-01') >= DATE_FORMAT('$search_date', '%Y-%m-01');
 
 ");
@@ -172,7 +169,6 @@ foreach ($loan_category as $cat_id) {
         JOIN acknowlegement_customer_profile cp ON ii.req_id = cp.req_id
         JOIN acknowlegement_loan_calculation alc ON ii.req_id = alc.req_id
         LEFT JOIN customer_status cs ON ii.req_id = cs.req_id
-        JOIN area_list_creation al ON cp.area_confirm_area = al.area_id
         $joinTable
         LEFT JOIN closing_customer cc ON ii.req_id = cc.req_id
         WHERE $condition
