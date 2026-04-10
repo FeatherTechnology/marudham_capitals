@@ -71,36 +71,7 @@ $column = array(
     'ii.req_id'    
 );
 
-$query = "SELECT
-    ii.req_id,
-    --  ag.group_name,
-    alm.line_name AS line,
-    -- adm.duefollowup_name,
-    ii.loan_id,
-    ii.updated_date AS loan_date,
-    ii.cus_id,
-    cr.autogen_cus_id,
-    al.area_name,
-    sal.sub_area_name,
-    lcc.loan_category_creation_name AS loan_cat_name,
-    lc.sub_category,
-    ac.ag_name,
-    u.role,
-    u.fullname,
-    lc.due_amt_cal,
-    lc.tot_amt_cal,
-    lc.due_period,
-    lc.due_start_from,
-    lc.due_method_scheme,
-    lc.due_method_calc,
-    lc.maturity_month as maturity_date,
-    lc.due_start_from,
-    cls.closed_sts,
-    cls.consider_level,
-    req.cus_name,
-    req.cus_status,
-    ack.updated_date,
-    IFNULL(col_sum.total_due_amt_tract, 0) AS total_due_amt
+$baseQuery = "
 FROM
     in_issue ii
 JOIN 
@@ -111,8 +82,8 @@ JOIN area_list_creation al ON
     cp.area_confirm_area = al.area_id
 JOIN sub_area_list_creation sal ON
     cp.area_confirm_subarea = sal.sub_area_id
-JOIN area_line_mapping_sub_area almsa ON sal.sub_area_id = almsa.sub_area_id
-JOIN area_line_mapping alm ON almsa.line_map_id = alm.map_id
+LEFT JOIN area_line_mapping_sub_area almsa ON sal.sub_area_id = almsa.sub_area_id
+LEFT JOIN area_line_mapping alm ON almsa.line_map_id = alm.map_id
         --  JOIN area_group_mapping ag ON FIND_IN_SET(sal.sub_area_id, ag.sub_area_id)
         --  JOIN area_duefollowup_mapping adm ON FIND_IN_SET(al.area_id, adm.area_id)
 JOIN acknowlegement_loan_calculation lc ON
@@ -156,10 +127,8 @@ AND (
 
 if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {
-        $query .= " and (ii.loan_id LIKE '%" . $_POST['search'] . "%'
-        -- OR ag.group_name LIKE '%" . $_POST['search'] . "%' 
+        $baseQuery .= " and (ii.loan_id LIKE '%" . $_POST['search'] . "%'
                     OR alm.line_name LIKE '%" . $_POST['search'] . "%'
-                    -- OR adm.duefollowup_name LIKE '%" . $_POST['search'] . "%'
                     OR ii.updated_date LIKE '%" . $_POST['search'] . "%'
                     OR lc.maturity_month LIKE '%" . $_POST['search'] . "%'
                     OR ii.cus_id LIKE '%" . $_POST['search'] . "%'
@@ -176,24 +145,67 @@ if (isset($_POST['search'])) {
     }
 }
 
+/* ---------- ORDER ---------- */
+$orderBy = '';
 if (isset($_POST['order'])) {
-    $query .= " ORDER BY " . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'];
+    $orderBy = " ORDER BY " . $column[$_POST['order']['0']['column']] . " " . $_POST['order']['0']['dir'];
 }
 
-$query1 = "";
-if ($_POST['length'] != -1) {
-    $query1 = " LIMIT " . $_POST['start'] . ", " . $_POST['length'];
+/* ---------- Pagination ---------- */
+$limit = '';
+if (!isset($_POST['download'])) {
+    if ($_POST['length'] != -1) {
+        $limit = " LIMIT " . $_POST['start'] . ", " . $_POST['length'];
+    }
 }
 
-$statement = $connect->prepare($query);
+/* ---------- Total records ---------- */
+$totalStmt = $connect->prepare("SELECT count(loan_id) as count_result from in_issue WHERE cus_status >=14");
+$totalStmt->execute();
+$recordsTotal = (int) $totalStmt->fetchColumn();
+
+/* ---------- Filtered records ---------- */
+$countStmt = $connect->prepare("SELECT COUNT(*) $baseQuery");
+$countStmt->execute();
+$recordsFiltered = (int) $countStmt->fetchColumn();
+
+/* ---------- Data query ---------- */
+$dataQuery = "SELECT
+    ii.req_id,
+    --  ag.group_name,
+    alm.line_name AS line,
+    -- adm.duefollowup_name,
+    ii.loan_id,
+    ii.updated_date AS loan_date,
+    ii.cus_id,
+    cr.autogen_cus_id,
+    al.area_name,
+    sal.sub_area_name,
+    lcc.loan_category_creation_name AS loan_cat_name,
+    lc.sub_category,
+    ac.ag_name,
+    u.role,
+    u.fullname,
+    lc.due_amt_cal,
+    lc.tot_amt_cal,
+    lc.due_period,
+    lc.due_start_from,
+    lc.due_method_scheme,
+    lc.due_method_calc,
+    lc.maturity_month as maturity_date,
+    lc.due_start_from,
+    cls.closed_sts,
+    cls.consider_level,
+    req.cus_name,
+    req.cus_status,
+    ack.updated_date,
+    IFNULL(col_sum.total_due_amt_tract, 0) AS total_due_amt
+            $baseQuery
+            $orderBy
+            $limit
+        ";
+$statement = $connect->prepare($dataQuery);
 $statement->execute();
-
-$number_filter_row = $statement->rowCount();
-
-$statement = $connect->prepare($query . $query1);
-
-$statement->execute();
-
 $result = $statement->fetchAll();
 
 $data = array();
@@ -314,17 +326,11 @@ foreach ($result as $row) {
     $data[]      = $sub_array;
     $sno = $sno + 1;
 }
-function count_all_data($connect)
-{
-    $query = $connect->query("SELECT count(loan_id) as count_result from in_issue WHERE cus_status >=14 ");
-    $statement = $query->fetch();
-    return intVal($statement['count_result']);
-}
 
 $output = array(
-    'draw' => intval($_POST['draw']),
-    'recordsTotal' => count_all_data($connect),
-    'recordsFiltered' => $number_filter_row,
+    'draw' => isset($_POST['draw']) ? intval($_POST['draw']) : 0, // ✅ safe for both table & download
+    'recordsTotal' => $recordsTotal,
+    'recordsFiltered' => $recordsFiltered,
     'data' => $data
 );
 

@@ -105,11 +105,11 @@ $query = "SELECT
         JOIN in_issue ii ON coll.req_id = ii.req_id
         JOIN area_list_creation al ON cp.area_confirm_area = al.area_id
         JOIN sub_area_list_creation sal ON cp.area_confirm_subarea = sal.sub_area_id
-        JOIN area_group_mapping_sub_area agmsa ON sal.sub_area_id = agmsa.sub_area_id
-        JOIN area_group_mapping agm ON agmsa.group_map_id = agm.map_id
-        JOIN area_line_mapping_sub_area almsa ON sal.sub_area_id = almsa.sub_area_id
-        JOIN area_line_mapping alm ON almsa.line_map_id = alm.map_id
-        JOIN branch_creation bc ON agm.branch_id = bc.branch_id
+        LEFT JOIN area_group_mapping_sub_area agmsa ON sal.sub_area_id = agmsa.sub_area_id
+        LEFT JOIN area_group_mapping agm ON agmsa.group_map_id = agm.map_id
+        LEFT JOIN area_line_mapping_sub_area almsa ON sal.sub_area_id = almsa.sub_area_id
+        LEFT JOIN area_line_mapping alm ON almsa.line_map_id = alm.map_id
+        LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id
         JOIN acknowlegement_loan_calculation lc ON coll.req_id = lc.req_id
         JOIN in_verification iv ON coll.req_id = iv.req_id
         JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
@@ -190,7 +190,7 @@ foreach ($result as $row) {
     $sub_array[] = $role_arr[$row['role']];
     $sub_array[] = $row['fullname'];
     $sub_array[] = date('d-m-Y', strtotime($row['coll_date']));
-     $sub_array[] = moneyFormatIndia(intVal($row['due_amt_track']));
+    $sub_array[] = moneyFormatIndia(intVal($row['due_amt_track']));
     if ($row['due_type'] != 'Interest') {
         //to get the principal and interest amt separate in due amt paid
         // $response = calculatePrincipalAndInterest(intVal($row['principal_amt_cal']) / $row['due_period'], intVal($row['int_amt_cal']) / $row['due_period'], intVal($row['due_amt_track']));
