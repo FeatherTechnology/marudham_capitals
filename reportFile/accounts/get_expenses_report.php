@@ -32,7 +32,7 @@ if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'
 }
 
 $column = array(
-    'id', 'created_date', 'usertype', 'username', 'ref_code', 'category',
+    'id', 'date', 'transaction_date', 'usertype', 'username', 'ref_code', 'category',
     'part', 'vou_id', 'trans_id', 'rec_per', 'remark', 'amt'
 );
 
@@ -40,7 +40,8 @@ $column = array(
 $query = "
     SELECT 
         hexp.id,
-        hexp.created_date,
+        hexp.created_date AS date,
+        '' AS transaction_date,
         hexp.usertype,
         hexp.username,
         '' AS ref_code,
@@ -60,7 +61,8 @@ $query = "
 
     SELECT 
         bexp.id,
-        bexp.created_date,
+        bexp.updated_date AS date,
+        bexp.created_date AS transaction_date,
         bexp.usertype,
         bexp.username,
         bexp.ref_code,
@@ -73,7 +75,7 @@ $query = "
         bexp.amt
     FROM ct_db_bexpense bexp
     JOIN expense_category excat ON bexp.cat = excat.id
-    WHERE DATE(bexp.created_date) BETWEEN '$from_date' AND '$to_date'" .
+    WHERE DATE(bexp.updated_date) BETWEEN '$from_date' AND '$to_date'" .
     ($user_based != "" ? " AND bexp.insert_login_id = '$userid'" : "");
 
 
@@ -118,7 +120,8 @@ $sno = 1;
 foreach ($result as $row) {
     $sub_array = array();
     $sub_array[] = $sno++;
-    $sub_array[] = date('d-m-Y', strtotime($row['created_date']));
+    $sub_array[] = date('d-m-Y', strtotime($row['date']));
+    $sub_array[] = !empty($row['transaction_date']) ? date('d-m-Y', strtotime($row['transaction_date'])) : '';
     $sub_array[] = $row['usertype'];
     $sub_array[] = $row['username'];
     $sub_array[] = $row['ref_code'];    // Blank for `hexp`, filled for `bexp`

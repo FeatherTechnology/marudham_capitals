@@ -61,6 +61,7 @@
                             <thead>
                                 <th>S.No</th>
                                 <th>Date</th>
+                                <th>Transaction Date</th>
                                 <th>Cash Type</th>
                                 <th>Credit</th>
                                 <th>Debit</th>
@@ -74,6 +75,7 @@
                                     <td></td>
                                     <td></td>
                                     <td></td>
+                                    <td></td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -82,6 +84,7 @@
                                 <tr>
                                     <th width="50">S.No</th>
                                     <th>Date</th>
+                                    <th>Transaction Date</th>
                                     <th>Cash Type</th>
                                     <th>Exchange Entry</th>
                                     <th>Credit</th>
@@ -97,6 +100,7 @@
                                     <td></td>
                                     <td></td>
                                     <td></td>
+                                    <td></td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -105,6 +109,7 @@
                                 <tr>
                                     <th width="50">S.No</th>
                                     <th>Date</th>
+                                    <th>Transaction Date</th>
                                     <th>Cash Type</th>
                                     <th>Category</th>
                                     <th>Credit</th>
@@ -118,6 +123,7 @@
                                     <td></td>
                                     <td></td>
                                     <td></td>
+                                    <td></td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -126,6 +132,7 @@
                                 <tr>
                                     <th width="50">S.No</th>
                                     <th>Date</th>
+                                    <th>Transaction Date</th>
                                     <th>User Type</th>
                                     <th>User Name</th>
                                     <th>Ref Code</th>
@@ -141,7 +148,7 @@
                             <tbody></tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="11"></td>
+                                    <td colspan="12"></td>
                                     <td colspan="1"></td>
                                 </tr>
                             </tfoot>
@@ -151,6 +158,7 @@
                                 <tr>
                                     <th width="50">S.No</th>
                                     <th>Date</th>
+                                    <th>Transaction Date</th>
                                     <th>Name</th>
                                     <th>Cash Type</th>
                                     <th>Credit</th>
@@ -160,6 +168,7 @@
                             <tbody></tbody>
                             <tfoot>
                                 <tr>
+                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -174,6 +183,7 @@
                                 <tr>
                                     <th width="50">S.No</th>
                                     <th>Date</th>
+                                    <th>Transaction Date</th>
                                     <th>Name</th>
                                     <th>Cash Type</th>
                                     <th>Credit</th>
@@ -183,6 +193,7 @@
                             <tbody></tbody>
                             <tfoot>
                                 <tr>
+                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -197,6 +208,7 @@
                                 <tr>
                                     <th width="50">S.No</th>
                                     <th>Date</th>
+                                    <th>Transaction Date</th>
                                     <th>Name</th>
                                     <th>Cash Type</th>
                                     <th>Credit</th>
@@ -212,6 +224,7 @@
                                     <td></td>
                                     <td></td>
                                     <td></td>
+                                    <td></td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -220,6 +233,7 @@
                                 <tr>
                                     <th width="50">S.No</th>
                                     <th>Date</th>
+                                    <th>Transaction Date</th>
                                     <th>Bank</th>
                                     <th>Ref ID</th>
                                     <th>Remark</th>
@@ -230,6 +244,7 @@
                             <tbody></tbody>
                             <tfoot>
                                 <tr>
+                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>

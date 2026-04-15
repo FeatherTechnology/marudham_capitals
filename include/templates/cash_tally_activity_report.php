@@ -28,20 +28,8 @@
                                  <thead>
                                     <tr>
                                         <th>S.No</th>
-                                        <th>Date</th>
-                                        <th>User Name</th>
-                                        <th>Opening Balance</th>
-                                        <th>Collection</th>
-                                        <th>Deposit</th>
-                                        <th>Exchange</th>
-                                        <th>EL</th>
-                                        <th>Investment</th>
-                                        <th>Other Income</th>
-                                        <th>Contra</th>
-                                        <th>Loan Issued</th>
-                                        <th>Agent</th>
-                                        <th>Expenses</th>
-                                        <th>Closing Balance</th>
+                                        <th>User Name </th>
+                                        <th>Hand Cash</th>
                                     </tr>
                                 </thead>
                                     <tbody></tbody>
