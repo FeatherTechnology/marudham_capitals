@@ -125,7 +125,7 @@ function contraReportTable() {
             };
 
             // Array of column indices to sum
-            var columnsToSum = [3, 4];
+            var columnsToSum = [4, 5];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {
@@ -204,7 +204,7 @@ function exchangeReportTable() {
             };
 
             // Array of column indices to sum
-            var columnsToSum = [4, 5];
+            var columnsToSum = [5, 6];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {
@@ -282,7 +282,7 @@ function otherIncomeReportTable() {
             };
 
             // Array of column indices to sum
-            var columnsToSum = [4];
+            var columnsToSum = [5];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {
@@ -360,7 +360,7 @@ function expensesReportTable() {
             };
 
             // Array of column indices to sum
-            var columnsToSum = [11];
+            var columnsToSum = [12];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {
@@ -438,7 +438,7 @@ function investmentReportTable() {
             };
 
             // Array of column indices to sum
-            var columnsToSum = [4, 5];
+            var columnsToSum = [5, 6];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {
@@ -516,7 +516,7 @@ function depositReportTable() {
             };
 
             // Array of column indices to sum
-            var columnsToSum = [4, 5];
+            var columnsToSum = [5, 6];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {
@@ -594,7 +594,7 @@ function elReportTable() {
             };
 
             // Array of column indices to sum
-            var columnsToSum = [4, 5];
+            var columnsToSum = [5, 6];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {
@@ -673,7 +673,7 @@ function excessFundReportTable() {
             };
 
             // Array of column indices to sum
-            var columnsToSum = [6];
+            var columnsToSum = [7];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {

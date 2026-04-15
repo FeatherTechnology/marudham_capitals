@@ -22,23 +22,25 @@ $where = "1"; // default condition
 if (!empty($_POST['from_date']) && !empty($_POST['to_date'])) {
     $from_date = date('Y-m-d', strtotime($_POST['from_date']));
     $to_date = date('Y-m-d', strtotime($_POST['to_date']));
-    $where = " (DATE(created_date) >= '$from_date') AND (DATE(created_date) <= '$to_date') ";
+    $where = " (DATE(updated_date) >= '$from_date') AND (DATE(updated_date) <= '$to_date') ";
 }
 
 $where .= $user_based;
 
 $column = array(
     'tdate',
+    'transaction_date',
     'ctype',
     'ref_code',
+    'ctype',
     'remark',
     'trans_id',
-    'Amount'
+    'Debit'
 );
 
 // Wrap UNION ALL in subquery
 $query = "
-SELECT created_date AS tdate, bank_id AS ctype, ref_code, remark, trans_id, amt AS Debit
+SELECT updated_date AS tdate, created_date AS transaction_date, bank_id AS ctype, ref_code, remark, trans_id, amt AS Debit
     FROM ct_db_exf 
     WHERE $where
 ";
@@ -46,7 +48,7 @@ SELECT created_date AS tdate, bank_id AS ctype, ref_code, remark, trans_id, amt 
 // Search filter
 if (!empty($_POST['search']['value'])) {
     $search = $_POST['search']['value'];
-    $query .= " WHERE created_date LIKE '%$search%' OR ctype LIKE '%$search%' OR ref_code LIKE '%$search%' OR trans_id LIKE '%$search%' OR amt LIKE '%$search%' ";
+    $query .= " WHERE updated_date LIKE '%$search%' OR transaction_date LIKE '%$search%' OR ctype LIKE '%$search%' OR ref_code LIKE '%$search%' OR trans_id LIKE '%$search%' OR amt LIKE '%$search%' ";
 }
 
 // Ordering
@@ -88,8 +90,9 @@ foreach ($result as $row) {
     $sub_array = array();
     $sub_array[] = $sno++;
     $sub_array[] = date('d-m-Y', strtotime($row['tdate']));
+    $sub_array[] = date('d-m-Y', strtotime($row['transaction_date']));
     $sub_array[] = $bname;
-    $sub_array[] = $row['ref_code'];;
+    $sub_array[] = $row['ref_code'];
     $sub_array[] = $row['remark'];
     $sub_array[] = $row['trans_id'];
     $sub_array[] = moneyFormatIndia($row['Debit']);

@@ -27,6 +27,7 @@ if (!empty($_POST['from_date']) && !empty($_POST['to_date'])) {
 }
 $column = array(
     'tdate',
+    'transaction_date',
     'ctype',
     'name',     
     'Credit',
@@ -36,7 +37,7 @@ $column = array(
 
 $query = "
 SELECT * FROM (
-    SELECT cdh.created_date AS tdate, 'Hand Cash' AS ctype, '' AS Credit, cdh.amt AS Debit, cdh.amt AS Amount, ndc.name 
+    SELECT cdh.created_date AS tdate, '' AS transaction_date, 'Hand Cash' AS ctype, '' AS Credit, cdh.amt AS Debit, cdh.amt AS Amount, ndc.name 
     FROM ct_db_hel cdh
     JOIN name_detail_creation ndc ON cdh.name_id = ndc.name_id 
     WHERE DATE(cdh.created_date) BETWEEN '$from_date' AND '$to_date'" . 
@@ -44,15 +45,15 @@ SELECT * FROM (
 
     UNION ALL 
 
-    SELECT cdb.created_date AS tdate, cdb.bank_id AS ctype, '' AS Credit, cdb.amt AS Debit, cdb.amt AS Amount, ndc.name 
+    SELECT cdb.updated_date AS tdate, cdb.created_date AS transaction_date, cdb.bank_id AS ctype, '' AS Credit, cdb.amt AS Debit, cdb.amt AS Amount, ndc.name 
     FROM ct_db_bel cdb 
     JOIN name_detail_creation ndc ON cdb.name_id = ndc.name_id
-    WHERE DATE(cdb.created_date) BETWEEN '$from_date' AND '$to_date'" . 
+    WHERE DATE(cdb.updated_date) BETWEEN '$from_date' AND '$to_date'" . 
     ($user_based != "" ? " AND cdb.insert_login_id = '$userid'" : "") . "
 
     UNION ALL 
 
-    SELECT cch.created_date AS tdate, 'Hand Cash' AS ctype, cch.amt AS Credit, '' AS Debit, cch.amt AS Amount, ndc.name 
+    SELECT cch.created_date AS tdate, '' AS transaction_date, 'Hand Cash' AS ctype, cch.amt AS Credit, '' AS Debit, cch.amt AS Amount, ndc.name 
     FROM ct_cr_hel cch
     JOIN name_detail_creation ndc ON cch.name_id = ndc.name_id
     WHERE DATE(cch.created_date) BETWEEN '$from_date' AND '$to_date'" . 
@@ -60,10 +61,10 @@ SELECT * FROM (
 
     UNION ALL 
 
-    SELECT ccb.created_date AS tdate, ccb.bank_id AS ctype, ccb.amt AS Credit, '' AS Debit, ccb.amt AS Amount, ndc.name 
+    SELECT ccb.updated_date AS tdate, ccb.created_date AS transaction_date, ccb.bank_id AS ctype, ccb.amt AS Credit, '' AS Debit, ccb.amt AS Amount, ndc.name 
     FROM ct_cr_bel ccb
     JOIN name_detail_creation ndc ON ccb.name_id = ndc.name_id
-    WHERE DATE(ccb.created_date) BETWEEN '$from_date' AND '$to_date'" . 
+    WHERE DATE(ccb.updated_date) BETWEEN '$from_date' AND '$to_date'" . 
     ($user_based != "" ? " AND ccb.insert_login_id = '$userid'" : "") . "
 ) AS sub
 ";
@@ -73,6 +74,7 @@ SELECT * FROM (
 if (!empty($_POST['search']['value'])) {
     $search = $_POST['search']['value'];
     $query .= " WHERE sub.tdate LIKE '%$search%' 
+                OR sub.transaction_date LIKE '%$search%'
                 OR ndc.name  LIKE '%$search%' 
                 OR sub.Credit LIKE '%$search%' 
                 OR sub.Debit LIKE '%$search%' 
@@ -118,7 +120,8 @@ foreach ($result as $row) {
     $sub_array = array();
     $sub_array[] = $sno++;
     $sub_array[] = date('d-m-Y', strtotime($row['tdate']));
-        $sub_array[] = $row['name'];
+    $sub_array[] = !empty($row['transaction_date']) ? date('d-m-Y', strtotime($row['transaction_date'])) : '';
+    $sub_array[] = $row['name'];
     $sub_array[] = $bname;
     $sub_array[] = moneyFormatIndia($row['Credit']);
     $sub_array[] = moneyFormatIndia($row['Debit']);

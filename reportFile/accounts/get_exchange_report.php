@@ -23,12 +23,14 @@ if (!empty($_POST['from_date']) && !empty($_POST['to_date'])) {
     $from_date = date('Y-m-d', strtotime($_POST['from_date']));
     $to_date = date('Y-m-d', strtotime($_POST['to_date']));
     $where = " (DATE(created_date) >= '$from_date') AND (DATE(created_date) <= '$to_date') ";
+    $whereUD = " (DATE(updated_date) >= '$from_date') AND (DATE(updated_date) <= '$to_date') ";
 }
 
 $where .= $user_based;
 
 $column = array(
     'tdate',
+    'transaction_date',
     'ctype',
     'from_user_id',
     'Credit',
@@ -39,34 +41,34 @@ $column = array(
 // Wrap UNION ALL in subquery
 $query = "
 SELECT * FROM (
-    SELECT created_date AS tdate, 'Hand Cash' AS ctype, insert_login_id AS from_user_id, '' AS Credit, amt AS Debit, amt AS Amount 
+    SELECT created_date AS tdate, '' AS transaction_date, 'Hand Cash' AS ctype, insert_login_id AS from_user_id, '' AS Credit, amt AS Debit, amt AS Amount 
     FROM ct_db_hexchange 
     WHERE $where
 
     UNION ALL 
 
-    SELECT created_date AS tdate, to_bank_id AS ctype, insert_login_id AS from_user_id, '' AS Credit, amt AS Debit, amt AS Amount 
+    SELECT updated_date AS tdate, created_date AS transaction_date, to_bank_id AS ctype, insert_login_id AS from_user_id, '' AS Credit, amt AS Debit, amt AS Amount 
     FROM ct_db_bexchange 
-    WHERE $where
+    WHERE $whereUD
 
     UNION ALL 
 
-    SELECT created_date AS tdate, 'Hand Cash' AS ctype, insert_login_id AS from_user_id, amt AS Credit, '' AS Debit, amt AS Amount 
+    SELECT created_date AS tdate, '' AS transaction_date, 'Hand Cash' AS ctype, insert_login_id AS from_user_id, amt AS Credit, '' AS Debit, amt AS Amount 
     FROM ct_cr_hexchange 
     WHERE $where
 
     UNION ALL 
 
-    SELECT created_date AS tdate, to_bank_id AS ctype, insert_login_id AS from_user_id, amt AS Credit, '' AS Debit, amt AS Amount 
+    SELECT updated_date AS tdate, created_date AS transaction_date, to_bank_id AS ctype, insert_login_id AS from_user_id, amt AS Credit, '' AS Debit, amt AS Amount 
     FROM ct_cr_bexchange 
-    WHERE $where
+    WHERE $whereUD
 ) AS result
 ";
 
 // Search filter
 if (!empty($_POST['search']['value'])) {
     $search = $_POST['search']['value'];
-    $query .= " WHERE tdate LIKE '%$search%' OR ctype LIKE '%$search%' OR Credit LIKE '%$search%' OR Debit LIKE '%$search%' OR Amount LIKE '%$search%' ";
+    $query .= " WHERE tdate LIKE '%$search%' OR transaction_date LIKE '%$search%' OR ctype LIKE '%$search%' OR Credit LIKE '%$search%' OR Debit LIKE '%$search%' OR Amount LIKE '%$search%' ";
 }
 
 // Ordering
@@ -109,6 +111,7 @@ foreach ($result as $row) {
     $sub_array = array();
     $sub_array[] = $sno++;
     $sub_array[] = date('d-m-Y', strtotime($row['tdate']));
+    $sub_array[] = !empty($row['transaction_date']) ? date('d-m-Y', strtotime($row['transaction_date'])) : '';
     $sub_array[] = $bname;
     $sub_array[] = $username;
     $sub_array[] = moneyFormatIndia($row['Credit']);

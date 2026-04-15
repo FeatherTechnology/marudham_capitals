@@ -26,12 +26,14 @@ if (!empty($_POST['from_date']) && !empty($_POST['to_date'])) {
     $from_date = date('Y-m-d', strtotime($_POST['from_date']));
     $to_date = date('Y-m-d', strtotime($_POST['to_date']));
     $where = " (DATE(created_date) >= '$from_date' AND DATE(created_date) <= '$to_date') ";
+    $whereUD = " (DATE(updated_date) >= '$from_date' AND DATE(updated_date) <= '$to_date') ";
 }
 $where .= $user_based;
 
 $column = array(
     'tdate',
     'tdate',
+    'transaction_date',
     'ctype',
     'Credit',
     'Debit'
@@ -39,23 +41,23 @@ $column = array(
 
 // Main data query
 $query = "
-SELECT created_date AS tdate, from_bank_id AS ctype, '' AS Credit, amt AS Debit, amt AS Amount FROM ct_db_cash_withdraw 
+SELECT updated_date AS tdate, created_date AS transaction_date, from_bank_id AS ctype, '' AS Credit, amt AS Debit, amt AS Amount FROM ct_db_cash_withdraw 
+WHERE $whereUD 
+
+UNION ALL 
+
+SELECT created_date AS tdate, '' AS transaction_date,'Hand Cash' AS ctype, '' AS Credit, amount AS Debit, amount AS Amount FROM ct_db_bank_deposit 
 WHERE $where 
 
 UNION ALL 
 
-SELECT created_date AS tdate, 'Hand Cash' AS ctype, '' AS Credit, amount AS Debit, amount AS Amount FROM ct_db_bank_deposit 
-WHERE $where 
+SELECT updated_date AS tdate, '' AS transaction_date, 'Hand Cash' AS ctype, amt AS Credit, '' AS Debit, amt AS Amount FROM ct_cr_bank_withdraw 
+WHERE $whereUD 
 
 UNION ALL 
 
-SELECT created_date AS tdate, 'Hand Cash' AS ctype, amt AS Credit, '' AS Debit, amt AS Amount FROM ct_cr_bank_withdraw 
-WHERE $where 
-
-UNION ALL 
-
-SELECT created_date AS tdate, to_bank_id AS ctype, amt AS Credit, '' AS Debit, amt AS Amount FROM ct_cr_cash_deposit 
-WHERE $where 
+SELECT updated_date AS tdate, created_date AS transaction_date, to_bank_id AS ctype, amt AS Credit, '' AS Debit, amt AS Amount FROM ct_cr_cash_deposit 
+WHERE $whereUD 
 ";
 
 // Search filter
@@ -63,6 +65,7 @@ if (!empty($_POST['search'])) {
     $search = $_POST['search'];
     $query = "SELECT * FROM ($query) AS sub WHERE 
         tdate LIKE '%$search%' OR 
+        transaction_date LIKE '%$search%' OR
         ctype LIKE '%$search%' OR 
         Credit LIKE '%$search%' OR 
         Debit LIKE '%$search%'";
@@ -104,6 +107,7 @@ foreach ($result as $row) {
     $sub_array = array();
     $sub_array[] = $sno;
     $sub_array[] = date('d-m-Y', strtotime($row['tdate']));
+    $sub_array[] = !empty($row['transaction_date']) ? date('d-m-Y', strtotime($row['transaction_date'])) : '';
     $sub_array[] =  $bname;
     $sub_array[] = moneyFormatIndia($row['Credit']);
     $sub_array[] = moneyFormatIndia($row['Debit']);
