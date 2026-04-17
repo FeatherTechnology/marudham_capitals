@@ -5,6 +5,16 @@ $from_date = $_POST['from_date'];
 $to_date   = $_POST['to_date'];
 $user_id   = $_POST['user_id'];
 
+$condition = "";
+
+$user_type = $_POST['user_type'] ?? '';
+
+if ($user_type == '2') {
+    $condition .= " AND u.status = 0";
+} elseif ($user_type == '3') {
+    $condition .= " AND u.status = 1";
+}
+
 $data = [];
 $sno = 1;
 
@@ -54,7 +64,7 @@ FROM commitment c
 LEFT JOIN user u ON u.user_id = c.insert_login_id
 
 WHERE DATE(c.created_date) BETWEEN '$from_date' AND '$to_date'
-$user_condition
+$user_condition $condition
 
 GROUP BY c.insert_login_id
 ORDER BY u.fullname

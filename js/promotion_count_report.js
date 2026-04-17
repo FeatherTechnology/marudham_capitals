@@ -11,26 +11,29 @@ $(document).ready(function () {
         }
     });
 
+    $('#user_type').change(function () {
+        getUserNames();
+    });
+
     $('#reset_btn').click(function () {
         let from_date = $('#from_date').val();
         let to_date = $('#to_date').val();
+        let user_type = $('#user_type').val();
         let selected_user = $('#by_user').val();
 
-        if (!from_date || !to_date || !selected_user) {
+        if (!from_date || !to_date || !user_type || !selected_user) {
             swalError('Please Select All Fields!', 'All fields are required.');
             return;
         }
 
-        getPromotionCountReport(from_date, to_date, selected_user);
+        getPromotionCountReport(from_date, to_date, user_type, selected_user);
     });
 });
 
-$(function () {
-    getUserNames();
-});
-
 function getUserNames() {
-    $.post('reportFile/due_followup_count_report/getDuefollowupUser.php', { screen: 3 }, function (response) {
+    let user_type = $('#user_type').val();
+
+    $.post('reportFile/due_followup_count_report/getDuefollowupUser.php', { screen: 3, user_type: user_type }, function (response) {
         $('#by_user').empty().append("<option value=''>Select User</option> <option value='0'>All</option>");
         $.each(response, function (i, val) {
             $('#by_user').append("<option value='" + val.user_id + "'>" + val.username + "</option>");
@@ -38,7 +41,7 @@ function getUserNames() {
     }, 'json');
 }
 
-function getPromotionCountReport(from_date, to_date, selected_user) {
+function getPromotionCountReport(from_date, to_date, user_type, selected_user) {
 
     $('#promotion_count_report_table').DataTable().destroy();
     // Declare table variable to store the DataTable instance
@@ -56,6 +59,7 @@ function getPromotionCountReport(from_date, to_date, selected_user) {
                 data.search = $('input[type=search]').val();
                 data.from_date = from_date;
                 data.to_date = to_date;
+                data.user_type = user_type;
                 data.user_id = selected_user;
             }
         },

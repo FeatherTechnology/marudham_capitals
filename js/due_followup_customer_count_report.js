@@ -1,5 +1,8 @@
 $(document).ready(function () {
-    getUserNames();
+
+    $('#user_type').change(function () {
+        getUserNames();
+    });
 
     $('#reset_btn').click(function () {
         dueFollowUpCustomerCountReportTable();
@@ -7,7 +10,9 @@ $(document).ready(function () {
 });
 
 function getUserNames() {
-    $.post('reportFile/due_followup_customer_count/user_list.php', function (response) {
+    let user_type = $('#user_type').val();
+
+    $.post('reportFile/due_followup_customer_count/user_list.php', { user_type: user_type }, function (response) {
         $('#by_user').empty();
         $('#by_user').append("<option value=''>Select User</option>");
         $.each(response, function (index, val) {
@@ -18,10 +23,16 @@ function getUserNames() {
 
 function dueFollowUpCustomerCountReportTable() {
     let to_date = $('#to_date').val();
+    let user_type = $('#user_type').val();
     let selected_user = $('#by_user').val();
 
     if (!to_date) {
         swalError('Please Select Date!', 'To Date is required.');
+        return;
+    }
+
+    if (!user_type) {
+        swalError('Please Select User Type!', 'User Type selection is required.');
         return;
     }
 

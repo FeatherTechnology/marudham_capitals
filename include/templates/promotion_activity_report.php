@@ -14,6 +14,12 @@
         <div class="row gutters" id="closed_card">
             <div class="toggle-container col-12">
                 <input type="date" id='selected_date' name='selected_date' class="toggle-button" value=''>
+                <select type="text" class="toggle-button" id='user_type' name='user_type'>
+                    <option value=''>Select User Type</option>
+                    <option value='1'>All</option>
+                    <option value='2'>Active</option>
+                    <option value='3'>In Active</option>
+                </select>
                 <select type="text" class="toggle-button" id='by_user' name='by_user'>
                     <option value=''>Select User</option>
                 </select>

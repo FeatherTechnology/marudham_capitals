@@ -11,30 +11,33 @@ $(document).ready(function () {
         }
     });
 
+    $('#user_type').change(function () {
+        getUserNames();
+    });
+
     // 🔹 Reset / Show Button Click
     $('#reset_btn').click(function () {
 
         let from_date = $('#from_date').val();
         let to_date = $('#to_date').val();
+        let user_type = $('#user_type').val();
         let selected_user = $('#by_user').val();
 
 
-        if (!from_date || !to_date || !selected_user) {
+        if (!from_date || !to_date || !user_type || !selected_user) {
             swalError('Please Select All Fields!', 'All fields are required.');
             return;
         }
-        confirmationReportCount(from_date, to_date, selected_user)
+        confirmationReportCount(from_date, to_date, user_type, selected_user)
 
     });
 
 });
-// Load User List
-$(function () {
-    getUserNames();
-});
 
 function getUserNames() {
-    $.post('reportFile/customer_status_report/getAllUserList.php', { user_track: 2 }, function (response) {
+    let user_type = $('#user_type').val();
+
+    $.post('reportFile/customer_status_report/getAllUserList.php', { user_track: 2, user_type: user_type }, function (response) {
         $('#by_user').empty().append("<option value=''>Select User</option>");
         $.each(response, function (i, val) {
             $('#by_user').append("<option value='" + val.user_id + "'>" + val.username + "</option>");
@@ -42,7 +45,7 @@ function getUserNames() {
     }, 'json');
 }
 
-function confirmationReportCount(from_date, to_date, selected_user) {
+function confirmationReportCount(from_date, to_date, user_type, selected_user) {
 
     $.ajax({
         url: 'reportFile/confirmation_count_report/getConfirmationCount.php',
@@ -50,6 +53,7 @@ function confirmationReportCount(from_date, to_date, selected_user) {
         data: {
             from_date: from_date,
             to_date: to_date,
+            user_type: user_type,
             user_id: selected_user,
         },
         dataType: 'json',

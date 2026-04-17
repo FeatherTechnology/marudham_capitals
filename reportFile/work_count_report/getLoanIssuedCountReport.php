@@ -5,6 +5,16 @@ $from_date = $_POST['from_date'];
 $to_date   = $_POST['to_date'];
 $user_id   = $_POST['user_id'];
 
+$where = "";
+
+$user_type = $_POST['user_type'] ?? '';
+
+if ($user_type == '2') {
+    $where .= " AND u.status = 0";
+} elseif ($user_type == '3') {
+    $where .= " AND u.status = 1";
+}
+
 /* ===================== USER FILTER ===================== */
 
 if ($user_id != 'all') {
@@ -13,8 +23,12 @@ if ($user_id != 'all') {
     }
     $userIds = array_map('intval', $user_id);
 } else {
-    $stmt = $connect->prepare("
-       SELECT DISTINCT insert_login_id  FROM `document_track` WHERE insert_login_id != '' ");
+    $stmt = $connect->prepare("SELECT DISTINCT u.user_id
+        FROM document_track dtk
+        LEFT JOIN user u ON dtk.insert_login_id = u.user_id
+        WHERE dtk.insert_login_id != ''
+        $where
+    ");
     $stmt->execute();
     $userIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
 }

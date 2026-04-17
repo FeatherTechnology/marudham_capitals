@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    getUserNames();
+
     $('#reset_btn').click(function () {
         if($('#to_date').val() == "" || $('#by_user').val() == ""){
             alert('Please Select The Search Date And User');
@@ -8,7 +8,9 @@ $(document).ready(function () {
         }
     });
 
-
+    $('#user_type').change(function () {
+        getUserNames();
+    });
 
 });
 
@@ -30,7 +32,9 @@ function cashTallyActivity(){
 }
 
 function getUserNames() {
-    $.post('reportFile/cashtally_activity/getuserName.php', function (response) {
+    let user_type = $('#user_type').val();
+
+    $.post('reportFile/cashtally_activity/getuserName.php', { user_type: user_type }, function (response) {
         $('#by_user').empty();
         $('#by_user').append("<option value=''>Select User</option>");
         $.each(response, function (index, val) {

@@ -1,4 +1,7 @@
 $(document).ready(function () {
+
+    getBankNames();
+
     $('#from_date').change(function(){
         const fromDate = $(this).val();
         const toDate = $('#to_date').val();
@@ -20,7 +23,9 @@ function clearedReportTable() {
     let from_date = $('#from_date').val();
     let to_date = $('#to_date').val();
     let stmt_type = $('#stmt_type').val();
-    if (!from_date ||!to_date || !stmt_type) {
+    let bank_name = $('#bank_name').val();
+
+    if (!from_date ||!to_date || !bank_name || !stmt_type) {
         swalError('Warning', 'All Fields are required.');
         return;
     }
@@ -30,7 +35,7 @@ function clearedReportTable() {
     var cleared_report_table = $('#cleared_report_table').DataTable({
         ...getStateSaveConfig('cleared_report_table'),
         "order": [
-            [0, "desc"]
+            [0, "asc"]
         ],
         'processing': true,
         'serverSide': true,
@@ -42,6 +47,7 @@ function clearedReportTable() {
                 data.from_date = from_date;
                 data.to_date = to_date;
                 data.stmt_type = stmt_type;
+                data.bank_name = $('#bank_name').val();
             }
         },
         dom: 'lBfrtip',
@@ -100,4 +106,16 @@ function clearedReportTable() {
 
     // Pass the table variable to the initColVisFeatures function
     initColVisFeatures(cleared_report_table, 'cleared_report_table');
+}
+
+function getBankNames() {
+    $.post('accountsFile/bankclearance/getBankNames.php', function (response) {
+        $('#bank_name').empty();
+        $('#bank_name').append("<option value=''>Select Bank Name</option>");
+         // Add "All" at last
+        $('#bank_name').append("<option value='all'>All</option>");
+        $.each(response, function (index, val) {
+            $('#bank_name').append("<option value='" + val['id'] + "'>" + val['bank_name'] + "</option>");
+        });
+    }, 'json');
 }

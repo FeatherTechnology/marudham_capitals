@@ -6,20 +6,21 @@ $result = [];
 $user_type = $_POST['user_type'] ?? '';
 
 // Build condition
-$where = "promotion_activity = 0";
+$where = "la.user_id IS NOT NULL";
 
 if ($user_type == '2') {
-    $where .= " AND status = 0"; // Active
+    $where .= " AND u.status = 0"; // Active
 } elseif ($user_type == '3') {
-    $where .= " AND status = 1"; // Inactive
+    $where .= " AND u.status = 1"; // Inactive
 }
 // If '1' (All) → no status filter
 
-$qry = $connect->query("SELECT fullname, GROUP_CONCAT(user_id ORDER BY user_id ASC) AS user_ids
-    FROM user
+$qry = $connect->query("SELECT u.user_id, u.fullname
+    FROM user u
+    LEFT JOIN location_audit la ON u.user_id = la.user_id
     WHERE $where
-    GROUP BY fullname
-    ORDER BY fullname ASC
+    GROUP BY u.fullname
+    ORDER BY u.fullname ASC
 ");
 
 if ($qry->rowCount() > 0) {
