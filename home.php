@@ -633,6 +633,11 @@ if (isset($getuserdetails['download_access'])) {
 			<?php if ($current_page == 'partners_report') { ?>
 				<?php include "include/templates/partners_report.php" ?>
 			<?php } else ?>
+
+			<!-- Location Track Report -->
+			<?php if ($current_page == 'location_track_report') { ?>
+				<?php include "include/templates/location_track_report.php" ?>
+			<?php } else ?>
 			
 			<!-- Intrest Ledger Report -->
 			<?php if ($current_page == 'intrest_ledger_report') { ?>

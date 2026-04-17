@@ -5,6 +5,16 @@ include '../../ajaxconfig.php';
 //$promo_type = ['Direct' => 1, 'Mobile' => 2]
 $where = "1=1";
 
+$condition = "";
+
+$user_type = $_POST['user_type'] ?? '';
+
+if ($user_type == '2') {
+    $condition .= " AND u.status = 0";
+} elseif ($user_type == '3') {
+    $condition .= " AND u.status = 1";
+}
+
 /* ---------- DATES ---------- */
 if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'] != '' && $_POST['to_date'] != '') {
     $from_date = $_POST['from_date'] . " 00:00:00";
@@ -32,7 +42,7 @@ $column = array(
 /* ---------- BASE QUERY ---------- */
 $base_query = "FROM new_promotion np
 LEFT JOIN user u ON np.insert_login_id = u.user_id
-WHERE $where";
+WHERE $where $condition";
 
 /* ---------- GROUP BY ---------- */
 $group_by = "GROUP BY np.insert_login_id, np.promo_type, np.status, np.orgin_table";

@@ -15,6 +15,9 @@
 			<div class="toggle-container col-12">
 				<input type="date" id='from_date' name='from_date' class="toggle-button" value=''>
 				<input type="date" id='to_date' name='to_date' class="toggle-button" value=''>
+				<select type="text" class="toggle-button" id='bank_name' name='bank_name'>
+                    <option value=''>Select Bank Name</option>
+                </select>
 				<select type="text" class="toggle-button" id='stmt_type' name='stmt_type'>
                     <option value=''>Select Type</option>
                     <option value='0'>Bank Statement</option>

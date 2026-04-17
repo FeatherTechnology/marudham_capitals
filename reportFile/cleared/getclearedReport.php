@@ -5,6 +5,7 @@ include '../../moneyFormatIndia.php';
 $from_date = date('Y-m-d', strtotime($_POST['from_date']));
 $to_date = date('Y-m-d', strtotime($_POST['to_date']. ' +1 day'));
 $stmt_type = $_POST['stmt_type'] ?? '1';
+$bank_name = $_POST['bank_name'] ?? '';
 
 $column = array(
     'bs.id',
@@ -23,6 +24,10 @@ $column = array(
 );
 
 $condition = ($stmt_type =='1') ? " AND bs.clr_status = '1' " : '';
+
+if ($bank_name != '' && $bank_name != 'all') {
+    $condition .= " AND bc.id = '$bank_name' ";
+}
 
 $based_query = "FROM 
     bank_stmt bs
@@ -185,7 +190,13 @@ if (!empty($_POST['search'])) {
 
 $orderby_query = "";
 
-if (isset($_POST['order'])) {
+// 1. Special case: ALL banks
+if (isset($_POST['bank_name']) && $_POST['bank_name'] == 'all') {
+    $orderby_query = " ORDER BY bc.bank_name ASC, bs.trans_date ASC ";
+}
+
+// 2. DataTables sorting
+else if (isset($_POST['order'])) {
     $col_index = $_POST['order'][0]['column'];
     $dir = $_POST['order'][0]['dir'];
 
@@ -196,6 +207,11 @@ if (isset($_POST['order'])) {
         $orderby_query = " ORDER BY " . $column[$col_index] . " " . $dir;
     }
 }
+
+// 3. Default sorting
+else {
+    $orderby_query = " ORDER BY bs.trans_date ASC ";
+} 
 
 $limit_query = "";
 if ($_POST['length'] != -1) {
