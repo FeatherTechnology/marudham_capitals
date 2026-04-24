@@ -19,7 +19,7 @@
 <br><br>
 <div class="page-header">
 	<div style="background-color:#009688; width:100%; padding:12px; color: #ffff; font-size: 20px; border-radius:5px;">
-		Marudham Capitals - Request Count Report
+		Marudham Capitals - Branch Request Count Report
 	</div>
 </div><br>
 <!-- Main container start -->
@@ -45,7 +45,7 @@
 			</div>
 			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 				<div class="card">
-					<div class="card-header">Request Count Report</div>
+					<div class="card-header">Branch Request Count Report</div>
 					<div class="card-body">
 						<div id="request_count_report_table_div" class="table-divs" style="overflow-x: auto;">
 							<table id="request_count_table" class="table custom-table" style="width:100%">
