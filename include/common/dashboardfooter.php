@@ -2976,6 +2976,10 @@
         <script src="js/duefollowup_count_report.js"></script>
     <?php }
 
+    if ($current_page == 'back_office_count_report') { ?>
+        <script src="js/back_office_count_report.js"></script>
+    <?php }
+
     if ($current_page == 'concern_report') { ?>
         <script src="js/concern_report.js"></script>
     <?php }
