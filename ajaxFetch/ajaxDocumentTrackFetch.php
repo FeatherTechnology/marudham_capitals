@@ -161,7 +161,9 @@ foreach ($result as $row) {
         $replace_doc_reqid[] = $req_id;
     }
 
-    $sub_array[] = $replace_doc_action;
+    $sub_array[] = !empty($replace_doc_action) 
+    ? implode('<br>', $replace_doc_action) 
+    : '';
 
     $id = $row['id']; //table id
 

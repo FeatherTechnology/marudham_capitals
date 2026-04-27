@@ -17,6 +17,8 @@
 						<thead>
 							<tr>
 								<th width="50">S.No.</th>
+								<th>Replace Date</th>
+								<th>Replace User</th>
 								<th>Aadhaar Number</th>
 								<th>Customer ID</th>
 								<th>Customer Name</th>

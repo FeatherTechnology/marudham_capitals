@@ -43,6 +43,8 @@ if ($userid != 1) {  // super admin bypass
 
 $column = array(
     'n.noc_id',
+    'n.created_date',
+    'u.fullname',
     'n.cus_id',
     'cr.autogen_cus_id',
     'cp.cus_name',
@@ -56,7 +58,7 @@ $column = array(
 );
 
 if ($userid == 1) {
-    $query = "SELECT cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cp.mobile1, n.cus_id, n.req_id 
+    $query = "SELECT n.created_date, u.fullname, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cp.mobile1, n.cus_id, n.req_id 
     FROM noc n 
     JOIN acknowlegement_customer_profile cp ON n.req_id = cp.req_id 
     JOIN customer_register cr ON cp.cus_id = cr.cus_id 
@@ -65,9 +67,10 @@ if ($userid == 1) {
     JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sa.sub_area_id
     JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id 
     JOIN branch_creation bc ON alm.branch_id = bc.branch_id 
+    JOIN user u ON u.user_id = n.insert_login_id
     WHERE n.noc_replace_status = 1 ";
 } else {
-    $query = "SELECT cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cp.mobile1, n.cus_id, n.req_id 
+    $query = "SELECT n.created_date, u.fullname, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cp.mobile1, n.cus_id, n.req_id
     FROM noc n 
     JOIN acknowlegement_customer_profile cp ON n.req_id = cp.req_id 
     JOIN customer_register cr ON cp.cus_id = cr.cus_id 
@@ -76,12 +79,15 @@ if ($userid == 1) {
     JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sa.sub_area_id
     JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
     JOIN branch_creation bc ON alm.branch_id = bc.branch_id 
+    JOIN user u ON u.user_id = n.insert_login_id
     WHERE n.noc_replace_status = 1 AND $colName IN ($sub_area_list) ";
 }
 
 if (isset($_POST['search']) && $_POST['search'] != "") {
 
     $query .= " AND (n.cus_id LIKE '%" . $_POST['search'] . "%'
+            OR n.created_date LIKE '%" . $_POST['search'] . "%'
+            OR u.fullname LIKE '%" . $_POST['search'] . "%'
             OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%'
             OR cp.cus_name LIKE '%" . $_POST['search'] . "%'
             OR ac.area_name LIKE '%" . $_POST['search'] . "%'
@@ -120,6 +126,8 @@ foreach ($result as $row) {
 
     $sub_array[] = $sno++;
 
+    $sub_array[] = date('d-m-Y', strtotime($row['created_date']));
+    $sub_array[] = $row['fullname'];
     $sub_array[] = $row['cus_id'];
     $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = $row['cus_name'];
