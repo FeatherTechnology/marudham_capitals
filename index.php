@@ -9,7 +9,7 @@ session_destroy();
 session_start();
 
 //below code is for redirecting user to dashboard if already logged in, even directly changes url
-$userid  = isset($_SESSION['userid']) ? $_SESSION['userid'] : "";
+$userid  = $_SESSION['userid'] ?? "";
 if($userid!=""){
 	echo "<script>/*alert('Please Dont Change the URL!');*/location.href='home_page'</script>"; 
 }

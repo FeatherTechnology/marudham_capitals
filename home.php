@@ -1,15 +1,9 @@
 <?php
 @session_start();
 
-if (isset($_SESSION['fullname'])) {
-	$fullname  = $_SESSION['fullname'];
-}
-if (isset($_SESSION['username'])) {
-	$username  = $_SESSION['username'];
-}
-if (isset($_SESSION['userid'])) {
-	$userid  = $_SESSION['userid'];
-}
+$fullname  = $_SESSION['fullname'] ?? '';
+$username  = $_SESSION['username'] ?? '';
+$userid  = $_SESSION['userid'] ?? '';
 
 $msc = 0;
 if (isset($_GET['msc'])) {
@@ -34,7 +28,7 @@ if (isset($getuserdetails['download_access'])) {
 	<!-- Page wrapper start -->
 	<div class="page-wrapper">
 		<?php
-		if ($_SESSION['userid'] == "") {
+		if ($userid == "") {
 			echo "<script>location.href='index.php'</script>";
 		}
 		
