@@ -10,7 +10,7 @@ $(document).ready(function () {
         }
     });
 
-    const toggleButtons = $(".toggle-button");
+    const toggleButtons = $(".toggle-button").not("#print_btn");
     toggleButtons.removeClass('active'); //initially make all buttons unchecked
     toggleButtons.on("click", function () {
         // Reset active class for all buttons
@@ -485,8 +485,193 @@ function clearAllContents() {
 }
 
 //After all function completed then calculate the total.
-function callCalculateFunctions(){
-    calculateClosingForBenefit();
-    calculateClosingForBenefitCheck();
-    calculateClosingForProfit();
+async function callCalculateFunctions() {
+
+    await calculateClosingForBenefit();
+    await calculateClosingForBenefitCheck();
+    await calculateClosingForProfit();
+    await calculateClosingForBS();
+
+    // After all functions completed
+    $('#print_btn').show();
+}
+
+// Print Button Click Event
+$(document).off('click', '#print_btn').on('click', '#print_btn', function () {
+    printFinancialTables();
+});
+
+function printFinancialTables() {
+
+    // Open Print Window
+    const printWindow = window.open('', '_blank', 'width=1200,height=800');
+
+    const pageTitle = $('.page-header div').first().text().trim();
+
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>${pageTitle}</title>
+
+            <style>
+                @page {
+                    size: A4 landscape;
+                    margin: 10mm;
+                   
+                }
+
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    padding: 10px;
+                    font-size: 10px;
+                }
+
+                .print-header {
+                    text-align: center;
+                    font-size: 18px;
+                    font-weight: bold;
+                    margin-bottom: 5px;
+                }
+
+                .print-date {
+                    text-align: center;
+                    font-size: 11px;
+                    margin-bottom: 15px;
+                }
+
+                /* Main 3 Column Layout */
+                .print-layout {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr 1fr;
+                    gap: 12px;
+                    align-items: start;
+                }
+
+                /* Middle Column = Benefit + Profit */
+                .middle-column {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 12px;
+                }
+
+              /* REMOVE CARD BOX DESIGN */
+               .print-card {
+                     border: none;
+                     padding: 0;
+                     border-radius: 0;
+                     background: transparent;
+                }
+
+                .print-card-header {
+                    text-align: center;
+                    font-weight: bold;
+                    font-size: 13px;
+                    margin-bottom: 6px;
+                    padding-bottom: 4px;
+                }
+
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    font-size: 10px;
+                }
+
+                th, td {
+                    border: 1px solid #000;
+                    padding: 3px;
+                    text-align: center;
+                }
+
+                th {
+                    background: #63c7c1;
+                    text-align: center;
+                }
+
+                .totals-row td {
+                    background: #d8f0d8 !important;
+                    font-weight: bold;
+                }
+
+                .difference-row td {
+                    background: #fff2cc !important;
+                    font-weight: bold;
+                }
+
+                @media print {
+                    body {
+                        -webkit-print-color-adjust: exact;
+                    }
+                }
+            </style>
+        </head>
+
+        <body>
+
+            <div class="print-header">${pageTitle}</div>
+
+            <div class="print-date">
+                Printed Date: ${new Date().toLocaleDateString('en-IN')}
+            </div>
+
+            <div class="print-layout">
+
+                <!-- Left -->
+                <div id="left-column"></div>
+
+                <!-- Middle -->
+                <div class="middle-column" id="middle-column"></div>
+
+                <!-- Right -->
+                <div id="right-column"></div>
+
+            </div>
+
+        </body>
+        </html>
+    `);
+
+    printWindow.document.close();
+
+    function getCardHtml(selector, title) {
+
+        const table = $(selector).first().clone();
+
+        if (table.length > 0) {
+
+            table.find('thead tr:last').addClass('totals-row');
+            table.find('tfoot tr:first').addClass('totals-row');
+            table.find('tfoot tr:last').addClass('difference-row');
+
+            return `
+                <div class="print-card">
+                    <div class="print-card-header">${title}</div>
+                    ${table.prop('outerHTML')}
+                </div>
+            `;
+        }
+
+        return '';
+    }
+
+    printWindow.onload = function () {
+
+        // Left = Balance Sheet
+        printWindow.document.getElementById('left-column').innerHTML =
+            getCardHtml('.balance-sheet-card table', 'Balance Sheet');
+
+        // Middle = Benefit + Profit (Profit Below Benefit)
+        printWindow.document.getElementById('middle-column').innerHTML =
+            getCardHtml('.benefits-card table', 'Benefit') +
+            getCardHtml('.profit-card table', 'Profit');
+
+        // Right = Benefit Check
+        printWindow.document.getElementById('right-column').innerHTML =
+            getCardHtml('.benefits-check-card table', 'Benefit Check');
+
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+    };
 }
