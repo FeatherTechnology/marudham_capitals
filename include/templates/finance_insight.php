@@ -28,6 +28,7 @@ $bank_details = $getuser['bank_details'];
 				<select type="text" class="toggle-button" id='by_user' name='by_user' style="display: none;">    <!-- when we click the userwise it shows the wrong amount so tem rmve that -->
 					<option value=''>Select User</option>
 				</select>
+				    <input type="button" id='print_btn' name='print_btn' class="toggle-button" style="display: none; background-color: #009688; color: white;" value='Print'>
 			</div>
 
 
