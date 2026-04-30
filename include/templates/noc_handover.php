@@ -3,6 +3,8 @@ if (isset($_GET['cusidupd'])) {
 	$cusidupd = $_GET['cusidupd'];
 }
 
+$reqidupd = $_GET['reqidupd'] ?? '';
+
 $getCustomerReg = $userObj->getCustomerRegister($mysqli, $cusidupd);
 if (sizeof($getCustomerReg) > 0) { 
 	$autogen_cus_id 			= $getCustomerReg['autogen_cus_id'];
@@ -53,6 +55,7 @@ if (sizeof($getCustomerReg) > 0) {
 	<div>
 		<form id="noc_form" name="noc_form" action="" method="post" enctype="multipart/form-data">
 			<input type="hidden" name="cusidupd" id="cusidupd" value="<?php if (isset($cusidupd)) {echo $cusidupd;} ?>" />
+			<input type="hidden" name="reqidupd" id="reqidupd" value="<?php if (isset($reqidupd)) {echo $reqidupd;} ?>" />
 			<input type="hidden" name="cuspicupd" id="cuspicupd" value="<?php if (isset($cus_pic)) {echo $cus_pic;} ?>" />
 			<input type="hidden" name="req_id" id="req_id" value='' />
 

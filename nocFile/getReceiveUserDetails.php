@@ -2,11 +2,11 @@
 include "../ajaxconfig.php";
 session_start();
 
-$cus_id = $_POST['cusId'] ?? '';
+$req_id = $_POST['reqId'] ?? '';
 $user_id = $_SESSION['userid'] ?? '';
 
-$res = $connect->prepare("SELECT receive_status, receive_by FROM noc WHERE cus_id = ? AND cus_status = 23 GROUP BY cus_id");
-$res->execute([$cus_id]);
+$res = $connect->prepare("SELECT receive_status, receive_by FROM noc WHERE req_id = ? AND cus_status = 23");
+$res->execute([$req_id]);
 if($res->rowCount() > 0){
     $rec = $res->fetch();
     

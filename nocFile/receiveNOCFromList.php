@@ -2,19 +2,19 @@
 session_start();
 include('../ajaxconfig.php');
 
-if(isset($_POST['cus_id'])){
-    $cus_id = $_POST['cus_id'];
+if(isset($_POST['req_id'])){
+    $req_id = $_POST['req_id'];
 }
 
 $userid = $_SESSION['userid'];
 
 // Fetch ALL req_id + receive_status for this customer
-$qry = "SELECT req_id, receive_status
+$qry = "SELECT req_id, cus_id, receive_status
         FROM noc 
-        WHERE cus_id = '$cus_id' AND cus_status = 23";
+        WHERE req_id = '$req_id' AND cus_status = 23";
 
 $res = $connect->query($qry);
-$reqRows = $res->fetchAll(PDO::FETCH_ASSOC);
+$reqRows = $res->fetch(PDO::FETCH_ASSOC);
 
 $response = '';
 
@@ -30,8 +30,9 @@ if (!empty($reqRows)) {
     // }
 
     // If not received → Update all rows
-    foreach($reqRows as $row){
-        $req_id = $row['req_id'];
+    // foreach($reqRows as $row){
+        $req_id = $reqRows['req_id'];
+        $cus_id = $reqRows['cus_id'];
 
         // Update noc
         $stmt = $connect->prepare(
@@ -47,7 +48,7 @@ if (!empty($reqRows)) {
         // Insert into noc_receive_user
         $stmt = $connect->prepare("INSERT INTO noc_receive_user(req_id, cus_id, received_user, created_date) VALUES (?, ?, ?, NOW())");
         $stmt->execute([$req_id, $cus_id, $userid]);
-    }
+    // }
 
     $response = "Successfully Received";
 

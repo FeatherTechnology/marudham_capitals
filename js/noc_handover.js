@@ -187,12 +187,12 @@ function showHandText(hand){
 }
 
 function OnLoadFunctions() {
-    const cus_id = $('#cusidupd').val();
+    const reqid = $('#reqidupd').val();
 
     $.ajax({
         //in this file, details gonna fetch by customer ID, Not by req id (Because we need all loans from customer)
         url: 'nocFile/getLoanListWithClosed.php',
-        data: { 'cus_id': cus_id, 'screen': 'nochandover' },
+        data: { reqid, 'screen': 'nochandover' },
         type: 'post',
         cache: false,
         success: function (response) {
@@ -576,10 +576,10 @@ function updateNocTable() {
 }
 
 function getReceiveUserDetails() {
-    let cusId = $('#cusidupd').val();
+    let reqId = $('#reqidupd').val();
 
     return new Promise((resolve, reject) => {
-        $.post('nocFile/getReceiveUserDetails.php', { cusId }, function (response) {
+        $.post('nocFile/getReceiveUserDetails.php', { reqId }, function (response) {
             resolve(response == 1 ? true : false);
         }, 'json').fail(function () {
             reject(false);
