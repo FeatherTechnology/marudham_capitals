@@ -56,39 +56,37 @@ $column = array(
     'cs.updated_date',
     'cr.cus_id',
     'cr.autogen_cus_id',
+    'ii.loan_id',
+    'ad.doc_id',
     'cr.customer_name',
     'ac.area_name',
     'sa.sub_area_name',
     'bc.branch_name',
     'alm.line_name',
     'cr.mobile1',
+    'lcc.loan_category_creation_name',
     'cs.updated_date',
     'cs.updated_date',
     'cs.updated_date',
     'cs.updated_date'
 );
 
-if ($userid == 1) {
-    $query = "SELECT cr.cus_id, cr.autogen_cus_id, cr.customer_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cr.mobile1
-    FROM closed_status cs 
-    JOIN customer_register cr ON cs.cus_id = cr.cus_id
-    JOIN area_list_creation ac ON cr.area_confirm_area = ac.area_id
-    JOIN sub_area_list_creation sa ON cr.area_confirm_subarea = sa.sub_area_id
-    JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sa.sub_area_id
-    JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
-    JOIN branch_creation bc ON alm.branch_id = bc.branch_id
-    WHERE cs.cus_sts = 23 "; // Only Issued and all lines not relying on sub area
-} else {
-    $query = "SELECT cr.cus_id, cr.autogen_cus_id, cr.customer_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cr.mobile1
-    FROM closed_status cs 
-    JOIN customer_register cr ON cs.cus_id = cr.cus_id
-    JOIN area_list_creation ac ON cr.area_confirm_area = ac.area_id
-    JOIN sub_area_list_creation sa ON cr.area_confirm_subarea = sa.sub_area_id
-    JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sa.sub_area_id
-    JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
-    JOIN branch_creation bc ON alm.branch_id = bc.branch_id
-    WHERE cs.cus_sts = 23 
-        AND $colName IN ($sub_area_list) ";
+$query = "SELECT cs.req_id, cr.cus_id, cr.autogen_cus_id, ii.loan_id, ad.doc_id, cr.customer_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cr.mobile1, lcc.loan_category_creation_name
+FROM closed_status cs
+JOIN in_issue ii ON cs.req_id = ii.req_id
+JOIN acknowlegement_documentation ad ON ii.req_id = ad.req_id
+JOIN in_verification iv ON ii.req_id = iv.req_id
+JOIN customer_register cr ON cs.cus_id = cr.cus_id
+JOIN area_list_creation ac ON cr.area_confirm_area = ac.area_id
+JOIN sub_area_list_creation sa ON cr.area_confirm_subarea = sa.sub_area_id
+JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sa.sub_area_id
+JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
+JOIN branch_creation bc ON alm.branch_id = bc.branch_id
+JOIN loan_category_creation lcc ON lcc.loan_category_creation_id = iv.loan_category
+WHERE cs.cus_sts = 23 ";
+
+if ($userid != 1) {
+    $query .= " AND $colName IN ($sub_area_list) ";
 }
 
 if (isset($_POST['search']) && $_POST['search'] != "") {
@@ -103,7 +101,7 @@ if (isset($_POST['search']) && $_POST['search'] != "") {
             OR cr.mobile1 LIKE '%" . $_POST['search'] . "%' ) ";
 }
 
-$query .= 'GROUP BY cs.cus_id ';
+// $query .= 'GROUP BY cs.cus_id ';
 
 if (isset($_POST['order'])) {
     $query .= 'ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
@@ -128,21 +126,25 @@ $sno = 1;
 foreach ($result as $row) {
     $sub_array   = array();
     $cus_id = $row['cus_id'];
+    $req_id = $row['req_id'];
 
     $sub_array[] = $sno++;
     $sub_array[] = $cus_id;
     $sub_array[] = $row['autogen_cus_id'];
+    $sub_array[] = $row['loan_id'];
+    $sub_array[] = $row['doc_id'];
     $sub_array[] = $row['customer_name'];
     $sub_array[] = $row['area_name'];
     $sub_array[] = $row['sub_area_name'];
     $sub_array[] = $row["branch_name"];
     $sub_array[] = $row['line_name'];
     $sub_array[] = $row['mobile1'];
+    $sub_array[] = $row['loan_category_creation_name'];
 
     // Fetch receive status + receive_by
     $qry = "SELECT receive_status, receive_by 
             FROM noc 
-            WHERE cus_id = '$cus_id' AND cus_status = 23 GROUP BY cus_id";
+            WHERE req_id = '$req_id' AND cus_status = 23";
 
     $res = $connect->query($qry);
     $rec = $res->fetch();
@@ -188,11 +190,11 @@ foreach ($result as $row) {
     // Status Completed → only show button to the person who received
     if ($receive_by == $userid) {
 
-        $action .= "<a href='noc_handover&cusidupd=$cus_id' title='NOC handover'>Handover</a>";
+        $action .= "<a href='noc_handover&cusidupd=$cus_id&reqidupd=$req_id' title='NOC handover'>Handover</a>";
 
     } else {
 
-        $action .= "<a href='' title='Receive details' class='receive-noc' data-cusid='$cus_id'>Receive</a>";
+        $action .= "<a href='' title='Receive details' class='receive-noc' data-reqid='$req_id'>Receive</a>";
     }
 
     $action .= "</div></div>";
@@ -205,10 +207,9 @@ foreach ($result as $row) {
 
 function count_all_data($connect)
 {
-    $query     = "SELECT cus_id FROM in_issue WHERE status = 0 AND cus_status = 23 GROUP BY cus_id";
-    $statement = $connect->prepare($query);
-    $statement->execute();
-    return $statement->rowCount();
+    $stmt = $connect->prepare("SELECT COUNT(*) AS cnt FROM in_issue WHERE status = 0 AND cus_status = 23");
+    $stmt->execute();
+    return $stmt->fetchColumn();
 }
 
 $output = array(

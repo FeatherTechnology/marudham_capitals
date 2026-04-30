@@ -72,53 +72,33 @@ $column = array(
 //22 NOC given
 //23 send NOC Handover
 //24 NOC Handovered.
-if ($userid == 1) {
-    $query = "SELECT cs.latest_date, cr.cus_id, cr.autogen_cus_id, cr.customer_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cr.mobile1
-    FROM in_issue ii 
-    JOIN customer_register cr ON ii.cus_id = cr.cus_id
-    JOIN area_list_creation ac ON cr.area_confirm_area = ac.area_id
-    JOIN sub_area_list_creation sa ON cr.area_confirm_subarea = sa.sub_area_id
-    JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sa.sub_area_id
-    JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
-    JOIN branch_creation bc ON alm.branch_id = bc.branch_id
-    LEFT JOIN (
-        SELECT cs.cus_id, MAX(cs.created_date) AS latest_date
-        FROM closed_status cs
-        INNER JOIN (
-            SELECT DISTINCT cus_id 
-            FROM in_issue 
-            WHERE status = 0 
-            AND cus_status IN (21,22,23)
-        ) filtered_customers ON cs.cus_id = filtered_customers.cus_id
-        GROUP BY cs.cus_id
-    ) cs
-    ON cs.cus_id = cr.cus_id
-    WHERE ii.status = 0
-        AND ii.cus_status IN (21,22,23) "; // Only Issued and all lines not relying on sub area
-} else {
-    $query = "SELECT cs.latest_date, cr.cus_id, cr.autogen_cus_id, cr.customer_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cr.mobile1
-    FROM in_issue ii 
-    JOIN customer_register cr ON ii.cus_id = cr.cus_id
-    JOIN area_list_creation ac ON cr.area_confirm_area = ac.area_id
-    JOIN sub_area_list_creation sa ON cr.area_confirm_subarea = sa.sub_area_id
-    JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sa.sub_area_id
-    JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
-    JOIN branch_creation bc ON alm.branch_id = bc.branch_id
-    LEFT JOIN (
-        SELECT cs.cus_id, MAX(cs.created_date) AS latest_date
-        FROM closed_status cs
-        INNER JOIN (
-            SELECT DISTINCT cus_id 
-            FROM in_issue 
-            WHERE status = 0 
-            AND cus_status IN (21,22,23)
-        ) filtered_customers ON cs.cus_id = filtered_customers.cus_id
-        GROUP BY cs.cus_id
-    ) cs
-    ON cs.cus_id = cr.cus_id
-    WHERE ii.status = 0
-        AND ii.cus_status IN (21,22,23)
-        AND $colName IN ($sub_area_list) ";
+$query = "SELECT cs.latest_date, cr.cus_id, cr.autogen_cus_id, cr.customer_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cr.mobile1
+FROM in_issue ii 
+LEFT JOIN noc n ON ii.req_id = n.req_id
+JOIN customer_register cr ON ii.cus_id = cr.cus_id
+JOIN area_list_creation ac ON cr.area_confirm_area = ac.area_id
+JOIN sub_area_list_creation sa ON cr.area_confirm_subarea = sa.sub_area_id
+JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sa.sub_area_id
+JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
+JOIN branch_creation bc ON alm.branch_id = bc.branch_id
+LEFT JOIN (
+    SELECT cs.cus_id, MAX(cs.created_date) AS latest_date
+    FROM closed_status cs
+    INNER JOIN (
+        SELECT DISTINCT cus_id 
+        FROM in_issue 
+        WHERE status = 0 
+        AND cus_status IN (21,22,23)
+    ) filtered_customers ON cs.cus_id = filtered_customers.cus_id
+    GROUP BY cs.cus_id
+) cs
+ON cs.cus_id = cr.cus_id
+WHERE ii.status = 0
+    AND ii.cus_status IN (21,22,23)
+    AND (n.receive_status = 0 OR n.req_id IS NULL) ";
+
+if ($userid != 1) {
+    $query .= " AND $colName IN ($sub_area_list) ";
 }
 
 if (isset($_POST['search']) && $_POST['search'] != "") {
@@ -186,7 +166,7 @@ foreach ($result as $row) {
     $sub_array[] = $row['line_name'];
     $sub_array[] = $row['mobile1'];
 
-    if ((in_array(21, $allStatus) || in_array(22, $allStatus)) && !in_array(23, $allStatus)) {
+    if ((in_array(21, $allStatus) || in_array(22, $allStatus))) {
         $noc_status = 'NOC';
     } elseif (in_array(23, $allStatus)) {
         $noc_status = isset($pendingReceive[$cus_id]) ? 'Pending' : 'Completed';
@@ -212,7 +192,7 @@ foreach ($result as $row) {
     }
 
     // For status 22 or 23 → show Summary + Letter
-    if (in_array(22, $allStatus) || in_array(23, $allStatus)) {
+    if (in_array(22, $allStatus) || (in_array(23, $allStatus) && $noc_status == 'Pending')) {
         $action .= "<a href='noc&cusidupd=$cus_id'>NOC Summary & Letter</a>";
     }
     $action .= "</div></div>";

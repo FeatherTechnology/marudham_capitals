@@ -38,12 +38,15 @@
 								<th width="50">S.No.</th>
 								<th>Aadhaar Number</th>
 								<th>Customer ID</th>
+								<th>Loan ID</th>
+								<th>Doc ID</th>
 								<th>Customer Name</th>
 								<th>Area</th>
 								<th>Sub Area</th>
 								<th>Branch</th>
 								<th>Line</th>
 								<th>Mobile</th>
+								<th>Loan Category</th>
 								<th>Receive Status</th>
 								<th>Receive By</th>
 								<th>Customer Status</th>
@@ -107,7 +110,7 @@
 	$(document).ready(function() {
 		$(document).on('click', '.receive-noc', function(event) {
 			event.preventDefault();
-			let cus_id = $(this).data('cusid');
+			let req_id = $(this).data('reqid');
 			Swal.fire({
 				title: 'Are your sure to receive this NOC Handover?',
 				text: 'This action cannot be reverted!',
@@ -120,16 +123,16 @@
 				confirmButtonText: 'Yes'
 			}).then(function(result) {
 				if (result.isConfirmed) {
-					receiveNOCFromList(cus_id);
+					receiveNOCFromList(req_id);
 				}
 			});
 		});
 
-		function receiveNOCFromList(cus_id) {
+		function receiveNOCFromList(req_id) {
 			$.ajax({
 				url: 'nocFile/receiveNOCFromList.php',
 				data: {
-					cus_id
+					req_id
 				},
 				dataType: 'json',
 				type: 'post',
