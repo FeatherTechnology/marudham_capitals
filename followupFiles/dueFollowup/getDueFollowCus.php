@@ -88,6 +88,9 @@ if (isset($_POST['comm_date'])) {
         $qry_cndtn = " AND cm.comm_date > '$current_date' AND (cm.comm_date IS NOT NULL OR cm.comm_date != '0000-00-00') ";
     } elseif ($comm_date == '5') { //To Follow Date
         $qry_cndtn = " AND (cm.comm_date IS NULL OR cm.comm_date = '0000-00-00') ";
+    } elseif ($comm_date == '6') { //Current month To Follow Date
+            $qry_cndtn = " AND ((cm.comm_date IS NULL OR cm.comm_date = '0000-00-00') OR
+                ( cm.comm_date < DATE_FORMAT(CURDATE(), '%Y-%m-01')  AND NOT EXISTS (  SELECT 1 FROM commitment c2  WHERE c2.cus_id = cp.cus_id  AND c2.comm_date >= DATE_FORMAT(CURDATE(), '%Y-%m-01')  AND c2.comm_date < DATE_FORMAT(CURDATE() + INTERVAL 1 MONTH, '%Y-%m-01') ) ) )";
     } else {
         $qry_cndtn = "";
     }
