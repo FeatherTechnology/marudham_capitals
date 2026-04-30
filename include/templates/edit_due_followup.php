@@ -59,6 +59,7 @@
 							<option value="3">Today</option>
 							<option value="4">After Date</option>
 							<option value="5">To Follow</option>
+							<option value="6">Current Month To Follow</option>
 						</select>
 					</div>
 					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
