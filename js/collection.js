@@ -191,34 +191,32 @@ $(document).ready(function () {
     }
   });
 
-  $("#submit_collection").click(function (event) {
+let isSubmitting = false;
+$("#submit_collection").click(function (event) {
     event.preventDefault();
+    if (isSubmitting) return;
     let submit_btn = $(this);
-    submit_btn.attr("disabled", true);
     if (validations()) {
-      let totAmt = $("#total_paid_track").val();
-      Swal.fire({
-        title: `The Total Paid Amount is  ${totAmt}`,
-        text: "Are you sure to Submit?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#009688",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes",
-      }).then(function (result) {
-        if (result.isConfirmed) {
-          submitCollection();
-        } else {
-          //if cancelled, re-enable the submit button
-          submit_btn.removeAttr("disabled");
-        }
-      });
+        let totAmt = $("#total_paid_track").val();
+        Swal.fire({
+            title: `The Total Paid Amount is ${totAmt}`,
+            text: "Are you sure to Submit?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#009688",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes"
+        }).then(function (result) {
+            if (result.isConfirmed) {
+                isSubmitting = true;
+                submit_btn.attr("disabled", true);
+                submitCollection();
+            }
+        });
     } else {
-      //if the validation false, re-enable the submit button
-      submit_btn.removeAttr("disabled");
-      scrollToFirstError('#collectionForm');
+        scrollToFirstError('#collectionForm');
     }
-  });
+});
 
   window.onscroll = function () {
     let navbar = document.getElementById("navbar");
@@ -1161,24 +1159,32 @@ function validations() {
   // submit_btn.removeAttr('disabled');
   return retVal;
 }
+
 function submitCollection() {
-  $.post(
-    "collectionFile/submitCollection.php",
-    $("#collectionForm").serialize(),
-    function (response) {
-      if (response["info"].includes("Success")) {
-        swarlSuccessAlert(response.info);
-        setTimeout(function () {
-          printCollection(response.coll_id);
-        }, 2000);
-      } else {
-        swarlErrorAlert("Error on Submit");
+
+    $.post( "collectionFile/submitCollection.php", $("#collectionForm").serialize(),
+        function (response) {
+            if (response.info.includes("Success")) {
+                swarlSuccessAlert(response.info);
+                setTimeout(function () {
+                    printCollection(response.coll_id);
+                }, 2000);
+            } else {
+                swarlErrorAlert("Error on Submit");
+                $("#submit_collection").removeAttr("disabled");
+                isSubmitting = false;
+            }
+        },
+        "json"
+    ).fail(function () {
+
+        swarlErrorAlert("Server Error");
+
         $("#submit_collection").removeAttr("disabled");
-      }
-    },
-    "json"
-  );
+        isSubmitting = false;
+    });
 }
+
 function printCollection(coll_id) {
   Swal.fire({
     title: "Print",
