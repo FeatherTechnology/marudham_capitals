@@ -127,7 +127,7 @@ class CircularAmountClass
         return $row['cur_circ_waiver'] ?? 0;
     }
 
-    public function getTotalIssued($from_date, $to_date)
+    public function getTotalIssued($to_date)
     {
         $sql = "
             SELECT SUM(user_balance) AS cur_circ_issued
@@ -181,7 +181,7 @@ class CircularAmountClass
         return $row['cur_circ_exchange'] ?? 0;
     }
 
-    public function getTotalWithdraw($from_date, $to_date)
+    public function getTotalWithdraw($to_date)
     {
         $sql = "
             SELECT SUM(amt) AS cur_circ_withdraw
@@ -406,9 +406,9 @@ class CircularAmountClass
     {
         $cur_circ_coll = $this->getTotalBalance( $to_date, $branch_id);
         $cur_circ_waiver = $this->getTotalwaiver($from_date, $to_date, $branch_id);
-        $cur_circ_issued = $this->getTotalIssued($from_date, $to_date);
+        $cur_circ_issued = $this->getTotalIssued($to_date);
         $cur_circ_exchange = $this->getTotalExchange($from_date);
-        $cur_circ_withdraw = $this->getTotalWithdraw($from_date, $to_date);
+        $cur_circ_withdraw = $this->getTotalWithdraw($to_date);
 
         $pre_circ_issued = $this->getTotalPreIssued($from_date);
         $pre_circ_coll= $this->getTotalPreviousCollection($from_date, $branch_id);
