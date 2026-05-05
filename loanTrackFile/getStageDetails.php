@@ -66,7 +66,7 @@ if ($stage == 'lc') { //Loan Calculation, So show verification info
     $qry = $connect->query("SELECT noc_handover_date,noc_member,mem_name from noc where req_id = '" . strip_tags($req_id) . "'");
     $row = $qry->fetch();
     $response = $row;
-    $detail_arr['noc_handover_date'] = date('d-m-Y', strtotime($response['noc_handover_date']));
+    $detail_arr['noc_handover_date'] = !empty($response['noc_handover_date']) ? date('d-m-Y', strtotime($response['noc_handover_date'])) : '';
     if ($response['noc_member'] == '1') {
         // 1 = Customer
         $detail_arr['noc_member'] = $response['mem_name'];
@@ -103,16 +103,14 @@ if ($stage == 'lc') { //Loan Calculation, So show verification info
         ?>
     </thead>
     <tbody>
-        <tr>
-            <td><?php echo 1; ?></td>
-            <?php
-            foreach ($detail_arr as $item) {
-            ?>
-                <td><?php echo $item; ?></td>
-            <?php
-            }
-            ?>
-        </tr>
+        <?php if (!empty(array_filter($detail_arr))) { ?>
+            <tr>
+                <td><?php echo 1; ?></td>
+                <?php foreach ($detail_arr as $item) { ?>
+                    <td><?php echo $item; ?></td>
+                <?php } ?>
+            </tr>
+        <?php } ?>
     </tbody>
 </table>
 
