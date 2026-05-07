@@ -1,11 +1,13 @@
 <?php
+//Also using in Concern.
 include '../../ajaxconfig.php';
 
 $response = array();
 $i = 0;
 
-$user_track = isset($_POST['user_track']) ? $_POST['user_track'] : '';
+$user_track = $_POST['user_track'] ?? '';
 $user_type = $_POST['user_type'] ?? '';
+$role_type = $_POST['role_type'] ?? '';
 
 $where = "1=1";
 
@@ -13,6 +15,9 @@ if ($user_track == '1') {
     // all users (no extra filter)
 } else if ($user_track == '2') {
     $where .= " AND confirmation_followup = 0";
+} else if ($user_track == '3') { //get list based on role type for concern
+    $column = ($role_type =='8') ? "role = '1'" : "role_type = '$role_type'"; 
+    $where .= " AND user_id != '1' AND $column";
 } else {
     $where .= " AND (collection = 0 OR due_followup = 0)";
 }

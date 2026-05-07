@@ -23,7 +23,7 @@ $column = array(
     'lc.loan_category'
 );
 
-$condition = ($stmt_type =='1') ? " AND bs.clr_status = '1' " : '';
+$condition = ($stmt_type =='1') ? " AND a.cleared_date >= :from_date AND a.cleared_date < :to_date AND bs.clr_status = '1' " : " AND bs.trans_date >= :from_date AND bs.trans_date < :to_date ";
 
 if ($bank_name != '' && $bank_name != 'all') {
     $condition .= " AND bc.id = '$bank_name' ";
@@ -158,8 +158,8 @@ $based_query = "FROM
             GROUP BY trans_id
         ) lc ON bs.trans_id = lc.trans_id
 
-WHERE 
-    bs.trans_date >= :from_date AND bs.trans_date < :to_date $condition ";  
+WHERE 1=1
+    $condition ";  
 
 $search = '';
 $params = [];

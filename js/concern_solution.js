@@ -220,9 +220,9 @@ function getAssignName(staff_name_id) {
     const selectedId = (pg_id != '1') ? staff_assign_id : '';
 
     return $.ajax({
-        url: 'manageUser/ajaxGetStaffName.php',
+        url: 'reportFile/customer_status_report/getAllUserList.php',
         type: 'POST',
-        data: { role_type: staff_name_id },
+        data: { user_track: '3', user_type: '2', role_type: staff_name_id },
         dataType: 'json',
         cache: false
     })
@@ -233,13 +233,12 @@ function getAssignName(staff_name_id) {
             $.each(response, function (index, val) {
 
                 // ❌ Skip if same staff already assigned
-                if (pg_id == '1' && val.staff_id == staff_assign_id) {
+                if (pg_id == '1' && staff_assign_id.includes(val.user_id)) {
                     return true; // continue loop
                 }
 
-
-                let selected = (val.staff_id == selectedId) ? 'selected' : '';
-                html += `<option value="${val.staff_id}" ${selected}>${val.staff_name}</option>`;
+                let selected = (selectedId.includes(val.user_id)) ? 'selected' : '';
+                html += `<option value="${val.user_id}" ${selected}>${val.username}</option>`;
             });
 
             $('#staff_assign_to').html(html);
@@ -248,9 +247,6 @@ function getAssignName(staff_name_id) {
             console.error('getAssignName failed:', textStatus, errorThrown);
         });
 }
-
-
-
 
 function solutionSubmitValidation() {
     let pg_id = $('#pg_id').val();

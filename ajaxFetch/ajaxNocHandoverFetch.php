@@ -93,11 +93,14 @@ if (isset($_POST['search']) && $_POST['search'] != "") {
 
     $query .= " AND (cr.cus_id LIKE '%" . $_POST['search'] . "%'
             OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%'
+            OR ii.loan_id LIKE '%" . $_POST['search'] . "%'
+            OR ad.doc_id LIKE '%" . $_POST['search'] . "%'
             OR cr.customer_name LIKE '%" . $_POST['search'] . "%'
             OR ac.area_name LIKE '%" . $_POST['search'] . "%'
             OR sa.sub_area_name LIKE '%" . $_POST['search'] . "%'
-            OR alm.line_name LIKE '%" . $_POST['search'] . "%'
             OR bc.branch_name LIKE '%" . $_POST['search'] . "%'
+            OR alm.line_name LIKE '%" . $_POST['search'] . "%'
+            OR lcc.loan_category_creation_name LIKE '%" . $_POST['search'] . "%'
             OR cr.mobile1 LIKE '%" . $_POST['search'] . "%' ) ";
 }
 

@@ -691,15 +691,15 @@ function getConcernRoleType() {
 // Assign Concern
 function getAssignName(staff_name_id, selectedId = '') {
     return $.ajax({
-        url: 'manageUser/ajaxGetStaffName.php',
+        url: 'reportFile/customer_status_report/getAllUserList.php',
         type: 'POST',
-        data: { role_type: staff_name_id },
+        data: { user_track: '3', user_type: '2', role_type: staff_name_id },
         dataType: 'json',
         cache: false
     }).done(function (response) {
         let html = '<option value="">Select Assign To</option>';
         $.each(response, function (index, val) {
-            html += '<option value="' + val.staff_id + '">' + val.staff_name + '</option>';
+            html += '<option value="' + val.user_id + '">' + val.username + '</option>';
         });
         $('#staff_assign_to').empty().append(html);
 
