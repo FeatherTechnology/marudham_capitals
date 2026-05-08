@@ -114,7 +114,7 @@ if (count($getConcernCreation) > 0) {
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="raising">Raising For</label><span class="required">&nbsp;*</span>
-                                        <select type="text" class="form-control" id="raising_for" name="raising_for" tabindex='4' disabled>
+                                        <select type="text" class="form-control" id="raising_for" name="raising_for" tabindex='1' disabled>
                                             <option value="">Select Raising For</option>
                                             <option value="1" <?php if (isset($raisingFor) and $raisingFor == '1') echo 'selected'; ?>>Myself</option>
                                             <option value="2" <?php if (isset($raisingFor) and $raisingFor == '2') echo 'selected'; ?>>staff</option>
@@ -129,7 +129,7 @@ if (count($getConcernCreation) > 0) {
                                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                         <div class="form-group">
                                             <label for="created-username">Created User Name</label><span class="required">&nbsp;*</span>
-                                            <input type="text" class="form-control" id="created_user_name" name="created_user_name" tabindex='4' value='<?php if (isset($insert_user_name)) echo $insert_user_name; ?>' readonly>
+                                            <input type="text" class="form-control" id="created_user_name" name="created_user_name" tabindex='2' value='<?php if (isset($insert_user_name)) echo $insert_user_name; ?>' readonly>
                                         </div>
                                     </div>
                                 <?php } ?>
@@ -144,14 +144,14 @@ if (count($getConcernCreation) > 0) {
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="name">Name</label><span class="required">&nbsp;*</span>
-                                        <input type="text" class="form-control" id="self_name" name="self_name" tabindex='5' value="<?php if (isset($selfName)) echo $selfName; ?>" readonly>
+                                        <input type="text" class="form-control" id="self_name" name="self_name" tabindex='3' value="<?php if (isset($selfName)) echo $selfName; ?>" readonly>
                                     </div>
                                 </div>
 
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="code">Staff Code</label><span class="required">&nbsp;*</span>
-                                        <input type="text" class="form-control" id="self_code" name="self_code" tabindex='6' value="<?php if (isset($selfCode)) echo $selfCode; ?>" readonly>
+                                        <input type="text" class="form-control" id="self_code" name="self_code" tabindex='4' value="<?php if (isset($selfCode)) echo $selfCode; ?>" readonly>
                                     </div>
                                 </div>
 
@@ -183,7 +183,7 @@ if (count($getConcernCreation) > 0) {
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="teamname">Team Name </label> <span class="required">&nbsp;*</span>
-                                        <select tabindex="6" type="text" class="form-control" id="staff_team_name" name="staff_team_name" disabled>
+                                        <select tabindex="7" type="text" class="form-control" id="staff_team_name" name="staff_team_name" disabled>
                                             <option value="">Select Team Name</option>
                                         </select>
                                         <span class="text-danger" style='display:none' id='staffteamnameCheck'>Please Select Team</span>
@@ -200,7 +200,7 @@ if (count($getConcernCreation) > 0) {
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="ag-name">Agent Name</label><span class="required">&nbsp;*</span>
-                                        <input type="text" class="form-control" id="ag_name" name="ag_name" tabindex='5' value="<?php if (isset($agentName)) echo $agentName; ?>" readonly>
+                                        <input type="text" class="form-control" id="ag_name" name="ag_name" tabindex='8' value="<?php if (isset($agentName)) echo $agentName; ?>" readonly>
                                         <span class="text-danger" style='display:none' id='agentnameCheck'>Please Select Agent Name</span>
                                     </div>
                                 </div>
@@ -208,7 +208,7 @@ if (count($getConcernCreation) > 0) {
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="ag-grp">Agent Group</label><span class="required">&nbsp;*</span>
-                                        <input type="text" class="form-control" id="ag_grp" name="ag_grp" tabindex='6' value="<?php if (isset($ag_grp)) echo $ag_grp; ?>" readonly>
+                                        <input type="text" class="form-control" id="ag_grp" name="ag_grp" tabindex='9' value="<?php if (isset($ag_grp)) echo $ag_grp; ?>" readonly>
                                     </div>
                                 </div>
 
@@ -222,7 +222,7 @@ if (count($getConcernCreation) > 0) {
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="cus-id">Customer ID</label><span class="required">&nbsp;*</span>
-                                        <input type="text" class="form-control" id="cus_id" name="cus_id"  maxlength="14" tabindex='5' value="<?php if (isset($cus_id)) echo $cus_id; ?>" readonly>
+                                        <input type="text" class="form-control" id="cus_id" name="cus_id"  maxlength="14" tabindex='10' value="<?php if (isset($cus_id)) echo $cus_id; ?>" readonly>
                                         <span class="text-danger" style='display:none' id='cusIdCheck'>Please Enter Customer ID</span>
                                     </div>
                                 </div>
@@ -230,35 +230,35 @@ if (count($getConcernCreation) > 0) {
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="cus_name">Customer Name</label><span class="required">&nbsp;*</span>
-                                        <input type="text" class="form-control" id="cus_name" name="cus_name" tabindex='6' value="<?php if (isset($cus_name)) echo $cus_name; ?>" readonly>
+                                        <input type="text" class="form-control" id="cus_name" name="cus_name" tabindex='11' value="<?php if (isset($cus_name)) echo $cus_name; ?>" readonly>
                                     </div>
                                 </div>
 
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="area">Area</label><span class="required">&nbsp;*</span>
-                                        <input type="text" class="form-control" id="cus_area" name="cus_area" value="<?php if (isset($cus_area)) echo $cus_area; ?>" readonly tabindex='7'>
+                                        <input type="text" class="form-control" id="cus_area" name="cus_area" value="<?php if (isset($cus_area)) echo $cus_area; ?>" readonly tabindex='12'>
                                     </div>
                                 </div>
 
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="subarea">Sub Area</label><span class="required">&nbsp;*</span>
-                                        <input type="text" class="form-control" id="cus_sub_area" name="cus_sub_area" value="<?php if (isset($cus_sub_area)) echo $cus_sub_area; ?>" readonly tabindex='8'>
+                                        <input type="text" class="form-control" id="cus_sub_area" name="cus_sub_area" value="<?php if (isset($cus_sub_area)) echo $cus_sub_area; ?>" readonly tabindex='13'>
                                     </div>
                                 </div>
 
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="group">Group</label><span class="required">&nbsp;*</span>
-                                        <input type="text" class="form-control" id="cus_group" name="cus_group" value="<?php if (isset($cus_grp)) echo $cus_grp; ?>" readonly tabindex='9'>
+                                        <input type="text" class="form-control" id="cus_group" name="cus_group" value="<?php if (isset($cus_grp)) echo $cus_grp; ?>" readonly tabindex='14'>
                                     </div>
                                 </div>
 
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="line">Line</label><span class="required">&nbsp;*</span>
-                                        <input type="text" class="form-control" id="cus_line" name="cus_line" value="<?php if (isset($cus_line)) echo $cus_line; ?>" readonly tabindex='10'>
+                                        <input type="text" class="form-control" id="cus_line" name="cus_line" value="<?php if (isset($cus_line)) echo $cus_line; ?>" readonly tabindex='15'>
                                     </div>
                                 </div>
 
@@ -276,14 +276,14 @@ if (count($getConcernCreation) > 0) {
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="comdate">Concern Date </label><span class="required">&nbsp;*</span>
-                                        <input type="date" class="form-control" id="com_date" name="com_date" tabindex='11' value="<?php if (isset($conDate)) echo $conDate; ?>" readonly>
+                                        <input type="date" class="form-control" id="com_date" name="com_date" tabindex='16' value="<?php if (isset($conDate)) echo $conDate; ?>" readonly>
                                     </div>
                                 </div>
 
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="comcode">Concern Code</label><span class="required">&nbsp;*</span>
-                                        <input type="text" class="form-control" id="com_code" name="com_code" value="<?php if (isset($conCode)) echo $conCode; ?>" readonly tabindex='12'>
+                                        <input type="text" class="form-control" id="com_code" name="com_code" value="<?php if (isset($conCode)) echo $conCode; ?>" readonly tabindex='17'>
                                     </div>
                                 </div>
 
@@ -302,7 +302,7 @@ if (count($getConcernCreation) > 0) {
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 dept">
                                     <div class="form-group">
                                         <label for="toname">Department Name </label> <span class="required">&nbsp;*</span>
-                                        <input tabindex="15" type="text" class="form-control" id="to_dept_name" name="to_dept_name" value="<?php if (isset($toDeptName)) echo $toDeptName; ?>" readonly>
+                                        <input tabindex="18" type="text" class="form-control" id="to_dept_name" name="to_dept_name" value="<?php if (isset($toDeptName)) echo $toDeptName; ?>" readonly>
                                         <span class="text-danger" style='display:none' id='todeptnameCheck'>Please Select Department Name</span>
                                     </div>
                                 </div>
@@ -327,7 +327,7 @@ if (count($getConcernCreation) > 0) {
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="comsub">Concern Subject</label><span class="required">&nbsp;*</span>
-                                        <select type="text" class="form-control" id="com_sub" name="com_sub" tabindex='16' disabled>
+                                        <select type="text" class="form-control" id="com_sub" name="com_sub" tabindex='19' disabled>
                                             <option value=""> Select Concern Subject </option>
                                         </select>
                                         <span class="text-danger" style='display:none' id='concernsubCheck'>Please Select Concern Subject</span>
@@ -350,7 +350,7 @@ if (count($getConcernCreation) > 0) {
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="comremark">Concern Remark</label><span class="required">&nbsp;*</span>
-                                        <textarea class="form-control" id="com_remark" name="com_remark" tabindex='17' onkeydown="return /[a-z ]/i.test(event.key)" readonly><?php if (isset($conRemark)) echo $conRemark; ?></textarea>
+                                        <textarea class="form-control" id="com_remark" name="com_remark" tabindex='20' onkeydown="return /[a-z ]/i.test(event.key)" readonly><?php if (isset($conRemark)) echo $conRemark; ?></textarea>
                                         <span class="text-danger" style='display:none' id='comRemarkCheck'>Please Enter Concern Remark</span>
                                     </div>
                                 </div>
@@ -358,7 +358,7 @@ if (count($getConcernCreation) > 0) {
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="role_type">Role Type</label><span class="required">&nbsp;*</span>
-                                        <select class="form-control" id="role_type" name="role_type" style="<?php echo (!isset($pgid) || $pgid != '1') ? 'pointer-events:none;background:#e9ecef;' : ''; ?>" tabindex='19'>
+                                        <select class="form-control" id="role_type" name="role_type" style="<?php echo (!isset($pgid) || $pgid != '1') ? 'pointer-events:none;background:#e9ecef;' : ''; ?>" tabindex='21'>
                                             <option value="">Select Role Type</option>
                                         </select>
                                         <span class="text-danger" style='display:none' id='roleTypeCheck'>Please Select Role Type</span>
@@ -367,7 +367,7 @@ if (count($getConcernCreation) > 0) {
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="assign-to">Assign To</label><span class="required">&nbsp;*</span>
-                                        <select class="form-control" id="staff_assign_to" name="staff_assign_to" style="<?php echo (!isset($pgid) || $pgid != '1') ? 'pointer-events:none;background:#e9ecef;' : ''; ?>" tabindex='19'>
+                                        <select class="form-control" id="staff_assign_to" name="staff_assign_to" style="<?php echo (!isset($pgid) || $pgid != '1') ? 'pointer-events:none;background:#e9ecef;' : ''; ?>" tabindex='22'>
                                             <option value="">Select Assign To</option>
                                         </select>
                                         <span class="text-danger" style='display:none' id='staffAssignCheck'>Please Select Staff Assign</span>
@@ -398,7 +398,7 @@ if (count($getConcernCreation) > 0) {
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="Communitcation"> Communication </label> <span class="required">*</span>
-                                        <select type="text" class="form-control" name="Com_for_solution" id="Com_for_solution" tabindex="20" disabled>
+                                        <select type="text" class="form-control" name="Com_for_solution" id="Com_for_solution" tabindex="24" disabled>
                                             <option value=""> Select Communication </option>
                                             <option value="1" <?php if (isset($communication) && $communication == '1') echo 'selected'; ?>> Phone </option>
                                             <option value="2" <?php if (isset($communication) && $communication == '2') echo 'selected'; ?>> Direct </option>
@@ -412,7 +412,7 @@ if (count($getConcernCreation) > 0) {
                                                                                         } ?> >
                                     <div class="form-group">
                                         <label for="location">Location </label><span class="text-danger">*</span>
-                                        <select type="text" class="form-control" id="location" name="location" tabindex="8" disabled>
+                                        <select type="text" class="form-control" id="location" name="location" tabindex="25" disabled>
                                             <option value="">Select Location</option>
                                             <option value="1" <?php if (isset($location) && $location == '1') echo 'selected'; ?>>Office</option>
                                             <option value="2" <?php if (isset($location) && $location == '2') echo 'selected'; ?>>On Spot</option>
@@ -424,7 +424,7 @@ if (count($getConcernCreation) > 0) {
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="sol_participants">Participants</label><span class="text-danger">*</span>
-                                        <textarea class="form-control" name="sol_participants" id="sol_participants" placeholder="Enter Participants" disabled tabindex="12"><?php if (isset($sol_participants)) echo $sol_participants; ?></textarea></textarea>
+                                        <textarea class="form-control" name="sol_participants" id="sol_participants" placeholder="Enter Participants" disabled tabindex="26"><?php if (isset($sol_participants)) echo $sol_participants; ?></textarea></textarea>
                                         <span class="text-danger" style='display:none' id='participantsCheck'>Please Enter Participants </span>
 
                                     </div>
@@ -432,7 +432,7 @@ if (count($getConcernCreation) > 0) {
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="reamrk"> Solution Remark </label> <span class="required">*</span>
-                                        <textarea type="text" class="form-control" name="solution_remark" id="solution_remark" tabindex="22" readonly><?php if (isset($solution_remark)) echo $solution_remark; ?></textarea>
+                                        <textarea type="text" class="form-control" name="solution_remark" id="solution_remark" tabindex="27" readonly><?php if (isset($solution_remark)) echo $solution_remark; ?></textarea>
                                         <span class="text-danger" style='display:none' id='solutionRemarkCheck'>Please Enter Solution Remark </span>
                                     </div>
                                 </div>
