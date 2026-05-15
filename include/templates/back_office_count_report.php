@@ -146,7 +146,7 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal"  onclick="closeModal" tabindex='13'>Close</button>
+				<button class="btn btn-secondary" data-dismiss="modal" onclick="closeModal()">Close</button>
 			</div>
 		</div>
 	</div>

@@ -1,6 +1,6 @@
 // Mantra MFS500 typically uses 8030 for HTTP and 8031 for HTTPS
 var protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
-var uri = protocol + "//localhost:" + (window.location.protocol === 'https:' ? "8031" : "8030") + "/morfinauth/";
+var uri = protocol + "//localhost:8030/morfinauth/";
 
 function GetMorFinAuthInfo(connectedDvc , clientKey) {
     var MorFinAuthRequest = {
@@ -103,10 +103,11 @@ function GetImage(imgformat) {
     return PostMorFinAuthClient("getimage", jsondata);
 }
 function GetTemplate(tmpFormat) {
-    // MorFinAuth `gettemplate` commonly supports POST only and may NOT handle CORS preflight (OPTIONS).
-    // If we POST with `application/json`, browsers will preflight and you'll see 405 + CORS blocked.
-    // Use a "simple" POST (text/plain) to avoid preflight.
+
+    if (!tmpFormat) tmpFormat = "ANSI";
+
     var res;
+
     $.support.cors = true;
     var httpStaus = false;
 
@@ -115,27 +116,28 @@ function GetTemplate(tmpFormat) {
         async: false,
         crossDomain: true,
         url: uri + "gettemplate",
-        // "simple" request => no preflight; MorFinAuth ignores body for many builds
-        contentType: "text/plain; charset=utf-8",
-        data: "",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({
+            "TemplateFormat": tmpFormat
+        }),
         dataType: "json",
         processData: false,
+
         success: function (data) {
             httpStaus = true;
-            res = { httpStaus: httpStaus, data: data };
+            res = {
+                httpStaus: true,
+                data: data
+            };
         },
+
         error: function (jqXHR, ajaxOptions, thrownError) {
-            // Fallback for non-browser / services that DO accept JSON body
-            // (kept to maximize compatibility across different MorFinAuth builds)
-            try {
-                var fallback = PostMorFinAuthClient("gettemplate", JSON.stringify({ "TmpFormat": tmpFormat }));
-                if (fallback && fallback.httpStaus) {
-                    res = fallback;
-                    return;
-                }
-            } catch (e) { }
-            res = { httpStaus: httpStaus, err: getHttpError(jqXHR, thrownError) };
-        },
+
+            res = {
+                httpStaus: false,
+                err: getHttpError(jqXHR, thrownError)
+            };
+        }
     });
 
     return res;
