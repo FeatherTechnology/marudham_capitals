@@ -94,39 +94,49 @@ $(document).ready(function () {
         })
     })
 
-    $('.scanBtn').click(function () {
+    //Get All fingerprint from db then scan for each one to find match.
+    $('.scanBtn').click(async function () {
 
-        commonCaptureFinger((fdata) => {
-            $('#search_fingerprint').val(fdata);
-            $.ajax({
-                url: "searchModule/searchByFingerprint.php",
-                type: "POST",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                data: JSON.stringify({ template: fdata }),
-                success: function (data) {
-                    if (data.matched) {
-                        $('#fingerprint_person_id').val(data.cus_id);
-                        Swal.fire({
-                            title: `Fingerprint Matched: ${data.cus_name}`,
-                            icon: 'success',
-                            showConfirmButton: true,
-                            confirmButtonColor: '#009688'
-                        }).then(() => {
-                            // Trigger search only after clicking OK
-                            $('#search').trigger('click');
-                        });
-                    } else {
-                        Swal.fire({
-                            title: 'No Match Found',
-                            icon: 'error',
-                            showConfirmButton: true,
-                            confirmButtonColor: '#009688'
-                        });
-                    }
-                }
-            });
+        let response = await $.ajax({
+            url: "searchModule/getAllFingerprints.php",
+            type: "GET",
+            dataType: "json"
         });
+
+        let fingerList = response.data || response;
+
+        let matched = false;
+
+        for (let row of fingerList) {
+
+            let matchRes = MatchFinger(60, 10000, row.ansi_template, "ANSI");
+
+            if (matchRes && matchRes.httpStaus && matchRes.data && matchRes.data.Status == true) {
+
+                matched = true;
+
+                $('#fingerprint_person_id').val(row.adhar_num);
+
+                Swal.fire({
+                    title: `Fingerprint Matched: ${row.name}`,
+                    icon: 'success',
+                    confirmButtonColor: '#009688'
+                }).then(() => {
+                    $('#search').trigger('click');
+                });
+
+                break;
+            }
+        }
+
+        if (!matched) {
+
+            Swal.fire({
+                title: 'No Match Found',
+                icon: 'error', 
+                confirmButtonColor: '#009688'
+            });
+        }
     }); //Scan button Onclick end
 
 });

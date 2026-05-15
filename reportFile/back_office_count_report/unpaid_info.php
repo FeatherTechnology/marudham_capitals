@@ -27,6 +27,14 @@ $query = "
         cr.autogen_cus_id, 
         cr.cus_id, 
         cr.customer_name,
+        CASE 
+            WHEN cs.last_paid_date = 1 THEN '1-10'
+            WHEN cs.last_paid_date = 2 THEN '11-15'
+            WHEN cs.last_paid_date = 3 THEN '16-20'
+            WHEN cs.last_paid_date = 4 THEN '21-25'
+            WHEN cs.last_paid_date = 5 THEN '26-30'
+            ELSE ''
+        END as last_paid_date,
         COALESCE(
             -- Priority 1: HIGHEST priority commitment (fstatus priority: 1>2-7>8)
             CASE 
@@ -53,6 +61,7 @@ $query = "
         ) as status
     FROM in_issue ii
     INNER JOIN customer_register cr ON ii.cus_id = cr.cus_id
+    JOIN customer_status cs ON ii.req_id = cs.req_id
     -- ✅ LEFT JOIN with highest priority commitment per req_id
     LEFT JOIN (
         SELECT 
@@ -102,6 +111,7 @@ $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <th>Customer ID</th>
             <th>Loan ID</th>
             <th>Customer Name</th>
+            <th>Last Paid Date</th>
             <th>Status</th>
         </tr>
     </thead>
@@ -116,6 +126,7 @@ $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <td><?php echo ($result['autogen_cus_id']); ?></td>
                 <td><?php echo ($result['loan_id']); ?></td>
                 <td><?php echo ($result['customer_name']); ?></td>
+               <td><?php echo ($result['last_paid_date']); ?></td>
                <td><?php echo ($result['status']); ?></td>
             </tr>
             <?php endforeach; ?>

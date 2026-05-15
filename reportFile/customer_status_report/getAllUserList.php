@@ -17,7 +17,7 @@ if ($user_track == '1') {
     $where .= " AND confirmation_followup = 0";
 } else if ($user_track == '3') { //get list based on role type for concern
     $column = ($role_type =='8') ? "role = '1'" : "role_type = '$role_type'"; 
-    $where .= " AND user_id != '1' AND $column";
+    $where .= " AND user_id != '1' AND status = 0 AND concern_solution = 0 AND $column";
 } else {
     $where .= " AND (collection = 0 OR due_followup = 0)";
 }
