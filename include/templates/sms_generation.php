@@ -104,8 +104,8 @@ if(isset($_POST['send_scheme_daily_reminder']) AND $_POST['send_scheme_daily_rem
                                         <th>Mobile No</th>
                                         <th>Area</th>
                                         <th>Branch</th>
-                                        <th>Line</th>
-                                        <th>Group</th>
+                                        <th>Region</th>
+                                        <th>Sector</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>

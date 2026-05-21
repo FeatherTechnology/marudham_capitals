@@ -52,8 +52,8 @@ if (sizeof($getUser) > 0) {
 									<th>Area</th>
 									<th>Sub Area</th>
 									<th>Branch</th>
-									<th>Group</th>
-									<th>Line</th>
+									<th>Sector</th>
+									<th>Region</th>
 									<th>Mobile No.</th>
 									<th>View</th>
 									<th>Action</th>

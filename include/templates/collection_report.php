@@ -33,9 +33,9 @@
 							<table id="collection_report_table" class="table custom-table">
 								<thead>
 									<th>S.No</th>
-									<th>Line</th>
-									<th>Group</th>
-									<th>Followup</th>
+									<th>Region</th>
+									<th>Sector</th>
+									<th>Zone</th>
 									<th>Branch</th>
 									<th>Loan ID</th>
 									<th>Loan Date</th>

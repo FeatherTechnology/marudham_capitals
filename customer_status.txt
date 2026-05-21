@@ -21,3 +21,10 @@
 22 -  NOC Completed
 23 -  NOC Completed - IN Handovered
 24 -  NOC Handovered
+
+
+
+After Deployment these names are renamed in Frontend.
+Group -> Sector
+Line -> Region
+Followup -> Zone

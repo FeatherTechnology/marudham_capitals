@@ -120,7 +120,7 @@ $connect = null;
             <th>User Type</th>
             <th>User Name</th>
             <th>Branch</th>
-            <th>Line</th>
+            <th>Region</th>
             <th>Pre Balance</th>
             <th>Today's Collection</th>
             <th>Total Balance</th>

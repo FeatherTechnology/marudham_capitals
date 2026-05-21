@@ -44,7 +44,7 @@
 								<th>Area</th>
 								<th>Sub Area</th>
 								<th>Branch</th>
-								<th>Line</th>
+								<th>Region</th>
 								<th>Mobile</th>
 								<th>Loan Category</th>
 								<th>Receive Status</th>

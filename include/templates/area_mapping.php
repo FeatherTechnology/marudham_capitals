@@ -205,7 +205,7 @@ if (isset($_GET['type'])) {
 				<!-- ************************************************************** Line Mapping *************************************************************************************** -->
 				<div class="card line_mapping" <?php if (isset($type) and $type != 'line') { ?> style="display:none" <?php } ?>>
 					<div class="card-header">
-						<div class="card-title">General Info (Line)</div>
+						<div class="card-title">General Info (Region)</div>
 					</div>
 					<div class="card-body">
 						<div class="row ">
@@ -214,8 +214,8 @@ if (isset($_GET['type'])) {
 								<div class="row">
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
-											<label for="disabledInput">Line Name</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" name="line_name" id="line_name" value="<?php if (isset($line_name)) echo $line_name; ?>" placeholder="Enter Line Name" class="form-control" tabindex="1">
+											<label for="disabledInput">Region Name</label>&nbsp;<span class="text-danger">*</span>
+											<input type="text" name="line_name" id="line_name" value="<?php if (isset($line_name)) echo $line_name; ?>" placeholder="Enter Region Name" class="form-control" tabindex="1">
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
@@ -281,7 +281,7 @@ if (isset($_GET['type'])) {
 				<!-- ************************************************************** Group Mapping *************************************************************************************** -->
 				<div class="card group_mapping" <?php if (isset($type) and $type != 'group') { ?> style="display:none" <?php } ?>>
 					<div class="card-header">
-						<div class="card-title">General Info (Group)</div>
+						<div class="card-title">General Info (Sector)</div>
 					</div>
 					<div class="card-body">
 						<div class="row ">
@@ -290,8 +290,8 @@ if (isset($_GET['type'])) {
 								<div class="row">
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
-											<label for="disabledInput">Group Name</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" name="group_name" id="group_name" value="<?php if (isset($group_name)) echo $group_name; ?>" placeholder="Enter Group Name" class="form-control" tabindex="1">
+											<label for="disabledInput">Sector Name</label>&nbsp;<span class="text-danger">*</span>
+											<input type="text" name="group_name" id="group_name" value="<?php if (isset($group_name)) echo $group_name; ?>" placeholder="Enter Sector Name" class="form-control" tabindex="1">
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
@@ -367,7 +367,7 @@ if (isset($_GET['type'])) {
 				<!-- ************************************************************** Due Followup Mapping *************************************************************************************** -->
 				<div class="card duefollowup_mapping" <?php if (isset($type) and $type != 'duefollowup') { ?> style="display:none" <?php } ?>>
 					<div class="card-header">
-						<div class="card-title">General Info (Followup)</div>
+						<div class="card-title">General Info (Zone)</div>
 					</div>
 					<div class="card-body">
 						<div class="row ">
@@ -376,8 +376,8 @@ if (isset($_GET['type'])) {
 								<div class="row">
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
 										<div class="form-group">
-											<label for="duefollowup_name">Followup Name</label>&nbsp;<span class="text-danger">*</span>
-											<input type="text" name="duefollowup_name" id="duefollowup_name" value="<?php if (isset($duefollowup_name)) echo $duefollowup_name; ?>" placeholder="Enter Followup Name" class="form-control" tabindex="1">
+											<label for="duefollowup_name">Zone Name</label>&nbsp;<span class="text-danger">*</span>
+											<input type="text" name="duefollowup_name" id="duefollowup_name" value="<?php if (isset($duefollowup_name)) echo $duefollowup_name; ?>" placeholder="Enter Zone Name" class="form-control" tabindex="1">
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">

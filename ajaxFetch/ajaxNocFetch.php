@@ -1,22 +1,33 @@
 <?php
 @session_start();
-include('..\ajaxconfig.php');
+include "../ajaxconfig.php";
 
-if (isset($_SESSION["userid"])) {
-    $userid = $_SESSION["userid"];
-}
+$userid = $_SESSION["userid"] ?? '';
 
-/* ================= USER ACCESS FILTER ================= */
-$sub_area_list = '';
-$colName = '';
+$where = [];
+$params = [];
+
+/* =========================================================
+   USER ACCESS
+========================================================= */
 
 if ($userid != 1) {
 
-    $stmt = $connect->prepare("SELECT group_id, line_id, due_followup_lines, noc_mapping_access FROM user WHERE user_id = ?");
-    $stmt->execute([$userid]);
-    $rowuser = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = $connect->prepare("
+        SELECT 
+            group_id,
+            line_id,
+            due_followup_lines,
+            noc_mapping_access
+        FROM user
+        WHERE user_id = ?
+    ");
 
-    if (!$rowuser) {
+    $stmt->execute([$userid]);
+
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$user) {
         echo json_encode([]);
         exit;
     }
@@ -27,7 +38,7 @@ if ($userid != 1) {
         3 => ['due_followup_lines', 'area_duefollowup_mapping_area', 'duefollowup_map_id', 'area_id', 'cr.area_confirm_area']
     ];
 
-    $accessType = (int)$rowuser['noc_mapping_access'];
+    $accessType = (int)$user['noc_mapping_access'];
 
     if (!isset($accessMap[$accessType])) {
         echo json_encode([]);
@@ -36,28 +47,78 @@ if ($userid != 1) {
 
     [$source, $table, $mapCol, $selCol, $filterCol] = $accessMap[$accessType];
 
-    $ids = array_filter(array_map('intval', explode(',', $rowuser[$source] ?? '')));
+    $ids = array_filter(array_map('intval', explode(',', $user[$source] ?? '')));
 
     if (!$ids) {
         echo json_encode([]);
         exit;
     }
 
-    $in = implode(',', array_fill(0, count($ids), '?'));
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
 
-    $stmt = $connect->prepare("SELECT DISTINCT $selCol FROM $table WHERE $mapCol IN ($in)");
+    $stmt = $connect->prepare("
+        SELECT DISTINCT $selCol
+        FROM $table
+        WHERE $mapCol IN ($placeholders)
+    ");
+
     $stmt->execute($ids);
 
-    $sub_area_list = implode(',', $stmt->fetchAll(PDO::FETCH_COLUMN));
-    $colName = $filterCol;
+    $mappedIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+    if (!$mappedIds) {
+        echo json_encode([]);
+        exit;
+    }
+
+    $where[] = "$filterCol IN (" . implode(',', array_fill(0, count($mappedIds), '?')) . ")";
+    $params = array_merge($params, $mappedIds);
 }
 
-$column = array(
-    'cs.latest_date',
-    'cs.latest_date',
+/* =========================================================
+   SEARCH
+========================================================= */
+
+$search = $_POST['search'] ?? '';
+
+if (!empty($search)) {
+
+    $where[] = "(
+        cr.cus_id LIKE ?
+        OR cr.autogen_cus_id LIKE ?
+        OR cr.customer_name LIKE ?
+        OR ac.area_name LIKE ?
+        OR sa.sub_area_name LIKE ?
+        OR alm.line_name LIKE ?
+        OR bc.branch_name LIKE ?
+        OR cr.mobile1 LIKE ?
+    )";
+
+    for ($i = 0; $i < 8; $i++) {
+        $params[] = "%$search%";
+    }
+}
+
+/* =========================================================
+   WHERE
+========================================================= */
+
+$whereSql = '';
+
+if (!empty($where)) {
+    $whereSql = ' AND ' . implode(' AND ', $where);
+}
+
+/* =========================================================
+   ORDER
+========================================================= */
+
+$columns = [
+    'latest_date',
+    'latest_date',
     'cr.cus_id',
     'cr.autogen_cus_id',
-    'cr.cus_name',
+    'cr.customer_name',
     'ac.area_name',
     'sa.sub_area_name',
     'bc.branch_name',
@@ -66,157 +127,232 @@ $column = array(
     'ii.id',
     'ii.id',
     'ii.id'
-);
+];
 
-//21 closed
-//22 NOC given
-//23 send NOC Handover
-//24 NOC Handovered.
-$query = "SELECT cs.latest_date, cr.cus_id, cr.autogen_cus_id, cr.customer_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cr.mobile1
-FROM in_issue ii 
-LEFT JOIN noc n ON ii.req_id = n.req_id
-JOIN customer_register cr ON ii.cus_id = cr.cus_id
-JOIN area_list_creation ac ON cr.area_confirm_area = ac.area_id
-JOIN sub_area_list_creation sa ON cr.area_confirm_subarea = sa.sub_area_id
-JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sa.sub_area_id
-JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
-JOIN branch_creation bc ON alm.branch_id = bc.branch_id
-LEFT JOIN (
-    SELECT cs.cus_id, MAX(cs.created_date) AS latest_date
-    FROM closed_status cs
-    INNER JOIN (
-        SELECT DISTINCT cus_id 
-        FROM in_issue 
-        WHERE status = 0 
-        AND cus_status IN (21,22,23)
-    ) filtered_customers ON cs.cus_id = filtered_customers.cus_id
-    GROUP BY cs.cus_id
-) cs
-ON cs.cus_id = cr.cus_id
-WHERE ii.status = 0
-    AND ii.cus_status IN (21,22,23)
-    AND (n.receive_status = 0 OR n.req_id IS NULL) ";
-
-if ($userid != 1) {
-    $query .= " AND $colName IN ($sub_area_list) ";
-}
-
-if (isset($_POST['search']) && $_POST['search'] != "") {
-
-    $query .= " AND (cr.cus_id LIKE '%" . $_POST['search'] . "%'
-            OR cs.latest_date LIKE '%" . $_POST['search'] . "%'
-            OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%'
-            OR cr.customer_name LIKE '%" . $_POST['search'] . "%'
-            OR ac.area_name LIKE '%" . $_POST['search'] . "%'
-            OR sa.sub_area_name LIKE '%" . $_POST['search'] . "%'
-            OR alm.line_name LIKE '%" . $_POST['search'] . "%'
-            OR bc.branch_name LIKE '%" . $_POST['search'] . "%'
-            OR cr.mobile1 LIKE '%" . $_POST['search'] . "%' ) ";
-}
-
-$query .= 'GROUP BY ii.cus_id ';
+$orderBy = " ORDER BY latest_date DESC ";
 
 if (isset($_POST['order'])) {
-    $query .= 'ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
+
+    $colIndex = (int)$_POST['order'][0]['column'];
+    $dir = $_POST['order'][0]['dir'] === 'asc' ? 'ASC' : 'DESC';
+
+    if (isset($columns[$colIndex])) {
+        $orderBy = " ORDER BY {$columns[$colIndex]} $dir ";
+    }
 }
 
-$query1 = ($_POST['length'] != -1) ? 'LIMIT ' . $_POST['start'] . ', ' . $_POST['length'] : '';
+/* =========================================================
+   LIMIT
+========================================================= */
 
-$statement = $connect->prepare($query);
+$limit = '';
 
-$statement->execute();
+if ($_POST['length'] != -1) {
 
-$number_filter_row = $statement->rowCount();
+    $start = (int)$_POST['start'];
+    $length = (int)$_POST['length'];
 
-$statement = $connect->prepare($query . $query1);
-
-$statement->execute();
-
-$result = $statement->fetchAll();
-
-// 1. Fetch all cus_status grouped by customer
-$stsStmt = $connect->query("SELECT cus_id, GROUP_CONCAT(DISTINCT cus_status) AS statuses FROM in_issue WHERE cus_status BETWEEN 21 AND 23 GROUP BY cus_id");
-
-$statusMap = [];
-while ($row = $stsStmt->fetch(PDO::FETCH_ASSOC)) {
-    $statusMap[$row['cus_id']] = array_map('intval', explode(',', $row['statuses']));
+    $limit = " LIMIT $start, $length ";
 }
 
-// 2. Fetch pending receive_status once
-$resStmt = $connect->query("SELECT DISTINCT cus_id FROM noc WHERE receive_status = 0");
+/* =========================================================
+   MAIN QUERY
+========================================================= */
 
-$pendingReceive = $resStmt->fetchAll(PDO::FETCH_COLUMN);
-$pendingReceive = array_flip($pendingReceive); // for fast lookup
+$query = "
+SELECT
+    MAX(cs.created_date) AS latest_date,
+    cr.cus_id,
+    cr.autogen_cus_id,
+    cr.customer_name,
+    ac.area_name,
+    sa.sub_area_name,
+    alm.line_name,
+    bc.branch_name,
+    cr.mobile1,
 
-$data = array();
-$sno = 1;
+    GROUP_CONCAT(DISTINCT ii.cus_status) AS statuses,
+
+    MAX(
+        CASE
+            WHEN n.receive_status = 0 THEN 1
+            ELSE 0
+        END
+    ) AS pending_receive
+
+FROM in_issue ii
+
+JOIN customer_register cr
+    ON ii.cus_id = cr.cus_id
+
+JOIN area_list_creation ac
+    ON cr.area_confirm_area = ac.area_id
+
+JOIN sub_area_list_creation sa
+    ON cr.area_confirm_subarea = sa.sub_area_id
+
+JOIN area_line_mapping_sub_area almsa
+    ON almsa.sub_area_id = sa.sub_area_id
+
+JOIN area_line_mapping alm
+    ON alm.map_id = almsa.line_map_id
+
+JOIN branch_creation bc
+    ON alm.branch_id = bc.branch_id
+
+LEFT JOIN noc n
+    ON ii.req_id = n.req_id
+
+LEFT JOIN closed_status cs
+    ON cs.cus_id = cr.cus_id
+
+WHERE
+    ii.status = 0
+    AND ii.cus_status IN (21,22,23)
+    AND (n.receive_status = 0 OR n.req_id IS NULL)
+    $whereSql
+
+GROUP BY ii.cus_id
+
+$orderBy
+
+$limit
+";
+
+$stmt = $connect->prepare($query);
+$stmt->execute($params);
+
+$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+/* =========================================================
+   FILTER COUNT
+========================================================= */
+
+$countQuery = "
+SELECT COUNT(*) as total
+FROM (
+    SELECT ii.cus_id
+    FROM in_issue ii
+    LEFT JOIN noc n ON ii.req_id = n.req_id
+    JOIN customer_register cr ON ii.cus_id = cr.cus_id
+    JOIN area_list_creation ac ON cr.area_confirm_area = ac.area_id
+    JOIN sub_area_list_creation sa ON cr.area_confirm_subarea = sa.sub_area_id
+    JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sa.sub_area_id
+    JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
+    JOIN branch_creation bc ON alm.branch_id = bc.branch_id
+
+    WHERE
+        ii.status = 0
+        AND ii.cus_status IN (21,22,23)
+        AND (n.receive_status = 0 OR n.req_id IS NULL)
+        $whereSql
+
+    GROUP BY ii.cus_id
+) x
+";
+
+$countStmt = $connect->prepare($countQuery);
+$countStmt->execute($params);
+
+$filtered = $countStmt->fetchColumn();
+
+/* =========================================================
+   TOTAL COUNT
+========================================================= */
+
+$totalStmt = $connect->query("
+    SELECT COUNT(DISTINCT cus_id)
+    FROM in_issue
+    WHERE status = 0
+    AND cus_status IN (21,22,23)
+");
+
+$total = $totalStmt->fetchColumn();
+
+/* =========================================================
+   DATA
+========================================================= */
+
+$data = [];
+$sno = $_POST['start'] + 1;
+
 foreach ($result as $row) {
-    $sub_array   = array();
-    $cus_id = $row['cus_id'];
-    $allStatus = $statusMap[$cus_id] ?? [];
 
-    $sub_array[] = $sno++;
-    $sub_array[] = $row['latest_date'] ? date('d-m-Y', strtotime($row['latest_date'])) : '';
-    $sub_array[] = $cus_id;
-    $sub_array[] = $row['autogen_cus_id'];
-    $sub_array[] = $row['customer_name'];
-    $sub_array[] = $row['area_name'];
-    $sub_array[] = $row['sub_area_name'];
-    $sub_array[] = $row["branch_name"];
-    $sub_array[] = $row['line_name'];
-    $sub_array[] = $row['mobile1'];
+    $statuses = array_map('intval', explode(',', $row['statuses']));
 
-    if ((in_array(21, $allStatus) || in_array(22, $allStatus))) {
+    if (in_array(21, $statuses) || in_array(22, $statuses)) {
+
         $noc_status = 'NOC';
-    } elseif (in_array(23, $allStatus)) {
-        $noc_status = isset($pendingReceive[$cus_id]) ? 'Pending' : 'Completed';
+
+    } elseif (in_array(23, $statuses)) {
+
+        $noc_status = $row['pending_receive'] ? 'Pending' : 'Completed';
+
     } else {
         $noc_status = '';
     }
-    $sub_array[] = $noc_status;
 
-    $sub_array[] = "<a href='#' data-value ='" . $cus_id . "' class='customer-status' data-toggle='modal' data-target='.customerstatus'><span class='icon-eye' style='font-size: 12px;position: relative;top: 2px;'></span></a>";
-
-    $action  = "<div class='dropdown'>
-                <button class='btn btn-outline-secondary'>
-                    <i class='fa'>&#xf107;</i>
-                </button>
-                <div class='dropdown-content'>";
-
-    $action .= "<a href='noc&cusidupd=$cus_id' title='Edit details'>NOC</a>";
+    $action = "
+    <div class='dropdown'>
+        <button class='btn btn-outline-secondary'>
+            <i class='fa'>&#xf107;</i>
+        </button>
+        <div class='dropdown-content'>
+            <a href='noc&cusidupd={$row['cus_id']}' title='Edit details'>NOC</a>
+    ";
 
     // Conditions
     // If any one loan is 22 → show SEND
-    if (in_array(22, $allStatus)) {
-        $action .= "<a href='' title='Send details' class='remove-noc' data-cusid='$cus_id'>Send</a>";
+    if (in_array(22, $statuses)) {
+        $action .= "
+            <a href='' title='Send details' class='remove-noc' data-cusid='{$row['cus_id']}'>
+                Send
+            </a>
+        ";
     }
 
     // For status 22 or 23 → show Summary + Letter
-    if (in_array(22, $allStatus) || (in_array(23, $allStatus) && $noc_status == 'Pending')) {
-        $action .= "<a href='noc&cusidupd=$cus_id'>NOC Summary & Letter</a>";
+    if (in_array(22, $statuses) || (in_array(23, $statuses) && $noc_status == 'Pending')) {
+
+        $action .= "
+            <a href='noc&cusidupd={$row['cus_id']}'>
+                NOC Summary & Letter
+            </a>
+        ";
     }
+
     $action .= "</div></div>";
 
-    $sub_array[] = $action;
-    $data[]      = $sub_array;
+    $data[] = [
+        $sno++,
+        $row['latest_date'] ? date('d-m-Y', strtotime($row['latest_date'])) : '',
+        $row['cus_id'],
+        $row['autogen_cus_id'],
+        $row['customer_name'],
+        $row['area_name'],
+        $row['sub_area_name'],
+        $row['branch_name'],
+        $row['line_name'],
+        $row['mobile1'],
+        $noc_status,
+        "<a href='#' data-value='{$row['cus_id']}' class='customer-status' data-toggle='modal' data-target='.customerstatus'>
+            <span class='icon-eye'></span>
+        </a>",
+        $action
+    ];
 }
 
-function count_all_data($connect)
-{
-    $query     = "SELECT cus_id FROM in_issue WHERE status = 0 AND cus_status IN (21,22,23) GROUP BY cus_id";
-    $statement = $connect->prepare($query);
-    $statement->execute();
-    return $statement->rowCount();
-}
+/* =========================================================
+   OUTPUT
+========================================================= */
 
-$output = array(
-    'draw' => intval($_POST['draw']),
-    'recordsTotal' => count_all_data($connect),
-    'recordsFiltered' => $number_filter_row,
-    'data' => $data
-);
-
-echo json_encode($output);
+echo json_encode([
+    "draw" => intval($_POST['draw']),
+    "recordsTotal" => (int)$total,
+    "recordsFiltered" => (int)$filtered,
+    "data" => $data
+]);
 
 // Close the database connection
 $connect = null;
+?>

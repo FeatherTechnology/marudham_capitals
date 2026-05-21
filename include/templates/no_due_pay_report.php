@@ -24,9 +24,9 @@
 							<table id="no_pay_due_report_table" class="table custom-table">
 								<thead>
 									<th>S.No</th>
-									<!-- <th>Group</th> -->
-									<th>Line</th>
-									<!-- <th>Followup</th> -->
+									<!-- <th>Sector</th> -->
+									<th>Region</th>
+									<!-- <th>Zone</th> -->
 									<th>Loan ID</th>
 									<th>Loan Date</th>
 									<th>Maturity Date</th>

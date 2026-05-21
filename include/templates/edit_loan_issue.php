@@ -45,8 +45,8 @@
 								<th>Customer ID</th>
 								<th>Customer Name</th>
 								<th>Branch</th>
-								<th>Group</th>
-								<th>Line</th>
+								<th>Sector</th>
+								<th>Region</th>
 								<th>Area</th>
 								<th>Sub Area</th>
 								<th>Loan Category</th>

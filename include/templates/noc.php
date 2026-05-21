@@ -121,7 +121,7 @@ if (sizeof($getCustomerReg) > 0) {
 										</div>
 										<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
 											<div class="form-group">
-												<label for="branch"> Line </label> <span class="required"> * </span>
+												<label for="branch"> Region </label> <span class="required"> * </span>
 												<input type="hidden" class="form-control" id="line_id" name="line_id" value='<?php if (isset($line_id)) echo $line_id; ?>' readonly tabindex='7'>
 												<input type="text" class="form-control" id="line" name="line" value='<?php if (isset($line_name)) echo $line_name; ?>' readonly tabindex='8'>
 											</div>

@@ -64,7 +64,7 @@ $row = $sql->fetch();
             <input type="text" name="info_sub_area" id="info_sub_area" class='form-control' tabindex="6" readonly value="<?php echo $row['sub_area_name']; ?>">
         </div>
         <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12">
-            <label for="info_line">Line</label>
+            <label for="info_line">Region</label>
             <input type="text" name="info_line" id="info_line" class='form-control' tabindex="7" readonly value="<?php echo $row['area_line']; ?>">
         </div>
         <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12">

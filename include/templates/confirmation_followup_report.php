@@ -25,8 +25,8 @@
                             <table id="confirmation_followup_report_table" class="table custom-table">
                                 <thead>
                                     <th>S.No</th>
-                                    <th>Line</th>
-                                    <th>Group</th>
+                                    <th>Region</th>
+                                    <th>Sector</th>
                                     <th>Branch</th>
                                     <th>Loan ID</th>
                                     <th>Loan Date</th>

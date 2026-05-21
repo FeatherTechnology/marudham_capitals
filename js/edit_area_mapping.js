@@ -32,7 +32,7 @@ $(function () {
 function dT1() {
     $('#area_mapping_line_info').DataTable().destroy();
     $('#area_mapping_line_info').empty();
-    $('#area_mapping_line_info').append(`<thead><tr><th width="50">S. No.</th><th>Line Name</th><th>Company Name</th><th>Branch Name</th><th>Area Name</th><th>Sub Area</th><th>Status</th><th>Action</th></tr></thead><tbody></tbody>`);
+    $('#area_mapping_line_info').append(`<thead><tr><th width="50">S. No.</th><th>Region Name</th><th>Company Name</th><th>Branch Name</th><th>Area Name</th><th>Sub Area</th><th>Status</th><th>Action</th></tr></thead><tbody></tbody>`);
 
     // Declare table variable to store the DataTable instance
     var area_mapping_line_info = $('#area_mapping_line_info').DataTable({
@@ -52,7 +52,7 @@ function dT1() {
         buttons: [
             {
                 extend: 'excel',
-                title: "Line List",
+                title: "Region List",
                 action: function (e, dt, button, config) {
                     var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                     var dynamic = curDateJs('Line_List'); // or any base
@@ -83,7 +83,7 @@ function dT1() {
 function dT2() {
     $('#area_mapping_group_info').DataTable().destroy();
     $('#area_mapping_group_info').empty();
-    $('#area_mapping_group_info').append(`<thead><tr><th width="50">S. No.</th><th>Group Name</th><th>Company Name</th><th>Branch Name</th><th>Area Name</th><th>Sub Area</th><th>Status</th><th>Action</th></tr></thead><tbody></tbody>`);
+    $('#area_mapping_group_info').append(`<thead><tr><th width="50">S. No.</th><th>Sector Name</th><th>Company Name</th><th>Branch Name</th><th>Area Name</th><th>Sub Area</th><th>Status</th><th>Action</th></tr></thead><tbody></tbody>`);
 
     // Declare table variable to store the DataTable instance
     var area_mapping_group_info = $('#area_mapping_group_info').DataTable({
@@ -104,7 +104,7 @@ function dT2() {
         buttons: [
             {
                 extend: 'excel',
-                title: "Group List",
+                title: "Sector List",
                 action: function (e, dt, button, config) {
                     var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                     var dynamic = curDateJs('Group_List'); // or any base
@@ -135,7 +135,7 @@ function dT2() {
 function dT3() {
     $('#area_mapping_duefollowup_info').DataTable().destroy();
     $('#area_mapping_duefollowup_info').empty();
-    $('#area_mapping_duefollowup_info').append(`<thead><tr><th width="50">S. No.</th><th>Due Followup Name</th><th>Company Name</th><th>Branch Name</th><th>Area Name</th><th>Status</th><th>Action</th></tr></thead><tbody></tbody>`);
+    $('#area_mapping_duefollowup_info').append(`<thead><tr><th width="50">S. No.</th><th>Zone Name</th><th>Company Name</th><th>Branch Name</th><th>Area Name</th><th>Status</th><th>Action</th></tr></thead><tbody></tbody>`);
 
     // Declare table variable to store the DataTable instance
     var area_mapping_duefollowup_info = $('#area_mapping_duefollowup_info').DataTable({
@@ -156,7 +156,7 @@ function dT3() {
         buttons: [
             {
                 extend: 'excel',
-                title: "Due Followup List",
+                title: "Zone List",
                 action: function (e, dt, button, config) {
                     var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
                     var dynamic = curDateJs('Due_followup_List'); // or any base

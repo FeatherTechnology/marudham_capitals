@@ -93,8 +93,8 @@
 														<th>Area</th>
 														<th>Sub Area</th>
 														<th>Branch</th>
-														<th>Line</th>
-														<th>Group</th>
+														<th>Region</th>
+														<th>Sector</th>
 														<th>Mobile 1</th>
 														<th>Mobile 2</th>
 														<th>Action</th>

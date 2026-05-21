@@ -48,8 +48,8 @@
 								<thead>
 									<th>S.No</th>
 									<!-- <th>Group</th> -->
-									<th>Line</th>
-									<!-- <th>Followup</th> -->
+									<th>Region</th>
+									<!-- <th>Zone</th> -->
 									<th>Loan ID</th>
 									<th>Doc ID</th>
 									<th>Loan Date</th>
@@ -99,8 +99,8 @@
 								<thead>
 									<th>S.No</th>
 									<!-- <th>Group</th> -->
-									<th>Line</th>
-									<!-- <th>Followup</th> -->
+									<th>Region</th>
+									<!-- <th>Zone</th> -->
 									<th>Loan ID</th>
 									<th>Doc ID</th>
 									<th>Loan Date</th>

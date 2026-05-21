@@ -65,7 +65,7 @@ function getGroup() {
         dataType: 'json',
         success: function (response) {
             $('#branch').empty()
-                .append("<option value=''>Select Group</option>") .append("<option value='0'>All</option>")
+                .append("<option value=''>Select Sector</option>") .append("<option value='0'>All</option>")
 
             $.each(response, function (i, val) {
                 $('#branch').append("<option value='" + val.group_ids + "'>" + val.group_name + "</option>");

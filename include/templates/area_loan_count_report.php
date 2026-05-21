@@ -36,8 +36,8 @@
                                         <th>S.No</th>
                                         <th>Area</th>
                                         <th>Taluk</th>
-                                        <th>Line</th>
-                                        <th>Group</th>
+                                        <th>Region</th>
+                                        <th>Sector</th>
                                         <th>Customer Count</th>
                                         <th>Loan Count</th>
                                         <th>Current</th>
