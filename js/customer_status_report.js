@@ -7,17 +7,17 @@ const loanCategory = new Choices('#loan_category', {
 });
 const line = new Choices('#line', {
     removeItemButton: true,
-    noChoicesText: 'Select Line',
+    noChoicesText: 'Select Region',
     allowHTML: true
 });
 const group_map = new Choices('#group_map', {
     removeItemButton: true,
-    noChoicesText: 'Select Group',
+    noChoicesText: 'Select Sector',
     allowHTML: true
 });
 const due_followup = new Choices('#due_followup', {
     removeItemButton: true,
-    noChoicesText: 'Select Due Followup',
+    noChoicesText: 'Select Zone',
     allowHTML: true
 });
 
@@ -127,13 +127,13 @@ $(document).ready(function () {
         }
 
         if (type == "1") {
-            $("#nameHeader").text("Line Name");
+            $("#nameHeader").text("Region Name");
         } else if (type == "2") {
             $("#nameHeader").text("User Name");
         } else if (type == "3") {
-            $("#nameHeader").text(" Group Name");
+            $("#nameHeader").text("Sector Name");
         } else if (type == "4") {
-            $("#nameHeader").text("Due Followup Name");
+            $("#nameHeader").text("Zone Name");
         }
         $('#current_table').hide();
         $('#pending_table').hide();

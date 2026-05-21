@@ -35,7 +35,7 @@
 					<option value=''>Select Type</option>
 					<option value='1'>All</option>
 					<option value='2'>Branch</option>
-					<option value='3'>Group</option>
+					<option value='3'>Sector</option>
 				</select>
 				<select type="text" class="toggle-button" id='branch' name='branch'>
 					<option value=''>Select</option>

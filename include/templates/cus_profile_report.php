@@ -30,8 +30,8 @@
 									<th>Sub Area</th>
 									<th>Mobile</th>
 									<th>Cust. Limit</th>
-									<th>Line</th>
-									<th>Group</th>
+									<th>Region</th>
+									<th>Sector</th>
 									<th>How to Know</th>
 									<th>Occupation type</th>
 									<th>Detail</th>

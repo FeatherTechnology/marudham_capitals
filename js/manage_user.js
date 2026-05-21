@@ -36,19 +36,19 @@ const acknowledgementloanCatMultiselect = new Choices('#loan_cat3', {
 
 const lineMultiselect = new Choices('#line1', {
     removeItemButton: true,
-    noChoicesText: 'Select Line Name',
+    noChoicesText: 'Select Region Name',
     allowHTML: true
 });
 
 const groupMultiselect = new Choices('#group1', {
     removeItemButton: true,
-    noChoicesText: 'Select Group Name',
+    noChoicesText: 'Select Sector Name',
     allowHTML: true
 });
 
 const vergroupMultiselect = new Choices('#ver_group_id', {
     removeItemButton: true,
-    noChoicesText: 'Select Group Name',
+    noChoicesText: 'Select Sector Name',
     allowHTML: true
 });
 
@@ -66,7 +66,7 @@ const promotionAccess = new Choices('#pro_aty_access', {
 
 const dueFollowupLines = new Choices('#due_follup_lines', {
     removeItemButton: true,
-    noChoicesText: 'Select Due Followup Lines',
+    noChoicesText: 'Select Zone Lines',
     allowHTML: true
 });
 

@@ -55,8 +55,8 @@ if (sizeof($getUser) > 0) {
 									<th>Sub Category</th>
 									<th>Agent</th>
 									<th>Branch</th>
-									<th>Group</th>
-									<th>Line</th>
+									<th>Sector</th>
+									<th>Region</th>
 									<th>Stage</th>
 									<th>View</th>
 									<th>Action</th>

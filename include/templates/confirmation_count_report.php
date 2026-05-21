@@ -35,7 +35,7 @@
 									<tr>
 										<th>S.No</th>
 										<th>User Name</th>
-										<th>Line</th>
+										<th>Region</th>
 										<th>Total Count</th>
 										<th>Completed</th>
 										<th>Unavailable</th>

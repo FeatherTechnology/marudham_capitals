@@ -68,8 +68,8 @@
 								<th>User ID</th>
 								<th>Company Name</th>
 								<th>Branch Name</th>
-								<th>Line Name</th>
-								<th>Group Name</th>
+								<th>Region Name</th>
+								<th>Sector Name</th>
 								<th>Status</th>
 								<th>Action</th>
 							</tr>

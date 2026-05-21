@@ -567,32 +567,32 @@ if($idupd>0)
                                     </div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
                                         <div class="form-group">
-                                            <label for="group1">Group Name</label>&nbsp;<span class="text-danger">*</span>
+                                            <label for="group1">Sector Name</label>&nbsp;<span class="text-danger">*</span>
 											<input type='hidden' class='form-control' id='group' name='group' >
 											<select tabindex="12" type="text" class="form-control" id="group1" name="group1" multiple>
-												<option value="">Select Group Name</option>
+												<option value="">Select Sector Name</option>
 											</select>
-											<span class="text-danger" style='display:none' id='groupCheck'>Please select Group Name</span>
+											<span class="text-danger" style='display:none' id='groupCheck'>Please select Sector Name</span>
                                         </div>
                                     </div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 line_div">
                                         <div class="form-group">
-                                            <label for="line1">Line Name</label>&nbsp;<span class="text-danger">*</span>
+                                            <label for="line1">Region Name</label>&nbsp;<span class="text-danger">*</span>
 											<input type='hidden' class='form-control' id='line' name='line' >
 											<select tabindex="13" type="text" class="form-control" id="line1" name="line1" multiple>
-												<option value="">Select Line Name</option>
+												<option value="">Select Region Name</option>
 											</select>
-											<span class="text-danger" style='display:none' id='lineCheck'>Please select Line Name</span>
+											<span class="text-danger" style='display:none' id='lineCheck'>Please select Region Name</span>
                                         </div>
                                     </div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 due_followupline_div">
                                         <div class="form-group">
-                                            <label class="due_follup_lines" for="due_follup_lines">Followup lines</label>&nbsp;<span class="text-danger">*</span>
+                                            <label class="due_follup_lines" for="due_follup_lines">Zone lines</label>&nbsp;<span class="text-danger">*</span>
 											<input type='hidden' id='due_follup_line_id' name='due_follup_line_id' value='<?php if(isset($due_followup_lines)) echo 	$due_followup_lines; ?>'>
                                             <select tabindex="14" class='form-control' id='due_follup_lines' name='due_follup_lines' multiple>
-												<option value="">Select Followup Lines</option>
+												<option value="">Select Zone Lines</option>
 											</select>
-											<span class='text-danger duefollowupCheck' style="display:none">Please Select Followup Lines</span>
+											<span class='text-danger duefollowupCheck' style="display:none">Please Select Zone Lines</span>
                                         </div>
                                     </div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
@@ -600,9 +600,9 @@ if($idupd>0)
                                             <label for="promotion_activity_mapping_access">Promotion Activity Mapping Access</label>&nbsp;<span class="text-danger">*</span>
 											<select tabindex="15" type="text" class="form-control" id="promotion_activity_mapping_access" name="promotion_activity_mapping_access">
 												<option value="">Select Promotion Mapping Activity</option>
-												<option value="1" <?php if($promotion_activity_mapping_access == '1') echo 'selected';?> >Group</option>
-												<option value="2" <?php if($promotion_activity_mapping_access == '2') echo 'selected';?> >Line</option>
-												<option value="3" <?php if($promotion_activity_mapping_access == '3') echo 'selected';?> >Followup</option>
+												<option value="1" <?php if($promotion_activity_mapping_access == '1') echo 'selected';?> >Sector</option>
+												<option value="2" <?php if($promotion_activity_mapping_access == '2') echo 'selected';?> >Region</option>
+												<option value="3" <?php if($promotion_activity_mapping_access == '3') echo 'selected';?> >Zone</option>
 											</select>
 											<br>
 											<span class="text-danger" style='display:none' id='proMapCheck'>Please select Promotion Activity Mapping Access</span>
@@ -815,10 +815,10 @@ if($idupd>0)
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 ver_loancat_div" style='display:none;'>
                             <div class="form-group">
-								<label for="ver_group_id">Verification Group Name</label>
+								<label for="ver_group_id">Verification Sector Name</label>
 								<input type='hidden' class='form-control' id='ver_group' name='ver_group' >
 								<select tabindex="41" type="text" class="form-control" id="ver_group_id" name="ver_group_id" multiple>
-									<option value="">Select Group Name</option>
+									<option value="">Select Sector Name</option>
 								</select>
                             </div>
                         </div>
@@ -1011,9 +1011,9 @@ if($idupd>0)
 								<label for="noc_mapping_access">NOC Mapping Access</label>&nbsp;<span class="text-danger">*</span>
 								<select tabindex="64" type="text" class="form-control noc-checkbox" id="noc_mapping_access" name="noc_mapping_access" style="width: 250px;" <?php if($noc_mapping_access =='') echo 'disabled'; ?> >
 									<option value="">Select NOC Mapping Access</option>
-									<option value="1" <?php if($noc_mapping_access == '1') echo 'selected';?> >Group</option>
-									<option value="2" <?php if($noc_mapping_access == '2') echo 'selected';?> >Line</option>
-									<option value="3" <?php if($noc_mapping_access == '3') echo 'selected';?> >Followup</option>
+									<option value="1" <?php if($noc_mapping_access == '1') echo 'selected';?> >Sector</option>
+									<option value="2" <?php if($noc_mapping_access == '2') echo 'selected';?> >Region</option>
+									<option value="3" <?php if($noc_mapping_access == '3') echo 'selected';?> >Zone</option>
 								</select>
 								<br>
 								<span class="text-danger" style='display:none' id='handoverCheck'>Please Select NOC Mapping Access</span>

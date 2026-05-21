@@ -32,8 +32,8 @@
 									<th>Cust. Name</th>
 									<th>Area</th>
 									<th>Sub Area</th>
-									<th>Line</th>
-									<th>Group</th>
+									<th>Region</th>
+									<th>Sector</th>
 									<th>Branch</th>
 									<th>Handover Date</th>
 									<th>User Name</th>

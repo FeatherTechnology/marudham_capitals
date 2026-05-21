@@ -27,22 +27,22 @@
 				<input type="date" class="toggle-button" name='search_date' id='search_date' value=''>
 				<select class="toggle-button" name='type' id='type'>
 					<option value=''>Select Type</option>
-					<option value='1'>Line</option>
+					<option value='1'>Region</option>
 					<option value='2'>User</option>
-					<option value='3'>Group</option>
-					<option value='4'>Due Followup</option>
+					<option value='3'>Sector</option>
+					<option value='4'>Zone</option>
 				</select>
 				<select type="text" class="form-control" id="line" name="line" multiple style="display: none;">
-					<option value="">Select Line</option>
+					<option value="">Select Region</option>
 				</select>
 				<select type="text" class="toggle-button" id='by_user' name='by_user' style="display: none;">
 					<option value=''>Select User</option>
 				</select>
 				<select type="text" class="form-control" id="group_map" name="group_map" multiple style="display: none;">
-					<option value="">Select Group</option>
+					<option value="">Select Sector</option>
 				</select>
 				<select type="text" class="form-control" id="due_followup" name="due_followup" multiple style="display: none;">
-					<option value="">Select Due Followup</option>
+					<option value="">Select Zone</option>
 				</select> &nbsp;&nbsp;
 				<select type="text" class="form-control" id="loan_category" name="loan_category" multiple>
 					<option value="">Select Loan Category</option>

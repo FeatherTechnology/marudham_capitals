@@ -180,7 +180,7 @@ if (sizeof($getCustomerReg) > 0) {
 
 									<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-8">
 										<div class="form-group">
-											<label for="line_name"> Line </label>
+											<label for="line_name"> Region </label>
 											<input type="hidden" class="form-control" name="line_id" id="line_id" value="<?php if (isset($line_id)) {
 																																echo $line_id;
 																															} ?>">

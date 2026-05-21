@@ -90,7 +90,7 @@
 								<th>Area</th>
 								<th>Sub Area</th>
 								<th>Branch</th>
-								<th>Line</th>
+								<th>Region</th>
 								<th>Mobile</th>
 								<th>Sub Status</th>
 								<th>Responsible status</th>

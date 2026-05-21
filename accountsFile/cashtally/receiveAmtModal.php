@@ -102,7 +102,7 @@ $tot_amt = $total_collection_amt - $total_rec_amt;
             </div>
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                 <div class='form-group'>
-                    <label for='line_name_rec'>Line Name</label>
+                    <label for='line_name_rec'>Region Name</label>
                     <input type="hidden" class="form-control" id='line_id_rec' name='line_id_rec' value='<?php echo $line_id ?>' readonly>
                     <input type="text" class="form-control" id='line_name_rec' name='line_name_rec' value='<?php echo $line_name ?>' readonly>
                 </div>

@@ -65,8 +65,8 @@ if ($role_type == 7 || $role_type == 3) {
         <th>Mobile No.</th>
         <th>Area</th>
         <th>Sub Area</th>
-        <th>Line</th>
-        <th>Group</th>
+        <th>Region</th>
+        <th>Sector</th>
         <th>User Name</th>
         <th>Action</th>
         <th>Promotion Chart</th>

@@ -1,14 +1,16 @@
 <?php
 @session_start();
-include('..\ajaxconfig.php');
 
-if (isset($_SESSION["userid"])) {
-    $userid = $_SESSION["userid"];
-}
+include "../ajaxconfig.php";
 
-/* ================= USER ACCESS FILTER ================= */
-$sub_area_list = '';
-$colName = '';
+$userid = $_SESSION["userid"] ?? 0;
+
+$where = [];
+$params = [];
+
+/* =========================================================
+   USER ACCESS FILTER
+========================================================= */
 
 if ($userid != 1) {
 
@@ -36,23 +38,76 @@ if ($userid != 1) {
 
     [$source, $table, $mapCol, $selCol, $filterCol] = $accessMap[$accessType];
 
-    $ids = array_filter(array_map('intval', explode(',', $rowuser[$source] ?? '')));
+    $ids = array_filter(array_map('intval', explode(',',$rowuser[$source] ?? '')));
 
     if (!$ids) {
         echo json_encode([]);
         exit;
     }
 
-    $in = implode(',', array_fill(0, count($ids), '?'));
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
 
-    $stmt = $connect->prepare("SELECT DISTINCT $selCol FROM $table WHERE $mapCol IN ($in)");
+    $stmt = $connect->prepare("
+        SELECT DISTINCT $selCol
+        FROM $table
+        WHERE $mapCol IN ($placeholders)
+    ");
+
     $stmt->execute($ids);
 
-    $sub_area_list = implode(',', $stmt->fetchAll(PDO::FETCH_COLUMN));
-    $colName = $filterCol;
+    $mappedIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+    if (!$mappedIds) {
+        echo json_encode([]);
+        exit;
+    }
+
+    $where[] = "$filterCol IN (" . implode(',', array_fill(0, count($mappedIds), '?')) . ")";
+    $params = array_merge($params, $mappedIds);
 }
 
-$column = array(
+/* =========================================================
+   SEARCH
+========================================================= */
+
+$search = $_POST['search'] ?? '';
+
+if (!empty($search)) {
+
+    $where[] = "(
+        cr.cus_id LIKE ?
+        OR cr.autogen_cus_id LIKE ?
+        OR ii.loan_id LIKE ?
+        OR ad.doc_id LIKE ?
+        OR cr.customer_name LIKE ?
+        OR ac.area_name LIKE ?
+        OR sa.sub_area_name LIKE ?
+        OR bc.branch_name LIKE ?
+        OR alm.line_name LIKE ?
+        OR lcc.loan_category_creation_name LIKE ?
+        OR cr.mobile1 LIKE ?
+    )";
+
+    for ($i = 0; $i < 11; $i++) {
+        $params[] = "%$search%";
+    }
+}
+
+/* =========================================================
+   WHERE
+========================================================= */
+
+$whereSql = '';
+
+if (!empty($where)) {
+    $whereSql = ' AND ' . implode(' AND ', $where);
+}
+
+/* =========================================================
+   ORDER
+========================================================= */
+
+$columns = [
     'cs.updated_date',
     'cr.cus_id',
     'cr.autogen_cus_id',
@@ -69,160 +124,261 @@ $column = array(
     'cs.updated_date',
     'cs.updated_date',
     'cs.updated_date'
-);
+];
 
-$query = "SELECT cs.req_id, cr.cus_id, cr.autogen_cus_id, ii.loan_id, ad.doc_id, cr.customer_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cr.mobile1, lcc.loan_category_creation_name
-FROM closed_status cs
-JOIN in_issue ii ON cs.req_id = ii.req_id
-JOIN acknowlegement_documentation ad ON ii.req_id = ad.req_id
-JOIN in_verification iv ON ii.req_id = iv.req_id
-JOIN customer_register cr ON cs.cus_id = cr.cus_id
-JOIN area_list_creation ac ON cr.area_confirm_area = ac.area_id
-JOIN sub_area_list_creation sa ON cr.area_confirm_subarea = sa.sub_area_id
-JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sa.sub_area_id
-JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
-JOIN branch_creation bc ON alm.branch_id = bc.branch_id
-JOIN loan_category_creation lcc ON lcc.loan_category_creation_id = iv.loan_category
-WHERE cs.cus_sts = 23 ";
-
-if ($userid != 1) {
-    $query .= " AND $colName IN ($sub_area_list) ";
-}
-
-if (isset($_POST['search']) && $_POST['search'] != "") {
-
-    $query .= " AND (cr.cus_id LIKE '%" . $_POST['search'] . "%'
-            OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%'
-            OR ii.loan_id LIKE '%" . $_POST['search'] . "%'
-            OR ad.doc_id LIKE '%" . $_POST['search'] . "%'
-            OR cr.customer_name LIKE '%" . $_POST['search'] . "%'
-            OR ac.area_name LIKE '%" . $_POST['search'] . "%'
-            OR sa.sub_area_name LIKE '%" . $_POST['search'] . "%'
-            OR bc.branch_name LIKE '%" . $_POST['search'] . "%'
-            OR alm.line_name LIKE '%" . $_POST['search'] . "%'
-            OR lcc.loan_category_creation_name LIKE '%" . $_POST['search'] . "%'
-            OR cr.mobile1 LIKE '%" . $_POST['search'] . "%' ) ";
-}
-
-// $query .= 'GROUP BY cs.cus_id ';
+$orderBy = " ORDER BY cs.updated_date DESC ";
 
 if (isset($_POST['order'])) {
-    $query .= 'ORDER BY ' . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'] . ' ';
-} 
 
-$query1 = ($_POST['length'] != -1) ? 'LIMIT ' . $_POST['start'] . ', ' . $_POST['length'] : '';
+    $colIndex = (int)$_POST['order'][0]['column'];
 
-$statement = $connect->prepare($query);
+    $dir = ($_POST['order'][0]['dir'] == 'asc') ? 'ASC' : 'DESC';
 
-$statement->execute();
+    if (isset($columns[$colIndex])) {
+        $orderBy = " ORDER BY {$columns[$colIndex]} $dir ";
+    }
+}
 
-$number_filter_row = $statement->rowCount();
+/* =========================================================
+   LIMIT
+========================================================= */
 
-$statement = $connect->prepare($query . $query1);
+$limit = '';
 
-$statement->execute();
+if ($_POST['length'] != -1) {
 
-$result = $statement->fetchAll();
+    $start = (int)$_POST['start'];
+    $length = (int)$_POST['length'];
 
-$data = array();
-$sno = 1;
+    $limit = " LIMIT $start, $length ";
+}
+
+/* =========================================================
+   MAIN QUERY
+========================================================= */
+
+$query = "
+SELECT
+    cs.req_id,
+    cr.cus_id,
+    cr.autogen_cus_id,
+    ii.loan_id,
+    ad.doc_id,
+    cr.customer_name,
+    ac.area_name,
+    sa.sub_area_name,
+    alm.line_name,
+    bc.branch_name,
+    cr.mobile1,
+    lcc.loan_category_creation_name,
+
+    COALESCE(n.receive_status,0) AS receive_status,
+    n.receive_by,
+
+    u.user_name AS receive_person
+
+FROM closed_status cs
+
+JOIN in_issue ii
+    ON cs.req_id = ii.req_id
+
+JOIN acknowlegement_documentation ad
+    ON ii.req_id = ad.req_id
+
+JOIN in_verification iv
+    ON ii.req_id = iv.req_id
+
+JOIN customer_register cr
+    ON cs.cus_id = cr.cus_id
+
+JOIN area_list_creation ac
+    ON cr.area_confirm_area = ac.area_id
+
+JOIN sub_area_list_creation sa
+    ON cr.area_confirm_subarea = sa.sub_area_id
+
+JOIN area_line_mapping_sub_area almsa
+    ON almsa.sub_area_id = sa.sub_area_id
+
+JOIN area_line_mapping alm
+    ON alm.map_id = almsa.line_map_id
+
+JOIN branch_creation bc
+    ON alm.branch_id = bc.branch_id
+
+JOIN loan_category_creation lcc
+    ON lcc.loan_category_creation_id = iv.loan_category
+
+LEFT JOIN noc n
+    ON n.req_id = cs.req_id
+    AND n.cus_status = 23
+
+LEFT JOIN user u
+    ON u.user_id = n.receive_by
+
+WHERE
+    cs.cus_sts = 23
+
+    $whereSql
+
+$orderBy
+
+$limit
+";
+
+$stmt = $connect->prepare($query);
+
+$stmt->execute($params);
+
+$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+/* =========================================================
+   FILTERED COUNT
+========================================================= */
+
+$countQuery = "
+SELECT COUNT(*) FROM (
+    SELECT cs.req_id
+
+    FROM closed_status cs
+
+    JOIN in_issue ii
+        ON cs.req_id = ii.req_id
+
+    JOIN acknowlegement_documentation ad
+        ON ii.req_id = ad.req_id
+
+    JOIN in_verification iv
+        ON ii.req_id = iv.req_id
+
+    JOIN customer_register cr
+        ON cs.cus_id = cr.cus_id
+
+    JOIN area_list_creation ac
+        ON cr.area_confirm_area = ac.area_id
+
+    JOIN sub_area_list_creation sa
+        ON cr.area_confirm_subarea = sa.sub_area_id
+
+    JOIN area_line_mapping_sub_area almsa
+        ON almsa.sub_area_id = sa.sub_area_id
+
+    JOIN area_line_mapping alm
+        ON alm.map_id = almsa.line_map_id
+
+    JOIN branch_creation bc
+        ON alm.branch_id = bc.branch_id
+
+    JOIN loan_category_creation lcc
+        ON lcc.loan_category_creation_id = iv.loan_category
+
+    WHERE
+        cs.cus_sts = 23
+
+        $whereSql
+
+) x
+";
+
+$countStmt = $connect->prepare($countQuery);
+
+$countStmt->execute($params);
+
+$filtered = $countStmt->fetchColumn();
+
+/* =========================================================
+   TOTAL COUNT
+========================================================= */
+
+$totalStmt = $connect->query("
+    SELECT COUNT(*)
+    FROM closed_status
+    WHERE cus_sts = 23
+");
+
+$total = $totalStmt->fetchColumn();
+
+/* =========================================================
+   DATA
+========================================================= */
+
+$data = [];
+
+$sno = $_POST['start'] + 1;
+
 foreach ($result as $row) {
-    $sub_array   = array();
-    $cus_id = $row['cus_id'];
-    $req_id = $row['req_id'];
 
-    $sub_array[] = $sno++;
-    $sub_array[] = $cus_id;
-    $sub_array[] = $row['autogen_cus_id'];
-    $sub_array[] = $row['loan_id'];
-    $sub_array[] = $row['doc_id'];
-    $sub_array[] = $row['customer_name'];
-    $sub_array[] = $row['area_name'];
-    $sub_array[] = $row['sub_area_name'];
-    $sub_array[] = $row["branch_name"];
-    $sub_array[] = $row['line_name'];
-    $sub_array[] = $row['mobile1'];
-    $sub_array[] = $row['loan_category_creation_name'];
+    $receive_status = $row['receive_status'];
+    $receive_by = $row['receive_by'];
 
-    // Fetch receive status + receive_by
-    $qry = "SELECT receive_status, receive_by 
-            FROM noc 
-            WHERE req_id = '$req_id' AND cus_status = 23";
+    $status = ($receive_status == 0)
+        ? 'Pending'
+        : 'Completed';
 
-    $res = $connect->query($qry);
-    $rec = $res->fetch();
+    $action = "
+    <div class='dropdown'>
+        <button class='btn btn-outline-secondary'>
+            <i class='fa'>&#xf107;</i>
+        </button>
+        <div class='dropdown-content'>
+    ";
 
-    $receive_status  = $rec['receive_status'];   // 0 or 1
-    $receive_by      = $rec['receive_by'];       // user_id of the person who received
-
-    // ---------------- STATUS COLUMN ----------------
-    if ($receive_status == 0) {
-        $sub_array[] = "Pending";
-    } else {
-        $sub_array[] = "Completed";
-    }
-
-
-    // ---------------- RECEIVE BY COLUMN ----------------
-    $receive_person = "";
-
-    if ($receive_by != "") {
-        $userQry = $connect->query("
-            SELECT user_name
-            FROM user 
-            WHERE user_id = $receive_by
-        ");
-
-        $rowuser = $userQry->fetch();
-        $receive_person = $rowuser['user_name'];
-    }
-
-    $sub_array[] = ($receive_person != "") ? $receive_person : " ";
-    
-    $sub_array[] = "<a href='' data-value ='" . $cus_id . "' class='customer-status' data-toggle='modal' data-target='.customerstatus'><span class='icon-eye' style='font-size: 12px;position: relative;top: 2px;'></span></a>";
-
-    // ---------------- ACTION BUTTON LOGIC ----------------
-    $action = ""; // default
-
-    $action = "<div class='dropdown'>
-            <button class='btn btn-outline-secondary'>
-                <i class='fa'>&#xf107;</i>
-            </button>
-            <div class='dropdown-content'>";
-
-    // Status Completed → only show button to the person who received
     if ($receive_by == $userid) {
 
-        $action .= "<a href='noc_handover&cusidupd=$cus_id&reqidupd=$req_id' title='NOC handover'>Handover</a>";
+        $action .= "
+            <a href='noc_handover&cusidupd={$row['cus_id']}&reqidupd={$row['req_id']}' title='NOC handover'>
+                Handover
+            </a>
+        ";
 
     } else {
 
-        $action .= "<a href='' title='Receive details' class='receive-noc' data-reqid='$req_id'>Receive</a>";
+        $action .= "
+            <a href='' 
+               title='Receive details' 
+               class='receive-noc'
+               data-reqid='{$row['req_id']}'>
+               Receive
+            </a>
+        ";
     }
 
     $action .= "</div></div>";
 
-    $sub_array[] = $action;
-
-    $sub_array[] = $action;
-    $data[]      = $sub_array;
+    $data[] = [
+        $sno++,
+        $row['cus_id'],
+        $row['autogen_cus_id'],
+        $row['loan_id'],
+        $row['doc_id'],
+        $row['customer_name'],
+        $row['area_name'],
+        $row['sub_area_name'],
+        $row['branch_name'],
+        $row['line_name'],
+        $row['mobile1'],
+        $row['loan_category_creation_name'],
+        $status,
+        $row['receive_person'] ?? '',
+        "<a href='#'
+            data-value='{$row['cus_id']}'
+            class='customer-status' data-toggle='modal' data-target='.customerstatus'>
+            <span class='icon-eye'></span>
+        </a>",
+        $action
+    ];
 }
 
-function count_all_data($connect)
-{
-    $stmt = $connect->prepare("SELECT COUNT(*) AS cnt FROM in_issue WHERE status = 0 AND cus_status = 23");
-    $stmt->execute();
-    return $stmt->fetchColumn();
-}
+/* =========================================================
+   OUTPUT
+========================================================= */
 
-$output = array(
-    'draw' => intval($_POST['draw']),
-    'recordsTotal' => count_all_data($connect),
-    'recordsFiltered' => $number_filter_row,
-    'data' => $data
-);
+echo json_encode([
+    "draw" => intval($_POST['draw']),
+    "recordsTotal" => (int)$total,
+    "recordsFiltered" => (int)$filtered,
+    "data" => $data
+]);
 
-echo json_encode($output);
-
-// Close the database connection
 $connect = null;
+?>

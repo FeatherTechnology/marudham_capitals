@@ -76,7 +76,7 @@ function confirmationReportCount(from_date, to_date, user_type, selected_user) {
             const columns = [
                 { data: 'sno', title: "S.No" },
                 { data: 'fullname', title: "User Name" },
-                { data: 'line', title: "Line Name" },
+                { data: 'line', title: "Region Name" },
                 { data: 'total_count', title: "Total Count" },
                 { data: 't_completed_count', title: "Completed" },
                 { data: 't_unavailable_count', title: "Unavailable" },
