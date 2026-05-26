@@ -49,6 +49,18 @@
     border: 1px solid #ffffff !important;
 }
 
+.hidefield{
+    display: none;
+}
+
+.reports_filter_card .choices {
+    margin-bottom: 0px !important;
+}
+
+.reports_filter_card .choices__input {
+    width: 200px !important;
+}
+
 @media (max-width:590px){
     .date-button{
         margin-top: 0;

@@ -11,6 +11,23 @@ if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'
     $where  = "AND (date(c.created_date) >= '" . $from_date . "') AND (date(c.created_date) <= '" . $to_date . "')";
 }
 
+$selectedType = $_POST['selectedType'] ?? '';
+$selectedVal = $_POST['selectedVal'] ?? '';
+
+if(is_array($selectedVal)) {
+    $selectedVal = implode(',', $selectedVal);
+}
+
+if ($selectedType == '2') { //Sector
+    $where .= " AND agma.group_map_id IN ($selectedVal)";
+
+} else if ($selectedType == '3') { //Region
+    $where .= " AND alma.line_map_id IN ($selectedVal)";
+    
+} else if ($selectedType == '4') { //Zone
+    $where .= " AND adma.duefollowup_map_id IN ($selectedVal)";
+} 
+
 $user_ids = $_POST['user_id'] ?? '';
 $user_ids = preg_replace('/[^0-9,]/', '', $user_ids); // clean
 $id_list = implode(',', array_filter(explode(',', $user_ids), 'is_numeric'));
@@ -69,7 +86,13 @@ JOIN
 JOIN 
     customer_register cr ON cp.cus_id = cr.cus_id
 JOIN 
-    area_list_creation alc ON cp.area_confirm_area = alc.area_id   
+    area_list_creation alc ON cp.area_confirm_area = alc.area_id
+LEFT JOIN 
+    area_group_mapping_area agma ON alc.area_id = agma.area_id
+LEFT JOIN 
+    area_line_mapping_area alma ON alc.area_id = alma.area_id
+LEFT JOIN 
+    area_duefollowup_mapping_area adma ON alc.area_id = adma.area_id  
 WHERE 1
     $where";
 

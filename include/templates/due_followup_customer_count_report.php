@@ -11,20 +11,26 @@
     <!--form start-->
     <form id="due_followup_customer_count_report_form" name="due_followup_customer_count_report_form" action="" method="post" enctype="multipart/form-data">
 
-        <div class="row gutters" id="closed_card">
+        <div class="row gutters">
+
             <div class="toggle-container col-12">
+
                 <input type="date" id='to_date' name='to_date' class="toggle-button" value=''>
+
                 <select type="text" class="toggle-button" id='user_type' name='user_type'>
                     <option value=''>Select User Type</option>
                     <option value='1'>All</option>
                     <option value='2'>Active</option>
                     <option value='3'>In Active</option>
                 </select>
+
                 <select type="text" class="toggle-button" id='by_user' name='by_user'>
                     <option value=''>Select User</option>
                 </select>
+
                 <input type="button" id='reset_btn' name='reset_btn' class="toggle-button" style="background-color: #009688;color:white" value='Search'>
             </div>
+
             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="card">
                     <div class="card-header">Back Office Summary</div>
@@ -55,6 +61,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
 
     </form>
