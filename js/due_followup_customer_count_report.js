@@ -1,7 +1,57 @@
+const map_name = new Choices('#map_name', {
+    removeItemButton: true,
+    noChoicesText: 'Select Zone',
+    allowHTML: true
+});
+
+$('#map_name').closest('.choices').hide();
+
 $(document).ready(function () {
+    
+    $('#type').change(function (e) {
+        let type = $(this).val();
+        $('#user_type, #by_user').val('').show();
+        $('#by_user').empty().append("<option value=''>Select User</option>");
+        $('#map_name').closest('.choices').hide();
+        map_name.clearStore();
+        $('#due_followup_customer_count_report_table').DataTable().destroy();
+        $('#due_followup_customer_count_report_table tbody').empty();
+        
+        if(type == '2' || type == '3' || type == '4') { //sector - group
+            $('#map_name').closest('.choices').show();
+            
+        } else if(type == '0'){
+            $('#user_type, #by_user').hide();
+        }
+    });
 
     $('#user_type').change(function () {
-        getUserNames();
+        let userType = $('#user_type').val();
+        $('#by_user').empty().append("<option value=''>Select User</option>");  
+
+        if(userType != ''){
+            getUserNames();
+        }
+    });
+    
+    $('#by_user').change(function(){
+        let userId = $(this).val();
+        let typeVal = $('#type').val();
+
+        if(typeVal != '1' && userId !=''){ //if type user then no need to show mapping.
+            $.post('reportFile/promotion_activity/getUserMappedDetails.php', {userId, typeVal}, function (response) {
+
+                map_name.clearStore();
+
+                const items = response.map(row => ({
+                    value: row.ids,
+                    label: row.map_name
+                }));
+
+                map_name.setChoices(items);
+
+            },'json');
+        }
     });
 
     $('#reset_btn').click(function () {
@@ -13,8 +63,7 @@ function getUserNames() {
     let user_type = $('#user_type').val();
 
     $.post('reportFile/due_followup_customer_count/user_list.php', { user_type: user_type }, function (response) {
-        $('#by_user').empty();
-        $('#by_user').append("<option value=''>Select User</option>");
+        $('#by_user').empty().append("<option value=''>Select User</option>");
         $.each(response, function (index, val) {
             $('#by_user').append("<option value='" + val['user_id'] + "'>" + val['fullname'] + "</option>");
         });
@@ -23,30 +72,47 @@ function getUserNames() {
 
 function dueFollowUpCustomerCountReportTable() {
     let to_date = $('#to_date').val();
+    let selectedType = $('#type').val();
     let user_type = $('#user_type').val();
     let selected_user = $('#by_user').val();
 
-    if (!to_date) {
-        swalError('Please Select Date!', 'To Date is required.');
-        return;
+    let selectedVal = '';
+
+    if(selectedType == '1'){ //user
+        selectedVal = '1'; //dummy
+        
+    } else if(selectedType == '2' || selectedType == '3' || selectedType == '4'){ //sector - group //Region - Line //Zone - Followup
+        selectedVal = $('#map_name').val();
     }
 
-    if (!user_type) {
-        swalError('Please Select User Type!', 'User Type selection is required.');
+    if(!to_date || !selectedVal || !user_type || !selected_user){
+        swalError('Warning', `All Fields are required.`);
         return;
-    }
+    } 
 
-    if (!selected_user) {
-        swalError('Please Select User!', 'User selection is required.');
-        return;
-    }
+    // if (!to_date) {
+    //     swalError('Please Select Date!', 'To Date is required.');
+    //     return;
+    // }
+
+    // if (!user_type) {
+    //     swalError('Please Select User Type!', 'User Type selection is required.');
+    //     return;
+    // }
+
+    // if (!selected_user) {
+    //     swalError('Please Select User!', 'User selection is required.');
+    //     return;
+    // }
 
     $.ajax({
         url: 'reportFile/due_followup_customer_count/dueFollowupCustomerCountReport.php',
         method: 'POST',
         data: {
             user_id: selected_user,
-            to_date: to_date
+            to_date: to_date,
+            selectedType: selectedType,
+            selectedVal: selectedVal
         },
         success: function (res) {
             const parsed = JSON.parse(res);

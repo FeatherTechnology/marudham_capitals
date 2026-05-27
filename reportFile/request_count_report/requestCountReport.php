@@ -25,12 +25,11 @@ if ($user_id != 'all') {
     }
     $userIds = array_map('intval', $user_id);
 } else {
-        $stmt = $connect->prepare("SELECT DISTINCT u.user_id
-        FROM request_creation r
-        LEFT JOIN user u ON r.insert_login_id = u.user_id
-        WHERE r.insert_login_id != ''
-        $where
-    ");
+    $stmt = $connect->prepare("SELECT DISTINCT u.user_id
+    FROM request_creation r
+    LEFT JOIN user u ON r.insert_login_id = u.user_id
+    WHERE r.insert_login_id != ''
+    $where");
     $stmt->execute();
     $userIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
 }

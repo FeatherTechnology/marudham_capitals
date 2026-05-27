@@ -29,9 +29,9 @@
 
 				<select class="toggle-button" name='type' id='type'>
 					<option value='0'>Select Type</option>
-					<option value='1'>User</option>//2
-					<option value='2'>Sector</option> //3
-					<option value='3'>Region</option>//1
+					<option value='1'>User</option>
+					<option value='2'>Sector</option>
+					<option value='3'>Region</option>
 					<option value='4'>Zone</option>
 				</select>
 

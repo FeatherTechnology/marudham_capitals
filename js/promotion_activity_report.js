@@ -106,10 +106,10 @@ function commitmentReportTable() {
             'url': 'reportFile/promotion_activity/getPromotionActivityReport.php',
             'data': function (data) {
                 data.search = $('input[type=search]').val();
-                data.selected_date = $('#selected_date').val();
-                data.selectedType = $('#type').val();
+                data.selected_date = selected_date;
+                data.selectedType = selectedType;
                 data.selectedVal = selectedVal;
-                data.user_id = $('#by_user').val();
+                data.user_id = selected_user;
             }
         },
         dom: 'lBfrtip',

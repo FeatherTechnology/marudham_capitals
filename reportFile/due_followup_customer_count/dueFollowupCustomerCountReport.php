@@ -5,6 +5,9 @@ $to_date = date('Y-m-d', strtotime($_POST['to_date']));
 $toDate_month_start = date('Y-m-01', strtotime($to_date));
 $user_id = isset($_POST['user_id']) ? $_POST['user_id'] : '';
 
+$selectedType = $_POST['selectedType'] ?? '';
+$selectedVal = $_POST['selectedVal'] ?? '';
+
 function monthDiff($start, $end)
 {
     return ((date('Y', strtotime($end)) - date('Y', strtotime($start))) * 12)
@@ -69,6 +72,11 @@ while ($userRow = $userQry->fetch()) {
     $fullname = $userRow['fullname'];
     $line_ids = array_filter(array_map('intval', explode(',', $userRow['due_followup_lines'])));
     $line_ids_str = implode(',', $line_ids);
+   
+    if ($selectedType == '4') {
+        $line_ids_str = (is_array($selectedVal)) ? implode(',', $selectedVal) : $selectedVal;
+    }
+
     $condition = "adfm.map_id IN ($line_ids_str)";
 
     $loan_category_data = [];
