@@ -6,19 +6,19 @@ $user_id = ($_POST['user_id'] != '') ? $_POST['user_id'] : '';
 $type = $_POST['type'];
 
 if ($type == 'today') {
-    $where = " DATE(ii.updated_date) = CURRENT_DATE";
+    $where = " DATE(li.created_date) = CURRENT_DATE";
 
 } else if ($type == 'day') {
     $from_date = $_POST['from_date'];
     $to_date = $_POST['to_date'];
 
-    $where = " (DATE(ii.updated_date) >= DATE('$from_date') && DATE(ii.updated_date) <= DATE('$to_date'))";
+    $where = " (DATE(li.created_date) >= DATE('$from_date') && DATE(li.created_date) <= DATE('$to_date'))";
 
 } else if ($type == 'month') {
     $month = date('m', strtotime($_POST['month']));
     $year = date('Y', strtotime($_POST['month']));
 
-    $where = " (MONTH(ii.updated_date) = '$month' && YEAR(ii.updated_date) = '$year')";
+    $where = " (MONTH(li.created_date) = '$month' && YEAR(li.created_date) = '$year')";
 
 }
 
@@ -32,10 +32,11 @@ function getDetials($connect, $where, $condition)
     //will show only interest amunt under user's branch not others also
     //excluding due type interest , coz interest loans will be sepately calculated. those interest will be collected every month as due amount
     $qry = $connect->query("SELECT COALESCE(SUM(alc.int_amt_cal), 0) AS int_amt_cal 
-    FROM in_issue ii
-    JOIN acknowlegement_loan_calculation alc ON ii.req_id = alc.req_id  
-    JOIN in_verification iv ON ii.req_id = iv.req_id  
-    WHERE due_type != 'Interest' AND ii.cus_status > 13 AND $where $condition ");
+    FROM loan_issue li
+     JOIN in_issue ii ON li.req_id = ii.req_id
+    JOIN acknowlegement_loan_calculation alc ON li.req_id = alc.req_id  
+    JOIN in_verification iv ON li.req_id = iv.req_id  
+    WHERE due_type != 'Interest' AND ii.cus_status > 13 AND li.balance_amount = 0 AND $where $condition ");
     $row = $qry->fetch();
     $benefit_amount = $row['int_amt_cal']; //interest amount
 
