@@ -1,3 +1,11 @@
+const map_name = new Choices('#map_name', {
+    removeItemButton: true,
+    noChoicesText: 'Select',
+    allowHTML: true
+});
+
+$('#map_name').closest('.choices').hide();
+
 $(document).ready(function () {
 
     // 🔹 Date validation
@@ -11,8 +19,50 @@ $(document).ready(function () {
         }
     });
 
+    $('#type').change(function (e) {
+        let type = $(this).val();
+        $('#user_type, #by_user').val('').show();
+        $('#by_user').empty().append("<option value=''>Select User</option>");
+        $('#map_name').closest('.choices').hide();
+        map_name.clearStore();
+        $('#back_office_count_table').DataTable().destroy();
+        $('#back_office_count_table tbody').empty();
+        
+        if(type == '4') { //Zone - Followup
+            $('#map_name').closest('.choices').show();
+            
+        } else if(type == '0'){
+            $('#user_type, #by_user').hide();
+        }
+    });
+
     $('#user_type').change(function () {
-        getUserNames();
+        let userType = $('#user_type').val();
+        $('#by_user').empty().append("<option value=''>Select User</option>");  
+
+        if(userType != ''){
+            getUserNames();
+        }
+    });
+
+    $('#by_user').change(function(){
+        let userId = $(this).val();
+        let typeVal = $('#type').val();
+
+        if(typeVal != '1' && userId !=''){ //if type user then no need to show mapping.
+            $.post('reportFile/promotion_activity/getUserMappedDetails.php', {userId, typeVal}, function (response) {
+
+                map_name.clearStore();
+
+                const items = response.map(row => ({
+                    value: row.ids,
+                    label: row.map_name
+                }));
+
+                map_name.setChoices(items);
+
+            },'json');
+        }
     });
 
     // 🔹 Reset / Show Button Click
@@ -20,17 +70,25 @@ $(document).ready(function () {
 
         let from_date = $('#from_date').val();
         let to_date = $('#to_date').val();
+        let selectedType = $('#type').val();
         let user_type = $('#user_type').val();
         let selected_user = $('#by_user').val();
+        let selectedVal = '';
 
-        if (!from_date || !to_date || !user_type || !selected_user) {
-            swalError('Please Select All Fields!', 'All fields are required.');
+        if(selectedType == '1'){ //user
+            selectedVal = '1'; //dummy
+            
+        } else if(selectedType == '4'){ //Zone - Followup
+            selectedVal = $('#map_name').val();
+        }
+
+        if(!from_date || !to_date || !selectedVal || !user_type || !selected_user){
+            swalError('Warning', `All Fields are required.`);
             return;
         }
+
         resetAllTables()
-        backOfficeCount(from_date, to_date, user_type, selected_user);
-
-
+        backOfficeCount(from_date, to_date, selectedType, user_type, selected_user, selectedVal);
     });
 
     $('#unpaid_btn').off('click').on('click', function () {
@@ -52,28 +110,20 @@ function getUserNames() {
     let user_type = $('#user_type').val();
 
     $.post('reportFile/due_followup_customer_count/user_list.php', { user_type: user_type }, function (response) {
-        $('#by_user').empty();
-        $('#by_user').append("<option value=''>Select User</option>");
+        $('#by_user').empty().append("<option value=''>Select User</option>");
         $.each(response, function (index, val) {
             $('#by_user').append("<option value='" + val['user_id'] + "'>" + val['fullname'] + "</option>");
         });
     }, 'json');
 }
 
-
-
 // Back Office Count
-function backOfficeCount(from_date, to_date, user_type, selected_user) {
+function backOfficeCount(from_date, to_date, selectedType, user_type, user_id, selectedVal) {
 
     $.ajax({
         url: 'reportFile/back_office_count_report/backOfficeCount.php',
         type: 'POST',
-        data: {
-            from_date: from_date,
-            to_date: to_date,
-            user_type: user_type,
-            user_id: selected_user,
-        },
+        data: { from_date, to_date, selectedType, user_type, user_id, selectedVal },
         dataType: 'json',
         success: function (res) {
 
@@ -212,6 +262,7 @@ function unPaidInfo(req_ids, from_date, to_date) {
         }
     });
 }
+
 function closeModal() {
  $('.unpaidModal').modal('hide');
 }
@@ -223,7 +274,3 @@ function resetAllTables() {
 
     $("th, td").show(); // reset any hidden columns
 }
-
-
-
-

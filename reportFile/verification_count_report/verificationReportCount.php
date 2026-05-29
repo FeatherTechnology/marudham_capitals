@@ -15,6 +15,29 @@ if ($user_type == '2') {
     $where .= " AND u.status = 1";
 }
 
+$selectedType = $_POST['selectedType'] ?? '';
+$selectedVal = $_POST['selectedVal'] ?? '';
+
+if(is_array($selectedVal)) {
+    $selectedVal = implode(',', $selectedVal);
+}
+
+$joinTable ='';
+$condition = '';
+
+if ($selectedType == '2') { //Sector
+    $joinTable  = "  JOIN area_group_mapping_sub_area agmsa ON req.sub_area = agmsa.sub_area_id";
+    $condition  = "AND agmsa.group_map_id IN ($selectedVal)";
+
+} else if ($selectedType == '3') { //Region
+    $joinTable = "  JOIN area_line_mapping_sub_area almsa ON req.sub_area = almsa.sub_area_id";
+    $condition = "AND almsa.line_map_id IN ($selectedVal)";
+    
+} else if ($selectedType == '4') { //Zone
+    $joinTable = "  JOIN area_duefollowup_mapping_area adma ON req.area = adma.area_id";
+    $condition = "AND adma.duefollowup_map_id IN ($selectedVal)";
+} 
+
 /* =====================
    USER FILTER (from in_approval)
 ===================== */
@@ -133,10 +156,12 @@ $prevQuery = "
     JOIN customer_profile cp ON cp.req_id = ia.req_id
     LEFT JOIN in_issue ii ON ii.req_id = ia.req_id AND ii.cus_status >= 14
     LEFT JOIN customer_status cs ON ii.req_id = cs.req_id AND ii.cus_status >= 14
+    $joinTable
     WHERE ia.insert_login_id IN ($placeholders) 
     AND DATE(ia.created_date) < ?
     AND NOT (req.cus_status IN (5,6,7,9) AND DATE(req.updated_date) < ?)
     AND NOT (ii.updated_date IS NOT NULL AND DATE(ii.updated_date) < ?)
+    $condition
 ";
 
 $stmt = $connect->prepare($prevQuery);
@@ -155,8 +180,10 @@ $currentQuery = "
     JOIN customer_profile cp ON cp.req_id = ia.req_id
     LEFT JOIN in_issue ii ON ii.req_id = ia.req_id AND ii.cus_status >= 14
     LEFT JOIN customer_status cs ON ii.req_id = cs.req_id AND ii.cus_status >= 14
+    $joinTable
     WHERE ia.insert_login_id IN ($placeholders) 
-    AND DATE(ia.created_date) BETWEEN ? AND ?
+    AND (DATE(ia.created_date) BETWEEN ? AND ?)
+    $condition
 ";
 
 $stmt = $connect->prepare($currentQuery);

@@ -25,8 +25,10 @@ $(document).ready(function () {
         $('#by_user').empty().append("<option value=''>Select User</option>");
         $('#map_name').closest('.choices').hide();
         map_name.clearStore();
-        $('#request_count_table').DataTable().destroy();
-        $('#request_count_table tbody').empty();
+        if ($.fn.DataTable.isDataTable('#request_count_table')) {
+            $('#request_count_table').DataTable().clear().draw();
+            $('#request_count_table').DataTable().destroy();
+        }
         
         if(type == '2' || type == '3' || type == '4') { //sector - group
             $('#map_name').closest('.choices').show();

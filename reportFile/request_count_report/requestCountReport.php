@@ -15,6 +15,29 @@ if ($user_type == '2') {
     $where .= " AND u.status = 1";
 }
 
+$selectedType = $_POST['selectedType'] ?? '';
+$selectedVal = $_POST['selectedVal'] ?? '';
+
+if(is_array($selectedVal)) {
+    $selectedVal = implode(',', $selectedVal);
+}
+
+$joinTable ='';
+$condition = '';
+
+if ($selectedType == '2') { //Sector
+    $joinTable  = "  JOIN area_group_mapping_sub_area agmsa ON req.sub_area = agmsa.sub_area_id";
+    $condition  = "AND agmsa.group_map_id IN ($selectedVal)";
+
+} else if ($selectedType == '3') { //Region
+    $joinTable = "  JOIN area_line_mapping_sub_area almsa ON req.sub_area = almsa.sub_area_id";
+    $condition = "AND almsa.line_map_id IN ($selectedVal)";
+    
+} else if ($selectedType == '4') { //Zone
+    $joinTable = "  JOIN area_duefollowup_mapping_area adma ON req.area = adma.area_id";
+    $condition = "AND adma.duefollowup_map_id IN ($selectedVal)";
+} 
+
 /* =====================
    USER FILTER
 ===================== */
@@ -63,10 +86,11 @@ $loanCats = $connect->query("
 ===================== */
 
 $historyStmt = $connect->query("
-    SELECT rc.cus_id, rc.req_id, rc.cus_status, cc.closing_date, rc.dor
-    FROM request_creation rc
-    LEFT JOIN closing_customer cc ON cc.req_id = rc.req_id
-    WHERE rc.cus_status NOT IN (4,5,6,7,8,9)
+    SELECT req.cus_id, req.req_id, req.cus_status, cc.closing_date, req.dor
+    FROM request_creation req
+    LEFT JOIN closing_customer cc ON cc.req_id = req.req_id
+    $joinTable
+    WHERE req.cus_status NOT IN (4,5,6,7,8,9) $condition
 ");
 
 $historyData = [];
@@ -141,6 +165,7 @@ $prevQuery = "
     FROM request_creation req
     LEFT JOIN in_issue ii ON ii.req_id = req.req_id AND ii.cus_status >= 14
     LEFT JOIN customer_status cs ON ii.req_id = cs.req_id AND ii.cus_status >= 14
+    $joinTable
     WHERE req.insert_login_id IN ($placeholders) 
     AND DATE(req.created_date) < ?
     AND NOT (
@@ -151,6 +176,7 @@ $prevQuery = "
         ii.updated_date IS NOT NULL
         AND DATE(ii.updated_date) < ?
     )
+    $condition
 ";
 
 $stmt = $connect->prepare($prevQuery);
@@ -164,8 +190,10 @@ $currentQuery = "
     FROM request_creation req
     LEFT JOIN in_issue ii ON ii.req_id = req.req_id AND ii.cus_status >= 14
     LEFT JOIN customer_status cs ON ii.req_id = cs.req_id AND ii.cus_status >= 14
+    $joinTable
     WHERE req.insert_login_id IN ($placeholders) 
-    AND DATE(req.created_date) BETWEEN ? AND ?
+    AND (DATE(req.created_date) BETWEEN ? AND ?)
+    $condition
 ";
 $stmt = $connect->prepare($currentQuery);
 $stmt->execute(array_merge($userIds, [$from_date, $to_date]));

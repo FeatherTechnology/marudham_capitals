@@ -15,6 +15,29 @@ if ($user_type == '2') {
     $condition .= " AND u.status = 1";
 }
 
+$selectedType = $_POST['selectedType'] ?? '';
+$selectedVal = $_POST['selectedVal'] ?? '';
+
+if(is_array($selectedVal)) {
+    $selectedVal = implode(',', $selectedVal);
+}
+
+$joinTable ='';
+$mapidcondition = '';
+
+if ($selectedType == '2') { //Sector
+    $joinTable  = "  JOIN area_group_mapping_sub_area agmsa ON cr.sub_area = agmsa.sub_area_id";
+    $mapidcondition  = "AND agmsa.group_map_id IN ($selectedVal)";
+
+} else if ($selectedType == '3') { //Region
+    $joinTable = "  JOIN area_line_mapping_sub_area almsa ON cr.sub_area = almsa.sub_area_id";
+    $mapidcondition = "AND almsa.line_map_id IN ($selectedVal)";
+    
+} else if ($selectedType == '4') { //Zone
+    $joinTable = "  JOIN area_duefollowup_mapping_area adma ON cr.area = adma.area_id";
+    $mapidcondition = "AND adma.duefollowup_map_id IN ($selectedVal)";
+} 
+
 /* ---------- DATES ---------- */
 if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'] != '' && $_POST['to_date'] != '') {
     $from_date = $_POST['from_date'] . " 00:00:00";
@@ -42,7 +65,9 @@ $column = array(
 /* ---------- BASE QUERY ---------- */
 $base_query = "FROM new_promotion np
 LEFT JOIN user u ON np.insert_login_id = u.user_id
-WHERE $where $condition";
+LEFT JOIN customer_register cr ON np.cus_id = cr.cus_id
+$joinTable
+WHERE $where $condition $mapidcondition";
 
 /* ---------- GROUP BY ---------- */
 $group_by = "GROUP BY np.insert_login_id, np.promo_type, np.status, np.orgin_table";
@@ -74,7 +99,7 @@ $totalStmt->execute();
 $recordsTotal = (int) $totalStmt->fetchColumn();
 
 /* ---------- FILTERED RECORDS ---------- */
-$countStmt = $connect->prepare("SELECT COUNT(*) FROM (SELECT id $base_query $filter_group_by) AS sq");
+$countStmt = $connect->prepare("SELECT COUNT(*) FROM (SELECT np.id $base_query $filter_group_by) AS sq");
 $countStmt->execute();
 $recordsFiltered = (int) $countStmt->fetchColumn();
 

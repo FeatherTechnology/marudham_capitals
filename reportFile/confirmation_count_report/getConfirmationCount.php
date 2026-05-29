@@ -11,6 +11,29 @@ if (!is_array($user_id)) {
 $user_id = array_map('intval', $user_id);
 $user_id_str = implode(',', $user_id);
 
+$selectedType = $_POST['selectedType'] ?? '';
+$selectedVal = $_POST['selectedVal'] ?? '';
+
+if(is_array($selectedVal)) {
+    $selectedVal = implode(',', $selectedVal);
+}
+
+$joinTable ='';
+$mapidcondition = '';
+
+if ($selectedType == '2') { //Sector
+    $joinTable  = "  JOIN area_group_mapping_sub_area agmsa ON cp.area_confirm_subarea = agmsa.sub_area_id";
+    $mapidcondition  = "AND agmsa.group_map_id IN ($selectedVal)";
+
+} else if ($selectedType == '3') { //Region
+    $joinTable = "  JOIN area_line_mapping_sub_area almsa ON cp.area_confirm_subarea = almsa.sub_area_id";
+    $mapidcondition = "AND almsa.line_map_id IN ($selectedVal)";
+    
+} else if ($selectedType == '4') { //Zone
+    $joinTable = "  JOIN area_duefollowup_mapping_area adma ON cp.area_confirm_area = adma.area_id";
+    $mapidcondition = "AND adma.duefollowup_map_id IN ($selectedVal)";
+} 
+
 /* USER NAME */
 $userNameQry = $connect->query("
     SELECT fullname 
@@ -48,8 +71,10 @@ JOIN area_list_creation al
     ON cp.area_confirm_area = al.area_id
 JOIN area_line_mapping_area alma ON al.area_id = alma.area_id
 JOIN area_line_mapping alm ON alma.line_map_id = alm.map_id
+$joinTable
 
-WHERE DATE(cf.created_date) BETWEEN '$from_date' AND '$to_date'
+WHERE (DATE(cf.created_date) BETWEEN '$from_date' AND '$to_date')
+$mapidcondition
 GROUP BY alm.line_name
 ORDER BY alm.line_name;
 ");

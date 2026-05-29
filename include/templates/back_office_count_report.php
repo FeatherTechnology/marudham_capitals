@@ -14,6 +14,7 @@
         border-right: 1px solid #ffffff !important;
     }
 </style>
+
 <link rel="stylesheet" type="text/css" href="css/ledger_report.css">
 <br><br>
 <div class="page-header">
@@ -21,26 +22,43 @@
         Marudham Capitals - Back Office Count Report
     </div>
 </div><br>
+
 <!-- Main container start -->
 <div class="main-container">
     <!--form start-->
     <form name="due_followup_report_form" action="" method="post" enctype="multipart/form-data">
 
-        <div class="row gutters" id="closed_card">
-            <div class="toggle-container col-12">
+        <div class="row gutters">
+
+            <div class="toggle-container col-12 reports_filter_card">
+
                 <input type="date" id='from_date' name='from_date' class="toggle-button" value=''>
                 <input type="date" id='to_date' name='to_date' class="toggle-button" value=''>
-                <select type="text" class="toggle-button" id='user_type' name='user_type'>
+
+                <select class="toggle-button" name='type' id='type'>
+					<option value='0'>Select Type</option>
+					<option value='1'>User</option>
+					<option value='4'>Zone</option>
+				</select>
+
+                <select class="toggle-button hidefield" id='user_type' name='user_type'>
                     <option value=''>Select User Type</option>
                     <option value='1'>All</option>
                     <option value='2'>Active</option>
                     <option value='3'>In Active</option>
                 </select>
-                <select type="text" class="toggle-button" id='by_user' name='by_user'>
+
+                <select class="toggle-button hidefield" id='by_user' name='by_user'>
                     <option value=''>Select User</option>
                 </select>
+
+                <select class="form-control hidefield" id="map_name" name="map_name" multiple>
+                    <option value="">Select</option>
+                </select>
+
                 <input type="button" id='reset_btn' name='reset_btn' class="toggle-button" style="background-color: #009688;color:white" value='Search'>
             </div>
+
             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="card">
                     <div class="card-header">Back Office Count Report
@@ -111,7 +129,9 @@
                     </div>
                 </div>
             </div>
+
         </div>
+
     </form>
 </div>
 

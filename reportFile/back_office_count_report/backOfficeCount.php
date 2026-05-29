@@ -5,6 +5,10 @@ $to_date = date('Y-m-d', strtotime($_POST['to_date']));
 $from_date = date('Y-m-d', strtotime($_POST['from_date']));
 $fromDate_month_start = date('Y-m-01', strtotime($from_date));
 $user_id = $_POST['user_id'] ?? '';
+
+$selectedType = $_POST['selectedType'] ?? '';
+$selectedVal = $_POST['selectedVal'] ?? '';
+
 $data = [];
 $sno = 1;
 
@@ -23,6 +27,10 @@ if (!$userRow) {
 $fullname = $userRow['fullname'];
 $line_ids = array_filter(array_map('intval', explode(',', $userRow['due_followup_lines'])));
 $line_ids_str = implode(',', $line_ids);
+
+if ($selectedType == '4') {
+    $line_ids_str = (is_array($selectedVal)) ? implode(',', $selectedVal) : $selectedVal;
+}
 
 // **2. COMBINED OD + DueNil query - Single execution**
 $specialReqStmt = $connect->prepare("
@@ -347,7 +355,7 @@ foreach ($commitmentData as $req_id => $data) {
 $data = [[
     'sno' => 1,
     'fullname' => $fullname ?? 'N/A',
-    'total_count' => $total_count,
+    'total_count' => $t_current_count,
     'payable_zero' => $payable_zero,
     'responsible_zero' => $responsible_zero,
     'balance_count' => $balance_count,

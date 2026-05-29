@@ -17,7 +17,7 @@ $(document).ready(function () {
         $('#due_followup_customer_count_report_table').DataTable().destroy();
         $('#due_followup_customer_count_report_table tbody').empty();
         
-        if(type == '2' || type == '3' || type == '4') { //sector - group
+        if(type == '4') { //Zone - Followup
             $('#map_name').closest('.choices').show();
             
         } else if(type == '0'){
@@ -81,7 +81,7 @@ function dueFollowUpCustomerCountReportTable() {
     if(selectedType == '1'){ //user
         selectedVal = '1'; //dummy
         
-    } else if(selectedType == '2' || selectedType == '3' || selectedType == '4'){ //sector - group //Region - Line //Zone - Followup
+    } else if(selectedType == '4'){ //Zone - Followup
         selectedVal = $('#map_name').val();
     }
 
