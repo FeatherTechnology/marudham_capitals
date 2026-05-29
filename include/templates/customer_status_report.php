@@ -1,6 +1,6 @@
 <style>
 	.choices__inner {
-		margin-top: 30px !important;
+		margin-top: 0px !important;
 	}
 
 	.choices__input {
@@ -23,37 +23,46 @@
 
 		<div class="row gutters">
 
-			<div class="toggle-container col-12">
+			<div class="toggle-container col-12 reports_filter_card">
+
 				<input type="date" class="toggle-button" name='search_date' id='search_date' value=''>
+
 				<select class="toggle-button" name='type' id='type'>
-					<option value=''>Select Type</option>
-					<option value='1'>Region</option>
-					<option value='2'>User</option>
-					<option value='3'>Sector</option>
+					<option value='0'>Select Type</option>
+					<option value='1'>User</option>
+					<option value='2'>Sector</option>
+					<option value='3'>Region</option>
 					<option value='4'>Zone</option>
 				</select>
-				<select type="text" class="form-control" id="line" name="line" multiple style="display: none;">
-					<option value="">Select Region</option>
-				</select>
-				<select type="text" class="toggle-button" id='by_user' name='by_user' style="display: none;">
+
+                <select class="toggle-button hidefield" id='user_type' name='user_type'>
+                    <option value=''>Select User Type</option>
+                    <option value='1'>All</option>
+                    <option value='2'>Active</option>
+                    <option value='3'>In Active</option>
+                </select>
+
+				<select class="toggle-button hidefield" id='by_user' name='by_user'>
 					<option value=''>Select User</option>
 				</select>
-				<select type="text" class="form-control" id="group_map" name="group_map" multiple style="display: none;">
-					<option value="">Select Sector</option>
-				</select>
-				<select type="text" class="form-control" id="due_followup" name="due_followup" multiple style="display: none;">
-					<option value="">Select Zone</option>
-				</select> &nbsp;&nbsp;
-				<select type="text" class="form-control" id="loan_category" name="loan_category" multiple>
+						     
+                <select class="form-control hidefield" id="map_name" name="map_name" multiple>
+                    <option value="">Select</option>
+                </select> &nbsp;&nbsp;
+
+				<select class="form-control" id="loan_category" name="loan_category" multiple>
 					<option value="">Select Loan Category</option>
 				</select>
+
 				<select class="toggle-button" name='sub_status_type' id='sub_status_type'>
 					<option value=''>Select Sub Status</option>
 					<option value='1'>Current</option>
 					<option value='2'>Pending</option>
 					<option value='3'>OD</option>
 				</select>
+
 				<input type="button" id='reset_btn' name='reset_btn' class="toggle-button" style="background-color: #2f958bd9;color:white" value='Search'>
+
 			</div>
 
 			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
@@ -62,6 +71,7 @@
 					<div class="card-header">Collection Status Report</div>
 					<div class="card-body">
 						<div id="pending_od_table_div" class="table-divs" style="overflow-x: auto;">
+
 							<table id="current_table" class="table custom-table" style="display: none;">
 								<thead>
 									<tr>
@@ -86,6 +96,7 @@
 								<tbody></tbody>
 								<tfoot></tfoot>
 							</table>
+
 							<table id="pending_table" class="table custom-table" style="display: none;">
 								<thead>
 									<tr>
@@ -107,6 +118,7 @@
 								<tbody></tbody>
 								<tfoot></tfoot>
 							</table>
+
 							<table id="od_table" class="table custom-table" style="display: none;">
 								<thead>
 									<tr>
@@ -128,6 +140,7 @@
 								<tbody></tbody>
 								<tfoot></tfoot>
 							</table>
+
 						</div>
 					</div>
 				</div>

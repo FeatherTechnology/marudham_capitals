@@ -55,6 +55,8 @@
                                     <th>Responsible</th>
                                     <th>Cust. Data</th>
                                     <th>Existing Type</th>
+                                    <th>User Type</th>
+                                    <th>User Name</th>
                                     <th>Cancel/Revoke Date</th>
                                     <th>Cust. Status</th>
                                     <th>Remarks</th>
@@ -64,8 +66,7 @@
                                     <tr>
                                         <td colspan="13"></td>
                                         <td></td>
-                                        <td></td>
-                                        <td colspan="8"></td>
+                                        <td colspan="11"></td>
                                     </tr>
                                 </tfoot>
                             </table>

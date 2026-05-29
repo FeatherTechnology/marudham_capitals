@@ -15,6 +15,29 @@ if ($user_type == '2') {
     $where .= " AND u.status = 1";
 }
 
+$selectedType = $_POST['selectedType'] ?? '';
+$selectedVal = $_POST['selectedVal'] ?? '';
+
+if(is_array($selectedVal)) {
+    $selectedVal = implode(',', $selectedVal);
+}
+
+$joinTable ='';
+$condition = '';
+
+if ($selectedType == '2') { //Sector
+    $joinTable  = "  JOIN area_group_mapping_sub_area agmsa ON cp.area_confirm_subarea = agmsa.sub_area_id";
+    $condition  = "AND agmsa.group_map_id IN ($selectedVal)";
+
+} else if ($selectedType == '3') { //Region
+    $joinTable = "  JOIN area_line_mapping_sub_area almsa ON cp.area_confirm_subarea = almsa.sub_area_id";
+    $condition = "AND almsa.line_map_id IN ($selectedVal)";
+    
+} else if ($selectedType == '4') { //Zone
+    $joinTable = "  JOIN area_duefollowup_mapping_area adma ON cp.area_confirm_area = adma.area_id";
+    $condition = "AND adma.duefollowup_map_id IN ($selectedVal)";
+} 
+
 /* ===================== USER FILTER ===================== */
 
 if ($user_id != 'all') {
@@ -92,14 +115,15 @@ $currentQuery = "
         LEFT JOIN agent_creation ac ON ac.ag_id = li.agent_id
         LEFT JOIN document_track dt ON dt.req_id = li.req_id
         LEFT JOIN customer_profile cp ON cp.req_id = li.req_id
+        $joinTable
         WHERE dt.insert_login_id IN ($placeholders) 
-    AND DATE(li.created_date) BETWEEN ? AND ? 
+        AND (DATE(li.created_date) BETWEEN ? AND ?)
+        $condition 
 ";
-// echo $currentQuery;die;
+
 $stmt = $connect->prepare($currentQuery);
 $stmt->execute(array_merge($userIds, [$from_date, $to_date]));
 $currentRecords = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 
 $currentByUserCat = [];
 foreach ($currentRecords as $r) {
@@ -181,8 +205,7 @@ function processRecord($r, &$counters) {
         $counters['status'][$sub]++;
         $counters['status']['total']++;
     }
-        
-    
+
 }
 /* =====================  TOTALS ===================== */
 

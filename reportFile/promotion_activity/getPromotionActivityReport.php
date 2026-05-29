@@ -11,13 +11,34 @@ if (isset($_POST['selected_date']) && $_POST['selected_date'] != '') {
           AND np.created_date <= '" . $selected_date . " 23:59:59'";
 }
 
+$selectedType = $_POST['selectedType'] ?? '';
+$selectedVal = $_POST['selectedVal'] ?? '';
+
+if(is_array($selectedVal)) {
+    $selectedVal = implode(',', $selectedVal);
+}
+
+if ($selectedType == '2') { //Sector
+    $where .= " AND agm.map_id IN ($selectedVal)";
+
+} else if ($selectedType == '3') { //Region
+    $where .= " AND alm.map_id IN ($selectedVal)";
+    
+} else if ($selectedType == '4') { //Zone
+    $where .= " AND adm.map_id IN ($selectedVal)";
+
+} 
+
 $user_ids = $_POST['user_id'] ?? '';
 $user_ids = preg_replace('/[^0-9,]/', '', $user_ids); // clean
 $id_list = implode(',', array_filter(explode(',', $user_ids), 'is_numeric'));
+
 if (!empty($id_list)) {
     $where .= " AND np.insert_login_id IN ($id_list) ";
 }
+
 $promo_type_arr = ['1'=>'Direct','2'=>'Mobile'];
+
 $column = array(
     'np.id',
     'np.cus_id',
@@ -30,6 +51,7 @@ $column = array(
     'COALESCE(sl.sub_area_name, ncp.sub_area)',
     'alm.line_name',
     'agm.group_name',
+    'adm.duefollowup_name',
     'bc.branch_name',
     'np.promo_type',
     'np.status',
@@ -56,6 +78,7 @@ $query = "SELECT
     bc.branch_name, 
     agm.group_name, 
     alm.line_name, 
+    adm.duefollowup_name, 
     np.follow_date, 
     np.orgin_table
 FROM 
@@ -69,11 +92,19 @@ LEFT JOIN
 LEFT JOIN 
     area_list_creation al ON al.area_id = COALESCE(cp.area, ncp.area)
 LEFT JOIN 
-    sub_area_list_creation sl ON   sl.sub_area_id = COALESCE(cp.sub_area, ncp.sub_area) 
-LEFT JOIN area_group_mapping_sub_area agmsa ON sl.sub_area_id = agmsa.sub_area_id
-LEFT JOIN area_group_mapping agm ON agmsa.group_map_id = agm.map_id
-LEFT JOIN area_line_mapping_sub_area almsa ON sl.sub_area_id = almsa.sub_area_id
-LEFT JOIN area_line_mapping alm ON almsa.line_map_id = alm.map_id
+    sub_area_list_creation sl ON sl.sub_area_id = COALESCE(cp.sub_area, ncp.sub_area) 
+LEFT JOIN 
+    area_group_mapping_sub_area agmsa ON sl.sub_area_id = agmsa.sub_area_id
+LEFT JOIN 
+    area_group_mapping agm ON agmsa.group_map_id = agm.map_id
+LEFT JOIN 
+    area_line_mapping_sub_area almsa ON sl.sub_area_id = almsa.sub_area_id
+LEFT JOIN 
+    area_line_mapping alm ON almsa.line_map_id = alm.map_id
+LEFT JOIN 
+    area_duefollowup_mapping_area adma ON al.area_id = adma.area_id
+LEFT JOIN 
+    area_duefollowup_mapping adm ON adma.duefollowup_map_id = adm.map_id
 LEFT JOIN 
     branch_creation bc ON agm.branch_id = bc.branch_id  
 
@@ -81,21 +112,22 @@ WHERE 1 $where";
 
 if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {
-        $query .= " and (np.created_date LIKE '%" . $_POST['search'] . "%' OR
-            np.cus_id LIKE '%" . $_POST['search'] . "%' OR
-            cp.autogen_cus_id LIKE '%" . $_POST['search'] . "%' OR
-            COALESCE(cp.customer_name, ncp.cus_name) LIKE '%" . $_POST['search'] . "%' OR
-            COALESCE(al.area_name, ncp.area) LIKE '%" . $_POST['search'] . "%' OR
-            COALESCE(sl.sub_area_name, ncp.sub_area) LIKE '%" . $_POST['search'] . "%' OR
-            bc.branch_name LIKE '%" . $_POST['search'] . "%' OR
-            agm.group_name LIKE '%" . $_POST['search'] . "%' OR
-            alm.line_name LIKE '%" . $_POST['search'] . "%' OR
-            np.status LIKE '%" . $_POST['search'] . "%' OR
-            np.remark LIKE '%" . $_POST['search'] . "%' OR
-            u.role LIKE '%" . $_POST['search'] . "%' OR
-            u.fullname LIKE '%" . $_POST['search'] . "%' OR
-            COALESCE(cp.mobile1, ncp.mobile) LIKE '%" . $_POST['search'] . "%' OR
-            np.follow_date LIKE '%" . $_POST['search'] . "%' )";
+        $query .= " AND (np.created_date LIKE '%" . $_POST['search'] . "%'  
+            OR np.cus_id LIKE '%" . $_POST['search'] . "%' 
+            OR cp.autogen_cus_id LIKE '%" . $_POST['search'] . "%' 
+            OR COALESCE(cp.customer_name, ncp.cus_name) LIKE '%" . $_POST['search'] . "%' 
+            OR COALESCE(al.area_name, ncp.area) LIKE '%" . $_POST['search'] . "%' 
+            OR COALESCE(sl.sub_area_name, ncp.sub_area) LIKE '%" . $_POST['search'] . "%' 
+            OR bc.branch_name LIKE '%" . $_POST['search'] . "%' 
+            OR agm.group_name LIKE '%" . $_POST['search'] . "%' 
+            OR alm.line_name LIKE '%" . $_POST['search'] . "%' 
+            OR adm.duefollowup_name LIKE '%" . $_POST['search'] . "%' 
+            OR np.status LIKE '%" . $_POST['search'] . "%' 
+            OR np.remark LIKE '%" . $_POST['search'] . "%' 
+            OR u.role LIKE '%" . $_POST['search'] . "%' 
+            OR u.fullname LIKE '%" . $_POST['search'] . "%' 
+            OR COALESCE(cp.mobile1, ncp.mobile) LIKE '%" . $_POST['search'] . "%' 
+            OR np.follow_date LIKE '%" . $_POST['search'] . "%' )";
     }
 }
 
@@ -138,6 +170,7 @@ foreach ($result as $row) {
     $sub_array[] = $row['sub_area_name'];
     $sub_array[] = $row['line_name'];
     $sub_array[] = $row['group_name'];
+    $sub_array[] = $row['duefollowup_name'];
     $sub_array[] = $row['branch_name'];   
     $sub_array[] = $promo_type_arr[$row['promo_type']];   
     $sub_array[] = $row['status'];

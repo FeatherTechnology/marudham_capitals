@@ -4,41 +4,33 @@ include('../ajaxconfig.php');
 include('../moneyFormatIndia.php');
 
 $req_id = $_POST['req_id'];
-$cus_id = $_POST['cus_id'];
-
 
 $qry = $connect->query("
-    SELECT 
+    SELECT
+    cr.cus_id, 
     cr.autogen_cus_id,
-    cp.cus_name,
+    cr.customer_name,
     req.father_name,
     fam.famname,
     alc.area_name,
     ii.loan_id,
-    (select lcc.loan_category_creation_name FROM acknowlegement_loan_calculation lc JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id where lc.req_id = $req_id) as loan_cat_name,
-    (select loan_amt_cal FROM acknowlegement_loan_calculation where req_id = $req_id) as loan_amt,
+    lcc.loan_category_creation_name AS loan_cat_name,
+    loan_amt_cal AS loan_amt,
     cs.created_date as closed_date
 
-    FROM acknowlegement_customer_profile cp 
-    JOIN customer_register cr ON cp.cus_id = cr.cus_id
-    JOIN request_creation req ON cp.req_id = req.req_id
-    LEFT JOIN verification_family_info fam ON cp.req_id = fam.req_id and fam.relationship = 'Father'
-    JOIN area_list_creation alc ON cp.area_confirm_area = alc.area_id
-    JOIN in_issue ii ON cp.req_id = ii.req_id
-    JOIN closed_status cs ON cp.req_id = cs.req_id
-    
-    where cp.req_id = $req_id");
+    FROM request_creation req
+    JOIN customer_register cr ON req.cus_id = cr.cus_id
+    LEFT JOIN verification_family_info fam ON req.req_id = fam.req_id and fam.relationship = 'Father'
+    JOIN area_list_creation alc ON cr.area_confirm_area = alc.area_id
+    JOIN in_issue ii ON req.req_id = ii.req_id
+    JOIN acknowlegement_loan_calculation lc ON req.req_id = lc.req_id
+    JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
+    JOIN closed_status cs ON req.req_id = cs.req_id
+
+    where req.req_id = $req_id");
 
 $row = $qry->fetch();
-$autogen_cus_id = $row['autogen_cus_id'];
-$cus_name = $row['cus_name'];
-$father_name = $row['famname'] ?? $row['father_name'];
-$area = $row['area_name'];
-$loan_id = $row['loan_id'];
-$loan_cat = $row['loan_cat_name'];
-$loan_amt = moneyFormatIndia($row['loan_amt']);
-$closed_date = date('d-m-Y',strtotime($row['closed_date']));
-
+extract($row); // Extracts the array values into variables
 ?>
 <!DOCTYPE html>
 <html>
@@ -59,14 +51,14 @@ $closed_date = date('d-m-Y',strtotime($row['closed_date']));
             <p>To</p>
             <p>Aadhaar Number: <?php echo $cus_id; ?></p>
             <p>Customer ID: <?php echo $autogen_cus_id; ?></p>
-            <p>Customer Name:<?php echo $cus_name; ?> </p>
-            <p>S/o <?php echo $father_name; ?>,</p>
-            <p><?php echo $area; ?></p>
+            <p>Customer Name:<?php echo $customer_name; ?> </p>
+            <p>S/o <?php echo $famname ?? $father_name; ?>,</p>
+            <p><?php echo $area_name; ?></p>
             <br>
-            <p>Ref: Loan ID - <?php echo $loan_id; ?>, Loan Category - <?php echo $loan_cat; ?> - NOC Clearance.</p>
+            <p>Ref: Loan ID - <?php echo $loan_id; ?>, Loan Category - <?php echo $loan_cat_name; ?> - NOC Clearance.</p>
             <br>
             <p>Respected Sir,</p>
-            <p>We are pleased to confirm that there are no outstanding dues towards the captioned loan and the loan amount (<?php echo $loan_amt; ?>) dispersed under the said loan ID: <?php echo $loan_id; ?> has been closed in our books on closed date (<?php echo $closed_date; ?>). The agreement signed by you with this regards stands terminated. Terminated documents are enclosed with this letter.</p>
+            <p>We are pleased to confirm that there are no outstanding dues towards the captioned loan and the loan amount (<?php echo $loan_amt; ?>) dispersed under the said loan ID: <?php echo $loan_id; ?> has been closed in our books on closed date (<?php echo date('d-m-Y',strtotime($row['closed_date'])); ?>). The agreement signed by you with this regards stands terminated. Terminated documents are enclosed with this letter.</p>
             <br>
             <p>Thank you once again for selecting MARUDHAM CAPITALS as your preferred partner in helping you accomplish your financial goals.</p>
         </div>

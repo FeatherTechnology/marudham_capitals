@@ -496,8 +496,7 @@ function OnLoadFunctions() {
         $(document).on('click', '.noc-letter', function (event) {
             event.preventDefault();
             let req_id = $(this).data('reqid');
-            let cus_id = $(this).data('cusid');
-            $.post('nocFile/nocLetter.php', { req_id, cus_id }, function (html) {
+            $.post('nocFile/nocLetter.php', { req_id }, function (html) {
                 $('#printnocletter').html(html);
             });
         });

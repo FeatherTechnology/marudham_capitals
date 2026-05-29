@@ -823,7 +823,7 @@ function promoChartOnclick() { // function of on click event for promo chart
 
 function intNotintOnclick() {
     // click for add promotion modal
-    $(document).off('click', '.intrest, .not-intrest').on('click', '.intrest, .not-intrest', function () {
+    $(document).off('click', '.intrest, .not-intrest, .un-available').on('click', '.intrest, .not-intrest, .un-available', function () {
         let value = $(this).children().text(); // span inner html
         let cus_id = $(this).data('id'); // customer id
 

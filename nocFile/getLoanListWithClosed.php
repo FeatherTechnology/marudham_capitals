@@ -179,7 +179,7 @@ if (isset($_SESSION["userid"])) {
                                 if ($row['cus_status'] > '21'){ //if NOC Completed show NOC letter.
                                 ?>
 
-                                    <a href="#" title="NOC Letter" class="noc-letter" data-reqid="<?= $row['req_id']; ?>" data-cusid="<?= $cus_id; ?>"> NOC Letter </a>
+                                    <a href="#" title="NOC Letter" class="noc-letter" data-reqid="<?= $row['req_id']; ?>"> NOC Letter </a>
 
                                 <?php } ?>
 

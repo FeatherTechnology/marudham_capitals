@@ -5,31 +5,40 @@ const loanCategory = new Choices('#loan_category', {
     noChoicesText: 'Select Category',
     allowHTML: true
 });
-const line = new Choices('#line', {
+// const line = new Choices('#line', {
+//     removeItemButton: true,
+//     noChoicesText: 'Select Region',
+//     allowHTML: true
+// });
+// const group_map = new Choices('#group_map', {
+//     removeItemButton: true,
+//     noChoicesText: 'Select Sector',
+//     allowHTML: true
+// });
+// const due_followup = new Choices('#due_followup', {
+//     removeItemButton: true,
+//     noChoicesText: 'Select Zone',
+//     allowHTML: true
+// });
+
+// $('#line, #group_map, #due_followup').closest('.choices').hide();
+
+const map_name = new Choices('#map_name', {
     removeItemButton: true,
-    noChoicesText: 'Select Region',
-    allowHTML: true
-});
-const group_map = new Choices('#group_map', {
-    removeItemButton: true,
-    noChoicesText: 'Select Sector',
-    allowHTML: true
-});
-const due_followup = new Choices('#due_followup', {
-    removeItemButton: true,
-    noChoicesText: 'Select Zone',
+    noChoicesText: 'Select',
     allowHTML: true
 });
 
-$('#line, #group_map, #due_followup').closest('.choices').hide();
+$('#map_name').closest('.choices').hide();
 
 $(document).ready(function () {
 
     $('#type').change(function () {
         let type = $(this).val();
-        $('#line, #group_map, #due_followup').closest('.choices').hide();
-        $('#by_user').hide()
-        $('#by_user').val('')
+        $('#user_type, #by_user').val('').show();
+        $('#by_user').empty().append("<option value=''>Select User</option>");
+        $('#map_name').closest('.choices').hide();
+        map_name.clearStore();
         $('#pending_table').hide().find('tbody').empty();
         $('#current_table').hide().find('tbody').empty();
         $('#od_table').hide().find('tbody').empty();
@@ -45,32 +54,73 @@ $(document).ready(function () {
         if ($.fn.DataTable.isDataTable('#od_table')) {
             $('#od_table').DataTable().clear().destroy();
         }
-        loanCategory.clearStore();
-        if (type == '1') {
-            document.querySelector('#line').closest('.choices').style.display = 'block';
-            $('#group_map, #due_followup').closest('.choices').hide();
-            $('#by_user').hide()
-            getline()
-            getUserLoanCategories('');
-        } else if (type == '2') {
-            $('#line, #group_map, #due_followup').closest('.choices').hide();
-            $('#by_user').show()
-            getUserNames();
-            getUserLoanCategories('');
-        } else if (type == '3') {
-            $('#group_map').closest('.choices').show();
-            $('#line,#due_followup').closest('.choices').hide();
-            $('#by_user').hide()
-            getGroup()
-            getUserLoanCategories('');
-        } else if (type == '4') {
-            $('#due_followup').closest('.choices').show();
-            $('#line, #group_map').closest('.choices').hide();
-            $('#by_user').hide()
-            getDueFollowup()
-            getUserLoanCategories('');
+
+        // loanCategory.clearStore();
+
+        // if (type == '1') {
+        //     document.querySelector('#line').closest('.choices').style.display = 'block';
+        //     $('#group_map, #due_followup').closest('.choices').hide();
+        //     $('#by_user').hide()
+        //     getline()
+        //     getUserLoanCategories('');
+        // } else if (type == '2') {
+        //     $('#line, #group_map, #due_followup').closest('.choices').hide();
+        //     $('#by_user').show()
+        //     getUserNames();
+        //     getUserLoanCategories('');
+        // } else if (type == '3') {
+        //     $('#group_map').closest('.choices').show();
+        //     $('#line,#due_followup').closest('.choices').hide();
+        //     $('#by_user').hide()
+        //     getGroup()
+        //     getUserLoanCategories('');
+        // } else if (type == '4') {
+        //     $('#due_followup').closest('.choices').show();
+        //     $('#line, #group_map').closest('.choices').hide();
+        //     $('#by_user').hide()
+        //     getDueFollowup()
+        //     getUserLoanCategories('');
+        // }
+
+        if(type == '2' || type == '3' || type == '4') { //sector - group
+            $('#map_name').closest('.choices').show();
+            
+        } else if(type == '0'){
+            $('#user_type, #by_user').hide();
         }
-    })
+
+    });
+
+    $('#user_type').change(function () {
+        let userType = $('#user_type').val();
+        $('#by_user').empty().append("<option value=''>Select User</option>");  
+
+        if(userType != ''){
+            getUserNames();
+        }
+    });
+
+    $('#by_user').change(function(){
+        let userId = $(this).val();
+        let typeVal = $('#type').val();
+
+        if(typeVal != '1' && userId !=''){ //if type user then no need to show mapping.
+            $.post('reportFile/promotion_activity/getUserMappedDetails.php', {userId, typeVal}, function (response) {
+
+                map_name.clearStore();
+
+                const items = response.map(row => ({
+                    value: row.ids,
+                    label: row.map_name
+                }));
+
+                map_name.setChoices(items);
+
+            },'json');
+        }
+    });
+
+
     // $('#by_user').change(function () {
     //     let user_id = $(this).val();
     //     // Reset header text
@@ -108,7 +158,7 @@ $(document).ready(function () {
         let type = $('#type').val();
         let line = $('#line').val();
         let selected_user = $('#by_user').val();
-        let group_map = $('#group_map').val();
+        let map_name = $('#map_name').val();
         let due_followup = $('#due_followup').val();
         let loan_category = $('#loan_category').val();
         let sub_status_type = $('#sub_status_type').val();
@@ -119,48 +169,51 @@ $(document).ready(function () {
         }
 
         if (
-            (type == 1 && !line) ||
-            (type == 2 && !selected_user) || (type == 3 && !group_map) || (type == 4 && !due_followup)
+            (type == 1 && !selected_user) || ((type == '2' || type == '3' || type == '4') && !map_name)
         ) {
             swalError('Please Select All Fields!', 'All fields are required.');
             return;
         }
 
         if (type == "1") {
-            $("#nameHeader").text("Region Name");
-        } else if (type == "2") {
             $("#nameHeader").text("User Name");
-        } else if (type == "3") {
+        } else if (type == "2") {
             $("#nameHeader").text("Sector Name");
+        } else if (type == "3") {
+            $("#nameHeader").text("Region Name");
         } else if (type == "4") {
             $("#nameHeader").text("Zone Name");
         }
+
         $('#current_table').hide();
         $('#pending_table').hide();
         $('#od_table').hide();
         $('.dataTables_wrapper').hide();
+
         if (sub_status_type == '1') {
             $('.card-header').text('Current Report');
             $('#current_table').show();
-            currentReportCount(search_date, type, line, selected_user, group_map, due_followup, loan_category, sub_status_type);
+            currentReportCount(search_date, type, selected_user, map_name, loan_category, sub_status_type);
             $('#current_table_wrapper').show();
-        }
-        else if (sub_status_type == '2') {
+
+        } else if (sub_status_type == '2') {
             $('.card-header').text('Pending Report');
             $('#pending_table').show();
-            pendingReportCount(search_date, type, line, selected_user, group_map, due_followup, loan_category, sub_status_type);
+            pendingReportCount(search_date, type, selected_user, map_name, loan_category, sub_status_type);
             $('#pending_table_wrapper').show();
+
         } else if (sub_status_type == '3') {
             $('.card-header').text('OD Report');
             $('#od_table').show();
             $('#od_table_wrapper').show();
-            odReportCount(search_date, type, line, selected_user, group_map, due_followup, loan_category, sub_status_type);
-
+            odReportCount(search_date, type, selected_user, map_name, loan_category, sub_status_type);
         }
-
     });
 });
 
+$(function(){
+    getUserLoanCategories();
+});
 
 function getUserNames() {
     $.post('reportFile/customer_status_report/getAllUserList.php', function (response) {
@@ -171,6 +224,7 @@ function getUserNames() {
         });
     }, 'json');
 }
+
 // function getUserLoanCategories(user_id, followup_id = null)
 function getUserLoanCategories() {
     // let type = $("#type").val();
@@ -198,78 +252,78 @@ function getUserLoanCategories() {
     });
 }
 
+// function getline() {
+//     $.ajax({
+//         url: 'reportFile/customer_status_report/ajaxGetLine.php', // new file for line data
+//         type: 'POST',
+//         dataType: 'json',
+//         success: function (response) {
+//             line.clearStore(); // clear old list
+//             let items = [];
 
-function getline() {
-    $.ajax({
-        url: 'reportFile/customer_status_report/ajaxGetLine.php', // new file for line data
-        type: 'POST',
-        dataType: 'json',
-        success: function (response) {
-            line.clearStore(); // clear old list
-            let items = [];
+//             for (let i = 0; i < response.length; i++) {
+//                 items.push({
+//                     value: response[i]['line_ids'], // store multiple IDs
+//                     label: response[i]['line_name'] // show only name
+//                 });
+//             }
 
-            for (let i = 0; i < response.length; i++) {
-                items.push({
-                    value: response[i]['line_ids'], // store multiple IDs
-                    label: response[i]['line_name'] // show only name
-                });
-            }
+//             line.setChoices(items);
+//         }
+//     });
+// }
 
-            line.setChoices(items);
-        }
-    });
-}
-function getGroup() {
-    $.ajax({
-        url: 'reportFile/customer_status_report/ajaxGetGroup.php',
-        type: 'POST',
-        dataType: 'json',
-        success: function (response) {
-            group_map.clearStore(); // clear old list
-            let items = [];
+// function getGroup() {
+//     $.ajax({
+//         url: 'reportFile/customer_status_report/ajaxGetGroup.php',
+//         type: 'POST',
+//         dataType: 'json',
+//         success: function (response) {
+//             group_map.clearStore(); // clear old list
+//             let items = [];
 
-            for (let i = 0; i < response.length; i++) {
-                items.push({
-                    value: response[i]['group_ids'], // store multiple IDs
-                    label: response[i]['group_name'] // show only name
-                });
-            }
+//             for (let i = 0; i < response.length; i++) {
+//                 items.push({
+//                     value: response[i]['group_ids'], // store multiple IDs
+//                     label: response[i]['group_name'] // show only name
+//                 });
+//             }
 
-            group_map.setChoices(items);
-        }
-    });
-}
-function getDueFollowup() {
-    $.ajax({
-        url: 'reportFile/customer_status_report/ajaxGetdueFollowup.php',
-        type: 'POST',
-        dataType: 'json',
-        success: function (response) {
-            due_followup.clearStore(); // clear old list
-            let items = [];
+//             group_map.setChoices(items);
+//         }
+//     });
+// }
 
-            for (let i = 0; i < response.length; i++) {
-                items.push({
-                    value: response[i]['followup_ids'], // store multiple IDs
-                    label: response[i]['duefollowup_name'] // show only name
-                });
-            }
+// function getDueFollowup() {
+//     $.ajax({
+//         url: 'reportFile/customer_status_report/ajaxGetdueFollowup.php',
+//         type: 'POST',
+//         dataType: 'json',
+//         success: function (response) {
+//             due_followup.clearStore(); // clear old list
+//             let items = [];
 
-            due_followup.setChoices(items);
-        }
-    });
-}
-function currentReportCount(search_date, type, line, selected_user, group_map, due_followup, loan_category, sub_status_type) {
+//             for (let i = 0; i < response.length; i++) {
+//                 items.push({
+//                     value: response[i]['followup_ids'], // store multiple IDs
+//                     label: response[i]['duefollowup_name'] // show only name
+//                 });
+//             }
+
+//             due_followup.setChoices(items);
+//         }
+//     });
+// }
+
+function currentReportCount(search_date, type, selected_user, map_name, loan_category, sub_status_type) {
     $.ajax({
         url: 'reportFile/customer_status_report/CurrentCustomerCountReport.php',
         method: 'POST',
         data: {
             search_date: search_date,
             type: type,
-            line: line,
             user_id: selected_user,
-            group_map: group_map,
-            due_followup: due_followup,
+            map_name: map_name,
             loan_category: loan_category,
             sub_status_type: sub_status_type
         },
@@ -376,17 +430,15 @@ function currentReportCount(search_date, type, line, selected_user, group_map, d
     });
 }
 
-function pendingReportCount(search_date, type, line, selected_user, group_map, due_followup, loan_category, sub_status_type) {
+function pendingReportCount(search_date, type, selected_user, map_name, loan_category, sub_status_type) {
     $.ajax({
         url: 'reportFile/customer_status_report/PendingCustomerCountReport.php',
         method: 'POST',
         data: {
             search_date: search_date,
             type: type,
-            line: line,
             user_id: selected_user,
-            group_map: group_map,
-            due_followup: due_followup,
+            map_name: map_name,
             loan_category: loan_category,
             sub_status_type: sub_status_type
         },
@@ -483,17 +535,15 @@ function pendingReportCount(search_date, type, line, selected_user, group_map, d
     });
 }
 
-function odReportCount(search_date, type, line, selected_user, group_map, due_followup, loan_category, sub_status_type) {
+function odReportCount(search_date, type, selected_user, map_name, loan_category, sub_status_type) {
     $.ajax({
         url: 'reportFile/customer_status_report/odCustomerCountReport.php',
         method: 'POST',
         data: {
             search_date: search_date,
             type: type,
-            line: line,
             user_id: selected_user,
-            group_map: group_map,
-            due_followup: due_followup,
+            map_name: map_name,
             loan_category: loan_category,
             sub_status_type: sub_status_type
         },
