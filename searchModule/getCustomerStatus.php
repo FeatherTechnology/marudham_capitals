@@ -344,9 +344,9 @@ function getDocumentStatus($connect, $req_id)
     // }
 
     if ($response1 == 'completed' && $response2 == 'completed' && $response3 == 'completed' && $response4 == 'completed') {
-        $response = 'true';
+        $response = 'completed';
     } else {
-        $response = 'false';
+        $response = 'pending';
     }
 
     return $response;

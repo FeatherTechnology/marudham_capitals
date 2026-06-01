@@ -216,7 +216,9 @@ $(function(){
 });
 
 function getUserNames() {
-    $.post('reportFile/customer_status_report/getAllUserList.php', function (response) {
+    let user_type = $('#user_type').val();
+
+    $.post('reportFile/customer_status_report/getAllUserList.php', {user_type}, function (response) {
         $('#by_user').empty();
         $('#by_user').append("<option value=''>Select User</option>");
         $.each(response, function (index, val) {

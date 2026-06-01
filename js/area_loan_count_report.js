@@ -113,6 +113,8 @@ function areaLoanCountReportTable() {
             { data: "group_names" },
             { data: "customer_count" },
             { data: "loan_count" },
+            { data: "responsible_count" },
+            { data: "payable_zero_count" },
             { data: "Current" },
             { data: "Pending" },
             { data: "OD" },

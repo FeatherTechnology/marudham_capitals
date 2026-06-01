@@ -154,20 +154,12 @@ function getDocumentStatus($connect, $cus_id)
         SELECT a.doc_sts 
         FROM acknowlegement_documentation a
         JOIN request_creation r ON a.req_id = r.req_id
-        WHERE a.cus_id_doc = '$cus_id' AND r.cus_status > 13
-        ORDER BY r.req_id DESC
-        LIMIT 1
+        WHERE a.cus_id_doc = '$cus_id' AND r.cus_status > 13 AND a.doc_sts ='NO'
     ");
 
-    if ($qry->rowCount() == 0) {
-        // No valid entry → treat as pending
-        return false;
-    }
-
-    $row = $qry->fetch();
-
-    if ($row['doc_sts'] == 'NO') {
-        return false; // pending
+    if ($qry->rowCount() > 0) {
+        // If pending status doc entry → treat as pending
+        return false; //pending
     }
 
     return true; // completed
