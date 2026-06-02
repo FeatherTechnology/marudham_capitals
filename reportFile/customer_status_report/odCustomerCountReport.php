@@ -296,7 +296,7 @@ foreach ($loan_category as $cat_id) {
     // Step 4: Decide grouping
     $groups = [];
     foreach ($customers as $cust) {
-        if ($type == 1 || $type == 3 || $type == 4) {
+        if ($type == 2 || $type == 3 || $type == 4) {
             $groups[$cust['map_name']][] = $cust;
         } else { // type 2
             $groups[$userName][] = $cust;
@@ -394,7 +394,7 @@ foreach ($loan_category as $cat_id) {
             }
         }
 
-        $display_name       = ($type == 2) ? $userName : $groupName;
+        $display_name       = ($type == 1) ? $userName : $groupName;
         $total_paid_od      = $t_od_clear + $partially_paid;
         $paid_percentage    = ($t_od_count > 0) ? number_format(round(($total_paid_od / $t_od_count) * 100, 1), 1) : '0.0';
         $unpaid_percentage  = ($t_od_count > 0) ? number_format(round(($unpaid / $t_od_count) * 100, 1), 1) : '0.0';

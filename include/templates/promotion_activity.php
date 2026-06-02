@@ -111,6 +111,7 @@ if (sizeof($getUser) > 0) {
 								<th>Status</th>
 								<th>Sub Status</th>
 								<th>Closed Date</th>
+								<th>NOC Status</th>
 								<th>View</th>
 								<th>Action</th>
 								<th>Follow up status</th>
@@ -142,6 +143,7 @@ if (sizeof($getUser) > 0) {
 								<th>Status</th>
 								<th>Sub Status</th>
 								<th>Closed Date</th>
+								<th>NOC Status</th>
 								<th>View</th>
 								<th>Action</th>
 								<th>Follow up status</th>
@@ -297,6 +299,7 @@ if (sizeof($getUser) > 0) {
 								<th>Sub Status</th>
 								<th>Customer Data</th>
 								<th>Closed Date</th>
+								<th>NOC Status</th>
 								<th>View</th>
 								<th>Action</th>
 								<th>Follow up status</th>

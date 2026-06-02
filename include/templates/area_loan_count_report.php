@@ -28,7 +28,7 @@
                             <table id="area_loan_count_report_table" class="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th colspan="14" id="Loan_category" style="font-size:14px;">
+                                        <th colspan="15" id="Loan_category" style="font-size:14px;">
                                             Loan Category :
                                         </th>
                                     </tr>
@@ -38,6 +38,7 @@
                                         <th>Taluk</th>
                                         <th>Region</th>
                                         <th>Sector</th>
+                                        <th>Zone</th>
                                         <th>Customer Count</th>
                                         <th>Loan Count</th>
                                         <th>Responsible Count</th>

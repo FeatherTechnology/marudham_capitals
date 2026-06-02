@@ -111,6 +111,7 @@ function areaLoanCountReportTable() {
             { data: "taluk" },
             { data: "line_names" },
             { data: "group_names" },
+            { data: "zone_names" },
             { data: "customer_count" },
             { data: "loan_count" },
             { data: "responsible_count" },

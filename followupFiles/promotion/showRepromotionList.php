@@ -43,7 +43,7 @@ if (isset($_POST['order'])) {
 $areaColumn = ($accessType == 3) 
     ? "cp.area" 
     : "cp.sub_area";
-    $qry = "SELECT req.req_id, req.cus_data, req.cus_id, cp.autogen_cus_id, cp.customer_name, al.area_name, sl.sub_area_name, bc.branch_name, agm.group_name, alm.line_name, cp.mobile1, req.cus_status AS consider_level, req.updated_date, np.status AS followup_sts, np.follow_date 
+    $qry = "SELECT req.req_id, req.cus_data, req.cus_id, cp.autogen_cus_id, cp.customer_name, al.area_name, sl.sub_area_name, bc.branch_name, agm.group_name, alm.line_name, cp.mobile1, req.cus_status AS consider_level, req.updated_date, np.status AS followup_sts, np.follow_date, n.cus_status AS noc_cus_status 
     FROM request_creation req 
     LEFT JOIN customer_register cp ON req.cus_id = cp.cus_id 
     LEFT JOIN (
@@ -60,6 +60,7 @@ $areaColumn = ($accessType == 3)
     LEFT JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
     LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
     LEFT JOIN new_promotion np ON np.cus_id = req.cus_id AND np.created_date = (SELECT MAX(np1.created_date) FROM new_promotion np1 WHERE np1.cus_id = req.cus_id)
+    LEFT JOIN noc n ON req.cus_id = n.cus_id
     WHERE req.cus_status BETWEEN 4 AND 9 
     AND CASE WHEN req.cus_status IN (6, 7) THEN cp.area_confirm_subarea ELSE $areaColumn END IN  ($sub_area_list) AND rc.cus_id IS NULL ";
 
@@ -92,13 +93,13 @@ $areaColumn = ($accessType == 3)
     $sql = $connect->query($qry . $limit);
 
     $status = [4 => 'Request', 5 => 'Verification', 6 => 'Approval', 7 => 'Acknowledgement', 8 => 'Request', 9 => 'Verification'];
-
     $sub_status = [4 => 'Cancel', 5 => 'Cancel', 6 => 'Cancel', 7 => 'Cancel', 8 => 'Revoke', 9 => 'Revoke'];
+    $cusstatus = [21 => 'NOC Pending', 22 => 'NOC Completed', 23 => 'NOC Completed', 24 => 'NOC Handovered'];
 
 $data = array();
 while ($row = $sql->fetch()) {
     $sub_array = array();
-    $sub_array[] = $sno;
+    $sub_array[] = $sno++;
     $sub_array[] = $row['cus_id'];
     $sub_array[] = $row['autogen_cus_id'];
     $sub_array[] = $row['customer_name'];
@@ -113,17 +114,17 @@ while ($row = $sql->fetch()) {
     $sub_array[] = $row['cus_data'];
 
     $sub_array[] = (isset($row['updated_date'])) ? date('d-m-Y', strtotime($row['updated_date'])) : '';
+    $sub_array[] = $cusstatus[$row['noc_cus_status']] ?? '';
 
     $sub_array[] = "<div class='dropdown'><button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button><div class='dropdown-content'> <a class='promo-chart' data-id='" . $row['cus_id'] . "' data-toggle='modal' data-target='#promoChartModal'><span>Promotion Chart</span></a><a class='personal-info' data-toggle='modal' data-target='#personalInfoModal' data-cusid='" . $row['cus_id'] . "'><span>Personal Info</span></a><a class='customer-sts' data-reqid='" . $row['req_id'] . "' data-cusid='" . $row['cus_id'] . "'><span>Customer Status</span></a></div></div>";
 
     //for intrest or not intrest choice to make
-    $sub_array[] = "<div class='dropdown'><button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button><div class='dropdown-content'> <a class='intrest' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Interested</span></a><a class='not-intrest' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Not Interested</span></a><a class='un-available' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Unavailable</span></a></div></div>";
+    $sub_array[] = "<div class='dropdown'><button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button><div class='dropdown-content'> <a class='intrest' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Interested</span></a><a class='not-intrest' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Not Interested</span></a><a class='un-available' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Unavailable</span></a><a class='noc-call' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>NOC Call</span></a></div></div>";
 
     $sub_array[] = $row['followup_sts'];
     $sub_array[] = (isset($row['follow_date'])) ? date('d-m-Y', strtotime($row['follow_date'])) : '';
 
     $data[] = $sub_array;
-    $sno++;
 }
 
 function count_all_data($connect)

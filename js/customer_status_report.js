@@ -330,104 +330,116 @@ function currentReportCount(search_date, type, selected_user, map_name, loan_cat
             sub_status_type: sub_status_type
         },
         success: function (res) {
-            const parsed = JSON.parse(res);
+            try {
+                const parsed = JSON.parse(res);
 
-            if (!parsed.data || parsed.data.length === 0) {
-                $('#current_table thead').html("<tr><th colspan='10'>No data found for the selected filters</th></tr>");
-                $('#current_table').DataTable().clear().draw();
-                return;
-            }
+                console.log(parsed);
 
-            const data = parsed.data;
-            const totalRow = data[data.length - 1];
-            if (totalRow.fullname === 'Total') {
-                data.pop();
-            }
-
-            const columns = [
-                { data: 'sno' },
-                { data: 'date' },
-                { data: 'fullname' },
-                { data: 'loan_category' },
-                { data: 'total_count' },
-                { data: 't_current_count' },
-                { data: 'payable_zero' },
-                { data: 'responsible_zero' },
-                { data: 'balance_count' },
-                { data: 'paid' },
-                { data: 'partially_paid' },
-                { data: 'totals_paid' },
-                {
-                    data: 'paid_percentage',
-                    render: function (data) {
-                        return Number(data).toFixed(1) + ' %';
-                    }
-                },
-                { data: 'unpaid' },
-                {
-                    data: 'unpaid_percentage',
-                    render: function (data) {
-                        return Number(data).toFixed(1) + ' %';
-                    }
-                },
-                { data: 'from_pending' }
-            ];
-
-            $('#current_table').DataTable().destroy();
-            var current_table = $('#current_table').DataTable({
-                ...getStateSaveConfig('current_table'),
-                data: data,
-                columns: columns,
-                dom: 'lBfrtip',
-                buttons: [{
-                    extend: 'excel',
-                    title: "Current Customer Count Report",
-                    action: function (e, dt, button, config) {
-                        var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
-                        var dynamic = curDateJs('Current_Customer_Count_Report'); // or any base
-                        config.title = dynamic;      // for versions that use title as filename
-                        config.filename = dynamic;   // for html5 filename
-                        defaultAction.call(this, e, dt, button, config);
-                    }
-                },
-                {
-                    extend: 'colvis',
-                    collectionLayout: 'fixed four-column'
+                if (!parsed.data || parsed.data.length === 0) {
+                    $('#current_table thead').html("<tr><th colspan='10'>No data found for the selected filters</th></tr>");
+                    $('#current_table').DataTable().clear().draw();
+                    return;
                 }
-                ],
-                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
-                drawCallback: function () {
-                    searchFunction('current_table');
-                    paginationFunction('current_table');
+
+                const data = parsed.data;
+                const totalRow = data[data.length - 1];
+                if (totalRow.fullname === 'Total') {
+                    data.pop();
                 }
-            });
 
-            // Pass the table variable to the initColVisFeatures function
-            initColVisFeatures(current_table, 'current_table');
+                const columns = [
+                    { data: 'sno' },
+                    { data: 'date' },
+                    { data: 'fullname' },
+                    { data: 'loan_category' },
+                    { data: 'total_count' },
+                    { data: 't_current_count' },
+                    { data: 'payable_zero' },
+                    { data: 'responsible_zero' },
+                    { data: 'balance_count' },
+                    { data: 'paid' },
+                    { data: 'partially_paid' },
+                    { data: 'totals_paid' },
+                    {
+                        data: 'paid_percentage',
+                        render: function (data) {
+                            return Number(data).toFixed(1) + ' %';
+                        }
+                    },
+                    { data: 'unpaid' },
+                    {
+                        data: 'unpaid_percentage',
+                        render: function (data) {
+                            return Number(data).toFixed(1) + ' %';
+                        }
+                    },
+                    { data: 'from_pending' }
+                ];
 
-            let CurrentPaidPercent = totalRow.balance_count > 0 ? (totalRow.totals_paid / totalRow.balance_count) * 100 : 0;
-            let CurrentUnpaidPercent = totalRow.balance_count > 0 ? (totalRow.unpaid / totalRow.balance_count) * 100 : 0;
+                $('#current_table').DataTable().destroy();
+                var current_table = $('#current_table').DataTable({
+                    ...getStateSaveConfig('current_table'),
+                    data: data,
+                    columns: columns,
+                    dom: 'lBfrtip',
+                    buttons: [{
+                        extend: 'excel',
+                        title: "Current Customer Count Report",
+                        action: function (e, dt, button, config) {
+                            var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                            var dynamic = curDateJs('Current_Customer_Count_Report'); // or any base
+                            config.title = dynamic;      // for versions that use title as filename
+                            config.filename = dynamic;   // for html5 filename
+                            defaultAction.call(this, e, dt, button, config);
+                        }
+                    },
+                    {
+                        extend: 'colvis',
+                        collectionLayout: 'fixed four-column'
+                    }
+                    ],
+                    lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                    drawCallback: function () {
+                        searchFunction('current_table');
+                        paginationFunction('current_table');
+                    }
+                });
 
-            let footerHtml = `<tr>
-                <td></td>
-                <td></td>
-                <td><b>Total</b></td>
-                <td></td>
-                <td><b>${totalRow.total_count}</b></td>
-                <td><b>${totalRow.t_current_count}</b></td>
-                <td><b>${totalRow.payable_zero}</b></td>
-                <td><b>${totalRow.responsible_zero}</b></td>
-                <td><b>${totalRow.balance_count}</b></td>
-                <td><b>${totalRow.paid}</b></td>
-                <td><b>${totalRow.partially_paid}</b></td>
-                <td><b>${totalRow.totals_paid}</b></td>
-                <td><b>${CurrentPaidPercent.toFixed(1)} %</b></td>
-                <td><b>${totalRow.unpaid}</b></td>
-                <td><b>${CurrentUnpaidPercent.toFixed(1)} %</b></td>
-                <td><b>${totalRow.from_pending}</b></td>
-            </tr>`;
+                // Pass the table variable to the initColVisFeatures function
+                initColVisFeatures(current_table, 'current_table');
 
-            $('#current_table tfoot').html(footerHtml);
+                let CurrentPaidPercent = totalRow.balance_count > 0 ? (totalRow.totals_paid / totalRow.balance_count) * 100 : 0;
+                let CurrentUnpaidPercent = totalRow.balance_count > 0 ? (totalRow.unpaid / totalRow.balance_count) * 100 : 0;
+
+                let footerHtml = `<tr>
+                    <td></td>
+                    <td></td>
+                    <td><b>Total</b></td>
+                    <td></td>
+                    <td><b>${totalRow.total_count}</b></td>
+                    <td><b>${totalRow.t_current_count}</b></td>
+                    <td><b>${totalRow.payable_zero}</b></td>
+                    <td><b>${totalRow.responsible_zero}</b></td>
+                    <td><b>${totalRow.balance_count}</b></td>
+                    <td><b>${totalRow.paid}</b></td>
+                    <td><b>${totalRow.partially_paid}</b></td>
+                    <td><b>${totalRow.totals_paid}</b></td>
+                    <td><b>${CurrentPaidPercent.toFixed(1)} %</b></td>
+                    <td><b>${totalRow.unpaid}</b></td>
+                    <td><b>${CurrentUnpaidPercent.toFixed(1)} %</b></td>
+                    <td><b>${totalRow.from_pending}</b></td>
+                </tr>`;
+
+                $('#current_table tfoot').html(footerHtml);
+
+            } catch (e) {
+                console.error('Invalid JSON:', res);
+                swalError('Error', 'File returing Error kindly contact admin.');
+            }
+        },
+        error: function(xhr, status, error){
+            console.error(error);
+            alert('AJAX request failed');
         }
     });
 }
@@ -445,94 +457,106 @@ function pendingReportCount(search_date, type, selected_user, map_name, loan_cat
             sub_status_type: sub_status_type
         },
         success: function (res) {
-            const parsed = JSON.parse(res);
+            try {
+                const parsed = JSON.parse(res);
 
-            if (!parsed.data || parsed.data.length === 0) {
-                $('#pending_table thead').html("<tr><th colspan='10'>No data found for the selected filters</th></tr>");
-                $('#pending_table').DataTable().clear().draw();
-                return;
+                console.log(parsed);
+
+                if (!parsed.data || parsed.data.length === 0) {
+                    $('#pending_table thead').html("<tr><th colspan='10'>No data found for the selected filters</th></tr>");
+                    $('#pending_table').DataTable().clear().draw();
+                    return;
+                }
+
+                const data = parsed.data;
+                const totalRow = data[data.length - 1];
+                if (totalRow.fullname === 'Total') {
+                    data.pop();
+                }
+
+                const columns = [
+                    { data: 'sno' },
+                    { data: 'date' },
+                    { data: 'fullname' },
+                    { data: 'loan_category' },
+                    { data: 'total_count' },
+                    { data: 't_pending_count' },
+                    { data: 'today_pending_clear' },
+                    { data: 't_pending_clear' },
+                    { data: 'partially_paid' },
+                    { data: 'total_paid_pending' },
+                    {
+                        data: 'paid_percentage',
+                        render: function (data) {
+                            return Number(data).toFixed(1) + ' %';
+                        }
+                    },
+                    { data: 'unpaid' },
+                    {
+                        data: 'unpaid_percentage',
+                        render: function (data) {
+                            return Number(data).toFixed(1) + ' %';
+                        }
+                    }
+                ];
+
+                $('#pending_table').DataTable().destroy();
+                $('#pending_table').DataTable({
+                    data: data,
+                    columns: columns,
+                    dom: 'lBfrtip',
+                    buttons: [{
+                        extend: 'excel',
+                        title: "Pending Customer Count Report",
+                        action: function (e, dt, button, config) {
+                            var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                            var dynamic = curDateJs('Pending_Customer_Count_Report'); // or any base
+                            config.title = dynamic;      // for versions that use title as filename
+                            config.filename = dynamic;   // for html5 filename
+                            defaultAction.call(this, e, dt, button, config);
+                        }
+                    },
+                    {
+                        extend: 'colvis',
+                        collectionLayout: 'fixed four-column'
+                    }
+                    ],
+                    lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                    drawCallback: function () {
+                        searchFunction('pending_table');
+                        paginationFunction('pending_table');
+                    }
+                });
+
+                let PendingPaidPercent = totalRow.t_pending_count > 0 ? (totalRow.total_paid_pending / totalRow.t_pending_count) * 100 : 0;
+                let PendingUnpaidPercent = totalRow.t_pending_count > 0 ? (totalRow.unpaid / totalRow.t_pending_count) * 100 : 0;
+
+                let footerHtml = `<tr>
+                    <td></td>
+                    <td></td>
+                    <td><b>Total</b></td>
+                    <td></td>
+                    <td><b>${totalRow.total_count}</b></td>
+                    <td><b>${totalRow.t_pending_count}</b></td>
+                    <td><b>${totalRow.today_pending_clear}</b></td>
+                    <td><b>${totalRow.t_pending_clear}</b></td>
+                    <td><b>${totalRow.partially_paid}</b></td>
+                    <td><b>${totalRow.total_paid_pending}</b></td>
+                    <td><b>${PendingPaidPercent.toFixed(1)} %</b></td>
+                    <td><b>${totalRow.unpaid}</b></td>
+                    <td><b>${PendingUnpaidPercent.toFixed(1)} %</b></td>
+                </tr>`;
+
+                $('#pending_table tfoot').html(footerHtml);
+
+            } catch (e) {
+                console.error('Invalid JSON:', res);
+                swalError('Error', 'File returing Error kindly contact admin.');
             }
-
-            const data = parsed.data;
-            const totalRow = data[data.length - 1];
-            if (totalRow.fullname === 'Total') {
-                data.pop();
-            }
-
-            const columns = [
-                { data: 'sno' },
-                { data: 'date' },
-                { data: 'fullname' },
-                { data: 'loan_category' },
-                { data: 'total_count' },
-                { data: 't_pending_count' },
-                { data: 'today_pending_clear' },
-                { data: 't_pending_clear' },
-                { data: 'partially_paid' },
-                { data: 'total_paid_pending' },
-                {
-                    data: 'paid_percentage',
-                    render: function (data) {
-                        return Number(data).toFixed(1) + ' %';
-                    }
-                },
-                { data: 'unpaid' },
-                {
-                    data: 'unpaid_percentage',
-                    render: function (data) {
-                        return Number(data).toFixed(1) + ' %';
-                    }
-                }
-            ];
-
-            $('#pending_table').DataTable().destroy();
-            $('#pending_table').DataTable({
-                data: data,
-                columns: columns,
-                dom: 'lBfrtip',
-                buttons: [{
-                    extend: 'excel',
-                    title: "Pending Customer Count Report",
-                    action: function (e, dt, button, config) {
-                        var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
-                        var dynamic = curDateJs('Pending_Customer_Count_Report'); // or any base
-                        config.title = dynamic;      // for versions that use title as filename
-                        config.filename = dynamic;   // for html5 filename
-                        defaultAction.call(this, e, dt, button, config);
-                    }
-                },
-                {
-                    extend: 'colvis',
-                    collectionLayout: 'fixed four-column'
-                }
-                ],
-                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
-                drawCallback: function () {
-                    searchFunction('pending_table');
-                    paginationFunction('pending_table');
-                }
-            });
-
-            let PendingPaidPercent = totalRow.t_pending_count > 0 ? (totalRow.total_paid_pending / totalRow.t_pending_count) * 100 : 0;
-            let PendingUnpaidPercent = totalRow.t_pending_count > 0 ? (totalRow.unpaid / totalRow.t_pending_count) * 100 : 0;
-
-            let footerHtml = `<tr>
-                <td></td>
-                <td></td>
-                <td><b>Total</b></td>
-                <td></td>
-                <td><b>${totalRow.total_count}</b></td>
-                <td><b>${totalRow.t_pending_count}</b></td>
-                <td><b>${totalRow.today_pending_clear}</b></td>
-                <td><b>${totalRow.t_pending_clear}</b></td>
-                <td><b>${totalRow.partially_paid}</b></td>
-                <td><b>${totalRow.total_paid_pending}</b></td>
-                <td><b>${PendingPaidPercent.toFixed(1)} %</b></td>
-                <td><b>${totalRow.unpaid}</b></td>
-                <td><b>${PendingUnpaidPercent.toFixed(1)} %</b></td>
-            </tr>`;
-
-            $('#pending_table tfoot').html(footerHtml);
+        },
+        error: function(xhr, status, error){
+            console.error(error);
+            alert('AJAX request failed');
         }
     });
 }
@@ -550,95 +574,107 @@ function odReportCount(search_date, type, selected_user, map_name, loan_category
             sub_status_type: sub_status_type
         },
         success: function (res) {
-            const parsed = JSON.parse(res);
+            try {
+                const parsed = JSON.parse(res);
 
-            if (!parsed.data || parsed.data.length === 0) {
-                $('#od_table thead').html("<tr><th colspan='10'>No data found for the selected filters</th></tr>");
-                $('#od_table').DataTable().clear().draw();
-                return;
-            }
+                console.log(parsed);
 
-            const data = parsed.data;
-            const totalRow = data[data.length - 1];
-            if (totalRow.fullname === 'Total') {
-                data.pop();
-            }
-
-            const columns = [
-                { data: 'sno' },
-                { data: 'date' },
-                { data: 'fullname' },
-                { data: 'loan_category' },
-                { data: 'total_count' },
-                { data: 't_od_count' },
-                { data: 'today_od_clear' },
-                { data: 't_od_clear' },
-                { data: 'partially_paid' },
-                { data: 'total_paid_od' },
-                {
-                    data: 'paid_percentage',
-                    render: function (data) {
-                        return Number(data).toFixed(1) + ' %';
-                    }
-                },
-                { data: 'unpaid' },
-                {
-                    data: 'unpaid_percentage',
-                    render: function (data) {
-                        return Number(data).toFixed(1) + ' %';
-                    }
+                if (!parsed.data || parsed.data.length === 0) {
+                    $('#od_table thead').html("<tr><th colspan='10'>No data found for the selected filters</th></tr>");
+                    $('#od_table').DataTable().clear().draw();
+                    return;
                 }
-            ];
 
-            $('#od_table').DataTable().destroy();
-            $('#od_table').DataTable({
-                data: data,
-                columns: columns,
-                dom: 'lBfrtip',
-                buttons: [
+                const data = parsed.data;
+                const totalRow = data[data.length - 1];
+                if (totalRow.fullname === 'Total') {
+                    data.pop();
+                }
+
+                const columns = [
+                    { data: 'sno' },
+                    { data: 'date' },
+                    { data: 'fullname' },
+                    { data: 'loan_category' },
+                    { data: 'total_count' },
+                    { data: 't_od_count' },
+                    { data: 'today_od_clear' },
+                    { data: 't_od_clear' },
+                    { data: 'partially_paid' },
+                    { data: 'total_paid_od' },
                     {
-                        extend: 'excel',
-                        title: "OD Customer Count Report",
-                        action: function (e, dt, button, config) {
-                            var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
-                            var dynamic = curDateJs('OD_Customer_Count_Report'); // or any base
-                            config.title = dynamic;      // for versions that use title as filename
-                            config.filename = dynamic;   // for html5 filename
-                            defaultAction.call(this, e, dt, button, config);
+                        data: 'paid_percentage',
+                        render: function (data) {
+                            return Number(data).toFixed(1) + ' %';
                         }
                     },
+                    { data: 'unpaid' },
                     {
-                        extend: 'colvis',
-                        collectionLayout: 'fixed four-column'
+                        data: 'unpaid_percentage',
+                        render: function (data) {
+                            return Number(data).toFixed(1) + ' %';
+                        }
                     }
-                ],
-                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
-                drawCallback: function () {
-                    searchFunction('od_table');
-                    paginationFunction('od_table');
-                }
-            });
+                ];
 
-            let odPaidPercent = totalRow.t_od_count > 0 ? (totalRow.total_paid_od / totalRow.t_od_count) * 100 : 0;
-            let odUnpaidPercent = totalRow.t_od_count > 0 ? (totalRow.unpaid / totalRow.t_od_count) * 100 : 0;
+                $('#od_table').DataTable().destroy();
+                $('#od_table').DataTable({
+                    data: data,
+                    columns: columns,
+                    dom: 'lBfrtip',
+                    buttons: [
+                        {
+                            extend: 'excel',
+                            title: "OD Customer Count Report",
+                            action: function (e, dt, button, config) {
+                                var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                                var dynamic = curDateJs('OD_Customer_Count_Report'); // or any base
+                                config.title = dynamic;      // for versions that use title as filename
+                                config.filename = dynamic;   // for html5 filename
+                                defaultAction.call(this, e, dt, button, config);
+                            }
+                        },
+                        {
+                            extend: 'colvis',
+                            collectionLayout: 'fixed four-column'
+                        }
+                    ],
+                    lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                    drawCallback: function () {
+                        searchFunction('od_table');
+                        paginationFunction('od_table');
+                    }
+                });
 
-            let footerHtml = `<tr>
-                <td></td>
-                <td></td>
-                <td><b>Total</b></td>
-                <td></td>
-                <td><b>${totalRow.total_count}</b></td>
-                <td><b>${totalRow.t_od_count}</b></td>
-                <td><b>${totalRow.today_od_clear}</b></td>
-                <td><b>${totalRow.t_od_clear}</b></td>
-                <td><b>${totalRow.partially_paid}</b></td>
-                <td><b>${totalRow.total_paid_od}</b></td>
-                <td><b>${odPaidPercent.toFixed(1)} %</b></td>
-                <td><b>${totalRow.unpaid}</b></td>
-                <td><b>${odUnpaidPercent.toFixed(1)} %</b></td>
-            </tr>`;
+                let odPaidPercent = totalRow.t_od_count > 0 ? (totalRow.total_paid_od / totalRow.t_od_count) * 100 : 0;
+                let odUnpaidPercent = totalRow.t_od_count > 0 ? (totalRow.unpaid / totalRow.t_od_count) * 100 : 0;
 
-            $('#od_table tfoot').html(footerHtml);
+                let footerHtml = `<tr>
+                    <td></td>
+                    <td></td>
+                    <td><b>Total</b></td>
+                    <td></td>
+                    <td><b>${totalRow.total_count}</b></td>
+                    <td><b>${totalRow.t_od_count}</b></td>
+                    <td><b>${totalRow.today_od_clear}</b></td>
+                    <td><b>${totalRow.t_od_clear}</b></td>
+                    <td><b>${totalRow.partially_paid}</b></td>
+                    <td><b>${totalRow.total_paid_od}</b></td>
+                    <td><b>${odPaidPercent.toFixed(1)} %</b></td>
+                    <td><b>${totalRow.unpaid}</b></td>
+                    <td><b>${odUnpaidPercent.toFixed(1)} %</b></td>
+                </tr>`;
+
+                $('#od_table tfoot').html(footerHtml);
+
+            } catch (e) {
+                console.error('Invalid JSON:', res);
+                swalError('Error', 'File returing Error kindly contact admin.');
+            }
+        },
+        error: function(xhr, status, error){
+            console.error(error);
+            alert('AJAX request failed');
         }
     });
 }

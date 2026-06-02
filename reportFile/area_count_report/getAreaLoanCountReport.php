@@ -82,6 +82,7 @@ $sql = " SELECT
             al.taluk,
             GROUP_CONCAT(DISTINCT alm.line_name) AS line_names,
             GROUP_CONCAT(DISTINCT agm.group_name) AS group_names,
+            GROUP_CONCAT(DISTINCT adm.duefollowup_name) AS zone_names,
             ii.req_id,
             ii.cus_id,
             ii.loan_id,
@@ -104,6 +105,8 @@ $sql = " SELECT
         JOIN area_line_mapping alm ON alm.map_id = alma.line_map_id
         JOIN area_group_mapping_area agma ON al.area_id = agma.area_id
         JOIN area_group_mapping agm ON agm.map_id = agma.group_map_id
+        JOIN area_duefollowup_mapping_area adma ON al.area_id = adma.area_id
+        JOIN area_duefollowup_mapping adm ON adm.map_id = adma.duefollowup_map_id
         LEFT JOIN (
             SELECT req_id, SUM(due_amt_track) AS total_due_amt
             FROM collection
@@ -132,6 +135,7 @@ foreach ($rows as $row) {
             'taluk' => $row['taluk'],
             'line_names' => $row['line_names'],
             'group_names' => $row['group_names'],
+            'zone_names' => $row['zone_names'],
             'loan_ids' => [],
             'customer_ids' => [],
             'responsible_cnt' => 0,
@@ -223,6 +227,7 @@ foreach ($area_data as $area) {
         "taluk" => $area['taluk'],
         "line_names" => $area['line_names'],
         "group_names" => $area['group_names'],
+        "zone_names" => $area['zone_names'],
         "customer_count" => count($area['customer_ids']),
         "loan_count" => count($area['loan_ids']),
         "responsible_count" => $area['responsible_cnt'],
@@ -246,7 +251,8 @@ if ($searchValue !== '') {
             strpos(strtolower($row['area_name']), $searchValue) !== false ||
             strpos(strtolower($row['taluk']), $searchValue) !== false ||
             strpos(strtolower($row['line_names']), $searchValue) !== false ||
-            strpos(strtolower($row['group_names']), $searchValue) !== false;
+            strpos(strtolower($row['group_names']), $searchValue) !== false ||
+            strpos(strtolower($row['zone_names']), $searchValue) !== false;
     });
 
     // update filtered count

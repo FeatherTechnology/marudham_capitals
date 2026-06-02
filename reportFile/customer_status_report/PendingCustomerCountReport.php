@@ -330,7 +330,7 @@ foreach ($loan_category as $cat_id) {
     // Step 3: Build groups
     $groups = [];
     foreach ($customers as $cust) {
-        if ($type == 1 || $type == 3 || $type == 4) {
+        if ($type == 2 || $type == 3 || $type == 4) {
             $groups[$cust['map_name']][] = $cust;
         } else { // type 2
             $groups[$userName][] = $cust;
@@ -438,7 +438,7 @@ foreach ($loan_category as $cat_id) {
             }
         }
 
-        $display_name       = ($type == 2) ? $userName : $groupName;
+        $display_name       = ($type == 1) ? $userName : $groupName;
         $total_paid_pending = $t_pending_clear + $partially_paid;
         $paid_percentage    = ($t_pending_count > 0) ? round(($total_paid_pending / $t_pending_count) * 100, 1) : 0.0;
         $unpaid_percentage  = ($t_pending_count > 0) ? round(($unpaid / $t_pending_count) * 100, 1) : 0.0;
