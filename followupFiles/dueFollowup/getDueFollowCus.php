@@ -152,6 +152,7 @@ CASE
     LEFT JOIN commitment cm ON cm.cus_id = cp.cus_id AND cm.created_date = (SELECT MAX(c1.created_date) FROM commitment c1 WHERE c1.cus_id = cp.cus_id $commitmentCondition)
 
     WHERE cs.payable_amnt > 0
+    AND cr.reminder_call = 0
     AND ii.status = 0
     AND (ii.cus_status BETWEEN 14 AND 17)
     AND cs.sub_status IN ($sub_status_mapping)

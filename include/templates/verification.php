@@ -2596,6 +2596,9 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 				<div id="FamDeleteOk" class="unsuccessalert"> Family Info Has been Deleted!<span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
 				</div>
 
+				<div id="FamDeleteValidateFail" class="unsuccessalert"> You don't have Access to delete, Family member used as Guarantor or Doc Holder!<span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
+				</div>
+				
 				<br />
 
 				<div class="row" id="editFam">

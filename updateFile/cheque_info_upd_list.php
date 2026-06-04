@@ -37,7 +37,7 @@ include '../ajaxconfig.php';
             $a = 1;
             while($upd = $updresult->fetch()){
                 $docName = $upd['upload_cheque_name'];
-                $doc_upd_name .= "<a href=uploads/verification/cheque_upd/ ";
+                $doc_upd_name .= "<a href=uploads/verification/cheque_upd/";
                 $doc_upd_name .= $docName ;
                 $doc_upd_name .= " target='_blank' >";
                 $doc_upd_name .=  $docName. ' ' ;

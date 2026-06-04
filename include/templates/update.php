@@ -31,6 +31,15 @@ if (isset($_POST['submit_update_cus_profile']) && $_POST['submit_update_cus_prof
 <?php
 }
 
+if (isset($_POST['submit_reminder_call']) && $_POST['submit_reminder_call'] != '') {
+
+	$userObj->updateReminderCall($mysqli);
+?>
+	<script>
+		alert('Reminder Call Updated');
+	</script>
+<?php
+}
 
 //////////////////////// Customer Profile Info ///////////////////////////////
 $getCustomerReg = $userObj->getCustomerRegister($mysqli, $idupd);
@@ -72,6 +81,7 @@ if (sizeof($getCustomerReg) > 0) {
 		$monthly_due_capacity 	= $getCustomerReg['monthly_due_capacity'];
 		$loan_limit 			= $getCustomerReg['loan_limit'];
 		$about_customer 		= $getCustomerReg['about_customer'];
+		$reminder_call 		= $getCustomerReg['reminder_call'];
 		$residential_type 		= $getCustomerReg['residential_type'];
 		$residential_details 	= $getCustomerReg['residential_details'];
 		$residential_address 	= $getCustomerReg['residential_address'];
@@ -1115,6 +1125,23 @@ if (sizeof($getCustomerReg) > 0) {
 										<span class="text-danger" style='display:none' id='aboutcusCheck'> Please Enter About Customer </span>
 									</div>
 								</div>
+								<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+									<div class="form-group">
+										<label for="reminder_call"> Reminder call </label> <span class="required">*</span>
+										<select class="form-control" name="reminder_call" id="reminder_call" tabindex="63">
+											<option value="">Select Reminder Call</option>
+											<option value="0" <?php if (isset($reminder_call) and $reminder_call == '0') echo 'selected'; ?>> Yes </option>
+											<option value="1" <?php if (isset($reminder_call) and $reminder_call == '1') echo 'selected'; ?>> No </option>
+										</select>
+										<span class="text-danger" style='display:none' id='reminderCallCheck'>Please Select Reminder Call </span>
+									</div>
+								</div>
+								<div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12" id="reminder_submit_div">
+									<div class="form-group">
+										<label style="visibility:hidden">submit</label> 
+										<button type="submit" class="btn btn-primary" name="submit_reminder_call" id="submit_reminder_call" value="Submit"><span class="icon-check"></span>&nbsp;Submit Reminder</button>
+									</div>
+								</div>
 							</div>
 
 						</div>
@@ -1776,6 +1803,9 @@ if (sizeof($getCustomerReg) > 0) {
 				</div>
 
 				<div id="FamDeleteOk" class="unsuccessalert"> Family Info Has been Deleted!<span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
+				</div>
+
+				<div id="FamDeleteValidateFail" class="unsuccessalert"> You don't have Access to delete, Family member used as Guarantor or Doc Holder!<span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
 				</div>
 
 				<br />

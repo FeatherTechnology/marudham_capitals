@@ -97,8 +97,7 @@ if ($role_type == 7 || $role_type == 3) {
 
                     $action .= "<a class='intrest' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Interested</span></a>
                             <a class='not-intrest' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Not Interested</span></a>
-                            <a class='un-available' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Unavailable</span></a>
-                            <a class='noc-call' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>NOC Call</span></a>";
+                            <a class='un-available' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Unavailable</span></a>";
                     $action .= "</div></div>";
                     echo $action;
 

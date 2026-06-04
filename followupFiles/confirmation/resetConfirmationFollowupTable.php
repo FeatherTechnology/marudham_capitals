@@ -20,7 +20,7 @@ $columns = [
     'ii.updated_date',
     'rc.cus_id',
     'cr.autogen_cus_id',
-    'rc.cus_name',
+    'cr.customer_name',
     'alc.area_name',
     'salc.sub_area_name',
     'bc.branch_name',
@@ -42,7 +42,7 @@ $searchQuery = "";
 if ($searchValue != '') {
     $searchQuery = " AND (rc.cus_id LIKE '%" . $searchValue . "%' 
                     OR cr.autogen_cus_id LIKE '%" . $searchValue . "%'
-                    OR rc.cus_name LIKE '%" . $searchValue . "%' 
+                    OR cr.customer_name LIKE '%" . $searchValue . "%' 
                     OR alc.area_name LIKE '%" . $searchValue . "%'
                     OR salc.sub_area_name LIKE '%" . $searchValue . "%'
                     OR bc.branch_name LIKE '%" . $searchValue . "%'
@@ -57,7 +57,7 @@ $sql = "SELECT
     rc.req_id,
     ii.updated_date,
     rc.cus_id,
-    rc.cus_name,
+    cr.customer_name,
     cr.mobile1,
     cr.autogen_cus_id,
     alc.area_name,
@@ -114,7 +114,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
         if ($status == '1') { // 1 means completed
             $actionEdit .= "<a class='conf-remove' data-cusid='" . $row['cus_id'] . "' data-reqid='" . $row['req_id'] . "' ><span>Remove</span></a>";
         } else {
-            $actionEdit .= "<a class='conf-edit' data-cusid='" . $row['cus_id'] . "' data-cusname='" . $row['cus_name'] . "' data-reqid='" . $row['req_id'] . "' data-toggle='modal' data-target='#addConfimation'><span>Confirmation</span></a>";
+            $actionEdit .= "<a class='conf-edit' data-cusid='" . $row['cus_id'] . "' data-cusname='" . $row['customer_name'] . "' data-reqid='" . $row['req_id'] . "' data-toggle='modal' data-target='#addConfimation'><span>Confirmation</span></a>";
         }
 
         $actionEdit .= "</div></div>";
@@ -124,7 +124,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
             date('d-m-Y', strtotime($row['updated_date'])),
             $row['cus_id'],
             $row['autogen_cus_id'],
-            $row['cus_name'],
+            $row['customer_name'],
             $row['area_name'],
             $row['sub_area_name'],
             $row['branch_name'],
