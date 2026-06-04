@@ -875,7 +875,7 @@ function callCustomerProfileFunctn() {
     }
 
     let updateCPEditAccess = $('#update_cp_edit_access').val();
-    if(updateCPEditAccess !='2'){ //Overall
+    if(updateCPEditAccess !='2'){ //1-Customer feedback, 2-Overall Customer profile
         let form = $('form#cus_Profiles');
 
         // inputs except inside customer_summary_card
@@ -885,11 +885,14 @@ function callCustomerProfileFunctn() {
 
         // button except inside customer_summary_card
         form.find('select, button')
-            .not('#customer_summary_card button, #back_btn')
+            .not('#customer_summary_card button, #back_btn, #reminder_call')
             .prop('disabled', true);
 
         form.find('#pic, #guarentorpic')
             .prop('disabled', true);
+
+    } else if(updateCPEditAccess =='2'){
+        $('#reminder_submit_div').hide();
     }
 }
 
@@ -1122,8 +1125,14 @@ $("body").on("click", "#verification_fam_delete", function () {
                     setTimeout(function () {
                         $('#FamDeleteOk').fadeOut('fast');
                     }, 2000);
-                }
-                else {
+
+                } else if(response.includes("Guarantor")){
+                    $('#FamDeleteValidateFail').show();
+                    setTimeout(function () {
+                        $('#FamDeleteValidateFail').fadeOut('slow');
+                    }, 5000);
+
+                } else {
 
                     $('#FamDeleteNotOk').show();
                     setTimeout(function () {
@@ -2455,7 +2464,7 @@ function validation() {
     var cus_occ_type = $('#cus_occ_type').val(); var cus_occ_detail = $('#cus_occ_detail').val(); var cus_occ_income = $('#cus_occ_income').val(); var cus_occ_address = $('#cus_occ_address').val(); var cus_occ_dow = $('#cus_occ_dow').val(); var cus_occ_abt = $('#cus_occ_abt').val();
     var area_state = $('#area_state').val(); var area_district = $('#area_district').val(); var area_taluk = $('#area_taluk').val();
     var area_confirm = $('#area_confirm').val(); var area_sub_area = $('#area_sub_area').val();
-    var cus_how_know = $('#cus_how_know').val(); var cus_monthly_income = $('#cus_monthly_income').val(); var cus_other_income = $('#cus_other_income').val(); var cus_support_income = $('#cus_support_income').val(); var cus_Commitment = $('#cus_Commitment').val(); var cus_monDue_capacity = $('#cus_monDue_capacity').val(); var cus_loan_limit = $('#cus_loan_limit').val(); var about_cus = $('#about_cus').val();
+    var cus_how_know = $('#cus_how_know').val(); var cus_monthly_income = $('#cus_monthly_income').val(); var cus_other_income = $('#cus_other_income').val(); var cus_support_income = $('#cus_support_income').val(); var cus_Commitment = $('#cus_Commitment').val(); var cus_monDue_capacity = $('#cus_monDue_capacity').val(); var cus_loan_limit = $('#cus_loan_limit').val(); var about_cus = $('#about_cus').val(); let reminderCall = $('#reminder_call').val();
     var guarentor_name = $('#guarentor_name').val(); var guarentor_image = $('#guarentor_image').val(); var guarentorpic = $('#guarentorpic').val(); var loan_id = $('#loan_id').val(); var validation = true;
 
     if (cus_id == '') {
@@ -2694,6 +2703,13 @@ function validation() {
         $('#aboutcusCheck').show();
     } else {
         $('#aboutcusCheck').hide();
+    }
+    if (reminderCall == '') {
+        event.preventDefault();
+        validation = false;
+        $('#reminderCallCheck').show();
+    } else {
+        $('#reminderCallCheck').hide();
     }
     if (pic == '') {
         if (cus_image == '') {

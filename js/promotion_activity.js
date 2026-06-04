@@ -26,17 +26,17 @@ $(document).ready(function () {
             $('.renewal_card, .filter_card').show();
             $('.event_card').hide()
             $('.add_event_card').hide()
-            showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list', '16');
+            showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list', '17');
         } else if (typevalue == 'Re-active') {
             $('.re_active_card, .filter_card').show();
             $('.event_card').hide()
             $('.add_event_card').hide()
-            showPromotionList('followupFiles/promotion/showPromotionList.php', 're_active_promotion_list', '16');
+            showPromotionList('followupFiles/promotion/showPromotionList.php', 're_active_promotion_list', '17');
         } else if (typevalue == 'Repromotion') {
             $('.event_card').hide()
             $('.add_event_card').hide()
             $('.repromotion_card, .filter_card').show()
-            showPromotionList('followupFiles/promotion/showRepromotionList.php', 'repromotion_list', '17');
+            showPromotionList('followupFiles/promotion/showRepromotionList.php', 'repromotion_list', '18');
         } else if (typevalue == 'Events') {
             $('.event_card').show()
             $('.add_event_card').hide()
@@ -95,13 +95,13 @@ $(document).ready(function () {
         let btnName = $(".toggle-button.active").first().val();
 
         if (btnName == 'Renewal') {
-            showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list', '16');
+            showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list', '17');
 
         } else if (btnName == 'Repromotion') {
-            showPromotionList('followupFiles/promotion/showRepromotionList.php', 'repromotion_list', '17');
+            showPromotionList('followupFiles/promotion/showRepromotionList.php', 'repromotion_list', '18');
 
         } else if (btnName == 'Re-active') {
-            showPromotionList('followupFiles/promotion/showPromotionList.php', 're_active_promotion_list', '16');
+            showPromotionList('followupFiles/promotion/showPromotionList.php', 're_active_promotion_list', '17');
         }
     });
     $("#area").change(function () {
@@ -823,7 +823,7 @@ function promoChartOnclick() { // function of on click event for promo chart
 
 function intNotintOnclick() {
     // click for add promotion modal
-    $(document).off('click', '.intrest, .not-intrest, .un-available').on('click', '.intrest, .not-intrest, .un-available', function () {
+    $(document).off('click', '.intrest, .not-intrest, .un-available, .noc-call').on('click', '.intrest, .not-intrest, .un-available, .noc-call', function () {
         let value = $(this).children().text(); // span inner html
         let cus_id = $(this).data('id'); // customer id
 

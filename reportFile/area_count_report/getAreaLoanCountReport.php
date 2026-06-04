@@ -9,7 +9,6 @@ $month_start = date('Y-m-01');
 $taluk = isset($_POST['taluk']) ? $_POST['taluk'] : null;
 $loan_cat = isset($_POST['loan_cat']) ? $_POST['loan_cat'] : null;
 
-
 /* ================== USER FILTER ================== */
 $user_filter = '';
 if ($userid != 1) {
@@ -18,8 +17,7 @@ if ($userid != 1) {
 
     if ($userRow && $userRow['report_access'] == '1') {
         $sub_area_list = getUserSubAreaList($connect, 'line');
-        $user_based = " AND cp.area_confirm_subarea IN ($sub_area_list) ";
-       
+        $user_filter = " AND cp.area_confirm_subarea IN ($sub_area_list) ";
     }
 }
 
@@ -39,7 +37,7 @@ $qry = "
                 WHERE req.cus_status BETWEEN 14 AND 18
                 AND ( cs.sub_status != 'Due Nil'OR (cs.sub_status = 'Due Nil' AND coll.last_collection_date > :month_start)
         )
-        AND (:taluk = 0 OR al.taluk = :taluk)
+        AND (:taluk = '0' OR al.taluk = :taluk)
         AND (:loan_cat = 0 OR lc.loan_category = :loan_cat)
 
         UNION
@@ -62,11 +60,9 @@ $qry = "
               AND DATE(li.created_date) <= :month_start
               AND (c.req_id IS NULL OR (c.bal_amt - c.due_amt_track) > 0)
               AND li.balance_amount = 0
-              AND (:taluk = 0 OR al.taluk = :taluk)
+              AND (:taluk = '0' OR al.taluk = :taluk)
               AND (:loan_cat = 0 OR lc.loan_category = :loan_cat) ";
 
-
-    
     $stmtReq = $connect->prepare($qry);
     $stmtReq->bindValue(':month_start', $month_start);
     $stmtReq->bindValue(':taluk', $taluk);
@@ -79,7 +75,6 @@ $qry = "
         $eligible_req_ids = [0]; // prevent empty IN()
     }
 
-
 /* ================== MAIN QUERY ================== */
 $sql = " SELECT
             al.area_id,
@@ -87,6 +82,7 @@ $sql = " SELECT
             al.taluk,
             GROUP_CONCAT(DISTINCT alm.line_name) AS line_names,
             GROUP_CONCAT(DISTINCT agm.group_name) AS group_names,
+            GROUP_CONCAT(DISTINCT adm.duefollowup_name) AS zone_names,
             ii.req_id,
             ii.cus_id,
             ii.loan_id,
@@ -98,7 +94,8 @@ $sql = " SELECT
             lc.tot_amt_cal,
             lc.due_method_calc,
             lc.due_method_scheme,
-            IFNULL(c.total_due_amt,0) AS total_due_amt
+            IFNULL(c.total_due_amt,0) AS total_due_amt,
+            iv.responsible
         FROM acknowlegement_loan_calculation lc
         JOIN acknowlegement_customer_profile cp ON lc.req_id = cp.req_id
         JOIN in_issue ii ON lc.req_id = ii.req_id
@@ -108,6 +105,8 @@ $sql = " SELECT
         JOIN area_line_mapping alm ON alm.map_id = alma.line_map_id
         JOIN area_group_mapping_area agma ON al.area_id = agma.area_id
         JOIN area_group_mapping agm ON agm.map_id = agma.group_map_id
+        JOIN area_duefollowup_mapping_area adma ON al.area_id = adma.area_id
+        JOIN area_duefollowup_mapping adm ON adm.map_id = adma.duefollowup_map_id
         LEFT JOIN (
             SELECT req_id, SUM(due_amt_track) AS total_due_amt
             FROM collection
@@ -136,8 +135,11 @@ foreach ($rows as $row) {
             'taluk' => $row['taluk'],
             'line_names' => $row['line_names'],
             'group_names' => $row['group_names'],
+            'zone_names' => $row['zone_names'],
             'loan_ids' => [],
             'customer_ids' => [],
+            'responsible_cnt' => 0,
+            'payable_zero_cnt' => 0,
             'Current' => 0,
             'Pending' => 0,
             'OD' => 0,
@@ -147,13 +149,15 @@ foreach ($rows as $row) {
         ];
     }
 
-
     // Track unique IDs
     if (!in_array($row['req_id'], $area_data[$area_id]['loan_ids'])) {
         $area_data[$area_id]['loan_ids'][] = $row['req_id'];
     }
     if (!in_array($row['cus_id'], $area_data[$area_id]['customer_ids'])) {
         $area_data[$area_id]['customer_ids'][] = $row['cus_id'];
+    }
+    if ($row['responsible'] =='0') {
+        $area_data[$area_id]['responsible_cnt']++;
     }
 
     // Status calculations
@@ -185,30 +189,27 @@ foreach ($rows as $row) {
     $payable_amount = max(0, $payable_amount);
     $pending_amount = max(0, $pending_amount);
 
+    //Get Payable count 
+    if($payable_amount == 0){
+        $area_data[$area_id]['payable_zero_cnt']++;
+    }
+
     // ---- STATUS DECISION (SAME AS DETAIL REPORT) ----
     if ($row['cus_status'] == '15' && strtotime($row['updated_date']) < strtotime($month_start)) {
         $area_data[$area_id]['Error']++;
-    }
 
-    else if ($row['cus_status'] == '16' && strtotime($row['updated_date']) < strtotime($month_start)) {
+    }else if ($row['cus_status'] == '16' && strtotime($row['updated_date']) < strtotime($month_start)) {
         $area_data[$area_id]['Legal']++;
 
-    }else if ( $payable_amount <= $row['due_amt_cal'] && $pending_amount == 0
-        && ( ( ($row['due_method_scheme'] === '1' || $row['due_method_calc'] === 'Monthly') && date('Y-m', strtotime($row['maturity_month'])) >= date('Y-m', strtotime($month_start)))
-            || ( ($row['due_method_scheme'] != '1' || $row['due_method_calc'] != 'Monthly')&& strtotime($row['maturity_month']) >= strtotime($month_start))) && $balance_amount != 0) {
+    }else if ( $payable_amount <= $row['due_amt_cal'] && $pending_amount == 0 && ( ( ($row['due_method_scheme'] === '1' || $row['due_method_calc'] === 'Monthly') && date('Y-m', strtotime($row['maturity_month'])) >= date('Y-m', strtotime($month_start))) || ( ($row['due_method_scheme'] != '1' || $row['due_method_calc'] != 'Monthly') && strtotime($row['maturity_month']) >= strtotime($month_start))) && $balance_amount != 0) {
 
         $area_data[$area_id]['Current']++;
-    }
 
-    else if ( $pending_amount > 0
-        && ( ( ($row['due_method_scheme'] === '1' || $row['due_method_calc'] === 'Monthly') && date('Y-m', strtotime($row['maturity_month'])) >= date('Y-m', strtotime($month_start)))
-            || (($row['due_method_scheme'] != '1' || $row['due_method_calc'] != 'Monthly') && strtotime($row['maturity_month']) > strtotime($month_start)))) {
+    }else if ( $pending_amount > 0 && ( ( ($row['due_method_scheme'] === '1' || $row['due_method_calc'] === 'Monthly') && date('Y-m', strtotime($row['maturity_month'])) >= date('Y-m', strtotime($month_start))) || (($row['due_method_scheme'] != '1' || $row['due_method_calc'] != 'Monthly') && strtotime($row['maturity_month']) > strtotime($month_start)))) {
 
         $area_data[$area_id]['Pending']++;
-    }
-    else if ( $balance_amount > 0 && (
-            (($row['due_method_scheme'] === '1' || $row['due_method_calc'] === 'Monthly')&& date('Y-m', strtotime($row['maturity_month'])) < date('Y-m', strtotime($month_start)))
-            || ( ($row['due_method_scheme'] != '1' || $row['due_method_calc'] != 'Monthly')&& strtotime($row['maturity_month']) < strtotime($month_start)))) {
+
+    }else if ( $balance_amount > 0 && ((($row['due_method_scheme'] === '1' || $row['due_method_calc'] === 'Monthly')&& date('Y-m', strtotime($row['maturity_month'])) < date('Y-m', strtotime($month_start))) || ( ($row['due_method_scheme'] != '1' || $row['due_method_calc'] != 'Monthly')&& strtotime($row['maturity_month']) < strtotime($month_start)))) {
 
         $area_data[$area_id]['OD']++;
     }
@@ -226,8 +227,11 @@ foreach ($area_data as $area) {
         "taluk" => $area['taluk'],
         "line_names" => $area['line_names'],
         "group_names" => $area['group_names'],
+        "zone_names" => $area['zone_names'],
         "customer_count" => count($area['customer_ids']),
         "loan_count" => count($area['loan_ids']),
+        "responsible_count" => $area['responsible_cnt'],
+        "payable_zero_count" => $area['payable_zero_cnt'],
         "Current" => $area['Current'],
         "Pending" => $area['Pending'],
         "OD" => $area['OD'],
@@ -247,7 +251,8 @@ if ($searchValue !== '') {
             strpos(strtolower($row['area_name']), $searchValue) !== false ||
             strpos(strtolower($row['taluk']), $searchValue) !== false ||
             strpos(strtolower($row['line_names']), $searchValue) !== false ||
-            strpos(strtolower($row['group_names']), $searchValue) !== false;
+            strpos(strtolower($row['group_names']), $searchValue) !== false ||
+            strpos(strtolower($row['zone_names']), $searchValue) !== false;
     });
 
     // update filtered count
@@ -255,7 +260,6 @@ if ($searchValue !== '') {
 } else {
     $recordsFiltered = $recordsTotal;
 }
-
 
 $start  = intval($_POST['start'] ?? 0);
 $length = intval($_POST['length'] ?? 10);
@@ -276,14 +280,9 @@ function count_all_data($connect)
     return (int)$statement['count_result'];
 }
 
-
 echo json_encode([
     "draw" => $draw,
     "recordsTotal" => $recordsTotal,
     "recordsFiltered" => $recordsFiltered,
     "data" => array_values($data)
 ]);
-
-
-
-

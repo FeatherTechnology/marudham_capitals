@@ -1562,14 +1562,21 @@ $("body").on("click", "#verification_fam_delete", function () {
           setTimeout(function () {
             $("#FamDeleteOk").fadeOut("fast");
           }, 2000);
-          resetFamInfo();
+
+        } else if(response.includes("Guarantor")){
+          $('#FamDeleteValidateFail').show();
+          setTimeout(function () {
+              $('#FamDeleteValidateFail').fadeOut('slow');
+          }, 5000);
+
         } else {
           $("#FamDeleteNotOk").show();
           setTimeout(function () {
             $("#FamDeleteNotOk").fadeOut("fast");
           }, 2000);
-          resetFamInfo();
         }
+        
+        resetFamInfo();
       },
     });
   }
