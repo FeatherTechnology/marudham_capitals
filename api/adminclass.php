@@ -6891,7 +6891,7 @@ class admin
 	function getUserDetails($mysqli, $userid)
 	{
 		$getDetails = array();
-		$selectQry = $mysqli->query("SELECT `user_id`,`fullname`,`user_name`,`role`,`role_type`,`staff_id`,`company_id`,`branch_id` FROM `user` WHERE user_id='" . $userid . "' ");
+		$selectQry = $mysqli->query("SELECT `user_id`,`fullname`,`user_name`,`role`,`role_type`,`dir_id`,`staff_id`,`company_id`,`branch_id` FROM `user` WHERE user_id='" . $userid . "' ");
 		if ($selectQry->num_rows > 0) {
 			$row = $selectQry->fetch_assoc();
 			$getDetails = $row;
@@ -6903,7 +6903,12 @@ class admin
 		if ($getDetails['staff_id'] != '') {
 			$qry = $mysqli->query("SELECT staff_code FROM staff_creation WHERE staff_id = '" . $getDetails['staff_id'] . "' ");
 			$getDetails['staff_code'] = $qry->fetch_assoc()['staff_code'];
+
+		} else if ($getDetails['role'] == '1') { //role 1 is director so need to get id from director_creation
+			$qry = $mysqli->query("SELECT dir_code FROM director_creation WHERE dir_id = '" . $getDetails['dir_id'] . "' ");
+			$getDetails['staff_code'] = $qry->fetch_assoc()['dir_code'];
 		}
+
 		return $getDetails;
 	}
 	//Concern Subject
