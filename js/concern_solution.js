@@ -219,10 +219,13 @@ function getAssignName(staff_name_id) {
     // selected id only needed in edit mode
     const selectedId = (pg_id != '1') ? staff_assign_id : '';
 
+    //if pass screen means hide login user name in dropdown, but in solution need to show the login username.
+    const filterId = (pg_id =='1') ? '1' : '2'; //1 dont show login username, 2 - show login username.
+
     return $.ajax({
         url: 'reportFile/customer_status_report/getAllUserList.php',
         type: 'POST',
-        data: { user_track: '3', user_type: '2', role_type: staff_name_id },
+        data: { user_track: '3', user_type: '2', role_type: staff_name_id, filterId: filterId},
         dataType: 'json',
         cache: false
     })

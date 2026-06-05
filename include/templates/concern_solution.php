@@ -10,7 +10,7 @@ $getUserDetails = $userObj->getUserDetails($mysqli, $userid);
 if ($getUserDetails) {
     $company_id = $getUserDetails['company_id'];
     $user_name = $getUserDetails['fullname'];
-    $staff_code = $getUserDetails['staff_code'];
+    $staff_code = $getUserDetails['staff_code'] ?? '';
 }
 
 $getConcernCreation = $userObj->getConcernCreation($mysqli, $idupd, $userid);
