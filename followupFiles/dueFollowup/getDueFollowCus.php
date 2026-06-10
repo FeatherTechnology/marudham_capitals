@@ -101,7 +101,7 @@ if (isset($_POST['comm_date'])) {
 $searchValue = $_POST['search'] ?? '';
 $search = $searchValue != '' ? "AND (ii.cus_id LIKE '%$searchValue%' OR cr.autogen_cus_id LIKE '%$searchValue%' OR cp.cus_name LIKE '%$searchValue%' OR alc.area_name LIKE '%$searchValue%' OR salc.sub_area_name LIKE '%$searchValue%' OR cr.mobile1 LIKE '%$searchValue%' OR cs.sub_status LIKE '%$searchValue%')" : '';
 
-$columns = ['cp.id', 'cp.cus_id', 'cr.autogen_cus_id', 'cp.cus_name', 'alc.area_name', 'salc.sub_area_name', 'bc.branch_name', 'alm.line_name', 'cr.mobile1', 'cs.sub_status', 'responsible_status', 'cp.id', 'cs.last_paid_date', 'cs.current_month_paid', 'cm.comm_err', 'cm.hint', 'cm.remark', 'cm.comm_date'];
+$columns = ['cp.id', 'cp.cus_id', 'cr.autogen_cus_id', 'cp.cus_name', 'alc.area_name', 'salc.sub_area_name', 'bc.branch_name', 'alm.line_name', 'cr.mobile1', 'cs.sub_status', 'responsible_status', 'cp.id', 'cr.reminder_call', 'cp.id', 'cs.last_paid_date', 'cs.current_month_paid', 'cm.comm_err', 'cm.hint', 'cm.remark', 'cm.comm_date'];
 $orderDir = $_POST['order'][0]['dir'] ?? 'ASC';
 $orderColumnIndex = $_POST['order'][0]['column'] ?? 0;
 $order = "ORDER BY " . ($columns[$orderColumnIndex] ?? $columns[0]) . " $orderDir";
@@ -123,6 +123,7 @@ $query = "SELECT
     cm.comm_date,
     cm.remark,
     ii.req_id,
+    cr.reminder_call,
 CASE
     -- if any responsible = 1 => NO
     WHEN SUM(CASE WHEN rc.responsible = 1 THEN 1 ELSE 0 END) > 0 THEN 'No'
@@ -152,7 +153,6 @@ CASE
     LEFT JOIN commitment cm ON cm.cus_id = cp.cus_id AND cm.created_date = (SELECT MAX(c1.created_date) FROM commitment c1 WHERE c1.cus_id = cp.cus_id $commitmentCondition)
 
     WHERE cs.payable_amnt > 0
-    AND cr.reminder_call = 0
     AND ii.status = 0
     AND (ii.cus_status BETWEEN 14 AND 17)
     AND cs.sub_status IN ($sub_status_mapping)
@@ -268,6 +268,8 @@ foreach ($result as $row) {
         $finalData['status_priority'] = $cus_status,
         $finalData['responsible_status'] = $row['responsible_status'],
         $finalData['action'] = "<a href='due_followup&upd={$row['req_id']}&cusidupd=$cus_id&cussts=$sub_status_url&cummDate=$commdate&res_sts=$res_sts' title='Edit details'><button class='btn btn-success' style='background-color:#009688;'>View Loans</button></a>",
+        $finalData['reminder_call'] = ($row['reminder_call'] == '0') ? 'Yes' : 'No',
+        $finalData['customer_summary'] = "<a href='' data-value ='" . $cus_id . "' data-cusid ='" . $row['autogen_cus_id'] . "' data-cusname ='" . $cus_name . "' data-mobile ='" . $row['mobile1'] . "' class='customer-summary' data-toggle='modal' data-target='.customersummary'><span class='icon-eye' style='font-size: 12px;position: relative;top: 2px;'></span></a>",
         $finalData['last_paid_date'] = $last_paid_date,
         $finalData['paid_status'] = $paid_status,
         $finalData['hint'] = $hint,

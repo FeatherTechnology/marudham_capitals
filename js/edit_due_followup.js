@@ -28,6 +28,7 @@ $(function () {
         OnLoadFunctions(cusSts, cummDate ,res_sts );
     }
 });
+
 function warningSwal(title, text) {
     Swal.fire({
         title: title,
@@ -143,3 +144,26 @@ function getSubStsMapping() {
     });
 
 }
+
+$(document).on('click', 'a.customer-summary', async function(event) {
+    event.preventDefault();
+    try {
+        let cus_id = $(this).data('value');
+        let cusid = $(this).data('cusid');
+        let cusname = $(this).data('cusname');
+        let mobile = $(this).data('mobile');
+        $.ajax({
+            url: 'verificationFile/customer_feedback_list.php',
+            type: 'POST',
+            data: { "cus_id": cus_id },
+            cache: false,
+            success: function (html) {
+                $("#feedbackListTable").html(html);
+                $('#myLargeModalLabel').text(`Customer Summary ( Aadhaar Number : ${cus_id} | Cus ID : ${cusid}  | Cus Name : ${cusname}  | Mobile : ${mobile} )`);
+            }
+        });
+    } catch (err) {
+        console.error(err);
+        hideOverlay();
+    }
+});

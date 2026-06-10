@@ -2577,6 +2577,23 @@
             }
         }
         ////////////////////////////////// Mantra device initialize END //////////////////////////////////
+
+        function getUserMappedDetails(typeVal){
+            if(typeVal != '1'){ //if type user then no need to show mapping.
+                $.post('reportFile/promotion_activity/getUserMappedDetails.php', {typeVal}, function (response) {
+
+                    map_name.clearStore();
+
+                    const items = response.map(row => ({
+                        value: row.ids,
+                        label: row.map_name
+                    }));
+
+                    map_name.setChoices(items);
+
+                },'json');
+            }
+        }
     </script>
 
     <?php

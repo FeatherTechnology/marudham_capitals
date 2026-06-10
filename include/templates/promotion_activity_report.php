@@ -13,7 +13,8 @@
 
         <div class="row gutters">
             <div class="toggle-container col-12 reports_filter_card">
-                <input type="date" id='selected_date' name='selected_date' class="toggle-button" value=''>
+                <input type="date" id='from_date' name='from_date' class="toggle-button" value=''>
+                <input type="date" id='to_date' name='to_date' class="toggle-button" value=''>
 
                 <select class="toggle-button" name='type' id='type'>
 					<option value='0'>Select Type</option>
@@ -68,6 +69,7 @@
                                     <th>User Type</th>
                                     <th>User Name</th>
                                     <th>Customer Status</th>
+                                    <th>Status</th>
                                 </thead>
                                 <tbody></tbody>
                             </table>

@@ -35,8 +35,6 @@ $(document).ready(function () {
 
     $('#type').change(function () {
         let type = $(this).val();
-        $('#user_type, #by_user').val('').show();
-        $('#by_user').empty().append("<option value=''>Select User</option>");
         $('#map_name').closest('.choices').hide();
         map_name.clearStore();
         $('#pending_table').hide().find('tbody').empty();
@@ -82,11 +80,17 @@ $(document).ready(function () {
         //     getUserLoanCategories('');
         // }
 
-        if(type == '2' || type == '3' || type == '4') { //sector - group
+        if(type == '1'){ 
+            $('#user_type, #by_user').val('').show();
+            $('#by_user').empty().append("<option value=''>Select User</option>");
+
+        } else if(type == '2' || type == '3' || type == '4') { //sector - group, Region - Line, Zone - Follow up
+            $('#user_type, #by_user').val('').hide();
             $('#map_name').closest('.choices').show();
+            getUserMappedDetails(type); //to Mapping details.
             
         } else if(type == '0'){
-            $('#user_type, #by_user').hide();
+            $('#user_type, #by_user').val('').hide();
         }
 
     });
@@ -97,26 +101,6 @@ $(document).ready(function () {
 
         if(userType != ''){
             getUserNames();
-        }
-    });
-
-    $('#by_user').change(function(){
-        let userId = $(this).val();
-        let typeVal = $('#type').val();
-
-        if(typeVal != '1' && userId !=''){ //if type user then no need to show mapping.
-            $.post('reportFile/promotion_activity/getUserMappedDetails.php', {userId, typeVal}, function (response) {
-
-                map_name.clearStore();
-
-                const items = response.map(row => ({
-                    value: row.ids,
-                    label: row.map_name
-                }));
-
-                map_name.setChoices(items);
-
-            },'json');
         }
     });
 

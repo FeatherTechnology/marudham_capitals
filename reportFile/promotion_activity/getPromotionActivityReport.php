@@ -5,10 +5,10 @@ include '../../ajaxconfig.php';
 
 $where = "";
 
-if (isset($_POST['selected_date']) && $_POST['selected_date'] != '') {
-    $selected_date = date('Y-m-d', strtotime($_POST['selected_date']));
-    $where  = "AND np.created_date >= '" . $selected_date . " 00:00:00' 
-          AND np.created_date <= '" . $selected_date . " 23:59:59'";
+if ((isset($_POST['fromdate']) && $_POST['fromdate'] != '') && isset($_POST['todate']) && $_POST['todate'] != '') {
+    $from_date = date('Y-m-d', strtotime($_POST['fromdate']));
+    $to_date = date('Y-m-d', strtotime($_POST['todate']));
+    $where  = "AND (np.created_date >= '" . $from_date . " 00:00:00' AND np.created_date <= '" . $to_date . " 23:59:59')";
 }
 
 $selectedType = $_POST['selectedType'] ?? '';
@@ -37,9 +37,7 @@ if (!empty($id_list)) {
     $where .= " AND np.insert_login_id IN ($id_list) ";
 }
 
-$promo_type_arr = ['1'=>'Direct','2'=>'Mobile'];
-
-$column = array(
+$column = [
     'np.id',
     'np.cus_id',
     'cp.autogen_cus_id',
@@ -59,8 +57,9 @@ $column = array(
     'np.follow_date',
     'u.role',
     'u.fullname',
+    'np.id',
     'np.id'
-);
+];
 
 $query = "SELECT 
     np.cus_id, 
@@ -80,7 +79,8 @@ $query = "SELECT
     alm.line_name, 
     adm.duefollowup_name, 
     np.follow_date, 
-    np.orgin_table
+    np.orgin_table,
+    cp.cus_status
 FROM 
     new_promotion np
 LEFT JOIN 
@@ -152,37 +152,38 @@ if ($_POST['length'] != -1) {
 }
 $result = $statement->fetchAll();
 
-$data = array();
+$data = [];
 $sno = 1;
 $role_arr = [1 => 'Director', 2 => 'Agent', 3 => 'Staff'];
 $originName = [1 => 'Renewal', 2 => 'New Promotion', 3 => 'Repromotion', 4=> 'Re-active']; 
+$promo_type_arr = ['1'=>'Direct','2'=>'Mobile'];
+$statusObj = ['0' => 'Request','1' => 'Verification','2' => 'Approval','3' => 'Acknowledgement','4' => 'Promotion','5' => 'Promotion','6' => 'Promotion','7' => 'Promotion','8' => 'Promotion','9' => 'Promotion','10' => 'Verification','11' => 'Verification','12' => 'Verification','13' => 'Loan Issue','14' => 'Collection','15' => 'Collection','16' => 'Collection','17' => 'Collection','20' => 'Promotion','21' => 'Promotion', '22' => 'Promotion', '23' => 'Promotion', '24' => 'Promotion'];
 
 foreach ($result as $row) {
-    $sub_array = array();
-    $sub_array[] = $sno;
-    $sub_array[] = $row['cus_id'];
-    $sub_array[] = $row['autogen_cus_id'];
-    $sub_array[] = $row['customer_name'];
-    $sub_array[] = date('d-m-Y', strtotime($row['created_date']));
-    $sub_array[] = date('h:i:s A', strtotime($row['created_date']));
-    $sub_array[] = $row['mobile1'];
-    $sub_array[] = $row['area_name'];
-    $sub_array[] = $row['sub_area_name'];
-    $sub_array[] = $row['line_name'];
-    $sub_array[] = $row['group_name'];
-    $sub_array[] = $row['duefollowup_name'];
-    $sub_array[] = $row['branch_name'];   
-    $sub_array[] = $promo_type_arr[$row['promo_type']];   
-    $sub_array[] = $row['status'];
-    $sub_array[] = $row['remark'];
-    $sub_array[] = date('d-m-Y', strtotime($row['follow_date']));
-    $sub_array[] = isset($role_arr[$row['role']]) ? $role_arr[$row['role']] : '';
-    $sub_array[] = $row['fullname'];
-    $sub_array[] = isset($originName[$row['orgin_table']]) ? $originName[$row['orgin_table']] : '';
-
-    $data[] = $sub_array;
-    $sno++;
-}
+    $data[] = [
+        $sno++,
+        $row['cus_id'],
+        $row['autogen_cus_id'],
+        $row['customer_name'],
+        date('d-m-Y', strtotime($row['created_date'])),
+        date('h:i:s A', strtotime($row['created_date'])),
+        $row['mobile1'],
+        $row['area_name'],
+        $row['sub_area_name'],
+        $row['line_name'],
+        $row['group_name'],
+        $row['duefollowup_name'],
+        $row['branch_name'],
+        $promo_type_arr[$row['promo_type']] ?? '',
+        $row['status'],
+        $row['remark'],
+        date('d-m-Y', strtotime($row['follow_date'])),
+        $role_arr[$row['role']] ?? '',
+        $row['fullname'],
+        $originName[$row['orgin_table']] ?? '',
+        $statusObj[$row['cus_status']] ?? ''
+    ];
+}    
 
 function count_all_data($connect)
 {
