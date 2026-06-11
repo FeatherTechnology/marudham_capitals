@@ -25,6 +25,7 @@ $(document).ready(function () {
         map_name.clearStore();
         $('#verification_count_table').DataTable().destroy();
         $('#verification_count_table tbody').empty();
+        $('#verification_count_table tfoot').empty();
         
         if(type == '1'){ 
             $('#user_type, #by_user').val('').show();

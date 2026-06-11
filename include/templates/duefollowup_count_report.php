@@ -52,7 +52,7 @@
 				</select>
 	
                 <select class="form-control hidefield" id="map_name" name="map_name" multiple>
-                    <option value="">Select</option>
+                    <option value="">Select Zone</option>
                 </select>
 
 				<input type="button" id='reset_btn' name='reset_btn' class="toggle-button" style="background-color: #009688;color:white" value='Search'>
@@ -97,7 +97,25 @@
 								</thead>
 
 								<tbody></tbody>
-								<tfoot></tfoot>
+								<tfoot>
+									<tr>
+										<td></td>
+										<td></td>
+
+										<td></td>
+										<td></td>
+
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+								</tfoot>
 							</table>
 							
 						</div>

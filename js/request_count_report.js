@@ -24,8 +24,10 @@ $(document).ready(function () {
         $('#map_name').closest('.choices').hide();
         map_name.clearStore();
         if ($.fn.DataTable.isDataTable('#request_count_table')) {
-            $('#request_count_table').DataTable().clear().draw();
-            $('#request_count_table').DataTable().destroy();
+            $('#request_count_table').DataTable().clear().destroy();
+
+            $('#request_count_table tbody').empty(); // Remove old rows
+            $('#request_count_table tfoot').empty(); // Remove old footer
         }
         
         if(type == '1'){ 
