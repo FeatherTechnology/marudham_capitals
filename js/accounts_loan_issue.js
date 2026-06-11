@@ -47,7 +47,15 @@ $(document).ready(function () {
         var doc_charge = $("#doc_charge").val();
         var proc_fee = $("#proc_fee").val();
         var due_period = $("#due_period").val();
-        var profit_method = $("#profit_method").val();
+        var profit_type = $("#profit_type").val();
+
+        if (profit_type == "1") {
+            // Calculation
+            profit_method = $("#profit_method").val();
+        } else if (profit_type == "2") {
+            // Scheme
+            profit_method = $("#scheme_profit_method").val();
+        }
 
         if( intrest_rate == "" || doc_charge == "" || proc_fee == "" || due_period == "" || profit_method == ""){
             Swal.fire({
