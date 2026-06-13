@@ -69,6 +69,8 @@
 									<th>Customer Data</th>
 									<th>Existing Type</th>
 									<th>Sub Status</th>
+									<th>Document Status</th>
+									<th>Document Holder</th>
 								</thead>
 								<tbody></tbody>
 								<tfoot>
@@ -84,7 +86,7 @@
 										<td></td>
 										<td></td>
 										<td></td>
-										<td colspan="10"></td>
+										<td colspan="12"></td>
 									</tr>
 								</tfoot>
 							</table>

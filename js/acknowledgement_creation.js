@@ -184,6 +184,7 @@ $(document).ready(function () {
         $("#feedback_label").val(result["feedback_label"]);
         $("#cus_feedback").val(result["cus_feedback"]);
         $("#feedback_remark").val(result["feedback_remark"]);
+        $("#cus_summary_upload").val(result["upload"]);
       },
     });
   });
@@ -1800,22 +1801,34 @@ $(document).on("click", "#feedbackBtn", function () {
   let cus_id = $("#cus_id").val();
   let feedback_label = $("#feedback_label").val();
   let cus_feedback = $("#cus_feedback").val();
+  let files = $("#customer_summary_uploads")[0].files;
+  let cus_summary_upload = $("#cus_summary_upload").val();
   let feedback_remark = $("#feedback_remark").val();
   let feedbackID = $("#feedbackID").val();
 
   if (feedback_label != "" && cus_feedback != "" && req_id != "") {
+    // Using FormData to send file and other data
+    let formData = new FormData();
+    formData.append("reqId", req_id);
+    formData.append("cus_id", cus_id);
+    formData.append("feedback_label", feedback_label);
+    formData.append("cus_feedback", cus_feedback);
+
+    for (let i = 0; i < files.length; i++) {
+        formData.append("customer_summary_uploads[]", files[i]);
+    } // Append the file
+    
+    formData.append("cus_summary_upload", cus_summary_upload); //edit value.
+    formData.append("feedback_remark", feedback_remark); 
+    formData.append("feedbackID", feedbackID);
+
     $.ajax({
       url: "verificationFile/customer_feedback_submit.php",
       type: "POST",
-      data: {
-        feedback_label: feedback_label,
-        cus_feedback: cus_feedback,
-        feedback_remark: feedback_remark,
-        feedbackID: feedbackID,
-        reqId: req_id,
-        cus_id: cus_id,
-      },
+      data: formData,
       cache: false,
+      contentType: false, // Important: Do not process contentType
+      processData: false, // Important: Do not process data
       success: function (response) {
         var insresult = response.includes("Inserted");
         var updresult = response.includes("Updated");
@@ -1840,8 +1853,7 @@ $(document).on("click", "#feedbackBtn", function () {
       },
     });
 
-    $("#feedbacklabelCheck").hide();
-    $("#feedbackCheck").hide();
+    $("#feedbacklabelCheck, #feedbackCheck").hide();
   } else {
     if (feedback_label == "") {
       $("#feedbacklabelCheck").show();
@@ -1865,13 +1877,8 @@ function resetfeedback() {
     data: { cus_id: cus_id },
     cache: false,
     success: function (html) {
-      $("#feedbackTable").empty();
-      $("#feedbackTable").html(html);
-
-      $("#feedback_label").val("");
-      $("#cus_feedback").val("");
-      $("#feedbackID").val("");
-      $("#feedback_remark").val("");
+        $("#feedbackTable").html(html);
+        $("#feedback_label, #cus_feedback, #feedback_remark, #feedbackID, #customer_summary_uploads").val('');
     },
   });
 }
@@ -1885,12 +1892,7 @@ function feedbackList() {
         data: { "cus_id": cus_id },
         cache: false,
         success: function (html) {
-            $("#feedbackListTable").empty();
             $("#feedbackListTable").html(html);
-
-            $("#feedback_label").val('');
-            $("#cus_feedback").val('');
-            $("#feedbackID").val('');
         }
     });
 }

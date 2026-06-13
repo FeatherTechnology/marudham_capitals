@@ -80,7 +80,9 @@ $column = array(
     'u.fullname',
     'cus_type',
     'cp.cus_exist_type',
-    'cs.sub_status'
+    'cs.sub_status',
+    'ad.doc_sts',
+    'us.fullname'
 );
 
 $query = "SELECT 
@@ -127,7 +129,9 @@ $query = "SELECT
         END AS loan_issue_user_type,
         cp.cus_type,
         cp.cus_exist_type,
-        cs.sub_status
+        cs.sub_status,
+        ad.doc_sts,
+        us.fullname AS doc_holder_name
 
         FROM in_issue ii
         JOIN customer_register cr ON ii.cus_id = cr.cus_id
@@ -152,6 +156,7 @@ $query = "SELECT
         LEFT JOIN customer_status cs ON ii.req_id = cs.req_id
         LEFT JOIN document_track dt ON dt.req_id = ii.req_id
         LEFT JOIN user u ON u.user_id = dt.insert_login_id
+        LEFT JOIN user us ON us.user_id = dt.update_login_id
         LEFT JOIN verification_family_info vfi_received_by ON li.relationship !='Customer' AND li.cash_guarentor_name = vfi_received_by.relation_aadhar AND li.cus_id = vfi_received_by.cus_id
 
         WHERE ii.cus_status >= 14 AND lc.due_type != 'Interest' $loan_category_filter 
@@ -234,58 +239,75 @@ foreach ($result as $row) {
         $bank_name = getBankName($qryfetch['bank_id'], $connect);
     }
 
-    $sub_array   = array();
-    $sub_array[] = $sno;
-    $sub_array[] = $row['loan_id'];
-    $sub_array[] = $row['doc_id'];
-    $sub_array[] = $row['cus_id'];
-    $sub_array[] = $row['autogen_cus_id'];
-    $sub_array[] = $row['cus_name'];
-    $sub_array[] = $row['famname'];
-    $sub_array[] = $row['relationship'];
-    $sub_array[] = $row['area_name'];
-    $sub_array[] = $row['sub_area_name'];
-    $sub_array[] = $row['line_name'];
-    $sub_array[] = $row['group_name'];
-    $sub_array[] = $row['duefollowup_name'];
-    $sub_array[] = $row['branch_name'];
-    $sub_array[] = $row['loan_cat_name'];
-    $sub_array[] = $row['sub_category'];
-    $sub_array[] = $row['ag_name'];
-    $sub_array[] = (!empty($row['ag_name'])) ? (($row['responsible'] == '0') ? 'Yes' : 'No') : '';
-    $sub_array[] = date('d-m-Y', strtotime($row['loan_date']));
-    $sub_array[] = $combinedtypeStr;
-    $sub_array[] = $bank_name;
-    $sub_array[] = (in_array('1', $combinedPaymentType) || in_array('2', $combinedPaymentType)) ? date('d-m-Y', strtotime($qryfetch['created_date'])) : '';
-    $sub_array[] = moneyFormatIndia($row['loan_amt_cal']);
-    $sub_array[] = moneyFormatIndia($row['principal_amt_cal']);
-    $sub_array[] = moneyFormatIndia($row['int_amt_cal']);
-    $sub_array[] = moneyFormatIndia($row['doc_charge_cal']);
-    $sub_array[] = moneyFormatIndia($row['proc_fee_cal']);
-    $sub_array[] = moneyFormatIndia($row['tot_amt_cal']);
-    $sub_array[] = moneyFormatIndia($row['net_cash_cal']);
-    $sub_array[] = moneyFormatIndia($row['due_amt_cal']);
-    $sub_array[] = $row['due_period'];
-    $sub_array[] = date('d-m-Y', strtotime($row['due_start_from']));
-    $sub_array[] = date('d-m-Y', strtotime($row['maturity_month']));
-
     if ($row['rec_relationship'] == 'Customer' || in_array('1', $combinedPaymentType) || in_array('2', $combinedPaymentType)) {
         //if loan issued to customer then direclty place customer name from cp table
-        $sub_array[] = $row['cus_name'];
-        $sub_array[] = 'Customer';
+        $receivedBy = $row['cus_name'];
+        $relation_name = 'Customer';
     } else {
         //else place received by and relation name from fam table
-        $sub_array[] = $row['received_by'];
-        $sub_array[] = $row['rel_name'];
+        $receivedBy = $row['received_by'];
+        $relation_name = $row['rel_name'];
     }
-    $sub_array[] = $row['loan_issue_user_type'];
-    $sub_array[] = $row['loan_issue_user_name'];
-    $sub_array[] = $row['cus_type'];
-    $sub_array[] = $row['cus_exist_type'];
-    $sub_array[] = $row['sub_status'];
 
-    $data[]      = $sub_array;
-    $sno = $sno + 1;
+    $data[]      = [
+        $sno++,
+        $row['loan_id'],
+        $row['doc_id'],
+        $row['cus_id'],
+        $row['autogen_cus_id'],
+        $row['cus_name'],
+        $row['famname'],
+        $row['relationship'],
+        $row['area_name'],
+        $row['sub_area_name'],
+        $row['line_name'],
+        $row['group_name'],
+        $row['duefollowup_name'],
+        $row['branch_name'],
+        $row['loan_cat_name'],
+        $row['sub_category'],
+        $row['ag_name'],
+        (!empty($row['ag_name'])) ? (($row['responsible'] == '0') ? 'Yes' : 'No') : '',
+        date('d-m-Y', strtotime($row['loan_date'])),
+        $combinedtypeStr,
+        $bank_name,
+        (in_array('1', $combinedPaymentType) || in_array('2', $combinedPaymentType)) ? date('d-m-Y', strtotime($qryfetch['created_date'])) : '',
+        moneyFormatIndia($row['loan_amt_cal']),
+        moneyFormatIndia($row['principal_amt_cal']),
+        moneyFormatIndia($row['int_amt_cal']),
+        moneyFormatIndia($row['doc_charge_cal']),
+        moneyFormatIndia($row['proc_fee_cal']),
+        moneyFormatIndia($row['tot_amt_cal']),
+        moneyFormatIndia($row['net_cash_cal']),
+        moneyFormatIndia($row['due_amt_cal']),
+        $row['due_period'],
+        date('d-m-Y', strtotime($row['due_start_from'])),
+        date('d-m-Y', strtotime($row['maturity_month'])),
+        $receivedBy,
+        $relation_name,    
+        $row['loan_issue_user_type'],
+        $row['loan_issue_user_name'],
+        $row['cus_type'],
+        $row['cus_exist_type'],
+        $row['sub_status'],
+        ($row['doc_sts'] == 'YES') ? 'Document Completed' : 'Document Pending',    
+        $row['doc_holder_name'] ?? $row['loan_issue_user_name'],
+    ];
+}
+
+function count_all_data($connect)
+{
+    $statement = $connect->prepare("SELECT COUNT(*) FROM in_issue ii JOIN acknowlegement_customer_profile cp ON ii.req_id = cp.req_id WHERE ii.cus_status >= 14 ");
+    $statement->execute();
+    return (int) $statement->fetchColumn();
+}
+
+function getBankName($bankid, $connect)
+{
+    $stmt = $connect->prepare("SELECT bank_name FROM bank_creation WHERE id = ? ");
+    $stmt->execute([$bankid]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $row ? $row['bank_name'] : '';
 }
 
 $output = array(
@@ -296,19 +318,3 @@ $output = array(
 );
 
 echo json_encode($output);
-
-function count_all_data($connect)
-{
-    $query = "SELECT ii.id from in_issue ii JOIN acknowlegement_customer_profile cp ON ii.req_id = cp.req_id WHERE ii.cus_status >= 14 ";
-    $statement = $connect->prepare($query);
-    $statement->execute();
-    return $statement->rowCount();
-}
-
-function getBankName($bankid, $connect)
-{
-    $stmt = $connect->prepare("SELECT bank_name FROM bank_creation WHERE id = ? ");
-    $stmt->execute([$bankid]);
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    return $row ? $row['bank_name'] : '';
-}

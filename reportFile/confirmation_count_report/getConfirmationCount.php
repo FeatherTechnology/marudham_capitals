@@ -36,15 +36,6 @@ if ($selectedType == '2') { //Sector
     $mapidcondition = "AND adma.duefollowup_map_id IN ($selectedVal)";
 } 
 
-/* USER NAME */
-// $userNameQry = $connect->query("
-//     SELECT fullname 
-//     FROM user 
-//     WHERE user_id IN ($user_id_str) AND status = 0 
-//     LIMIT 1
-// ");
-// $user_fullname = $userNameQry->fetchColumn();
-
 $data = [];
 $sno = 1;
 

@@ -21,6 +21,7 @@ $(document).ready(function () {
 
     $('#type').change(function (e) {
         let type = $(this).val();
+        $('#user_type, #by_user').val('').hide();
         $('#map_name').closest('.choices').hide();
         map_name.clearStore();
         $('#due_followup_count_table').DataTable().destroy();
@@ -32,12 +33,8 @@ $(document).ready(function () {
             $('#by_user').empty().append("<option value=''>Select User</option>");
 
         } else if(type == '4') { //sector - group, Region - Line, Zone - Follow up
-            $('#user_type, #by_user').val('').hide();
             $('#map_name').closest('.choices').show();
-            getUserMappedDetails(type); //to Mapping details.
-            
-        } else if(type == '0'){
-            $('#user_type, #by_user').val('').hide();
+            getUserMappedDetails(type); //to Mapping details. 
         }
     });
 

@@ -5,11 +5,12 @@ include '../ajaxconfig.php';
 <table class="table custom-table" id="feedback_table">
     <thead>
         <tr>
-            <th width="20%"> S.No </th>
+            <th width="20px"> S.No </th>
             <th> User Name</th>
             <th> Created Date </th>
             <th> Feedback Label </th>
             <th> Feedback </th>
+            <th> Upload </th>
             <th> Remarks </th>
         </tr>
     </thead>
@@ -38,6 +39,18 @@ include '../ajaxconfig.php';
                     } else if ($feedback["cus_feedback"] == '5') {
                         echo 'Excellent';
                     } ?></td>
+                <td> 
+                    <?php
+                        $upload = explode(',', $feedback['upload']) ?? '';
+                        $upd_name = '';
+                        foreach ($upload as $upd) {
+                            if ($upd != null) {
+                                $upd_name .= "<a href=uploads/customer_summary/".$upd ." target='_blank' style='color: #4ba39b;'>" . $upd . "</a>, ";
+                            }
+                        } 
+                        echo rtrim($upd_name,', ');// to trim the comma at end;
+                    ?>
+                </td>
                 <td><?php echo $feedback["feedback_remark"]; ?></td>
             </tr>
 

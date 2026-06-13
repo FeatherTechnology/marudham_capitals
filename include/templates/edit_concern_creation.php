@@ -66,6 +66,7 @@ if (isset($_SESSION["userid"])) {
 								<th>Department Name</th>
 								<th>Staff Assign</th>
 								<th>Subject</th>
+								<th>Concern Upload</th>
 								<th>Status</th>
 								<th>Action</th>
 							</tr>

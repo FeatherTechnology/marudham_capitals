@@ -35,6 +35,7 @@
                                 <th>Concern Remark</th>
                                 <th>Assign To</th>
                                 <th>Pass To</th>
+                                <th>Concern Upload</th>
                                 <th>Solution Date</th>
                                 <th>Communication</th>
                                 <th>Upload</th>

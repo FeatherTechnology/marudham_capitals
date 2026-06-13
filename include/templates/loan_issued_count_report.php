@@ -28,8 +28,6 @@
 					<option value='0'>Select Type</option>
 					<option value='1'>User</option>
 					<option value='2'>Sector</option>
-					<!-- <option value='3'>Region</option>
-					<option value='4'>Zone</option> -->
 				</select>
 
 				<select class="toggle-button hidefield" id='user_type' name='user_type'>

@@ -7045,6 +7045,29 @@ class admin
 		if (isset($_POST['staff_assign_to'])) {
 			$staff_assign_to = $_POST['staff_assign_to'];
 		}
+
+		$concerncreation_upload = '';
+		if (isset($_FILES['concern_creation_upload'])) {
+			$filesArr3 = $_FILES['concern_creation_upload'];
+			$uploadDir = "uploads/concern/concern_creation/";
+
+			foreach ($filesArr3['name'] as $key => $val) {
+				$fileName = basename($filesArr3['name'][$key]);
+				$targetFilePath = $uploadDir . $fileName;
+
+				$fileType = pathinfo($targetFilePath, PATHINFO_EXTENSION);
+
+				$uniqueFileName = uniqid() . '.' . $fileType;
+				while (file_exists($uploadDir . $uniqueFileName)) {
+					$uniqueFileName = uniqid() . '.' . $fileType;
+				}
+
+				if (move_uploaded_file($filesArr3["tmp_name"][$key], $uploadDir . $uniqueFileName)) {
+					$concerncreation_upload .= $uniqueFileName . ',';
+				}
+			}
+		}
+
         try {
 			// Disable autocommit to start a transaction
 			$mysqli->autocommit(FALSE);
@@ -7062,14 +7085,11 @@ class admin
 				$com_code = $initialapp;
 			}
 
-		$insertQry = "INSERT INTO `concern_creation`( `raising_for`, `self_name`, `self_code`, `staff_name`, `staff_dept_name`, `staff_team_name`, `ag_name`, `ag_grp`, `cus_id`, `cus_name`, `cus_area`, `cus_sub_area`, `cus_group`, `cus_line`, `com_date`, `com_code`, `to_dept_name`, `com_sub`, `com_remark`, `role_type`, `staff_assign_to`, `insert_user_id`) VALUES('" . strip_tags($raising_for) . "','" . strip_tags($self_name) . "','" . strip_tags($self_code) . "','" . strip_tags($staff_name) . "',
-				'" . strip_tags($staff_dept_name) . "', '" . strip_tags($staff_team_name) . "', '" . strip_tags($ag_name) . "', '" . strip_tags($ag_grp) . "','" . strip_tags($cus_id) . "',
-				'" . strip_tags($cus_name) . "','" . strip_tags($cus_area) . "','" . strip_tags($cus_sub_area) . "', '" . strip_tags($cus_group) . "', '" . strip_tags($cus_line) . "', 
-				'" . strip_tags($com_date) . "','" . strip_tags($com_code) . "','" . strip_tags($to_dept_name) . "',
-				'" . strip_tags($com_sub) . "','" . strip_tags($com_remark) . "','" . strip_tags($role_type) . "','" . strip_tags($staff_assign_to) . "','" . strip_tags($userid) . "')";
+			$insertQry = "INSERT INTO `concern_creation`( `raising_for`, `self_name`, `self_code`, `staff_name`, `staff_dept_name`, `staff_team_name`, `ag_name`, `ag_grp`, `cus_id`, `cus_name`, `cus_area`, `cus_sub_area`, `cus_group`, `cus_line`, `com_date`, `com_code`, `to_dept_name`, `com_sub`, `com_remark`, `role_type`, `staff_assign_to`, `concern_creation_uploads`, `insert_user_id`) VALUES('$raising_for', '$self_name', '$self_code', '$staff_name', '$staff_dept_name', '$staff_team_name', '$ag_name', '$ag_grp', '$cus_id', '$cus_name', '$cus_area', '$cus_sub_area', '$cus_group', '$cus_line', '$com_date', '$com_code', '$to_dept_name', '$com_sub', '$com_remark', '$role_type', '$staff_assign_to', '$concerncreation_upload', '$userid')";
 
-		$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
-		// Commit the transaction
+			$mysqli->query($insertQry) or die("Error " . $mysqli->error);
+
+			// Commit the transaction
 			$mysqli->commit();
 
 			// Enable autocommit again
@@ -7117,6 +7137,7 @@ class admin
 			$detailrecords['staff_assign_to'] = $row['staff_assign_to'];
 			$detailrecords['pass_role'] = $row['pass_role'];
 			$detailrecords['pass_to'] = $row['pass_to'];
+			$detailrecords['concern_creation_uploads'] = $row['concern_creation_uploads'];
 			$detailrecords['solution_date'] = $row['solution_date'];
 			$detailrecords['communication'] = $row['communication'];
 			$detailrecords['uploads'] = $row['uploads'];
@@ -7243,7 +7264,7 @@ class admin
 		// }
 		if (isset($_FILES['concern_upload']) && $_POST['Com_for_solution'] == '1') {
 			$filesArr3 = $_FILES['concern_upload'];
-			$uploadDir = "uploads/concern/";
+			$uploadDir = "uploads/concern/concern_solution/";
 
 			foreach ($filesArr3['name'] as $key => $val) {
 				$fileName = basename($filesArr3['name'][$key]);

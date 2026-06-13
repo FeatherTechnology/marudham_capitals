@@ -46,6 +46,7 @@ if (count($getConcernCreation) > 0) {
     $assignStaffName      = $getConcernCreation['staff_assign_to'];
     $passRole    = $getConcernCreation['pass_role'];
     $passTo    = $getConcernCreation['pass_to'];
+    $concernCreationupload    = explode(',', $getConcernCreation['concern_creation_uploads']) ?? '';
     $solution_date        = $getConcernCreation['solution_date'];
     $communication          = $getConcernCreation['communication'];
     $location          = $getConcernCreation['location'];
@@ -373,6 +374,21 @@ if (count($getConcernCreation) > 0) {
                                         <span class="text-danger" style='display:none' id='staffAssignCheck'>Please Select Staff Assign</span>
                                     </div>
                                 </div>
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                                    <div class="form-group">
+                                        <label for="concern_creation_upload">Uploads</label><br>
+                                        <?php 
+                                        $doc_upd_name = '';
+                                        foreach ($concernCreationupload as $concernupd) {
+                                            if ($concernupd != null) {
+                                                $doc_upd_name .= "<a href=uploads/concern/concern_creation/".$concernupd ." target='_blank' download>Click Here To Download Your " . $concernupd . " File </a> <br/><br/>" ;
+                                            }
+                                        }
+
+                                        echo rtrim($doc_upd_name,', ');// to trim the comma at end
+                                        ?>
+                                    </div>
+                                </div>
 
                             </div>
                         </div>
@@ -446,7 +462,7 @@ if (count($getConcernCreation) > 0) {
                                         <?php foreach ($upds as $fileupd) {
                                             if ($fileupd != null) {
                                         ?>
-                                                <a href="<?php echo "uploads/concern/" . $fileupd; ?>" target="_blank" download>Click Here To Download Your <?php if (isset($fileupd)) echo $fileupd; ?> File </a> <br><br>
+                                                <a href="<?php echo "uploads/concern/concern_solution/" . $fileupd; ?>" target="_blank" download>Click Here To Download Your <?php if (isset($fileupd)) echo $fileupd; ?> File </a> <br><br>
                                         <?php }
                                         } ?>
 

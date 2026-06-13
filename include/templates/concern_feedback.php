@@ -386,7 +386,7 @@ if (count($getConcernCreation) > 0) {
                                         <?php foreach ($upds as $fileupd) {
                                             if ($fileupd != null) {
                                         ?>
-                                                <a href="<?php echo "uploads/concern/" . $fileupd; ?>" target="_blank" download tabindex='27'>Click Here To Download Your <?php if (isset($fileupd)) echo $fileupd; ?> File </a> <br><br>
+                                                <a href="<?php echo "uploads/concern/concern_solution/" . $fileupd; ?>" target="_blank" download tabindex='27'>Click Here To Download Your <?php if (isset($fileupd)) echo $fileupd; ?> File </a> <br><br>
                                         <?php }
                                         } ?>
 

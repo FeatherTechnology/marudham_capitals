@@ -281,7 +281,7 @@
 									<span class="text-danger" id="feedbacklabelCheck" style='display:none'> Select Feedback Label</span>
 								</div>
 								<div style="padding: 20px 0px 0px 10px;  ">
-									<button class="btn btn-primary" id="add_cus_feedback" onclick="cusfeedbacklist()" style="display: <?= ($approvalaccess == 0 ? 'inline-block' : 'none'); ?>;"><span class="icon-add"></span></button>
+									<button class="btn btn-primary" id="add_cus_feedback" onclick="cusfeedbacklist()" style="display: <?= ($approvalaccess == 0 ? 'inline-block' : 'none'); ?>;" tabindex="2"><span class="icon-add"></span></button>
 								</div>
 							</div>
 						</div>
@@ -289,7 +289,7 @@
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<div class="form-group">
 								<label for="cus_feedback"> Feedback </label> <span class="required">&nbsp;*</span>
-								<select type="text" class="form-control" id="cus_feedback" name="cus_feedback" tabindex='2'>
+								<select type="text" class="form-control" id="cus_feedback" name="cus_feedback" tabindex='3'>
 									<option value=""> Select Feedback </option>
 									<option value="1"> Bad </option>
 									<option value="2"> Poor </option>
@@ -301,17 +301,24 @@
 							</div>
 						</div>
 
-						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12"></div>
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+							<div class="form-group">
+								<label for="customer_summary_uploads">Uploads</label>
+								<input type="file" class="form-control" name="customer_summary_uploads[]" id="customer_summary_uploads" tabindex="4" multiple>
+								<input type="hidden" id="cus_summary_upload">
+							</div>
+						</div>
+
 						<div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12">
 							<div class="form-group">
 								<label for="feedback_remark"> Remarks </label>
-								<textarea class="form-control" name="feedback_remark" id="feedback_remark" tabindex='3'></textarea>
+								<textarea class="form-control" name="feedback_remark" id="feedback_remark" tabindex='5'></textarea>
 							</div>
 						</div>
 
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 							<input type="hidden" name="feedbackID" id="feedbackID">
-							<button type="button" name="feedbackBtn" id="feedbackBtn" class="btn btn-primary" style="margin-top: 19px;" tabindex='4'> Submit </button>
+							<button type="button" name="feedbackBtn" id="feedbackBtn" class="btn btn-primary" style="margin-top: 19px;" tabindex='6'> Submit </button>
 						</div>
 					</div>
 					</br>
@@ -325,6 +332,7 @@
 									<th> Created Date </th>
 									<th> Feedback Label </th>
 									<th> Feedback </th>
+									<th> Upload </th>
 									<th> ACTION </th>
 								</tr>
 							</thead>
