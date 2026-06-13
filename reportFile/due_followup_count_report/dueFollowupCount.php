@@ -47,7 +47,7 @@ $sno = 1;
 
 $user_condition = "";
 
-if ($user_id != 'all') {
+if ($user_id != 'all' && !empty($user_id)) {
 
     if (!is_array($user_id)) {
         $user_id = explode(',', $user_id);

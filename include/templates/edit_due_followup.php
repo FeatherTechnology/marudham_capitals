@@ -93,8 +93,10 @@
 								<th>Region</th>
 								<th>Mobile</th>
 								<th>Sub Status</th>
-								<th>Responsible status</th>
+								<th>Responsible</th>
 								<th>Action</th>
+								<th>Reminder</th>
+								<th>Customer Summary</th>
 								<th>Last Paid Date</th>
 								<th>Current Month Paid</th>
 								<th>Hint</th>
@@ -112,3 +114,47 @@
 	<!-- Row end -->
 </div>
 <!-- Main container end -->
+
+
+
+<!-- //////////////////////////////// Customer Summary Modal START //////////////////////////////// -->
+<div class="modal fade customersummary" tabindex="-1" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="myLargeModalLabel">Customer Summary</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<br />
+				<div class="row">
+					<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+						<div class="form-group table-responsive" id="feedbackListTable">
+							<table class="table custom-table modalTable">
+								<thead>
+									<tr>
+										<th width="50"> S.No </th>
+										<th> User Name </th>
+										<th> Created Date </th>
+										<th> Feedback Label </th>
+										<th> Feedback </th>
+										<th> Remarks </th>
+									</tr>
+								</thead>
+								<tbody>
+
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- //////////////////////////////// Customer Status Modal END //////////////////////////////// -->

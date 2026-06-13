@@ -8,20 +8,33 @@ $('#map_name').closest('.choices').hide();
 
 $(document).ready(function () {
 
+    //to validate from and to date. don't allow to choose todate before the date of from date.
+    $('#from_date').change(function () {
+        const fromDate = $(this).val();
+        const toDate = $('#to_date').val();
+        $('#to_date').attr('min', fromDate);
+
+         // Check if from_date is greater than to_date
+        if (toDate && fromDate > toDate) {
+            $('#to_date').val(''); // Clear the invalid value
+        }
+    });
+
     $('#type').change(function (e) {
         let type = $(this).val();
-        $('#user_type, #by_user').val('').show();
-        $('#by_user').empty().append("<option value=''>Select User</option>");
+        $('#user_type, #by_user').val('').hide();
         $('#map_name').closest('.choices').hide();
         map_name.clearStore();
         $('#promotion_activity_report_table').DataTable().destroy();
         $('#promotion_activity_report_table tbody').empty();
         
-        if(type == '2' || type == '3' || type == '4') { //sector - group
+        if(type == '1'){ 
+            $('#user_type, #by_user').val('').show();
+            $('#by_user').empty().append("<option value=''>Select User</option>");
+
+        } else if(type == '2' || type == '3' || type == '4') { //sector - group, Region - Line, Zone - Follow up
             $('#map_name').closest('.choices').show();
-            
-        } else if(type == '0'){
-            $('#user_type, #by_user').hide();
+            getUserMappedDetails(type); //to Mapping details.
         }
     });
 
@@ -31,26 +44,6 @@ $(document).ready(function () {
 
         if(userType != ''){
             getUserNames();
-        }
-    });
-
-    $('#by_user').change(function(){
-        let userId = $(this).val();
-        let typeVal = $('#type').val();
-
-        if(typeVal != '1' && userId !=''){ //if type user then no need to show mapping.
-            $.post('reportFile/promotion_activity/getUserMappedDetails.php', {userId, typeVal}, function (response) {
-
-                map_name.clearStore();
-
-                const items = response.map(row => ({
-                    value: row.ids,
-                    label: row.map_name
-                }));
-
-                map_name.setChoices(items);
-
-            },'json');
         }
     });
 
@@ -74,7 +67,8 @@ function getUserNames() {
 }
 
 function commitmentReportTable() {
-    let selected_date = $('#selected_date').val();
+    let fromDate = $('#from_date').val();
+    let toDate = $('#to_date').val();
     let selectedType = $('#type').val();
     let selected_user = $('#by_user').val();
     let user_type = $('#user_type').val();
@@ -87,7 +81,7 @@ function commitmentReportTable() {
         selectedVal = $('#map_name').val();
     }
 
-    if(!selected_date || !selectedVal || !user_type || !selected_user){
+    if(!fromDate || !toDate || !selectedVal || (selectedType == '1' && (!user_type || !selected_user))){
         swalError('Warning', `All Fields are required.`);
         return;
     } 
@@ -106,7 +100,8 @@ function commitmentReportTable() {
             'url': 'reportFile/promotion_activity/getPromotionActivityReport.php',
             'data': function (data) {
                 data.search = $('input[type=search]').val();
-                data.selected_date = selected_date;
+                data.fromdate = fromDate;
+                data.todate = toDate;
                 data.selectedType = selectedType;
                 data.selectedVal = selectedVal;
                 data.user_id = selected_user;

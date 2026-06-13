@@ -37,7 +37,7 @@
                 <select class="toggle-button" name='type' id='type'>
 					<option value='0'>Select Type</option>
 					<option value='1'>User</option>
-					<option value='4'>Zone</option>
+					<option value='4'>Zone</option><!-- using common API to get mapped zone so not changed value -->
 				</select>
 
 				<select class="toggle-button hidefield" id='user_type' name='user_type'>
@@ -52,7 +52,7 @@
 				</select>
 	
                 <select class="form-control hidefield" id="map_name" name="map_name" multiple>
-                    <option value="">Select</option>
+                    <option value="">Select Zone</option>
                 </select>
 
 				<input type="button" id='reset_btn' name='reset_btn' class="toggle-button" style="background-color: #009688;color:white" value='Search'>
@@ -97,7 +97,25 @@
 								</thead>
 
 								<tbody></tbody>
-								<tfoot></tfoot>
+								<tfoot>
+									<tr>
+										<td></td>
+										<td></td>
+
+										<td></td>
+										<td></td>
+
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+								</tfoot>
 							</table>
 							
 						</div>

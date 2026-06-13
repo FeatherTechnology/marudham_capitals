@@ -3319,12 +3319,12 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 </div>
 <!-- END  Add Document Info Modal -->
 <!-- Add Customer Label Modal  START -->
-<div class="modal fade addCusLabel" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<div class="modal fade addCusLabel" tabindex="-1" role="dialog">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
 				<h5 class="modal-title" id="myLargeModalLabel">Add Customer Feedback </h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="feedbackList()">
+				<button type="button" class="close" data-dismiss="modal" onclick="feedbackList()">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -3381,18 +3381,25 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 						</div>
 					</div>
 
-					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12"></div>
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+						<div class="form-group">
+							<label for="customer_summary_uploads">Uploads</label>
+							<input type="file" class="form-control" name="customer_summary_uploads[]" id="customer_summary_uploads" tabindex="4" multiple>
+							<input type="hidden" id="cus_summary_upload">
+						</div>
+					</div>
+
 					<div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12">
 						<div class="form-group">
 							<label for="feedback_remark"> Remarks </label>
-							<textarea class="form-control" name="feedback_remark" id="feedback_remark" tabindex='4'></textarea>
+							<textarea class="form-control" name="feedback_remark" id="feedback_remark" tabindex='5'></textarea>
 						</div>
 					</div>
 
 					<div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12"></div>
 					<div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12">
 						<input type="hidden" name="feedbackID" id="feedbackID">
-						<button type="button" name="feedbackBtn" id="feedbackBtn" class="btn btn-primary" style="margin-top: 35px;" tabindex='5'> Submit </button>
+						<button type="button" name="feedbackBtn" id="feedbackBtn" class="btn btn-primary" style="margin-top: 35px;" tabindex='6'> Submit </button>
 					</div>
 				</div>
 				</br>
@@ -3406,6 +3413,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 								<th> Date</th>
 								<th> Feedback Label </th>
 								<th> Feedback </th>
+								<th> Upload </th>
 								<th> ACTION </th>
 							</tr>
 						</thead>
@@ -3423,7 +3431,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 </div>
 <!-- END  Add Customer Label Info Modal -->
 <!--  Add Customer Label Info Modal -->
- <div class="modal fade" id="add_feedback_lable" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+ <div class="modal fade" id="add_feedback_lable" tabindex="-1" role="dialog">
 	<div class="modal-dialog modal-lg " role="document">
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">

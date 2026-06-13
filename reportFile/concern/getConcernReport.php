@@ -88,7 +88,7 @@ $countStmt = $connect->prepare("SELECT COUNT(*) $base_query");
 $countStmt->execute();
 $number_filter_row = (int) $countStmt->fetchColumn();
 
-$data_query = "SELECT cc.id, cc.com_code, cc.com_date, cc.raising_for, cc.self_name, cc.cus_name, cs.concern_subject, cc.com_remark, us.fullname AS staff_name, cc.status, cc.solution_date, cc.communication, cc.location, cc.sol_participants, cc.solution_remark, cc.uploads, cc.self_code, cc.cus_id, ag.ag_name, cdn.dep_name, u.fullname, ag.ag_code, cc.pass_to, up.fullname AS pass_staff $base_query $orderBy $limit ";
+$data_query = "SELECT cc.id, cc.com_code, cc.com_date, cc.raising_for, cc.self_name, cc.cus_name, cs.concern_subject, cc.com_remark, us.fullname AS staff_name, cc.concern_creation_uploads, cc.status, cc.solution_date, cc.communication, cc.location, cc.sol_participants, cc.solution_remark, cc.uploads, cc.self_code, cc.cus_id, ag.ag_name, cdn.dep_name, u.fullname, ag.ag_code, cc.pass_to, up.fullname AS pass_staff $base_query $orderBy $limit ";
 
 $statement = $connect->prepare($data_query);
 $statement->execute();
@@ -121,18 +121,32 @@ foreach ($result as $row) {
     $sub_array[] = $row['com_remark'] ?? '';
     $sub_array[] = $row['staff_name'] ?? '';
     $sub_array[] = $row['pass_staff'] ?? '';
+        
+    $concernCreationupload = explode(',', $row['concern_creation_uploads']) ?? '';
+    $doc_upd_name = '';
+    foreach ($concernCreationupload as $concernupd) {
+        if ($concernupd != null) {
+            $doc_upd_name .= "<a href=uploads/concern/concern_creation/".$concernupd ." target='_blank' >" . $concernupd . "</a>, " ;
+        }
+    }
+
+    $sub_array[] = rtrim($doc_upd_name,', ');// to trim the comma at end
+
     $sub_array[] = (!empty($row['solution_date']) && $row['solution_date'] != '0000-00-00')
     ? date('d-m-Y', strtotime($row['solution_date']))
     : '';
 
     $sub_array[] = $comm_arr[$row['communication']] ?? '';
-    
-    if (!empty($row['uploads'])) {
-        $filePath = 'uploads/concern/' . $row['uploads'];
-        $sub_array[] = '<a href="' . $filePath . '" target="_blank">' . $row['uploads'] . '</a>';
-    } else {
-        $sub_array[] = '';
+        
+    $concernSolutionUpload = explode(',', $row['uploads']) ?? '';
+    $sol_upd_name = '';
+    foreach ($concernSolutionUpload as $solutionupd) {
+        if ($solutionupd != null) {
+            $sol_upd_name .= "<a href=uploads/concern/concern_solution/".$solutionupd ." target='_blank' >" . $solutionupd . "</a>, " ;
+        }
     }
+
+    $sub_array[] = rtrim($sol_upd_name,', ');// to trim the comma at end
 
     $sub_array[] = $loc_arr[$row['location']] ?? '';
     $sub_array[] = $row['sol_participants'] ?? '';

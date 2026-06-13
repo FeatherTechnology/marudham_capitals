@@ -43,6 +43,7 @@ if (count($getConcernCreation) > 0) {
     $roleType    = $getConcernCreation['role_type'];
     $passRole    = $getConcernCreation['pass_role'];
     $passTo    = $getConcernCreation['pass_to'];
+    $concernCreationupload    = explode(',', $getConcernCreation['concern_creation_uploads']) ?? '';
     $assignStaffName      = $getConcernCreation['staff_assign_to'];
     $insert_user_name      = $getConcernCreation['insert_user_name'];
 }
@@ -373,6 +374,21 @@ if (isset($_POST['submit_concern_solution']) && $_POST['submit_concern_solution'
                                     </div>
                                 </div>
 
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                                    <div class="form-group">
+                                        <label for="concern_creation_upload">Uploads</label><br><br>
+                                        <?php 
+                                        $doc_upd_name = '';
+                                        foreach ($concernCreationupload as $concernupd) {
+                                            if ($concernupd != null) {
+                                                $doc_upd_name .= "<a href=uploads/concern/concern_creation/".$concernupd ." target='_blank' download>Click Here To Download Your " . $concernupd . " File </a> <br/><br/>" ;
+                                            }
+                                        }
+
+                                        echo rtrim($doc_upd_name,', ');// to trim the comma at end
+                                        ?>
+                                    </div>
+                                </div>
 
                             </div>
                         </div>

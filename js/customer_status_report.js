@@ -5,23 +5,6 @@ const loanCategory = new Choices('#loan_category', {
     noChoicesText: 'Select Category',
     allowHTML: true
 });
-// const line = new Choices('#line', {
-//     removeItemButton: true,
-//     noChoicesText: 'Select Region',
-//     allowHTML: true
-// });
-// const group_map = new Choices('#group_map', {
-//     removeItemButton: true,
-//     noChoicesText: 'Select Sector',
-//     allowHTML: true
-// });
-// const due_followup = new Choices('#due_followup', {
-//     removeItemButton: true,
-//     noChoicesText: 'Select Zone',
-//     allowHTML: true
-// });
-
-// $('#line, #group_map, #due_followup').closest('.choices').hide();
 
 const map_name = new Choices('#map_name', {
     removeItemButton: true,
@@ -35,15 +18,14 @@ $(document).ready(function () {
 
     $('#type').change(function () {
         let type = $(this).val();
-        $('#user_type, #by_user').val('').show();
-        $('#by_user').empty().append("<option value=''>Select User</option>");
+        $('#user_type, #by_user').val('').hide();
         $('#map_name').closest('.choices').hide();
         map_name.clearStore();
-        $('#pending_table').hide().find('tbody').empty();
-        $('#current_table').hide().find('tbody').empty();
-        $('#od_table').hide().find('tbody').empty();
+        $('#pending_table, #current_table, #od_table').hide().find('tbody').empty();
+
         // Reset header text
         $('.card-header').text('Customer Status Report');
+
         // If DataTables is used, destroy previous instances to avoid duplicates
         if ($.fn.DataTable.isDataTable('#pending_table')) {
             $('#pending_table').DataTable().clear().destroy();
@@ -55,40 +37,14 @@ $(document).ready(function () {
             $('#od_table').DataTable().clear().destroy();
         }
 
-        // loanCategory.clearStore();
+        if(type == '1'){ 
+            $('#user_type, #by_user').val('').show();
+            $('#by_user').empty().append("<option value=''>Select User</option>");
 
-        // if (type == '1') {
-        //     document.querySelector('#line').closest('.choices').style.display = 'block';
-        //     $('#group_map, #due_followup').closest('.choices').hide();
-        //     $('#by_user').hide()
-        //     getline()
-        //     getUserLoanCategories('');
-        // } else if (type == '2') {
-        //     $('#line, #group_map, #due_followup').closest('.choices').hide();
-        //     $('#by_user').show()
-        //     getUserNames();
-        //     getUserLoanCategories('');
-        // } else if (type == '3') {
-        //     $('#group_map').closest('.choices').show();
-        //     $('#line,#due_followup').closest('.choices').hide();
-        //     $('#by_user').hide()
-        //     getGroup()
-        //     getUserLoanCategories('');
-        // } else if (type == '4') {
-        //     $('#due_followup').closest('.choices').show();
-        //     $('#line, #group_map').closest('.choices').hide();
-        //     $('#by_user').hide()
-        //     getDueFollowup()
-        //     getUserLoanCategories('');
-        // }
-
-        if(type == '2' || type == '3' || type == '4') { //sector - group
+        } else if(type == '2' || type == '3' || type == '4') { //sector - group, Region - Line, Zone - Follow up
             $('#map_name').closest('.choices').show();
-            
-        } else if(type == '0'){
-            $('#user_type, #by_user').hide();
+            getUserMappedDetails(type); //to Mapping details.  
         }
-
     });
 
     $('#user_type').change(function () {
@@ -99,59 +55,6 @@ $(document).ready(function () {
             getUserNames();
         }
     });
-
-    $('#by_user').change(function(){
-        let userId = $(this).val();
-        let typeVal = $('#type').val();
-
-        if(typeVal != '1' && userId !=''){ //if type user then no need to show mapping.
-            $.post('reportFile/promotion_activity/getUserMappedDetails.php', {userId, typeVal}, function (response) {
-
-                map_name.clearStore();
-
-                const items = response.map(row => ({
-                    value: row.ids,
-                    label: row.map_name
-                }));
-
-                map_name.setChoices(items);
-
-            },'json');
-        }
-    });
-
-
-    // $('#by_user').change(function () {
-    //     let user_id = $(this).val();
-    //     // Reset header text
-    //     $('.card-header').text('Customer Status Report');
-
-    //     // Hide all tables and wrappers
-    //     $('#pending_table').hide().find('tbody').empty();
-    //     $('#current_table').hide().find('tbody').empty();
-    //     $('#od_table').hide().find('tbody').empty();
-
-    //     // If DataTables is used, destroy previous instances to avoid duplicates
-    //     if ($.fn.DataTable.isDataTable('#pending_table')) {
-    //         $('#pending_table').DataTable().clear().destroy();
-    //     }
-    //     if ($.fn.DataTable.isDataTable('#current_table')) {
-    //         $('#current_table').DataTable().clear().destroy();
-    //     }
-    //     if ($.fn.DataTable.isDataTable('#od_table')) {
-    //         $('#od_table').DataTable().clear().destroy();
-    //     }
-    //     if (user_id) {
-    //         getUserLoanCategories(user_id);
-    //     } else {
-    //         loanCategory.clearStore(); // clear if no user selected
-    //     }
-    // });
-
-    // $('#due_followup').on('change', function () {
-    //     let followup_id = $(this).val();
-    //     getUserLoanCategories(null, followup_id); // user_id not needed for type=4
-    // });
 
     $('#reset_btn').click(function () {
         let search_date = $('#search_date').val();
@@ -185,27 +88,21 @@ $(document).ready(function () {
             $("#nameHeader").text("Zone Name");
         }
 
-        $('#current_table').hide();
-        $('#pending_table').hide();
-        $('#od_table').hide();
-        $('.dataTables_wrapper').hide();
+        $('#current_table, #pending_table, #od_table, .dataTables_wrapper').hide();
 
         if (sub_status_type == '1') {
             $('.card-header').text('Current Report');
             $('#current_table').show();
             currentReportCount(search_date, type, selected_user, map_name, loan_category, sub_status_type);
-            $('#current_table_wrapper').show();
 
         } else if (sub_status_type == '2') {
             $('.card-header').text('Pending Report');
             $('#pending_table').show();
             pendingReportCount(search_date, type, selected_user, map_name, loan_category, sub_status_type);
-            $('#pending_table_wrapper').show();
 
         } else if (sub_status_type == '3') {
             $('.card-header').text('OD Report');
             $('#od_table').show();
-            $('#od_table_wrapper').show();
             odReportCount(search_date, type, selected_user, map_name, loan_category, sub_status_type);
         }
     });
@@ -219,8 +116,7 @@ function getUserNames() {
     let user_type = $('#user_type').val();
 
     $.post('reportFile/customer_status_report/getAllUserList.php', {user_type}, function (response) {
-        $('#by_user').empty();
-        $('#by_user').append("<option value=''>Select User</option>");
+        $('#by_user').empty().append("<option value=''>Select User</option>");
         $.each(response, function (index, val) {
             $('#by_user').append("<option value='" + val['user_id'] + "'>" + val['username'] + "</option>");
         });
@@ -229,16 +125,9 @@ function getUserNames() {
 
 // function getUserLoanCategories(user_id, followup_id = null)
 function getUserLoanCategories() {
-    // let type = $("#type").val();
-
     $.ajax({
         url: 'reportFile/customer_status_report/ajaxGetUserLoanCategory.php',
         type: 'POST',
-        // data: {
-        //     user_id: user_id,
-        //     type: type,
-        //     followup_id: followup_id // only used when type=4
-        // },
         dataType: 'json',
         success: function (response) {
             loanCategory.clearStore();
@@ -253,69 +142,6 @@ function getUserLoanCategories() {
         }
     });
 }
-
-// function getline() {
-//     $.ajax({
-//         url: 'reportFile/customer_status_report/ajaxGetLine.php', // new file for line data
-//         type: 'POST',
-//         dataType: 'json',
-//         success: function (response) {
-//             line.clearStore(); // clear old list
-//             let items = [];
-
-//             for (let i = 0; i < response.length; i++) {
-//                 items.push({
-//                     value: response[i]['line_ids'], // store multiple IDs
-//                     label: response[i]['line_name'] // show only name
-//                 });
-//             }
-
-//             line.setChoices(items);
-//         }
-//     });
-// }
-
-// function getGroup() {
-//     $.ajax({
-//         url: 'reportFile/customer_status_report/ajaxGetGroup.php',
-//         type: 'POST',
-//         dataType: 'json',
-//         success: function (response) {
-//             group_map.clearStore(); // clear old list
-//             let items = [];
-
-//             for (let i = 0; i < response.length; i++) {
-//                 items.push({
-//                     value: response[i]['group_ids'], // store multiple IDs
-//                     label: response[i]['group_name'] // show only name
-//                 });
-//             }
-
-//             group_map.setChoices(items);
-//         }
-//     });
-// }
-
-// function getDueFollowup() {
-//     $.ajax({
-//         url: 'reportFile/customer_status_report/ajaxGetdueFollowup.php',
-//         type: 'POST',
-//         dataType: 'json',
-//         success: function (response) {
-//             due_followup.clearStore(); // clear old list
-//             let items = [];
-
-//             for (let i = 0; i < response.length; i++) {
-//                 items.push({
-//                     value: response[i]['followup_ids'], // store multiple IDs
-//                     label: response[i]['duefollowup_name'] // show only name
-//                 });
-//             }
-
-//             due_followup.setChoices(items);
-//         }
-//     });
-// }
 
 function currentReportCount(search_date, type, selected_user, map_name, loan_category, sub_status_type) {
     $.ajax({
@@ -332,8 +158,6 @@ function currentReportCount(search_date, type, selected_user, map_name, loan_cat
         success: function (res) {
             try {
                 const parsed = JSON.parse(res);
-
-                console.log(parsed);
 
                 if (!parsed.data || parsed.data.length === 0) {
                     $('#current_table thead').html("<tr><th colspan='10'>No data found for the selected filters</th></tr>");

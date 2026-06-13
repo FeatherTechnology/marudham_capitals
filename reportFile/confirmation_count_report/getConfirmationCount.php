@@ -11,6 +11,8 @@ if (!is_array($user_id)) {
 $user_id = array_map('intval', $user_id);
 $user_id_str = implode(',', $user_id);
 
+$userids = (!empty($user_id_str)) ? "AND insert_login_id IN ($user_id_str)" : '';
+
 $selectedType = $_POST['selectedType'] ?? '';
 $selectedVal = $_POST['selectedVal'] ?? '';
 
@@ -34,57 +36,48 @@ if ($selectedType == '2') { //Sector
     $mapidcondition = "AND adma.duefollowup_map_id IN ($selectedVal)";
 } 
 
-/* USER NAME */
-$userNameQry = $connect->query("
-    SELECT fullname 
-    FROM user 
-    WHERE user_id IN ($user_id_str) AND status = 0 
-    LIMIT 1
-");
-$user_fullname = $userNameQry->fetchColumn();
-
 $data = [];
 $sno = 1;
 
 $qry = $connect->query("
    SELECT 
-    alm.line_name,
-    COUNT(DISTINCT cf.req_id) AS total_count,
-    SUM(CASE WHEN cf.status = 1 THEN 1 ELSE 0 END) AS completed_count,
-    SUM(CASE WHEN cf.status = 2 THEN 1 ELSE 0 END) AS unavailable_count,
-    SUM(CASE WHEN cf.status = 3 THEN 1 ELSE 0 END) AS reconfirmation_count
-FROM confirmation_followup cf
+        u.fullname,
+        alm.line_name,
+        COUNT(DISTINCT cf.req_id) AS total_count,
+        SUM(CASE WHEN cf.status = 1 THEN 1 ELSE 0 END) AS completed_count,
+        SUM(CASE WHEN cf.status = 2 THEN 1 ELSE 0 END) AS unavailable_count,
+        SUM(CASE WHEN cf.status = 3 THEN 1 ELSE 0 END) AS reconfirmation_count
+    FROM confirmation_followup cf
+    JOIN user u ON cf.insert_login_id = u.user_id
 
-INNER JOIN (
-    SELECT req_id, MAX(created_date) AS max_date
-    FROM confirmation_followup
-    WHERE DATE(created_date) <= '$to_date'
-      AND insert_login_id IN ($user_id_str)
-    GROUP BY req_id
-) latest
-ON cf.req_id = latest.req_id
-AND cf.created_date = latest.max_date
+    INNER JOIN (
+        SELECT req_id, MAX(created_date) AS max_date
+        FROM confirmation_followup
+        WHERE DATE(created_date) <= '$to_date'
+        $userids
+        GROUP BY req_id
+    ) latest
+    ON cf.req_id = latest.req_id
+    AND cf.created_date = latest.max_date
 
-JOIN acknowlegement_customer_profile cp 
-    ON cf.req_id = cp.req_id
-JOIN area_list_creation al 
-    ON cp.area_confirm_area = al.area_id
-JOIN area_line_mapping_area alma ON al.area_id = alma.area_id
-JOIN area_line_mapping alm ON alma.line_map_id = alm.map_id
-$joinTable
+    JOIN acknowlegement_customer_profile cp ON cf.req_id = cp.req_id
+    JOIN area_list_creation al ON cp.area_confirm_area = al.area_id
+    JOIN area_line_mapping_area alma ON al.area_id = alma.area_id
+    JOIN area_line_mapping alm ON alma.line_map_id = alm.map_id
+    $joinTable
 
-WHERE (DATE(cf.created_date) BETWEEN '$from_date' AND '$to_date')
-$mapidcondition
-GROUP BY alm.line_name
-ORDER BY alm.line_name;
-");
+    WHERE (DATE(cf.created_date) BETWEEN '$from_date' AND '$to_date')
+    $mapidcondition
+    GROUP BY alm.line_name
+    ORDER BY alm.line_name;
+    ");
 
 $results = $qry->fetchAll(PDO::FETCH_ASSOC);
 
 foreach ($results as $row) {
     $data[] = [
         "sno"                 => $sno++,
-        "fullname"      => $user_fullname,
+        "fullname"            => $row['fullname'],
         "line"                => $row['line_name'],
         "total_count"         => (int)$row['total_count'],
         "t_completed_count"   => (int)$row['completed_count'],
@@ -96,7 +89,7 @@ foreach ($results as $row) {
 /* ---------- TOTAL ROW ---------- */
 $data[] = [
     "sno"                 => "",
-    "fullname"                 => "",
+    "fullname"            => "",
     "line"                => "Total",
     "total_count"         => array_sum(array_column($data, "total_count")),
     "t_completed_count"   => array_sum(array_column($data, "t_completed_count")),

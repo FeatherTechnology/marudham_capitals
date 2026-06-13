@@ -48,7 +48,7 @@ if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'
 
 /* ---------- USER ID ---------- */
 $user_ids = $_POST['user_id'] ?? '';
-if($user_ids != '0'){
+if($user_ids != '0' && !empty($user_id)){
     $user_ids = preg_replace('/[^0-9,]/', '', $user_ids); // clean
     $id_list = implode(',', array_filter(explode(',', $user_ids), 'is_numeric'));
     if (!empty($id_list)) {

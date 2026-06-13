@@ -177,15 +177,15 @@ JOIN
 JOIN 
     user us ON req.update_login_id = us.user_id
 JOIN 
-    area_group_mapping_area agma ON agma.area_id = al.area_id
+    area_group_mapping_sub_area agmsa ON agmsa.sub_area_id = sal.sub_area_id
 JOIN 
-    area_group_mapping agm ON agm.map_id = agma.group_map_id
+    area_group_mapping agm ON agm.map_id = agmsa.group_map_id
 LEFT JOIN 
     branch_creation bc ON agm.branch_id = bc.branch_id
 JOIN 
-    area_line_mapping_area alma ON alma.area_id = al.area_id
+    area_line_mapping_sub_area almsa ON almsa.sub_area_id = sal.sub_area_id
 JOIN 
-    area_line_mapping alm ON alm.map_id = alma.line_map_id
+    area_line_mapping alm ON alm.map_id = almsa.line_map_id
 WHERE 
     $where ";
 
