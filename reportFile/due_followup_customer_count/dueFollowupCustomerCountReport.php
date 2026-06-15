@@ -7,6 +7,11 @@ $user_id = isset($_POST['user_id']) ? $_POST['user_id'] : '';
 
 $selectedType = $_POST['selectedType'] ?? '';
 $selectedVal = $_POST['selectedVal'] ?? '';
+if ($selectedType == '4') {
+    $line_ids_str = is_array($selectedVal)
+        ? implode(',', array_map('intval', $selectedVal))
+        : $selectedVal;
+}
 
 function monthDiff($start, $end)
 {
@@ -42,10 +47,53 @@ while ($row = $loanCatQry->fetch()) {
     $loan_category_map[$row['loan_category_creation_id']] = $row['loan_category_creation_name'];
 }
 
-// ===== User List =====
-$userQry = $connect->query("SELECT user_id, fullname, due_followup_lines 
-    FROM user WHERE due_followup_lines IS NOT NULL AND due_followup_lines != '' 
-    AND user_id = $user_id");
+// ===== User List / Zone Selection =====
+$zone_name = '';
+if ($selectedType == '1') {
+
+    $userQry = $connect->query("
+        SELECT user_id, fullname, due_followup_lines
+        FROM user
+        WHERE due_followup_lines IS NOT NULL
+        AND due_followup_lines != ''
+        AND user_id = '$user_id'
+    ");
+} elseif ($selectedType == '4') {
+
+    $line_ids_str = is_array($selectedVal)
+        ? implode(',', array_map('intval', $selectedVal))
+        : $selectedVal;
+
+    $zoneQry = $connect->query("
+        SELECT duefollowup_name AS map_name
+        FROM area_duefollowup_mapping
+        WHERE map_id IN ($line_ids_str)
+    ");
+
+    $zoneNames = [];
+
+    while ($row = $zoneQry->fetch(PDO::FETCH_ASSOC)) {
+        $zoneNames[] = $row['map_name'];
+    }
+
+$zone_name = $zoneNames[0] ?? '';
+
+    $userQry = $connect->query("
+        SELECT
+            0 AS user_id,
+            '$zone_name' AS fullname,
+            '' AS due_followup_lines
+    ");
+} else {
+
+    echo json_encode([
+        "draw" => 0,
+        "recordsTotal" => 0,
+        "recordsFiltered" => 0,
+        "data" => []
+    ]);
+    exit;
+}
 
 $loan_category = [];
 $loanCategoryQry = $connect->query("SELECT DISTINCT loan_category FROM loan_calculation WHERE status = 0");
@@ -70,11 +118,21 @@ $grand_totals = [
 while ($userRow = $userQry->fetch()) {
     $user_id = $userRow['user_id'];
     $fullname = $userRow['fullname'];
-    $line_ids = array_filter(array_map('intval', explode(',', $userRow['due_followup_lines'])));
-    $line_ids_str = implode(',', $line_ids);
-   
     if ($selectedType == '4') {
-        $line_ids_str = (is_array($selectedVal)) ? implode(',', $selectedVal) : $selectedVal;
+
+        // Zone values selected from multiselect
+        if (is_array($selectedVal)) {
+            $line_ids_str = implode(',', array_map('intval', $selectedVal));
+        } else {
+            $line_ids_str = (int)$selectedVal;
+        }
+    } else {
+
+        $line_ids = array_filter(
+            array_map('intval', explode(',', $userRow['due_followup_lines']))
+        );
+
+        $line_ids_str = implode(',', $line_ids);
     }
 
     $condition = "adfm.map_id IN ($line_ids_str)";
