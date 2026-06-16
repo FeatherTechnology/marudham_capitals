@@ -1,4 +1,5 @@
 <?php
+//Also using in Promotion Activity - New.
 include('../ajaxconfig.php');
 if (isset($_POST['cus_id'])) {
     $cus_id = $_POST['cus_id'];

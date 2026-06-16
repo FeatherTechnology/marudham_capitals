@@ -98,7 +98,7 @@ function commitmentReportTable() {
         'ajax': {
             'url': 'reportFile/commitment/getCommitmentReport.php',
             'data': function (data) {
-                data.search = $('input[type=search]').val();
+                data.search = $('#search').val();
                 data.from_date = $('#from_date').val();
                 data.to_date = $('#to_date').val();
                 data.selectedType = $('#type').val();

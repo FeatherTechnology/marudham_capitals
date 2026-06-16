@@ -66,6 +66,7 @@
                                     <th>Status</th>
                                     <th>Remark</th>
                                     <th>Follow Date</th>
+                                    <th>Follow up Type</th>
                                     <th>User Type</th>
                                     <th>User Name</th>
                                     <th>Customer Status</th>
