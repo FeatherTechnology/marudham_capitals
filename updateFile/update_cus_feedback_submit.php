@@ -5,6 +5,7 @@ require '../ajaxconfig.php';
 
 $cus_id = preg_replace('/\D/', '', $_POST['cus_id']);
 $feedback_label        = $_POST['feedback_label'];
+$cus_feedback_dept        = $_POST['cus_feedback_dept'];
 $cus_feedback              = $_POST['cus_feedback'];
 $feedback_remark              = $_POST['feedback_remark'];
 $feedbackID              = $_POST['feedbackID'];
@@ -39,7 +40,7 @@ if (isset($_FILES['customer_summary_uploads'])) {
 }
 
 if($feedbackID == ''){
-    $insert_qry = $connect ->query("INSERT INTO `verification_cus_feedback`( `cus_id`, `feedback_label`, `cus_feedback`,`upload`,`feedback_remark`,`insert_login_id`,`inserted_date`) VALUES ('$cus_id','$feedback_label','$cus_feedback','$uploadedFiles','$feedback_remark','$user_id',now())");
+    $insert_qry = $connect ->query("INSERT INTO `verification_cus_feedback`( `cus_id`, `feedback_label`,  `cus_feedback_dept`, `cus_feedback`,`upload`,`feedback_remark`,`insert_login_id`,`inserted_date`) VALUES ('$cus_id','$feedback_label','$cus_feedback_dept','$cus_feedback','$uploadedFiles','$feedback_remark','$user_id',now())");
 
 } else{
             
@@ -61,7 +62,7 @@ if($feedbackID == ''){
         $uploadedFiles = $_POST['cus_summary_upload'];
     }
 
-    $update = $connect->query("UPDATE `verification_cus_feedback` SET `cus_id`='$cus_id',`feedback_label`='$feedback_label',`cus_feedback`='$cus_feedback', `upload` = '$uploadedFiles',`feedback_remark`='$feedback_remark' WHERE `id`='$feedbackID' ");
+    $update = $connect->query("UPDATE `verification_cus_feedback` SET `cus_id`='$cus_id',`feedback_label`='$feedback_label',`cus_feedback_dept` = '$cus_feedback_dept',`cus_feedback`='$cus_feedback', `upload` = '$uploadedFiles',`feedback_remark`='$feedback_remark' WHERE `id`='$feedbackID' ");
 }
 
 if($insert_qry){

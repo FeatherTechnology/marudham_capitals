@@ -349,6 +349,7 @@ $(document).ready(function () {
       success: function (result) {
         $("#feedbackID").val(result["id"]);
         $("#feedback_label").val(result["feedback_label"]);
+        $("#cus_feedback_department").val(result["cus_feedback_dept"]);
         $("#cus_feedback").val(result["cus_feedback"]);
         $("#feedback_remark").val(result["feedback_remark"]);
         $("#cus_summary_upload").val(result["upload"]);
@@ -3380,26 +3381,27 @@ function getAreaBasedSubArea(area) {
 }
 
 //Customer Feedback Modal
-$("#feedbacklabelCheck").hide();
-$("#feedbackCheck").hide();
+$("#feedbacklabelCheck, #feedbackCheck, #departmentCheck").hide();
 
 $(document).on("click", "#feedbackBtn", function () {
   let req_id = $("#req_id").val();
   let cus_id = $("#cus_id").val();
   let feedback_label = $("#feedback_label").val();
   let cus_feedback = $("#cus_feedback").val();
+  let cus_feedback_dept = $("#cus_feedback_department").val();
   let files = $("#customer_summary_uploads")[0].files;
   let cus_summary_upload = $("#cus_summary_upload").val();
   let feedback_remark = $("#feedback_remark").val();
   let feedbackID = $("#feedbackID").val();
 
-  if (feedback_label != "" && cus_feedback != "" && req_id != "") {
+  if (feedback_label != "" && cus_feedback_dept !="" && cus_feedback != "" && req_id != "") {
     // Using FormData to send file and other data
     let formData = new FormData();
     formData.append("reqId", req_id);
     formData.append("cus_id", cus_id);
     formData.append("feedback_label", feedback_label);
     formData.append("cus_feedback", cus_feedback);
+    formData.append("cus_feedback_dept", cus_feedback_dept);
 
     for (let i = 0; i < files.length; i++) {
         formData.append("customer_summary_uploads[]", files[i]);
@@ -3440,7 +3442,7 @@ $(document).on("click", "#feedbackBtn", function () {
       },
     });
 
-    $("#feedbacklabelCheck, #feedbackCheck").hide();
+    $("#feedbacklabelCheck, #feedbackCheck, #departmentCheck").hide();
   } else {
     if (feedback_label == "") {
       $("#feedbacklabelCheck").show();
@@ -3452,6 +3454,12 @@ $(document).on("click", "#feedbackBtn", function () {
       $("#feedbackCheck").show();
     } else {
       $("#feedbackCheck").hide();
+    }
+
+    if (cus_feedback_dept == "") {
+      $("#departmentCheck").show();
+    } else {
+      $("#departmentCheck").hide();
     }
   }
 });
@@ -3465,7 +3473,7 @@ function resetfeedback() {
     cache: false,
     success: function (html) {
       $("#feedbackTable").html(html);
-      $("#feedback_label, #cus_feedback, #feedback_remark, #feedbackID, #customer_summary_uploads").val('');
+      $("#feedback_label, #cus_feedback_department, #cus_feedback, #feedback_remark, #feedbackID, #customer_summary_uploads").val('');
     },
   });
 }

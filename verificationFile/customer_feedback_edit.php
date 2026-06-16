@@ -10,6 +10,7 @@ $cus_feedback = $feedbackDetail->fetch();
 
 $feedback['id'] = $cus_feedback['id'];
 $feedback['feedback_label'] = $cus_feedback['feedback_label'];
+$feedback['cus_feedback_dept'] = $cus_feedback['cus_feedback_dept'];
 $feedback['cus_feedback'] = $cus_feedback['cus_feedback'];
 $feedback['feedback_remark'] = $cus_feedback['feedback_remark'];
 $feedback['upload'] = $cus_feedback['upload'];
