@@ -22,6 +22,7 @@ $sql = $connect->query("SELECT a.*,b.fullname, CASE b.role WHEN 1 then 'Director
         <th>User Type</th>
         <th>User</th>
         <th>Follow Date</th>
+        <th>Follow up type</th>
     </thead>
     <tbody>
         <?php while($row =  $sql->fetch()){?>
@@ -34,7 +35,17 @@ $sql = $connect->query("SELECT a.*,b.fullname, CASE b.role WHEN 1 then 'Director
                 <td><?php echo $row['role']; ?></td>
                 <td><?php echo $row['fullname']; ?></td>
                 <td><?php echo date('d-m-Y',strtotime($row['follow_date'])); ?></td>
-                
+                <td>
+                    <?php 
+                        $followup_type =''; 
+                        if($row['followup_type'] =='1'){
+                            $followup_type = 'Direct';  
+                        }else if($row['followup_type'] =='2'){
+                            $followup_type = 'Clear';  
+                        }  
+                        echo $followup_type;
+                    ?>
+                </td>
             </tr>
         <?php } ?>
 

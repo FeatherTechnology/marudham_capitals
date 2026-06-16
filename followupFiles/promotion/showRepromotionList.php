@@ -32,7 +32,8 @@ $column = array(
     'cp.cus_reg_id',
     'cp.cus_reg_id',
     'np.status',
-    'np.follow_date'
+    'np.follow_date',
+    'np.followup_type'
 );
 
 $areaColumn = ($accessType == 3) 
@@ -70,6 +71,8 @@ if($_POST['dateType']){
     $baseqry .= ($date_type == '1') ? "AND DATE(req.updated_date) BETWEEN '".$_POST['followUpFromDate']."' AND '".$_POST['followUpToDate']."' " : "AND DATE(np.follow_date) BETWEEN '".$_POST['followUpFromDate']."' AND '".$_POST['followUpToDate']."' ";
 }     
 
+    $baseqry .= ($_POST['followupType']) ? "AND np.followup_type = '". $_POST['followupType'] ."'" : "";   
+
 $search = '';
 if (isset($_POST['search']) && $_POST['search'] != "") {
     $search = " AND (cp.cus_id LIKE '%" . $_POST['search'] . "%' 
@@ -102,7 +105,7 @@ $num_qry->execute();
 $number_filter_row = $num_qry->fetchColumn();
 
 // Main query to fetch customers with specific status and filter those without recent loan requests
-$sql = $connect->query("SELECT req.req_id, req.cus_data, req.cus_id, cp.autogen_cus_id, cp.customer_name, al.area_name, sl.sub_area_name, bc.branch_name, agm.group_name, alm.line_name, cp.mobile1, req.cus_status AS consider_level, req.updated_date, np.status AS followup_sts, np.follow_date, rcs.cus_status AS noc_cus_status $baseqry $limit");
+$sql = $connect->query("SELECT req.req_id, req.cus_data, req.cus_id, cp.autogen_cus_id, cp.customer_name, al.area_name, sl.sub_area_name, bc.branch_name, agm.group_name, alm.line_name, cp.mobile1, req.cus_status AS consider_level, req.updated_date, np.status AS followup_sts, np.follow_date, np.followup_type, rcs.cus_status AS noc_cus_status $baseqry $limit");
 
 $sno = 1;
 $data = [];
@@ -115,6 +118,13 @@ while ($row = $sql->fetch()) {
     $actions = "<div class='dropdown'><button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button><div class='dropdown-content'> <a class='noc-call' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>NOC Call</span></a><a class='intrest' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Interested</span></a><a class='not-intrest' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Not Interested</span></a><a class='un-available' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Unavailable</span></a></div></div>";
 
     $followdate = (isset($row['follow_date'])) ? date('d-m-Y', strtotime($row['follow_date'])) : '';
+    
+    $followup_type =''; 
+    if($row['followup_type'] =='1'){
+        $followup_type = 'Direct';  
+    }else if($row['followup_type'] =='2'){
+        $followup_type = 'Clear';  
+    }  
 
     $data[] = [
         $sno++,
@@ -135,7 +145,8 @@ while ($row = $sql->fetch()) {
         $charts,
         $actions,
         $row['followup_sts'],
-        $followdate
+        $followdate,
+        $followup_type
     ];
 }
 

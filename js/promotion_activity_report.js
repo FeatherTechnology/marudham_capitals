@@ -99,7 +99,7 @@ function commitmentReportTable() {
         'ajax': {
             'url': 'reportFile/promotion_activity/getPromotionActivityReport.php',
             'data': function (data) {
-                data.search = $('input[type=search]').val();
+                data.search = $('#search').val();
                 data.fromdate = fromDate;
                 data.todate = toDate;
                 data.selectedType = selectedType;

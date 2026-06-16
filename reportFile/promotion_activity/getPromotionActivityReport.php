@@ -55,6 +55,7 @@ $column = [
     'np.status',
     'np.remark',
     'np.follow_date',
+    'np.followup_type',
     'u.role',
     'u.fullname',
     'np.id',
@@ -79,6 +80,7 @@ $query = "SELECT
     alm.line_name, 
     adm.duefollowup_name, 
     np.follow_date, 
+    np.followup_type, 
     np.orgin_table,
     cp.cus_status
 FROM 
@@ -127,7 +129,8 @@ if (isset($_POST['search'])) {
             OR u.role LIKE '%" . $_POST['search'] . "%' 
             OR u.fullname LIKE '%" . $_POST['search'] . "%' 
             OR COALESCE(cp.mobile1, ncp.mobile) LIKE '%" . $_POST['search'] . "%' 
-            OR np.follow_date LIKE '%" . $_POST['search'] . "%' )";
+            OR np.follow_date LIKE '%" . $_POST['search'] . "%'
+            OR np.followup_type LIKE '%" . $_POST['search'] . "%' )";
     }
 }
 
@@ -160,6 +163,14 @@ $promo_type_arr = ['1'=>'Direct','2'=>'Mobile'];
 $statusObj = ['0' => 'Request','1' => 'Verification','2' => 'Approval','3' => 'Acknowledgement','4' => 'Promotion','5' => 'Promotion','6' => 'Promotion','7' => 'Promotion','8' => 'Promotion','9' => 'Promotion','10' => 'Verification','11' => 'Verification','12' => 'Verification','13' => 'Loan Issue','14' => 'Collection','15' => 'Collection','16' => 'Collection','17' => 'Collection','20' => 'Promotion','21' => 'Promotion', '22' => 'Promotion', '23' => 'Promotion', '24' => 'Promotion'];
 
 foreach ($result as $row) {
+        
+    $followup_type =''; 
+    if($row['followup_type'] =='1'){
+        $followup_type = 'Direct';  
+    }else if($row['followup_type'] =='2'){
+        $followup_type = 'Clear';  
+    }
+
     $data[] = [
         $sno++,
         $row['cus_id'],
@@ -178,6 +189,7 @@ foreach ($result as $row) {
         $row['status'],
         $row['remark'],
         date('d-m-Y', strtotime($row['follow_date'])),
+        $followup_type,
         $role_arr[$row['role']] ?? '',
         $row['fullname'],
         $originName[$row['orgin_table']] ?? '',

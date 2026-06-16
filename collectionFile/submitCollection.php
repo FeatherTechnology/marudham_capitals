@@ -163,26 +163,17 @@ try {
         $coll_code = $myStr . "-101";
     }
 
-    $insertQry = "INSERT INTO `collection`(  `coll_code`, `req_id`, `cus_id`, `cus_name`, `branch`, `area`, `sub_area`, `line`, `loan_category`, `sub_category`, `coll_status`, 
-        `coll_sub_status`, `tot_amt`, `paid_amt`, `bal_amt`, `due_amt`, `pending_amt`, `payable_amt`, `penalty`, `coll_charge`, `coll_mode`, `bank_id`, `cheque_no`, `trans_id`, `trans_date`, 
-        `coll_location`, `coll_date`, `due_amt_track`,`princ_amt_track`,`int_amt_track`, `penalty_track`, `coll_charge_track`, `total_paid_track`, `pre_close_waiver`,  `interest_waiver`, `principal_waiver`, `penalty_waiver`, `coll_charge_waiver`, 
-        `total_waiver`, `insert_login_id`,`created_date`)  VALUES('" . strip_tags($coll_code) . "','" . strip_tags($req_id) . "','" . strip_tags($cus_id) . "','" . strip_tags($cus_name) . "',
-        '" . strip_tags($branch_id) . "', '" . strip_tags($area_id) . "', '" . strip_tags($sub_area_id) . "', '" . strip_tags($line_id) . "','" . strip_tags($loan_category_id) . "',
-        '" . strip_tags($sub_category_id) . "','" . strip_tags($status) . "','" . strip_tags($sub_status) . "', '" . strip_tags($tot_amt) . "', '" . strip_tags($paid_amt) . "', 
-        '" . strip_tags($bal_amt) . "','" . strip_tags($due_amt) . "','" . strip_tags($pending_amt) . "','" . strip_tags($payable_amt) . "','" . strip_tags($penalty) . "','" . strip_tags($coll_charge) . "',
-        '" . strip_tags($collection_mode) . "','" . strip_tags($bank_id) . "','" . strip_tags($cheque_no) . "','" . strip_tags($trans_id) . "','" . strip_tags($trans_date) . "','" . strip_tags($collection_loc) . "',
-        '" . strip_tags($collection_date) . "','" . strip_tags($due_amt_track) . "','" . strip_tags($princ_amt_track) . "','" . strip_tags($int_amt_track) . "','" . strip_tags($penalty_track) . "','" . strip_tags($coll_charge_track) . "','" . strip_tags($total_paid_track) . "','" . strip_tags($pre_close_waiver) . "',
-        '" . strip_tags($interest_waiver) . "','" . strip_tags($principal_waiver) . "','" . strip_tags($penalty_waiver) . "','" . strip_tags($coll_charge_waiver) . "','" . strip_tags($total_waiver) . "',$userid,current_timestamp )";
+    $insertQry = "INSERT INTO `collection`(`coll_code`, `req_id`, `cus_id`, `cus_name`, `branch`, `area`, `sub_area`, `line`, `loan_category`, `sub_category`, `coll_status`, 
+        `coll_sub_status`, `tot_amt`, `paid_amt`, `bal_amt`, `due_amt`, `pending_amt`, `payable_amt`, `penalty`, `coll_charge`, `coll_mode`, `bank_id`, `cheque_no`, `trans_id`, `trans_date`, `coll_location`, `coll_date`, `due_amt_track`,`princ_amt_track`,`int_amt_track`, `penalty_track`, `coll_charge_track`, `total_paid_track`, `pre_close_waiver`,  `interest_waiver`, `principal_waiver`, `penalty_waiver`, `coll_charge_waiver`, `total_waiver`, `insert_login_id`, `created_date`) VALUES('$coll_code', '$req_id', '$cus_id', '$cus_name', '$branch_id', '$area_id', '$sub_area_id', '$line_id', '$loan_category_id', '$sub_category_id', '$status', '$sub_status', '$tot_amt', '$paid_amt', '$bal_amt', '$due_amt', '$pending_amt', '$payable_amt', '$penalty', '$coll_charge', '$collection_mode', '$bank_id', '$cheque_no', '$trans_id', '$trans_date', '$collection_loc', '$collection_date', '$due_amt_track', '$princ_amt_track', '$int_amt_track', '$penalty_track', '$coll_charge_track', '$total_paid_track', '$pre_close_waiver', '$interest_waiver', '$principal_waiver', '$penalty_waiver', '$coll_charge_waiver', '$total_waiver', '$userid', current_timestamp )";
 
     $insresult = $connect->query($insertQry);
 
     if ($penalty_track != '' or $penalty_waiver != '') {
-        $qry = $connect->query("INSERT INTO penalty_charges (`req_id`,`paid_date`,`paid_amnt`,`waiver_amnt`)VALUES('" . strip_tags($req_id) . "','" . strip_tags($collctn_date) . "',
-            '" . strip_tags($penalty_track) . "','" . strip_tags($penalty_waiver) . "')");
+        $qry = $connect->query("INSERT INTO penalty_charges (`req_id`, `paid_date`, `paid_amnt`, `waiver_amnt`) VALUES('$req_id', '$collctn_date', '$penalty_track','$penalty_waiver')");
     }
+
     if ($coll_charge_track != '' or $coll_charge_waiver != '') {
-        $qry = $connect->query("INSERT INTO collection_charges (`req_id`,`paid_date`,`paid_amnt`,`waiver_amnt`)VALUES('" . strip_tags($req_id) . "','" . strip_tags($collctn_date) . "',
-            '" . strip_tags($coll_charge_track) . "','" . strip_tags($coll_charge_waiver) . "')");
+        $qry = $connect->query("INSERT INTO collection_charges (`req_id`, `paid_date`, `paid_amnt`, `waiver_amnt`) VALUES('$req_id', '$collctn_date', '$coll_charge_track', '$coll_charge_waiver')");
     }
 
     if ($cheque_no != '') {
@@ -204,13 +195,13 @@ try {
 
     if ($check == 0 && $penalty_check == 0 && $coll_charge_check == 0) {
         $cus_status = 20;
-        $connect->query("UPDATE request_creation set cus_status = $cus_status,updated_date=now(), update_login_id = $userid WHERE  req_id = '" . $req_id . "' ") or die('Error on Request Table');
+        $connect->query("UPDATE request_creation set cus_status = $cus_status, updated_date=now(), update_login_id = $userid WHERE  req_id = '" . $req_id . "' ") or die('Error on Request Table');
         // $connect->query("UPDATE customer_register set cus_status = 14 WHERE req_ref_id = '".$req_id."' ")or die('Error on Customer Table');
-        $connect->query("UPDATE in_verification set cus_status = $cus_status,updated_date=now(), update_login_id = $userid WHERE req_id = '" . $req_id . "' ") or die('Error on inVerification Table');
-        $connect->query("UPDATE `in_approval` SET `cus_status`= $cus_status,updated_date=now(),`update_login_id`= $userid WHERE  req_id = '" . $req_id . "' ") or die('Error on in_approval Table');
-        $connect->query("UPDATE `in_acknowledgement` SET `cus_status`= $cus_status,updated_date=now(),`update_login_id`= $userid WHERE  req_id = '" . $req_id . "' ") or die('Error on in_acknowledgement Table');
+        $connect->query("UPDATE in_verification set cus_status = $cus_status, updated_date=now(), update_login_id = $userid WHERE req_id = '" . $req_id . "' ") or die('Error on inVerification Table');
+        $connect->query("UPDATE `in_approval` SET `cus_status`= $cus_status, updated_date=now(), `update_login_id`= $userid WHERE  req_id = '" . $req_id . "' ") or die('Error on in_approval Table');
+        $connect->query("UPDATE `in_acknowledgement` SET `cus_status`= $cus_status, updated_date=now(), `update_login_id`= $userid WHERE  req_id = '" . $req_id . "' ") or die('Error on in_acknowledgement Table');
         $connect->query("UPDATE `in_issue` SET `cus_status`= $cus_status, `update_login_id` = $userid where req_id = '" . $req_id . "' ") or die('Error on in_issue Table');
-        $connect->query("INSERT INTO `closing_customer` (req_id,cus_id,closing_date) VALUES ($req_id, $cus_id, DATE(now()) ) ") or die('Error on closing_customer Table');
+        $connect->query("INSERT INTO `closing_customer` (req_id, cus_id, closing_date) VALUES ($req_id, $cus_id, DATE(now()) ) ") or die('Error on closing_customer Table');
     }
 
     $pending_amount = intval($pending_amt) - $collected_amnt;
@@ -303,7 +294,7 @@ try {
     }
     //Current_month_paid = YES/1, if either partial amount or full amount of payable paid in collection. 
 
-    $query = $connect->query("UPDATE `customer_status` SET `cus_id`='$cus_id',`sub_status`='$substs',`payable_amnt` = '$payable_amnts', `bal_amnt`='$bal_amnts', `last_paid_date`= '$lpd', `current_month_paid`='1', `insert_login_id`='$userid',`created_date`='$cur_date' WHERE `req_id`='$req_id' ");
+    $query = $connect->query("UPDATE `customer_status` SET `cus_id`='$cus_id', `sub_status`='$substs', `payable_amnt` = '$payable_amnts', `bal_amnt`='$bal_amnts', `last_paid_date`= '$lpd', `current_month_paid`='1', `insert_login_id`='$userid', `created_date`='$cur_date' WHERE `req_id`='$req_id' ");
 
     if (!empty($bank_clr_bank_id)) {
         // Deduct paid amount
