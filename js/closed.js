@@ -34,6 +34,7 @@ $(document).ready(function () {
     $(document).on("click", "#feedbackBtn", function () {
         let cus_id = $('#cus_id').val();
         let feedback_label = $("#feedback_label").val();
+        let cus_feedback_dept = $("#cus_feedback_department").val();
         let cus_feedback = $("#cus_feedback").val();
         let files = $("#customer_summary_uploads")[0].files;
         let cus_summary_upload = $("#cus_summary_upload").val();
@@ -41,12 +42,13 @@ $(document).ready(function () {
         let feedbackID = $("#feedbackID").val();
 
 
-        if (feedback_label != "" && cus_feedback != "" && cus_id != "") {
+        if (feedback_label != "" && cus_feedback_dept !="" && cus_feedback != "" && cus_id != "") {
             // Using FormData to send file and other data
             let formData = new FormData();
             formData.append("cus_id", cus_id);
             formData.append("feedback_label", feedback_label);
             formData.append("cus_feedback", cus_feedback);
+            formData.append("cus_feedback_dept", cus_feedback_dept);
 
             for (let i = 0; i < files.length; i++) {
                 formData.append("customer_summary_uploads[]", files[i]);
@@ -90,7 +92,7 @@ $(document).ready(function () {
                 }
             });
 
-            $('#feedbacklabelCheck, #feedbackCheck').hide();
+            $('#feedbacklabelCheck, #departmentCheck, #feedbackCheck').hide();
 
         } else {
 
@@ -104,6 +106,12 @@ $(document).ready(function () {
                 $('#feedbackCheck').show();
             } else {
                 $('#feedbackCheck').hide();
+            }
+            
+            if (cus_feedback_dept == "") {
+                $('#departmentCheck').show();
+            } else {
+                $('#departmentCheck').hide();
             }
         }
     });
@@ -121,6 +129,7 @@ $(document).ready(function () {
 
                 $("#feedbackID").val(result['id']);
                 $("#feedback_label").val(result['feedback_label']);
+                $("#cus_feedback_department").val(result["cus_feedback_dept"]);
                 $("#cus_feedback").val(result['cus_feedback']);
                 $("#feedback_remark").val(result['feedback_remark']);
                 $("#cus_summary_upload").val(result["upload"]);
@@ -542,7 +551,7 @@ function resetfeedback() {
         cache: false,
         success: function (html) {
             $("#feedbackTable").html(html);
-            $("#feedback_label, #cus_feedback, #feedback_remark, #feedbackID, #customer_summary_uploads").val('');
+            $("#feedback_label, #cus_feedback_department, #cus_feedback, #feedback_remark, #feedbackID, #customer_summary_uploads").val('');
         }
     });
 }
