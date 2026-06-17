@@ -91,7 +91,7 @@ foreach ($loanCats as $cat) {
                 $closingDate  = date('Y-m-d', strtotime($issue['created_date']));
                 $monthEnd     = date('Y-m-t', strtotime($issue['created_date']));
                 $nextMonth    = date('Y-m-d', strtotime($monthEnd . ' +1 day'));
-                $reactiveDate = date('Y-m-d', strtotime($nextMonth . ' +3 months'));
+                $reactiveDate = date('Y-m-d', strtotime($nextMonth . ' +6 months'));
 
                 if ($closingDate > $reqDate) {
                     $type = 'additional';

@@ -228,8 +228,8 @@ foreach ($result as $row) {
                     // First day of next month
                     $nextMonthStart = date('Y-m-d', strtotime($monthEnd . ' +1 day'));
 
-                    // Add 3 months to calculate reactive date
-                    $reactiveDate = date('Y-m-d', strtotime($nextMonthStart . ' +3 months'));
+                    // Add 6 months to calculate reactive date
+                    $reactiveDate = date('Y-m-d', strtotime($nextMonthStart . ' +6 months'));
 
                     $today = date('Y-m-d');
 

@@ -67,7 +67,7 @@ if ($result->rowCount() > 0) {
 
         $monthEnd       = date('Y-m-t', strtotime($lastIssuedDate));
         $nextMonthStart = date('Y-m-d', strtotime($monthEnd . ' +1 day'));
-        $reactiveDate   = date('Y-m-d', strtotime($nextMonthStart . ' +3 months'));
+        $reactiveDate   = date('Y-m-d', strtotime($nextMonthStart . ' +6 months'));
         $today          = date('Y-m-d');
 
         $response = ($today < $reactiveDate) ? 'Renewal' : 'Re-active';

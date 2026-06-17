@@ -290,7 +290,7 @@ foreach ($result as $row) {
             $closingDate = date('Y-m-d', strtotime($issue['closing_date']));
             $monthEnd = date('Y-m-t', strtotime($issue['closing_date']));
             $nextMonth = date('Y-m-d', strtotime($monthEnd . ' +1 day'));
-            $reactiveDate = date('Y-m-d', strtotime($nextMonth . ' +3 months'));
+            $reactiveDate = date('Y-m-d', strtotime($nextMonth . ' +6 months'));
 
             if ($closingDate > $dor) {
 
