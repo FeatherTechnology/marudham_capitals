@@ -17,7 +17,7 @@ if (!is_array($req)) $req = [];
 
 $quality = isset($req['Quality']) ? (int)$req['Quality'] : 60;
 $timeout = isset($req['TimeOut']) ? (int)$req['TimeOut'] : 10;
-$templateFormat = isset($req['TemplateFormat']) ? (string)$req['TemplateFormat'] : 'ANSI';
+$templateFormat = isset($req['TmpFormat']) ? (string)$req['TmpFormat'] : 2;
 $imageFormat = isset($req['ImageFormat']) ? (string)$req['ImageFormat'] : 'BMP';
 
 $base = 'http://localhost:8030/morfinauth/';
@@ -51,7 +51,7 @@ $init = postJson($base . 'initdevice', ['ConnectedDvc' => '', 'ClientKey' => '']
 $capturePayload = [
     'Quality' => $quality,
     'TimeOut' => $timeout,
-    'TemplateFormat' => $templateFormat,
+    'TmpFormat' => $templateFormat,
     'ImageFormat' => $imageFormat
 ];
 

@@ -27,7 +27,7 @@ if (!is_array($req)) {
 $quality   = isset($req['Quality']) ? (int)$req['Quality'] : 60;
 $timeout   = isset($req['TimeOut']) ? (int)$req['TimeOut'] : 10;
 $gallery   = $req['GalleryTemplate'] ?? '';
-$tmpFormat = $req['TemplateFormat'] ?? 'ANSI';
+$tmpFormat = $req['TmpFormat'] ?? 2;
 
 $base = 'http://localhost:8030/morfinauth/';
 
@@ -56,7 +56,7 @@ $payload = [
     'Quality'         => $quality,
     'TimeOut'         => $timeout,
     'GalleryTemplate' => $gallery,
-    'TemplateFormat'  => $tmpFormat   // ✅ FIXED
+    'TmpFormat'  => $tmpFormat   // ✅ FIXED
 ];
 
 $ch = curl_init($base . 'match');

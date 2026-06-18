@@ -129,9 +129,9 @@ if($_POST['dateType']){
                         $followuptype = $row['followup_type'] ?? '';
                         $followup_type =''; 
                         if($followuptype =='1'){
-                            $followup_type = 'Direct';  
+                            $followup_type = 'Field';  
                         }else if($followuptype =='2'){
-                            $followup_type = 'Clear';  
+                            $followup_type = 'Telecalling';  
                         } 
                         echo $followup_type;
                     ?>

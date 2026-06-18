@@ -27,7 +27,7 @@ function commonCaptureFinger(successCallback, errorCallback) {
                     // Fetch template separately
                     setTimeout(() => {
 
-                        const tempRes = GetTemplate("ANSI");
+                        const tempRes = GetTemplate(2);
                         if (
                             tempRes &&
                             tempRes.httpStaus &&
@@ -116,7 +116,7 @@ function commonStoreFingerprint(fdata, hand, id, name, successCallback) {
 function commonMatchFinger(compare_template, successCallback, errorCallback) {
     const quality = 60;
     const timeout = 10;
-    const matchResult = MatchFinger(quality, timeout, compare_template, "ANSI");
+    const matchResult = MatchFinger(quality, timeout, compare_template, 2);
     if (matchResult.httpStaus) {
         if (matchResult.data.Status) {
             Swal.fire({ title: 'Fingerprint Matching', icon: 'success', showConfirmButton: true, confirmButtonColor: '#009688' });

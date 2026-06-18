@@ -95,7 +95,7 @@ function getCustomerTypeFast($cus_data, $reqDate, $cus_id, $req_id, $historyData
     $closingDate = date('Y-m-d', strtotime($latestIssue['closing_date']));
     $monthEnd = date('Y-m-t', strtotime($latestIssue['closing_date']));
     $nextMonth = date('Y-m-d', strtotime($monthEnd . ' +1 day'));
-    $reactiveDate = date('Y-m-d', strtotime($nextMonth . ' +3 months'));
+    $reactiveDate = date('Y-m-d', strtotime($nextMonth . ' +6 months'));
     
     if ($closingDate > $dor) {
         return 'additional';

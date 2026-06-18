@@ -20,7 +20,7 @@ if (!is_array($req)) {
 
 $prob = $req['ProbTemplate'] ?? '';
 $gallery = $req['GalleryTemplate'] ?? '';
-$tmpFormat = $req['TmpFormat'] ?? 'ANSI';
+$tmpFormat = $req['TmpFormat'] ?? 2;
 
 $base = 'http://localhost:8030/morfinauth/';
 

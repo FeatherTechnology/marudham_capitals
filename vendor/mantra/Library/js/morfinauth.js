@@ -45,8 +45,8 @@ function CaptureFinger(quality, timeout) {
     var MorFinAuthRequest = {
         "Quality": quality,
         "TimeOut": timeout,
-        "TemplateFormat": "ANSI",
-        "ImageFormat": "BMP"
+        // "TmpFormat": 2,
+        // "ImageFormat": "BMP"
     };
     return PostMorFinAuthClient("capture", JSON.stringify(MorFinAuthRequest));
 
@@ -77,7 +77,7 @@ function CaptureFinger(quality, timeout) {
     return res;
 }
 function VerifyFinger(ProbFMR, GalleryFMR, tmpFormat) {
-    if (!tmpFormat) { tmpFormat = "ANSI"; }
+    if (!tmpFormat) { tmpFormat = 2; }
     var MorFinAuthRequest = {
         "ProbTemplate": ProbFMR,
         "GalleryTemplate": GalleryFMR,
@@ -86,12 +86,12 @@ function VerifyFinger(ProbFMR, GalleryFMR, tmpFormat) {
     return PostMorFinAuthClient("verify", JSON.stringify(MorFinAuthRequest));
 }
 function MatchFinger(quality, timeout, GalleryFMR, tmpFormat) {
-    if (!tmpFormat) { tmpFormat = "ANSI"; }
+    if (!tmpFormat) { tmpFormat = 2; }
     var MorFinAuthRequest = {
         "Quality": quality,
         "TimeOut": timeout,
         "GalleryTemplate": GalleryFMR,
-        "TemplateFormat": tmpFormat   // ✅ FIXED
+        "TmpFormat": tmpFormat   // ✅ FIXED
     };
     return PostMorFinAuthClient("match", JSON.stringify(MorFinAuthRequest));
 }
@@ -104,7 +104,7 @@ function GetImage(imgformat) {
 }
 function GetTemplate(tmpFormat) {
 
-    if (!tmpFormat) tmpFormat = "ANSI";
+    if (!tmpFormat) tmpFormat = 2;
 
     var res;
 
@@ -118,7 +118,7 @@ function GetTemplate(tmpFormat) {
         url: uri + "gettemplate",
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify({
-            "TemplateFormat": tmpFormat
+            "TmpFormat": tmpFormat
         }),
         dataType: "json",
         processData: false,

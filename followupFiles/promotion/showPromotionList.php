@@ -35,10 +35,10 @@ $column = array(
 );
 
 if (isset($_POST['re_active']) && $_POST['re_active'] != "") {
-    $re_active = "HAVING CURDATE() >= DATE_ADD(DATE_ADD(LAST_DAY(MAX(created_date)), INTERVAL 1 DAY),INTERVAL 3 MONTH)";
+    $re_active = "HAVING CURDATE() >= DATE_ADD(DATE_ADD(LAST_DAY(MAX(created_date)), INTERVAL 1 DAY),INTERVAL 6 MONTH)";
 }
 else{
-    $re_active ="HAVING CURDATE() < DATE_ADD( DATE_ADD(LAST_DAY(MAX(created_date)), INTERVAL 1 DAY),INTERVAL 3 MONTH)";
+    $re_active ="HAVING CURDATE() < DATE_ADD( DATE_ADD(LAST_DAY(MAX(created_date)), INTERVAL 1 DAY),INTERVAL 6 MONTH)";
 }
 
 $areaColumn = ($accessType == 3) 
@@ -125,9 +125,9 @@ while ($row = $sql->fetch()) {
 
     $followup_type =''; 
     if($row['followup_type'] =='1'){
-        $followup_type = 'Direct';  
+        $followup_type = 'Field';  
     }else if($row['followup_type'] =='2'){
-        $followup_type = 'Clear';  
+        $followup_type = 'Telecalling';  
     }  
 
     $data[] = [

@@ -28,7 +28,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         "Quality" => 60,
         "TimeOut" => 10,
         "GalleryTemplate" => $storedTemplate,
-        "TemplateFormat" => "ANSI"
+        "TmpFormat" => 2
     ];
 
     $ch = curl_init($base . 'match');
