@@ -87,8 +87,8 @@ if (sizeof($getUser) > 0) {
 							<label for="followuptype">Follow up Type</label>
 							<select class="form-control" name="followuptype" id="followuptype">
 								<option value="0">Select Followup Type</option>
-								<option value="1">Direct</option>
-								<option value="2">Clear</option>
+								<option value="1">Field</option>
+								<option value="2">Telecalling</option>
 							</select>
 						</div>
 					</div>
@@ -559,8 +559,8 @@ if (sizeof($getUser) > 0) {
 								<label for="followup_type">Follow up Type</label>
 								<select class="form-control" name="followup_type" id="followup_type">
 									<option value="0">Select Followup Type</option>
-									<option value="1">Direct</option>
-									<option value="2">Clear</option>
+									<option value="1">Field</option>
+									<option value="2">Telecalling</option>
 								</select>
 							</div>
 						</div>

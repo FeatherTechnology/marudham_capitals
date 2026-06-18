@@ -121,9 +121,9 @@ while ($row = $sql->fetch()) {
     
     $followup_type =''; 
     if($row['followup_type'] =='1'){
-        $followup_type = 'Direct';  
+        $followup_type = 'Field';  
     }else if($row['followup_type'] =='2'){
-        $followup_type = 'Clear';  
+        $followup_type = 'Telecalling';  
     }  
 
     $data[] = [

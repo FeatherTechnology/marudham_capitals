@@ -39,9 +39,9 @@ $sql = $connect->query("SELECT a.*,b.fullname, CASE b.role WHEN 1 then 'Director
                     <?php 
                         $followup_type =''; 
                         if($row['followup_type'] =='1'){
-                            $followup_type = 'Direct';  
+                            $followup_type = 'Field';  
                         }else if($row['followup_type'] =='2'){
-                            $followup_type = 'Clear';  
+                            $followup_type = 'Telecalling';  
                         }  
                         echo $followup_type;
                     ?>

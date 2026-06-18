@@ -549,24 +549,6 @@ $(document).ready(function () {
         $("#addPromotion").find(".modal-body span").not('.required').hide();
     });
 
-    $(document).on('change', '#promo_type', function(e){
-        let promoType = $(this).val();
-        let followupTypeOption;
-        
-        if(promoType =='1'){//Direct, if direct means no need to show Direct option in Followup status.
-            followupTypeOption = `<option value="0">Select Followup Type</option>
-                    <option value="2">Clear</option>`;
-        }else{
-            followupTypeOption = `<option value="0">Select Followup Type</option>
-                    <option value="1">Direct</option>
-                    <option value="2">Clear</option>`;           
-        }
-
-        $('#followup_type')
-        .empty()
-        .append(followupTypeOption);
-    });
-
     $(document).on('change', '#cus_id', function(e){
         var cus_id = $(this).val();
         cus_id = cus_id.replace(/\s+/g, "");

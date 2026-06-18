@@ -109,7 +109,7 @@ $(document).ready(function () {
 
         for (let row of fingerList) {
 
-            let matchRes = MatchFinger(60, 10000, row.ansi_template, "ANSI");
+            let matchRes = MatchFinger(60, 10000, row.ansi_template, 2);
 
             if (matchRes && matchRes.httpStaus && matchRes.data && matchRes.data.Status == true) {
 
