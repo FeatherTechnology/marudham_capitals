@@ -3009,6 +3009,10 @@
         <script src="js/location_track_report.js"></script>
     <?php }
 
+    if ($current_page == 'outstanding_report') { ?>
+        <script src="js/outstanding_report.js"></script>
+    <?php }
+
     if ($current_page == 'intrest_ledger_report') { ?>
         <script src="js/intrest_ledger_report.js"></script>
     <?php }
