@@ -159,7 +159,7 @@ foreach ($loopBranches as $b_id) {
         WHERE agm.branch_id = '$b_id'
         AND li.agent_id = '$agent_id'
         AND DATE(c1.coll_date) BETWEEN '$monthStart' AND '$monthEnd'
-        AND (c1.bal_amt = 0 OR c1.bal_amt = c1.due_amt_track)
+        AND (c1.bal_amt = c1.due_amt_track)
     ");
     $end_po = $endQry->fetchColumn() ?: 0;
 
