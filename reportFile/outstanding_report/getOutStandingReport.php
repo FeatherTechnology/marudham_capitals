@@ -185,13 +185,9 @@ foreach ($loopCategories as $cat) {
         ON agm.map_id = agmsa.group_map_id
     WHERE agm.branch_id = '$branch_id'
     AND DATE(c1.coll_date) BETWEEN '$monthStart' AND '$monthEnd'
-    AND (
-        c1.bal_amt = 0
-        OR c1.bal_amt = c1.due_amt_track
-    )
+    AND (c1.bal_amt = c1.due_amt_track)
     $singleFilter
 ");
-
     $end_po = $endQry->fetchColumn() ?: 0;
 
     $calculated_curr_po  = $pre['count'] + $issue_count - $end_po;
