@@ -159,7 +159,8 @@ function submitLoanfollowup() {
             swarlErrorAlert(response);
         } else {
             swarlSuccessAlert(response, function(){
-                $('#closeAddFollowupModal').trigger('click');
+                // $('#closeAddFollowupModal').trigger('click');
+                location.reload(); // Refresh the page to show the Last Follow-up date in the list
             });
 
             $('#addLoanFollow').find('.modal-body input').not('[readonly]').val('');

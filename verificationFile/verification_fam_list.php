@@ -11,7 +11,9 @@ include '../ajaxconfig.php';
             <th>Authorize</th>
             <!-- <th>Remark</th> -->
             <!-- <th>Address</th> -->
+            <th>DOB</th>
             <th>Age</th>
+            <th>Live/Deceased</th>
             <th>Aadhar No</th>
             <th>Mobile No</th>
             <th>Occupation</th>
@@ -34,7 +36,9 @@ include '../ajaxconfig.php';
                 <td> <?php echo ($fam['authorize'] == '0') ?'Yes' : 'No';?></td>
                 <!-- <td> <?php echo ($fam['relationship'] == 'Other') ? $fam['other_remark'] : '---'; ?></td>
                 <td> <?php echo ($fam['relationship'] == 'Other') ? $fam['other_address'] : '---'; ?></td> -->
+                <td> <?php echo ($fam['relation_dob'] !='0000-00-00') ? date('d-m-Y',strtotime($fam['relation_dob'])) : ''; ?></td>
                 <td> <?php echo $fam['relation_age']; ?></td>
+                <td> <?php echo $fam['relation_live_deceased']; ?></td>
                 <td> <?php echo $fam['relation_aadhar']; ?></td>
                 <td> <?php echo $fam['relation_Mobile']; ?></td>
                 <td> <?php echo $fam['relation_Occupation']; ?></td>
