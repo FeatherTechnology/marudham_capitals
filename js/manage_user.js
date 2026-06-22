@@ -1209,12 +1209,12 @@ function validation() {
     let requireGroup = false;
     let requireLine = false;
     let requireFollowup = false;
+    let requireCusSummaryAccess = false;
 
     const screenCategoryMap = {
 
         /* ---------------- LINE ONLY ---------------- */
         collection: { line: true },
-        closed: { line: true },
         finance_insight: { line: true },
 
         closed_report: { line: true },
@@ -1235,22 +1235,25 @@ function validation() {
         intrest_collection_report: { line: true },
 
         /* ---------------- GROUP ONLY ---------------- */
-        verification: { group: true },
-        approval: { group: true },
-        acknowledgement: { group: true },
-        loan_issue: { group: true },
-        accounts_loan_issue: { group: true },
-
         request: { group: true },
         request_list_access: { group: true },
-        update: { group: true },
 
         cancel_revoke_report: { group: true },
         request_report: { group: true },
         verification_report: { group: true },
         approval_report: { group: true },
 
+        /* ---------------- CUSTOMER SUMMARY ONLY ---------------- */
+        request: { cusSummary: true },
+        
         /* ---------------- BOTH REQUIRED ---------------- */
+        verification: { group: true, cusSummary: true },
+        approval: { group: true, cusSummary: true },
+        acknowledgement: { group: true, cusSummary: true },
+        loan_issue: { group: true, cusSummary: true },
+        accounts_loan_issue: { group: true },
+        closed: { line: true, cusSummary: true },
+        update: { group: true, cusSummary: true },
         cash_tally: { line: true, group: true }
     };
 
@@ -1261,6 +1264,7 @@ function validation() {
         if (screenCategoryMap[id]) {
             if (screenCategoryMap[id].line) requireLine = true;
             if (screenCategoryMap[id].group) requireGroup = true;
+            if (screenCategoryMap[id].cusSummary) requireCusSummaryAccess = true;
         }
     });
 
@@ -1318,6 +1322,14 @@ function validation() {
         validation = false;
     } else {
         $('.duefollowupCheck').hide();
+    }
+
+    let cusSummary = $('#cus_summary_access').val();
+    if (requireCusSummaryAccess && cusSummary == '') {
+        $('#cusSummaryAccessCheck').show();
+        validation = false;
+    } else {
+        $('#cusSummaryAccessCheck').hide();
     }
 
     let varLoanCatchecked = $('#verification').is(':checked');

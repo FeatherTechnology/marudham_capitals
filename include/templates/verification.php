@@ -2174,11 +2174,18 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 										<input type="hidden" id="verification_audio_upd" name="verification_audio_upd" value="<?php if (isset($com_audio)) {
 																																	echo $com_audio;
 																																} ?>">
-										<input type="file" onchange="compressImage(this,800)" class="form-control" name="verification_audio" id="verification_audio" accept=".mp3,audio/*" tabindex="117">
+										<input type="file" class="form-control" name="verification_audio[]" id="verification_audio" accept=".mp3,audio/*" tabindex="117" multiple>
 										<?php if (isset($communication)) {
-											if ($communication == '0') { ?>
-												<a href="<?php echo "uploads/verification/verifyInfo_audio/" . $com_audio; ?>" target="_blank" download>Click Here To Download Your <?php if (isset($com_audio)) echo $com_audio; ?> Audio </a>
-										<?php }
+											if ($communication == '0') { 
+												$upload = explode(',', $com_audio) ?? '';
+												$upd_name = '';
+												foreach ($upload as $upd) {
+													if ($upd != null) {
+														$upd_name .= "<a href=uploads/verification/verifyInfo_audio/".$upd ." target='_blank' style='color: #4ba39b;'>" . $upd . "</a>, ";
+													}
+												} 
+												echo rtrim($upd_name,', ');// to trim the comma at end;
+											}
 										} ?>
 									</div>
 								</div>
@@ -3228,13 +3235,13 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 </div>
 <!-- END  Add KYC Info Modal -->
 <!-- Add Signed Doc info Modal  START -->
-<div class="modal fade addSignDoc" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<div class="modal fade addSignDoc" tabindex="-1" role="dialog">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
 				<h5 class="modal-title" id="myLargeModalLabel">Add Signed Doc Info</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="resetsigninfoList()">
-					<span aria-hidden="true">&times;</span>
+				<button type="button" class="close" data-dismiss="modal" onclick="resetsigninfoList()">
+					<span>&times;</span>
 				</button>
 			</div>
 			<div class="modal-body">
@@ -3549,7 +3556,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label for="customer_summary_uploads">Uploads</label>
-							<input type="file" class="form-control" name="customer_summary_uploads[]" id="customer_summary_uploads" tabindex="5" multiple>
+							<input type="file" class="form-control" name="customer_summary_uploads[]" id="customer_summary_uploads" tabindex="5" onchange="compressImage(this,800)" multiple>
 							<input type="hidden" id="cus_summary_upload">
 						</div>
 					</div>

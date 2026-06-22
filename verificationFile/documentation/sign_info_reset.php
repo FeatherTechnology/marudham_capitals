@@ -27,7 +27,7 @@ include '../../ajaxconfig.php';
         ?>
 
             <tr>
-                <td><?php echo $i; ?></td>
+                <td><?php echo $i++; ?></td>
 
                 <td>Signed Document</td>
 
@@ -48,13 +48,12 @@ include '../../ajaxconfig.php';
                         } ?></td>
                 <td><?php echo $signed["doc_Count"]; ?></td>
                 <td>
-                    <a id="signed_doc_edit" value="<?php echo $signed['id']; ?>"> <span class="icon-border_color"></span></a> &nbsp
+                    <a id="signed_doc_edit" value="<?php echo $signed['id']; ?>" data-relationid="<?= $fam_id ?>"> <span class="icon-border_color"></span></a> &nbsp
                     <a id="signed_doc_delete" value="<?php echo $signed['id']; ?>"> <span class='icon-trash-2'></span> </a>
                 </td>
             </tr>
 
-        <?php $i = $i + 1;
-        }     ?>
+        <?php } ?>
     </tbody>
 </table>
 

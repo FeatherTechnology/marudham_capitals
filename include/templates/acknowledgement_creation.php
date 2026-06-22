@@ -2374,11 +2374,18 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 										<input type="hidden" id="verification_audio_upd" name="verification_audio_upd" value="<?php if (isset($com_audio)) {
 																																	echo $com_audio;
 																																} ?>">
-										<input type="file" onchange="compressImage(this,200)" class="form-control" name="verification_audio" id="verification_audio" accept=".mp3,audio/*" tabindex="113">
+										<input type="file" onchange="compressImage(this,200)" class="form-control" name="verification_audio[]" id="verification_audio" accept=".mp3,audio/*" tabindex="113">
 										<?php if (isset($communication)) {
-											if ($communication == '0') { ?>
-												<a href="<?php echo "uploads/verification/verifyInfo_audio/" . $com_audio; ?>" target="_blank" download>Click Here To Download Your <?php if (isset($com_audio)) echo $com_audio; ?> Audio </a>
-										<?php }
+											if ($communication == '0') { 
+												$upload = explode(',', $com_audio) ?? '';
+												$upd_name = '';
+												foreach ($upload as $upd) {
+													if ($upd != null) {
+														$upd_name .= "<a href=uploads/verification/verifyInfo_audio/".$upd ." target='_blank' style='color: #4ba39b;'>" . $upd . "</a>, ";
+													}
+												} 
+												echo rtrim($upd_name,', ');// to trim the comma at end;
+											}
 										} ?>
 									</div>
 								</div>

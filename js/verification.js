@@ -523,10 +523,27 @@ $(document).ready(function () {
     // Signed Type
     let type = $(this).val();
 
-    $("#cus_name_div").hide();
-    $("#guar_name_div").hide();
-    $("#relation_doc").hide();
-    $('#signTyperRelationshipCheck').hide();
+    if(type =='0' || type =='1'){ //Customer, Guarantor.
+      // Get all td elements at index 2 from all rows
+      let allSignTypes = $('#signedDoc_table_data').find('tr').map(function() {
+          return $(this).find("td:eq(2)").text();
+      }).get();
+  
+      let typeName = {'0':'Customer', '1':'Guarantor', '2':'Combined', '3':'Family Members'};
+      let checkType = typeName[type] ?? '';
+  
+      // Check if checkType exists in any of the rows
+      if (allSignTypes.some(function(tbSignType) {
+          return tbSignType.includes(checkType);
+      })){
+          alert(`${checkType} already added in Sign doc.`);
+          $(this).val('');
+          $("#cus_name_div, #guar_name_div, #relation_doc, #signTyperRelationshipCheck").hide();
+          return;
+      }
+    }
+
+    $("#cus_name_div, #guar_name_div, #relation_doc, #signTyperRelationshipCheck").hide();
 
     if (type == "0") {
       // if customer , then show Customer name
@@ -543,9 +560,7 @@ $(document).ready(function () {
           $("#signType_cus_name").val(result["name"]);
         },
       });
-
     }
-
 
     if (type == "1") {
       // if guarentor , then show guarentor name
@@ -560,9 +575,45 @@ $(document).ready(function () {
 
     } else {
       $("#signType_relationship").val('');
-
     }
 
+  });
+
+  $('#signType_relationship').change(function(){
+      let relationship = $(this).val();
+      // Signed Type
+      let type = $('#sign_type').val();
+      
+      // Get all td elements at index 2 from all rows
+      let allSignTypes = $('#signedDoc_table_data').find('tr:has(td)').map(function() {
+          return $(this).find("td:eq(2)").text();
+      }).get();
+
+      // Get all relation-id attributes from all rows
+      let allRelationIds = $('#signedDoc_table_data').find('tr:has(td)').map(function() {
+          return $(this).find("a").data('relationid');
+      }).get();
+
+      // Types that share the same relationship ID
+      let typeName = {'0':'Customer', '1':'Guarantor', '2':'Combined', '3':'Family Members'};
+      let checkType = typeName[type] ?? '';
+      
+      // Check if the relationship already exists with Combined OR Family Members in the same row
+      let alreadyExists = allRelationIds.some(function(tbRelationId, index) {
+          // Check if this row has the matching relationship
+          if (tbRelationId == relationship) {
+              // Check if this same row has either Combined OR Family Members
+              let rowType = allSignTypes[index];
+              return checkType.includes(rowType);
+          }
+          return false;
+      });
+
+      if (alreadyExists) {
+          alert(`This "${checkType}" already added in Sign doc.`);
+          $(this).val('');
+          return;
+      }
   });
 
   $("body").on("click", "#signed_doc_edit", function () {
@@ -1260,6 +1311,7 @@ $(document).ready(function () {
   });
   
   ///Hide AND Show doc Card END
+  
 }); ////////Document Ready End
 
 function showErrorAlert(message) {
@@ -4111,7 +4163,6 @@ function resetsignInfo() {
     data: { reqId: req_id },
     cache: false,
     success: function (html) {
-      $("#signTable").empty();
       $("#signTable").html(html);
 
       $("#sign_type, #signType_cus_name, #guar_name, #signType_relationship, #doc_Count, #signedID").val("");
@@ -4180,15 +4231,8 @@ function resetsigninfoList() {
       $("#signDocResetTable").empty();
       $("#signDocResetTable").html(html);
 
-      $("#sign_type").val("");
-      $("#signType_cus_name").val('');
-      $("#cus_name_div").hide();
-      $("#guar_name").val("");
-      $("#guar_name_div").hide();
-      $("#signType_relationship").val("");
-      $("#relation_doc").hide();
-      $("#doc_Count").val("");
-      $("#signedID").val("");
+      $("#sign_type, #signType_cus_name, #guar_name, #signType_relationship, #doc_Count, #signedID").val("");
+      $("#cus_name_div, #guar_name_div, #relation_doc").hide();
 
       let hasRecords = $("#signed_table").DataTable().rows().count() > 0;
       if (hasRecords) {
