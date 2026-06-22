@@ -128,6 +128,7 @@ $concern_report  = '';
 $partners_report  = '';
 $back_office_count_report='';
 $location_track_report = '';
+$outstanding_report = '';
 $search_module = '';
 $search_screen = '';
 $bulk_upload_module = '';
@@ -323,6 +324,7 @@ if($idupd>0)
 			$back_office_count_report = $getUser['back_office_count_report'];
 			$branch_request_count_report = $getUser['branch_request_count_report'];
 			$location_track_report = $getUser['location_track_report'];
+			$outstanding_report = $getUser['outstanding_report'];
 			$search_module = $getUser['search_module'];
 			$search_screen = $getUser['search'];
 			$bulk_upload_module = $getUser['bulk_upload_module'];
@@ -1513,6 +1515,12 @@ if($idupd>0)
 								<div class="custom-control custom-checkbox">
 									<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($cleared_report==0){ echo'checked'; }} ?> tabindex="127" class="acounts-checkbox    screen-validations" id="cleared_report" name="cleared_report" disabled>&nbsp;&nbsp;
 									<label class="custom-control-label" for="cleared_report">Cleared</label>
+								</div>
+							</div>
+							<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+								<div class="custom-control custom-checkbox">
+									<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($outstanding_report==0){ echo'checked'; }} ?> tabindex="127" class="acounts-checkbox    screen-validations" id="outstanding_report" name="outstanding_report" disabled>&nbsp;&nbsp;
+									<label class="custom-control-label" for="outstanding_report">Outstanding</label>
 								</div>
 							</div>
 						</div>

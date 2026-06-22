@@ -637,6 +637,11 @@ if (isset($getuserdetails['download_access'])) {
 			<?php if ($current_page == 'location_track_report') { ?>
 				<?php include "include/templates/location_track_report.php" ?>
 			<?php } else ?>
+
+			<!-- Outstanding Report -->
+			<?php if ($current_page == 'outstanding_report') { ?>
+				<?php include "include/templates/outstanding_report.php" ?>
+			<?php } else ?>
 			
 			<!-- Intrest Ledger Report -->
 			<?php if ($current_page == 'intrest_ledger_report') { ?>

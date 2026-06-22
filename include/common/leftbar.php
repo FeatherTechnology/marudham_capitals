@@ -62,7 +62,7 @@ $modules = [
         'promotion_activity_report','cleared_report','events_report','area_loan_count_report',
         'confirmation_count_report','concern_report','partners_report','request_count_report',
         'verification_count_report','approval_count_report','loan_issue_count_report',
-        'promotion_count_report','duefollowup_count_report','back_office_count_report','branch_request_count_report','location_track_report',
+        'promotion_count_report','duefollowup_count_report','back_office_count_report','branch_request_count_report','location_track_report','outstanding_report'
     ],
 
     'interest_report' => [
@@ -937,6 +937,11 @@ if (sizeof($getUser) > 0) {
 											<?php if (($cleared_report ?? 1) == 0) { ?>
 												<li>
 													<a href="cleared_report"><i class='icon-area-graph'></i>Cleared</a>
+												</li>
+											<?php  } ?> 									
+											<?php if (($outstanding_report ?? 1) == 0) { ?>
+												<li>
+													<a href="outstanding_report"><i class='icon-area-graph'></i>Outstanding</a>
 												</li>
 											<?php  } ?> 									
 										</ul>
