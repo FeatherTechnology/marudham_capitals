@@ -18,8 +18,8 @@ $(document).ready(function () {
 
     });
 
-    $('#dob').change(function () {
-        let dobirth = $('#dob').val();
+    $('#dob, #relation_dob').change(function () {
+        let dobirth = $(this).val();
 
         var dob = new Date(dobirth);
         //calculate month difference from current date in time  
@@ -34,7 +34,10 @@ $(document).ready(function () {
         //now calculate the age of the user  
         var age = Math.abs(year - 1970);
 
-        $('#age').val(age); // set value to age.
+        // Determine which age field to update based on which element triggered the event
+        let ageval = (this.id === "dob") ? "#age" : "#relation_age";
+
+        $(ageval).val(age); // set value to age.
     })
 
     $("#state").change(function () {
@@ -192,18 +195,20 @@ $(document).ready(function () {
         var verify = $('input[name=verification_type]:checked').val();
 
         if (verify == 'cus_profile') {
-            $('#customer_profile').show(); $('#cus_document').hide(); $('#customer_loan_calc').hide(); $('#customer_old_div').hide();
+            $('#customer_profile').show(); 
+            $('#cus_document, #customer_loan_calc, #customer_old_div, .edit-document-card').hide();// hide edit document card when not in use
             // $('.documentation-card').hide();
-            $('.edit-document-card').hide();// hide edit document card when not in use
             $('.dropdown').children().css('border-color', '');// to set other dropdown buttons as normal
+            const curDate = moment().format('YYYY-MM-DD');
+            $('#relation_dob').attr('max', curDate);
         }
         if (verify == 'documentation') {
-            $('#customer_profile').hide(); $('#cus_document').show(); $('#customer_loan_calc').hide(); $('#customer_old_div').hide();
+            $('#customer_profile, #customer_loan_calc, #customer_old_div, .edit-document-card').hide();
+            $('#cus_document').show(); 
             // $('.documentation-card').show();
-            $('.edit-document-card').hide();
         }
         if (verify == 'customer_old') {
-            $('#customer_profile').hide(); $('#cus_document').hide(); $('#customer_loan_calc').hide();
+            $('#customer_profile, #cus_document, #customer_loan_calc').hide();
             $('#customer_old_div').show();
             showCustomerOldData();
         }
@@ -939,25 +944,29 @@ function getCustomerLoanCounts() {
 // Modal Box for Agent Group
 
 $(document).on("click", "#submitFamInfoBtn", function () {
-    let cus_id = $('#cus_id').val();
-    let famname = $("#famname").val();
-    let relationship = $("#relationship").val();
-    let other_remark = $("#other_remark").val();
-    let other_address = $("#other_address").val();
-    let relation_age = $("#relation_age").val();
-    let relation_aadhar = $("#relation_aadhar").val();
-    let relation_Mobile = $("#relation_Mobile").val();
-    let relation_Occupation = $("#relation_Occupation").val();
-    let relation_Income = $("#relation_Income").val();
-    let relation_Blood = $("#relation_Blood").val();
-    let famTableId = $("#famID").val();
-    let authorize = $("#authorize").val();
+    let famData = {
+        cus_id : $('#cus_id').val(),
+        famname : $("#famname").val(),
+        relationship : $("#relationship").val(),
+        other_remark : $("#other_remark").val(),
+        other_address : $("#other_address").val(),
+        relation_dob : $("#relation_dob").val(),
+        relation_age : $("#relation_age").val(),
+        relation_live_deceased : $("#relation_live_deceased").val(),
+        relation_aadhar : $("#relation_aadhar").val(),
+        relation_Mobile : $("#relation_Mobile").val(),
+        relation_Occupation : $("#relation_Occupation").val(),
+        relation_Income : $("#relation_Income").val(),
+        relation_Blood : $("#relation_Blood").val(),
+        famTableId : $("#famID").val(),
+        authorize : $("#authorize").val()
+    }
 
-    if (famname != "" && relationship != "" && relation_aadhar != "" && relation_Mobile != "" && relation_Mobile.length === 10) {
+    if (famData.famname != "" && famData.relationship != "" && famData.relation_aadhar != "" && famData.relation_Mobile != "" && famData.relation_Mobile.length === 10 && famData.relation_dob != "" && famData.relation_live_deceased != "") {
         $.ajax({
             url: 'updateFile/update_family_submit.php',
             type: 'POST',
-            data: { "famname": famname, "realtionship": relationship, "other_remark": other_remark, "other_address": other_address, "relation_age": relation_age, "relation_aadhar": relation_aadhar, "relation_Mobile": relation_Mobile, "relation_Occupation": relation_Occupation, "relation_Income": relation_Income, "relation_Blood": relation_Blood, "famTableId": famTableId, "cus_id": cus_id ,"authorize":authorize },
+            data: famData,
             cache: false,
             success: function (response) {
 
@@ -987,40 +996,52 @@ $(document).on("click", "#submitFamInfoBtn", function () {
         });
     }
     else {
-        if (famname == "") {
+        if (famData.famname == "") {
             $('#famnameCheck').show();
         } else {
             $('#famnameCheck').hide();
         }
 
-        if (relationship == "") {
+        if (famData.relationship == "") {
             $('#famrelationCheck').show();
         } else {
             $('#famrelationCheck').hide();
         }
 
-        if (relationship == "Other" && other_remark == "") {
+        if (famData.relationship == "Other" && famData.other_remark == "") {
             $('#famremarkCheck').show();
         } else {
             $('#famremarkCheck').hide();
         }
 
-        if (relationship == "Other" && other_address == "") {
+        if (famData.relationship == "Other" && famData.other_address == "") {
             $('#famaddressCheck').show();
         } else {
             $('#famaddressCheck').hide();
         }
 
-        if (relation_aadhar == "") {
+        if (famData.relation_aadhar == "") {
             $('#famaadharCheck').show();
         } else {
             $('#famaadharCheck').hide();
         }
 
-        if (relation_Mobile == "" || relation_Mobile.length < 10) {
+        if (famData.relation_Mobile == "" || famData.relation_Mobile.length < 10) {
             $('#fammobileCheck').show();
         } else {
             $('#fammobileCheck').hide();
+        }
+        
+        if (famData.relation_dob == "") {
+            $("#famdobCheck").show();
+        } else {
+            $("#famdobCheck").hide();
+        }
+
+        if (famData.relation_live_deceased == "") {
+            $("#famLiveDeceasedCheck").show();
+        } else {
+            $("#famLiveDeceasedCheck").hide();
         }
     }
 
@@ -1035,21 +1056,10 @@ function resetFamInfo() {
         data: { "cus_id": cus_id },
         cache: false,
         success: function (html) {
-            $("#updatedFamTable").empty();
             $("#updatedFamTable").html(html);
 
-            $("#famname").val('');
-            $("#relationship").val('');
-            $("#authorize").val('');
-            $("#other_remark").val('');
-            $("#other_address").val('');
-            $("#relation_age").val('');
-            $("#relation_aadhar").val('');
-            $("#relation_Mobile").val('');
-            $("#relation_Occupation").val('');
-            $("#relation_Income").val('');
-            $("#relation_Blood").val('');
-            $("#famID").val('');
+            $("#famname, #relationship, #authorize, #other_remark, #other_address, #relation_dob, #relation_age, #relation_live_deceased, #relation_aadhar, #relation_Mobile, #relation_Occupation, #relation_Income, #relation_Blood, #famID").val('');
+            $("#famnameCheck, #famrelationCheck, #famremarkCheck, #famaddressCheck, #famdobCheck, #famageCheck, #famLiveDeceasedCheck, #famaadharCheck, #fammobileCheck, #famoccCheck, #famincomeCheck").hide();
         }
     });
 }
@@ -1064,7 +1074,6 @@ function resetFamDetails() {
         data: { "cus_id": cus_id },
         cache: false,
         success: function (html) {
-            $("#famList").empty();
             $("#famList").html(html);
             getFingerPrintDetails(cus_id, cus_name);
         }
@@ -1088,7 +1097,9 @@ $("body").on("click", "#verification_fam_edit", function () {
             $("#authorize").val(result['authorize']);
             $("#other_remark").val(result['remark']);
             $("#other_address").val(result['address']);
+            $("#relation_dob").val(result["dob"]);
             $("#relation_age").val(result['age']);
+            $("#relation_live_deceased").val(result["live_deceased"]);
             $("#relation_aadhar").val(result['aadhar']);
             $("#relation_Mobile").val(result['mobileno']);
             $("#relation_Occupation").val(result['occ']);
@@ -1102,7 +1113,7 @@ $("body").on("click", "#verification_fam_edit", function () {
                 $('#remark').hide();
                 $('#address').hide();
             }
-            $('#famnameCheck').hide(); $('#famrelationCheck').hide(); $('#famremarkCheck').hide(); $('#famaddressCheck').hide(); $('#famageCheck').hide(); $('#famaadharCheck').hide(); $('#fammobileCheck').hide(); $('#famoccCheck').hide(); $('#famincomeCheck').hide();
+            $("#famnameCheck, #famrelationCheck, #famremarkCheck, #famaddressCheck, #famdobCheck, #famageCheck, #famLiveDeceasedCheck, #famaadharCheck, #fammobileCheck, #famoccCheck, #famincomeCheck").hide();
         }
     });
 

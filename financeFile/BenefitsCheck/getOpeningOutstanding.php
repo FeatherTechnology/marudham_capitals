@@ -1,7 +1,5 @@
 <?php
-
 include('../../ajaxconfig.php');
-include('../../moneyFormatIndia.php');
 
 $user_id = ($_POST['user_id'] != '') ? $_POST['user_id'] : '';
 if ($user_id != '') {
@@ -28,7 +26,6 @@ if ($user_id != '') {
         $sub_area_list = implode(',', $sub_area_ids);
     }
 }
-
 
 
 $type = $_POST['type'];
@@ -100,7 +97,7 @@ function getDetials($connect, $condition, $li_where, $to_date)
 
     };
 
-    $response['opening_outstanding'] = moneyFormatIndia($balance_amount);
+    $response['opening_outstanding'] = $balance_amount;
 
     echo json_encode($response);
 }

@@ -561,7 +561,9 @@ if (sizeof($getCustomerReg) > 0) {
 													<th>S.No</th>
 													<th>Name</th>
 													<th>Relationship</th>
+													<th>DOB</th>
 													<th>Age</th>
+													<th>Live/Deceased</th>
 													<th>Aadhar No</th>
 													<th>Mobile No</th>
 													<th>Occupation</th>
@@ -1883,16 +1885,36 @@ if (sizeof($getCustomerReg) > 0) {
 
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
+							<label for="relation_dob">Date of Birth</label><span class="required">&nbsp;*</span>
+							<input type="date" class="form-control" id="relation_dob" name="relation_dob" tabindex='8'>
+							<span class="text-danger" id='famdobCheck' style='display:none'>Please Select DOB</span>
+						</div>
+					</div>
+
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+						<div class="form-group">
 							<label class="label"> Age </label>
-							<input type="text" class="form-control" name="relation_age" id="relation_age" placeholder="Enter Age" tabindex='8' oninput="validateInputNumber(this,'withOutDot')">
+							<input type="text" class="form-control" name="relation_age" id="relation_age" placeholder="Enter Age" tabindex='9' readonly>
 							<span class="text-danger" id="famageCheck" style='display:none'>Enter Age</span>
 						</div>
 					</div>
 
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
+							<label class="label" for="relation_live_deceased"> Live/Deceased </label><span class="required">&nbsp;*</span>
+							<select class="form-control" name="relation_live_deceased" id="relation_live_deceased" tabindex="10">
+								<option value=''>Select Live/Deceased</option>
+								<option value='1'>Live</option>
+								<option value='2'>Deceased</option>
+							</select>
+							<span class="text-danger" id="famLiveDeceasedCheck" style='display:none'>Select Live/Deceased</span>
+						</div>
+					</div>
+
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+						<div class="form-group">
 							<label class="label"> Occupation </label>
-							<input type="text" class="form-control" name="relation_Occupation" id="relation_Occupation" onkeydown="return /[a-z ]/i.test(event.key)" placeholder="Enter Occupation" tabindex='9'>
+							<input type="text" class="form-control" name="relation_Occupation" id="relation_Occupation" onkeydown="return /[a-z ]/i.test(event.key)" placeholder="Enter Occupation" tabindex='11'>
 							<span class="text-danger" id="famoccCheck" style='display:none'>Enter Occupation</span>
 						</div>
 					</div>
@@ -1900,7 +1922,7 @@ if (sizeof($getCustomerReg) > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label class="label"> Income </label>
-							<input type="text" class="form-control" name="relation_Income" id="relation_Income" placeholder="Enter Income" tabindex='10' oninput="validateInputNumber(this,'withOutDot')">
+							<input type="text" class="form-control" name="relation_Income" id="relation_Income" placeholder="Enter Income" tabindex='12' oninput="validateInputNumber(this,'withOutDot')">
 							<span class="text-danger" id="famincomeCheck" style='display:none'>Enter Income</span>
 						</div>
 					</div>
@@ -1908,14 +1930,14 @@ if (sizeof($getCustomerReg) > 0) {
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
 							<label class="label"> Blood Group </label>&nbsp;
-							<input type="text" class="form-control" name="relation_Blood" id="relation_Blood" placeholder="Enter Blood Group" tabindex='11'>
+							<input type="text" class="form-control" name="relation_Blood" id="relation_Blood" placeholder="Enter Blood Group" tabindex='13'>
 						</div>
 					</div>
 
 
 					<div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12">
 						<input type="hidden" name="famID" id="famID">
-						<button type="button" tabindex="12" name="submitFamInfoBtn" id="submitFamInfoBtn" class="btn btn-primary" style="margin-top: 19px;">Submit</button>
+						<button type="button" tabindex="14" name="submitFamInfoBtn" id="submitFamInfoBtn" class="btn btn-primary" style="margin-top: 19px;">Submit</button>
 					</div>
 
 				</div>

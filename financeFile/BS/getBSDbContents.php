@@ -1,6 +1,5 @@
 <?php
 include('../../ajaxconfig.php');
-include('../../moneyFormatIndia.php');
 
 $type = $_POST['type'];
 $user_id = ($_POST['user_id'] != '') ? $_POST['user_id'] : '';
@@ -66,9 +65,6 @@ function getDetails($connect, $where,$bank_where)
     $expense = $row['amt'] ?? 0;
 
     $response['expense'] = (float)$expense;
-
-    $response['issued'] = moneyFormatIndia($response['issued']);
-    $response['expense'] = moneyFormatIndia($response['expense']);
 
     echo json_encode($response);
 }

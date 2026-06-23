@@ -1,8 +1,5 @@
 <?php
-
-
 include('../../ajaxconfig.php');
-include('../../moneyFormatIndia.php');
 
 $type = $_POST['type'];
 $user_id = ($_POST['user_id'] != '') ? $_POST['user_id'] : '';
@@ -158,18 +155,6 @@ function getDetails($connect, $where,$bank_where)
     $agent = $row['amt'] ?? 0;
 
     $response['db_agent'] = (float)$agent;
-
-
-    $response['cr_investment'] = moneyFormatIndia($response['cr_investment']);
-    $response['db_investment'] = moneyFormatIndia($response['db_investment']);
-    $response['cr_deposit'] = moneyFormatIndia($response['cr_deposit']);
-    $response['db_deposit'] = moneyFormatIndia($response['db_deposit']);
-    $response['cr_el'] = moneyFormatIndia($response['cr_el']);
-    $response['db_el'] = moneyFormatIndia($response['db_el']);
-    $response['cr_exchange'] = moneyFormatIndia($response['cr_exchange']);
-    $response['db_exchange'] = moneyFormatIndia($response['db_exchange']);
-    $response['cr_agent'] = moneyFormatIndia($response['cr_agent']);
-    $response['db_agent'] = moneyFormatIndia($response['db_agent']);
 
     echo json_encode($response);
 }

@@ -1,6 +1,5 @@
 <?php
 include('../../ajaxconfig.php');
-include('../../moneyFormatIndia.php');
 $user_id = ($_POST['user_id'] != '') ? $_POST['user_id'] : '';
 
 $type = $_POST['type'];
@@ -47,7 +46,7 @@ function getDetials($connect, $where, $condition)
     // $row = $qry->fetch();
     // $interest_amount = $row['int_amt_cal']; //interest amount on interest type loans
 
-    $response['benefit_amount'] = moneyFormatIndia($benefit_amount);
+    $response['benefit_amount'] = $benefit_amount;
     // $response['interest_amount'] = moneyFormatIndia($interest_amount);
 
     echo json_encode($response);

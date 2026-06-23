@@ -1823,25 +1823,28 @@
                 num = Math.abs(num);
             }
 
+            // Round to 2 decimals to avoid float precision issues
+            num = Math.round(Number(num) * 100) / 100;
+
+            var hasDecimal = num % 1 !== 0;
+
             // 🔹 Split decimal part (minimal addition)
-            num = num.toString();
-            var parts = num.split('.');
+            var parts = num.toString().split('.');
             var intPart = parts[0];
-            var decPart = parts.length > 1 ? '.' + parts[1] : '';
+            var decPart = hasDecimal ? '.' + (parts[1] || '').padEnd(2, '0').substring(0, 2) : '';
 
             var explrestunits = "";
+
             if (intPart.length > 3) {
                 var lastthree = intPart.substr(intPart.length - 3);
                 var restunits = intPart.substr(0, intPart.length - 3);
                 restunits = (restunits.length % 2 == 1) ? "0" + restunits : restunits;
                 var expunit = restunits.match(/.{1,2}/g);
+
                 for (var i = 0; i < expunit.length; i++) {
-                    if (i == 0) {
-                        explrestunits += parseInt(expunit[i]) + ",";
-                    } else {
-                        explrestunits += expunit[i] + ",";
-                    }
+                    explrestunits += (i === 0 ? parseInt(expunit[i], 10) : expunit[i]) + ',';
                 }
+
                 var thecash = explrestunits + lastthree + decPart;
             } else {
                 var thecash = intPart + decPart;

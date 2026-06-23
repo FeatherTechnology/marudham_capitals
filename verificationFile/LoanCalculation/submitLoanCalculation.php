@@ -158,23 +158,40 @@ if (isset($_POST['Communitcation_to_cus_ack'])) {
     $Communitcation_to_cus = $_POST['Communitcation_to_cus_ack'];
 }
 
-if (!empty($_FILES['verification_audio']['name'])) {
-    $verify_audio = $_FILES['verification_audio']['name'];
-    $audio_temp = $_FILES['verification_audio']['tmp_name'];
-    $path = "../../uploads/verification/verifyInfo_audio/";
-    $audiofolder = $path . $verify_audio;
+$verify_audio ='';
+if (!empty($_FILES['verification_audio'])) {
+    
+    $filesArr3 = $_FILES['verification_audio'];
+    $uploadDir = "uploads/verification/verifyInfo_audio/";
 
-    $fileExtension = pathinfo($audiofolder, PATHINFO_EXTENSION); //get the file extention
-    $verify_audio = uniqid() . '.' . $fileExtension;
-    while (file_exists($path . $verify_audio)) {
+    foreach ($filesArr3['name'] as $key => $val) {
+
+        $fileName = basename($filesArr3['name'][$key]);
+        $fileType = pathinfo($fileName, PATHINFO_EXTENSION); //get the file extention
+
+        $uniqueFileName = uniqid() . '.' . $fileType;
+
         //this loop will continue until it generates a unique file name
-        $verify_audio = uniqid() . '.' . $fileExtension;
-    }
+        while (file_exists($uploadDir . $uniqueFileName)) {
+            $uniqueFileName = uniqid() . '.' . $fileType;
+        }
 
-    move_uploaded_file($audio_temp, $path . $verify_audio);
-} else {
-    $verify_audio = $_POST['verification_audio_upd'];
+        if (
+            move_uploaded_file(
+                $filesArr3['tmp_name'][$key],
+                $uploadDir . $uniqueFileName
+            )
+        ) {
+            $verify_audio .= $uniqueFileName . ',';
+        }
+    }
 }
+
+$verify_audio = implode(',', array_filter([
+    rtrim($verify_audio, ','),
+    trim($_POST['verification_audio_upd'] ?? '', ',')
+]));
+
 if (isset($_POST['verifyPerson'])) {
     $verifyPerson = $_POST['verifyPerson'];
 }

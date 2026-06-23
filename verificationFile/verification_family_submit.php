@@ -2,11 +2,11 @@
 require '../ajaxconfig.php';
 
 $reqId                   = $_POST['reqId'];
-$cus_id                   = preg_replace('/\D/', '', $_POST['cus_id']);
+$cus_id                  = preg_replace('/\D/', '', $_POST['cus_id']);
 $famname                 = $_POST['famname'];
-$realtionship            = $_POST['realtionship'];
+$relationship            = $_POST['relationship'];
 
-if ($realtionship  == 'Other') {
+if ($relationship  == 'Other') {
     $other_remark            = $_POST['other_remark'];
     $other_address           = $_POST['other_address'];
 } else {
@@ -14,8 +14,9 @@ if ($realtionship  == 'Other') {
     $other_address           = null;
 }
 
-
+$relation_dob            = $_POST['relation_dob'];
 $relation_age            = $_POST['relation_age'];
+$relation_live_deceased  = $_POST['relation_live_deceased'];
 $relation_aadhar         = preg_replace('/\s+/', '', $_POST['relation_aadhar']);
 $relation_Mobile         = $_POST['relation_Mobile'];
 $relation_Occupation     = $_POST['relation_Occupation'];
@@ -26,10 +27,10 @@ $authorize               = ($_POST['authorize'] == 1) ? 1 : 0;
 
 
 if ($famTableId == '') {
+    $insert_qry = $connect->query("INSERT INTO `verification_family_info`(`cus_id`, `req_id`, `famname`, `relationship`, `authorize`, `other_remark`, `other_address`, `relation_dob`, `relation_age`, `relation_live_deceased`, `relation_aadhar`, `relation_Mobile`, `relation_Occupation`, `relation_Income`, `relation_Blood`) VALUES ('$cus_id','$reqId','$famname','$relationship','$authorize','$other_remark','$other_address ','$relation_dob','$relation_age','$relation_live_deceased','$relation_aadhar','$relation_Mobile','$relation_Occupation','$relation_Income','$relation_Blood')");
 
-    $insert_qry = $connect->query("INSERT INTO `verification_family_info`(`cus_id`,`req_id`, `famname`, `relationship`, `authorize`,`other_remark`, `other_address`, `relation_age`, `relation_aadhar`, `relation_Mobile`, `relation_Occupation`, `relation_Income`, `relation_Blood`) VALUES ('$cus_id','$reqId','$famname','$realtionship','$authorize','$other_remark','$other_address ','$relation_age','$relation_aadhar','$relation_Mobile','$relation_Occupation','$relation_Income','$relation_Blood')");
 } else {
-    $update = $connect->query("UPDATE `verification_family_info` SET `cus_id`='$cus_id',`req_id`='$reqId',`famname`='$famname',`relationship`='$realtionship',`authorize`='$authorize',`other_remark`='$other_remark',`other_address`='$other_address',`relation_age`='$relation_age',`relation_aadhar`='$relation_aadhar',`relation_Mobile`='$relation_Mobile',`relation_Occupation`='$relation_Occupation',`relation_Income`='$relation_Income',`relation_Blood`='$relation_Blood' WHERE id = '$famTableId ' ");
+    $update = $connect->query("UPDATE `verification_family_info` SET `cus_id`='$cus_id',`req_id`='$reqId',`famname`='$famname',`relationship`='$relationship',`authorize`='$authorize',`other_remark`='$other_remark',`other_address`='$other_address',`relation_dob`='$relation_dob',`relation_age`='$relation_age',`relation_live_deceased`='$relation_live_deceased',`relation_aadhar`='$relation_aadhar',`relation_Mobile`='$relation_Mobile',`relation_Occupation`='$relation_Occupation',`relation_Income`='$relation_Income',`relation_Blood`='$relation_Blood' WHERE id = '$famTableId ' ");
 }
 
 if ($insert_qry) {

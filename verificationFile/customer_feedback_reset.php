@@ -1,6 +1,22 @@
 <?php
 include '../ajaxconfig.php';
+@session_start();
+$userid = $_SESSION["userid"] ?? '';
+
+$userQry = $connect->prepare("SELECT cus_summary_access FROM user WHERE user_id = ? ");
+$userQry->execute([$userid]);
+$userData = $userQry->fetch(PDO::FETCH_ASSOC);
+
+$cus_summary_access = $userData ? $userData['cus_summary_access'] : '1';
 ?>
+
+<style>
+    .disabled-link {
+        pointer-events: none;
+        cursor: default;
+        opacity: 0.6;
+    }
+</style>
 
 <table class="table custom-table" id="feedback_table_data">
     <thead>
@@ -75,8 +91,8 @@ include '../ajaxconfig.php';
                 <td><?php echo $feedback["feedback_remark"]; ?></td>
 
                 <td>
-                    <a id="cus_feedback_edit" value="<?php echo $feedback['id']; ?>"> <span class="icon-border_color"></span></a> &nbsp
-                    <a id="cus_feedback_delete" value="<?php echo $feedback['id']; ?>"> <span class='icon-trash-2'></span> </a>
+                    <a id="cus_feedback_edit" value="<?php echo $feedback['id']; ?>" class="<?= ($cus_summary_access == '1') ? 'disabled-link' : '';?>" > <span class="icon-border_color"></span></a> &nbsp
+                    <a id="cus_feedback_delete" value="<?php echo $feedback['id']; ?>" class="<?= ($cus_summary_access == '1') ? 'disabled-link' : '';?>" > <span class='icon-trash-2'></span> </a>
                 </td>
 
             </tr>

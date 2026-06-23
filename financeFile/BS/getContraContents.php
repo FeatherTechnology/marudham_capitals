@@ -61,10 +61,7 @@ function getDetails($connect, $where)
     $cash_withdrawal = $row['amt'] ?? 0;
 
     $response['credit_contra'] = (float)$bank_withdrawal + (float)$cash_deposit;
-    $response['debit_contra'] = +(float)$bank_deposit + (float)$cash_withdrawal;
-
-    $response['credit_contra'] = number_format($response['credit_contra'], 0, '', ',');
-    $response['debit_contra'] = number_format($response['debit_contra'], 0, '', ',');
+    $response['debit_contra'] = (float)$bank_deposit + (float)$cash_withdrawal;
 
     echo json_encode($response);
 }

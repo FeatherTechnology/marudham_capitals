@@ -1,12 +1,8 @@
 <?php
 include('../../ajaxconfig.php');
-include('../../moneyFormatIndia.php');
-
 
 $type = $_POST['type'];
 $user_id = ($_POST['user_id'] != '') ? $_POST['user_id'] : '';
-
-
 
 if ($type == 'today') {
     $where = " DATE(created_date) = CURRENT_DATE ";
@@ -40,7 +36,6 @@ if ($type == 'today') {
     getDetials($connect, $where);
 }
 
-
 function getDetials($connect, $where)
 {
 
@@ -59,8 +54,6 @@ function getDetials($connect, $where)
     $row = $result->fetch();
     $coll_charge_track = $row['coll_charge_track'] ?? 0;
     $response['fine'] = $coll_charge_track; // - $coll_charge_waiver;
-
-
 
     echo json_encode($response);
 }

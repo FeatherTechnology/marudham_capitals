@@ -15,7 +15,18 @@ if ($stage == 'lc') { //Loan Calculation, So show verification info
 
         $detail_arr['communication'] = $row['communication'] == '0' ? 'Phone' : 'Direct';
         if ($row['com_audio'] != '') {
-            $detail_arr['com_audio'] = "<a href='uploads/verification/verifyInfo_audio/" . $row['com_audio'] . "' target='_blank'>Audio File</a>";
+            // $detail_arr['com_audio'] = "<a href='uploads/verification/verifyInfo_audio/" . $row['com_audio'] . "' target='_blank'>Audio File</a>";
+
+            $upload = explode(',', $row['com_audio']) ?? '';
+            $upd_name = '';
+            foreach ($upload as $upd) {
+                if ($upd != null) {
+                    $upd_name .= "<a href=uploads/verification/verifyInfo_audio/".$upd ." target='_blank' style='color: #4ba39b;'>" . $upd . "</a>, ";
+                }
+            } 
+            
+            $detail_arr['com_audio'] = rtrim($upd_name,', ');// to trim the comma at end; 
+
         } else {
             $detail_arr['com_audio'] = '';
         }

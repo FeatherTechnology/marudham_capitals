@@ -89,6 +89,7 @@ if (sizeof($getUser) > 0) {
 								<th>Responsible</th>
 								<th>Customer Data</th>
 								<th>Existing Type</th>
+								<th>FollowUp Date</th>
 								<th>Customer Status</th>
 								<th>Action</th>
 							</tr>

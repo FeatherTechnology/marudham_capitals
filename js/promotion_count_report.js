@@ -141,7 +141,7 @@ function getPromotionCountReport(from_date, to_date, selectedType, user_type, us
             };
 
             // Array of column indices to sum
-            var columnsToSum = [1, 2, 3, 4, 5,  6, 7, 8, 9, 10,  11, 12, 13, 14, 15,  16, 17, 18, 19, 20];
+            var columnsToSum = [1, 2, 3, 4, 5,  6, 7, 8, 9, 10,  11, 12, 13, 14, 15,  16, 17, 18, 19, 20,  21, 22, 23, 24, 25,  26, 27, 28, 29, 30,  31, 32, 33, 34, 35,  36, 37, 38, 39, 40];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {

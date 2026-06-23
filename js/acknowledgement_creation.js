@@ -43,17 +43,24 @@ $(document).ready(function () {
         var verify = $('input[name=verification_type]:checked').val();
 
         if (verify == 'cus_profile') {
-            $('#customer_profile').show(); $('#cus_document').hide(); $('#customer_loan_calc').hide();
+            $('#customer_profile').show(); 
+            $('#cus_document, #customer_loan_calc').hide();
             customerProfileFunc();
         }
         if (verify == 'documentation') {
-            $('#customer_profile').hide(); $('#cus_document').show(); $('#customer_loan_calc').hide();
+            $('#customer_profile, #customer_loan_calc').hide();
+            $('#cus_document').show(); 
             onLoadDocEditFunction();
             getDocumentFunc();
 
         }
         if (verify == 'loan_calc') {
-            $('#customer_profile').hide(); $('#cus_document').hide(); $('#customer_loan_calc').show();
+            $('#customer_profile, #cus_document').hide(); 
+            $('#customer_loan_calc').show();
+            
+            const curDate = moment().add(2, 'months').format('YYYY-MM-DD');
+            $('#due_start_from').attr('max', curDate);
+
             onLoadEditFunction();
             getUserBasedLoanCategory().then(function () {
                 var loan_category = $('#loan_category').val(); // Get the selected loan category
@@ -3406,7 +3413,13 @@ $('#day_scheme').change(function () {
 })
 
 $('#due_start_from').change(function () {
-    var due_start_from = $('#due_start_from').val(); // get start date to calculate maturity date
+    let selectedDate = moment(this.value);
+    if (selectedDate.date() !== 1) {
+        // Reset to 1st of same month
+        selectedDate.date(1);
+        this.value = selectedDate.format('YYYY-MM-DD');
+    }
+
     var due_period = parseInt($('#due_period').val()); //get due period to calculate maturity date
     var profit_type = $('#profit_type').val()
     if (profit_type == '1') { //Based on the profit method choose due method from input box
@@ -3415,6 +3428,7 @@ $('#due_start_from').change(function () {
         var due_method = $('#due_method_scheme').val()
     }
 
+    var due_start_from = $('#due_start_from').val(); // get start date to calculate maturity date
     if (due_method == 'Monthly' || due_method == '1') { // if due method is monthly or 1(for scheme) then calculate maturity by month
 
         var maturityDate = moment(due_start_from, 'YYYY-MM-DD').add(due_period, 'months').subtract(1, 'month').format('YYYY-MM-DD');

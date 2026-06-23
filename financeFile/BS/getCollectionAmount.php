@@ -23,10 +23,6 @@ if ($type == 'today') {
 
 $response = getCollectionRecord($connect, $where);
 
-$response = array_map(function ($num) {
-    return number_format(intVal($num), 0, '', ',');
-}, $response);
-
 echo json_encode($response);
 
 function getCollectionRecord($connect, $where)
