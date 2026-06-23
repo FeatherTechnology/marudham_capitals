@@ -52,7 +52,7 @@ $zone_name = '';
 if ($selectedType == '1') {
 
     $userQry = $connect->query("
-        SELECT user_id, fullname, due_followup_lines
+        SELECT fullname, due_followup_lines
         FROM user
         WHERE due_followup_lines IS NOT NULL
         AND due_followup_lines != ''
@@ -60,30 +60,12 @@ if ($selectedType == '1') {
     ");
 } elseif ($selectedType == '4') {
 
-    $line_ids_str = is_array($selectedVal)
-        ? implode(',', array_map('intval', $selectedVal))
-        : $selectedVal;
-
-    $zoneQry = $connect->query("
-        SELECT duefollowup_name AS map_name
+    $userQry = $connect->query("
+        SELECT duefollowup_name AS fullname, map_id AS due_followup_lines
         FROM area_duefollowup_mapping
         WHERE map_id IN ($line_ids_str)
     ");
 
-    $zoneNames = [];
-
-    while ($row = $zoneQry->fetch(PDO::FETCH_ASSOC)) {
-        $zoneNames[] = $row['map_name'];
-    }
-
-$zone_name = $zoneNames[0] ?? '';
-
-    $userQry = $connect->query("
-        SELECT
-            0 AS user_id,
-            '$zone_name' AS fullname,
-            '' AS due_followup_lines
-    ");
 } else {
 
     echo json_encode([
@@ -116,26 +98,20 @@ $grand_totals = [
 ];
 
 while ($userRow = $userQry->fetch()) {
-    $user_id = $userRow['user_id'];
     $fullname = $userRow['fullname'];
-    if ($selectedType == '4') {
 
-        // Zone values selected from multiselect
-        if (is_array($selectedVal)) {
-            $line_ids_str = implode(',', array_map('intval', $selectedVal));
-        } else {
-            $line_ids_str = (int)$selectedVal;
-        }
-    } else {
-
+    if ($selectedType == '1') { //User
         $line_ids = array_filter(
             array_map('intval', explode(',', $userRow['due_followup_lines']))
         );
 
-        $line_ids_str = implode(',', $line_ids);
+        $due_followup_lines = implode(',', $line_ids);
+
+    } else {
+        $due_followup_lines = $userRow['due_followup_lines'];
     }
 
-    $condition = "adfm.map_id IN ($line_ids_str)";
+    $condition = "adfm.map_id IN ($due_followup_lines)";
 
     $loan_category_data = [];
 
@@ -361,7 +337,7 @@ while ($userRow = $userQry->fetch()) {
             }
         }
     }
-}
+} //While END.
 
 $total_paid = $grand_totals['paid'] + $grand_totals['partially_paid'];
 $balance = $grand_totals['balance_count'];

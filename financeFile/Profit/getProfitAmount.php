@@ -1,6 +1,5 @@
 <?php
 include('../../ajaxconfig.php');
-include('../../moneyFormatIndia.php');
 $user_id = ($_POST['user_id'] != '') ? $_POST['user_id'] : '';
 
 $type = $_POST['type'];
@@ -57,7 +56,7 @@ function getDetials($connect, $where, $condition)
         $interest += round($row['due_amt_track'] * $interest_calc, 1);
     }
 
-    $response['split_interest'] = moneyFormatIndia(round($interest));
+    $response['split_interest'] = round($interest);
 
     echo json_encode($response);
 }

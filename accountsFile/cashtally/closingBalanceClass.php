@@ -230,16 +230,7 @@ class ClosingBalanceClass
         $records[0]['hand_closing'] = $records[0]['hand_closing'] - $agent_hand_op; //this will subract the hand debited amount for the agent with hand closing cash
         //this will subract the bank debited amount for the agent with bank closing cash
 
-        $closing_total = $records[0]['hand_closing'] + $bank_closing_all;
-
-        if (floor($closing_total) == $closing_total) {
-            // No decimal part
-            $records[0]['closing_balance'] = number_format($closing_total, 0, '.', '');
-        } else {
-            // Has decimal part
-            $records[0]['closing_balance'] = number_format($closing_total, 2, '.', '');
-        }
-
+        $records[0]['closing_balance'] = $records[0]['hand_closing'] + $bank_closing_all;
 
         return $records;
     }

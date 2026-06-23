@@ -2374,7 +2374,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 										<input type="hidden" id="verification_audio_upd" name="verification_audio_upd" value="<?php if (isset($com_audio)) {
 																																	echo $com_audio;
 																																} ?>">
-										<input type="file" onchange="compressImage(this,200)" class="form-control" name="verification_audio[]" id="verification_audio" accept=".mp3,audio/*" tabindex="113">
+										<input type="file" onchange="compressImage(this,200)" class="form-control" name="verification_audio" id="verification_audio" accept=".mp3,audio/*" tabindex="113" disabled>
 										<?php if (isset($communication)) {
 											if ($communication == '0') { 
 												$upload = explode(',', $com_audio) ?? '';
