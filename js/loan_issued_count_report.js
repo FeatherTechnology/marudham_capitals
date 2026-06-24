@@ -113,7 +113,10 @@ function requestIssuedReportCount(from_date, to_date, selectedType, user_type, u
 
             const columns = [
                 { data: 'sno' },
-                { data: 'fullname' },
+               {
+                    data: 'fullname',
+                    title: (selectedType == '2') ? 'Sector Name' : 'User Name'
+                },
                 { data: 'loan_category' },
                 { data: 'agent_name' },
                 { data: 'new' },
