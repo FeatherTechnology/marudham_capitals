@@ -115,11 +115,13 @@ function requestToIssuedReportCount(from_date, to_date, selectedType, user_type,
             if ($.fn.DataTable.isDataTable('#request_count_table')) {
                 $('#request_count_table').DataTable().destroy();
             }
-
             const columns = [
                 /* BASIC */
                 { data: 'sno' },
-                { data: 'fullname' },
+                {
+                    data: 'fullname',
+                    title: (selectedType == '2') ? 'Sector Name' : 'User Name'
+                },
                 { data: 'loan_category' },
                 /* PREVIOUS IN PROCESS */
                 { data: 'previous.new' },

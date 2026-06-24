@@ -27,6 +27,7 @@ include '../ajaxconfig.php';
         $famInfo = $connect->query("SELECT * FROM `verification_family_info` where cus_id = '$cus_id' order by id desc");
 
         $i = 1;
+        $relationLiveDeceased = ['' =>'', '1' => 'Live', '2' => 'Deceased'];
         while ($fam = $famInfo->fetch()) {
         ?>
             <tr>
@@ -38,7 +39,7 @@ include '../ajaxconfig.php';
                 <td> <?php echo ($fam['relationship'] == 'Other') ? $fam['other_address'] : '---'; ?></td> -->
                 <td> <?php echo ($fam['relation_dob'] !='0000-00-00') ? date('d-m-Y',strtotime($fam['relation_dob'])) : ''; ?></td>
                 <td> <?php echo $fam['relation_age']; ?></td>
-                <td> <?php echo $fam['relation_live_deceased']; ?></td>
+                <td> <?php echo $relationLiveDeceased[$fam['relation_live_deceased']]; ?></td>
                 <td> <?php echo $fam['relation_aadhar']; ?></td>
                 <td> <?php echo $fam['relation_Mobile']; ?></td>
                 <td> <?php echo $fam['relation_Occupation']; ?></td>

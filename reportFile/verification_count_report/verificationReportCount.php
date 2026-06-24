@@ -6,7 +6,6 @@ $to_date   = $_POST['to_date'];
 $user_id   = $_POST['user_id'];
 
 $where = "";
-
 $user_type = $_POST['user_type'] ?? '';
 
 if ($user_type == '2') {
@@ -27,16 +26,16 @@ $condition = '';
 
 if ($selectedType == '2') { //Sector
     $joinTable  = "  JOIN area_group_mapping_sub_area agmsa ON req.sub_area = agmsa.sub_area_id";
-    $condition  = "AND agmsa.group_map_id IN ($selectedVal)";
-
-} else if ($selectedType == '3') { //Region
-    $joinTable = "  JOIN area_line_mapping_sub_area almsa ON req.sub_area = almsa.sub_area_id";
-    $condition = "AND almsa.line_map_id IN ($selectedVal)";
-    
-} else if ($selectedType == '4') { //Zone
-    $joinTable = "  JOIN area_duefollowup_mapping_area adma ON req.area = adma.area_id";
-    $condition = "AND adma.duefollowup_map_id IN ($selectedVal)";
+    $condition  = " AND agmsa.group_map_id IN ($selectedVal)";
 } 
+// else if ($selectedType == '3') { //Region
+//     $joinTable = "  JOIN area_line_mapping_sub_area almsa ON req.sub_area = almsa.sub_area_id";
+//     $condition = "AND almsa.line_map_id IN ($selectedVal)";
+    
+// } else if ($selectedType == '4') { //Zone
+//     $joinTable = "  JOIN area_duefollowup_mapping_area adma ON req.area = adma.area_id";
+//     $condition = "AND adma.duefollowup_map_id IN ($selectedVal)";
+// } 
 
 /* =====================
    USER FILTER (from in_approval)
@@ -68,15 +67,32 @@ if (empty($userIds)) {
 ===================== */
 
 $placeholders = str_repeat('?,', count($userIds) - 1) . '?';
+$nameMap = [];
 
-// User map
-$stmt = $connect->prepare("
-    SELECT user_id, fullname 
-    FROM user 
-    WHERE user_id IN ($placeholders) ORDER BY fullname ASC
-");
-$stmt->execute($userIds);
-$userMap = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+if ($selectedType == '2' && !empty($selectedVal)) {
+    // If Sector is selected, split selectedVal into an array for placeholders
+    $valArray = explode(',', $selectedVal);
+    $sectorPlaceholders = str_repeat('?,', count($valArray) - 1) . '?';
+    
+    $stmt = $connect->prepare("
+        SELECT map_id, group_name 
+        FROM area_group_mapping 
+        WHERE map_id IN ($sectorPlaceholders) 
+        ORDER BY group_name ASC
+    ");
+    $stmt->execute($valArray);
+    $nameMap = $stmt->fetchAll(PDO::FETCH_KEY_PAIR); // structure: map_id => group_name
+} else {
+    // Default fallback: Fetch User names
+    $stmt = $connect->prepare("
+        SELECT user_id, fullname 
+        FROM user 
+        WHERE user_id IN ($placeholders) 
+        ORDER BY fullname ASC
+    ");
+    $stmt->execute($userIds);
+    $nameMap = $stmt->fetchAll(PDO::FETCH_KEY_PAIR); // structure: user_id => fullname
+}
 
 // Loan categories
 $loanCats = $connect->query("
@@ -140,6 +156,9 @@ function processRecord($r, &$counters, $baseCounter, $from_date, $to_date) {
     }
 }
 
+// Select either the Sector Map ID or User ID dynamically so records group correctly
+$groupSelect = ($selectedType == '2') ? ", agmsa.group_map_id AS target_group_id" : ", ia.insert_login_id AS target_group_id";
+
 /* =====================
    MAIN QUERIES (FIXED)
 ===================== */
@@ -149,7 +168,7 @@ $prevQuery = "
     SELECT 
         vlc.loan_category, ia.req_id, ia.insert_login_id, cp.cus_type, cp.cus_exist_type,
         req.cus_status, req.updated_date, ii.updated_date AS issue_date, cs.sub_status,
-        vlc.create_date
+        vlc.create_date $groupSelect
     FROM verification_loan_calculation vlc
     JOIN in_approval ia ON ia.req_id = vlc.req_id
     JOIN request_creation req ON req.req_id = ia.req_id
@@ -173,7 +192,7 @@ $currentQuery = "
     SELECT 
         vlc.loan_category, ia.req_id, ia.insert_login_id, cp.cus_type, cp.cus_exist_type,
         req.cus_status, req.updated_date, ii.updated_date AS issue_date, cs.sub_status,
-        vlc.create_date
+        vlc.create_date $groupSelect
     FROM verification_loan_calculation vlc
     JOIN in_approval ia ON ia.req_id = vlc.req_id
     JOIN request_creation req ON req.req_id = ia.req_id
@@ -196,12 +215,12 @@ $currentRecords = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $prevByUserCat = [];
 foreach ($previousRecords as $r) {
-    $prevByUserCat[$r['insert_login_id']][$r['loan_category']][] = $r;
+    $prevByUserCat[$r['target_group_id']][$r['loan_category']][] = $r;
 }
 
 $currentByUserCat = [];
 foreach ($currentRecords as $r) {
-    $currentByUserCat[$r['insert_login_id']][$r['loan_category']][] = $r;
+    $currentByUserCat[$r['target_group_id']][$r['loan_category']][] = $r;
 }
 
 /* =====================
@@ -211,13 +230,13 @@ foreach ($currentRecords as $r) {
 $data = [];
 $sno = 1;
 
-foreach ($userMap as $userId => $userName) {
+foreach ($nameMap as $targetId => $targetName) {
     foreach ($loanCats as $cat) {
         $cat_id = $cat['loan_category_creation_id'];
         $cat_name = $cat['loan_category_creation_name'];
 
-        if (empty($prevByUserCat[$userId][$cat_id] ?? []) && 
-            empty($currentByUserCat[$userId][$cat_id] ?? [])) {
+        if (empty($prevByUserCat[$targetId][$cat_id] ?? []) && 
+            empty($currentByUserCat[$targetId][$cat_id] ?? [])) {
             continue;
         }
 
@@ -232,16 +251,16 @@ foreach ($userMap as $userId => $userName) {
         ];
 
         // Process records
-        foreach ($prevByUserCat[$userId][$cat_id] ?? [] as $r) {
+        foreach ($prevByUserCat[$targetId][$cat_id] ?? [] as $r) {
             processRecord($r, $counters, 'previous', $from_date, $to_date);
         }
-        foreach ($currentByUserCat[$userId][$cat_id] ?? [] as $r) {
+        foreach ($currentByUserCat[$targetId][$cat_id] ?? [] as $r) {
             processRecord($r, $counters, 'verification', $from_date, $to_date);
         }
 
         $data[] = [
             "sno" => $sno++,
-            "fullname" => $userName,
+            "fullname" => $targetName, // Dynamic Column: Sector Name or User Name
             "loan_category" => $cat_name,
             "previous" => $counters['previous'],
             "verification"  => $counters['verification'],

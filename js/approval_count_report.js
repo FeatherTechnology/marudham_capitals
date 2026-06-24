@@ -118,7 +118,10 @@ function approvalReportCount(from_date, to_date, selectedType, user_type, user_i
             const columns = [
                 /* BASIC */
                 { data: 'sno' },
-                { data: 'fullname' },
+                {
+                    data: 'fullname',
+                    title: (selectedType == '2') ? 'Sector Name' : 'User Name'
+                },
                 { data: 'loan_category' },
                 /* PREVIOUS IN PROCESS */
                 { data: 'previous.new' },
