@@ -43,12 +43,13 @@ if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'
     $from_date = $_POST['from_date'] . " 00:00:00";
     $to_date   = date('Y-m-d', strtotime($_POST['to_date'] . ' +1 day')) . " 00:00:00";
 
-    $where .= " AND np.created_date >= '$from_date' AND np.created_date < '$to_date'";
+    $where .= " AND (np.created_date >= '$from_date' AND np.created_date < '$to_date')";
 }
 
 /* ---------- USER ID ---------- */
 $user_ids = $_POST['user_id'] ?? '';
-if($user_ids != '0' && !empty($user_id)){
+
+if($user_ids != '0' && !empty($user_ids)){
     $user_ids = preg_replace('/[^0-9,]/', '', $user_ids); // clean
     $id_list = implode(',', array_filter(explode(',', $user_ids), 'is_numeric'));
     if (!empty($id_list)) {

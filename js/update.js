@@ -666,9 +666,7 @@ $(document).ready(function () {
     });
 
     $("#loan_id").change(function () {
-        let gurantor_id = $(this).find(':selected').attr('gurantor_id');
-        let gu_pic = $(this).find(':selected').attr('gu_pic');
-        closeFamModal(gurantor_id, gu_pic)
+        closeFamModal();
 
     });
 
@@ -911,12 +909,14 @@ function callDocFunctn() {
 function getImage() { // Cus img show onload.
     let imgName = $('#cus_image').val();
     if (imgName != '') {
-        $('#imgshow').attr('src', "uploads/request/customer/" + imgName + " ");
-    } else { $('#imgshow').attr('src', 'img/avatar.png'); }
+        $('#imgshow').attr('src', `uploads/request/customer/${imgName}`);
+    } else { 
+        $('#imgshow').attr('src', 'img/avatar.png'); 
+    }
 
     var guarentorimg = $('#guarentor_image').val();
     if (guarentorimg != '') {
-        $('#imgshows').attr('src', "uploads/verification/guarentor/" + guarentorimg + " ");
+        $('#imgshows').attr('src', `uploads/verification/guarentor/${guarentorimg}`);
     } else {
         $('#imgshows').attr('src', 'img/avatar.png');
     }
@@ -1168,41 +1168,38 @@ function getLoanID() {
     $.post('updateFile/get_loan_id.php', { "cus_id": $('#cus_id').val() }, function (data) {
 
         $("#loan_id").empty().append("<option value=''>" + 'Select Loan ID' + "</option>");
-        let lastGuarantorID = "";
-        let guarentor_photos = "";
+        let isLast ='';
         if (data.length > 0) {
             for (var i = 0; i < data.length; i++) {
                 let loanId = data[i]['loan_id'];
                 let guarentorID = data[i]['guarentor_name'];
                 let guarentor_photo = data[i]['guarentor_photo'] ? data[i]['guarentor_photo'] : "";
-                let isLast = i === data.length - 1;
+                isLast = i === data.length - 1;
                 let selected = isLast ? "selected" : "";
-                if (isLast) {
-                    lastGuarantorID = guarentorID;
-                    guarentor_photos = guarentor_photo;
-                }
+                
                 $("#loan_id").append("<option value='" + loanId + "' " + selected + " gurantor_id='" + guarentorID + "' gu_pic='" + guarentor_photo + "'>" + loanId + "</option>");
                 loanidResponse = "true";
             }
-            if (lastGuarantorID != '') {
-                closeFamModal(lastGuarantorID, guarentor_photos);
+            if (isLast) {
+                closeFamModal();
             }
 
-        }
-        else {
+        } else {
             $("#guarentor_name").empty().append("<option value=''>" + 'Select Guarantor' + "</option>");
             $("#guarentor_relationship").val('');
-            $("#guarentor_image").val(guarentor_photos);
+            $("#guarentor_image").val('');
             getImage();
             resetFamDetails();
             loanidResponse = "false";
         }
 
     }, 'json');
-
 }
 
-function closeFamModal(lastGuarantorID, guarentor_photos) {
+function closeFamModal() {
+
+    let lastGuarantorID = $('#loan_id').find(':selected').attr('gurantor_id');
+    let guarentor_photos = $('#loan_id').find(':selected').attr('gu_pic');
 
     $.post('verificationFile/verificationFam.php', { "cus_id": $('#cus_id').val() }, function (data) {
 
@@ -2445,6 +2442,12 @@ $('#guarentor_name').change(function () { //Select Guarantor Name relationship w
 
     let famId = $("#guarentor_name").val();
     $('#guarentor_image').val('');//empty guarentor pic when changing guarentor name, to upload new pic for new guarentor.
+
+    let matchedLoan = $('#loan_id option[gurantor_id="' + famId + '"]');
+
+    if (matchedLoan.length) {
+        $('#guarentor_image').val(matchedLoan.attr('gu_pic'));
+    }
 
     $.ajax({
         url: 'verificationFile/verification_guarantor.php',

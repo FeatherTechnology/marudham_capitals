@@ -91,7 +91,7 @@ if(isset($_POST['lusername'])) {
 								<h5>Welcome back,<br />Please Login to your Account.</h5>
 								<div class="form-group mt-4">
 									<label for="lusername">User Name</label>
-									<input type="text" name="lusername" id="lusername"  tabindex="1"  class="form-control" value="" placeholder="Enter Email" style="padding: 10px;border-radius:6px;"/>
+									<input type="text" name="lusername" id="lusername"  tabindex="1"  class="form-control" value="" placeholder="Enter Email" style="padding: 10px;border-radius:6px;" autocomplete="off"/>
 									<span id="usernamecheck" class="text-danger" style="display:none">Enter Email</span>    
 								</div>
 								

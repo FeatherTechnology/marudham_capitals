@@ -32,7 +32,7 @@ $(document).ready(function () {
             $('#user_type, #by_user').val('').show();
             $('#by_user').empty().append("<option value=''>Select User</option>");
 
-        } else if(type == '4') { //sector - group, Region - Line, Zone - Follow up
+        } else if(type == '3' || type == '4') { //sector - group, Region - Line, Zone - Follow up
             $('#map_name').closest('.choices').show();
             getUserMappedDetails(type); //to Mapping details. 
         }
@@ -60,7 +60,7 @@ $(document).ready(function () {
         if(selectedType == '1'){ //user
             selectedVal = '1'; //dummy
             
-        } else if(selectedType == '4'){ //Zone - Followup
+        } else if(selectedType == '3' || selectedType == '4'){ //Region - Line //Zone - Followup
             selectedVal = $('#map_name').val();
         }
 

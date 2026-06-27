@@ -37,6 +37,7 @@
                 <select class="toggle-button" name='type' id='type'>
 					<option value='0'>Select Type</option>
 					<option value='1'>User</option>
+					<option value='3'>Region</option><!-- using common API to get mapped zone so not changed value -->
 					<option value='4'>Zone</option><!-- using common API to get mapped zone so not changed value -->
 				</select>
 
