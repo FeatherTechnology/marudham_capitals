@@ -21,12 +21,21 @@ if(is_array($selectedVal)) {
     $selectedVal = implode(',', $selectedVal);
 }
 
+$loanCatVal = $_POST['loanCatVal'] ?? '';
+
+if(is_array($loanCatVal)) {
+    $loanCatVal = implode(',', $loanCatVal);
+}
+
 $joinTable ='';
 $condition = '';
+$condtn = '';
 
 if ($selectedType == '2') { //Sector
     $joinTable  = "  JOIN area_group_mapping_sub_area agmsa ON req.sub_area = agmsa.sub_area_id";
     $condition  = " AND agmsa.group_map_id IN ($selectedVal)";
+    
+    $condtn  = "WHERE loan_category_creation_id IN ($loanCatVal)";
 } 
 // else if ($selectedType == '3') { //Region
 //     $joinTable = "  JOIN area_line_mapping_sub_area almsa ON req.sub_area = almsa.sub_area_id";
@@ -97,7 +106,7 @@ if ($selectedType == '2' && !empty($selectedVal)) {
 // Loan categories
 $loanCats = $connect->query("
     SELECT loan_category_creation_id, loan_category_creation_name 
-    FROM loan_category_creation
+    FROM loan_category_creation $condtn
 ")->fetchAll(PDO::FETCH_ASSOC);
 
 /* =====================

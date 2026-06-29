@@ -22,13 +22,21 @@ if(is_array($selectedVal)) {
     $selectedVal = implode(',', $selectedVal);
 }
 
+$loanCatVal = $_POST['loanCatVal'] ?? '';
+
+if(is_array($loanCatVal)) {
+    $loanCatVal = implode(',', $loanCatVal);
+}
+
 $joinTable ='';
 $condition = '';
+$condtn = '';
 
 if ($selectedType == '2') { //Sector
     $joinTable  = "  JOIN area_group_mapping_sub_area agmsa ON cp.area_confirm_subarea = agmsa.sub_area_id";
     $condition  = "AND agmsa.group_map_id IN ($selectedVal)";
 
+    $condtn  = "WHERE loan_category_creation_id IN ($loanCatVal)";
 } 
 // else if ($selectedType == '3') { //Region
 //     $joinTable = "  JOIN area_line_mapping_sub_area almsa ON cp.area_confirm_subarea = almsa.sub_area_id";
@@ -92,7 +100,7 @@ if ($selectedType == '2' && !empty($selectedVal)) {
     $nameMap = $stmt->fetchAll(PDO::FETCH_KEY_PAIR); // structure: user_id => fullname
 }
 
-$loanCats = $connect->query("SELECT loan_category_creation_id, loan_category_creation_name FROM loan_category_creation")->fetchAll(PDO::FETCH_ASSOC);
+$loanCats = $connect->query("SELECT loan_category_creation_id, loan_category_creation_name FROM loan_category_creation $condtn")->fetchAll(PDO::FETCH_ASSOC);
 
 // Initialize grand totals
 $grandTotals = [

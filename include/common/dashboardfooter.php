@@ -2597,6 +2597,25 @@
                 },'json');
             }
         }
+        
+        function getUserLoanCategories() {
+            $.ajax({
+                url: 'reportFile/customer_status_report/ajaxGetUserLoanCategory.php',
+                type: 'POST',
+                dataType: 'json',
+                success: function (response) {
+                    loanCategory.clearStore();
+                    let items = [];
+                    for (let i = 0; i < response.length; i++) {
+                        items.push({
+                            value: response[i]['loan_category_creation_id'],
+                            label: response[i]['loan_category_creation_name']
+                        });
+                    }
+                    loanCategory.setChoices(items);
+                }
+            });
+        }
     </script>
 
     <?php
