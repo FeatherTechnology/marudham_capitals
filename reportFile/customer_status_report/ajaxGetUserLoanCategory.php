@@ -1,4 +1,5 @@
 <?php
+//also using in request_count_report.js
 include '../../ajaxconfig.php';
 
 // $type = isset($_POST['type']) ? $_POST['type'] : '';

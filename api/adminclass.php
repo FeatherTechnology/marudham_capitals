@@ -7425,7 +7425,7 @@ class admin
 				$detailrecords['whatsapp_no'] = $whatsapp_no;
 
 				// Getting Line Id, Branch ID, Branch Name
-				$areaconfirmsubarea = $detailrecords['area_confirm_subarea'] || $detailrecords['sub_area'];
+				$areaconfirmsubarea = $detailrecords['area_confirm_subarea'] ?: $detailrecords['sub_area'];
 				$qry = $mysqli->query("SELECT b.branch_id, b.branch_name, l.map_id, l.line_name AS area_line FROM branch_creation b 
 				JOIN area_line_mapping l ON l.branch_id = b.branch_id
 				JOIN area_line_mapping_sub_area almsa ON almsa.line_map_id = l.map_id
