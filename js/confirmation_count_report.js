@@ -4,7 +4,13 @@ const map_name = new Choices('#map_name', {
     allowHTML: true
 });
 
-$('#map_name').closest('.choices').hide();
+const loanCategory = new Choices('#loan_category', {
+    removeItemButton: true,
+    noChoicesText: 'Select Category',
+    allowHTML: true
+});
+
+$('#map_name, #loan_category').closest('.choices').hide();
 
 $(document).ready(function () {
 
@@ -22,10 +28,13 @@ $(document).ready(function () {
     $('#type').change(function (e) {
         let type = $(this).val();
         $('#user_type, #by_user').val('').hide();
-        $('#map_name').closest('.choices').hide();
+        $('#map_name, #loan_category').closest('.choices').hide();
         map_name.clearStore();
 
-        $('#confirmation_count_table').DataTable().destroy();
+        if ($.fn.DataTable.isDataTable('#confirmation_count_table')) {
+            $('#confirmation_count_table').DataTable().destroy();
+        }
+        $('#confirmation_count_table thead').empty();
         $('#confirmation_count_table tbody').empty();
         $('#confirmation_count_table tfoot').empty();
         
@@ -34,8 +43,9 @@ $(document).ready(function () {
             $('#by_user').empty().append("<option value=''>Select User</option>");
 
         } else if(type == '2' || type == '3' || type == '4') { //sector - group, Region - Line, Zone - Follow up
-            $('#map_name').closest('.choices').show();
+            $('#map_name, #loan_category').closest('.choices').show();
             getUserMappedDetails(type); //to Mapping details. 
+            getUserLoanCategories(); //to get Loan Category list.
         }
     });
 
@@ -57,20 +67,23 @@ $(document).ready(function () {
         let user_type = $('#user_type').val();
         let selected_user = $('#by_user').val();
         let selectedVal = '';
+        let loanCatVal = '';
 
         if(selectedType == '1'){ //user
             selectedVal = '1'; //dummy
+            loanCatVal = '1'; //dummy
             
         } else if(selectedType == '2' || selectedType == '3' || selectedType == '4'){ //sector - group //Region - Line //Zone - Followup
             selectedVal = $('#map_name').val();
+            loanCatVal = $('#loan_category').val();
         }
 
-        if(!from_date || !to_date || !selectedVal || (selectedType == '1' && (!user_type || !selected_user))){
+        if(!from_date || !to_date || !selectedVal || !loanCatVal || (selectedType == '1' && (!user_type || !selected_user))){
             swalError('Warning', `All Fields are required.`);
             return;
         }
 
-        confirmationReportCount(from_date, to_date, selectedType, user_type, selected_user, selectedVal);
+        confirmationReportCount(from_date, to_date, selectedType, user_type, selected_user, selectedVal, loanCatVal);
     });
 
 });
@@ -86,12 +99,12 @@ function getUserNames() {
     }, 'json');
 }
 
-function confirmationReportCount(from_date, to_date, selectedType, user_type, user_id, selectedVal) {
+function confirmationReportCount(from_date, to_date, selectedType, user_type, user_id, selectedVal, loanCatVal) {
 
     $.ajax({
         url: 'reportFile/confirmation_count_report/getConfirmationCount.php',
         type: 'POST',
-        data: { from_date, to_date, selectedType, user_type, user_id, selectedVal },
+        data: { from_date, to_date, selectedType, user_type, user_id, selectedVal, loanCatVal },
         dataType: 'json',
 
         success: function (res) {
@@ -99,7 +112,7 @@ function confirmationReportCount(from_date, to_date, selectedType, user_type, us
             if (!res.data || res.data.length === 0) {
                 $('#confirmation_count_table').DataTable().clear().draw();
                 $('#confirmation_count_table thead').html(
-                    "<tr><th colspan='10'>No data found for selected filters</th></tr>"
+                    "<tr><th colspan='8'>No data found for selected filters</th></tr>"
                 );
                 return;
             }
@@ -108,21 +121,48 @@ function confirmationReportCount(from_date, to_date, selectedType, user_type, us
             const totalRow = res.data[res.data.length - 1];
             const tableData = res.data.slice(0, -1);
 
+            let ttle;
+            if(selectedType =='2'){
+                ttle = 'Sector';
+            } else if(selectedType =='3'){
+                ttle = 'Region';
+            } else if(selectedType =='4'){
+                ttle = 'Zone';
+            } else{
+                ttle = 'User Name';
+            }
+
             // DataTable Columns
             const columns = [
                 { data: 'sno', title: "S.No" },
-                { data: 'fullname', title: "User Name" },
-                { data: 'line', title: "Region Name" },
+                { data: 'fullname', title: ttle },
+                { data: 'loan_category', title: "Loan Category" }
+            ];
+
+            if (selectedType == '1') {
+                columns.push({
+                    data: 'line',
+                    title: "Region Name"
+                });
+            }
+
+            columns.push(
                 { data: 'total_count', title: "Total Count" },
                 { data: 't_completed_count', title: "Completed" },
                 { data: 't_unavailable_count', title: "Unavailable" },
-                { data: 't_reconfirmation', title: "Reconfirmation" },
-            ];
+                { data: 't_reconfirmation', title: "Reconfirmation" }
+            );
 
-            $('#confirmation_count_table').DataTable().destroy();
+            if ($.fn.DataTable.isDataTable('#confirmation_count_table')) {
+                $('#confirmation_count_table').DataTable().destroy();
+            }
+
+            $('#confirmation_count_table thead').empty();
+            $('#confirmation_count_table tbody').empty();
+            $('#confirmation_count_table tfoot').empty();
 
             var confirmation_count_table = $('#confirmation_count_table').DataTable({
-                ...getStateSaveConfig('confirmation_count_table'),
+                destroy: true,
                 data: tableData,
                 columns: columns,
                 dom: 'lBfrtip',
@@ -147,32 +187,29 @@ function confirmationReportCount(from_date, to_date, selectedType, user_type, us
                 }
             });
 
-            // Pass the table variable to the initColVisFeatures function
-            initColVisFeatures(confirmation_count_table, 'confirmation_count_table');
-
             // =============================
             // 🔥 SET FOOTER (TOTAL VALUES)
             // =============================
-            $('#confirmation_count_table tfoot').html(`
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td><b>Total</b></td>
-                    <td><b>${totalRow.total_count}</b></td>
-                    <td><b>${totalRow.t_completed_count}</b></td>
-                    <td><b>${totalRow.t_unavailable_count}</b></td>
-                    <td><b>${totalRow.t_reconfirmation}</b></td>
-                </tr>
-            `);
+            let footer = `
+            <tr>
+                <td></td>
+                <td></td>
+            `;
 
-            // Hide revoke column if required
-            if (screen == "3") {
-                $("th:nth-child(6)").hide();
-                $("#confirmation_count_table tbody tr").each(function () {
-                    $(this).find("td:nth-child(6)").hide();
-                });
-                $("#confirmation_count_table tfoot tr td:nth-child(6)").hide();
+            if (selectedType == '1') {
+                footer += `<td></td>`;
             }
+
+            footer += `
+                <td><b>Total</b></td>
+                <td><b>${totalRow.total_count}</b></td>
+                <td><b>${totalRow.t_completed_count}</b></td>
+                <td><b>${totalRow.t_unavailable_count}</b></td>
+                <td><b>${totalRow.t_reconfirmation}</b></td>
+            </tr>
+            `;
+
+            $('#confirmation_count_table tfoot').html(footer);
         }
     });
 }

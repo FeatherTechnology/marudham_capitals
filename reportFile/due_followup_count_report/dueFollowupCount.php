@@ -22,21 +22,47 @@ if(is_array($selectedVal)) {
     $selectedVal = implode(',', $selectedVal);
 }
 
-$joinTable ='';
+$loanCatVal = $_POST['loanCatVal'] ?? '';
+
+if(is_array($loanCatVal)) {
+    $loanCatVal = implode(',', $loanCatVal);
+}
+
+$colname = '';
+$groupby = "c.insert_login_id, iv.loan_category";
+$orderby = "u.fullname";
+$joinTable = '';
 $mapidcondition = '';
+$condtn = '';
 
 if ($selectedType == '2') { //Sector
-    $joinTable  = "  JOIN area_group_mapping_sub_area agmsa ON cr.area_confirm_subarea = agmsa.sub_area_id";
+    $colname = ", agm.group_name AS mapname";
+    $groupby = "agm.group_name, iv.loan_category";
+    $orderby = "agm.group_name";
+    $joinTable  = "  JOIN area_group_mapping_sub_area agmsa ON iv.sub_area = agmsa.sub_area_id
+    JOIN area_group_mapping agm ON agmsa.group_map_id = agm.map_id";
     $mapidcondition  = "AND agmsa.group_map_id IN ($selectedVal)";
 
 } else if ($selectedType == '3') { //Region
-    $joinTable = "  JOIN area_line_mapping_sub_area almsa ON cr.area_confirm_subarea = almsa.sub_area_id";
+    $colname = ", alm.line_name AS mapname";
+    $groupby = "alm.line_name, iv.loan_category";
+    $orderby = "alm.line_name";
+    $joinTable = "  JOIN area_line_mapping_sub_area almsa ON iv.sub_area = almsa.sub_area_id
+    JOIN area_line_mapping alm ON almsa.line_map_id = alm.map_id";
     $mapidcondition = "AND almsa.line_map_id IN ($selectedVal)";
     
 } else if ($selectedType == '4') { //Zone
-    $joinTable = "  JOIN area_duefollowup_mapping_area adma ON cr.area_confirm_area = adma.area_id";
+    $colname = ", adm.duefollowup_name AS mapname";
+    $groupby = "adm.duefollowup_name, iv.loan_category";
+    $orderby = "adm.duefollowup_name";
+    $joinTable = "  JOIN area_duefollowup_mapping_area adma ON iv.area = adma.area_id
+    JOIN area_duefollowup_mapping adm ON adma.duefollowup_map_id = adm.map_id";
     $mapidcondition = "AND adma.duefollowup_map_id IN ($selectedVal)";
 } 
+
+if($selectedType =='2' || $selectedType =='3' || $selectedType =='4'){
+    $condtn  = "AND iv.loan_category IN ($loanCatVal)";
+}
 
 $data = [];
 $sno = 1;
@@ -67,6 +93,7 @@ if ($user_id != 'all' && !empty($user_id)) {
 $qry = $connect->query("
 SELECT 
 u.fullname,
+lcc.loan_category_creation_name,
 
 COUNT(DISTINCT c.cus_id) AS total_customer,
 COUNT(c.id) AS total_entries,
@@ -82,16 +109,18 @@ SUM(CASE WHEN c.ftype = 1 AND c.fstatus = 1 THEN 1 ELSE 0 END) AS direct_commitm
 SUM(CASE WHEN c.ftype = 1 AND c.fstatus BETWEEN 2 AND 7 THEN 1 ELSE 0 END) AS direct_unavailable,
 SUM(CASE WHEN c.ftype = 1 AND c.fstatus = 8 THEN 1 ELSE 0 END) AS direct_paid,
 SUM(CASE WHEN c.ftype = 1 THEN 1 ELSE 0 END) AS direct_total
+$colname
 
 FROM commitment c
+JOIN in_verification iv ON c.req_id = iv.req_id
+JOIN loan_category_creation lcc ON iv.loan_category = lcc.loan_category_creation_id
 LEFT JOIN user u ON u.user_id = c.insert_login_id
-LEFT JOIN customer_register cr ON c.cus_id = cr.cus_id
 $joinTable
 WHERE (DATE(c.created_date) BETWEEN '$from_date' AND '$to_date')
-$user_condition $condition $mapidcondition
+$user_condition $condition $mapidcondition $condtn
 
-GROUP BY c.insert_login_id
-ORDER BY u.fullname
+GROUP BY $groupby
+ORDER BY $orderby ASC
 ");
 
 
@@ -100,7 +129,8 @@ while ($row = $qry->fetch()) {
     $data[] = [
 
         "sno" => $sno++,
-        "fullname" => $row['fullname'],
+        "fullname" => ($selectedType =='1') ? $row['fullname'] : $row['mapname'],
+        "loan_category" => $row['loan_category_creation_name'],
 
         "total_customer" => $row['total_customer'],
         "total_entries" => $row['total_entries'],

@@ -39,7 +39,11 @@
 				
                 <select class="form-control hidefield" id="map_name" name="map_name" multiple>
                     <option value="">Select</option>
-                </select>
+                </select>&nbsp;&nbsp;
+	
+				<select class="form-control hidefield" id="loan_category" name="loan_category" multiple>
+					<option value="">Select Loan Category</option>
+				</select>
 
 				<input type="button" id='reset_btn' name='reset_btn' class="toggle-button" style="background-color: #009688;color:white" value='Search'>
 			</div>
@@ -50,17 +54,7 @@
 					<div class="card-body">
 						<div id="confirmation_count_table_div" class="table-divs" style="overflow-x: auto;">
 							<table id="confirmation_count_table" class="table custom-table">
-								<thead>
-									<tr>
-										<th>S.No</th>
-										<th>User Name</th>
-										<th>Region</th>
-										<th>Total Count</th>
-										<th>Completed</th>
-										<th>Unavailable</th>
-										<th>Reconfirmation</th>
-									</tr>
-								</thead>
+								<thead></thead>
 								<tbody></tbody>
 								<tfoot></tfoot>
 							</table>

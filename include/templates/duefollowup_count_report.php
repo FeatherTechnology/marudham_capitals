@@ -22,6 +22,7 @@
 		Marudham Capitals - Due Followup Count Report
 	</div>
 </div><br>
+
 <!-- Main container start -->
 <div class="main-container">
 	<!--form start-->
@@ -53,8 +54,12 @@
 				</select>
 	
                 <select class="form-control hidefield" id="map_name" name="map_name" multiple>
-                    <option value="">Select Zone</option>
-                </select>
+                    <option value="">Select</option>
+                </select>&nbsp;&nbsp;
+	
+				<select class="form-control hidefield" id="loan_category" name="loan_category" multiple>
+					<option value="">Select Loan Category</option>
+				</select>
 
 				<input type="button" id='reset_btn' name='reset_btn' class="toggle-button" style="background-color: #009688;color:white" value='Search'>
 			</div>
@@ -65,19 +70,19 @@
 					<div class="card-body">
 						<div id="due_followup_count_table_div" class="table-divs" style="overflow-x: auto;">
 							
-								<table id="due_followup_count_table" class="table custom-table" style="width:100%">
+							<table id="due_followup_count_table" class="table custom-table" style="width:100%">
 								<thead>
 									<!-- GROUP HEADER -->
 									<tr>
 										<th rowspan="2">S.No</th>
-										<th rowspan="2">User Name</th>
+										<th rowspan="2" id="th_name">User Name</th>
+										<th rowspan="2">Loan Category</th>
 										<th rowspan="2">Total Customer</th>
 										<th rowspan="2">Total Entries</th>
 
 										<th colspan="4" class="group-border">Mobile</th>
 										<th colspan="4" class="group-border">Direct</th>
 									</tr>
-
 
 									<!-- SUB HEADERS -->
 									<tr>
@@ -92,14 +97,13 @@
 										<th>Unavailable</th>
 										<th>Paid</th>
 										<th>Total</th>
-
-									
 									</tr>
 								</thead>
 
 								<tbody></tbody>
 								<tfoot>
 									<tr>
+										<td></td>
 										<td></td>
 										<td></td>
 
