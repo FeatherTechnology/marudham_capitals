@@ -1239,6 +1239,22 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 					</div>
 					<!-- KYC info END -->
 
+					<!-- Fingerprint Info start-->
+					<div class="card">
+						<div class="card-header"> Fingerprint Info </div>
+						<input type="hidden" id="fingerValidation" name="fingerValidation"> <!-- set val as 1 when finger Print Matching becuz to use for finger print validation if submit click.-->
+						<div class="card-body">
+							<div class="row">
+								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+									<div class="form-group fingerprintTable">
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Fingerprint Info End-->
+
 					<!-- ///////////////////////////////////////////////// Customer Summary START ///////////////////////////////////////////////////////////// -->
 					<div class="card">
 						<div class="card-header"> Customer Summary <span style="font-weight:bold" class=""></span></div>
@@ -2052,25 +2068,14 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 									</div>
 								</div>
 							</div>
-						</div>
-					</div>
-					<!-- Document Status End -->
-
-					<!-- Fingerprint Info start-->
-					<div class="card">
-						<div class="card-header"> Fingerprint Info </div><span class="text-danger fingerSpan" style="margin-left:25px;display: none;">Please Scan Customer Fingerprint</span>
-						<input type="hidden" id="fingerValidation" name="fingerValidation"> <!-- set val as 1 when finger Print Matching becuz to use for finger print validation if submit click.-->
-						<div class="card-body">
 							<div class="row">
-								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-									<div class="form-group fingerprintTable">
-
-									</div>
+								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" style="text-align: right;">
+									<span class="text-danger fingerSpan" style="display: none;">*Please Scan Customer Fingerprint in Customer Profile before submit.</span>
 								</div>
 							</div>
 						</div>
 					</div>
-					<!-- Fingerprint Info End-->
+					<!-- Document Status End -->
 
 					<div class="col-md-12 ">
 						<div class="text-right">

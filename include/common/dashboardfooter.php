@@ -2571,11 +2571,14 @@
                     console.log("Device Name:", device);
                     const init = InitDevice(device, "");
                     console.log("Init result:", init);
+                    alert(`Device Name: ${device}, ${init.data.ErrorDescription}.`);
                 } else {
+                    alert("Fingerprint Device not found in description");
                     console.error("Device not found in description");
                 }
 
             } else {
+                alert("Fingerprint Device not connected");
                 console.error("Device not connected");
             }
         }

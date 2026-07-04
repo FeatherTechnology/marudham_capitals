@@ -445,6 +445,7 @@ $(document).ready(function () {
       resetbankinfoList(); //Bank Info List.
       feedbackList(); // Feedback Info List.
       getCustomerLoanCounts(); //to get closed customer details
+      fingerprintTable(); // Fingerprint Info List.
     
       var state_upd = $("#state_upd").val();
       if (state_upd != "") {
@@ -1558,6 +1559,7 @@ function resetFamDetails() {
     cache: false,
     success: function (html) {
       $("#famList").html(html);
+      fingerprintTable(cus_id);
     },
   });
 }
@@ -5077,8 +5079,6 @@ async function getDocumentFunc() {
   // await resetdocInfo(); // Document Info Reset.
   await docinfoList(); // Document Info List.
 
-  fingerprintTable(); // Fingerprint Info List.
-
   let mort = $("#mortgage_process").val() == "0" ? true : false;
   if (mort) {
     $("#mortgage_info_card").show();
@@ -7017,35 +7017,16 @@ function loan_calc_validation() {
   }
   return validation;
 }
+
 function fingerprintTable() {//To Get family member's name are required for scanning fingerprint
-  var cus_name = $('#cus_name').val();
-  var cus_id = $('#cus_id').val();
+  let cus_id = $('#cus_id').val();
   $.ajax({
     url: 'verificationFile/getNamesForFingerprint.php',
-    data: { 'cus_name': cus_name, 'cus_id': cus_id },
+    data: { cus_id },
     type: 'post',
     cache: false,
     success: function (html) {
       $('.fingerprintTable').html(html);
-
-      $('.scanBtn').click(function () {
-        var hand = $(this).prev().val();
-        var name = $(this).parent().prev().find('input[id="name_print"]').val();
-        var adhar = $(this).parent().prev().prev().find('input[id="adhar_print"]').val();
-        if (hand == '') { //prevent if hand is not selected
-          $(this).prev().css('border-color', 'red');
-        } else {
-          $(this).prev().css('border-color', '#009688');
-          var btn = $(this);
-          btn.attr('disabled', true);
-          commonCaptureFinger((fdata) => {
-            btn.next().val(fdata);
-            commonStoreFingerprint(fdata, hand, adhar, name);
-          }, () => {
-            btn.removeAttr('disabled');
-          });
-        }
-      })
     }
   })
 }

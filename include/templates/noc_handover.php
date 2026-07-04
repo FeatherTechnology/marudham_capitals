@@ -578,7 +578,7 @@ if (sizeof($getCustomerReg) > 0) {
 										<input type="hidden" id="ack_fingerprint" name="ack_fingerprint"> <!-- finger print value from Device when scanning.-->
 										<input type="hidden" id="fingerValidation" name="fingerValidation"> <!-- set val as 1 when finger Print Matching becuz to use for finger print validation if submit click.-->
 										<input type="text" class="form-control" style="visibility:hidden;">
-										<button type="button" class='btn btn-success scanBtn'  style='background-color:#009688;margin-top: -50px;width: auto;' onclick="event.preventDefault()" title='Put Your Thumb' tabindex='44'><i class="material-icons" id="icon-flipped">&#xe90d;</i>&nbsp;Scan</button> 
+										<button type="button" class='btn btn-success noc_scan_btn'  style='background-color:#009688;margin-top: -50px;width: auto;' onclick="event.preventDefault()" title='Put Your Thumb' tabindex='44'><i class="material-icons" id="icon-flipped">&#xe90d;</i>&nbsp;Scan</button> 
 										<span class="text-danger" id="hand_type" style="position: relative;top: -22px;"> </span>
 									</div>
 								</div>

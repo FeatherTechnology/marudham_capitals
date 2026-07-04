@@ -563,7 +563,7 @@ if (sizeof($getCustomerReg) > 0) {
 													<th>Relationship</th>
 													<th>DOB</th>
 													<th>Age</th>
-													<th>Live/Deceased</th>
+													<th>Live Status</th>
 													<th>Aadhar No</th>
 													<th>Mobile No</th>
 													<th>Occupation</th>
@@ -969,6 +969,20 @@ if (sizeof($getCustomerReg) > 0) {
 					</div>
 					<!-- KYC info END -->
 
+					<!-- Fingerprint Info start-->
+					<div class="card ">
+						<div class="card-header"> Fingerprint Info </div><span class="text-danger fingerSpan" style="margin-left:25px;display: none;">Please Scan Customer Fingerprint</span>
+						<div class="card-body">
+							<div class="row">
+								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+									<div class="form-group table-responsive fingerprintTable">
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Fingerprint Info End-->
 
 					<!-- ///////////////////////////////////////////////// Customer Summary START ///////////////////////////////////////////////////////////// -->
 					<div class="card" id="customer_summary_card">
@@ -1149,22 +1163,6 @@ if (sizeof($getCustomerReg) > 0) {
 						</div>
 					</div>
 					<!-- ///////////////////////////////////////////////  Customer Summary  END /////////////////////////////////////////////////////////// -->
-
-					<!-- Fingerprint Info start-->
-					<div class="card ">
-						<div class="card-header"> Fingerprint Info </div><span class="text-danger fingerSpan" style="margin-left:25px;display: none;">Please Scan Customer Fingerprint</span>
-						<div class="card-body">
-							<div class="row">
-								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-									<div class="form-group table-responsive fingerprintTable">
-
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<!-- Fingerprint Info End-->
-
 
 					<div class="col-md-12 ">
 						<div class="text-right">
@@ -1901,13 +1899,13 @@ if (sizeof($getCustomerReg) > 0) {
 
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
-							<label class="label" for="relation_live_deceased"> Live/Deceased </label><span class="required">&nbsp;*</span>
+							<label class="label" for="relation_live_deceased"> Live Status </label><span class="required">&nbsp;*</span>
 							<select class="form-control" name="relation_live_deceased" id="relation_live_deceased" tabindex="10">
-								<option value=''>Select Live/Deceased</option>
+								<option value=''>Select Live Status</option>
 								<option value='1'>Live</option>
 								<option value='2'>Deceased</option>
 							</select>
-							<span class="text-danger" id="famLiveDeceasedCheck" style='display:none'>Select Live/Deceased</span>
+							<span class="text-danger" id="famLiveDeceasedCheck" style='display:none'>Select Live Status</span>
 						</div>
 					</div>
 

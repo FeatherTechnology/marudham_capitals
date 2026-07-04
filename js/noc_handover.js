@@ -9,8 +9,8 @@ $(document).ready(function () {
     })
 
     $('#noc_member').change(function () {
-        $('.scanBtn').removeAttr('disabled');
-        $('#compare_finger').val('')
+        $('.noc_scan_btn').removeAttr('disabled');
+        $('#compare_finger, #ack_fingerprint, #fingerValidation').val('');
         var noc_member = parseInt($(this).val());
         var cus_id = $('#cusidupd').val();
         var req_id = $('#req_id').val();
@@ -88,7 +88,7 @@ $(document).ready(function () {
 
     $('#mem_relation_name').change(function () {
         var id = $(this).val();
-        $('.scanBtn').removeAttr('disabled');
+        $('.noc_scan_btn').removeAttr('disabled');
         $.ajax({
             url: 'nocFile/getFingerprints.php',
             data: { 'id': id, 'family': true },
@@ -102,7 +102,18 @@ $(document).ready(function () {
         }).error(function () {
             alert('Guarentor Fingerprint not Registered')
         })
-    })
+    });
+
+    $(document).on('click','.noc_scan_btn', function () {
+        var mem_name = $('#mem_relation_name').val() != '' ? $('#mem_relation_name').val() : $('#mem_name').val();
+
+        if (mem_name != '') {
+            getMatchFingerDetails();
+        } else {//If End
+            $('#noc_memberCheck').show();
+        }
+
+    })//Scan button Onclick end
 
     //Hide mortgage & Endorsement intially.
     $('.mort_proc').hide();
@@ -174,13 +185,13 @@ $(function () {
 function showHandText(hand){
     let handText;
     if (hand == '1') {
-        $('.scanBtn').removeAttr('disabled');
+        $('.noc_scan_btn').removeAttr('disabled');
         handText = "Put Your Left Thumb"
     } else if (hand == '2') {
-        $('.scanBtn').removeAttr('disabled');
+        $('.noc_scan_btn').removeAttr('disabled');
         handText = "Put Your Right Thumb"
     } else {
-        $('.scanBtn').attr('disabled', true);
+        $('.noc_scan_btn').attr('disabled', true);
         handText = "Finger Print Not Registered";
     }
     $("#hand_type").text(handText).attr('class', 'text-danger');
@@ -438,32 +449,6 @@ function OnLoadFunctions() {
                 })
             }
 
-            $('.scanBtn').click(function () {
-                var mem_name = $('#mem_relation_name').val() != '' ? $('#mem_relation_name').val() : $('#mem_name').val();
-
-                if (mem_name != '') {
-                    var btn = $(this);
-                    btn.attr('disabled', true);
-                    var compare_finger = $('#compare_finger').val();
-                    commonCaptureFinger((fdata) => {
-                        $('#ack_fingerprint').val(fdata);
-                        commonMatchFinger(compare_finger, () => {
-                            $('#fingerValidation').val('1');
-                            btn.attr('disabled', true);
-                            $("#hand_type").text('Done').attr('class', 'text-success');
-                        }, () => {
-                            $('#fingerValidation').val('');
-                            btn.removeAttr('disabled');
-                        });
-                    }, () => {
-                        btn.removeAttr('disabled');
-                    });
-                } else {//If End
-                    $('#noc_memberCheck').show();
-                }
-
-            })//Scan button Onclick end
-
             // Run all AJAX calls in parallel and wait for all to complete
             Promise.all([
                 getSignedDocList(),
@@ -510,7 +495,7 @@ async function validations() {
 
     let noc_member = $('#noc_member').val();
     let mem_relation_name = $('#mem_relation_name').val();
-    // let fingerprint = $('#fingerValidation').val();
+    let fingerprint = $('#fingerValidation').val();
 
     // Case 1
     if (noc_member == '') {
@@ -529,12 +514,12 @@ async function validations() {
     }
 
     //Case 3
-    // if (fingerprint != '1') {
-    //     $('.scanBtnCheck').show();
-    //     res = false;
-    // } else {
-    //     $('.scanBtnCheck').hide();
-    // }
+    if (fingerprint != '1') {
+        $('.scanBtnCheck').show();
+        res = false;
+    } else {
+        $('.scanBtnCheck').hide();
+    }
 
     // Case 4 (AJAX validation)
     let receiveCheck = await getReceiveUserDetails();
