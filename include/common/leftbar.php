@@ -92,10 +92,9 @@ if ($current_page == 'verification_list' || $current_page == 'verification') {
 }
 
 $getUser = $userObj->getUser($mysqli, $userid);
-if (sizeof($getUser) > 0) {
-	foreach ($getUser as $key => $val) {
-		$$key = $val; //directly use db table column name as variable.
-	}
+
+if (!empty($getUser) && is_array($getUser)) {
+    extract($getUser, EXTR_PREFIX_ALL, 'leftbar'); //it is linked to common page set prefix in variable so it avoid the conflict with other page.
 }
 ?>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
@@ -281,7 +280,7 @@ if (sizeof($getUser) > 0) {
 				<!-- <li class="dashboard">
 					<a href="dashboard"><i class='icon-developer_board'></i>&nbsp;Dashboard</a>
 				</li> -->
-				<?php if (($mastermodule ?? 1) == 0) { ?>
+				<?php if (($leftbar_mastermodule ?? 1) == 0) { ?>
 					<li class="sidebar-dropdown master">
 						<a href="javascript:void(0)">
 							<i class="icon-globe"></i>
@@ -289,42 +288,42 @@ if (sizeof($getUser) > 0) {
 						</a>
 						<div class="sidebar-submenu" <?php if ($current_module == 'master') echo 'style="display:block" '; ?>>
 							<ul>
-								<?php if (($company_creation ?? 1) == 0) { ?>
+								<?php if (($leftbar_company_creation ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_company_creation"><i class="icon-assignment"></i>Company Creation</a>
 									</li>
 								<?php  }
-								if (($branch_creation ?? 1) == 0) { ?>
+								if (($leftbar_branch_creation ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_branch_creation"><i class="icon-format_list_bulleted"></i>Branch Creation</a>
 									</li>
 								<?php  }
-								if (($loan_category ?? 1) == 0) { ?>
+								if (($leftbar_loan_category ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_loan_category"><i class="icon-package"></i>Loan Category</a>
 									</li>
 								<?php  }
-								if (($loan_calculation ?? 1) == 0) { ?>
+								if (($leftbar_loan_calculation ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_loan_calculation"><i class="icon-percent"></i>Loan Calculation</a>
 									</li>
 								<?php  }
-								if (($loan_scheme ?? 1) == 0) { ?>
+								if (($leftbar_loan_scheme ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_loan_scheme"><i class="icon-credit-card"></i>Loan Scheme</a>
 									</li>
 								<?php  }
-								if (($area_creation ?? 1) == 0) { ?>
+								if (($leftbar_area_creation ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_area_creation"><i class="icon-octagon"></i>Area Creation</a>
 									</li>
 								<?php  }
-								if (($area_mapping ?? 1) == 0) { ?>
+								if (($leftbar_area_mapping ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_area_mapping"><i class="icon-documents"></i>Area Mapping</a>
 									</li>
 								<?php  }
-								if (($area_status ?? 1) == 0) { ?>
+								if (($leftbar_area_approval ?? 1) == 0) { ?>
 									<li>
 										<a href="area_status"><i class="icon-check"></i>Area Approval</a>
 									</li>
@@ -333,7 +332,7 @@ if (sizeof($getUser) > 0) {
 						</div>
 					</li>
 				<?php  } ?>
-				<?php if (($adminmodule ?? 1) == 0) { ?>
+				<?php if (($leftbar_adminmodule ?? 1) == 0) { ?>
 					<li class="sidebar-dropdown administration">
 						<a href="javascript:void(0)">
 							<i class='icon-layers'></i>
@@ -341,32 +340,32 @@ if (sizeof($getUser) > 0) {
 						</a>
 						<div class="sidebar-submenu" <?php if ($current_module == 'admin') echo 'style="display:block" '; ?>>
 							<ul>
-								<?php if (($director_creation ?? 1) == 0) { ?>
+								<?php if (($leftbar_director_creation ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_director_creation"><i class="icon-event_note"></i>Director Creation</a>
 									</li>
 								<?php  }
-								if (($agent_creation ?? 1) == 0) { ?>
+								if (($leftbar_agent_creation ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_agent_creation"><i class="icon-users"></i>Agent Creation</a>
 									</li>
 								<?php  }
-								if (($staff_creation ?? 1) == 0) { ?>
+								if (($leftbar_staff_creation ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_staff_creation"><i class="icon-user-plus"></i>Staff Creation</a>
 									</li>
 								<?php  }
-								if (($bank_creation ?? 1) == 0) { ?>
+								if (($leftbar_bank_creation ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_bank_creation"><i class='icon-save'></i>Bank Creation</a>
 									</li>
 								<?php  }
-								if (($manage_user ?? 1) == 0) { ?>
+								if (($leftbar_manage_user ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_manage_user"><i class="icon-cog"></i>Manage User</a>
 									</li>
 								<?php  }
-								if (($doc_mapping ?? 1) == 0) { ?>
+								if (($leftbar_doc_mapping ?? 1) == 0) { ?>
 									<!-- <li>
 										<a href="edit_doc_mapping"><i class="icon-briefcase"></i>Documentation Mapping</a>
 									</li> -->
@@ -375,7 +374,7 @@ if (sizeof($getUser) > 0) {
 						</div>
 					</li>
 				<?php  } ?>
-				<?php if (($requestmodule ?? 1) == 0) { ?>
+				<?php if (($leftbar_requestmodule ?? 1) == 0) { ?>
 					<li class="sidebar-dropdown request">
 						<a href="javascript:void(0)">
 							<i class='icon-upload-to-cloud'></i>
@@ -383,7 +382,7 @@ if (sizeof($getUser) > 0) {
 						</a>
 						<div class="sidebar-submenu" <?php if ($current_module == 'request') echo 'style="display:block" '; ?>>
 							<ul>
-								<?php if (($request ?? 1) == 0) { ?>
+								<?php if (($leftbar_request ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_request"><i class='icon-upload-to-cloud'></i>Request</a>
 									</li>
@@ -392,7 +391,7 @@ if (sizeof($getUser) > 0) {
 						</div>
 					</li>
 				<?php  } ?>
-				<?php if (($verificationmodule ?? 1) == 0) { ?>
+				<?php if (($leftbar_verificationmodule ?? 1) == 0) { ?>
 					<li class="sidebar-dropdown request">
 						<a href="javascript:void(0)">
 							<i class='icon-archive'></i>
@@ -400,7 +399,7 @@ if (sizeof($getUser) > 0) {
 						</a>
 						<div class="sidebar-submenu" <?php if ($current_module == 'verification') echo 'style="display:block" '; ?>>
 							<ul>
-								<?php if (($verification ?? 1) == 0) { ?>
+								<?php if (($leftbar_verification ?? 1) == 0) { ?>
 									<li>
 										<a href="verification_list"><i class='icon-archive'></i>Verification</a>
 									</li>
@@ -409,7 +408,7 @@ if (sizeof($getUser) > 0) {
 						</div>
 					</li>
 				<?php  } ?>
-				<?php if (($approvalmodule ?? 1) == 0) { ?>
+				<?php if (($leftbar_approvalmodule ?? 1) == 0) { ?>
 					<li class="sidebar-dropdown approve">
 						<a href="javascript:void(0)">
 							<i class='icon-check'></i>
@@ -417,7 +416,7 @@ if (sizeof($getUser) > 0) {
 						</a>
 						<div class="sidebar-submenu" <?php if ($current_module == 'approval') echo 'style="display:block" '; ?>>
 							<ul>
-								<?php if (($approval ?? 1) == 0) { ?>
+								<?php if (($leftbar_approval ?? 1) == 0) { ?>
 									<li>
 										<a href="approval_list"><i class='icon-check'></i>Approval</a>
 									</li>
@@ -426,7 +425,7 @@ if (sizeof($getUser) > 0) {
 						</div>
 					</li>
 				<?php  } ?>
-				<?php if (($acknowledgementmodule ?? 1) == 0) { ?>
+				<?php if (($leftbar_acknowledgementmodule ?? 1) == 0) { ?>
 					<li class="sidebar-dropdown acknowledge">
 						<a href="javascript:void(0)">
 							<i class='icon-cw'></i>
@@ -434,7 +433,7 @@ if (sizeof($getUser) > 0) {
 						</a>
 						<div class="sidebar-submenu" <?php if ($current_module == 'acknowledgement') echo 'style="display:block" '; ?>>
 							<ul>
-								<?php if (($acknowledgement ?? 1) == 0) { ?>
+								<?php if (($leftbar_acknowledgement ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_acknowledgement_list"><i class='icon-cw'></i>Acknowledgement</a>
 									</li>
@@ -443,7 +442,7 @@ if (sizeof($getUser) > 0) {
 						</div>
 					</li>
 				<?php  } ?>
-				<?php if (($loanissuemodule ?? 1) == 0) { ?>
+				<?php if (($leftbar_loanissuemodule ?? 1) == 0) { ?>
 					<li class="sidebar-dropdown acknowledge">
 						<a href="javascript:void(0)">
 							<i class='icon-wallet'></i>
@@ -451,7 +450,7 @@ if (sizeof($getUser) > 0) {
 						</a>
 						<div class="sidebar-submenu" <?php if ($current_module == 'loanissue') echo 'style="display:block" '; ?>>
 							<ul>
-								<?php if (($loan_issue ?? 1) == 0) { ?>
+								<?php if (($leftbar_loan_issue ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_loan_issue"><i class='icon-wallet'></i>Loan Issue</a>
 									</li>
@@ -461,7 +460,7 @@ if (sizeof($getUser) > 0) {
 					</li>
 
 				<?php  } 
-				 if (($doctrackmodule ?? 1) == 0) { ?>
+				 if (($leftbar_doctrackmodule ?? 1) == 0) { ?>
 				 
 					<li class="sidebar-dropdown ">
                         <a href="javascript:void(0)">
@@ -470,12 +469,12 @@ if (sizeof($getUser) > 0) {
                         </a>
                         <div class="sidebar-submenu" <?php if ($current_module == 'doctrack') echo 'style="display:block" '; ?>>
                             <ul>
-                                <?php if (($doctrack ?? 1) == 0) { ?>
+                                <?php if (($leftbar_doctrack ?? 1) == 0) { ?>
                                     <li>
                                         <a href="document_track"><i class='icon-credit-card'></i>Document Track</a>
                                     </li>
 								 <?php  } 
-								 if (($noc_replace ?? 1) == 0) { ?>
+								 if (($leftbar_noc_replace ?? 1) == 0) { ?>
                                     <li>
                                         <a href="noc_replace"><i class='icon-unlock'></i>DOC Replace</a>
                                     </li>
@@ -485,7 +484,7 @@ if (sizeof($getUser) > 0) {
                     </li>
 
 				<?php  } 
-				 if (($collectionmodule ?? 1) == 0) { ?>
+				 if (($leftbar_collectionmodule ?? 1) == 0) { ?>
 					<li class="sidebar-dropdown acknowledge">
 						<a href="javascript:void(0)">
 							<i class='icon-credit'></i>
@@ -493,7 +492,7 @@ if (sizeof($getUser) > 0) {
 						</a>
 						<div class="sidebar-submenu" <?php if ($current_module == 'collection') echo 'style="display:block" '; ?>>
 							<ul>
-								<?php if (($collection ?? 1) == 0) { ?>
+								<?php if (($leftbar_collection ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_collection"><i class='icon-credit'></i>Collection</a>
 									</li>
@@ -502,7 +501,7 @@ if (sizeof($getUser) > 0) {
 						</div>
 					</li>
 				<?php  } ?>
-				<?php if (($closedmodule ?? 1) == 0) { ?>
+				<?php if (($leftbar_closedmodule ?? 1) == 0) { ?>
 					<li class="sidebar-dropdown closed">
 						<a href="javascript:void(0)">
 							<i class='icon-uninstall'></i>
@@ -510,7 +509,7 @@ if (sizeof($getUser) > 0) {
 						</a>
 						<div class="sidebar-submenu" <?php if ($current_module == 'closed') echo 'style="display:block" '; ?>>
 							<ul>
-								<?php if (($closed ?? 1) == 0) { ?>
+								<?php if (($leftbar_closed ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_closed"><i class='icon-uninstall'></i>Closed</a>
 									</li>
@@ -519,7 +518,7 @@ if (sizeof($getUser) > 0) {
 						</div>
 					</li>
 				<?php  } ?>
-				<?php if (($nocmodule ?? 1) == 0) { ?>
+				<?php if (($leftbar_nocmodule ?? 1) == 0) { ?>
 					<li class="sidebar-dropdown acknowledge">
 						<a href="javascript:void(0)">
 							<i class='icon-export'></i>
@@ -527,12 +526,12 @@ if (sizeof($getUser) > 0) {
 						</a>
 						<div class="sidebar-submenu" <?php if ($current_module == 'noc') echo 'style="display:block" '; ?>>
 							<ul>
-								<?php if (($noc ?? 1) == 0) { ?>
+								<?php if (($leftbar_noc ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_noc"><i class='icon-export'></i>NOC</a>
 									</li>
 								<?php  } ?>
-								<?php if (($noc_handover ?? 1) == 0) { ?>
+								<?php if (($leftbar_noc_handover ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_noc_handover"><i class='icon-assistant'></i>NOC Handover</a>
 									</li>
@@ -541,7 +540,7 @@ if (sizeof($getUser) > 0) {
 						</div>
 					</li>
 				<?php  } ?>
-				<?php if (($followupmodule ?? 1) == 0) { ?>
+				<?php if (($leftbar_followupmodule ?? 1) == 0) { ?>
 					<li class="sidebar-dropdown ">
 						<a href="javascript:void(0)">
 							<i class='icon-cycle'></i>
@@ -549,27 +548,27 @@ if (sizeof($getUser) > 0) {
 						</a>
 						<div class="sidebar-submenu" <?php if ($current_module == 'followup') echo 'style="display:block" '; ?>>
 							<ul>
-								<?php if (($promotion_activity ?? 1) == 0) { ?>
+								<?php if (($leftbar_promotion_activity ?? 1) == 0) { ?>
 									<li>
 										<a href="promotion_activity"><i class='icon-change_history'></i>Promotion Activity</a>
 									</li>
 								<?php  } ?>
-								<?php if (($loan_followup ?? 1) == 0) { ?>
+								<?php if (($leftbar_loan_followup ?? 1) == 0) { ?>
 									<!-- <li>
 										<a href="loan_followup"><i class='icon-chat_bubble_outline'></i>Loan Follow Up</a>
 									</li> -->
 								<?php  } ?>
-								<?php if (($confirmation_followup ?? 1) == 0) { ?>
+								<?php if (($leftbar_confirmation_followup ?? 1) == 0) { ?>
 									<li>
 										<a href="confirmation_followup"><i class='icon-laptop'></i>Confirmation Follow Up</a>
 									</li>
 								<?php  } ?>
-								<?php if (($due_followup ?? 1) == 0) { ?>
+								<?php if (($leftbar_due_followup ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_due_followup"><i class='icon-confirmation_number'></i>Due Follow Up</a>
 									</li>
 								<?php  } ?>
-								<?php if (($ecs_followup ?? 1) == 0) { ?>
+								<?php if (($leftbar_ecs_followup ?? 1) == 0) { ?>
 									<li>
 										<a href="ecs_edit_followup"><i class='icon-confirmation_number'></i>ECS Follow Up</a>
 									</li>
@@ -579,7 +578,7 @@ if (sizeof($getUser) > 0) {
 					</li>
 				<?php  } ?>
 				
-				<?php if (($updatemodule ?? 1) == 0) { ?>
+				<?php if (($leftbar_updatemodule ?? 1) == 0) { ?>
 					<li class="sidebar-dropdown ">
 						<a href="javascript:void(0)">
 							<i class='icon-arrow_upward'></i>
@@ -587,7 +586,7 @@ if (sizeof($getUser) > 0) {
 						</a>
 						<div class="sidebar-submenu" <?php if ($current_module == 'update') echo 'style="display:block" '; ?>>
 							<ul>
-								<?php if (($update_screen ?? 1) == 0) { ?>
+								<?php if (($leftbar_updatemodule ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_update"><i class='icon-arrow_upward'></i>Update</a>
 									</li>
@@ -602,7 +601,7 @@ if (sizeof($getUser) > 0) {
 					</li>
 				<?php  } ?>
 
-				<?php if (($concernmodule ?? 1) == 0) { ?>
+				<?php if (($leftbar_concernmodule ?? 1) == 0) { ?>
 					<li class="sidebar-dropdown ">
 						<a href="javascript:void(0)">
 							<i class='icon-help-with-circle'></i>
@@ -610,17 +609,17 @@ if (sizeof($getUser) > 0) {
 						</a>
 						<div class="sidebar-submenu" <?php if ($current_module == 'concerncreation') echo 'style="display:block" '; ?>>
 							<ul>
-								<?php if (($concern_creation ?? 1) == 0) { ?>
+								<?php if (($leftbar_concern_creation ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_concern_creation"><i class='icon-bug_report'></i>Concern Creation</a>
 									</li>
 								<?php  } ?>
-								<?php if (($concern_solution ?? 1) == 0) { ?>
+								<?php if (($leftbar_concern_solution ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_concern_solution"><i class='icon-center_focus_strong'></i>Concern Solution</a>
 									</li>
 								<?php  } ?>
-								<!-- <?php if (($concern_feedback ?? 1) == 0) { ?>
+								<!-- <?php if (($leftbar_concern_feedback ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_concern_feedback"><i class='icon-redeem'></i>Concern Feedback</a>
 									</li>
@@ -629,7 +628,7 @@ if (sizeof($getUser) > 0) {
 						</div>
 					</li>
 				<?php  } ?>
-				<?php if (($accountsmodule ?? 1) == 0) { ?>
+				<?php if (($leftbar_accountsmodule ?? 1) == 0) { ?>
 					<li class="sidebar-dropdown ">
 						<a href="javascript:void(0)">
 							<i class='icon-domain'></i>
@@ -637,27 +636,27 @@ if (sizeof($getUser) > 0) {
 						</a>
 						<div class="sidebar-submenu" <?php if ($current_module == 'accounts') echo 'style="display:block" '; ?>>
 							<ul>
-								<?php if (($cash_tally ?? 1) == 0) { ?>
+								<?php if (($leftbar_cash_tally ?? 1) == 0) { ?>
 									<li>
 										<a href="cash_tally"><i class='icon-shareable'></i>Cash Tally</a>
 									</li>
 								<?php  } ?>
-								<?php if (($bank_clearance ?? 1) == 0) { ?>
+								<?php if (($leftbar_bank_clearance ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_bank_clearance"><i class='icon-business_center'></i>Bank Clearance</a>
 									</li>
 								<?php  } ?>
-								<?php if (($finance_insight ?? 1) == 0) { ?>
+								<?php if (($leftbar_finance_insight ?? 1) == 0) { ?>
 									<li>
 										<a href="finance_insight"><i class='icon-card_travel'></i>Financial Insights</a>
 									</li>
 								<?php  } ?>
-								<?php if (($hand_cash_balance_sheet ?? 1) == 0) { ?>
+								<?php if (($leftbar_hand_cash_balance_sheet ?? 1) == 0) { ?>
 									<li>
 										<a href="hand_cash_balance_sheet"><i class='icon-dollar-sign'></i>Hand Cash Balance Sheet</a>
 									</li>
 								<?php  } ?>
-								<?php if (($accounts_loan_issue ?? 1) == 0) { ?> 
+								<?php if (($leftbar_accounts_loan_issue ?? 1) == 0) { ?> 
 									<li>
 										<a href="edit_accounts_loan_issue"><i class='icon-wallet'></i>Loan Issue</a>
 									</li>
@@ -683,7 +682,7 @@ if (sizeof($getUser) > 0) {
 						</div>
 					</li>
 				<?php # } ?> -->
-				<?php if (($reportmodule ?? 1) == 0) { ?>
+				<?php if (($leftbar_reportmodule ?? 1) == 0) { ?>
 					<li class="sidebar-dropdown ">
 						<a href="javascript:void(0)">
 							<i class='icon-area-graph'></i>
@@ -691,61 +690,61 @@ if (sizeof($getUser) > 0) {
 						</a>
 						<div class="sidebar-submenu">
 							<ul>
-								<?php if (($work_report_module ?? 1) == 0) { ?>
+								<?php if (($leftbar_work_report_module ?? 1) == 0) { ?>
 								<li class="sidebar-dropdown-2">
 									<a href="javascript:void(0)"><i class="icon-briefcase"></i><span class="menu-text">Work Reports</span></a>
 
 									<div class="sidebar-submenu-2" style="display:none; margin-left: 25px;">
 										<ul>
-											<?php if (($request_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_request_report ?? 1) == 0) { ?>
 												<li>
 													<a href="request_report"><i class='icon-area-graph'></i>Request</a>
 												</li>
 											<?php  } ?>
 
-											<?php if (($verification_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_verification_report ?? 1) == 0) { ?>
 												<li>
 													<a href="verification_report"><i class='icon-area-graph'></i>Verification</a>
 												</li>
 											<?php  } ?>
 
-											<?php if (($approval_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_approval_report ?? 1) == 0) { ?>
 												<li>
 													<a href="approval_report"><i class='icon-area-graph'></i>Approval</a>
 												</li>
 											<?php  } ?>
 
-											<?php if (($cancel_revoke_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_cancel_revoke_report ?? 1) == 0) { ?>
 												<li>
 													<a href="cancel_revoke_report"><i class='icon-area-graph'></i>Cancel / Revoke</a>
 												</li>
 											<?php  } ?>
-											<?php if (($loan_issue_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_loan_issue_report ?? 1) == 0) { ?>
 												<li>
 													<a href="loan_issue_report"><i class='icon-area-graph'></i>Loan Issue</a>
 												</li>
 											<?php  } ?>
-											<?php if (($collection_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_collection_report ?? 1) == 0) { ?>
 												<li>
 													<a href="collection_report"><i class='icon-area-graph'></i>Collection</a>
 												</li>
 											<?php  } ?>
-											<?php if (($in_closed_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_in_closed_report ?? 1) == 0) { ?>
 												<li>
 													<a href="in_closed_report"><i class='icon-area-graph'></i>In Closed</a>
 												</li>
 											<?php  } ?>
-											<?php if (($closed_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_closed_report ?? 1) == 0) { ?>
 												<li>
 													<a href="closed_report"><i class='icon-area-graph'></i>Closed</a>
 												</li>
 											<?php  } ?>
-											<?php if (($due_list_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_due_list_report ?? 1) == 0) { ?>
 												<li>
 													<a href="due_list_report"><i class='icon-area-graph'></i>Due List</a>
 												</li>
 											<?php  } ?>
-											<?php if (($noc_handover_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_noc_handover_report ?? 1) == 0) { ?>
 												<li>
 													<a href="noc_handover_report"><i class='icon-area-graph'></i>NOC Handover</a>
 												</li>
@@ -754,29 +753,29 @@ if (sizeof($getUser) > 0) {
 									</div>
 								</li>
 								<?php  } ?>
-								<?php if (($monitor_report_module ?? 1) == 0) { ?>
+								<?php if (($leftbar_monitor_report_module ?? 1) == 0) { ?>
 								<li class="sidebar-dropdown-2">
 									<a href="javascript:void(0)"><i class="icon-monitor"></i><span class="menu-text">Monitor Reports</span></a>
 
 									<div class="sidebar-submenu-2" style="display:none; margin-left: 25px;">
 										<ul>
-											<?php if (($promotion_activity_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_promotion_activity_report ?? 1) == 0) { ?>
 												<li>
 													<a href="promotion_activity_report"><i class='icon-area-graph'></i>Promotion Activity </a>
 												</li>
 											<?php  } ?> 
 
-											<?php if (($events_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_events_report ?? 1) == 0) { ?>
 												<li>
 													<a href="events_report"><i class='icon-area-graph'></i>Events Activity</a>
 												</li>
 											<?php  } ?>
-											<?php if (($confirmation_followup_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_confirmation_followup_report ?? 1) == 0) { ?>
 												<li>
 													<a href="confirmation_followup_report"><i class='icon-area-graph'></i>Confirmation Follow Up</a>
 												</li>
 											<?php  } ?> 
-											<?php if (($commitment_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_commitment_report ?? 1) == 0) { ?>
 												<li>
 													<!-- name changes commitment_report to Due Followup Activity -->
 													<a href="commitment_report"><i class='icon-area-graph'></i>Due Followup Activity</a>  
@@ -787,29 +786,29 @@ if (sizeof($getUser) > 0) {
 													<a href="work_count_report"><i class='icon-area-graph'></i>Work Count</a>
 												</li>
 											<?php  #} ?>  -->
-											<?php if (($concern_report ?? 1)  == 0) { ?>
+											<?php if (($leftbar_concern_report ?? 1)  == 0) { ?>
 												<li>
 													<a href="concern_report"><i class='icon-area-graph'></i>Concern</a>
 												</li>
 											<?php  } ?> 
-											<?php if (($loan_track ?? 1) == 0) { ?>
+											<?php if (($leftbar_loan_track ?? 1) == 0) { ?>
 												<li>
 													<a href="loan_track"><i class='icon-target'></i>Loan Track</a>
 												</li>
 											<?php  } ?> 
-											<?php if (($customer_status_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_customer_status_report ?? 1) == 0) { ?>
 												<li>
 												<!-- name changes customer_status_report to Collection Status -->
 													<a href="customer_status_report"><i class='icon-area-graph'></i>Collection Status</a>
 												</li>
 											<?php  } ?> 
-											<?php if (($due_followup_customer_count_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_due_followup_customer_count_report ?? 1) == 0) { ?>
 												<li>
 													<!-- name changes due_followup_customer_count_report to Followup Summary to Due Summary to Back Office Summary-->
 													<a href="due_followup_customer_count_report"><i class='icon-area-graph'></i>Back Office Summary</a>
 												</li>
 											<?php  } ?>
-											<?php if (($location_track_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_location_track_report ?? 1) == 0) { ?>
 												<li>
 													<a href="location_track_report"><i class='icon-area-graph'></i>Location Track</a>
 												</li>
@@ -818,48 +817,48 @@ if (sizeof($getUser) > 0) {
 									</div>
 								</li>
 								<?php } ?>
-								<?php if (($count_report_module ?? 1) == 0) { ?>
+								<?php if (($leftbar_count_report_module ?? 1) == 0) { ?>
 								<li class="sidebar-dropdown-2">
 									<a href="javascript:void(0)"><i class="icon-layers"></i><span class="menu-text">Count Reports</span></a>
 
 									<div class="sidebar-submenu-2" style="display:none; margin-left: 25px;">
 										<ul>
-											<?php if (($request_count_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_request_count_report ?? 1) == 0) { ?>
 												<li>
 													<a href="request_count_report"><i class='icon-area-graph'></i>Request Count</a>
 												</li>
 											<?php  } ?>
-											<?php if (($verification_count_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_verification_count_report ?? 1) == 0) { ?>
 												<li>
 													<a href="verification_count_report"><i class='icon-area-graph'></i>Verification Count</a>
 												</li>
 											<?php  } ?>
-											<?php if (($approval_count_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_approval_count_report ?? 1) == 0) { ?>
 												<li>
 													<a href="approval_count_report"><i class='icon-area-graph'></i>Approval Count</a>
 												</li>
 											<?php  } ?> 
-											<?php if (($loan_issue_count_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_loan_issue_count_report ?? 1) == 0) { ?>
 												<li>
 													<a href="loan_issued_count_report"><i class='icon-area-graph'></i>Loan Issued Count</a>
 												</li>
 											<?php  } ?>
-											<?php if (($promotion_count_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_promotion_count_report ?? 1) == 0) { ?>
 												<li>
 													<a href="promotion_count_report"><i class='icon-area-graph'></i>Promotion Count</a>
 												</li>
 											<?php  } ?>
-											<?php if (($confirmation_count_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_confirmation_count_report ?? 1) == 0) { ?>
 												<li>
 													<a href="confirmation_count_report"><i class='icon-area-graph'></i>Confirmation Count</a>
 												</li>
 											<?php  } ?> 
-											<?php if (($due_followup_count_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_due_followup_count_report ?? 1) == 0) { ?>
 												<li>
 													<a href="duefollowup_count_report"><i class='icon-area-graph'></i>Due Followup Count</a>
 												</li>
 											<?php  } ?>
-											<?php if (($back_office_count_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_back_office_count_report ?? 1) == 0) { ?>
 												<li>
 													<a href="back_office_count_report"><i class='icon-area-graph'></i>Back Office Count</a>
 												</li>
@@ -868,33 +867,33 @@ if (sizeof($getUser) > 0) {
 									</div>
 								</li>
 								<?php } ?>
-								<?php if (($analysis_report_module ?? 1) == 0) { ?>
+								<?php if (($leftbar_analysis_report_module ?? 1) == 0) { ?>
 								<li class="sidebar-dropdown-2">
 									<a href="javascript:void(0)"><i class="icon-layers"></i><span class="menu-text">Analysis Reports</span></a>
 
 									<div class="sidebar-submenu-2" style="display:none; margin-left: 25px;">
 										<ul>
-											<?php if (($principal_interest_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_principal_interest_report ?? 1) == 0) { ?>
 												<li>
 													<a href="principal_interest_report"><i class='icon-area-graph'></i>Principal / Interest</a>
 												</li>
 											<?php  } ?>
-											<?php if (($balance_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_balance_report ?? 1) == 0) { ?>
 												<li>
 													<a href="balance_report"><i class='icon-area-graph'></i>Balance</a>
 												</li>
 											<?php  } ?>
-											<?php if (($area_loan_count_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_area_loan_count_report ?? 1) == 0) { ?>
 												<li>
 													<a href="area_loan_count_report"><i class='icon-area-graph'></i>Area Loan Count</a>
 												</li>
 											<?php  } ?> 
-											<?php if (($no_due_pay_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_no_due_pay_report ?? 1) == 0) { ?>
 												<li>
 													<a href="no_due_pay_report"><i class='icon-area-graph'></i>No Due Pay</a>
 												</li>
 											<?php  } ?>
-											<?php if (($branch_request_count_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_branch_request_count_report ?? 1) == 0) { ?>
 												<li>
 													<a href="branch_request_count_report"><i class='icon-area-graph'></i>Branch Request Count</a>
 												</li>
@@ -903,43 +902,43 @@ if (sizeof($getUser) > 0) {
 									</div>
 								</li>
 								<?php } ?>
-								<?php if (($accounts_report_module ?? 1) == 0) { ?>
+								<?php if (($leftbar_accounts_report_module ?? 1) == 0) { ?>
 								<li class="sidebar-dropdown-2">
 									<a href="javascript:void(0)"><i class="icon-domain"></i><span class="menu-text">Accounts Reports</span></a>
 
 									<div class="sidebar-submenu-2" style="display:none; margin-left: 25px;">
 										<ul>
-											<?php if (($agent_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_agent_report ?? 1) == 0) { ?>
 												<li>
 													<a href="agent_report"><i class='icon-area-graph'></i>Agent</a>
 												</li>
 											<?php  } ?>
-											<?php if (($other_trans_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_other_trans_report ?? 1) == 0) { ?>
 												<li>
 													<a href="other_transaction_report"><i class='icon-area-graph'></i>Other Transaction</a>
 												</li>
 											<?php  } ?>
-											<?php if (($day_end_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_day_end_report ?? 1) == 0) { ?>
 												<li>
 													<a href="day_end_report"><i class='icon-area-graph'></i>Day End</a>
 												</li>
 											<?php  } ?>
-											<?php if (($cash_tally_activity_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_cash_tally_activity_report ?? 1) == 0) { ?>
 												<li>
 													<a href="cash_tally_activity_report"><i class='icon-area-graph'></i>Cash Tally Activity</a>
 												</li>
 											<?php  } ?>
-											<?php if (($partners_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_partners_report ?? 1) == 0) { ?>
 												<li>
 													<a href="partners_report"><i class='icon-area-graph'></i>Partners</a>
 												</li>
 											<?php  } ?>
-											<?php if (($cleared_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_cleared_report ?? 1) == 0) { ?>
 												<li>
 													<a href="cleared_report"><i class='icon-area-graph'></i>Cleared</a>
 												</li>
 											<?php  } ?> 									
-											<?php if (($outstanding_report ?? 1) == 0) { ?>
+											<?php if (($leftbar_outstanding_report ?? 1) == 0) { ?>
 												<li>
 													<a href="outstanding_report"><i class='icon-area-graph'></i>Outstanding</a>
 												</li>
@@ -952,7 +951,7 @@ if (sizeof($getUser) > 0) {
 						</div>
 					</li>
 				<?php  } ?>
-				<?php if (($reportmodule_intrest ?? 1) == 0) { ?>
+				<?php if (($leftbar_reportmodule_intrest ?? 1) == 0) { ?>
 					<li class="sidebar-dropdown ">
 						<a href="javascript:void(0)">
 							<i class='icon-area-graph'></i>
@@ -960,27 +959,27 @@ if (sizeof($getUser) > 0) {
 						</a>
 						<div class="sidebar-submenu" <?php if ($current_module == 'interest_report') echo 'style="display:block" '; ?>>
 							<ul>
-								<?php if (($intrest_ledger_report ?? 1) == 0) { ?>
+								<?php if (($leftbar_intrest_ledger_report ?? 1) == 0) { ?>
 									<li>
 										<a href="intrest_ledger_report"><i class='icon-area-graph'></i>Ledger View</a>
 									</li>
 								<?php  } ?>
-								<?php if (($intrest_loan_issue_report ?? 1) == 0) { ?>
+								<?php if (($leftbar_intrest_loan_issue_report ?? 1) == 0) { ?>
 									<li>
 										<a href="intrest_loan_issue_report"><i class='icon-area-graph'></i>Loan Issue</a>
 									</li>
 								<?php  } ?>
-								<?php if (($intrest_collection_report ?? 1) == 0) { ?>
+								<?php if (($leftbar_intrest_collection_report ?? 1) == 0) { ?>
 									<li>
 										<a href="intrest_collection_report"><i class='icon-area-graph'></i>Collection</a>
 									</li>
 								<?php  } ?>
-								<?php if (($intrest_balance_report ?? 1) == 0) { ?>
+								<?php if (($leftbar_intrest_balance_report ?? 1) == 0) { ?>
 									<li>
 										<a href="intrest_balance_report"><i class='icon-area-graph'></i>Balance</a>
 									</li>
 								<?php  } ?>
-								<?php if (($intrest_closed_report ?? 1) == 0) { ?>
+								<?php if (($leftbar_intrest_closed_report ?? 1) == 0) { ?>
 									<li>
 										<a href="intrest_closed_report"><i class='icon-area-graph'></i>Closed</a>
 									</li>
@@ -989,7 +988,7 @@ if (sizeof($getUser) > 0) {
 						</div>
 					</li>
 				<?php  } ?>
-				<?php if (($search_module ?? 1) == 0) { ?>
+				<?php if (($leftbar_search_module ?? 1) == 0) { ?>
 					<li class="sidebar-dropdown">
 						<a href="javascript:void(0)">
 							<i class='icon-search'></i>
@@ -997,7 +996,7 @@ if (sizeof($getUser) > 0) {
 						</a>
 						<div class="sidebar-submenu" <?php if ($current_module == 'search_module') echo 'style="display:block" '; ?>>
 							<ul>
-								<?php if (($search ?? 1) == 0) { ?>
+								<?php if (($leftbar_search ?? 1) == 0) { ?>
 									<li>
 										<a href="search_module"><i class='icon-search'></i>Search</a>
 									</li>
@@ -1006,39 +1005,40 @@ if (sizeof($getUser) > 0) {
 						</div>
 					</li>
 				<?php  } ?>
-				<!-- <?php if (($bulk_upload_module ?? 1) == 0) { ?>
+				<!-- <?php #if (($leftbar_bulk_upload_module ?? 1) == 0) { ?>
 					<li class="sidebar-dropdown">
 						<a href="javascript:void(0)">
 							<i class='icon-upload-cloud'></i>
 							<span class="menu-text">Bulk Upload</span>
 						</a>
-						<div class="sidebar-submenu" <?php if ($current_module == 'bulk_upload') echo 'style="display:block" '; ?>>
+						<div class="sidebar-submenu" <?php #if ($current_module == 'bulk_upload') echo 'style="display:block" '; ?>>
 							<ul>
-								<?php if (($bulk_upload ?? 1) == 0) { ?>
+								<?php #if (($leftbar_bulk_upload ?? 1) == 0) { ?>
 									<li>
 										<a href="bulk_upload"><i class='icon-upload-cloud'></i>Bulk Upload</a>
 									</li>
-								<?php  } ?>
+								<?php  #} ?>
 							</ul>
 						</div>
 					</li>
-				<?php  } ?> -->
-				<?php  if (($sms_module ?? 1) == 0) { ?>
-				<li class="sidebar-dropdown">
-					<a href="javascript:void(0)">
-						<i class='icon-mail'></i>
-						<span class="menu-text">SMS</span>
-					</a>
-					<div class="sidebar-submenu" <?php if ($current_module == 'sms_generation') echo 'style="display:block" '; ?>>
-						<ul>
-						<?php if (($sms_generation ?? 1) == 0) { ?>
-							<li>
-								<a href="sms_generation"><i class="icon-message"></i>SMS Generation</a>
-							</li>
-						<?php  } ?>
-						</ul>
-					</div>
-				</li>
+				<?php  #} ?> -->
+
+				<?php  if (($leftbar_sms_module ?? 1) == 0) { ?>
+					<li class="sidebar-dropdown">
+						<a href="javascript:void(0)">
+							<i class='icon-mail'></i>
+							<span class="menu-text">SMS</span>
+						</a>
+						<div class="sidebar-submenu" <?php if ($current_module == 'sms_generation') echo 'style="display:block" '; ?>>
+							<ul>
+							<?php if (($leftbar_sms_generation ?? 1) == 0) { ?>
+								<li>
+									<a href="sms_generation"><i class="icon-message"></i>SMS Generation</a>
+								</li>
+							<?php  } ?>
+							</ul>
+						</div>
+					</li>
 				<?php } ?>
 
 			</ul>

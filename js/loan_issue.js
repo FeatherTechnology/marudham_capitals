@@ -231,15 +231,13 @@ $(document).ready(function () {
 
         let famAdhaarNo = document.querySelector("#cash_guarentor_name").value;
         $('#cash_guarentor').hide();
-        $('#compare_finger').val('')
+        $('#compare_finger, #ack_fingerprint, #fingerValidation').val('');
         var cusId = $('#cus_id').val();
         if (famAdhaarNo == cusId) {
             var cus = '1';
         } else {
             var cus = '2';
         }
-
-        $('#fingerValidation').val('');
 
         if(famAdhaarNo !=''){
             $.ajax({
@@ -253,14 +251,14 @@ $(document).ready(function () {
                     $("#relationship").val(result['relation']);
                     $("#compare_finger").val(result['fpTemplate']);
                     if (result['hand'] == '1') {
-                        $('.scanBtn').removeAttr('disabled');
+                        $('.scan_btn').removeAttr('disabled');
                         var hand = "Put Your Left Thumb"
                     } else if (result['hand'] == '2') {
-                        $('.scanBtn').removeAttr('disabled');
+                        $('.scan_btn').removeAttr('disabled');
                         var hand = "Put Your Right Thumb"
                     } else {
                         var hand = "Finger Print Not Registered";
-                        $('.scanBtn').attr('disabled', true);
+                        $('.scan_btn').attr('disabled', true);
                     }
                     $("#hand_type").text(hand).attr('class', 'text-danger');
                 }
@@ -270,30 +268,15 @@ $(document).ready(function () {
             $("#hand_type").text('');
             $("#relationship").val('');
             $("#compare_finger").val('');
-            $('.scanBtn').removeAttr('disabled');
+            $('.scan_btn').removeAttr('disabled');
         }
     });
 
-    $('.scanBtn').click(function () {
+    $('.scan_btn').click(function () {
         var g_name = $('#cash_guarentor_name').val();
 
         if (g_name != '') {
-            var btn = $(this);
-            btn.attr('disabled', true);
-            var compare_finger = $('#compare_finger').val();
-            commonCaptureFinger((fdata) => {
-                $('#ack_fingerprint').val(fdata);
-                commonMatchFinger(compare_finger, () => {
-                    $('#fingerValidation').val('1');
-                    btn.attr('disabled', true);
-                    $("#hand_type").text('Done').attr('class', 'text-success');
-                }, () => {
-                    $('#fingerValidation').val('');
-                    btn.removeAttr('disabled');
-                });
-            }, () => {
-                btn.removeAttr('disabled');
-            });
+            getMatchFingerDetails();
         } else {//If End
             $('#cash_guarentor').show();
         }
@@ -1595,7 +1578,7 @@ function checkBalance() {
 //Submit Validation
 function loanIssueSumitValidation(event) {
     var issueMode = $('#issued_mode').val(); var paymenType = $('#payment_type').val(); var cash = $('#cash').val(); var guarentorName = $('#cash_guarentor_name').val();
-    // var fingerMatch = $('#fingerValidation').val();
+    var fingerMatch = $('#fingerValidation').val();
     var ag_id = $('#agent_id').val(); 
     // var bank_id = $('#bank_id').val();
     var validation = true ;
@@ -1654,13 +1637,13 @@ function loanIssueSumitValidation(event) {
                 $('#cash_guarentor').hide();
             }
 
-            // if (fingerMatch != '1') {
-            //     event.preventDefault();
-            //     validation = false;
-            //     $('#finger_check').show();
-            // } else {
-            //     $('#finger_check').hide();
-            // }
+            if (fingerMatch != '1') {
+                event.preventDefault();
+                validation = false;
+                $('#finger_check').show();
+            } else {
+                $('#finger_check').hide();
+            }
         }
     }
     return validation;

@@ -13,7 +13,7 @@ include '../ajaxconfig.php';
             <!-- <th>Address</th> -->
             <th>DOB</th>
             <th>Age</th>
-            <th>Live/Deceased</th>
+            <th>Live Status</th>
             <th>Aadhar No</th>
             <th>Mobile No</th>
             <th>Occupation</th>

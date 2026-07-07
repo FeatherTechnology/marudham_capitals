@@ -68,7 +68,7 @@
 									<div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12"></div>
 									<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12">
 										<div class="form-group">
-											<button type="button" class='form-control btn btn-success scanBtn' style='background-color:#009688; margin-top: 17px; height: 35px;' onclick="event.preventDefault()" title='Put Your Thumb'><i class="material-icons" id="icon-flipped">&#xe90d;</i>&nbsp;Scan</button>
+											<button type="button" class='form-control btn btn-success search_by_scan' style='background-color:#009688; margin-top: 17px; height: 35px;' onclick="event.preventDefault()" title='Put Your Thumb'><i class="material-icons" id="icon-flipped">&#xe90d;</i>&nbsp;Scan</button>
 											<input type="hidden" class="form-control" id="search_fingerprint" name="search_fingerprint"> <!-- finger print value from Device when scanning.-->
 											<input type="hidden" class="form-control" id="fingerprint_person_id" name="fingerprint_person_id">
 										</div>
