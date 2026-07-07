@@ -6,19 +6,15 @@ if (isset($_GET['upd'])) {
 }
 
 @session_start();
-$update_screen_id = ''; // Default value
-$selected_screens = [];
 
 if (isset($_SESSION['userid'])) {
 	$userid = $_SESSION['userid'];
 	$getUser = $userObj->getuser($mysqli, $userid);
-	// Check if user record exists and update_screen_id is not empty
-	if (!empty($getUser) && !empty($getUser['update_screen_id'])) {
-		$update_screen_id = $getUser['update_screen_id'];
-		$selected_screens = array_filter(explode(',', $update_screen_id));
-	}
-		$approvalaccess = $getUser['approval'];
-		$update_cp_edit_access = $getUser['update_cp_edit_access'] ?? 0;
+
+	$customer_profile = $getUser['update_screen'] ?? '1';
+	$update_documentation = $getUser['update_documentation']  ?? '1';
+	$approvalaccess = $getUser['approval'] ?? '1';
+	$update_cp_edit_access = $getUser['update_cp_edit_access'] ?? 0;
 }
 
 if (isset($_POST['submit_update_cus_profile']) && $_POST['submit_update_cus_profile'] != '') {
@@ -239,15 +235,15 @@ if (sizeof($getCustomerReg) > 0) {
 
 	<div class="col-md-12">
 		<div class="form-group" style="text-align:center">
-			<input type="hidden" name="selected_screens" id="selected_screens" value="<?php if (isset($selected_screens)) {
-																							echo implode(',', $selected_screens);
-																						} ?>">
-			<?php if (!empty($selected_screens)) { ?>
-				<?php if (in_array("1", $selected_screens)) { ?>
+			<input type="hidden" name="cp_screen" id="cp_screen" value="<?php echo $customer_profile; ?>">
+			<input type="hidden" name="doc_screen" id="doc_screen" value="<?php echo $update_documentation; ?>">
+
+			<?php if ($customer_profile == '0' || $update_documentation == '0') { ?>
+				<?php if ($customer_profile == '0') { ?>
 					<input type="radio" name="verification_type" id="cus_profile" value="cus_profile">
 					<label for="cus_profile">&nbsp;&nbsp; Customer Profile </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<?php } ?>
-				<?php if (in_array("2", $selected_screens)) { ?>
+				<?php } 
+				 if ($update_documentation =='0') { ?>
 					<input type="radio" name="verification_type" id="documentation" value="documentation">
 					<label for="documentation">&nbsp;&nbsp; Documentation </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<?php } ?>
@@ -970,7 +966,7 @@ if (sizeof($getCustomerReg) > 0) {
 					<!-- KYC info END -->
 
 					<!-- Fingerprint Info start-->
-					<div class="card ">
+					<div class="card">
 						<div class="card-header"> Fingerprint Info </div><span class="text-danger fingerSpan" style="margin-left:25px;display: none;">Please Scan Customer Fingerprint</span>
 						<div class="card-body">
 							<div class="row">

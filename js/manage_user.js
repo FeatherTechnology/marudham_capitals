@@ -70,11 +70,12 @@ const dueFollowupLines = new Choices('#due_follup_lines', {
     allowHTML: true
 });
 
-const updateScreen = new Choices('#update_screen', {
+const cpEditAccess = new Choices('#update_cp_edit_access', {
     removeItemButton: true,
-    noChoicesText: 'Select Update Screen',
+    noChoicesText: 'Select Customer Profile Access',
     allowHTML: true
 });
+cpEditAccess.disable();
 
 // Document is ready
 $(document).ready(function () {
@@ -163,6 +164,7 @@ $(document).ready(function () {
         getLineDropdown(branch_id);
         getdueFollupLineDropdown(branch_id);
     });
+
     $('#bank_access').change(function () {
         var bank_access = bankAccessMultiselect.getValue();
         var bank_details = '';
@@ -196,25 +198,70 @@ $(document).ready(function () {
         $('#bank_details').val(sortedStr);
     });
 
-    $('#update_screen').change(function () {
-        // Get values from multiselect and sort
-        const screenList = updateScreen.getValue();
-        const values = screenList.map(item => item.value);
-
-        const screenSortedStr = values
-            .sort((a, b) => a - b)
-            .join(',');
-    
-        $('#update_screen_id').val(screenSortedStr);
-
-        if(values.includes('1')){
-            $('.update_cp_edit_access_div').show();
-        }else{
-            $('#update_cp_edit_access').val('0');
-            $('.update_cp_edit_access_div').hide();
+    $('#noc_replace, #doctrackmodule').on('change', function () {
+        if ($(this).is(':checked')) {
+            $('#doc_replace_remove_access').prop('disabled', false);
+        } else {
+            $('#doc_replace_remove_access').prop('disabled', true);
+            $('#doc_replace_remove_access').val(''); // Optional: clear selected values
         }
     });
 
+    $('#updatemodule').on('change', function () {
+        cpEditAccess.removeActiveItems(); // Optional: clear selected values
+        cpEditAccess.disable();
+        $('#update_doc_edit_access').val(''); // Optional: clear selected values
+        $('#update_doc_edit_access').prop('disabled', true);
+    });
+
+    $('#update').on('change', function () {
+        cpEditAccess.removeActiveItems(); // Optional: clear selected values
+        if ($(this).is(':checked')) {
+            cpEditAccess.enable();
+        } else {
+            cpEditAccess.disable();
+        }
+    });
+    
+    $('#update_cp_edit_access').change(function () {
+
+        let values = cpEditAccess.getValue(true); // ["1","2"]
+
+        // If Overall (2) is selected with other options
+        if (values.includes('2') && values.length > 1) {
+
+            // Check whether 2 was the last selected option
+            const lastValue = values[values.length - 1];
+
+            cpEditAccess.removeActiveItems();
+
+            if (lastValue === '2') {
+                // User selected Overall last → keep only Overall
+                cpEditAccess.setChoiceByValue('2');
+            } else {
+                // User selected another option after Overall → remove Overall
+                values
+                    .filter(v => v !== '2')
+                    .forEach(v => cpEditAccess.setChoiceByValue(v));
+            }
+
+            values = cpEditAccess.getValue(true);
+        }
+
+        $('#update_cp_edit_access_id').val(
+            values.sort((a, b) => a - b).join(',')
+        );
+    });
+
+    $('#update_documentation').on('change', function () {
+        if ($(this).is(':checked')) {
+            $('#update_doc_edit_access').prop('disabled', false);
+        } else {
+            $('#update_doc_edit_access').prop('disabled', true);
+            $('#update_doc_edit_access').val(''); // Optional: clear selected values
+        }
+    });
+    
     //modules checkbox events
     $("#adminmodule").on("change", function () {
         const checkboxesToEnable = document.querySelectorAll("input.admin-checkbox");
@@ -431,22 +478,6 @@ $(document).ready(function () {
         }
     });
 
-    $('#updatemodule').click(function () {
-        var update_screen = document.querySelector('#updatemodule');
-        if (!update_screen.checked) {
-            $('.update_screen_div').hide();
-        }
-    });
-
-    $('#update').click(function () {
-        var update_screen = document.querySelector('#update');
-        if (update_screen.checked) {
-            $('.update_screen_div').show();
-        } else {
-            $('.update_screen_div').hide();
-        }
-    });
-
     $('#request').click(function () {
         var request_screen = document.querySelector('#request');
         if (request_screen.checked) {
@@ -533,6 +564,21 @@ $(function () {
 
     var user_id_upd = $('#user_id_upd').val();
     getBankName();
+
+    if ($('#noc_replace').is(':checked')) {
+        $('#doc_replace_remove_access').prop('disabled', false);
+    } else {
+        $('#doc_replace_remove_access').prop('disabled', true);
+        $('#doc_replace_remove_access').val(''); // Optional: clear selected values
+    }
+
+    if ($('#update_documentation').is(':checked')) {
+        $('#update_doc_edit_access').prop('disabled', false);
+    } else {
+        $('#update_doc_edit_access').prop('disabled', true);
+        $('#update_doc_edit_access').val(''); // Optional: clear selected values
+    }
+
     if (user_id_upd > 0) {
         var role_upd = $('#role_upd').val();
         var role_type_upd = $('#role_type_upd').val();
@@ -568,22 +614,18 @@ $(function () {
 
         var update_screen = document.querySelector('#update');
         if (update_screen.checked) {
-            let editVal = $('#update_screen_id').val();
+            let editVal = $('#update_cp_edit_access_id').val();
             if (editVal) {
+                cpEditAccess.enable();
                 let selectedValues = editVal.split(',');
                 selectedValues.forEach(value => {
-                    updateScreen.setChoiceByValue(value.trim());
+                    cpEditAccess.setChoiceByValue(value.trim());
                 });
-
-                if(selectedValues.includes('1')){ //Customer Profile.
-                    $('.update_cp_edit_access_div').show();
-                }else{
-                    $('#update_cp_edit_access').val('0');
-                    $('.update_cp_edit_access_div').hide();
-                }
+            } else {
+                cpEditAccess.disable();
             }
-
-            $('.update_screen_div').show()
+        } else {
+            cpEditAccess.disable();
         }
 
         var request_screen = document.querySelector('#request');
@@ -1242,9 +1284,6 @@ function validation() {
         request_report: { group: true },
         verification_report: { group: true },
         approval_report: { group: true },
-
-        /* ---------------- CUSTOMER SUMMARY ONLY ---------------- */
-        request: { cusSummary: true },
         
         /* ---------------- BOTH REQUIRED ---------------- */
         verification: { group: true, cusSummary: true },
@@ -1497,26 +1536,42 @@ function validation() {
         $('#bnk_clr_upl_acc').val('')
     }
 
-    var update = document.querySelector('#update');
-    var update_screen = updateScreen.getValue();
+    var update = document.querySelector('#update'); //Customer Profile.
     if (!update.checked) {
-        $('#update_screen_id').val('')
+        $('#update_cp_edit_access_id').val('');
     } else{
-         if(update_screen.length == 0){
-            $('.update_screen_div').show();
+        let cp_edit_screen = cpEditAccess.getValue();
+         if(cp_edit_screen.length == 0){
+            $('.cpEditScreenCheck').show();
+            validation = false;
+        }else{
+            $('.cpEditScreenCheck').hide();
+        }
+    }
+
+    var updateDoc = document.querySelector('#update_documentation'); //Documentation.
+    if (!updateDoc.checked) {
+        $('#update_doc_edit_access').val('');
+    } else{
+        let docEditAccess = $('#update_doc_edit_access').val();
+         if(docEditAccess == '0'){
             $('.updateScreenCheck').show();
             validation = false;
         }else{
             $('.updateScreenCheck').hide();
         }
+    }
 
-        const values = update_screen.map(item => item.value);
-        let editAccess = $('#update_cp_edit_access').val();
-        if(values.includes('1') && editAccess =='0'){
-            $('.cpEditScreenCheck').show();
+    var docReplace = document.querySelector('#noc_replace'); //Documentation.
+    if (!docReplace.checked) {
+        $('#doc_replace_remove_access').val('');
+    } else{
+        let docReplaceAccess = $('#doc_replace_remove_access').val();
+         if(docReplaceAccess == '0'){
+            $('.removeAccessCheck').show();
             validation = false;
         }else{
-            $('.cpEditScreenCheck').hide();
+            $('.removeAccessCheck').hide();
         }
     }
 

@@ -774,18 +774,10 @@ $(function () {
     });
     
     //  $('.icon-chevron-down1').parent().next('div').slideUp(); //To collapse all card on load
-    let selectedScreens = $('#selected_screens').val();
+    let cp_screen = $('#cp_screen').val();
+    let doc_screen = $('#doc_screen').val();
 
-    // Convert the string to an array
-    let selectedArray = selectedScreens.split(',');
-
-    if (selectedArray.length === 1 && selectedArray.includes('1')) {
-        callCustomerProfileFunctn();
-
-    } else if (selectedArray.length === 1 && selectedArray.includes('2')) {
-        getDocumentHistory();
-
-    } else if (selectedArray.includes('1') && selectedArray.includes('2')) {
+    if (cp_screen == '0' && doc_screen == '0') {
 
         $('input[name="verification_type"]').on('change', function () {
 
@@ -798,7 +790,14 @@ $(function () {
 
         });
 
-    }
+    } else if (cp_screen == '0') {
+        callCustomerProfileFunctn();
+
+    } else if (doc_screen == '0') {
+        getDocumentHistory();
+
+    } 
+
     nameFormatter('#cus_name');
     nameFormatter('#famname');
 
@@ -879,8 +878,10 @@ function callCustomerProfileFunctn() {
         $('.spouse').hide();
     }
 
-    let updateCPEditAccess = $('#update_cp_edit_access').val();
-    if(updateCPEditAccess !='2'){ //1-Customer feedback, 2-Overall Customer profile
+    // Convert the string to an array
+    let selectedArray = $('#update_cp_edit_access').val().split(',');
+
+    if(selectedArray.includes('1') || selectedArray.includes('3')){ //1-Customer feedback, 2-Overall Customer profile, 3-Fingerprint info
         let form = $('form#cus_Profiles');
 
         // inputs except inside customer_summary_card
@@ -889,14 +890,15 @@ function callCustomerProfileFunctn() {
             .prop('readonly', true);
 
         // button except inside customer_summary_card
+        let cndtn = (selectedArray.includes('1')) ? '#customer_summary_card button, #reminder_call,' : '';
         form.find('select, button')
-            .not('#customer_summary_card button, #back_btn, #reminder_call')
+            .not(`${cndtn} #back_btn`)
             .prop('disabled', true);
 
         form.find('#pic, #guarentorpic')
             .prop('disabled', true);
 
-    } else if(updateCPEditAccess =='2'){
+    } else if(selectedArray.includes('2')){
         $('#reminder_submit_div').hide();
     }
 }
@@ -2467,7 +2469,7 @@ $('#guarentor_name').change(function () { //Select Guarantor Name relationship w
 ///Customer profile submit///
 $('#submit_update_cus_profile').click(function () {
     if (validation()) {
-        let confirmAction = confirm("Are you sure you want to submit Loan Issue ?");
+        let confirmAction = confirm("Are you sure you want to update ?");
         if (!confirmAction) {
             event.preventDefault(); // Stop form submission if canceled
             return false;
@@ -3837,8 +3839,8 @@ function fingerprintTable() {
         cache: false,
         success: function (html) {
             $('.fingerprintTable').html(html);
-            let updateCPEditAccess = $('#update_cp_edit_access').val();
-            if(updateCPEditAccess !='2'){ //Overall
+            let updateCPEditAccess = $('#update_cp_edit_access').val().split(',');
+            if(updateCPEditAccess.includes('1') && !updateCPEditAccess.includes('2') && !updateCPEditAccess.includes('3') ){ //1-Customer summary, 2-Overall, 3-Fingerprint info
                 $('.hand_selection, .scanBtn').attr('disabled', true);
             }
         }

@@ -59,11 +59,17 @@ $closed = '';
 $nocmodule = '';
 $noc = '';
 $noc_mapping_access = '';
+$noc_handover = '';
+$noc_replace = '';
+$doc_replace_remove_access = '';
 $doctrackmodule = '';
 $doctrack = '';
 $doc_rec_access = '';
 $updatemodule = '';
 $update_screen = '';
+$update_cp_edit_access = '';
+$update_documentation = '';
+$update_doc_edit_access = '';
 $concernmodule = '';
 $concern_creation = '';
 $concern_solution = '';
@@ -244,6 +250,7 @@ if($idupd>0)
 			$noc          		     	= $getUser['noc'];
 			$noc_handover          		     = $getUser['noc_handover'];
 			$noc_replace          		     = $getUser['noc_replace'];
+			$doc_replace_remove_access          		     = $getUser['doc_replace_remove_access'];
 			$noc_replace_access          		     = $getUser['noc_replace_access'];
 			$noc_mapping_access          		     = $getUser['noc_mapping_access'];
 			$doctrackmodule 				= $getUser['doctrackmodule'];
@@ -251,8 +258,9 @@ if($idupd>0)
 			$doc_rec_access 				= $getUser['doc_rec_access'];
 			$updatemodule 				= $getUser['updatemodule'];
 			$update_screen 				= $getUser['update_screen'];
-			$update_screen_id 				= $getUser['update_screen_id'];
 			$update_cp_edit_access 				= $getUser['update_cp_edit_access'];
+			$update_documentation              = $getUser['update_documentation'];
+			$update_doc_edit_access              = $getUser['update_doc_edit_access'];
 			$concernmodule          		     = $getUser['concernmodule'];
 			$concern_creation          		     = $getUser['concern_creation'];
 			$concern_solution          		     = $getUser['concern_solution'];
@@ -948,6 +956,17 @@ if($idupd>0)
                                 <label class="custom-control-label" for="noc_replace">DOC Replace</label>
                             </div>
                         </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12" tabindex="55">
+                            <div class="custom-control custom-checkbox">
+                                <select class='form-control' id='doc_replace_remove_access' name='doc_replace_remove_access' style="width: 250px;" disabled>
+									<option value="">Select Remove Access</option>
+									<option value="1" <?php if(isset($doc_replace_remove_access) && $doc_replace_remove_access == '1') echo 'selected'; ?>>Yes</option>
+									<option value="2" <?php if(isset($doc_replace_remove_access) && $doc_replace_remove_access == '2') echo 'selected'; ?>>No</option>
+								</select>
+								<br/>
+								<span class='text-danger removeAccessCheck' style="display:none">Please Select Remove Access</span>
+                            </div>
+                        </div>
 					</div>
 					
 					<hr>
@@ -1110,30 +1129,42 @@ if($idupd>0)
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($update_screen==0){ echo'checked'; }} ?> tabindex="72" class="update-checkbox screen-validations" id="update" name="update" disabled>&nbsp;&nbsp;
-                                <label class="custom-control-label" for="update">Update</label>
+                                <label class="custom-control-label" for="update">Customer Profile</label>
                             </div>
                         </div>
-						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 update_screen_div"  style='display:none;' tabindex="73">
+
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12" tabindex="73">
                             <div class="custom-control custom-checkbox">
-								<input type='hidden' id='update_screen_id' name='update_screen_id' value='<?php if(isset($update_screen_id)) echo $update_screen_id; ?>'>
-                                <select class='form-control' id='update_screen' name='update_screen' multiple>
-									<option value="">Select Update screen</option>
-									<option value="1">Customer Profile</option>
-									<option value="2">Documentation</option>
+								<input type='hidden' id='update_cp_edit_access_id' name='update_cp_edit_access_id' value='<?php if(isset($update_cp_edit_access)) echo $update_cp_edit_access; ?>'>
+                                <select class='form-control' name='update_cp_edit_access' id='update_cp_edit_access' multiple>
+									<option value="">Select Customer Profile Access</option>
+									<option value="1">Customer Feedback</option>
+									<option value="2">Overall Customer Profile</option>
+									<option value="3">Fingerprint Info</option>
 								</select>
-								<span class='text-danger updateScreenCheck' style="display:none">Please Select Update Screen</span>
+								<span class='text-danger cpEditScreenCheck' style="display:none">Please Select Customer Profile Access</span>
                             </div>
                         </div>
-						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 update_cp_edit_access_div" style='display:none;' tabindex="74">
+						
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-                                <select class='form-control' name='update_cp_edit_access' id='update_cp_edit_access'>
-									<option value="0">Select Customer Profile Edit Access</option>
-									<option value="1" <?php if(isset($update_cp_edit_access) && $update_cp_edit_access == '1') echo 'selected'; ?>>Customer Feedback</option>
-									<option value="2" <?php if(isset($update_cp_edit_access) && $update_cp_edit_access == '2') echo 'selected'; ?>>Overall Customer Profile</option>
-								</select>
-								<span class='text-danger cpEditScreenCheck' style="display:none">Please Select Customer Profile Edit Access</span>
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($update_documentation==0){ echo'checked'; }} ?> tabindex="74" class="update-checkbox screen-validations" id="update_documentation" name="update_documentation" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="update_documentation">Documentation</label>
                             </div>
                         </div>
+						
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12" tabindex="75">
+                            <div class="custom-control custom-checkbox">
+                                <select class='form-control' name='update_doc_edit_access' id='update_doc_edit_access' style="width: 250px;" disabled>
+									<option value="">Select Documentation Edit Access</option>
+									<option value="1" <?php if(isset($update_doc_edit_access) && $update_doc_edit_access == '1') echo 'selected'; ?>>Yes</option>
+									<option value="2" <?php if(isset($update_doc_edit_access) && $update_doc_edit_access == '2') echo 'selected'; ?>>No</option>
+								</select>
+								<br/>
+								<span class='text-danger updateScreenCheck' style="display:none">Please Select Documentation Edit Access</span>
+                            </div>
+                        </div>
+						
 					</div>
 
 					<hr>
