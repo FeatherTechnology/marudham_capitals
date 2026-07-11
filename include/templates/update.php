@@ -1139,13 +1139,13 @@ if (sizeof($getCustomerReg) > 0) {
 								</div>
 								<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
 									<div class="form-group">
-										<label for="reminder_call"> Reminder call </label> <span class="required">*</span>
+										<label for="reminder_call"> Reminder and Follow up </label> 
 										<select class="form-control" name="reminder_call" id="reminder_call" tabindex="63">
-											<option value="">Select Reminder Call</option>
-											<option value="0" <?php if (isset($reminder_call) and $reminder_call == '0') echo 'selected'; ?>> Yes </option>
-											<option value="1" <?php if (isset($reminder_call) and $reminder_call == '1') echo 'selected'; ?>> No </option>
+											<option value="0">Select Reminder and Follow up</option>
+											<option value="1" <?php if (isset($reminder_call) and $reminder_call == '1') echo 'selected'; ?>> No Reminder </option>
+											<option value="2" <?php if (isset($reminder_call) and $reminder_call == '2') echo 'selected'; ?>> No Follow up </option>
 										</select>
-										<span class="text-danger" style='display:none' id='reminderCallCheck'>Please Select Reminder Call </span>
+										<span class="text-danger" style='display:none' id='reminderCallCheck'>Please Select Reminder and Follow up </span>
 									</div>
 								</div>
 								<div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12" id="reminder_submit_div">

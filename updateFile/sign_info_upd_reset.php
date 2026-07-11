@@ -1,5 +1,11 @@
 <?php
 include '../ajaxconfig.php';
+
+@session_start();
+$userid = $_SESSION['userid'];
+$sql = $connect->prepare("SELECT update_doc_edit_access FROM user WHERE user_id = ?");
+$sql->execute([$userid]);
+$doc_edit_access = (int) $sql->fetchColumn(); //1-Yes, 2-No.
 ?>
 
 <table class="table custom-table" id="signedDoc_upd_table_data">
@@ -18,62 +24,54 @@ include '../ajaxconfig.php';
 
         <?php
         $req_id = $_POST['req_id'];
-        $signDocInfo = $connect->query("SELECT * FROM `signed_doc_info` where req_id = '$req_id' order by id desc");
+        $signDocInfo = $connect->query("SELECT sdi.id, sdi.cus_id, sign_type, signType_relationship, doc_Count, GROUP_CONCAT(upload_doc_name) AS doc_name, vfi.famname, vfi.relationship 
+        FROM signed_doc_info sdi 
+        LEFT JOIN signed_doc sd ON sdi.id = sd.signed_doc_id 
+        LEFT JOIN verification_family_info vfi ON sdi.signType_relationship = vfi.id 
+        WHERE sdi.req_id = '$req_id' 
+        GROUP BY sdi.id ORDER BY sdi.id DESC");
 
         $i = 1;
+        $signType = ['0' => 'Customer', '1' => 'Guarantor', '2' => 'Combined', '3' => 'Family Members'];
         while ($signed = $signDocInfo->fetch()) {
-            $fam_id = $signed["signType_relationship"];
-            $result = $connect->query("SELECT famname,relationship FROM `verification_family_info` where id='$fam_id'");
-            $row = $result->fetch();
 
+            $cus_id = $signed['cus_id'];
             $doc_upd_name = '';
-            $id = $signed["id"];
-            $updresult = $connect->query("SELECT upload_doc_name FROM `signed_doc` where signed_doc_id = '$id'");
-            $a = 1;
-            while ($upd = $updresult->fetch()) {
-                $docName = $upd['upload_doc_name'];
-                $doc_upd_name .= "<a href=uploads/verification/signed_doc/";
-                $doc_upd_name .= $docName;
-                $doc_upd_name .= " target='_blank'>";
-                $doc_upd_name .=  $docName . ' ';
-                $doc_upd_name .= "</a>";
-                $a++;
+            $doc = explode(',', $signed['doc_name']);
+            foreach ($doc as $docName) {
+                $doc_upd_name .= "<a href='uploads/verification/signed_doc/$docName' target='_blank' style='color: #4ba39b;'>$docName</a>,  ";
             }
-
         ?>
 
             <tr>
-                <td><?php echo $i;
-                    $i++; ?></td>
-
+                <td><?php echo $i++; ?></td>
                 <td>Signed Document</td>
-
-                <td><?php if ($signed["sign_type"] == '0') {
-                        echo 'Customer';
-                    } elseif ($signed["sign_type"] == '1') {
-                        echo 'Guarantor';
-                    } elseif ($signed["sign_type"] == '2') {
-                        echo 'Combined';
-                    } elseif ($signed["sign_type"] == '3') {
-                        echo 'Family Members';
-                    } ?></td>
-
-                <td> <?php if ($signed["sign_type"] == '3' or $signed["sign_type"] == '1' or $signed["sign_type"] == '2') {
-                            echo $row["famname"] . ' - ' . $row["relationship"];
+                <td><?php echo $signType[$signed['sign_type']] ?? ''; ?></td>
+                <td> 
+                    <?php 
+                        if ($signed["sign_type"] == '1' || $signed["sign_type"] == '2' || $signed["sign_type"] == '3') {
+                            echo $signed["famname"] . ' - ' . $signed["relationship"];
                         } else {
                             echo 'NIL';
-                        } ?></td>
+                        } 
+                    ?>
+                </td>
                 <td><?php echo $signed["doc_Count"]; ?></td>
-                <td><?php echo $doc_upd_name; ?></td>
+                <td><?php echo rtrim($doc_upd_name, ', '); ?></td>
                 <td>
-                    <?php if ($doc_upd_name == '') { ?>
-                        <a class="signed_doc_edit" value="<?php echo $signed['id']; ?>" style="text-decoration: underline;"> Upload </a> &nbsp;
+                    <?php
+                    if (empty($signed['doc_name']) && $doc_edit_access == 2) { ?>
+                        <a class="signed_doc_edit" value="<?php echo $signed['id']; ?>" data-access="2" style="text-decoration: underline;"> Upload </a> &nbsp;
+
+                    <?php } else if ($doc_edit_access == 1) { ?>
+                        <a class="signed_doc_edit" value="<?php echo $signed['id']; ?>" data-access="1"> <span class="icon-border_color"></span></a> &nbsp
+                        <a class="signed_doc_delete" value="<?php echo $signed['id']; ?>" data-reqid="<?php echo $req_id; ?>" data-cusid="<?php echo $cus_id; ?>"> <span class='icon-trash-2'></span> </a>
+                        
                     <?php } ?>
                 </td>
             </tr>
 
-        <?php
-        }     ?>
+        <?php } ?>
     </tbody>
 </table>
 
@@ -82,7 +80,6 @@ include '../ajaxconfig.php';
     $(function() {
         // Declare table variable to store the DataTable instance
         var signedDoc_upd_table_data = $('#signedDoc_upd_table_data').DataTable({
-            ...getStateSaveConfig('signedDoc_upd_table_data'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -115,8 +112,5 @@ include '../ajaxconfig.php';
                 }
             ],
         });
-
-        // Pass the table variable to the initColVisFeatures function
-        initColVisFeatures(signedDoc_upd_table_data, 'signedDoc_upd_table_data');
     });
 </script>

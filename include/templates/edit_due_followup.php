@@ -95,7 +95,7 @@
 								<th>Sub Status</th>
 								<th>Responsible</th>
 								<th>Action</th>
-								<th>Reminder</th>
+								<th>Call Status</th>
 								<th>Customer Summary</th>
 								<th>Last Paid Date</th>
 								<th>Current Month Paid</th>

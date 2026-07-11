@@ -2831,7 +2831,7 @@ function fingerprintinfo() {
         type: 'post',
         dataType: 'json',
         success: function (result) {
-            let cnt = (result == '1') ? '1' : '';
+            let cnt = (result > '0') ? '1' : '';
             $('#fingerValidation').val(cnt);
         }
     });
@@ -2870,7 +2870,7 @@ function doc_submit_validation(event) {
     var doc_remark = $('#doc_remark').val().trim();
     let replaceStatusChecked = $('#replace_status').is(':checked'); 
     
-    var fingerprint = $('#fingerValidation').val();
+    // var fingerprint = $('#fingerValidation').val();
     
     var validation = true;
     
@@ -3102,13 +3102,13 @@ function doc_submit_validation(event) {
         }
     }
 
-    if (fingerprint == '') {
-        event.preventDefault();
-        validation = false;
-        $('.fingerSpan').show();
-    } else {
-        $('.fingerSpan').hide();
-    }
+    // if (fingerprint == '') {
+    //     event.preventDefault();
+    //     validation = false;
+    //     $('.fingerSpan').show();
+    // } else {
+    //     $('.fingerSpan').hide();
+    // }
 
     return validation;
 

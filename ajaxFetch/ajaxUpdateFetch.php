@@ -53,7 +53,7 @@ if ($userid == 1) {
     FROM request_creation rc
     JOIN customer_register cr ON rc.cus_id = cr.cus_id 
     INNER JOIN ( SELECT cus_id, MAX(req_id) AS last_req_id FROM request_creation GROUP BY cus_id) latest ON rc.cus_id = latest.cus_id AND rc.req_id = latest.last_req_id $con
-    WHERE rc.sub_area IN ($sub_area_list) AND ( (rc.cus_data = 'Existing' AND rc.cus_status >= 1) OR (rc.cus_data = 'New' AND rc.cus_status > 13))";
+    WHERE cr.area_confirm_subarea IN ($sub_area_list) AND ( (rc.cus_data = 'Existing' AND rc.cus_status >= 1) OR (rc.cus_data = 'New' AND rc.cus_status > 13))";
 }
 
 if (isset($_POST['search']) && $_POST['search'] != "") {
