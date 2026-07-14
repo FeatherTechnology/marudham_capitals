@@ -215,12 +215,6 @@ function calculateOthers($loan_arr, $response, $connect, $req_id)
                 $count++; //Count represents how many months are exceeded
             }
             $response['count_of_month'] = $count;
-            //To check over due, if current date is greater than maturity minth, then i will be OD
-            if ($current_date_obj > $end_date_obj) {
-                $response['od'] = true;
-            } else {
-                $response['od'] = false;
-            }
 
             //To check whether due has been nil with other charges
 
@@ -273,6 +267,12 @@ function calculateOthers($loan_arr, $response, $connect, $req_id)
                 $response['due_nil'] = false;
             }
 
+            //To check over due, if current date is greater than maturity minth, then i will be OD
+            if ($current_date_obj > $end_date_obj && $due_nil_check > 0) {
+                $response['od'] = true;
+            } else {
+                $response['od'] = false;
+            }
 
             // //Insert Penalty once again because its showing extra one penalty in collection for current month
             // $qry = $connect->query("INSERT into penalty_charges (`req_id`,`penalty_date`, `penalty`, `created_date`) values ('$req_id','$penalty_raised_date','$penalty',current_timestamp)");
@@ -348,13 +348,6 @@ function calculateOthers($loan_arr, $response, $connect, $req_id)
         }
         $response['count_of_month'] = $count;
 
-        //To check over due, if current date is greater than maturity minth, then i will be OD
-        if ($current_date_obj > $end_date_obj) {
-            $response['od'] = true;
-        } else {
-            $response['od'] = false;
-        }
-
         //To check whether due has been nil with other charges
 
         $qry = $connect->query("SELECT c.due_amt_track,c.pre_close_waiver,c.princ_amt_track,pc.penalty,pc.paid_amnt AS paid_amntpc,pc.waiver_amnt AS waiver_amntpc,cc.coll_charge,cc.paid_amnt AS paid_amntcc,cc.waiver_amnt AS waiver_amntcc FROM 
@@ -403,6 +396,13 @@ function calculateOthers($loan_arr, $response, $connect, $req_id)
             }
         } else {
             $response['due_nil'] = false;
+        }
+
+        //To check over due, if current date is greater than maturity minth, then i will be OD
+        if ($current_date_obj > $end_date_obj && $due_nil_check > 0) {
+            $response['od'] = true;
+        } else {
+            $response['od'] = false;
         }
 
         if ($count > 0) {
@@ -469,12 +469,6 @@ function calculateOthers($loan_arr, $response, $connect, $req_id)
             $count++; //Count represents how many months are exceeded
         }
         $response['count_of_month'] = $count;
-        //To check over due, if current date is greater than maturity minth, then i will be OD
-        if ($current_date_obj > $end_date_obj) {
-            $response['od'] = true;
-        } else {
-            $response['od'] = false;
-        }
 
         //To check whether due has been nil with other charges
 
@@ -524,6 +518,13 @@ function calculateOthers($loan_arr, $response, $connect, $req_id)
             }
         } else {
             $response['due_nil'] = false;
+        }
+
+        //To check over due, if current date is greater than maturity minth, then i will be OD
+        if ($current_date_obj > $end_date_obj && $due_nil_check > 0) {
+            $response['od'] = true;
+        } else {
+            $response['od'] = false;
         }
 
         if ($count > 0) {
@@ -617,14 +618,7 @@ function calculateInterestLoan($connect, $loan_arr, $response, $req_id)
         $count++; //Count represents how many months are exceeded
     }
 
-
     $res['count_of_month'] = $count;
-    //To check over due, if current date is greater than maturity minth, then i will be OD
-    if ($current_date_obj > $end_date_obj) {
-        $res['od'] = true;
-    } else {
-        $res['od'] = false;
-    }
 
     //To check whether due has been nil with other charges
 
@@ -678,6 +672,12 @@ function calculateInterestLoan($connect, $loan_arr, $response, $req_id)
         $res['due_nil'] = false;
     }
 
+    //To check over due, if current date is greater than maturity minth, then i will be OD
+    if ($current_date_obj > $end_date_obj && $due_nil_check > 0) {
+        $res['od'] = true;
+    } else {
+        $res['od'] = false;
+    }
 
     if ($count > 0) {
         $interest_paid = getPaidInterest($connect, $req_id);

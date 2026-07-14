@@ -101,7 +101,7 @@ if (isset($_POST["bal_amt"])) {
                                 } else {
                                     echo 'Pending';
                                 }
-                            } else if ($od_sts[$i - 1] == 'true') {
+                            } else if ($od_sts[$i - 1] == 'true' && $due_nil_sts[$i - 1] == 'false') {
                                 if ($row['cus_status'] == '15') {
                                     echo 'Error';
                                 } elseif ($row['cus_status'] == '16') {
