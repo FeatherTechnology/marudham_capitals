@@ -3,13 +3,36 @@ include '../../ajaxconfig.php';
 
 $id = $_POST['id'];
 
-$delct = $connect->query("DELETE FROM document_info WHERE id = '$id' ");
+$filePath = "../../uploads/verification/doc_info/";
 
-if ($delct) {
-	$message = " Document Info Deleted Successfully";
+// Get uploaded files
+$stmt = $connect->prepare("SELECT doc_upload FROM document_info WHERE id = ?");
+$stmt->execute([$id]);
+
+$files = $stmt->fetchColumn();
+
+if (!empty($files)) {
+
+    $docUpd = array_map('trim', explode(',', $files));
+
+    foreach ($docUpd as $fileinfo) {
+
+        $file = $filePath . $fileinfo;
+
+        if (!empty($fileinfo) && file_exists($file)) {
+            unlink($file);
+        }
+    }
 }
+
+// Delete database record
+$delct = $connect->prepare("DELETE FROM document_info WHERE id = ?");
+$delct->execute([$id]);
+
+$message = $delct->rowCount()
+    ? "Document Info Deleted Successfully"
+    : "No record found";
 
 echo json_encode($message);
 
-// Close the database connection
 $connect = null;

@@ -79,7 +79,7 @@ $doc_edit_access = (int) $sql->fetchColumn(); //1-Yes, 2-No.
 <script type="text/javascript">
     $(function() {
         // Declare table variable to store the DataTable instance
-        var signedDoc_upd_table_data = $('#signedDoc_upd_table_data').DataTable({
+        $('#signedDoc_upd_table_data').DataTable({
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [

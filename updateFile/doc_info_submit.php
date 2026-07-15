@@ -38,10 +38,34 @@ if (isset($_POST['relation'])) {
 }
 
 $doc_upload ='';
+$docupd ='';
 if(isset($_FILES['document_info_upd'])){
 
-    $fileArray = $_FILES['document_info_upd'];
     $uploadDir = "../uploads/verification/doc_info/";
+
+    // Get uploaded files
+    if($doc_id !=''){
+        $stmt = $connect->prepare("SELECT doc_upload FROM document_info WHERE id = ?");
+        $stmt->execute([$doc_id]);
+    
+        $files = $stmt->fetchColumn();
+    
+        if (!empty($files)) {
+    
+            $docUpd = array_map('trim', explode(',', $files));
+    
+            foreach ($docUpd as $fileinfo) {
+    
+                $file = $uploadDir . $fileinfo;
+    
+                if (!empty($fileinfo) && file_exists($file)) {
+                    unlink($file);
+                }
+            }
+        }
+    }
+
+    $fileArray = $_FILES['document_info_upd'];
     $doc_upload = '';
 
     foreach ($fileArray['name'] as $key => $val) {
@@ -61,6 +85,8 @@ if(isset($_FILES['document_info_upd'])){
     }
     $doc_upload = rtrim($doc_upload, ',');
 
+    $docupd = "doc_upload = '$doc_upload', ";
+
 }
 
 if ($doc_id == '') {
@@ -73,14 +99,13 @@ if ($doc_id == '') {
 
 } else {
 
-    $update = $connect->query("UPDATE `document_info` SET `doc_name` = '$doc_name', `doc_detail` = '$doc_details', `doc_type` = '$doc_type', `doc_holder` = '$doc_holder',  `holder_name` = '$holder_name', `relation_name` = '$relation_name', `relation` = '$relation', `doc_upload` = '$doc_upload', `update_login_id` = $userid, `updated_date` = NOW()  WHERE `id` = '$doc_id' ");
+    $update = $connect->query("UPDATE `document_info` SET `doc_name` = '$doc_name', `doc_detail` = '$doc_details', `doc_type` = '$doc_type', `doc_holder` = '$doc_holder',  `holder_name` = '$holder_name', `relation_name` = '$relation_name', `relation` = '$relation', $docupd `update_login_id` = $userid, `updated_date` = NOW()  WHERE `id` = '$doc_id' ");
 
     if($update){
         $result = "Document Info Updated Successfully.";
     }
 
 }
-
 
 echo $result;
 ?>

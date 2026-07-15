@@ -2920,7 +2920,7 @@ function getDocumentDetails(req_id, cus_id, cus_name) {
     resetSignedDocList(req_id, cus_id);// to reset signed document list non-modal
     resetChequeList(req_id, cus_id);// to reset signed document list non-modal
     resetGoldList(req_id, cus_id);// to reset signed document list non-modal
-    resetDocmentList(req_id, cus_id);// to reset signed document list non-modal
+    resetDocmentList(req_id);// to reset signed document list non-modal
     // getFamilyList();//to get family , it may used in mort and endorse processes
     getMortgageInfo(req_id, cus_id); // to get mortgage details
     getEndorsementInfo(req_id, cus_id); // to get mortgage details
@@ -2988,7 +2988,7 @@ function getDocumentDetails(req_id, cus_id, cus_name) {
     {//Document modal on click events
         $('#add_document').off('click');//open event for Document info modal
         $('#add_document').click(function () {
-            resetdocInfo(req_id, cus_id)
+            resetdocInfo(req_id);
         });
 
         $('#docInfoBtn').off('click');//submit event for Document info modal
@@ -2998,7 +2998,7 @@ function getDocumentDetails(req_id, cus_id, cus_name) {
 
         $('.closeDocInfo').off('click');//close event for Document info modal
         $('.closeDocInfo').click(function () {
-            resetDocmentList(req_id, cus_id)
+            resetDocmentList(req_id)
         });
     }
 }
@@ -3175,17 +3175,15 @@ function resetGoldList(req_id, cus_id) {
 }
 
 //Document Info List non-modal
-function resetDocmentList(req_id, cus_id) {
+function resetDocmentList(req_id) {
 
     $.ajax({
         url: 'updateFile/doc_info_upd_list.php',
         type: 'POST',
-        data: { "req_id": req_id, "cus_id": cus_id },
+        data: { req_id },
         cache: false,
         success: function (html) {
             $("#documentResetDiv").html(html);
-
-            $("#document_name, #document_details, #document_type, #document_holder, #docholder_name, #docholder_relationship_name, #doc_relation, #document_info_upd, #doc_info_id").val('');
 
             let hasRecords = ($('#document_table').DataTable().rows().count() > 0);
             if (hasRecords) {
@@ -4554,17 +4552,18 @@ function docHolderName(callback) {
 }
 
 //Document Info List Modal Table
-function resetdocInfo(req_id, cus_id) {
+function resetdocInfo(req_id) {
 
     $.ajax({
         url: 'updateFile/doc_info_reset.php',
         type: 'POST',
-        data: { "req_id": req_id, "cus_id": cus_id },
+        data: { req_id },
         cache: false,
         success: function (html) {
             $("#docModalDiv").html(html);
             $('#docUploads input, #docUploads select').attr('disabled', false);
-            $("#document_name, #document_details, #document_type, #document_holder, #docholder_name, #docholder_relationship_name, #relation_name, #doc_relation, #document_info_upd").val('');
+
+            $("#document_name, #document_details, #document_type, #document_holder, #docholder_name, #docholder_relationship_name, #relation_name, #doc_relation, #document_info_upd, #doc_info_id").val('');
 
             $("#documentnameCheck, #documentdetailsCheck, #documentTypeCheck, #docholderCheck, #docinfoupdCheck, #docHolderNameCheck").hide();
 
@@ -4576,10 +4575,13 @@ function resetdocInfo(req_id, cus_id) {
 
 //to set on click event for edit of gold 
 function docInfoEditEvent() {
+
     $('.doc_info_edit').off('click')
     $('.doc_info_edit').click(function () {
 
         let id = $(this).attr('value');
+        let access = $(this).data('access');
+
         $.ajax({
             url: 'verificationFile/documentation/doc_info_edit.php',
             type: 'POST',
@@ -4587,7 +4589,7 @@ function docInfoEditEvent() {
             dataType: 'json',
             cache: false,
             success: function (response) {
-                $('#docUploads input, #docUploads select').attr('disabled', false);
+                // $('#docUploads input, #docUploads select').attr('disabled', false);
 
                 $("#doc_info_id").val(response['doc_id']);
                 $("#document_name").val(response['doc_name']);
@@ -4605,11 +4607,45 @@ function docInfoEditEvent() {
                     // $("#docholder_relationship_name").val(response['relation_name']);
                 }
                 $("#doc_relation").val(response['relation']);
-                $('#docUploads input:not(#document_info_upd), #docUploads select').attr('disabled', true);
-
+                
+                (access =='2') ? $('#docUploads input:not(#document_info_upd), #docUploads select').attr('disabled', true) : '';
             }
         });
+    });
 
+    $('.doc_info_delete').off('click')
+    $('.doc_info_delete').click(function () {
+        var isok = confirm("Do you want delete this Document Info?");
+        if (isok == false) {
+            return false;
+        } else {
+            var id = $(this).attr('value');
+            var reqid = $(this).data('reqid');
+
+            $.ajax({
+                url: 'verificationFile/documentation/doc_info_delete.php',
+                type: 'POST',
+                data: { id },
+                cache: false,
+                success: function (response) {
+                    var delresult = response.includes("Deleted");
+                    if (delresult) {
+                        $('#docDeleteOk').show();
+                        setTimeout(function () {
+                            $('#docDeleteOk').fadeOut('fast');
+                        }, 2000);
+                    } else {
+
+                        $('#docDeleteNotOk').show();
+                        setTimeout(function () {
+                            $('#docDeleteNotOk').fadeOut('fast');
+                        }, 2000);
+                    }
+
+                    resetdocInfo(reqid);  
+                }
+            });
+        }
     });
 }
 
@@ -4673,7 +4709,7 @@ function submitDocument(req_id, cus_id) {
                     }, 2000);
                 }
 
-                resetdocInfo(req_id, cus_id);
+                resetdocInfo(req_id);
             }
         });
 
