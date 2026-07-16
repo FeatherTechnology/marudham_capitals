@@ -3,14 +3,8 @@ session_start();
 include '../../ajaxconfig.php';
 include '../../moneyFormatIndia.php';
 
-if (isset($_SESSION["userid"])) {
-    $user_id = $_SESSION["userid"];
-}
-if (isset($_POST["screen"])) {
-    $screen = $_POST["screen"];
-} else {
-    $screen = '';
-}
+$screen = $_POST["screen"] ?? '';
+
 if (isset($_POST["pending_sts"])) {
     $pending_sts = explode(',', $_POST["pending_sts"]);
 }
@@ -26,59 +20,17 @@ if (isset($_POST["closed_sts"])) {
 if (isset($_POST["bal_amt"])) {
     $bal_amt = explode(',', $_POST["bal_amt"]);
 }
-
 ?>
-<style>
-    .dropdown {
-        position: relative;
-        display: inline-block;
-    }
 
-    .dropdown-content {
-        display: none;
-        position: absolute;
-        right: 0;
-        background-color: #F9F9F9;
-        min-width: 160px;
-        margin-top: -50px;
-        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-        z-index: 1;
-    }
-
-    .dropdown-content a {
-        color: black;
-        padding: 10px 10px;
-        text-decoration: none;
-        display: block;
-    }
-
-    .dropdown-content a:hover {
-        background-color: #fafafa;
-    }
-
-    /* .dropdown:hover .dropdown-content {
-        display: block;
-    } */
-
-    .dropdown:hover .dropbtn {
-        background-color: #3E8E41;
-    }
-
-    .btn-outline-secondary {
-        color: #383737;
-        border-color: #383737;
-        position: inherit;
-        /* left: -20px; */
-    }
-</style>
 <table class="table custom-table" id='DocListTable'>
     <thead>
         <tr>
             <th width='50'>Loan ID</th>
-             <th>Doc ID</th>
+            <th>Doc ID</th>
             <th>Loan Category</th>
             <th>Sub Category</th>
             <th>Agent</th>
+            <th>Responsible</th>
             <th>Loan date</th>
             <th>Loan Amount</th>
             <th>Closing Date</th>
@@ -93,14 +45,16 @@ if (isset($_POST["bal_amt"])) {
         <?php
         $cus_id = $_POST['cus_id'];
         $consider_lvl_arr = [1 => 'Bronze', 2 => 'Silver', 3 => 'Gold', 4 => 'Platinum', 5 => 'Diamond'];
-        $run = $connect->query("SELECT lc.due_start_from, lc.cus_name_loan, lc.loan_category, lc.sub_category, lc.loan_amt_cal, lc.due_amt_cal, lc.net_cash_cal, lc.collection_method, ii.loan_id, ii.req_id, ii.updated_date, ii.cus_status, ad.doc_id, rc.agent_id, lcc.loan_category_creation_name as loan_catrgory_name,  us.collection_access
-        from acknowlegement_loan_calculation lc 
+
+        $run = $connect->query("SELECT ii.loan_id, ad.doc_id, lcc.loan_category_creation_name as loan_catrgory_name, lc.sub_category, ac.ag_name, iv.responsible, ii.updated_date, lc.loan_amt_cal, cs.updated_date AS closed_date, cs.closed_sts, cs.consider_level, ii.cus_status, lc.due_start_from, lc.cus_name_loan, ii.req_id
+        FROM acknowlegement_loan_calculation lc 
         LEFT JOIN in_issue ii ON lc.req_id = ii.req_id 
-        LEFT JOIN request_creation rc ON ii.req_id = rc.req_id 
+        LEFT JOIN in_verification iv ON ii.req_id = iv.req_id 
         LEFT JOIN acknowlegement_documentation ad ON lc.req_id = ad.req_id 
-        LEFT JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id 
-        LEFT JOIN user us ON us.user_id = '$user_id'
-        WHERE lc.cus_id_loan = '$cus_id' and (ii.cus_status >= 13) ORDER BY CAST(ii.req_id AS UNSIGNED) ASC "); //Customer status greater than or equal to 14 because, after issued data only we need  
+        LEFT JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
+        LEFT JOIN agent_creation ac ON ac.ag_id = iv.agent_id
+        LEFT JOIN closed_status cs ON ii.req_id = cs.req_id
+        WHERE lc.cus_id_loan = '$cus_id' AND (ii.cus_status >= 13) ORDER BY CAST(ii.req_id AS UNSIGNED) ASC "); //Customer status greater than or equal to 14 because, after issued data only we need  
 
         $i = 1;
         $curdate = date('Y-m-d');
@@ -108,32 +62,17 @@ if (isset($_POST["bal_amt"])) {
             //Show NOC button until closed_status submit so we check the count of closed status against the request id.
             $cus_name = $row["cus_name_loan"];
             $ii_req_id = $row["req_id"];
-            $closedSts = $connect->query("SELECT * FROM `closed_status` WHERE `req_id` ='" . strip_tags($ii_req_id) . "' ");
-            $closed_row = $closedSts->fetch();
-            $closed_cnt = $closedSts->rowCount();
-
         ?>
             <tr>
                 <td><?php echo $row['loan_id']; ?></td> <!-- id -->
                 <td><?php echo $row['doc_id']; ?></td> <!-- id -->
                 <td><?php echo $row["loan_catrgory_name"]; ?></td> <!-- Loan Cat -->
                 <td><?php echo $row["sub_category"]; ?></td> <!-- Loan Sub Cat -->
-                <td>
-                    <?php
-                    if ($row["agent_id"] != '' || $row["agent_id"] != NULL) {
-                        $run1 = $connect->query('SELECT ag_name from agent_creation where ag_id = "' . $row['agent_id'] . '" ');
-                        echo $run1->fetch()['ag_name'];
-                    }
-                    ?>
-                </td> <!-- Agent -->
+                <td><?php echo $row["ag_name"] ?? '';?></td> <!-- Agent -->
+                <td><?php echo ($row['responsible'] == '0') ? 'Yes' : (!empty($row['ag_name']) && $row['responsible'] != '0' ? 'No' : ''); ?></td>
                 <td><?php if (isset($row["updated_date"])) echo date('d-m-Y', strtotime($row["updated_date"])); ?></td> <!-- Loan date -->
                 <td><?php echo moneyFormatIndia($row["loan_amt_cal"]); ?></td> <!-- Loan Amount -->
-
-                <td><?php
-                    if ($closed_cnt > 0) {
-                        echo date('d-m-Y', strtotime($closed_row["updated_date"])); ?> <!-- Closing Date -->
-                    <?php } ?>
-                </td>
+                <td><?php echo ($row['closed_date'] !='') ? date('d-m-Y', strtotime($row["closed_date"])) : ''; ?></td> <!-- Closing Date -->
 
                 <td><?php if ($row['cus_status'] < 20) {
                         echo 'Present';
@@ -192,17 +131,13 @@ if (isset($_POST["bal_amt"])) {
                                 }
                             }
                         } else if ($row['cus_status'] > 20) { // if status is closed(21) or more than that(22), then show closed status
-                            $closedSts = $connect->query("SELECT * FROM `closed_status` WHERE `req_id` ='" . strip_tags($ii_req_id) . "' ");
-                            $closedStsrow = $closedSts->fetch();
-                            $rclosed = $closedStsrow['closed_sts'];
-                            $consider_lvl = $closedStsrow['consider_level'];
-                            if ($rclosed == '1') {
-                                echo 'Consider - ' . $consider_lvl_arr[$consider_lvl];
-                            }
-                            if ($rclosed == '2') {
+                            if ($row['closed_sts'] == '1') {
+                                echo 'Consider - ' . $consider_lvl_arr[$row['consider_level']];
+
+                            } else if ($row['closed_sts'] == '2') {
                                 echo 'Waiting List';
-                            }
-                            if ($rclosed == '3') {
+
+                            } else if ($row['closed_sts'] == '3') {
                                 echo 'Block List';
                             }
                         }
@@ -211,25 +146,22 @@ if (isset($_POST["bal_amt"])) {
                 </td> <!-- Sub status -->
                 <td><!-- Document status -->
                     <?php
-                    $doc_status = '';
                     if ($row['cus_status'] <= 20) { //show for present contents and closed customer but not submitted in closed
-                        if (getDocumentStatus($connect, $ii_req_id, $cus_id) == false) {
-                            $doc_status =  'Document Pending';
+                        if (getDocumentStatus($connect, $ii_req_id) == false) {
                             echo 'Document Pending';
                         } else {
-                            $doc_status = 'Document Completed';
                             echo 'Document Completed';
                         }
-                    } else if ($row['cus_status'] == 21) { // show for closed(which are submitted in closed) and noc contents 
-                        // if (getNOCDocDetails($connect, $ii_req_id, $cus_id) == 'completed') { // this function will be true when user started to give NOC to customer, then that will be in noc pending
-                        //     echo 'NOC Completed';
-                        // } else {
-                            echo 'NOC Pending';
-                        // }
+
+                    } else if ($row['cus_status'] == 21) { // show for closed(which are submitted in closed) and noc contents
+                        echo 'NOC Pending';
+
                     } else if ($row['cus_status'] >= 22 && $row['cus_status'] <= 23) {
                         echo 'NOC Completed';
+
                     } else if($row['cus_status'] >= 24){
                         echo 'NOC Handovered';
+
                     }
                     ?>
                 </td>
@@ -256,114 +188,18 @@ if (isset($_POST["bal_amt"])) {
 </table>
 
 <?php
-// function getNOCDocDetails($connect, $req_id, $cus_id)
-// {
-
-//     $response = 'completed';
-
-//     $qry = $connect->query("SELECT * FROM signed_doc where req_id ='$req_id' and cus_id = '$cus_id' and noc_given = 0 ");
-//     if ($qry->rowCount() > 0) { // if condition true, then signed doc any one is given other may be pending to give
-//         $response = 'pending';
-//     }
-
-//     $qry = $connect->query("SELECT * FROM cheque_no_list where req_id ='$req_id' and cus_id = '$cus_id' and noc_given = 0 ");
-//     if ($qry->rowCount() > 0) { // if condition true, then Cheque doc any one is given other may be pending to give
-//         $response = 'pending';
-//     }
-
-//     $qry = $connect->query("SELECT * FROM acknowlegement_documentation where req_id ='$req_id' and cus_id_doc = '$cus_id' and (mortgage_process_noc = 0 or mortgage_document_noc = 0 or endorsement_process_noc = 0 or en_RC_noc = 0 or en_Key_noc = 0 ) ");
-//     if ($qry->rowCount() > 0) { // if condition true, then acknowlegement documentation any one is given other may be pending to give
-//         $response = 'pending';
-//     }
-
-//     $qry = $connect->query("SELECT * FROM gold_info where req_id ='$req_id' and cus_id = '$cus_id' and noc_given = 0 ");
-//     if ($qry->rowCount() > 0) { // if condition true, then Gold doc any one is given other may be pending to give
-//         $response = 'pending';
-//     }
-
-//     $qry = $connect->query("SELECT * FROM document_info where req_id ='$req_id' and cus_id = '$cus_id' and doc_info_upload_noc = 0 ");
-//     if ($qry->rowCount() > 0) { // if condition true, then Document doc any one is given other may be pending to give
-//         $response = 'pending';
-//     }
-
-//     return $response;
-// }
-
-// function getNOCSubmitted($connect, $req_id, $cus_id)
-// {
-//     // should check whether all documents have been given to customer but not removed from list
-// }
-
-function getDocumentStatus($connect, $req_id, $cus_id)
+function getDocumentStatus($connect, $req_id)
 {
+    $response = 'completed';
 
-    $response1 = 'completed';
+    $sts_qry = $connect->query("SELECT doc_sts FROM acknowlegement_documentation WHERE req_id = '$req_id' ");
 
-    // $sts_qry = $connect->query("SELECT id,doc_Count FROM signed_doc_info where cus_id = '$cus_id' and req_id = '$req_id' ");//echo "SELECT id,doc_Count FROM signed_doc_info where cus_id = '$cus_id' and req_id = '$req_id' "; 
-    // if($sts_qry->rowCount() > 0){
-    //     while($sts_row=$sts_qry->fetch()){
-
-    //         $sts_qry1 = $connect->query("SELECT * FROM signed_doc where cus_id = '$cus_id' and req_id = '$req_id' and signed_doc_id='".$sts_row['id']."' "); //echo ' $sts_qry1->rowCount():',$sts_qry1->rowCount(),' docCount:',$sts_row['doc_Count'],'---';
-    //         if($sts_qry1->rowCount() == $sts_row['doc_Count'] && $response1 != 'pending' ){ // check whether mentioned count of signed document has been collected from customer or not
-    //             $response1 = 'completed';// if condition true then all documents are collected
-    //             //completed
-    //         }else{
-    //             $response1= 'pending';
-    //         }
-    //     }
-    // }
-
-
-    $response2 = 'completed';
-    // $sts_qry = $connect->query("SELECT id,cheque_count FROM cheque_info where cus_id = '$cus_id' and req_id = '$req_id' ");
-    // if($sts_qry->rowCount() > 0){
-
-    //     while($sts_row=$sts_qry->fetch()){
-
-    //         $sts_qry1 = $connect->query("SELECT * FROM cheque_upd where cus_id = '$cus_id' and req_id = '$req_id' and cheque_table_id='".$sts_row['id']."' ");
-    //         if($sts_qry1->rowCount() == $sts_row['cheque_count'] && $response2 != 'pending'){ // check whether mentioned count of Cheque has been collected from customer or not
-    //             $response2 = 'completed';// if condition true then all documents are collected
-    //         }else{
-    //             $response2 = 'pending';
-    //         }
-    //     }
-    // }
-
-
-    $response3 = 'completed';
-    $sts_qry = $connect->query("SELECT doc_sts FROM acknowlegement_documentation where cus_id_doc = '$cus_id' and req_id = '$req_id' ");
-
-    if ($sts_qry->rowCount() > 0) {
-        while ($sts_row = $sts_qry->fetch()) { //check any one of document for mortgage or endorsement is pending then response will be pending
-
-            if ($sts_row['doc_sts'] == 'NO') {
-
-                $response3 = 'pending';
-            }
-        }
+    $sts_row = $sts_qry->fetch();
+    if ($sts_row['doc_sts'] == 'NO') {
+        $response = 'pending';
     }
 
-
-    $response4 = 'completed';
-    // $sts_qry = $connect->query("SELECT * FROM document_info where cus_id = '$cus_id' and req_id = '$req_id' ");
-
-    // if($sts_qry->rowCount() > 0){
-    //     while($sts_row = $sts_qry->fetch()){
-
-    //         if($sts_row['doc_upload'] == '' || $sts_row['doc_upload'] == null ){ // check any of document that are added in verification is not still uploaded
-    //             $response4 = 'pending';
-    //         }
-    //     }
-    // }
-
-
-    if ($response1 == 'completed' and $response2 == 'completed' and $response3 == 'completed' and $response4 == 'completed') {
-        $response = true;
-    } else {
-        $response = false;
-    }
-
-    return $response;
+    return ($response == 'completed') ? true : false;
 }
 ?>
 

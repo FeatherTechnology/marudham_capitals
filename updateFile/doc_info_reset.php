@@ -75,10 +75,10 @@ if (isset($_POST['req_id'])) {
                 <td>
                     <?php
                     if (empty($docUpd[0]) && $doc_edit_access == 2) { ?>
-                        <a class="doc_info_edit" value="<?php echo $row['id']; ?>" data-access="2" style="text-decoration: underline;"> Upload</a> &nbsp;
+                        <a class="doc_info_edit" value="<?php echo $row['id']; ?>" data-access="2" style="text-decoration: underline;">Upload</a> &nbsp;
 
                     <?php } else if ($doc_edit_access == 1) { ?>
-                        <a class="doc_info_edit" value="<?php echo $row['id']; ?>" data-access="1"> <span class="icon-border_color"></span></a> &nbsp
+                        <a class="doc_info_edit" value="<?php echo $row['id']; ?>" data-access="1"> <span class="icon-border_color"></span> </a> &nbsp;
                         <a class="doc_info_delete" value="<?php echo $row['id']; ?>" data-reqid="<?php echo $req_id; ?>"> <span class='icon-trash-2'></span> </a>
                         
                     <?php } ?>

@@ -10,7 +10,6 @@ $(document).ready(function () {
         if (verify == 'cus_profile') {
             $('#customer_profile').show(); 
             $('#cus_document, #customer_loan_calc, #customer_old_div, .edit-document-card').hide();// hide edit document card when not in use
-            // $('.documentation-card').hide();
             $('.dropdown').children().css('border-color', '');// to set other dropdown buttons as normal
             const curDate = moment().format('YYYY-MM-DD');
             $('#relation_dob').attr('max', curDate);
@@ -18,7 +17,6 @@ $(document).ready(function () {
         if (verify == 'documentation') {
             $('#customer_profile, #customer_loan_calc, #customer_old_div, .edit-document-card').hide();
             $('#cus_document').show(); 
-            // $('.documentation-card').show();
         }
         if (verify == 'customer_old') {
             $('#customer_profile, #cus_document, #customer_loan_calc').hide();
@@ -850,9 +848,6 @@ $(document).ready(function () {
 
                 } else if (result['proofOf'] == 2) { //Family Members
                     getfamilyforKyc(result['fam_mem']);
-                    // setTimeout(() => {
-                    //     $("#fam_mem").val(result['fam_mem']);
-                    // }, 1000);
                     $('.fam_mem_div').show();
                     $('.name_div').hide();
 
@@ -2971,7 +2966,7 @@ function getDocumentDetails(req_id, cus_id, cus_name) {
     {//gold modal on click events
         $('#add_gold').off('click');//open event for Gold info modal
         $('#add_gold').click(function () {
-            resetgoldInfo(req_id, cus_id)
+            resetgoldInfo(req_id);
         });
 
         $('#goldInfoBtn').off('click');//submit event for Gold info modal
@@ -3656,7 +3651,9 @@ function updateMortEndorse(id, req_id) {
                         showConfirmButton: true,
                         confirmButtonColor: '#009688'
                     })
-                    getDocumentHistory();// to reset the current status of the document history
+                    if (id == 'update_doc_sts') { //document status get from doc_sts field so call this to get update value.
+                        getDocumentHistory();// to reset the current status of the document history
+                    }
                 } else if (response.includes('Error')) {
                     Swal.fire({
                         title: response,
@@ -3713,8 +3710,6 @@ function updateMortEndorse(id, req_id) {
                             $('#rc_doc_img').attr('href', `uploads/verification/endorsement_doc/${docUpdName}`).text(docUpdName);
 
                         }
-
-                        getDocumentHistory();// to reset the current status of the document history
                     } else if (result.response.includes('Error')) {
                         Swal.fire({
                             title: result.response,
@@ -3925,9 +3920,6 @@ function signInfoEditEvent() {
             dataType: 'json',
             cache: false,
             success: function (result) {
-
-                // FIRST remove readonly/disabled to allow setting value
-                // $('#signDocUploads input, #signDocUploads select').attr('disabled', false);
 
                 $("#signedID").val(result['id']);
                 $("#sign_type").val(result['sign_type']);
@@ -4167,7 +4159,6 @@ function chequeInfoEditEvent() {
             dataType: 'json',
             cache: false,
             success: function (result) {
-                // $('#chequeUploads input, #chequeUploads select').attr('disabled', false);
 
                 $("#chequeID").val(result['id']);
                 $("#holder_type").val(result['holder_type']);
@@ -4188,10 +4179,6 @@ function chequeInfoEditEvent() {
                 $("#cheque_count").val(result['cheque_count']);
 
                 getChequeColumn(result['cheque_count'], result['cheque_no'], access); // show input to insert Cheque No.
-
-                // NOW apply readonly mode after values are set
-                // Disable everything EXCEPT upload field
-                // (access =='2') ? $('#chequeUploads input:not(#cheque_upd), #chequeUploads select').attr('disabled', true) : '';
             }
         });
 
@@ -4377,16 +4364,16 @@ function submitCheque(req_id, cus_id) {
 /************************ Gold Modal Events START ************************/
 
 //reset table contents of gold table modal
-function resetgoldInfo(req_id, cus_id) {
+function resetgoldInfo(req_id) {
     $.ajax({
         url: 'updateFile/gold_info_reset.php',
-        data: { "req_id": req_id, "cus_id": cus_id, "pages": 2 },
+        data: { req_id },
         type: 'POST',
         cache: false,
         success: function (html) {
             $("#goldTable").html(html);
             $('#goldform input, #goldform select').attr('disabled', false);
-            $("#gold_sts, #gold_type, #Purity, #gold_Count, #gold_Weight, #gold_Value, #gold_upload, #goldID").val('');
+            $("#gold_sts, #gold_type, #Purity, #gold_Count, #gold_Weight, #gold_Value, #goldupload, #gold_upload, #goldID").val('');
 
             $('#GoldstatusCheck, #GoldtypeCheck, #purityCheck, #goldCountCheck, #goldWeightCheck, #goldValueCheck').hide(); //to hide span.
         }
@@ -4399,6 +4386,7 @@ function resetgoldInfo(req_id, cus_id) {
 function goldInfoEditEvent() {
     $('.gold_info_edit').off().click(function () {
         let id = $(this).attr('value');
+        let access = $(this).data('access');
 
         $.ajax({
             url: 'verificationFile/documentation/gold_info_edit.php',
@@ -4407,7 +4395,7 @@ function goldInfoEditEvent() {
             dataType: 'json',
             cache: false,
             success: function (result) {
-                $('#goldform input, #goldform select').attr('disabled', false);
+                // $('#goldform input, #goldform select').attr('disabled', false);
                 $("#goldID").val(result['id']);
                 $("#gold_sts").val(result['gold_sts']);
                 $("#gold_type").val(result['gold_type']);
@@ -4416,9 +4404,44 @@ function goldInfoEditEvent() {
                 $("#gold_Weight").val(result['gold_Weight']);
                 $("#gold_Value").val(result['gold_Value']);
                 $("#goldupload").val(result['gold_upload']);
-                $('#goldform input:not(#gold_upload), #goldform select').attr('disabled', true);
+                
+                (access =='2') ? $('#goldform input:not(#gold_upload), #goldform select').attr('disabled', true) : '';
             }
         });
+    });
+    
+    $('.gold_info_delete').off().click(function () {
+        var isok = confirm("Do you want delete this Gold Info?");
+        if (isok == false) {
+            return false;
+        } else {
+            var chequeid = $(this).attr('value');
+            var reqid = $(this).data('reqid');
+
+            $.ajax({
+                url: 'verificationFile/documentation/gold_info_delete.php',
+                type: 'POST',
+                data: { "chequeid": chequeid },
+                cache: false,
+                success: function (response) {
+                    var delresult = response.includes("Deleted");
+                    if (delresult) {
+                        $('#goldDeleteOk').show();
+                        setTimeout(function () {
+                            $('#goldDeleteOk').fadeOut('fast');
+                        }, 2000);
+
+                    }else {
+                        $('#goldDeleteNotOk').show();
+                        setTimeout(function () {
+                            $('#goldDeleteNotOk').fadeOut('fast');
+                        }, 2000);
+                    }
+
+                    resetgoldInfo(reqid);
+                }
+            });
+        }
     });
 }
 
@@ -4481,7 +4504,7 @@ function submitGoldInfo(req_id, cus_id) {
                     }, 2000);
                 }
 
-                resetgoldInfo(req_id, cus_id);
+                resetgoldInfo(req_id);
             }
         });
 
