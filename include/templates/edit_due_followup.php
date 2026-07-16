@@ -53,7 +53,7 @@
 
 					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
 						<label for="comm_date">Commitement Date</label>
-						<select class="form-control" id="comm_date" name="comm_date" >
+						<select class="form-control" id="comm_date" name="comm_date">
 							<option value="1">Select Commitment Date</option>
 							<option value="2">Before Date</option>
 							<option value="3">Today</option>
@@ -72,9 +72,18 @@
 							<option value="1" <?php echo (isset($_GET['res_sts']) && $_GET['res_sts'] === "1") ? 'selected' : ''; ?>>No</option>
 						</select>
 					</div>
+					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+						<label for="comm_sts">Communication Status</label>
+						<select class="form-control" id="comm_sts" name="comm_sts">
+							<option value="">Select Communication Status</option>
+							<option value="1" <?php echo (isset($_GET['comm_sts']) && $_GET['comm_sts'] === "1") ? 'selected' : ''; ?>>Error</option>
+						</select>
+					</div>
 
-					<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
-						<button type="button" class="btn btn-primary" id="show_due_followup" style="margin-top:20px;">Proceed</button>
+					<div class="col-12 d-flex justify-content-end mt-3">
+						<button type="button" class="btn btn-primary" id="show_due_followup">
+							Proceed
+						</button>
 					</div>
 				</div>
 

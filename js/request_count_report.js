@@ -36,12 +36,12 @@ $(document).ready(function () {
             $('#request_count_table tbody').empty(); // Remove old rows
             $('#request_count_table tfoot').empty(); // Remove old footer
         }
-        
-        if(type == '1'){ 
+
+        if (type == '1') {
             $('#user_type, #by_user').val('').show();
             $('#by_user').empty().append("<option value=''>Select User</option>");
 
-        } else if(type == '2' || type == '3' || type == '4') { //sector - group, Region - Line, Zone - Follow up
+        } else if (type == '2' || type == '3' || type == '4') { //sector - group, Region - Line, Zone - Follow up
             $('#map_name, #loan_category').closest('.choices').show();
             getUserMappedDetails(type); //to Mapping details. 
             getUserLoanCategories(); //to get Loan Category list.
@@ -50,9 +50,9 @@ $(document).ready(function () {
 
     $('#user_type').change(function () {
         let userType = $('#user_type').val();
-        $('#by_user').empty().append("<option value=''>Select User</option>");  
+        $('#by_user').empty().append("<option value=''>Select User</option>");
 
-        if(userType != ''){
+        if (userType != '') {
             getUserNames();
         }
     });
@@ -68,19 +68,19 @@ $(document).ready(function () {
         let selectedVal = '';
         let loanCatVal = '';
 
-        if(selectedType == '1'){ //user
+        if (selectedType == '1') { //user
             selectedVal = '1'; //dummy
             loanCatVal = '1'; //dummy
-            
-        } else if(selectedType == '2' || selectedType == '3' || selectedType == '4'){ //sector - group //Region - Line //Zone - Followup
+
+        } else if (selectedType == '2' || selectedType == '3' || selectedType == '4') { //sector - group //Region - Line //Zone - Followup
             selectedVal = $('#map_name').val();
             loanCatVal = $('#loan_category').val();
         }
 
-        if(!from_date || !to_date || !selectedVal || !loanCatVal || (selectedType == '1' && (!user_type || !selected_user))){
+        if (!from_date || !to_date || !selectedVal || !loanCatVal || (selectedType == '1' && (!user_type || !selected_user))) {
             swalError('Warning', `All Fields are required.`);
             return;
-        } 
+        }
 
         requestToIssuedReportCount(from_date, to_date, selectedType, user_type, selected_user, selectedVal, loanCatVal);
     });
@@ -90,10 +90,10 @@ $(document).ready(function () {
 function getUserNames() {
     let user_type = $('#user_type').val();
 
-    $.post('reportFile/due_followup_count_report/getDuefollowupUser.php', { screen : 2, user_type: user_type }, function (response) {
+    $.post('reportFile/due_followup_count_report/getDuefollowupUser.php', { screen: 2, user_type: user_type }, function (response) {
         $('#by_user').empty()
-        .append("<option value=''>Select User</option>")
-        .append("<option value='all'>All</option>");
+            .append("<option value=''>Select User</option>")
+            .append("<option value='all'>All</option>");
 
         $.each(response, function (i, val) {
             $('#by_user').append("<option value='" + val.user_id + "'>" + val.username + "</option>");
@@ -109,7 +109,15 @@ function requestToIssuedReportCount(from_date, to_date, selectedType, user_type,
         data: { from_date, to_date, selectedType, user_type, user_id, selectedVal, loanCatVal },
         dataType: 'json',
         success: function (res) {
+            let title = 'User Name';
 
+            if (selectedType == '2') {
+                title = 'Sector Name';
+            } else if (selectedType == '3') {
+                title = 'Region Name';
+            } else if (selectedType == '4') {
+                title = 'Zone Name';
+            }
             // Handle empty response
             if (!res.data || res.data.length === 0) {
                 if ($.fn.DataTable.isDataTable('#request_count_table')) {
@@ -130,8 +138,9 @@ function requestToIssuedReportCount(from_date, to_date, selectedType, user_type,
                 { data: 'sno' },
                 {
                     data: 'fullname',
-                    title: (selectedType == '2') ? 'Sector Name' : 'User Name'
+                    title: title
                 },
+
                 { data: 'loan_category' },
                 /* PREVIOUS IN PROCESS */
                 { data: 'previous.new' },

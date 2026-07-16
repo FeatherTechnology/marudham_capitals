@@ -59,6 +59,7 @@ $column = [
     'u.role',
     'u.fullname',
     'np.id',
+    'np.id',
     'np.id'
 ];
 
@@ -170,31 +171,32 @@ foreach ($result as $row) {
     }else if($row['followup_type'] =='2'){
         $followup_type = 'Telecalling';  
     }
-
-    $data[] = [
-        $sno++,
-        $row['cus_id'],
-        $row['autogen_cus_id'],
-        $row['customer_name'],
-        date('d-m-Y', strtotime($row['created_date'])),
-        date('h:i:s A', strtotime($row['created_date'])),
-        $row['mobile1'],
-        $row['area_name'],
-        $row['sub_area_name'],
-        $row['line_name'],
-        $row['group_name'],
-        $row['duefollowup_name'],
-        $row['branch_name'],
-        $promo_type_arr[$row['promo_type']] ?? '',
-        $row['status'],
-        $row['remark'],
-        date('d-m-Y', strtotime($row['follow_date'])),
-        $followup_type,
-        $role_arr[$row['role']] ?? '',
-        $row['fullname'],
-        $originName[$row['orgin_table']] ?? '',
-        $statusObj[$row['cus_status']] ?? ''
-    ];
+$action = "<button type='button' class='btn btn-success promo-chart' style='background-color:#009688;' data-id='" . $row['cus_id'] . "' data-toggle='modal' data-target='#promoChartModal'>View</button>";
+$data[] = [
+    $sno++,
+    $row['cus_id'],
+    $row['autogen_cus_id'],
+    $row['customer_name'],
+    date('d-m-Y', strtotime($row['created_date'])),
+    date('h:i:s A', strtotime($row['created_date'])),
+    $row['mobile1'],
+    $row['area_name'],
+    $row['sub_area_name'],
+    $row['line_name'],
+    $row['group_name'],
+    $row['duefollowup_name'],
+    $row['branch_name'],
+    $promo_type_arr[$row['promo_type']] ?? '',
+    $row['status'],
+    $row['remark'],
+    date('d-m-Y', strtotime($row['follow_date'])),
+    $followup_type,
+    $role_arr[$row['role']] ?? '',
+    $row['fullname'],
+    $originName[$row['orgin_table']] ?? '',
+    $statusObj[$row['cus_status']] ?? '',
+    $action
+];
 }    
 
 function count_all_data($connect)

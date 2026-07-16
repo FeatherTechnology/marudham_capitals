@@ -40,7 +40,8 @@ if (isset($_POST["bal_amt"])) {
             <th>Loan Category</th>
             <th>Sub Category</th>
             <th>Agent</th>
-            <th>Loan date</th>
+            <th>Responsible</th>
+            <th>Loan Date</th>
             <th>Loan Amount</th>
             <th>Balance Amount</th>
             <th>Collection Format</th>
@@ -56,10 +57,10 @@ if (isset($_POST["bal_amt"])) {
         <?php
         $cus_id = $_POST['cus_id'];
         $run = $connect->query("SELECT lc.due_start_from,lc.loan_category,lc.sub_category,lc.loan_amt_cal,lc.due_amt_cal,lc.net_cash_cal,lc.collection_method,ii.loan_id,ii.req_id,ii.updated_date,ii.cus_status,
-        rc.agent_id,lcc.loan_category_creation_name as loan_catrgory_name, us.collection_access
+        iv.agent_id,lcc.loan_category_creation_name as loan_catrgory_name, us.collection_access,iv.responsible
         from acknowlegement_loan_calculation lc 
         LEFT JOIN in_issue ii ON lc.req_id = ii.req_id 
-        LEFT JOIN request_creation rc ON ii.req_id = rc.req_id 
+        LEFT JOIN in_verification iv ON ii.req_id = iv.req_id 
         LEFT JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id 
         LEFT JOIN user us ON us.user_id = '$user_id'
         WHERE lc.cus_id_loan = '$cus_id' and (ii.cus_status >= 14 and ii.cus_status < 20) ORDER BY CAST(ii.req_id AS UNSIGNED) ASC "); //Customer status greater than or equal to 14 because, after issued data only we need
@@ -82,6 +83,7 @@ if (isset($_POST["bal_amt"])) {
                     }
                     ?>
                 </td>
+                <td><?php echo ($row['responsible'] == '0') ? 'Yes' : (!empty($row['agent_id']) && $row['responsible'] != '0' ? 'No' : ''); ?></td>
                 <td><?php echo date('d-m-Y', strtotime($row["updated_date"])); ?></td>
                 <td><?php echo moneyFormatIndia($row["loan_amt_cal"]); ?></td>
                 <td><?php echo moneyFormatIndia($bal_amt[$i - 1]); ?></td>

@@ -70,7 +70,8 @@ if (isset($_SESSION["userid"])) {
             <th>Loan Category</th>
             <th>Sub Category</th>
             <th>Agent</th>
-            <th>Loan date</th>
+            <th>Responsible</th>
+            <th>Loan Date</th>
             <th>Loan Amount</th>
             <th>Closed Date</th>
             <th>Status</th>
@@ -100,7 +101,7 @@ if (isset($_SESSION["userid"])) {
                 $screen_condition = " AND lc.cus_id_loan = $cus_id AND (n.receive_status = 0 OR n.req_id IS NULL)"; 
             }
 
-            $run = $connect->query("SELECT ii.loan_id, lc.cus_name_loan as cus_name, ad.doc_id, lcc.loan_category_creation_name as loan_catrgory_name, lc.sub_category, iv.agent_id, ii.updated_date, lc.loan_amt_cal, ii.req_id, ii.cus_status
+            $run = $connect->query("SELECT ii.loan_id, lc.cus_name_loan as cus_name, ad.doc_id, lcc.loan_category_creation_name as loan_catrgory_name, lc.sub_category, iv.agent_id, ii.updated_date, lc.loan_amt_cal, ii.req_id, ii.cus_status,iv.responsible
             FROM acknowlegement_loan_calculation lc 
             JOIN acknowlegement_documentation ad ON lc.req_id = ad.req_id 
             JOIN in_issue ii ON lc.req_id = ii.req_id 
@@ -126,6 +127,7 @@ if (isset($_SESSION["userid"])) {
                     }
                     ?>
                 </td>
+                <td><?php echo ($row['responsible'] == '0') ? 'Yes' : (!empty($row['agent_id']) && $row['responsible'] != '0' ? 'No' : ''); ?></td>
                 <td><?php echo date('d-m-Y', strtotime($row["updated_date"])); ?></td>
                 <td><?php echo moneyFormatIndia($row["loan_amt_cal"]); ?></td>
                 <td><?php echo date('d-m-Y', strtotime($runqry['created_date'])); ?></td> <!-- closed date-->

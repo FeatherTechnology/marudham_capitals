@@ -15,6 +15,47 @@ $(document).ready(function() {
             getAllDocumentList(req_id, cus_name);
         }); //then function end
     });
+
+    $(document).on('click', '.remove-doc', function () {
+    var req_id = $(this).data('reqid');
+
+    Swal.fire({
+        title: 'Are you sure to remove this document?',
+        text: 'This action cannot be reverted.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#0C70AB',
+        cancelButtonColor: '#cc4444',
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: 'documentTrackFile/removeDoc.php',
+                type: 'POST',
+                data: {
+                    req_id: req_id
+                },
+                cache: false,
+                success: function (response) {
+                    if (response == 0) {
+                        swarlSuccessAlert('Success', 'Document removed successfully.');
+                        window.location = 'noc_replace';
+                    } else {
+                        swalError('Error', 'Document removal failed');
+                    }
+                },
+                error: function () {
+                    swalError('Error', 'An error occurred while processing the request.');
+                }
+            });
+
+        }
+
+    });
+
+});
+
 });
 
 function getAllDocumentList(req_id, cus_name) {
@@ -131,4 +172,22 @@ function getAllDocumentList(req_id, cus_name) {
         }
     });
 
+}
+
+function swarlSuccessAlert(response, callback) {
+  Swal.fire({
+    title: response,
+    icon: "success",
+    confirmButtonText: "Ok",
+    confirmButtonColor: "#009688",
+    timerProgressBar: true,
+    timer: 2000,
+    showConfirmButton: false,
+    willClose: () => {
+      // This will run after the timer completes
+      if (typeof callback === "function") {
+        callback();
+      }
+    },
+  });
 }

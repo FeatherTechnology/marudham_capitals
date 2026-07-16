@@ -143,6 +143,12 @@ function outStandingReport(monthVal, branch, loan_category, type, agent) {
                         return moneyFormatIndia(data || 0);
                     }
                 },
+                {
+                    data: 'waiver_amount',
+                    render: function (data) {
+                        return moneyFormatIndia(data || 0);
+                    }
+                },
                 { data: 'end_po', defaultContent: 0 },
                 {
                     data: 'cash_amount',
@@ -319,6 +325,7 @@ function buildBranchHeader(branchName, monthName, agentName, type) {
     <tr>
         <th colspan="2">Pre O/s</th>
         <th colspan="1">Collection</th>
+        <th colspan="1">Waiver</th>
         <th colspan="1">End</th>
         <th colspan="1">Cash</th>
         <th colspan="1">Profit</th>
@@ -330,6 +337,7 @@ function buildBranchHeader(branchName, monthName, agentName, type) {
     <tr>
         <th>Amount</th>
         <th>Po</th>
+        <th>Amount</th>
         <th>Amount</th>
         <th>Po</th>
         <th>Amount</th>
