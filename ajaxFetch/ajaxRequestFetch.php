@@ -8,6 +8,68 @@ $userid = $_SESSION['userid'] ?? 0;
 $request_list_access = $_SESSION['request_list_access'] ?? 0;
 $login_user_type = $_SESSION['role'] ?? 0;
 
+$where = [];
+$params = [];
+
+/* =========================================================
+   USER ACCESS FILTER
+========================================================= */
+
+if ($userid != 1) {
+
+    $stmt = $connect->prepare("SELECT group_id, line_id, due_followup_lines, req_mapping_access FROM user WHERE user_id = ?");
+    $stmt->execute([$userid]);
+    $rowuser = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$rowuser) {
+        echo json_encode([]);
+        exit;
+    }
+
+    $accessMap = [
+        1 => ['group_id', 'area_group_mapping_sub_area', 'group_map_id', 'sub_area_id', 'cr.sub_area'],
+        2 => ['line_id', 'area_line_mapping_sub_area', 'line_map_id', 'sub_area_id', 'cr.sub_area'],
+        3 => ['due_followup_lines', 'area_duefollowup_mapping_area', 'duefollowup_map_id', 'area_id', 'cr.area']
+    ];
+
+    $accessType = (int)$rowuser['req_mapping_access'];
+
+    if (!isset($accessMap[$accessType])) {
+        echo json_encode([]);
+        exit;
+    }
+
+    [$source, $table, $mapCol, $selCol, $filterCol] = $accessMap[$accessType];
+
+    $ids = array_filter(array_map('intval', explode(',',$rowuser[$source] ?? '')));
+
+    if (!$ids) {
+        echo json_encode([]);
+        exit;
+    }
+
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+    $stmt = $connect->prepare("
+        SELECT DISTINCT $selCol
+        FROM $table
+        WHERE $mapCol IN ($placeholders)
+    ");
+
+    $stmt->execute($ids);
+
+    $mappedIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+    if (!$mappedIds) {
+        echo json_encode([]);
+        exit;
+    }
+
+    $where[] = "$filterCol IN (" . implode(',', array_fill(0, count($mappedIds), '?')) . ")";
+    $params = array_merge($params, $mappedIds);
+}
+
+
 /* ---------------- DATATABLE COLUMN MAP ---------------- */
 $column = [
     'rc.req_id',
@@ -71,10 +133,17 @@ $query = "SELECT DISTINCT
     STRAIGHT_JOIN loan_category_creation lcc ON lcc.loan_category_creation_id = rc.loan_category
     WHERE rc.status = 0 AND rc.cus_status < 14 AND rc.cus_status NOT IN (4,5,6,7,8,9)";
 
-/* user-level restriction */
+/* User-level restriction */
 if (!($userid == 1 || $request_list_access == 0)) {
-    $query .= " AND rc.insert_login_id = '" . intval($userid) . "'";
+    $where[] = "rc.insert_login_id = ?";
+    $params[] = $userid;
 }
+
+/* Mapping restriction */
+if (!empty($where)) {
+    $query .= " AND " . implode(" AND ", $where);
+}
+
 
 /* ---------------- SEARCH ---------------- */
 if (!empty($_POST['search'])) {
@@ -114,13 +183,13 @@ if ($_POST['length'] != -1) {
 
 /* ---------------- EXECUTE MAIN QUERY ---------------- */
 $stmt = $connect->prepare($query . $limit);
-$stmt->execute();
+$stmt->execute($params);
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $stmt->closeCursor();
 
 /* ---------------- COUNT FILTERED ---------------- */
 $stmt = $connect->prepare($query);
-$stmt->execute();
+$stmt->execute($params);
 $recordsFiltered = $stmt->rowCount();
 $stmt->closeCursor();
 

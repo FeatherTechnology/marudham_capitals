@@ -59,6 +59,7 @@ $closed = '';
 $nocmodule = '';
 $noc = '';
 $noc_mapping_access = '';
+$req_mapping_access = '';
 $noc_handover = '';
 $noc_replace = '';
 $doc_replace_remove_access = '';
@@ -253,6 +254,7 @@ if($idupd>0)
 			$doc_replace_remove_access          		     = $getUser['doc_replace_remove_access'];
 			$noc_replace_access          		     = $getUser['noc_replace_access'];
 			$noc_mapping_access          		     = $getUser['noc_mapping_access'];
+			$req_mapping_access          		     = $getUser['req_mapping_access'];
 			$doctrackmodule 				= $getUser['doctrackmodule'];
 			$doctrack 				= $getUser['doctrack'];
 			$doc_rec_access 				= $getUser['doc_rec_access'];
@@ -783,8 +785,9 @@ if($idupd>0)
 						<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($requestmodule==0){ echo'checked'; }} ?> tabindex="34" class="" id="requestmodule" name="requestmodule" >&nbsp;&nbsp;
 						<label class="custom-control-label" for="requestmodule">
 							<h5>Request</h5>
-						</label>
+						</label>&nbsp;&nbsp; <span class="text-danger" style='display:none' id='requestCheck'>Please Check Request </span>
 					</div>
+					
 					<br>
 					<div class="row">
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
@@ -793,7 +796,7 @@ if($idupd>0)
                                 <label class="custom-control-label" for="request">Request</label>
                             </div>
                         </div>
-					<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 agent_div" style="display: none">
+					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12 agent_div" style="display: none">
                         <div class="form-group">
                             <label for="agent1">Agent Name</label>
 							<input type='hidden' class='form-control' id="agentforstaff" name="agentforstaff" value="<?php if(isset($agentforstaff)){echo $agentforstaff;}?>">
@@ -809,6 +812,20 @@ if($idupd>0)
 								<label class="custom-control-label" for="request_list_access">All Request List Access</label>
 							</div>
 						</div>
+
+					<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+							  <div class="custom-control custom-checkbox">
+								<label for="req_mapping_access">Request Mapping Access</label>&nbsp;<span class="text-danger">*</span>
+								<select tabindex="64" type="text" class="form-control request-checkbox screen-validations" id="req_mapping_access" name="req_mapping_access" style="width: 250px;" <?php if($req_mapping_access =='') echo 'disabled'; ?> >
+									<option value="">Select Request Mapping Access</option>
+									<option value="1" <?php if($req_mapping_access == '1') echo 'selected';?> >Sector</option>
+									<option value="2" <?php if($req_mapping_access == '2') echo 'selected';?> >Region</option>
+									<option value="3" <?php if($req_mapping_access == '3') echo 'selected';?> >Zone</option>
+								</select>
+								<br>
+								<span class="text-danger" style='display:none' id='reqCheck'>Please Select Request Mapping Access</span>
+							</div>
+                        </div>
 					</div>
 					
 					<hr>

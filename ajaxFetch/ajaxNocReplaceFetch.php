@@ -8,13 +8,14 @@ if (isset($_SESSION["userid"])) {
 
 if ($userid != 1) {  // super admin bypass
     $userQry = $connect->query("
-            SELECT group_id, line_id, due_followup_lines, noc_mapping_access
+            SELECT group_id, line_id, due_followup_lines, noc_mapping_access,doc_replace_remove_access
             FROM user 
             WHERE user_id = $userid
         ");
     $rowuser = $userQry->fetch();
 
     $accessType = $rowuser['noc_mapping_access'];
+    $replaceRemoveAccess = $rowuser['doc_replace_remove_access'];
     $sub_area_ids = [];
 
     if ($accessType == 1) {
@@ -58,9 +59,10 @@ $column = array(
 );
 
 if ($userid == 1) {
-    $query = "SELECT n.created_date, u.fullname, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cp.mobile1, n.cus_id, n.req_id 
+    $query = "SELECT n.created_date, u.fullname, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cp.mobile1, n.cus_id, n.req_id ,dri.id AS replace_connected
     FROM noc n 
     JOIN acknowlegement_customer_profile cp ON n.req_id = cp.req_id 
+    JOIN acknowlegement_documentation ad ON n.req_id = ad.req_id
     JOIN customer_register cr ON cp.cus_id = cr.cus_id 
     JOIN area_list_creation ac ON cp.area_confirm_area = ac.area_id 
     JOIN sub_area_list_creation sa ON cp.area_confirm_subarea = sa.sub_area_id 
@@ -68,11 +70,13 @@ if ($userid == 1) {
     JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id 
     JOIN branch_creation bc ON alm.branch_id = bc.branch_id 
     JOIN user u ON u.user_id = n.insert_login_id
+    LEFT JOIN doc_replace_ids dri ON dri.replace_doc_id = ad.doc_id
     WHERE n.noc_replace_status = 1 ";
 } else {
-    $query = "SELECT n.created_date, u.fullname, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cp.mobile1, n.cus_id, n.req_id
+    $query = "SELECT n.created_date, u.fullname, cr.autogen_cus_id, cp.cus_name, ac.area_name, sa.sub_area_name, alm.line_name, bc.branch_name, cp.mobile1, n.cus_id, n.req_id,dri.id AS replace_connected
     FROM noc n 
     JOIN acknowlegement_customer_profile cp ON n.req_id = cp.req_id 
+     JOIN acknowlegement_documentation ad ON n.req_id = ad.req_id
     JOIN customer_register cr ON cp.cus_id = cr.cus_id 
     JOIN area_list_creation ac ON cp.area_confirm_area = ac.area_id 
     JOIN sub_area_list_creation sa ON cp.area_confirm_subarea = sa.sub_area_id 
@@ -80,6 +84,7 @@ if ($userid == 1) {
     JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
     JOIN branch_creation bc ON alm.branch_id = bc.branch_id 
     JOIN user u ON u.user_id = n.insert_login_id
+    LEFT JOIN doc_replace_ids dri ON dri.replace_doc_id = ad.doc_id
     WHERE n.noc_replace_status = 1 AND $colName IN ($sub_area_list) ";
 }
 
@@ -143,8 +148,21 @@ foreach ($result as $row) {
 
     $cus_sts = "<a href='' data-value ='" . $cus_id . "' class='customer-status' data-toggle='modal' data-target='.customerstatus'><span class='icon-eye' style='font-size: 12px;position: relative;top: 2px;'></span></a>";
     $sub_array[] = $cus_sts;
+    $replaceConnected = $row['replace_connected'];
+    $action = "<div class='dropdown'>
+    <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
+    <div class='dropdown-content'>";
 
-    $sub_array[] = "<button class='btn btn-primary view-track' title='View details' data-reqid='$req_id' data-cusname='$cus_name' data-toggle='modal' data-target='.viewDocModal'>View</button>";
+    $action .= "<a href='' title='View details' class='view-track'  title='View details' data-reqid='$req_id' data-cusname='$cus_name' data-toggle='modal' data-target='.viewDocModal'>View</a>";
+
+    
+if ($replaceRemoveAccess == '1' && empty($replaceConnected))  { 
+        $action .= "<a href='' title='Remove' class='remove-doc' data-reqid='$req_id' data-cusname='$cus_name'>Remove</a>";
+    }
+
+
+    $action .= "</div></div>";
+    $sub_array[] = $action;
 
     $data[]      = $sub_array;
 }

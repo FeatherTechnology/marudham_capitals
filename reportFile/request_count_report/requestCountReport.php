@@ -38,14 +38,14 @@ if ($selectedType == '2') { //Sector
 
     $condtn  = "WHERE loan_category_creation_id IN ($loanCatVal)";
 } 
-// else if ($selectedType == '3') { //Region
-//     $joinTable = "  JOIN area_line_mapping_sub_area almsa ON req.sub_area = almsa.sub_area_id";
-//     $condition = "AND almsa.line_map_id IN ($selectedVal)";
+else if ($selectedType == '3') { //Region
+    $joinTable = "  JOIN area_line_mapping_sub_area almsa ON req.sub_area = almsa.sub_area_id";
+    $condition = "AND almsa.line_map_id IN ($selectedVal)";
     
-// } else if ($selectedType == '4') { //Zone
-//     $joinTable = "  JOIN area_duefollowup_mapping_area adma ON req.area = adma.area_id";
-//     $condition = "AND adma.duefollowup_map_id IN ($selectedVal)";
-// } 
+} else if ($selectedType == '4') { //Zone
+    $joinTable = "  JOIN area_duefollowup_mapping_area adma ON req.area = adma.area_id";
+    $condition = "AND adma.duefollowup_map_id IN ($selectedVal)";
+} 
 
 /* =====================
    USER FILTER
@@ -77,8 +77,17 @@ if (empty($userIds)) {
 
 $placeholders = str_repeat('?,', count($userIds) - 1) . '?';
 $nameMap = [];
-
-if ($selectedType == '2' && !empty($selectedVal)) {
+if ($selectedType == '1' && !empty($selectedVal)) {
+ // Default fallback: Fetch User names
+    $stmt = $connect->prepare("
+        SELECT user_id, fullname 
+        FROM user 
+        WHERE user_id IN ($placeholders) 
+        ORDER BY fullname ASC
+    ");
+    $stmt->execute($userIds);
+    $nameMap = $stmt->fetchAll(PDO::FETCH_KEY_PAIR); // structure: user_id => fullname
+} else if ($selectedType == '2' && !empty($selectedVal)) {
     // If Sector is selected, split selectedVal into an array for placeholders
     $valArray = explode(',', $selectedVal);
     $sectorPlaceholders = str_repeat('?,', count($valArray) - 1) . '?';
@@ -91,16 +100,33 @@ if ($selectedType == '2' && !empty($selectedVal)) {
     ");
     $stmt->execute($valArray);
     $nameMap = $stmt->fetchAll(PDO::FETCH_KEY_PAIR); // structure: map_id => group_name
-} else {
-    // Default fallback: Fetch User names
+} else if($selectedType == '3' && !empty($selectedVal)) {
+    // If Region is selected, split selectedVal into an array for placeholders
+    $valArray = explode(',', $selectedVal);
+    $regionPlaceholders = str_repeat('?,', count($valArray) - 1) . '?';
+    
     $stmt = $connect->prepare("
-        SELECT user_id, fullname 
-        FROM user 
-        WHERE user_id IN ($placeholders) 
-        ORDER BY fullname ASC
+        SELECT map_id, line_name 
+        FROM area_line_mapping 
+        WHERE map_id IN ($regionPlaceholders) 
+        ORDER BY line_name ASC
     ");
-    $stmt->execute($userIds);
-    $nameMap = $stmt->fetchAll(PDO::FETCH_KEY_PAIR); // structure: user_id => fullname
+    $stmt->execute($valArray);
+    $nameMap = $stmt->fetchAll(PDO::FETCH_KEY_PAIR); // structure: map_id => line_name
+} else if($selectedType == '4' && !empty($selectedVal)) {
+    // If Zone is selected, split selectedVal into an array for placeholders
+    $valArray = explode(',', $selectedVal);
+    $zonePlaceholders = str_repeat('?,', count($valArray) - 1) . '?';
+    
+    $stmt = $connect->prepare("
+        SELECT map_id, duefollowup_name 
+        FROM area_duefollowup_mapping 
+        WHERE map_id IN ($zonePlaceholders) 
+        ORDER BY duefollowup_name ASC
+    ");
+    $stmt->execute($valArray);
+    $nameMap = $stmt->fetchAll(PDO::FETCH_KEY_PAIR); // structure: map_id => duefollowup_name
+   
 }
 
 $loanCats = $connect->query("
@@ -182,7 +208,17 @@ function emptyStatusCounter() {
 }
 
 // Select either the Sector Map ID or User ID dynamically so records group correctly
-$groupSelect = ($selectedType == '2') ? ", agmsa.group_map_id AS target_group_id" : ", req.insert_login_id AS target_group_id";
+$groupSelect = "";
+
+if ($selectedType == '1') {
+    $groupSelect = ", req.insert_login_id AS target_group_id";
+} elseif ($selectedType == '2') {
+    $groupSelect = ", agmsa.group_map_id AS target_group_id";
+} elseif ($selectedType == '3') {
+    $groupSelect = ", almsa.line_map_id AS target_group_id";
+} elseif ($selectedType == '4') {
+    $groupSelect = ", adma.duefollowup_map_id AS target_group_id";
+}
 
 $prevQuery = "
     SELECT req.req_id, req.cus_id, req.cus_data, req.cus_status,

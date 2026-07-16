@@ -51,6 +51,15 @@ $(document).ready(function () {
     $('#reset_btn').click(function () {
         commitmentReportTable();
     });
+
+    //Promotion Chart
+    $(document).off('click', '.promo-chart').on('click', '.promo-chart', function () {
+        let cus_id = $(this).data('id');
+        $.post('followupFiles/promotion/resetPromotionChart.php', { cus_id: cus_id }, function (html) {
+            $('#promoChartDiv').empty().html(html);
+        });
+    });
+
 });
 
 function getUserNames() {

@@ -115,6 +115,7 @@ $data = [];
 $tot_pre_os_amt = 0;
 $tot_pre_os_po = 0;
 $tot_coll_amt = 0;
+$tot_waiver_amt = 0;
 $tot_end_po = 0;
 $tot_cash_amt = 0;
 $tot_profit = 0;
@@ -135,18 +136,24 @@ foreach ($loopCategories as $cat) {
     $current = getOutstanding($connect, $branch_id, $monthEnd, $cat, $hasCategoryFilter);
 
     // 2. Collection Query
-    $collQry = $connect->query("
-        SELECT IFNULL(SUM(c.due_amt_track),0)
-        FROM collection c
-        LEFT JOIN acknowlegement_customer_profile ack ON c.req_id = ack.req_id
-        LEFT JOIN acknowlegement_loan_calculation alc ON c.req_id = alc.req_id
-        JOIN area_group_mapping_sub_area agmsa ON agmsa.sub_area_id = ack.area_confirm_subarea
-        JOIN area_group_mapping agm ON agm.map_id = agmsa.group_map_id
-        WHERE agm.branch_id = '$branch_id'
-        AND DATE(c.coll_date) BETWEEN '$monthStart' AND '$monthEnd'
-        $singleFilter
-    ");
-    $collection_amount = $collQry->fetchColumn() ?: 0;
+   $collQry = $connect->query("
+    SELECT
+        IFNULL(SUM(c.due_amt_track),0) AS due_amt_track,
+        IFNULL(SUM(c.pre_close_waiver),0) AS pre_close_waiver
+    FROM collection c
+    LEFT JOIN acknowlegement_customer_profile ack ON c.req_id = ack.req_id
+    LEFT JOIN acknowlegement_loan_calculation alc ON c.req_id = alc.req_id
+    JOIN area_group_mapping_sub_area agmsa ON agmsa.sub_area_id = ack.area_confirm_subarea
+    JOIN area_group_mapping agm ON agm.map_id = agmsa.group_map_id
+    WHERE agm.branch_id = '$branch_id'
+    AND DATE(c.coll_date) BETWEEN '$monthStart' AND '$monthEnd'
+    $singleFilter
+");
+
+$collection = $collQry->fetch(PDO::FETCH_ASSOC);
+
+$due_amt_track    = $collection['due_amt_track'] ?? 0;
+$pre_close_waiver = $collection['pre_close_waiver'] ?? 0;
 
     // 3. Issues Query
     $issueQry = $connect->query("
@@ -185,16 +192,16 @@ foreach ($loopCategories as $cat) {
         ON agm.map_id = agmsa.group_map_id
     WHERE agm.branch_id = '$branch_id'
     AND DATE(c1.coll_date) BETWEEN '$monthStart' AND '$monthEnd'
-    AND (c1.bal_amt = c1.due_amt_track)
+    AND ((c1.bal_amt = c1.due_amt_track) OR (c1.bal_amt = c1.pre_close_waiver))
     $singleFilter
 ");
     $end_po = $endQry->fetchColumn() ?: 0;
 
     $calculated_curr_po  = $pre['count'] + $issue_count - $end_po;
-      if (
-        $pre['amount'] == 0 && $pre['count'] == 0 && 
-        $collection_amount == 0 && $end_po == 0 && 
-        $cash_amt == 0 && $profit_amt == 0 && $doc_amt == 0 && 
+    if (
+        $pre['amount'] == 0 && $pre['count'] == 0 &&
+        $due_amt_track == 0 && $pre_close_waiver == 0 && $end_po == 0 &&
+        $cash_amt == 0 && $profit_amt == 0 && $doc_amt == 0 &&
         $issue_count == 0 && $current['amount'] == 0 && $calculated_curr_po == 0
     ) {
         // Drop calculations and skip row insertion
@@ -203,7 +210,8 @@ foreach ($loopCategories as $cat) {
     // Accumulate for Grand Total Row calculations
     $tot_pre_os_amt  += $pre['amount'];
     $tot_pre_os_po   += $pre['count'];
-    $tot_coll_amt    += $collection_amount;
+    $tot_coll_amt    += $due_amt_track;
+    $tot_waiver_amt    += $pre_close_waiver;
     $tot_end_po      += $end_po;
     $tot_cash_amt    += $cash_amt;
     $tot_profit      += $profit_amt;
@@ -219,7 +227,8 @@ foreach ($loopCategories as $cat) {
             'details'           => $rowLabel,
             'pre_os_amount'      => round($pre['amount']),
             'pre_os_po'          => $pre['count'],
-            'collection_amount'  => round($collection_amount),
+            'collection_amount'  => round($due_amt_track),
+            'waiver_amount'      => round($pre_close_waiver),
             'end_po'             => $end_po,
             'cash_amount'        => round($cash_amt),
             'profit'             => round($profit_amt),
@@ -238,6 +247,7 @@ $data[] = [
     'pre_os_amount'      => round($tot_pre_os_amt),
     'pre_os_po'          => $tot_pre_os_po,
     'collection_amount'  => round($tot_coll_amt),
+    'waiver_amount'      => round($tot_waiver_amt),
     'end_po'             => $tot_end_po,
     'cash_amount'        => round($tot_cash_amt),
     'profit'             => round($tot_profit),
