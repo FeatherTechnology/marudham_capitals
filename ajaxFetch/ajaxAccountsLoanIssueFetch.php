@@ -168,7 +168,7 @@ foreach ($result as $row) {
     $ag_id = $row['agent_id'];
     if ($ag_id != '') {
 
-        $qry = $connect->query("SELECT * FROM agent_creation where ag_id = $ag_id ");
+        $qry = $connect->query("SELECT ag_name FROM agent_creation where ag_id = $ag_id ");
         $row1 = $qry->fetch();
         $sub_array[] = $row1['ag_name'];
     } else {

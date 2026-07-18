@@ -360,15 +360,11 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 	<div class="col-md-12">
 		<div class="form-group" style="text-align:center">
 			<!-- <label for=''style="font-size:16px" >Verification:</label><br><br> -->
-			<input type="radio" name="verification_type" id="cus_profile" value="cus_profile" data-sts="<?php echo $customer_profile_sts ?? ''; ?>"></input><label for='cus_profile'>&nbsp;&nbsp; Customer Profile <?php if (isset($customer_profile_sts)) {
-																																																						if ($customer_profile_sts == 10) { ?> <span class="icon-done"></span> <?php }
-																																																									} ?> </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<input type="radio" name="verification_type" id="documentation" value="documentation" data-sts="<?php echo $document_sts ?? ''; ?>"></input><label for='documentation'>&nbsp;&nbsp; Documentation <?php if (isset($document_sts)) {
-																																																					if ($document_sts == 11) { ?> <span class="icon-done"></span> <?php }
-																																																							} ?> </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<input type="radio" name="verification_type" id="loan_calc" value="loan_calc" data-sts="<?php echo $cus_status_lc ?? ''; ?>"></input><label for='loan_calc'>&nbsp;&nbsp; Loan Calculation <?php if (isset($cus_status_lc)) {
-																																																			if ($cus_status_lc == 12) { ?> <span class="icon-done"></span> <?php }
-																																																					} ?> </label>
+			<input type="radio" name="verification_type" id="cus_profile" value="cus_profile" data-sts="<?php echo $customer_profile_sts ?? ''; ?>"></input><label for='cus_profile'>&nbsp;&nbsp; Customer Profile <?php if (isset($customer_profile_sts)) {if ($customer_profile_sts == 10) { ?> <span class="icon-done"></span> <?php }} ?> </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+			<input type="radio" name="verification_type" id="documentation" value="documentation" data-sts="<?php echo $document_sts ?? ''; ?>"></input><label for='documentation'>&nbsp;&nbsp; Documentation <?php if (isset($document_sts)) {if ($document_sts == 11) { ?> <span class="icon-done"></span> <?php }} ?> </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			
+			<input type="radio" name="verification_type" id="loan_calc" value="loan_calc" data-sts="<?php echo $cus_status_lc ?? ''; ?>"></input><label for='loan_calc'>&nbsp;&nbsp; Loan Calculation <?php if (isset($cus_status_lc)) {if ($cus_status_lc == 12) { ?> <span class="icon-done"></span> <?php }} ?> </label>
 		</div>
 	</div>
 
@@ -3578,7 +3574,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 				</br>
 
 
-				<div id="feedbackTable">
+				<div id="feedbackTable" style="overflow-x: auto;">
 					<table class="table custom-table">
 						<thead>
 							<tr>

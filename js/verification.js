@@ -477,14 +477,10 @@ $(document).ready(function () {
          getAllAgentDropdown(); //for directors
       }
   
-      let agent_id = $("#agent_id").val();
-      getresponsiblecolumn(agent_id);
-  
       var pge = $("#pge").val();
       if (pge == "1") {
         //verification.
-        $("#cus_agent_name").attr("disabled", true);
-        $("#cus_responsible").attr("disabled", true);
+        $("#cus_agent_name, #agent_name, #cus_responsible, #doc_responsible, #loan_responsible").attr("disabled", true);
       }
   }
 
@@ -1330,6 +1326,9 @@ $(function () {
   nameFormatter('#cus_name');// To Show Namein Proper Format
   nameFormatter('#famname'); // 
 
+  let agent_id = $("#agent_id").val();
+  getresponsiblecolumn(agent_id);
+
   $(".modalTable").DataTable({
     processing: true,
     iDisplayLength: 5,
@@ -1775,6 +1774,12 @@ function verificationPerson() {
 
 $("#guarentor_name").change(function () {
   //Select Guarantor Name relationship will show in input.
+
+  let gId = $('#guarentor_name_upd').val();
+
+  $.post('', {}, function(){
+    
+  }, 'json');
 
   let famId = document.querySelector("#guarentor_name").value;
 
@@ -3549,38 +3554,25 @@ function feedbackList() {
 
 ////////////////////////// Agent dropdown START ////////////////////////////////////
 //Fetch Agent dropdown based on staffs from manage user
-function getStaffBasedAgent(user_id_load) {
+function getStaffBasedAgent(user_id) {
   var ag_id_upd = $("#agent_id").val();
   $.ajax({
     url: "requestFile/getStaffBasedAgent.php",
-    data: { user_id: user_id_load },
+    data: { user_id },
     dataType: "json",
     type: "post",
     cache: false,
     success: function (response) {
-      $("#cus_agent_name").empty();
-      $("#cus_agent_name").append(
-        "<option value='' >Select Agent Name</option>"
-      );
+      $("#cus_agent_name").empty().append("<option value='' >Select Agent Name</option>");
+
       for (var i = 0; i < response.length; i++) {
         var selected = "";
-        if (
-          ag_id_upd != "undefined" &&
-          ag_id_upd != "" &&
-          ag_id_upd == response[i]["ag_id"]
-        ) {
+        if (ag_id_upd != "undefined" && ag_id_upd != "" && ag_id_upd == response[i]["ag_id"]) {
           selected = "selected";
         }
-        $("#cus_agent_name").append(
-          "<option value='" +
-          response[i]["ag_id"] +
-          "' " +
-          selected +
-          ">" +
-          response[i]["ag_name"] +
-          " </option>"
-        );
+        $("#cus_agent_name").append(`<option value='${response[i]["ag_id"]}' ${selected}> ${response[i]["ag_name"]} </option>`);
       }
+
       // Sort cus_agent_name dropdown
       sortDropdownAlphabetically("#cus_agent_name");
     },
@@ -3631,6 +3623,7 @@ $("#cus_agent_name").change(function () {
   $("#agent_id_hidden").val(agentId);
   getresponsiblecolumn(agentId); //To Hide/show responsible.
 });
+
 $('#cus_responsible').change(function () {
   let res_id = $(this).val();
   $('#responsible_hidden').val(res_id)

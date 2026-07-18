@@ -103,10 +103,8 @@ $(document).ready(function () {
         if (area_upd != '') {
             getAreaBasedSubArea(area_upd);
         }
-
-        let agent_id = $('#agent_id').val();
-        getresponsiblecolumn(agent_id);
     }
+    
  $("body").on("click", "#feedback_edit", function () {
     let id = $(this).attr("value");
 
@@ -1237,6 +1235,9 @@ $(function () {
     $('input').not('#int_rate, #due_period, #doc_charge, #proc_fee').attr('readonly', true);
     $('select').not('#choose_document, #mortgage_process, #endorsement_process, #replace_doc_id').attr('disabled', true);
 
+    let agent_id = $('#agent_id').val();
+    getresponsiblecolumn(agent_id);
+
     $('.modalTable').DataTable({
         'processing': true,
         'iDisplayLength': 5,
@@ -1310,7 +1311,7 @@ function getresponsiblecolumn(ag_id) {
         cache: false,
         success: function (response) {
             if (response == '0') {
-                $('.responsible').show();
+                $('.collection').show();
             } else {
                 $('.responsible').hide();
             }
