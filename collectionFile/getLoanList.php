@@ -39,7 +39,7 @@ if (isset($_POST["bal_amt"])) {
             <th>Sub Category</th>
             <th>Agent</th>
             <th>Responsible</th>
-            <th>Loan date</th>
+            <th>Loan Date</th>
             <th>Loan Amount</th>
             <th>Balance Amount</th>
             <th>Collection Format</th>
@@ -58,7 +58,7 @@ if (isset($_POST["bal_amt"])) {
         $run = $connect->query("SELECT ii.loan_id, lcc.loan_category_creation_name AS loan_catrgory_name, lc.sub_category, ac.ag_name, rc.responsible, ii.updated_date, lc.loan_amt_cal, lc.collection_method, lc.due_start_from, ii.req_id, ii.cus_status, us.collection_access
         FROM acknowlegement_loan_calculation lc 
         LEFT JOIN in_issue ii ON lc.req_id = ii.req_id 
-        LEFT JOIN request_creation rc ON ii.req_id = rc.req_id 
+        LEFT JOIN in_verification iv ON ii.req_id = iv.req_id 
         LEFT JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id 
         LEFT JOIN user us ON us.user_id = '$user_id'
         LEFT JOIN agent_creation ac ON rc.agent_id = ac.ag_id

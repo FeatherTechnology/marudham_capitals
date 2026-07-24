@@ -6,7 +6,8 @@ $(document).ready(function () {
         let cusSts = $('#cus_sts').val();
         let cummDate = $('#cummDate').val();
         let res_sts = $('#res_sts').val();
-        window.location = 'edit_due_followup&cussts='+cusSts+'&cummDate='+cummDate+'&res_sts='+res_sts;
+        let comm_sts = $('#comm_sts').val();
+        window.location = 'edit_due_followup&cussts='+cusSts+'&cummDate='+cummDate+'&res_sts='+res_sts+'&comm_sts='+comm_sts;
     })
 
     $('#comm_ftype').change(function () {

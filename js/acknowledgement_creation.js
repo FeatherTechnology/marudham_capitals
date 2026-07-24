@@ -2840,19 +2840,61 @@ function fingerprintinfo() {
 // ///////////////////////////  Document Info Modal END //////////////////////////////
 
 
-//Documentation Submit Validation
+// Documentation Submit Validation
 $('#submit_documentation').click(function (event) {
-    if (doc_submit_validation(event)) {
-        let confirmAction = confirm("Are you sure you want to submit Documentation ?");
-        if (!confirmAction) {
-            event.preventDefault(); // Stop form submission if canceled
-            return false;
+    event.preventDefault(); // Stop immediate form submission
+    
+    let $btn = $(this);
+    let $form = $btn.closest('form');
+    
+    $btn.attr('disabled', true); // Temporarily disable button during AJAX call
+
+    // 1. FIRST: Check the replacement status via AJAX
+    $.ajax({
+        url: "approveFile/checkReplaceStatus.php",
+        type: "POST",
+        data: {
+            req_id: $('#req_id').val()
+        },
+        dataType: "json",
+        success: function (res) {
+            
+            // Check if backend throws a warning AND the user has NOT checked/enabled the switch
+            if (res.status === 'warning' && !$('#replace_status').is(':checked')) {
+                swalError('Warning', res.message);
+                $btn.removeAttr('disabled'); // Ensure button is re-enabled to let user fix it
+                return false;
+            }
+
+            // 2. SECOND: Check form inputs validation
+            // Note: If this function returns false, the confirmation below WILL NOT show.
+            if (!doc_submit_validation(event)) {
+                console.log("Validation failed inside doc_submit_validation");
+                scrollToFirstError('#cus_doc'); 
+                $btn.removeAttr('disabled');
+                return false;
+            }
+
+            // 3. THIRD: Ask for final submission confirmation
+            let confirmAction = confirm("Are you sure you want to submit Documentation ?");
+            if (confirmAction) {
+                // Fix for programmatic submit missing button POST value
+                if ($form.find('input[name="submit_documentation"]').length === 0) {
+                    $form.append('<input type="hidden" name="submit_documentation" value="submit">');
+                }
+                
+                // NATIVE SUBMIT: Using [0] bypasses jQuery event blocks and forces the page to POST
+                $form[0].submit();
+            } else {
+                // If canceled, re-enable button and stop
+                $btn.removeAttr('disabled');
+            }
+        },
+        error: function() {
+            alert("An error occurred while validating status. Please try again.");
+            $btn.removeAttr('disabled');
         }
-    } else {
-        event.preventDefault();
-        scrollToFirstError('#cus_doc'); 
-        return false;
-    }
+    });
 });
 
 function doc_submit_validation(event) {

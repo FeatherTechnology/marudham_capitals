@@ -695,7 +695,7 @@ function getTalukBasedArea(talukselected) {
     $.ajax({
         url: 'requestFile/ajaxGetEnabledAreaName.php',
         type: 'post',
-        data: { 'talukselected': talukselected },
+        data: { 'type': 'request', 'talukselected': talukselected },
         dataType: 'json',
         success: function (response) {
 

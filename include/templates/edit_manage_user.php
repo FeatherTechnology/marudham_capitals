@@ -64,6 +64,7 @@
 								<th width="50">S.No.</th>
 								<th>Role</th>
 								<th>Role Type</th>
+								<th>Department</th>
 								<th>Name</th>
 								<th>User ID</th>
 								<th>Company Name</th>

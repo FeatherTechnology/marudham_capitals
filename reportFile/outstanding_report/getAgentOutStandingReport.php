@@ -98,9 +98,18 @@ function getAgentOutstanding($connect, $branch_id, $agent_id, $to_date)
 $data = [];
 
 // Initialize summation pools for the Grand Total row
-$tot_pre_os_amt = 0; $tot_pre_os_po = 0; $tot_coll_amt = 0; $tot_end_po = 0;
-$tot_cash_amt = 0; $tot_profit = 0; $tot_doc = 0; $tot_grand_amt = 0; $tot_issue_po = 0;
-$tot_curr_os_amt = 0; $tot_curr_os_po = 0;
+$tot_pre_os_amt = 0;
+$tot_pre_os_po = 0;
+$tot_coll_amt = 0;
+$tot_waiver_amt = 0;
+$tot_end_po = 0;
+$tot_cash_amt = 0;
+$tot_profit = 0;
+$tot_doc = 0;
+$tot_grand_amt = 0;
+$tot_issue_po = 0;
+$tot_curr_os_amt = 0;
+$tot_curr_os_po = 0;
 
 foreach ($loopBranches as $b_id) {
     
@@ -111,7 +120,8 @@ foreach ($loopBranches as $b_id) {
 
     // 2. Collection Query: Filtered by the Agent ID assigned at Loan Issue
     $collQry = $connect->query("
-        SELECT IFNULL(SUM(c.due_amt_track), 0)
+        SELECT  IFNULL(SUM(c.due_amt_track),0) AS due_amt_track,
+        IFNULL(SUM(c.pre_close_waiver),0) AS pre_close_waiver
         FROM collection c
         JOIN loan_issue li ON c.req_id = li.req_id
         LEFT JOIN acknowlegement_customer_profile ack ON c.req_id = ack.req_id
@@ -121,9 +131,10 @@ foreach ($loopBranches as $b_id) {
         AND li.agent_id = '$agent_id'
         AND DATE(c.coll_date) BETWEEN '$monthStart' AND '$monthEnd'
     ");
+    $collection = $collQry->fetch(PDO::FETCH_ASSOC);
 
-    $collection_amount = $collQry->fetchColumn() ?: 0;
-
+    $due_amt_track    = $collection['due_amt_track'] ?? 0;
+    $pre_close_waiver = $collection['pre_close_waiver'] ?? 0;
     // 3. Issues Query explicitly filtered by agent_id
     $issueQry = $connect->query("
         SELECT
@@ -159,19 +170,19 @@ foreach ($loopBranches as $b_id) {
         WHERE agm.branch_id = '$b_id'
         AND li.agent_id = '$agent_id'
         AND DATE(c1.coll_date) BETWEEN '$monthStart' AND '$monthEnd'
-        AND (c1.bal_amt = c1.due_amt_track)
+        AND ((c1.bal_amt = c1.due_amt_track) OR (c1.bal_amt = c1.pre_close_waiver))
     ");
     $end_po = $endQry->fetchColumn() ?: 0;
 
     // 5. Apply standard bookkeeping pipeline formulas
-    $calculated_curr_amt = $pre['amount'] + $row_total - $collection_amount;
+    $calculated_curr_amt = $pre['amount'] + $row_total - $due_amt_track - $pre_close_waiver;
     $calculated_curr_po  = $pre['count'] + $issue_count - $end_po;
 
     // --- NEW MODIFICATION: CHECK IF ALL VALUES ARE ZERO ---
     if (
-        $pre['amount'] == 0 && $pre['count'] == 0 && 
-        $collection_amount == 0 && $end_po == 0 && 
-        $cash_amt == 0 && $profit_amt == 0 && $doc_amt == 0 && 
+        $pre['amount'] == 0 && $pre['count'] == 0 &&
+        $due_amt_track == 0 && $pre_close_waiver == 0 && $end_po == 0 &&
+        $cash_amt == 0 && $profit_amt == 0 && $doc_amt == 0 &&
         $issue_count == 0 && $calculated_curr_amt == 0 && $calculated_curr_po == 0
     ) {
         // Skip adding this branch to the report entirely
@@ -182,7 +193,8 @@ foreach ($loopBranches as $b_id) {
     // Accumulate metrics for Grand Total calculations
     $tot_pre_os_amt  += $pre['amount'];
     $tot_pre_os_po   += $pre['count'];
-    $tot_coll_amt    += $collection_amount;
+    $tot_coll_amt    += $due_amt_track;
+    $tot_waiver_amt  += $pre_close_waiver;
     $tot_end_po      += $end_po;
     $tot_cash_amt    += $cash_amt;
     $tot_profit      += $profit_amt;
@@ -196,7 +208,8 @@ foreach ($loopBranches as $b_id) {
         'details'            => $rowLabel,
         'pre_os_amount'      => round($pre['amount']),
         'pre_os_po'          => $pre['count'],
-        'collection_amount'  => round($collection_amount),
+        'collection_amount'  => round($due_amt_track),
+        'waiver_amount'      => round($pre_close_waiver),
         'end_po'             => $end_po,
         'cash_amount'        => round($cash_amt),
         'profit'             => round($profit_amt),
@@ -214,6 +227,7 @@ $data[] = [
     'pre_os_amount'      => round($tot_pre_os_amt),
     'pre_os_po'          => $tot_pre_os_po,
     'collection_amount'  => round($tot_coll_amt),
+    'waiver_amount'      => round($tot_waiver_amt),
     'end_po'             => $tot_end_po,
     'cash_amount'        => round($tot_cash_amt),
     'profit'             => round($tot_profit),
@@ -227,4 +241,3 @@ $data[] = [
 echo json_encode([
     'data' => $data
 ]);
-?>
