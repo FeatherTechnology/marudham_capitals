@@ -23,14 +23,14 @@ include '../../moneyFormatIndia.php';
         $req_id = $_POST['reqId'];
         $pages = $_POST['pages'];
 
-        $goldInfo = $connect->query("SELECT * FROM gold_info where req_id = '$req_id' order by id desc");
+        $goldInfo = $connect->query("SELECT id, gold_sts, gold_type, Purity, gold_Count, gold_Weight, gold_Value, gold_upload FROM gold_info WHERE req_id = '$req_id' ORDER BY id DESC");
 
         $i = 1;
         while ($gold = $goldInfo->fetch()) {
         ?>
 
             <tr>
-                <td><?php echo $i; ?></td>
+                <td><?php echo $i++; ?></td>
                 <td><?php if ($gold["gold_sts"] == '0') {
                         echo 'Old';
                     } else if ($gold["gold_sts"] == '1') {
@@ -42,7 +42,6 @@ include '../../moneyFormatIndia.php';
                 <td><?php echo $gold["gold_Weight"]; ?></td>
                 <td><?php echo moneyFormatIndia($gold["gold_Value"]); ?></td>
                 <td> <a href="uploads/gold_info/<?php echo $gold['gold_upload']; ?>" target="_blank" style="color: #4ba39b;"> <?php echo $gold['gold_upload']; ?> </a></td>
-
                 <td>
                     <a id="gold_info_edit" value="<?php echo $gold['id']; ?>"> <span class="icon-border_color"></span></a> &nbsp
                     <?php
@@ -52,20 +51,16 @@ include '../../moneyFormatIndia.php';
                     <?php  //} 
                     ?>
                 </td>
-
             </tr>
 
-        <?php $i = $i + 1;
-        }     ?>
+        <?php } ?>
     </tbody>
 </table>
-
 
 <script type="text/javascript">
     $(function() {
         // Declare table variable to store the DataTable instance
-        var goldInfo_table_data = $('#goldInfo_table_data').DataTable({
-            ...getStateSaveConfig('goldInfo_table_data'),
+        $('#goldInfo_table_data').DataTable({
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -98,9 +93,6 @@ include '../../moneyFormatIndia.php';
                 }
             ],
         });
-
-        // Pass the table variable to the initColVisFeatures function
-        initColVisFeatures(goldInfo_table_data, 'goldInfo_table_data');
     });
 </script>
 <?php

@@ -15,35 +15,27 @@ include '../../ajaxconfig.php';
     <tbody>
 
         <?php
-        $req_id = $_POST['reqId'];
-        $signInfo = $connect->query("SELECT * FROM `signed_doc_info` where req_id = '$req_id' order by id desc");
+            $req_id = $_POST['reqId'];
+            $signInfo = $connect->query("SELECT sign_type, doc_Count, vfi.famname, vfi.relationship FROM `signed_doc_info` sdi LEFT JOIN verification_family_info vfi ON sdi.signType_relationship = vfi.id WHERE sdi.req_id = '$req_id' ORDER BY sdi.id DESC");
 
-        $i = 1;
-        while ($signedDoc = $signInfo->fetch()) {
-            $fam_id = $signedDoc["signType_relationship"];
-            $result = $connect->query("SELECT famname,relationship FROM `verification_family_info` where id='$fam_id'");
-            $row = $result->fetch()
+            $i = 1;
+            $signType = ['0' => 'Customer', '1' => 'Guarantor', '2' => 'Combined', '3' => 'Family Members'];
+            while ($signedDoc = $signInfo->fetch()) {
         ?>
             <tr>
                 <td> <?php echo $i++; ?></td>
 
                 <td>Signed Document</td>
 
-                <td> <?php if ($signedDoc["sign_type"] == '0') {
-                            echo 'Customer';
-                        } elseif ($signedDoc["sign_type"] == '1') {
-                            echo 'Guarantor';
-                        } elseif ($signedDoc["sign_type"] == '2') {
-                            echo 'Combined';
-                        } elseif ($signedDoc["sign_type"] == '3') {
-                            echo 'Family Members';
-                        } ?></td>
+                <td> <?php echo $signType[$signedDoc['sign_type']] ?? ''; ?> </td>
 
-                <td> <?php if ($signedDoc["sign_type"] == '3' or $signedDoc["sign_type"] == '1' or $signedDoc["sign_type"] == '2') {
-                            echo $row["famname"] . ' - ' . $row["relationship"];
-                        } else {
-                            echo 'NIL';
-                        } ?></td>
+                <td> 
+                    <?php if(in_array($signedDoc['sign_type'], [1,2,3])){
+                        echo $signedDoc["famname"] . ' - ' . $signedDoc["relationship"];
+                    } else {
+                        echo 'NIL';
+                    } ?> 
+                </td>
 
                 <td> <?php echo $signedDoc['doc_Count']; ?></td>
             </tr>
@@ -52,13 +44,10 @@ include '../../ajaxconfig.php';
     </tbody>
 </table>
 
-
-
 <script type="text/javascript">
     $(function() {
         // Declare table variable to store the DataTable instance
-        var signed_table = $('#signed_table').DataTable({
-            ...getStateSaveConfig('signed_table'),
+        $('#signed_table').DataTable({
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -91,9 +80,6 @@ include '../../ajaxconfig.php';
                 }
             ],
         });
-
-        // Pass the table variable to the initColVisFeatures function
-        initColVisFeatures(signed_table, 'signed_table');
     });
 </script>
 <?php

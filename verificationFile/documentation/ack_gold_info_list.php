@@ -21,20 +21,20 @@ include '../../moneyFormatIndia.php';
 
         <?php
         $req_id = $_POST['reqId'];
-        $goldInfo = $connect->query("SELECT * FROM `gold_info` where req_id = '$req_id' order by id desc");
+
+        $goldInfo = $connect->query("SELECT id, gold_sts, gold_type, Purity, gold_Count, gold_Weight, gold_Value, gold_upload FROM `gold_info` where req_id = '$req_id' order by id desc");
 
         $i = 1;
         $cnt = 0;
         $weight = 0;
         $goldVal = 0;
         while ($gold = $goldInfo->fetch()) {
-            $cnt = $cnt + intval($gold['gold_Count']);
-            $weight = $weight + intval($gold["gold_Weight"]);
-            $goldVal = $goldVal + intval($gold["gold_Value"]);
-
+            $cnt += intval($gold['gold_Count']);
+            $weight += intval($gold["gold_Weight"]);
+            $goldVal += intval($gold["gold_Value"]);
         ?>
             <tr>
-                <td><?php echo $i; ?></td>
+                <td><?php echo $i++; ?></td>
                 <td><?php if ($gold["gold_sts"] == '0') {
                         echo 'Old';
                     } else if ($gold["gold_sts"] == '1') {
@@ -51,8 +51,7 @@ include '../../moneyFormatIndia.php';
                 </td>
             </tr>
 
-        <?php $i++;
-        } ?>
+        <?php } ?>
     </tbody>
     <tr>
         <td> <b> Total </b> </td>
@@ -68,8 +67,7 @@ include '../../moneyFormatIndia.php';
 <script type="text/javascript">
     $(function() {
         // Declare table variable to store the DataTable instance
-        var gold_table = $('#gold_table').DataTable({
-            ...getStateSaveConfig('gold_table'),
+        $('#gold_table').DataTable({
             // "order": [[0,'desc']],
             'processing': true,
             'iDisplayLength': 5,
@@ -98,9 +96,6 @@ include '../../moneyFormatIndia.php';
                 searchFunction('gold_table');
             }
         });
-
-        // Pass the table variable to the initColVisFeatures function
-        initColVisFeatures(gold_table, 'gold_table');
     });
 </script>
 <?php

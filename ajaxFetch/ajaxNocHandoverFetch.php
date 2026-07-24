@@ -108,7 +108,8 @@ if (!empty($where)) {
 ========================================================= */
 
 $columns = [
-    'cs.updated_date',
+    'latest_date',
+    'latest_date',
     'cr.cus_id',
     'cr.autogen_cus_id',
     'ii.loan_id',
@@ -126,7 +127,7 @@ $columns = [
     'cs.updated_date'
 ];
 
-$orderBy = " ORDER BY cs.updated_date DESC ";
+$orderBy = " ORDER BY latest_date DESC ";
 
 if (isset($_POST['order'])) {
 
@@ -159,6 +160,7 @@ if ($_POST['length'] != -1) {
 
 $query = "
 SELECT
+    MAX(cs.created_date) AS latest_date,
     cs.req_id,
     cr.cus_id,
     cr.autogen_cus_id,
@@ -220,6 +222,8 @@ WHERE
     cs.cus_sts = 23
 
     $whereSql
+    
+GROUP BY ii.cus_id
 
 $orderBy
 
@@ -347,6 +351,7 @@ foreach ($result as $row) {
 
     $data[] = [
         $sno++,
+        $row['latest_date'] ? date('d-m-Y', strtotime($row['latest_date'])) : '',
         $row['cus_id'],
         $row['autogen_cus_id'],
         $row['loan_id'],

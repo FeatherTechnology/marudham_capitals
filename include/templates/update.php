@@ -1345,7 +1345,7 @@ if (sizeof($getCustomerReg) > 0) {
 											<select type="text" class="form-control" id="Propertyholder_type" name="Propertyholder_type" tabindex="73">
 												<option value=""> Select Holder type </option>
 												<option value="0"> Customer </option>
-												<option value="1"> Guarantor </option>
+												<!-- <option value="1"> Guarantor </option> -->
 												<option value="2"> Family Members </option>
 											</select>
 											<span class="text-danger" id="propertyholdertypeCheck" style='display:none'> Select Property Holder type </span>
@@ -1522,7 +1522,7 @@ if (sizeof($getCustomerReg) > 0) {
 										<select type="text" class="form-control" id="owner_type" name="owner_type" tabindex="91">
 											<option value=""> Select Holder type </option>
 											<option value="0"> Customer </option>
-											<option value="1"> Guarantor </option>
+											<!-- <option value="1"> Guarantor </option> -->
 											<option value="2"> Family Members </option>
 										</select>
 										<span class="text-danger" id="ownertypeCheck" style='display:none'> Select Owner type </span>
@@ -2228,7 +2228,7 @@ if (sizeof($getCustomerReg) > 0) {
 								<select type="text" class="form-control" id="sign_type" name="sign_type" tabindex='2'>
 									<option value=""> Select Sign Type </option>
 									<option value="0"> Customer </option>
-									<option value="1"> Guarantor </option>
+									<!-- <option value="1"> Guarantor </option> -->
 									<option value="2"> Combined </option>
 									<option value="3"> Family Members </option>
 								</select>
@@ -2352,7 +2352,7 @@ if (sizeof($getCustomerReg) > 0) {
 								<select type="text" class="form-control" id="holder_type" name="holder_type" tabindex='1'>
 									<option value=""> Select Holder type </option>
 									<option value="0"> Customer </option>
-									<option value="1"> Guarantor </option>
+									<!-- <option value="1"> Guarantor </option> -->
 									<option value="2"> Family Members </option>
 								</select>
 								<span class="text-danger" id="holdertypeCheck" style='display:none'> Select Holder type </span>
@@ -2774,7 +2774,7 @@ if (sizeof($getCustomerReg) > 0) {
 								<select type="text" class="form-control" id="document_holder" name="document_holder" tabindex="4">
 									<option value=""> Select Holder type </option>
 									<option value="0"> Customer </option>
-									<option value="1"> Guarantor </option>
+									<!-- <option value="1"> Guarantor </option> -->
 									<option value="2"> Family Members </option>
 								</select>
 								<span class="text-danger" id="docholderCheck" style='display:none'> Select Document Holder </span>

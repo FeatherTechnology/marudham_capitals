@@ -18,58 +18,37 @@ include '../../ajaxconfig.php';
 
         <?php
         $req_id = $_POST['reqId'];
-        $signDocInfo = $connect->query("SELECT * FROM `signed_doc_info` where req_id = '$req_id' order by id desc");
+        $signDocInfo = $connect->query("SELECT sdi.id, sdi.cus_id, sign_type, signType_relationship, doc_Count, GROUP_CONCAT(upload_doc_name) AS doc_name, vfi.famname, vfi.relationship FROM `signed_doc_info` sdi LEFT JOIN signed_doc sd ON sdi.id = sd.signed_doc_id LEFT JOIN verification_family_info vfi ON sdi.signType_relationship = vfi.id WHERE sdi.req_id = '$req_id' GROUP BY sdi.id ORDER BY sdi.id DESC");
 
         $i = 1;
+        $signType = ['0' => 'Customer', '1' => 'Guarantor', '2' => 'Combined', '3' => 'Family Members'];
         while ($signed = $signDocInfo->fetch()) {
-            $fam_id = $signed["signType_relationship"];
-            $result = $connect->query("SELECT famname,relationship FROM `verification_family_info` where id='$fam_id'");
-            $row = $result->fetch();
 
             $doc_upd_name = '';
-            $id = $signed["id"];
-            $updresult = $connect->query("SELECT upload_doc_name FROM `signed_doc` where signed_doc_id = '$id'");
-            $a = 1;
-            while ($upd = $updresult->fetch()) {
-                $docName = $upd['upload_doc_name'];
-                $doc_upd_name .= "<a href=uploads/verification/signed_doc/";
-                $doc_upd_name .= $docName;
-                $doc_upd_name .= " target='_blank'>";
-                $doc_upd_name .=  $a . ' ';
-                $doc_upd_name .= "</a>";
-                $a++;
+            $doc = explode(',', $signed['doc_name']);
+            foreach ($doc as $docName) {
+                $doc_upd_name .= "<a href='uploads/verification/signed_doc/$docName' target='_blank' style='color: #4ba39b;'>$docName</a>,  ";
             }
-
         ?>
 
             <tr>
-                <td><?php echo $i; ?></td>
+                <td><?php echo $i++; ?></td>
                 <td>Signed Document</td>
-                <td><?php if ($signed["sign_type"] == '0') {
-                        echo 'Customer';
-                    } elseif ($signed["sign_type"] == '1') {
-                        echo 'Guarantor';
-                    } elseif ($signed["sign_type"] == '2') {
-                        echo 'Combined';
-                    } elseif ($signed["sign_type"] == '3') {
-                        echo 'Family Members';
-                    } ?></td>
-
-                <td> <?php if ($signed["sign_type"] == '3' or $signed["sign_type"] == '1' or $signed["sign_type"] == '2') {
-                            echo $row["famname"] . ' - ' . $row["relationship"];
+                <td><?php echo $signType[$signed['sign_type']] ?? ''; ?></td>
+                <td> <?php if(in_array($signed['sign_type'], [1,2,3])){
+                            echo $signed["famname"] . ' - ' . $signed["relationship"];
                         } else {
                             echo 'NIL';
                         } ?></td>
                 <td><?php echo $signed["doc_Count"]; ?></td>
-                <td><?php echo $doc_upd_name; ?></td>
+                <td><?php echo rtrim($doc_upd_name,', '); ?></td>
                 <td>
-                    <a id="signed_doc_edit" value="<?php echo $signed['id']; ?>"> <span class="icon-border_color"></span></a> &nbsp
+                    <a id="signed_doc_edit" value="<?php echo $signed['id']; ?>" data-relationid="<?= $signed['signType_relationship']; ?>"> <span class="icon-border_color"></span></a> &nbsp
                     <a id="signed_doc_delete" value="<?php echo $signed['id']; ?>"> <span class='icon-trash-2'></span> </a>
                 </td>
             </tr>
 
-        <?php $i = $i + 1;
-        }     ?>
+        <?php } ?>
     </tbody>
 </table>
 
@@ -77,8 +56,7 @@ include '../../ajaxconfig.php';
 <script type="text/javascript">
     $(function() {
         // Declare table variable to store the DataTable instance
-        var signedDoc_upd_table_data = $('#signedDoc_upd_table_data').DataTable({
-            ...getStateSaveConfig('signedDoc_upd_table_data'),
+        $('#signedDoc_upd_table_data').DataTable({
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -111,9 +89,6 @@ include '../../ajaxconfig.php';
                 }
             ],
         });
-
-        // Pass the table variable to the initColVisFeatures function
-        initColVisFeatures(signedDoc_upd_table_data, 'signedDoc_upd_table_data');
     });
 </script>
 <?php

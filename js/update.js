@@ -1192,6 +1192,26 @@ $(document).ready(function () {
         // Signed Type
         let type = $(this).val();
 
+        if(type =='0' || type =='1'){ //Customer, Guarantor.
+            // Get all td elements at index 2 from all rows
+            let allSignTypes = $('#signedDoc_upd_table_data tbody tr').map(function() {
+                return $(this).find("td:eq(2)").text().trim();
+            }).get();
+        
+            let typeName = {'0':'Customer', '1':'Guarantor', '2':'Combined', '3':'Family Members'};
+            let checkType = typeName[type] ?? '';
+        
+            // Check if checkType exists in any of the rows
+            if (allSignTypes.some(function(tbSignType) {
+                return tbSignType.includes(checkType);
+            })){
+                alert(`${checkType} already added in Sign doc.`);
+                $(this).val('');
+                $("#cus_name_div, #guar_name_div, #relation_doc, #signTyperRelationshipCheck").hide();
+                return;
+            }
+        }
+
         $("#cus_name_div, #guar_name_div, #relation_doc, #signTyperRelationshipCheck").hide();
 
         if (type == "0") {
@@ -1229,6 +1249,44 @@ $(document).ready(function () {
         }
 
     });
+    
+    $('#signType_relationship').change(function(){
+        let relationship = $(this).val();
+        // Signed Type
+        let type = $('#sign_type').val();
+        
+        // Get all td elements at index 2 from all rows
+        let allSignTypes = $('#signedDoc_upd_table_data tbody tr').map(function() {
+            return $(this).find("td:eq(2)").text().trim();
+        }).get();
+
+        // Get all relation-id attributes from all rows
+        let allRelationIds = $('#signedDoc_upd_table_data tbody tr').map(function () {
+            return $(this).find('.signed_doc_edit').data('relationid');
+        }).get();
+
+        // Types that share the same relationship ID
+        let typeName = {'0':'Customer', '1':'Guarantor', '2':'Combined', '3':'Family Members'};
+        let checkType = typeName[type] ?? '';
+        
+        // Check if the relationship already exists with Combined OR Family Members in the same row
+        let alreadyExists = allRelationIds.some(function(tbRelationId, index) {
+            // Check if this row has the matching relationship
+            if (tbRelationId == relationship) {
+                // Check if this same row has either Combined OR Family Members
+                let rowType = allSignTypes[index];
+                return checkType.includes(rowType);
+            }
+            return false;
+        });
+
+        if (alreadyExists) {
+            alert(`This "${checkType}" already added in Sign doc.`);
+            $(this).val('');
+            return;
+        }
+    });
+
     /* ********************************************** Sign doc END********************************************** */
 
     /* ********************************************** cheque START ********************************************** */
@@ -1404,7 +1462,11 @@ $(document).ready(function () {
 
             $('#mort_form').find('span').not('.slider, .required, .icon-check').hide(); //to hide the span.
         }
-    })
+
+        let mort = process == "0" ? true : false;
+        storeDocInfo.mortgageInfo = mort;
+
+    });
 
     /* ********************************************** Mortgage Info END ********************************************** */
 
@@ -1509,6 +1571,9 @@ $(document).ready(function () {
             $('#owner_type, #owner_name, #ownername_relationship_name, #en_relation, #vehicle_type, #vehicle_process, #en_Company, #en_Model').val('');
             $('#end_form').find('span').not('.slider, .required, .icon-check').hide(); //to hide the span.
         }
+
+        let endorse = process == "0" ? true : false;
+        storeDocInfo.endorseInfo = endorse;
     });
     /* ********************************************** Endorsement Info END ********************************************** */
 
@@ -3729,7 +3794,7 @@ function MEValidation(id) {
     var response = true;
 
     if (id == 'update_mortgage') {
-        var mortgage_process = $('#mortgage_process').val(); var Propertyholder_type = $('#Propertyholder_type').val(); var Propertyholder_name = $('#Propertyholder_name').val();
+        var mortgage_process = $('#mortgage_process').val(); var Propertyholder_type = $('#Propertyholder_type').val() ?? ''; var Propertyholder_name = $('#Propertyholder_name').val();
         var Propertyholder_relationship_name = $('#Propertyholder_relationship_name').val(); var doc_property_relation = $('#doc_property_relation').val();
         var doc_property_pype = $('#doc_property_pype').val(); var doc_property_measurement = $('#doc_property_measurement').val();
         var doc_property_location = $('#doc_property_location').val(); var doc_property_value = $('#doc_property_value').val();
@@ -3771,7 +3836,7 @@ function MEValidation(id) {
         }
 
     } else if (id == 'update_endorsement') {
-        var endorsement_process = $('#endorsement_process').val(); var owner_type = $('#owner_type').val(); var ownername_relationship_name = $('#ownername_relationship_name').val();
+        var endorsement_process = $('#endorsement_process').val(); var owner_type = $('#owner_type').val() ?? ''; var ownername_relationship_name = $('#ownername_relationship_name').val();
         var vehicle_type = $('#vehicle_type').val(); var vehicle_process = $('#vehicle_process').val(); var en_Company = $('#en_Company').val(); var en_Model = $('#en_Model').val();
         var endorsement_name = $('#endorsement_name').val(); var en_RC = $('#en_RC').val(); var en_Key = $('#en_Key').val();
         // var vehicle_reg_no = $('#vehicle_reg_no').val(); var RC_document_upd = $('#RC_document_upd').val(); var RC_old_document_upd = $('#rc_doc_upd').val();
@@ -4009,7 +4074,7 @@ function submitSignedDoc(req_id, cus_id) {
 
     let files = $("#signdoc_upd")[0].files;
     let signedID = $("#signedID").val();
-    let sign_type = $("#sign_type").val();
+    let sign_type = $("#sign_type").val() ?? '';
     let doc_Count = $("#doc_Count").val();
     let signType_relationship = $("#signType_relationship").val();
 
@@ -4259,7 +4324,7 @@ function submitCheque(req_id, cus_id) {
 
     let files = $("#cheque_upd")[0].files;//cheque documents
     let chequeID = $("#chequeID").val();
-    let holder_type = $("#holder_type").val();
+    let holder_type = $("#holder_type").val() ?? '';
     let holder_name = $("#holder_name").val();
     let holder_relationship_name = $("#holder_relationship_name").val();
     let cheque_relation = $("#cheque_relation").val();
@@ -4681,7 +4746,7 @@ function submitDocument(req_id, cus_id) {
     let doc_name = $("#document_name").val();
     let doc_details = $("#document_details").val();
     let doc_type = $("#document_type").val();
-    let doc_holder = $("#document_holder").val();
+    let doc_holder = $("#document_holder").val() ?? '';
     let holder_name = $("#docholder_name").val();
     let relation_name = $("#docholder_relationship_name").val();
     let relation = $("#doc_relation").val();

@@ -522,8 +522,8 @@ $(document).ready(function () {
 
     if(type =='0' || type =='1'){ //Customer, Guarantor.
       // Get all td elements at index 2 from all rows
-      let allSignTypes = $('#signedDoc_table_data').find('tr').map(function() {
-          return $(this).find("td:eq(2)").text();
+      let allSignTypes = $('#signedDoc_table_data tbody tr').map(function() {
+          return $(this).find("td:eq(2)").text().trim();
       }).get();
   
       let typeName = {'0':'Customer', '1':'Guarantor', '2':'Combined', '3':'Family Members'};
@@ -582,13 +582,13 @@ $(document).ready(function () {
       let type = $('#sign_type').val();
       
       // Get all td elements at index 2 from all rows
-      let allSignTypes = $('#signedDoc_table_data').find('tr:has(td)').map(function() {
-          return $(this).find("td:eq(2)").text();
+      let allSignTypes = $('#signedDoc_table_data tbody tr').map(function() {
+        return $(this).find("td:eq(2)").text().trim();
       }).get();
 
       // Get all relation-id attributes from all rows
-      let allRelationIds = $('#signedDoc_table_data').find('tr:has(td)').map(function() {
-          return $(this).find("a").data('relationid');
+      let allRelationIds = $('#signedDoc_table_data tbody tr').map(function() {
+        return $(this).find('#signed_doc_edit').data('relationid');
       }).get();
 
       // Types that share the same relationship ID
@@ -878,14 +878,7 @@ $(document).ready(function () {
     } else {
       $("#Mortgageprocess").hide();
 
-      $("#Propertyholder_type").val("");
-      $("#Propertyholder_name").val("");
-      $("#Propertyholder_relationship_name").val("");
-      $("#doc_property_relation").val("");
-      $("#doc_property_pype").val("");
-      $("#doc_property_measurement").val("");
-      $("#doc_property_location").val("");
-      $("#doc_property_value").val("");
+      $("#Propertyholder_type, #Propertyholder_name, #Propertyholder_relationship_name, #doc_property_relation, #doc_property_pype, #doc_property_measurement, #doc_property_location, #doc_property_value").val(""); 
       $("#propertyholderNameCheck").hide();
     }
 
@@ -969,14 +962,7 @@ $(document).ready(function () {
     } else {
       $("#endorsementprocess").hide();
 
-      $("#owner_type").val("");
-      $("#owner_name").val("");
-      $("#ownername_relationship_name").val("");
-      $("#en_relation").val("");
-      $("#vehicle_type").val("");
-      $("#vehicle_process").val("");
-      $("#en_Company").val("");
-      $("#en_Model").val("");
+      $("#owner_type, #owner_name, #ownername_relationship_name, #en_relation, #vehicle_type, #vehicle_process, #en_Company, #en_Model").val(""); 
       $("#ownerNameCheck").hide();
       // $('#vehicle_reg_no').val('');
       // $('#endorsement_name').val('');
@@ -1774,13 +1760,6 @@ function verificationPerson() {
 
 $("#guarentor_name").change(function () {
   //Select Guarantor Name relationship will show in input.
-
-  let gId = $('#guarentor_name_upd').val();
-
-  $.post('', {}, function(){
-    
-  }, 'json');
-
   let famId = document.querySelector("#guarentor_name").value;
 
   $.ajax({
@@ -4082,7 +4061,7 @@ $(document).on("click", "#signInfoBtn", function () {
   let cus_id = $("#cus_id").val();
   let cus_profile_id = $("#cus_profile_id").val();
   let doc_name = $("#doc_name").val();
-  let sign_type = $("#sign_type").val();
+  let sign_type = $("#sign_type").val() ?? '';
   let signType_relationship = $("#signType_relationship").val();
   let doc_Count = $("#doc_Count").val();
   let signedID = $("#signedID").val();
@@ -4246,7 +4225,7 @@ $(document).on("click", "#chequeInfoBtn", function () {
   let req_id = $("#req_id").val();
   let cus_id = $("#cus_id").val();
   let cus_profile_id = $("#cus_profile_id").val();
-  let holder_type = $("#holder_type").val();
+  let holder_type = $("#holder_type").val() ?? '';
   let holder_name = $("#holder_name").val();
   let holder_relationship_name = $("#holder_relationship_name").val();
   let cheque_relation = $("#cheque_relation").val();
@@ -4574,7 +4553,7 @@ $("#docInfoBtn").click(function () {
   let doc_name = $("#document_name").val();
   let doc_details = $("#document_details").val();
   let doc_type = $("#document_type").val();
-  let doc_holder = $("#document_holder").val();
+  let doc_holder = $("#document_holder").val() ?? '';
   let holder_name = $("#docholder_name").val();
   let relation_name = $("#docholder_relationship_name").val();
   let relation = $("#doc_relation").val();

@@ -64,7 +64,7 @@ $doc_edit_access = (int) $sql->fetchColumn(); //1-Yes, 2-No.
                         <a class="signed_doc_edit" value="<?php echo $signed['id']; ?>" data-access="2" style="text-decoration: underline;"> Upload </a> &nbsp;
 
                     <?php } else if ($doc_edit_access == 1) { ?>
-                        <a class="signed_doc_edit" value="<?php echo $signed['id']; ?>" data-access="1"> <span class="icon-border_color"></span></a> &nbsp
+                        <a class="signed_doc_edit" value="<?php echo $signed['id']; ?>" data-relationid="<?= $signed['signType_relationship']; ?>"  data-access="1"> <span class="icon-border_color"></span></a> &nbsp
                         <a class="signed_doc_delete" value="<?php echo $signed['id']; ?>" data-reqid="<?php echo $req_id; ?>" data-cusid="<?php echo $cus_id; ?>"> <span class='icon-trash-2'></span> </a>
                         
                     <?php } ?>

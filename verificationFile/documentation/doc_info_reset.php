@@ -25,15 +25,10 @@ if (isset($_POST['pages'])) {
     <tbody>
 
         <?php
-        $qry = $connect->query("SELECT * FROM document_info where req_id = '$req_id' order by id desc");
+        $qry = $connect->query("SELECT di.id, di.doc_name, di.doc_detail, di.doc_type, di.doc_holder, di.holder_name, di.relation, vfi.famname FROM document_info di LEFT JOIN verification_family_info vfi ON di.relation_name = vfi.id WHERE di.req_id = '$req_id' ORDER BY di.id DESC");
 
         while ($row = $qry->fetch()) {
-            if ($row["holder_name"] == '') {
-                $qry1 = $connect->query("SELECT * FROM verification_family_info where id = '" . $row['relation_name'] . "' ");
-                $holder_name = $qry1->fetch()['famname'];
-            } else {
-                $holder_name = $row["holder_name"];
-            }
+            $holder_name = ($row["holder_name"] == '') ? $row['famname'] : $row["holder_name"];
         ?>
 
             <tr>
@@ -67,11 +62,8 @@ if (isset($_POST['pages'])) {
                     <?php //} 
                     ?>
                 </td>
-
             </tr>
-
-        <?php
-        }     ?>
+        <?php } ?>
     </tbody>
 </table>
 
@@ -79,8 +71,7 @@ if (isset($_POST['pages'])) {
 <script type="text/javascript">
     $(function() {
         // Declare table variable to store the DataTable instance
-        var docModalTable = $('#docModalTable').DataTable({
-            ...getStateSaveConfig('docModalTable'),
+        $('#docModalTable').DataTable({
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -113,9 +104,6 @@ if (isset($_POST['pages'])) {
                 }
             ],
         });
-
-        // Pass the table variable to the initColVisFeatures function
-        initColVisFeatures(docModalTable, 'docModalTable');
     });
 </script>
 <?php

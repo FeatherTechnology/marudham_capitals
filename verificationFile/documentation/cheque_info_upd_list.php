@@ -20,28 +20,19 @@ include '../../ajaxconfig.php';
 
         <?php
         $req_id = $_POST['reqId'];
-        $chequeInfo = $connect->query("SELECT * FROM `cheque_info` where req_id = '$req_id' order by id desc");
+        $chequeInfo = $connect->query("SELECT ci.id, holder_type, holder_name, holder_relationship_name, cheque_relation, chequebank_name, cheque_count, vfi.famname, GROUP_CONCAT(upload_cheque_name) AS doc_name FROM `cheque_info` ci LEFT JOIN verification_family_info vfi ON ci.holder_relationship_name = vfi.id LEFT JOIN cheque_upd cu ON ci.id = cu.cheque_table_id WHERE ci.req_id = '$req_id' GROUP BY ci.id ORDER BY ci.id DESC");
 
         $i = 1;
+        $holderType = ['0' => 'Customer', '1' => 'Guarantor', '2' => 'Family Members'];
         while ($cheque = $chequeInfo->fetch()) {
-            $fam_id = $cheque["holder_relationship_name"];
-            $result = $connect->query("SELECT famname FROM `verification_family_info` where id='$fam_id'");
-            $row = $result->fetch();
 
             $doc_upd_name = '';
-            $id = $cheque["id"];
-            $updresult = $connect->query("SELECT upload_cheque_name FROM `cheque_upd` where cheque_table_id = '$id'");
-            $a = 1;
-            while ($upd = $updresult->fetch()) {
-                $docName = $upd['upload_cheque_name'];
-                $doc_upd_name .= "<a href=uploads/verification/cheque_upd/";
-                $doc_upd_name .= $docName;
-                $doc_upd_name .= " target='_blank'>";
-                $doc_upd_name .=  $docName . ' ';
-                $doc_upd_name .= "</a>";
-                $a++;
+            $doc = explode(',', $cheque['doc_name']);
+            foreach ($doc as $docName) {
+                $doc_upd_name .= "<a href='uploads/verification/cheque_upd/$docName' target='_blank' style='color: #4ba39b;'>$docName</a>,  ";
             }
-
+                
+            $id = $cheque["id"];
             $cheque_no = '';
             $updnoresult = $connect->query("SELECT cheque_no FROM `cheque_no_list` where cheque_table_id = '$id'");
             while ($updno = $updnoresult->fetch()) {
@@ -50,32 +41,26 @@ include '../../ajaxconfig.php';
             }
         ?>
             <tr>
-                <td><?php echo $i; ?></td>
-
-                <td><?php if ($cheque["holder_type"] == '0') {
-                        echo 'Customer';
-                    } elseif ($cheque["holder_type"] == '1') {
-                        echo 'Guarantor';
-                    } elseif ($cheque["holder_type"] == '2') {
-                        echo 'Family Members';
-                    }  ?></td>
-
-                <td> <?php if ($cheque["holder_type"] == '0' || $cheque["holder_type"] == '1') {
+                <td><?php echo $i++; ?></td>
+                <td><?php echo $holderType[$cheque['holder_type']] ?? ''; ?></td>
+                <td> 
+                    <?php 
+                        if ($cheque["holder_type"] == '0' || $cheque["holder_type"] == '1') {
                             echo $cheque["holder_name"];
                         } elseif ($cheque["holder_type"] == '2') {
-                            echo $row["famname"];
-                        } ?></td>
+                            echo $cheque["famname"];
+                        } 
+                    ?>
+                </td>
                 <td><?php echo $cheque["cheque_relation"]; ?></td>
                 <td><?php echo $cheque["chequebank_name"]; ?></td>
                 <td><?php echo $cheque["cheque_count"]; ?></td>
-                <td><?php echo rtrim($cheque_no, ','); ?></td>
-                <td><?php echo $doc_upd_name; ?></td>
+                <td><?php echo rtrim($cheque_no,', '); // to trim the comma at end ?></td>
+                <td><?php echo rtrim($doc_upd_name,', '); // to trim the comma at end ?></td>
                 <td>
                     <a id="cheque_info_delete" value="<?php echo $cheque['id']; ?>" data-screen="1"> <span class='icon-trash-2'></span> </a>
                 </td>
-
             </tr>
-
         <?php  } ?>
     </tbody>
 </table>
@@ -83,8 +68,7 @@ include '../../ajaxconfig.php';
 <script type="text/javascript">
     $(function() {
         // Declare table variable to store the DataTable instance
-        var cheque_table = $('#cheque_table').DataTable({
-            ...getStateSaveConfig('cheque_table'),
+        $('#cheque_table').DataTable({
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -117,9 +101,6 @@ include '../../ajaxconfig.php';
                 }
             ],
         });
-
-        // Pass the table variable to the initColVisFeatures function
-        initColVisFeatures(cheque_table, 'cheque_table');
     });
 </script>
 <?php

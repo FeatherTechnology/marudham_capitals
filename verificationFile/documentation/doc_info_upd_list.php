@@ -4,7 +4,6 @@ include '../../ajaxconfig.php';
 if (isset($_POST['req_id'])) {
     $req_id = $_POST['req_id'];
 }
-
 ?>
 
 <table class="table custom-table" id="document_table">
@@ -24,17 +23,17 @@ if (isset($_POST['req_id'])) {
     <tbody>
 
         <?php
-        $qry = $connect->query("SELECT * FROM `document_info` where req_id = '$req_id' order by id desc");
+        $qry = $connect->query("SELECT di.id, di.doc_name, di.doc_detail, di.doc_type, di.doc_holder, di.holder_name, di.relation, di.doc_upload, vfi.famname FROM `document_info` di LEFT JOIN verification_family_info vfi ON di.relation_name = vfi.id WHERE di.req_id = '$req_id' ORDER BY di.id DESC");
 
         $i = 1;
         while ($row = $qry->fetch()) {
+            
+            $holder_name = ($row["holder_name"] == '') ? $row['famname'] : $row["holder_name"];
+            
+            $doc_upd_name = '';
             $docUpd = explode(',', $row["doc_upload"]);
-
-            if ($row["holder_name"] == '') {
-                $qry1 = $connect->query("SELECT * FROM verification_family_info where id = '" . $row['relation_name'] . "' ");
-                $holder_name = $qry1->fetch()['famname'];
-            } else {
-                $holder_name = $row["holder_name"];
+            foreach ($docUpd as $docName) {
+                $doc_upd_name .= "<a href='uploads/verification/doc_info/$docName' target='_blank' style='color: #4ba39b;'>$docName</a>,  ";
             }
         ?>
             <tr>
@@ -55,16 +54,7 @@ if (isset($_POST['req_id'])) {
                     } ?></td>
                 <td><?php echo $holder_name; ?></td>
                 <td><?php echo $row["relation"]; ?></td>
-                <td><?php $ii = 0;
-                    foreach ($docUpd as $upd) {
-                        if ($ii > 0) {
-                            echo ',';
-                        }
-                        if ($upd != null) {
-                            echo '<a href="uploads/verification/doc_info/' . $upd . '" target="_blank" title="View Document"> ' . $upd . '</a>';
-                        }
-                        $ii++;
-                    } ?></td>
+                <td><?php echo rtrim($doc_upd_name, ', '); ?></td>
                 <td>
                     <a id="doc_info_delete" value="<?php echo $row['id']; ?>" data-screen="1"> <span class='icon-trash-2'></span> </a>
                 </td>
@@ -79,8 +69,7 @@ if (isset($_POST['req_id'])) {
 <script type="text/javascript">
     $(function() {
         // Declare table variable to store the DataTable instance
-        var document_table = $('#document_table').DataTable({
-            ...getStateSaveConfig('document_table'),
+        $('#document_table').DataTable({
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -113,9 +102,6 @@ if (isset($_POST['req_id'])) {
                 }
             ],
         });
-
-        // Pass the table variable to the initColVisFeatures function
-        initColVisFeatures(document_table, 'document_table');
     });
 </script>
 <?php
