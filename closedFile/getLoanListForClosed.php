@@ -30,6 +30,7 @@ if (isset($_POST["bal_amt"])) {
             <th>Loan Category</th>
             <th>Sub Category</th>
             <th>Agent</th>
+            <th>Responsible</th>
             <th>Loan Date</th>
             <th>Loan Amount</th>
             <th>In Closed Date</th>
@@ -44,34 +45,27 @@ if (isset($_POST["bal_amt"])) {
         <?php
         $req_id = $_POST['req_id'];
         $cus_id = $_POST['cus_id'];
-        $run = $connect->query("SELECT lc.due_start_from,lc.loan_category,lc.sub_category,lc.loan_amt_cal,lc.due_amt_cal,lc.net_cash_cal,lc.collection_method,ii.loan_id,ii.req_id,ii.updated_date,ii.cus_status,
-        rc.agent_id,lcc.loan_category_creation_name as loan_catrgory_name, us.collection_access,cc.closing_date
-        from acknowlegement_loan_calculation lc JOIN in_issue ii ON lc.req_id = ii.req_id JOIN request_creation rc ON ii.req_id = rc.req_id  JOIN closing_customer cc ON cc.req_id = ii.req_id
-        JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id JOIN user us ON us.user_id = $user_id
+        $run = $connect->query("SELECT ii.loan_id, lcc.loan_category_creation_name AS loan_catrgory_name, lc.sub_category, ac.ag_name, rc.responsible, ii.updated_date, lc.loan_amt_cal, cc.closing_date, ii.cus_status, lc.due_start_from, ii.req_id, cs.closed_sts, cs.consider_level
+        FROM acknowlegement_loan_calculation lc 
+        JOIN in_issue ii ON lc.req_id = ii.req_id 
+        JOIN request_creation rc ON ii.req_id = rc.req_id  
+        JOIN closing_customer cc ON cc.req_id = ii.req_id
+        JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id 
+        LEFT JOIN agent_creation ac ON rc.agent_id = ac.ag_id
+        LEFT JOIN closed_status cs ON lc.req_id = cs.req_id
         WHERE lc.cus_id_loan = $cus_id and (ii.cus_status >= 14 and ii.cus_status <= 20) ORDER BY CAST(ii.req_id AS UNSIGNED) ASC "); //Customer status greater than or equal to 14 because, after issued data only we need  
 
         $i = 1;
         $curdate = date('Y-m-d');
         $consider_lvl_arr = [1 => 'Bronze', 2 => 'Silver', 3 => 'Gold', 4 => 'Platinum', 5 => 'Diamond'];
         while ($row = $run->fetch()) {
-            //Show NOC button until closed_status submit so we check the count of closed status against the request id.
-            $ii_req_id = $row["req_id"];
-            $closedSts = $connect->query("SELECT * FROM `closed_status` WHERE `req_id` ='" . strip_tags($ii_req_id) . "' ");
-            $closed_cnt = $closedSts->rowCount();
-
         ?>
             <tr>
                 <td><?php echo $row['loan_id']; ?></td> <!-- id -->
                 <td><?php echo $row["loan_catrgory_name"]; ?></td> <!-- Loan Cat -->
                 <td><?php echo $row["sub_category"]; ?></td> <!-- Loan Sub Cat -->
-                <td>
-                    <?php
-                    if ($row["agent_id"] != '' || $row["agent_id"] != NULL) {
-                        $run1 = $connect->query('SELECT ag_name from agent_creation where ag_id = "' . $row['agent_id'] . '" ');
-                        echo $run1->fetch()['ag_name'];
-                    }
-                    ?>
-                </td> <!-- Agent -->
+                <td><?php echo $row["ag_name"] ?? '';?></td> <!-- Agent -->
+                <td><?php echo ($row['responsible'] == '0') ? 'Yes' : (!empty($row['ag_name']) && $row['responsible'] != '0' ? 'No' : ''); ?></td>
                 <td><?php echo date('d-m-Y', strtotime($row["updated_date"])); ?></td> <!-- Loan date -->
                 <td><?php echo moneyFormatIndia($row["loan_amt_cal"]); ?></td> <!-- Loan Amount -->
                 <td><?php echo date('d-m-Y', strtotime($row["closing_date"])); ?></td> <!-- In Closed Date-->
@@ -101,7 +95,7 @@ if (isset($_POST["bal_amt"])) {
                                 } else {
                                     echo 'Pending';
                                 }
-                            } else if ($od_sts[$i - 1] == 'true') {
+                            } else if ($od_sts[$i - 1] == 'true' && $due_nil_sts[$i - 1] == 'false') {
                                 if ($row['cus_status'] == '15') {
                                     echo 'Error';
                                 } elseif ($row['cus_status'] == '16') {
@@ -132,28 +126,21 @@ if (isset($_POST["bal_amt"])) {
                             }
                         }
                     } else if ($row['cus_status'] > 20) { // if status is closed(21) or more than that(22), then show closed status
-                        $closedSts = $connect->query("SELECT * FROM `closed_status` WHERE `req_id` ='" . strip_tags($ii_req_id) . "' ");
-                        $closedStsrow = $closedSts->fetch();
-                        $rclosed = $closedStsrow['closed_sts'];
-                        $consider_lvl = $closedStsrow['consider_level'];
-                        if ($rclosed == '1') {
-                            echo 'Consider - ' . $consider_lvl_arr[$consider_lvl];
+                        if ($row['closed_sts'] == '1') {
+                            echo 'Consider - ' . $consider_lvl_arr[$row['consider_level']];
                         }
-                        if ($rclosed == '2') {
+                        if ($row['closed_sts'] == '2') {
                             echo 'Waiting List';
                         }
-                        if ($rclosed == '3') {
+                        if ($row['closed_sts'] == '3') {
                             echo 'Block List';
                         }
                     } ?></td> <!-- Sub status -->
                 <td>
                     <?php
-                    if ($closed_cnt == '0') {
-                        if ($row['cus_status'] == '20') { // 20 is collection completed.
-                            echo  $action = "<div class='dropdown'><span class='btn btn-primary noc-window'  data-value='" . $row['req_id'] . "'>  Close </span></div>";
+                        if ($row['closed_sts'] == '' && $row['cus_status'] == '20') { // 20 is collection completed.
+                            echo "<div class='dropdown'><span class='btn btn-primary noc-window'  data-value='" . $row['req_id'] . "'>  Close </span></div>";
                         }
-                    } else {
-                    }
                     ?>
                 </td> <!-- Action -->
             </tr>

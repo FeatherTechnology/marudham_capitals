@@ -48,8 +48,7 @@ include '../../moneyFormatIndia.php';
 <script type="text/javascript">
     $(function() {
         // Declare table variable to store the DataTable instance
-        var gold_table = $('#gold_table').DataTable({
-            ...getStateSaveConfig('gold_table'),
+        $('#gold_table').DataTable({
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -82,9 +81,6 @@ include '../../moneyFormatIndia.php';
                 }
             ],
         });
-
-        // Pass the table variable to the initColVisFeatures function
-        initColVisFeatures(gold_table, 'gold_table');
     });
 </script>
 <?php

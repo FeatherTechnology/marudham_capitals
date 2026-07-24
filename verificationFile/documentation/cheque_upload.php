@@ -32,25 +32,42 @@ if ($chequeID == '') {
 }
 
 
-$connect->query("DELETE FROM `cheque_upd` WHERE `cheque_table_id`='$chequeID'");
 $connect->query("DELETE FROM `cheque_no_list` WHERE `cheque_table_id`='$chequeID'");
 
 if (isset($_FILES['cheque_upd']) && isset($_FILES['cheque_upd']['name']) && is_array($_FILES['cheque_upd']['name'])) {
+
+    $filePath = "../../uploads/verification/cheque_upd/";
+
+    // Get all files for this cheque_upd
+    $stmt = $connect->query("SELECT upload_cheque_name FROM cheque_upd WHERE cheque_table_id = '$chequeID'");
+    $files = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Delete files from folder
+    foreach ($files as $fileinfo) {
+        $file = $filePath . $fileinfo['upload_cheque_name'];
+
+        if (!empty($fileinfo['upload_cheque_name']) && file_exists($file)) {
+            unlink($file);
+        }
+    }
+
+    $connect->query("DELETE FROM `cheque_upd` WHERE `cheque_table_id`='$chequeID'");
+
 
     $filesArr3 = $_FILES['cheque_upd'];
 
     foreach ($filesArr3['name'] as $key => $val) {
         $fileName = basename($filesArr3['name'][$key]);
-        $targetFilePath = "../../uploads/verification/cheque_upd/" . $fileName;
+        $targetFilePath = $filePath.$fileName;
 
         $fileExtension = pathinfo($targetFilePath, PATHINFO_EXTENSION);
 
         $uniqueFileName = uniqid() . '.' . $fileExtension;
-        while (file_exists("../../uploads/verification/cheque_upd/" . $uniqueFileName)) {
+        while (file_exists($filePath.$uniqueFileName)) {
             $uniqueFileName = uniqid() . '.' . $fileExtension;
         }
 
-        if (move_uploaded_file($filesArr3["tmp_name"][$key], "../../uploads/verification/cheque_upd/" . $uniqueFileName)) {
+        if (move_uploaded_file($filesArr3["tmp_name"][$key], $filePath.$uniqueFileName)) {
             // Perform database insertion
             $insert =  $connect->query("INSERT INTO `cheque_upd`(`cus_id`,`req_id`, `cheque_table_id`, `upload_cheque_name`) VALUES ('$cus_id','$req_id','$chequeID','$uniqueFileName')");
         }

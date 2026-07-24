@@ -360,15 +360,11 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 	<div class="col-md-12">
 		<div class="form-group" style="text-align:center">
 			<!-- <label for=''style="font-size:16px" >Verification:</label><br><br> -->
-			<input type="radio" name="verification_type" id="cus_profile" value="cus_profile" data-sts="<?php echo $customer_profile_sts ?? ''; ?>"></input><label for='cus_profile'>&nbsp;&nbsp; Customer Profile <?php if (isset($customer_profile_sts)) {
-																																																						if ($customer_profile_sts == 10) { ?> <span class="icon-done"></span> <?php }
-																																																									} ?> </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<input type="radio" name="verification_type" id="documentation" value="documentation" data-sts="<?php echo $document_sts ?? ''; ?>"></input><label for='documentation'>&nbsp;&nbsp; Documentation <?php if (isset($document_sts)) {
-																																																					if ($document_sts == 11) { ?> <span class="icon-done"></span> <?php }
-																																																							} ?> </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<input type="radio" name="verification_type" id="loan_calc" value="loan_calc" data-sts="<?php echo $cus_status_lc ?? ''; ?>"></input><label for='loan_calc'>&nbsp;&nbsp; Loan Calculation <?php if (isset($cus_status_lc)) {
-																																																			if ($cus_status_lc == 12) { ?> <span class="icon-done"></span> <?php }
-																																																					} ?> </label>
+			<input type="radio" name="verification_type" id="cus_profile" value="cus_profile" data-sts="<?php echo $customer_profile_sts ?? ''; ?>"></input><label for='cus_profile'>&nbsp;&nbsp; Customer Profile <?php if (isset($customer_profile_sts)) {if ($customer_profile_sts == 10) { ?> <span class="icon-done"></span> <?php }} ?> </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+			<input type="radio" name="verification_type" id="documentation" value="documentation" data-sts="<?php echo $document_sts ?? ''; ?>"></input><label for='documentation'>&nbsp;&nbsp; Documentation <?php if (isset($document_sts)) {if ($document_sts == 11) { ?> <span class="icon-done"></span> <?php }} ?> </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			
+			<input type="radio" name="verification_type" id="loan_calc" value="loan_calc" data-sts="<?php echo $cus_status_lc ?? ''; ?>"></input><label for='loan_calc'>&nbsp;&nbsp; Loan Calculation <?php if (isset($cus_status_lc)) {if ($cus_status_lc == 12) { ?> <span class="icon-done"></span> <?php }} ?> </label>
 		</div>
 	</div>
 
@@ -1618,7 +1614,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 											<select type="text" class="form-control" id="Propertyholder_type" name="Propertyholder_type" tabindex="81">
 												<option value=""> Select Holder type </option>
 												<option value="0" <?php if (isset($Propertyholder_type) and $Propertyholder_type == '0') echo 'selected'; ?>> Customer </option>
-												<option value="1" <?php if (isset($Propertyholder_type) and $Propertyholder_type == '1') echo 'selected'; ?>> Guarantor </option>
+												<!-- <option value="1" <?php #if (isset($Propertyholder_type) and $Propertyholder_type == '1') echo 'selected'; ?>> Guarantor </option> -->
 												<option value="2" <?php if (isset($Propertyholder_type) and $Propertyholder_type == '2') echo 'selected'; ?>> Family Members </option>
 											</select>
 											<span class="text-danger" id="propertyholdertypeCheck"> Select Property Holder type </span>
@@ -1713,7 +1709,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 										<select type="text" class="form-control" id="owner_type" name="owner_type" tabindex="90">
 											<option value=""> Select Holder type </option>
 											<option value="0" <?php if (isset($owner_type) and $owner_type == '0') echo 'selected'; ?>> Customer </option>
-											<option value="1" <?php if (isset($owner_type) and $owner_type == '1') echo 'selected'; ?>> Guarantor </option>
+											<!-- <option value="1" <?php #if (isset($owner_type) and $owner_type == '1') echo 'selected'; ?>> Guarantor </option> -->
 											<option value="2" <?php if (isset($owner_type) and $owner_type == '2') echo 'selected'; ?>> Family Members </option>
 										</select>
 										<span class="text-danger" id="ownertypeCheck"> Select Owner type </span>
@@ -3283,7 +3279,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 							<select type="text" class="form-control" id="sign_type" name="sign_type" tabindex='2'>
 								<option value=""> Select Sign Type </option>
 								<option value="0"> Customer </option>
-								<option value="1"> Guarantor </option>
+								<!-- <option value="1"> Guarantor </option> -->
 								<option value="2"> Combined </option>
 								<option value="3"> Family Members </option>
 							</select>
@@ -3396,7 +3392,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 							<select type="text" class="form-control" id="holder_type" name="holder_type" tabindex='1'>
 								<option value=""> Select Holder type </option>
 								<option value="0"> Customer </option>
-								<option value="1"> Guarantor </option>
+								<!-- <option value="1"> Guarantor </option> -->
 								<option value="2"> Family Members </option>
 							</select>
 							<span class="text-danger" id="holdertypeCheck"> Select Holder type </span>
@@ -3578,7 +3574,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 				</br>
 
 
-				<div id="feedbackTable">
+				<div id="feedbackTable" style="overflow-x: auto;">
 					<table class="table custom-table">
 						<thead>
 							<tr>
@@ -3801,7 +3797,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 							<select type="text" class="form-control" id="document_holder" name="document_holder" tabindex="4">
 								<option value=""> Select Holder type </option>
 								<option value="0"> Customer </option>
-								<option value="1"> Guarantor </option>
+								<!-- <option value="1"> Guarantor </option> -->
 								<option value="2"> Family Members </option>
 							</select>
 							<span class="text-danger" id="docholderCheck"> Select Document Holder </span>

@@ -1,6 +1,12 @@
 <?php
 include '../ajaxconfig.php';
 include '../moneyFormatIndia.php';
+
+@session_start();
+$userid = $_SESSION['userid'];
+$sql = $connect->prepare("SELECT update_doc_edit_access FROM user WHERE user_id = ?");
+$sql->execute([$userid]);
+$doc_edit_access = (int) $sql->fetchColumn(); //1-Yes, 2-No.
 ?>
 
 <table class="table custom-table" id="goldInfo_table_data">
@@ -20,22 +26,13 @@ include '../moneyFormatIndia.php';
     <tbody>
 
         <?php
-        $req_id = $_POST['req_id'];
-        $cus_id = $_POST['cus_id'];
-        $pages = $_POST['pages'];
-
-        $goldInfo = $connect->query("SELECT * FROM `gold_info` where cus_id = '$cus_id' order by id desc");
-
-        if ($pages == 2) { // for update screen data should be fetched using request id
-            $goldInfo = $connect->query("SELECT * FROM `gold_info` where req_id = '$req_id' order by id desc");
-        }
-
+        $req_id = $_POST['req_id']; 
+        $goldInfo = $connect->query("SELECT id, gold_sts, gold_type, Purity, gold_Count, gold_Weight, gold_Value, gold_upload FROM `gold_info` WHERE req_id = '$req_id' ORDER BY id DESC");
         $i = 1;
         while ($gold = $goldInfo->fetch()) {
         ?>
-
             <tr>
-                <td><?php echo $i; ?></td>
+                <td><?php echo $i++; ?></td>
                 <td><?php if ($gold["gold_sts"] == '0') {
                         echo 'Old';
                     } else if ($gold["gold_sts"] == '1') {
@@ -47,28 +44,28 @@ include '../moneyFormatIndia.php';
                 <td><?php echo $gold["gold_Weight"]; ?></td>
                 <td><?php echo moneyFormatIndia($gold["gold_Value"]); ?></td>
                 <td> <a href="uploads/gold_info/<?php echo $gold['gold_upload']; ?>" target="_blank" style="color: #4ba39b;"> <?php echo $gold['gold_upload']; ?> </a></td>
-
+                
                 <td>
-                    <a class="gold_info_edit" value="<?php echo $gold['id']; ?>"> <span class="icon-border_color"></span></a> &nbsp
-                    <?php if ($pages == 1) {  // Verification screen only delete option. 
-                    ?>
-                        <a id="gold_info_delete" value="<?php echo $gold['id']; ?>"> <span class='icon-trash-2'></span> </a>
-                    <?php  } ?>
-                </td>
+                    <?php
+                    if (empty($gold['gold_upload']) && $doc_edit_access == 2) { ?>
+                        <a class="gold_info_edit" value="<?php echo $gold['id']; ?>" data-access="2" style="text-decoration: underline;">Upload</a> &nbsp;
 
+                    <?php } else if ($doc_edit_access == 1) { ?>
+                        <a class="gold_info_edit" value="<?php echo $gold['id']; ?>" data-access="1"> <span class="icon-border_color"></span> </a> &nbsp;
+                        <a class="gold_info_delete" value="<?php echo $gold['id']; ?>" data-reqid="<?= $req_id; ?>"> <span class='icon-trash-2'></span> </a>
+                        
+                    <?php } ?>
+                </td>
             </tr>
 
-        <?php $i = $i + 1;
-        }     ?>
+        <?php } ?>
     </tbody>
 </table>
-
 
 <script type="text/javascript">
     $(function() {
         // Declare table variable to store the DataTable instance
         var goldInfo_table_data = $('#goldInfo_table_data').DataTable({
-            ...getStateSaveConfig('goldInfo_table_data'),
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -101,8 +98,5 @@ include '../moneyFormatIndia.php';
                 }
             ],
         });
-
-        // Pass the table variable to the initColVisFeatures function
-        initColVisFeatures(goldInfo_table_data, 'goldInfo_table_data');
     });
 </script>

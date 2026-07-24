@@ -21,15 +21,13 @@ if (isset($_POST["closed_sts"])) {
 if (isset($_POST["bal_amt"])) {
     $bal_amt = explode(',', $_POST["bal_amt"]);
 }
-
 ?>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 <style>
     .btn-outline-secondary {
         color: #383737;
         border-color: #383737;
         position: inherit;
-        /* left: -20px; */
     }
 </style>
 
@@ -56,48 +54,33 @@ if (isset($_POST["bal_amt"])) {
 
         <?php
         $cus_id = $_POST['cus_id'];
-        $run = $connect->query("SELECT lc.due_start_from,lc.loan_category,lc.sub_category,lc.loan_amt_cal,lc.due_amt_cal,lc.net_cash_cal,lc.collection_method,ii.loan_id,ii.req_id,ii.updated_date,ii.cus_status,
-        iv.agent_id,lcc.loan_category_creation_name as loan_catrgory_name, us.collection_access,iv.responsible
-        from acknowlegement_loan_calculation lc 
+
+        $run = $connect->query("SELECT ii.loan_id, lcc.loan_category_creation_name AS loan_catrgory_name, lc.sub_category, ac.ag_name, rc.responsible, ii.updated_date, lc.loan_amt_cal, lc.collection_method, lc.due_start_from, ii.req_id, ii.cus_status, us.collection_access
+        FROM acknowlegement_loan_calculation lc 
         LEFT JOIN in_issue ii ON lc.req_id = ii.req_id 
         LEFT JOIN in_verification iv ON ii.req_id = iv.req_id 
         LEFT JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id 
         LEFT JOIN user us ON us.user_id = '$user_id'
-        WHERE lc.cus_id_loan = '$cus_id' and (ii.cus_status >= 14 and ii.cus_status < 20) ORDER BY CAST(ii.req_id AS UNSIGNED) ASC "); //Customer status greater than or equal to 14 because, after issued data only we need
+        LEFT JOIN agent_creation ac ON rc.agent_id = ac.ag_id
+        WHERE lc.cus_id_loan = '$cus_id' AND (ii.cus_status >= 14 AND ii.cus_status < 20) ORDER BY CAST(ii.req_id AS UNSIGNED) ASC "); //Customer status greater than or equal to 14 because, after issued data only we need
 
         $i = 1;
         $curdate = date('Y-m-d');
+        $coll_method = ['1' => 'By Self', '2' => 'Spot Collection', '3' => 'Cheque Collection', '4' => 'ECS'];
         while ($row = $run->fetch()) {
-            // if($bal_amt[$i-1] != '0'){
-
         ?>
             <tr>
                 <td><?php echo $row['loan_id']; ?></td>
                 <td><?php echo $row["loan_catrgory_name"]; ?></td>
                 <td><?php echo $row["sub_category"]; ?></td>
-                <td>
-                    <?php
-                    if ($row["agent_id"] != '' || $row["agent_id"] != NULL) {
-                        $run1 = $connect->query('SELECT ag_name from agent_creation where ag_id = "' . $row['agent_id'] . '" ');
-                        echo $run1->fetch()['ag_name'];
-                    }
-                    ?>
-                </td>
-                <td><?php echo ($row['responsible'] == '0') ? 'Yes' : (!empty($row['agent_id']) && $row['responsible'] != '0' ? 'No' : ''); ?></td>
+                <td><?php echo $row["ag_name"] ?? '';?></td>
+                <td><?php echo ($row['responsible'] == '0') ? 'Yes' : (!empty($row['ag_name']) && $row['responsible'] != '0' ? 'No' : ''); ?></td>
                 <td><?php echo date('d-m-Y', strtotime($row["updated_date"])); ?></td>
                 <td><?php echo moneyFormatIndia($row["loan_amt_cal"]); ?></td>
                 <td><?php echo moneyFormatIndia($bal_amt[$i - 1]); ?></td>
-                <td><?php if ($row["collection_method"] == '1') {
-                        echo 'By Self';
-                    } else if ($row["collection_method"] == '2') {
-                        echo 'Spot Collection';
-                    } else if ($row["collection_method"] == '3') {
-                        echo 'Cheque Collection';
-                    } else if ($row["collection_method"] == '4') {
-                        echo 'ECS';
-                    } ?></td>
+                <td><?php echo $coll_method[$row["collection_method"]];?></td>
                 <td><?php echo 'Present'; ?></td>
-                <td><?php if (date('Y-m-d', strtotime($row['due_start_from'])) > date('Y-m-d', strtotime($curdate))  and $bal_amt[$i - 1] != 0) { //If the start date is on upcoming date then the sub status is current, until current date reach due_start_from date.
+                <td><?php if (date('Y-m-d', strtotime($row['due_start_from'])) > date('Y-m-d', strtotime($curdate)) and $bal_amt[$i - 1] != 0) { //If the start date is on upcoming date then the sub status is current, until current date reach due_start_from date.
                         if ($row['cus_status'] == '15') {
                             echo $subStatus = 'Error';
                         } elseif ($row['cus_status'] == '16') {
@@ -146,26 +129,25 @@ if (isset($_POST["bal_amt"])) {
                     } 
                     //Need to update customer status so updating here with the live status.
                     $balAmnt = $bal_amt[$i - 1];
-                    $current_date = date('Y-m-d');
-                    $connect->query("UPDATE `customer_status` SET `cus_id`='$cus_id',`sub_status`='$subStatus',`bal_amnt`='$balAmnt',`insert_login_id`='$user_id',`created_date`='$current_date' WHERE `req_id`='".$row['req_id']."' ");
+                    $connect->query("UPDATE `customer_status` SET `cus_id`='$cus_id',`sub_status`='$subStatus',`bal_amnt`='$balAmnt',`insert_login_id`='$user_id',`created_date`='$curdate' WHERE `req_id`='".$row['req_id']."' ");
                     
                     ?></td>
                 <td><?php echo "<span class='btn btn-success collection-window' style='font-size: 17px;position: relative;top: 0px; background-color:#009688;";
                     if ($row['cus_status'] == '16') {
                         echo 'display:none';
-                    } //|| $row['cus_status']== '15' || $closed_sts[$i-1] == 'true'
+                    }
                     echo " ' data-value='" . $row['req_id'] . "'' tabindex='0'>$</span>"; ?></td>
                 <td>
                     <?php
-                    $action = "<div class='dropdown'><button class='btn btn-outline-secondary' ";
-
-                    $action .= "><i class='fa'>&#xf107;</i></button><div class='dropdown-content'>";
-                    $action .= "<a><span data-toggle='modal' data-target='.DueChart' class='due-chart' value='" . $row['req_id'] . "' > Due Chart</span></a>
-                        <a><span data-toggle='modal' data-target='.PenaltyChart' class='penalty-chart' value='" . $row['req_id'] . "' > Penalty Chart</span></a>
-                        <a><span data-toggle='modal' data-target='.collectionChargeChart' class='coll-charge-chart' value='" . $row['req_id'] . "' > Fine Chart</span></a>
-                        <a><span data-toggle='modal' data-target='#commitmentChart' class='commitment-chart' data-reqid='" . $row['req_id'] . "' > Commitment Chart </span></a>";
-                    $action .= "</div></div>";
-                    echo $action;
+                        echo "<div class='dropdown'>
+                                <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
+                                <div class='dropdown-content'>
+                                    <a><span data-toggle='modal' data-target='.DueChart' class='due-chart' value='" . $row['req_id'] . "' > Due Chart</span></a>
+                                    <a><span data-toggle='modal' data-target='.PenaltyChart' class='penalty-chart' value='" . $row['req_id'] . "' > Penalty Chart</span></a>
+                                    <a><span data-toggle='modal' data-target='.collectionChargeChart' class='coll-charge-chart' value='" . $row['req_id'] . "' > Fine Chart</span></a>
+                                    <a><span data-toggle='modal' data-target='#commitmentChart' class='commitment-chart' data-reqid='" . $row['req_id'] . "' > Commitment Chart </span></a>
+                                </div>
+                            </div>";
                     ?>
                 </td>
                 <td>
@@ -182,6 +164,7 @@ if (isset($_POST["bal_amt"])) {
                         //     $action .= "<a href='' class='move-closed' value='".$row['req_id']."' > Move To Closed</a>";
                         // }
                     }
+
                     $action .= "<a><span data-toggle='modal' data-target='#addCommitment' class='add-commitment-chart' data-reqid='" . $row['req_id'] . "' > New Commitment </span></a>";
                     $action .= "</div></div>";
                     echo $action;
@@ -230,6 +213,7 @@ if (isset($_POST["bal_amt"])) {
         // Pass the table variable to the initColVisFeatures function
         initColVisFeatures(loanListTable, 'loanListTable');
     });
+
     $('.dropdown').off().click(function(event) {
         event.preventDefault();
         $('.dropdown').not(this).removeClass('active');
@@ -242,5 +226,6 @@ if (isset($_POST["bal_amt"])) {
             $('.dropdown').removeClass('active');
         }
     });
+
     $('.due-chart, .penalty-chart, .coll-charge-chart, .coll-charge, .add-commitment-chart, .commitment-chart').css('color', 'black');
 </script>

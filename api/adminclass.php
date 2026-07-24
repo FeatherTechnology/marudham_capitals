@@ -3841,7 +3841,7 @@ class admin
 			$update_documentation = 1;
 		}
 		
-		$update_doc_edit_access = ($_POST['update_doc_edit_access']) ? $_POST['update_doc_edit_access'] : '2';
+		$update_doc_edit_access = (isset($_POST['update_doc_edit_access']) && $_POST['update_doc_edit_access']) ? $_POST['update_doc_edit_access'] : '2';
 		
 		if (isset($_POST['concernmodule']) &&    $_POST['concernmodule'] == 'Yes') {
 			$concernmodule = 0;

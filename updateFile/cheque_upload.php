@@ -21,9 +21,6 @@ if($holder_type == '0' || $holder_type == '1'){
 
 $holderName = ($holder_type == '0' || $holder_type == '1') ? $holder_name : $holder_relationship_name;
 
-// $connect->query("DELETE FROM `cheque_upd` WHERE `cheque_table_id`='$chequeID'");
-// $connect->query("DELETE FROM `cheque_no_list` WHERE `cheque_table_id`='$chequeID'");
-
 if ($chequeID == '') {
 
     $qry = $connect->query("SELECT id FROM `customer_profile` WHERE `req_id` = $req_id");
@@ -40,37 +37,54 @@ if ($chequeID == '') {
 $connect->query("DELETE FROM `cheque_no_list` WHERE `cheque_table_id`='$chequeID'");
 
 if (!empty($filesArray['name'][0])){
+    
+    $filePath = "../uploads/verification/cheque_upd/";
+
+    // Get all files for this cheque_upd
+    $stmt = $connect->query("SELECT upload_cheque_name FROM cheque_upd WHERE cheque_table_id = '$chequeID'");
+    $files = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Delete files from folder
+    foreach ($files as $fileinfo) {
+        $file = $filePath . $fileinfo['upload_cheque_name'];
+
+        if (!empty($fileinfo['upload_cheque_name']) && file_exists($file)) {
+            unlink($file);
+        }
+    }
+
     $connect->query("DELETE FROM `cheque_upd` WHERE `cheque_table_id`='$chequeID'");
     
     foreach($filesArray['name'] as $key=>$val)
     {
         $fileName = basename($filesArray['name'][$key]);  
-        $targetFilePath = "../uploads/verification/cheque_upd/".$fileName; 
+        $targetFilePath = $filePath.$fileName; 
     
         $fileExtension = pathinfo($targetFilePath, PATHINFO_EXTENSION);
         
         $uniqueFileName = uniqid() . '.' . $fileExtension;
-        while(file_exists("../uploads/verification/cheque_upd/".$uniqueFileName)){
+        while(file_exists($filePath.$uniqueFileName)){
             $uniqueFileName = uniqid() . '.' . $fileExtension;
         }
     
         // Upload file to server  
-        if(move_uploaded_file($filesArray["tmp_name"][$key], "../uploads/verification/cheque_upd/" . $uniqueFileName)){  
+        if(move_uploaded_file($filesArray["tmp_name"][$key], $filePath.$uniqueFileName)){  
             $update =  $connect->query("INSERT INTO `cheque_upd`(`cus_id`,`req_id`, `cheque_table_id`, `upload_cheque_name`) VALUES ('$cus_id','$req_id','$chequeID','$uniqueFileName')");
         }
     }
 }
-
 
 foreach($cheque_upd_no as $chequeNo){
     $update  = $connect->query("INSERT INTO `cheque_no_list`( `req_id`,`cus_id`,`cheque_table_id`, `cheque_holder_type`, `cheque_holder_name`, `cheque_no`) 
     VALUES ('$req_id','$cus_id','$chequeID',' $holder_type','$holderName','$chequeNo')");
 }
 
-
 if($update){
     $result = "Cheque Uploaded Successfully.";
 }
 
 echo json_encode($result);
+
+// Close the database connection
+$connect = null;
 ?>

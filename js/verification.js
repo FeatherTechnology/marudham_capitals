@@ -477,14 +477,10 @@ $(document).ready(function () {
          getAllAgentDropdown(); //for directors
       }
   
-      let agent_id = $("#agent_id").val();
-      getresponsiblecolumn(agent_id);
-  
       var pge = $("#pge").val();
       if (pge == "1") {
         //verification.
-        $("#cus_agent_name").attr("disabled", true);
-        $("#cus_responsible").attr("disabled", true);
+        $("#cus_agent_name, #agent_name, #cus_responsible, #doc_responsible, #loan_responsible").attr("disabled", true);
       }
   }
 
@@ -526,8 +522,8 @@ $(document).ready(function () {
 
     if(type =='0' || type =='1'){ //Customer, Guarantor.
       // Get all td elements at index 2 from all rows
-      let allSignTypes = $('#signedDoc_table_data').find('tr').map(function() {
-          return $(this).find("td:eq(2)").text();
+      let allSignTypes = $('#signedDoc_table_data tbody tr').map(function() {
+          return $(this).find("td:eq(2)").text().trim();
       }).get();
   
       let typeName = {'0':'Customer', '1':'Guarantor', '2':'Combined', '3':'Family Members'};
@@ -586,13 +582,13 @@ $(document).ready(function () {
       let type = $('#sign_type').val();
       
       // Get all td elements at index 2 from all rows
-      let allSignTypes = $('#signedDoc_table_data').find('tr:has(td)').map(function() {
-          return $(this).find("td:eq(2)").text();
+      let allSignTypes = $('#signedDoc_table_data tbody tr').map(function() {
+        return $(this).find("td:eq(2)").text().trim();
       }).get();
 
       // Get all relation-id attributes from all rows
-      let allRelationIds = $('#signedDoc_table_data').find('tr:has(td)').map(function() {
-          return $(this).find("a").data('relationid');
+      let allRelationIds = $('#signedDoc_table_data tbody tr').map(function() {
+        return $(this).find('#signed_doc_edit').data('relationid');
       }).get();
 
       // Types that share the same relationship ID
@@ -882,14 +878,7 @@ $(document).ready(function () {
     } else {
       $("#Mortgageprocess").hide();
 
-      $("#Propertyholder_type").val("");
-      $("#Propertyholder_name").val("");
-      $("#Propertyholder_relationship_name").val("");
-      $("#doc_property_relation").val("");
-      $("#doc_property_pype").val("");
-      $("#doc_property_measurement").val("");
-      $("#doc_property_location").val("");
-      $("#doc_property_value").val("");
+      $("#Propertyholder_type, #Propertyholder_name, #Propertyholder_relationship_name, #doc_property_relation, #doc_property_pype, #doc_property_measurement, #doc_property_location, #doc_property_value").val(""); 
       $("#propertyholderNameCheck").hide();
     }
 
@@ -973,14 +962,7 @@ $(document).ready(function () {
     } else {
       $("#endorsementprocess").hide();
 
-      $("#owner_type").val("");
-      $("#owner_name").val("");
-      $("#ownername_relationship_name").val("");
-      $("#en_relation").val("");
-      $("#vehicle_type").val("");
-      $("#vehicle_process").val("");
-      $("#en_Company").val("");
-      $("#en_Model").val("");
+      $("#owner_type, #owner_name, #ownername_relationship_name, #en_relation, #vehicle_type, #vehicle_process, #en_Company, #en_Model").val(""); 
       $("#ownerNameCheck").hide();
       // $('#vehicle_reg_no').val('');
       // $('#endorsement_name').val('');
@@ -1329,6 +1311,9 @@ $(function () {
   $(".icon-chevron-down1").parent().next("div").slideUp(); //To collapse all card on load
   nameFormatter('#cus_name');// To Show Namein Proper Format
   nameFormatter('#famname'); // 
+
+  let agent_id = $("#agent_id").val();
+  getresponsiblecolumn(agent_id);
 
   $(".modalTable").DataTable({
     processing: true,
@@ -1775,7 +1760,6 @@ function verificationPerson() {
 
 $("#guarentor_name").change(function () {
   //Select Guarantor Name relationship will show in input.
-
   let famId = document.querySelector("#guarentor_name").value;
 
   $.ajax({
@@ -3549,38 +3533,25 @@ function feedbackList() {
 
 ////////////////////////// Agent dropdown START ////////////////////////////////////
 //Fetch Agent dropdown based on staffs from manage user
-function getStaffBasedAgent(user_id_load) {
+function getStaffBasedAgent(user_id) {
   var ag_id_upd = $("#agent_id").val();
   $.ajax({
     url: "requestFile/getStaffBasedAgent.php",
-    data: { user_id: user_id_load },
+    data: { user_id },
     dataType: "json",
     type: "post",
     cache: false,
     success: function (response) {
-      $("#cus_agent_name").empty();
-      $("#cus_agent_name").append(
-        "<option value='' >Select Agent Name</option>"
-      );
+      $("#cus_agent_name").empty().append("<option value='' >Select Agent Name</option>");
+
       for (var i = 0; i < response.length; i++) {
         var selected = "";
-        if (
-          ag_id_upd != "undefined" &&
-          ag_id_upd != "" &&
-          ag_id_upd == response[i]["ag_id"]
-        ) {
+        if (ag_id_upd != "undefined" && ag_id_upd != "" && ag_id_upd == response[i]["ag_id"]) {
           selected = "selected";
         }
-        $("#cus_agent_name").append(
-          "<option value='" +
-          response[i]["ag_id"] +
-          "' " +
-          selected +
-          ">" +
-          response[i]["ag_name"] +
-          " </option>"
-        );
+        $("#cus_agent_name").append(`<option value='${response[i]["ag_id"]}' ${selected}> ${response[i]["ag_name"]} </option>`);
       }
+
       // Sort cus_agent_name dropdown
       sortDropdownAlphabetically("#cus_agent_name");
     },
@@ -3631,6 +3602,7 @@ $("#cus_agent_name").change(function () {
   $("#agent_id_hidden").val(agentId);
   getresponsiblecolumn(agentId); //To Hide/show responsible.
 });
+
 $('#cus_responsible').change(function () {
   let res_id = $(this).val();
   $('#responsible_hidden').val(res_id)
@@ -4089,7 +4061,7 @@ $(document).on("click", "#signInfoBtn", function () {
   let cus_id = $("#cus_id").val();
   let cus_profile_id = $("#cus_profile_id").val();
   let doc_name = $("#doc_name").val();
-  let sign_type = $("#sign_type").val();
+  let sign_type = $("#sign_type").val() ?? '';
   let signType_relationship = $("#signType_relationship").val();
   let doc_Count = $("#doc_Count").val();
   let signedID = $("#signedID").val();
@@ -4253,7 +4225,7 @@ $(document).on("click", "#chequeInfoBtn", function () {
   let req_id = $("#req_id").val();
   let cus_id = $("#cus_id").val();
   let cus_profile_id = $("#cus_profile_id").val();
-  let holder_type = $("#holder_type").val();
+  let holder_type = $("#holder_type").val() ?? '';
   let holder_name = $("#holder_name").val();
   let holder_relationship_name = $("#holder_relationship_name").val();
   let cheque_relation = $("#cheque_relation").val();
@@ -4581,7 +4553,7 @@ $("#docInfoBtn").click(function () {
   let doc_name = $("#document_name").val();
   let doc_details = $("#document_details").val();
   let doc_type = $("#document_type").val();
-  let doc_holder = $("#document_holder").val();
+  let doc_holder = $("#document_holder").val() ?? '';
   let holder_name = $("#docholder_name").val();
   let relation_name = $("#docholder_relationship_name").val();
   let relation = $("#doc_relation").val();

@@ -36,6 +36,7 @@
 						<thead>
 							<tr>
 								<th width="50">S.No.</th>
+								<th>Closed Date</th>
 								<th>Aadhaar Number</th>
 								<th>Customer ID</th>
 								<th>Loan ID</th>

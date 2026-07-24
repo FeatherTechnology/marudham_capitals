@@ -852,23 +852,23 @@ function getLoaninfo(sub_cat_id) {
 }
 
 //Fetch Agent dropdown based on staffs from manage user
-function getStaffBasedAgent(user_id_load) {
+function getStaffBasedAgent(user_id) {
     var ag_id_upd = $('#ag_id_upd').val();
     $.ajax({
         url: 'requestFile/getStaffBasedAgent.php',
-        data: { 'user_id': user_id_load },
+        data: { user_id },
         dataType: 'json',
         type: 'post',
         cache: false,
         success: function (response) {
-            $('#agent').empty();
-            $('#agent').append("<option value='' >Select Agent Name</option>");
+            $('#agent').empty().append("<option value='' >Select Agent Name</option>");
+
             for (var i = 0; i < response.length; i++) {
                 var selected = '';
                 if (ag_id_upd != 'undefined' && ag_id_upd != '' && ag_id_upd == response[i]['ag_id']) {
                     selected = "selected";
                 }
-                $('#agent').append("<option value='" + response[i]['ag_id'] + "' " + selected + ">" + response[i]['ag_name'] + " </option>");
+                $('#agent').append(`<option value='${response[i]['ag_id']}' ${selected}> ${response[i]['ag_name']} </option>`);
             }
             // Sort agent dropdown
             sortDropdownAlphabetically("#agent");

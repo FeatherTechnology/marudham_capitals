@@ -8,60 +8,6 @@ if (isset($_SESSION["userid"])) {
 }
 ?>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-    .dropbtn {
-        color: white;
-        /* background-color: #009688; */
-        /* padding: 10px; */
-        font-size: 10px;
-        border: none;
-        cursor: pointer;
-    }
-
-    .dropdown {
-        position: relative;
-        display: inline-block;
-    }
-
-    .dropdown-content {
-        display: none;
-        position: absolute;
-        right: 0;
-        background-color: #F9F9F9;
-        min-width: 160px;
-        margin-top: -50px;
-        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-        z-index: 1;
-    }
-
-    .dropdown-content a {
-        color: black;
-        padding: 10px 10px;
-        text-decoration: none;
-        display: block;
-    }
-
-    .dropdown-content a:hover {
-        background-color: #fafafa;
-    }
-
-    /* .dropdown:hover .dropdown-content {
-        display: block;
-    } */
-
-    /* .dropdown:hover .dropbtn {
-        background-color: #3E8E41;
-    } */
-
-    .btn-outline-secondary {
-        color: #383737;
-        border-color: #383737;
-        position: inherit;
-        /* left: -20px; */
-    }
-</style>
-
 <table class="table custom-table" id='loanListTable'>
     <thead>
         <tr>
@@ -71,7 +17,7 @@ if (isset($_SESSION["userid"])) {
             <th>Sub Category</th>
             <th>Agent</th>
             <th>Responsible</th>
-            <th>Loan Date</th>
+            <th>Loan date</th>
             <th>Loan Amount</th>
             <th>Closed Date</th>
             <th>Status</th>
@@ -101,36 +47,30 @@ if (isset($_SESSION["userid"])) {
                 $screen_condition = " AND lc.cus_id_loan = $cus_id AND (n.receive_status = 0 OR n.req_id IS NULL)"; 
             }
 
-            $run = $connect->query("SELECT ii.loan_id, lc.cus_name_loan as cus_name, ad.doc_id, lcc.loan_category_creation_name as loan_catrgory_name, lc.sub_category, iv.agent_id, ii.updated_date, lc.loan_amt_cal, ii.req_id, ii.cus_status,iv.responsible
+            $run = $connect->query("SELECT ii.loan_id, lc.cus_name_loan as cus_name, ad.doc_id, lcc.loan_category_creation_name as loan_catrgory_name, lc.sub_category, ac.ag_name, iv.responsible, ii.updated_date, lc.loan_amt_cal, ii.req_id, ii.cus_status, cs.created_date, cs.consider_level
             FROM acknowlegement_loan_calculation lc 
             JOIN acknowlegement_documentation ad ON lc.req_id = ad.req_id 
             JOIN in_issue ii ON lc.req_id = ii.req_id 
             JOIN in_verification iv ON ii.req_id = iv.req_id 
             JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
             LEFT JOIN noc n ON ii.req_id = n.req_id
+            LEFT JOIN agent_creation ac ON iv.agent_id = ac.ag_id
+            LEFT JOIN closed_status cs ON lc.req_id = cs.req_id
             WHERE ii.cus_status IN ($cus_sts) $screen_condition "); //21 means loan has been closed form closed window for noc
 
+            $consider_lvl = ['1' => 'Bronze', '2' => 'Silver', '3' => 'Gold', '4' => 'Platinum', '5' => 'Diamond'];
             while ($row = $run->fetch()) {
-                $qry = $connect->query("SELECT created_date, closed_sts, consider_level FROM `closed_status` WHERE req_id = '" . $row['req_id'] . "' ");
-                $runqry = $qry->fetch();
         ?>
             <tr>
                 <td><?php echo $row["loan_id"]; ?></td>
                 <td><?php echo $row["doc_id"]; ?></td>
                 <td><?php echo $row["loan_catrgory_name"]; ?></td>
                 <td><?php echo $row["sub_category"]; ?></td>
-                <td>
-                    <?php
-                    if ($row["agent_id"] != '' || $row["agent_id"] != NULL) {
-                        $run1 = $connect->query('SELECT ag_name from agent_creation where ag_id = "' . $row['agent_id'] . '" ');
-                        echo $run1->fetch()['ag_name'];
-                    }
-                    ?>
-                </td>
-                <td><?php echo ($row['responsible'] == '0') ? 'Yes' : (!empty($row['agent_id']) && $row['responsible'] != '0' ? 'No' : ''); ?></td>
+                <td><?php echo $row["ag_name"] ?? '';?></td> <!-- Agent -->
+                <td><?php echo ($row['responsible'] == '0') ? 'Yes' : (!empty($row['ag_name']) && $row['responsible'] != '0' ? 'No' : ''); ?></td>
                 <td><?php echo date('d-m-Y', strtotime($row["updated_date"])); ?></td>
                 <td><?php echo moneyFormatIndia($row["loan_amt_cal"]); ?></td>
-                <td><?php echo date('d-m-Y', strtotime($runqry['created_date'])); ?></td> <!-- closed date-->
+                <td><?php echo date('d-m-Y', strtotime($row['created_date'])); ?></td> <!-- closed date-->
                 <td><?php echo 'NOC'; ?></td>
                 <td><?php if ($row['cus_status'] == '21') {
                         echo 'Pending';
@@ -139,21 +79,7 @@ if (isset($_SESSION["userid"])) {
                     } else {
                         echo '';
                     } ?></td>
-                <td>
-                    <?php if ($runqry['consider_level'] == '1') {
-                        echo 'Bronze';
-                    } elseif ($runqry['consider_level'] == '2') {
-                        echo 'Silver';
-                    } elseif ($runqry['consider_level'] == '3') {
-                        echo 'Gold';
-                    } elseif ($runqry['consider_level'] == '4') {
-                        echo 'Platinum';
-                    } elseif ($runqry['consider_level'] == '5') {
-                        echo 'Diamond';
-                    } else {
-                        echo '';
-                    } ?>
-                </td>
+                <td><?php echo $consider_lvl[$row['consider_level']] ?? ''; ?></td>
                 <td>
                     <div class="dropdown">
                         <button class="btn btn-outline-secondary"><i class="fa">&#xf107;</i></button>

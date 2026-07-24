@@ -17,46 +17,37 @@ include '../../ajaxconfig.php';
 
         <?php
         $req_id = $_POST['reqId'];
-        $chequeInfo = $connect->query("SELECT * FROM `cheque_info` where req_id = '$req_id' order by id desc");
+        $chequeInfo = $connect->query("SELECT holder_type, holder_name, cheque_relation, chequebank_name, cheque_count, vfi.famname FROM `cheque_info` ci LEFT JOIN verification_family_info vfi ON ci.holder_relationship_name = vfi.id WHERE ci.req_id = '$req_id' ORDER BY ci.id DESC");
 
         $i = 1;
+        $holderType = ['0' => 'Customer', '1' => 'Guarantor', '2' => 'Family Members'];
         while ($cheque = $chequeInfo->fetch()) {
-            $fam_id = $cheque["holder_relationship_name"];
-            $result = $connect->query("SELECT famname FROM `verification_family_info` where id='$fam_id'");
-            $row = $result->fetch()
         ?>
             <tr>
-                <td><?php echo $i; ?></td>
+                <td><?php echo $i++; ?></td>
 
-                <td><?php if ($cheque["holder_type"] == '0') {
-                        echo 'Customer';
-                    } elseif ($cheque["holder_type"] == '1') {
-                        echo 'Guarantor';
+                <td> <?php echo $holderType[$cheque['holder_type']] ?? ''; ?> </td>
+
+                <td> 
+                    <?php if(in_array($cheque["holder_type"], [0,1])){
+                        echo $cheque["holder_name"];
                     } elseif ($cheque["holder_type"] == '2') {
-                        echo 'Family Members';
-                    }  ?></td>
-
-                <td> <?php if ($cheque["holder_type"] == '0' || $cheque["holder_type"] == '1') {
-                            echo $cheque["holder_name"];
-                        } elseif ($cheque["holder_type"] == '2') {
-                            echo $row["famname"];
-                        } ?></td>
+                        echo $cheque["famname"];
+                    } ?>
+                </td>
                 <td><?php echo $cheque["cheque_relation"]; ?></td>
                 <td><?php echo $cheque["chequebank_name"]; ?></td>
                 <td><?php echo $cheque["cheque_count"]; ?></td>
-
-
             </tr>
 
-        <?php  } ?>
+        <?php } ?>
     </tbody>
 </table>
 
 <script type="text/javascript">
     $(function() {
         // Declare table variable to store the DataTable instance
-        var cheque_table = $('#cheque_table').DataTable({
-            ...getStateSaveConfig('cheque_table'),
+        $('#cheque_table').DataTable({
             'processing': true,
             'iDisplayLength': 5,
             "lengthMenu": [
@@ -89,9 +80,6 @@ include '../../ajaxconfig.php';
                 }
             ],
         });
-
-        // Pass the table variable to the initColVisFeatures function
-        initColVisFeatures(cheque_table, 'cheque_table');
     });
 </script>
 <?php

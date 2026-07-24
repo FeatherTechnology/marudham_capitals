@@ -1485,6 +1485,12 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 										<input type="text" class="form-control" id="Customer_name" name="Customer_name" value='<?php if (isset($doc_cus_name)) echo $doc_cus_name; ?>' readonly tabindex="55">
 									</div>
 								</div>
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+									<div class="form-group">
+										<label for="user">Agent Name</label><span class="required">&nbsp;*</span>
+										<input type="text" class="form-control" id="agent_name" name="agent_name" readonly value='<?php if (isset($agent_name)) echo $agent_name; ?>' tabindex='101'>
+									</div>
+								</div>
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 responsible" style="display: none">
 									<div class="form-group">
 										<label for="responsible">Responsible&nbsp;<span class="required">&nbsp;*</span></label>
@@ -1665,7 +1671,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 											<select type="text" class="form-control" id="Propertyholder_type" name="Propertyholder_type" tabindex="64">
 												<option value=""> Select Holder type </option>
 												<option value="0" <?php if (isset($Propertyholder_type) and $Propertyholder_type == '0') echo 'selected'; ?>> Customer </option>
-												<option value="1" <?php if (isset($Propertyholder_type) and $Propertyholder_type == '1') echo 'selected'; ?>> Guarantor </option>
+												<!-- <option value="1" <?php #if (isset($Propertyholder_type) and $Propertyholder_type == '1') echo 'selected'; ?>> Guarantor </option> -->
 												<option value="2" <?php if (isset($Propertyholder_type) and $Propertyholder_type == '2') echo 'selected'; ?>> Family Members </option>
 											</select>
 											<span class="text-danger" id="propertyholdertypeCheck"> Select Property Holder type </span>
@@ -1833,7 +1839,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 										<select type="text" class="form-control" id="owner_type" name="owner_type" tabindex="81">
 											<option value=""> Select Holder type </option>
 											<option value="0" <?php if (isset($owner_type) and $owner_type == '0') echo 'selected'; ?>> Customer </option>
-											<option value="1" <?php if (isset($owner_type) and $owner_type == '1') echo 'selected'; ?>> Guarantor </option>
+											<!-- <option value="1" <?php #if (isset($owner_type) and $owner_type == '1') echo 'selected'; ?>> Guarantor </option> -->
 											<option value="2" <?php if (isset($owner_type) and $owner_type == '2') echo 'selected'; ?>> Family Members </option>
 										</select>
 										<span class="text-danger" id="ownertypeCheck"> Select Owner type </span>
@@ -2839,7 +2845,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 								<select type="text" class="form-control" id="sign_type" name="sign_type" tabindex='2'>
 									<option value=""> Select Sign Type </option>
 									<option value="0"> Customer </option>
-									<option value="1"> Guarantor </option>
+									<!-- <option value="1"> Guarantor </option> -->
 									<option value="2"> Combined </option>
 									<option value="3"> Family Members </option>
 								</select>
@@ -2970,7 +2976,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 								<select type="text" class="form-control" id="holder_type" name="holder_type" tabindex='1'>
 									<option value=""> Select Holder type </option>
 									<option value="0"> Customer </option>
-									<option value="1"> Guarantor </option>
+									<!-- <option value="1"> Guarantor </option> -->
 									<option value="2"> Family Members </option>
 								</select>
 								<span class="text-danger" id="holdertypeCheck"> Select Holder type </span>
@@ -3261,7 +3267,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 								<select type="text" class="form-control" id="document_holder" name="document_holder" tabindex="4">
 									<option value=""> Select Holder type </option>
 									<option value="0"> Customer </option>
-									<option value="1"> Guarantor </option>
+									<!-- <option value="1"> Guarantor </option> -->
 									<option value="2"> Family Members </option>
 								</select>
 								<span class="text-danger" id="docholderCheck"> Select Document Holder </span>
