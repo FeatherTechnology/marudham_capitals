@@ -1,12 +1,6 @@
 <?php
-session_start();
 include '../ajaxconfig.php';
 include '../moneyFormatIndia.php';
-
-if (isset($_SESSION["userid"])) {
-    $user_id = $_SESSION["userid"];
-}
-
 ?>
 <table class="table custom-table" id='penaltyListTable'>
     <thead>
@@ -24,7 +18,6 @@ if (isset($_SESSION["userid"])) {
 
         <?php
         $req_id = $_POST['req_id'];
-        $cus_id = $_POST['cus_id'];
         $run = $connect->query("SELECT * FROM `penalty_charges` WHERE `req_id`= '$req_id' ORDER BY created_date ");
 
         $i = 1;
@@ -33,54 +26,40 @@ if (isset($_SESSION["userid"])) {
         $waiver = 0;
         while ($row = $run->fetch()) {
             $penaltys = ($row['penalty']) ? $row['penalty'] : '0';
-            $penalt = $penalt + $penaltys; 
+            $penalt += $penaltys; 
             $paid_amount = ($row['paid_amnt']) ? $row['paid_amnt'] : '0';
-            $paid = $paid + $paid_amount;
+            $paid += $paid_amount;
             $waivers = ($row['waiver_amnt']) ? $row['waiver_amnt'] : '0';
-            $waiver = $waiver + $waivers ;
+            $waiver += $waivers;
             $bal_amnt = $penalt - $paid - $waiver;
         ?>
             <tr>
-                <td><?php echo $i; ?></td>
-                <td><?php echo $row['penalty_date']!=''?date('d-m-Y',strtotime($row['penalty_date'])):''; ?></td>
+                <td><?php echo $i++; ?></td>
+                <td><?php echo ($row['penalty_date'] !='') ? date('d-m-Y',strtotime($row['penalty_date'])) : ''; ?></td>
                 <td><?php echo $penaltys; ?></td>
-                <td><?php echo $row['paid_date']!=''?date('d-m-Y',strtotime($row['paid_date'])):''; ?></td>
+                <td><?php echo ($row['paid_date'] !='') ? date('d-m-Y',strtotime($row['paid_date'])) : ''; ?></td>
                 <td><?php echo $paid_amount; ?></td>
                 <td><?php echo $bal_amnt; ?></td>
                 <td><?php echo $waivers; ?></td>
             </tr>
 
-        <?php $i++;
-        }
+        <?php } ?>
 
-        $sumPenaltyAmnt = $connect->query("SELECT sum(penalty) as penalte,sum(paid_amnt) as paidAmnt,sum(waiver_amnt) as penalte_waiver FROM `penalty_charges` WHERE `req_id`= '$req_id' ");
-        $sumAmnt = $sumPenaltyAmnt->fetch();
-        $penalty = $sumAmnt['penalte'];
-        $paid_amt = $sumAmnt['paidAmnt'];
-        $penalty_waiver = $sumAmnt['penalte_waiver'];
-
-        ?>
-
-</tbody>
-<tr>
-    <td></td>
-    <td></td>
-    <td><b><?php echo moneyFormatIndia($penalty); ?></b></td>
-    <td></td>
-    <td><b><?php echo moneyFormatIndia($paid_amt); ?></b></td>
-    <td></td>
-    <td><b><?php echo moneyFormatIndia($penalty_waiver); ?></b></td>
-</tr>
+    </tbody>
+    <tr>
+        <td></td>
+        <td></td>
+        <td><b><?php echo moneyFormatIndia($penalt); ?></b></td>
+        <td></td>
+        <td><b><?php echo moneyFormatIndia($paid); ?></b></td>
+        <td></td>
+        <td><b><?php echo moneyFormatIndia($waiver); ?></b></td>
+    </tr>
 </table>
 
 <script type="text/javascript">
     $(function() {
-        // Declare table variable to store the DataTable instance
-        var penaltyListTable = $('#penaltyListTable').DataTable({
-            ...getStateSaveConfig('penaltyListTable'),
-            // 'order': [
-            //     [0, 'desc']
-            // ],
+        $('#penaltyListTable').DataTable({
             'processing': true,
             'iDisplayLength': 10,
             "lengthMenu": [
@@ -102,18 +81,7 @@ if (isset($_SESSION["userid"])) {
                     extend: 'colvis',
                     collectionLayout: 'fixed four-column',
                 }
-            ],
-            // "createdRow": function(row, data, dataIndex) {
-            //     $(row).find('td:first').html(dataIndex + 1);
-            // },
-            // "drawCallback": function(settings) {
-            //     this.api().column(0).nodes().each(function(cell, i) {
-            //         cell.innerHTML = i + 1;
-            //     });
-            // },
+            ]
         });
-
-        // Pass the table variable to the initColVisFeatures function
-        initColVisFeatures(penaltyListTable, 'penaltyListTable');
     });
 </script>

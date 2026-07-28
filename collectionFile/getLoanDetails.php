@@ -1,6 +1,4 @@
 <?php
-
-session_start();
 include('../ajaxconfig.php');
 include 'getLoanDetailsClass.php';
 

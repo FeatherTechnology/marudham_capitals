@@ -46,25 +46,27 @@ $cusid = $_POST['cus_id'];
 
             $i = 1;
             while ($row = $qry->fetch()) {
+                $cusid = $row['aadhaar_no'];
 
-                $left = ($row['left_hand'] =='Added') ? 'badge-success' : 'badge-danger';
-                $right = ($row['right_hand'] =='Added') ? 'badge-success' : 'badge-danger';
+                if($cusid){
+                    $left = ($row['left_hand'] =='Added') ? 'badge-success' : 'badge-danger';
+                    $right = ($row['right_hand'] =='Added') ? 'badge-success' : 'badge-danger';
             ?>
-                <tr height='70px'>
-                    <td><?php echo $i++; ?></td>
-                    <td><input type='hidden' id='adhar_print' name='adhar_print[]' value='<?php echo $row['name']; ?>' data-no='<?php echo $row['aadhaar_no']; ?>'><?php echo $row["name"]; ?></td>
-                    <td><?php echo $row["relationship"]; ?></td>
-                    <td><span class="badge badge-pill <?= $left ?>">L</span> &nbsp;&nbsp; <span class="badge badge-pill <?= $right ?>">R</span></td>
-                    <td>
-                        <select type='text' id='hand_selection' name='hand_selection[]' class='btn hand_selection' style="border: #009688 1px solid;height: 38px;" tabindex='42'>
-                            <option value=''>Select Hand</option>
-                            <option value='1'>Left Hand</option>
-                            <option value='2'>Right Hand</option>
-                        </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <button type="button" class='btn btn-success scanBtn' style='background-color:#009688;' onclick="event.preventDefault()" title='Put Your Thumb' tabindex='42'><i class="material-icons" id="icon-flipped">&#xe90d;</i>&nbsp;Scan</button>
-                    </td>
-                </tr>
-        <?php } ?>
+                    <tr height='70px'>
+                        <td><?php echo $i++; ?></td>
+                        <td><input type='hidden' id='adhar_print' name='adhar_print[]' value='<?php echo $row['name']; ?>' data-no='<?php echo $cusid; ?>'><?php echo $row["name"]; ?></td>
+                        <td><?php echo $row["relationship"]; ?></td>
+                        <td><span class="badge badge-pill <?= $left ?>">L</span> &nbsp;&nbsp; <span class="badge badge-pill <?= $right ?>">R</span></td>
+                        <td>
+                            <select type='text' id='hand_selection' name='hand_selection[]' class='btn hand_selection' style="border: #009688 1px solid;height: 38px;" tabindex='42'>
+                                <option value=''>Select Hand</option>
+                                <option value='1'>Left Hand</option>
+                                <option value='2'>Right Hand</option>
+                            </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <button type="button" class='btn btn-success scanBtn' style='background-color:#009688;' onclick="event.preventDefault()" title='Put Your Thumb' tabindex='42'><i class="material-icons" id="icon-flipped">&#xe90d;</i>&nbsp;Scan</button>
+                        </td>
+                    </tr>
+        <?php } } ?>
     </tbody>
 </table>
 

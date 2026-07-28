@@ -976,19 +976,18 @@ function aadharList() {   // To show Aadhar No for Data Checking.
     $.ajax({
         url: 'verificationFile/verification_datacheck_name.php',
         type: 'POST',
-        data: { "cus_id": cus_id },
+        data: { cus_id },
         dataType: 'json',
         cache: false,
         success: function (response) {
-            $("#check_aadhar").empty();
-            $('#check_aadhar').append("<option value=''> Select Aadhar Number</option>")
-            $('#check_aadhar').append("<option value='" + cus_id + "'> " + cus_name + " - Customer </option>");//Current Customer Aadhaar
+            $("#check_aadhar").empty().append("<option value=''> Select Aadhar Number</option>")
+            $('#check_aadhar').append(`<option value='${cus_id}'> ${cus_name} - Customer </option>`);//Current Customer Aadhaar
             let len = response.length;
             for (let i = 0; i < len; i++) {
                 let aadhar = response[i]['aadhar'];
                 let fam_name = response[i]['fam_name'];
                 let relationship = response[i]['relationship'];
-                $('#check_aadhar').append("<option value='" + aadhar + "'> " + fam_name + " - " + relationship + " </option>")
+                (aadhar) ? $("#check_aadhar").append(`<option value='${aadhar}'> ${fam_name} - ${relationship} </option>`) : '';
             }
         }
     });

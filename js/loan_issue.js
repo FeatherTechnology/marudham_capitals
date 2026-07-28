@@ -1509,25 +1509,23 @@ function checkIssuedAmount(type) {
 
 //cash Acknowledgement Name 
 function cashAckName() {
-    let req_id = $('#req_id').val();
     let cus_id = $('#cus_id').val();
     let cus_name = $('#cus_name').val();
 
     $.ajax({
         url: 'loanIssueFile/famnameForloanIssue.php',
         type: 'post',
-        data: { "reqId": req_id, "cus_id": cus_id },
+        data: { cus_id },
         dataType: 'json',
         success: function (response) {
 
             var len = response.length;
-            $("#cash_guarentor_name").empty();
-            $("#cash_guarentor_name").append("<option value=''>" + 'Select Guarantor' + "</option>");
-            $("#cash_guarentor_name").append("<option value='" + cus_id + "'>" + cus_name + "</option>");
+            $("#cash_guarentor_name").empty().append("<option value=''> Select Guarantor</option>");
+            $("#cash_guarentor_name").append(`<option value='${cus_id}'>${cus_name}</option>`);
             for (var i = 0; i < len; i++) {
-                var fam_name = response[i]['fam_name'];
-                var fam_aadharno = response[i]['aadharno'];
-                $("#cash_guarentor_name").append("<option value='" + fam_aadharno + "'>" + fam_name + "</option>");
+                var fam_name = response[i]['famname'];
+                var fam_aadharno = response[i]['relation_aadhar'];
+                $("#cash_guarentor_name").append(`<option value='${fam_aadharno}'>${fam_name}</option>`);
             }
         }
     });

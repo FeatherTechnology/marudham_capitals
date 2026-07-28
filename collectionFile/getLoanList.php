@@ -55,13 +55,13 @@ if (isset($_POST["bal_amt"])) {
         <?php
         $cus_id = $_POST['cus_id'];
 
-        $run = $connect->query("SELECT ii.loan_id, lcc.loan_category_creation_name AS loan_catrgory_name, lc.sub_category, ac.ag_name, rc.responsible, ii.updated_date, lc.loan_amt_cal, lc.collection_method, lc.due_start_from, ii.req_id, ii.cus_status, us.collection_access
+        $run = $connect->query("SELECT ii.loan_id, lcc.loan_category_creation_name AS loan_catrgory_name, lc.sub_category, ac.ag_name, iv.responsible, ii.updated_date, lc.loan_amt_cal, lc.collection_method, lc.due_start_from, ii.req_id, ii.cus_status, us.collection_access
         FROM acknowlegement_loan_calculation lc 
         LEFT JOIN in_issue ii ON lc.req_id = ii.req_id 
         LEFT JOIN in_verification iv ON ii.req_id = iv.req_id 
         LEFT JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id 
         LEFT JOIN user us ON us.user_id = '$user_id'
-        LEFT JOIN agent_creation ac ON rc.agent_id = ac.ag_id
+        LEFT JOIN agent_creation ac ON iv.agent_id = ac.ag_id
         WHERE lc.cus_id_loan = '$cus_id' AND (ii.cus_status >= 14 AND ii.cus_status < 20) ORDER BY CAST(ii.req_id AS UNSIGNED) ASC "); //Customer status greater than or equal to 14 because, after issued data only we need
 
         $i = 1;

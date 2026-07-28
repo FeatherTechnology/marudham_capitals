@@ -90,28 +90,8 @@ if (sizeof($getCustomerReg) > 0) {
 <div class="main-container">
 	<!--form start-->
 	<form id="cus_Profiles" name="cus_Profiles" action="" method="post" enctype="multipart/form-data">
-		<input type="hidden" name="idupd" id="idupd" value="<?php if (isset($idupd)) {
-																echo $idupd;
-															} ?>" />
-		<input type="hidden" name="req_id" id="req_id" value="<?php if (isset($req_id)) {
-																	echo $req_id;
-																} ?>" />
-		<input type="hidden" name="cusidupd" id="cusidupd" value="<?php if (isset($cusidupd)) {
-																		echo $cusidupd;
-																	} ?>" />
-		<input type="hidden" name="cuspicupd" id="cuspicupd" value="<?php if (isset($cus_pic)) {
-																		echo $cus_pic;
-																	} ?>" />
-		<input type="hidden" name="collection_access" id="collection_access" value="<?php if (isset($collection_access)) {
-																						echo $collection_access;
-																					} ?>" />
-		<input type="hidden" name="pending_sts" id="pending_sts" value="" />
-		<input type="hidden" name="od_sts" id="od_sts" value="" />
-		<input type="hidden" name="due_nil_sts" id="due_nil_sts" value="" />
-		<input type="hidden" name="closed_sts" id="closed_sts" value="" />
-		<input type="hidden" name="colluserid" id="colluserid" value="<?php if (isset($userid)) {
-																			echo $userid;
-																		} ?>" />
+		<input type="hidden" name="cusidupd" id="cusidupd" value="<?php if (isset($cusidupd)) {echo $cusidupd;} ?>" />
+		<input type="hidden" name="cuspicupd" id="cuspicupd" value="<?php if (isset($cus_pic)) {echo $cus_pic;} ?>" />
 
 		<!-- Row start -->
 		<div class="row gutters">
@@ -507,9 +487,6 @@ if (sizeof($getCustomerReg) > 0) {
 
 <!-- /////////////////////////////////////////////////////////////////// Due Chart Modal START ////////////////////////////////////////////////////////////////////// -->
 <div class="modal fade DueChart" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-	<input type="hidden" name="req_id" id="req_id" value="<?php if (isset($idupd)) {
-																echo $idupd;
-															} ?>">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
@@ -552,9 +529,6 @@ if (sizeof($getCustomerReg) > 0) {
 <!-- /////////////////////////////////////////////////////////////////// Due Chart Modal END ////////////////////////////////////////////////////////////////////// -->
 <!-- /////////////////////////////////////////////////////////////////// Penalty Char Modal START ////////////////////////////////////////////////////////////////////// -->
 <div class="modal fade PenaltyChart" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-	<input type="hidden" name="req_id" id="req_id" value="<?php if (isset($idupd)) {
-																echo $idupd;
-															} ?>">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
@@ -591,9 +565,6 @@ if (sizeof($getCustomerReg) > 0) {
 <!-- /////////////////////////////////////////////////////////////////// Penalty Chart Modal END ////////////////////////////////////////////////////////////////////// -->
 <!-- /////////////////////////////////////////////////////////////////// Fine Chart Modal START ////////////////////////////////////////////////////////////// -->
 <div class="modal fade collectionChargeChart" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-	<input type="hidden" name="req_id" id="req_id" value="<?php if (isset($idupd)) {
-																echo $idupd;
-															} ?>">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">

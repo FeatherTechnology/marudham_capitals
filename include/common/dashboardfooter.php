@@ -2571,7 +2571,7 @@
                     console.log("Device Name:", device);
                     const init = InitDevice(device, "");
                     console.log("Init result:", init);
-                    alert(`Device Name: ${device}, ${init.data.ErrorDescription}.`);
+                    (init.data.ErrorCode !='0') ? alert(`Device Name: ${device}, ${init.data.ErrorDescription}.`) : ''; //Alert show only if device not connected or gets error. 
                 } else {
                     alert("Fingerprint Device not found in description");
                     console.error("Device not found in description");
