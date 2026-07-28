@@ -2664,7 +2664,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
-							<label class="label" for="relation_aadhar"> Aadhar No </label>&nbsp;<span class="text-danger">*</span>
+							<label class="label" for="relation_aadhar"> Aadhar No </label>
 							<input type="text" class="form-control" name="relation_aadhar" id="relation_aadhar" data-type="adhaar-number" maxlength="14" tabindex='6' placeholder="Enter Adhar Number">
 							<span class="text-danger" id="famaadharCheck">Enter Aadhar Number</span>
 						</div>

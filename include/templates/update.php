@@ -1863,7 +1863,7 @@ if (sizeof($getCustomerReg) > 0) {
 
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
-							<label class="label"> Aadhar No </label>&nbsp;<span class="text-danger">*</span>
+							<label class="label"> Aadhar No </label>
 							<input type="text" class="form-control" name="relation_aadhar" id="relation_aadhar" data-type="adhaar-number" maxlength="14" placeholder="Enter Aadhar No" tabindex='6'>
 							<span class="text-danger" id="famaadharCheck" style='display:none'>Enter Aadhar Number</span>
 						</div>

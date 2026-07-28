@@ -240,6 +240,90 @@ $(document).ready(function () {
     submitfeedbackname();
   });
 
+    $(document).on('click', '.noc-window', function (event) {
+        let req_id = $(this).data('value');
+
+        checkDocumentsStatus(req_id, (result) => {
+            if (result === 'completed') {//this function will check if the particular loan is completed all the document upload
+                $('.loanlist_card, .customersummary_card, .back-button').hide();
+                $('.noc_window, #close_noc_card, #submit_closed').show();
+
+                $('#noc_req_id').val(req_id);
+
+            } else {//else prevent closing the document due to not completing documents
+                event.preventDefault();
+                alert('Please complete pending documents to Close!');
+            }
+        });
+    });
+
+    $(document).on('click', '#close_noc_card', function (event) {
+        $('.loanlist_card, .customersummary_card, .back-button').show();
+        $('.noc_window, #close_noc_card, #submit_closed').hide();
+
+        $('#closedStatusCheck, #considerLevelCheck, #remarkCheck').hide();
+        $('#closed_Sts, #closed_Sts_consider, #closed_Sts_remark').val('');
+    });
+
+    $(document).on('click', '.due-chart', function (event) {
+        var nocreq_id = $('#noc_req_id').val();
+        dueChartList(nocreq_id);
+    });
+
+    $(document).on("click", ".print_due_coll", function () {
+        var id = $(this).attr('value');
+        Swal.fire({
+            title: 'Print',
+            text: 'Do you want to print this collection?',
+            imageUrl: 'img/printer.png',
+            imageWidth: 300,
+            imageHeight: 210,
+            imageAlt: 'Custom image',
+            showCancelButton: true,
+            confirmButtonColor: '#009688',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'No',
+            confirmButtonText: 'Yes'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: 'collectionFile/print_collection.php',
+                    data: { 'coll_id': id },
+                    type: 'post',
+                    cache: false,
+                    success: function (html) {
+                        $('#printcollection').html(html);
+                    }
+                })
+            }
+        });
+    });
+
+    $(document).on('click', '.penalty-chart', function (event) {
+        var noc_req_id = $('#noc_req_id').val();
+        $.ajax({
+            //to insert penalty by on click
+            url: 'collectionFile/getLoanDetails.php',
+            data: { 'req_id': noc_req_id },
+            dataType: 'json',
+            type: 'post',
+            cache: false,
+            success: function (response) {
+                penaltyChartList(noc_req_id); //To show Penalty List.
+            }
+        })
+    });
+
+    $(document).on('click', '.coll-charge-chart', function (event) {
+        var noc_req_id = $('#noc_req_id').val();
+        collectionChargeChartList(noc_req_id) //To Show Fine Chart List
+    });
+
+    $(document).on('click', '.coll-charge', function (event) {
+        var noc_req_id = $('#noc_req_id').val();
+        resetcollCharges(noc_req_id);  //Fine
+    });
+    
 })//Document Ready End
 
 //On Load Event
@@ -248,165 +332,25 @@ $(function () {
     $('#close_noc_card').hide();//Hide collection close button at the starting
     $('#submit_closed').hide();//Hide Submit button at the starting, because submit is only for collection
 
-    var req_id = $('#idupd').val()
-    const cus_id = $('#cusidupd').val()
-    OnLoadFunctions(req_id, cus_id);
+    const cus_id = $('#cusidupd').val();
+    OnLoadFunctions(cus_id);
 
     var cus_pic = $('#cuspicupd').val();
     $('#imgshow').attr('src', 'uploads/request/customer/' + cus_pic);
 });
 
-function OnLoadFunctions(req_id, cus_id) {
-    //To get loan sub Status
-    var pending_arr = [];
-    var od_arr = [];
-    var due_nil_arr = [];
-    var closed_arr = [];
-    var balAmnt = [];
+function OnLoadFunctions(cus_id) {
     $.ajax({
-        url: 'closedFile/resetCustomerStsForClosed.php',
-        data: { 'cus_id': cus_id, 'start': 14, 'end': 20 },
-        dataType: 'json',
+        //in this file, details gonna fetch by customer ID, Not by req id (Because we need all loans from customer)
+        url: 'closedFile/getLoanListForClosed.php',
+        data: { cus_id },
         type: 'post',
         cache: false,
         success: function (response) {
-            if (response.length != 0) {
-                let pendingCnt = (response['pending_customer']) ? response['pending_customer'].length : 0;
-                for (var i = 0; i < pendingCnt; i++) {
-                    pending_arr[i] = response['pending_customer'][i]
-                    od_arr[i] = response['od_customer'][i]
-                    due_nil_arr[i] = response['due_nil_customer'][i]
-                    closed_arr[i] = response['closed_customer'][i]
-                    balAmnt[i] = response['balAmnt'][i]
-                }
-                var pending_sts = pending_arr.join(',');
-                $('#pending_sts').val(pending_sts);
-                var od_sts = od_arr.join(',');
-                $('#od_sts').val(od_sts);
-                var due_nil_sts = due_nil_arr.join(',');
-                $('#due_nil_sts').val(due_nil_sts);
-                var closed_sts = closed_arr.join(',');
-                $('#closed_sts').val(closed_sts);
-                balAmnt = balAmnt.join(',');
-            }
+            $('#loanListTableDiv').html(response);
+            getCustomerLoanCounts(); // to get customer summary details
         }
-    }).then(() => {
-        showOverlay();//loader start
-        var pending_sts = $('#pending_sts').val()
-        var od_sts = $('#od_sts').val()
-        var due_nil_sts = $('#due_nil_sts').val()
-        var closed_sts = $('#closed_sts').val()
-        var bal_amt = balAmnt;
-        $.ajax({
-            //in this file, details gonna fetch by customer ID, Not by req id (Because we need all loans from customer)
-            url: 'closedFile/getLoanListForClosed.php',
-            data: { 'req_id': req_id, 'cus_id': cus_id, 'pending_sts': pending_sts, 'od_sts': od_sts, 'due_nil_sts': due_nil_sts, 'closed_sts': closed_sts, 'bal_amt': bal_amt },
-            type: 'post',
-            cache: false,
-            success: function (response) {
-                // $('.overlay').remove();
-                $('#loanListTableDiv').empty()
-                $('#loanListTableDiv').html(response);
-
-                $(document).on('click', '.noc-window', function (event) {
-                    let req_id = $(this).data('value');
-
-                    checkDocumentsStatus(req_id, (result) => {
-                        if (result === 'completed') {//this function will check if the particular loan is completed all the document upload
-                            $('.loanlist_card').hide();
-                            $('.customersummary_card').hide();
-                            $('.back-button').hide();
-                            $('.noc_window').show();
-                            $('#close_noc_card').show();
-                            $('#submit_closed').show();
-
-                            $('#noc_req_id').val(req_id);
-
-                        } else {//else prevent closing the document due to not completing documents
-                            event.preventDefault();
-                            alert('Please complete pending documents to Close!');
-                        }
-                    });
-                });
-
-                $('#close_noc_card').click(function () {
-                    $('.loanlist_card').show();
-                    $('.customersummary_card').show();
-                    $('.back-button').show();
-                    $('.noc_window').hide();
-                    $('#close_noc_card').hide();
-                    $('#submit_closed').hide();
-
-                    $('#closedStatusCheck, #considerLevelCheck, #remarkCheck').hide();
-                    $('#closed_Sts, #closed_Sts_consider, #closed_Sts_remark').val('');
-                });
-
-                $('.due-chart').click(function () {
-                    var nocreq_id = $('#noc_req_id').val();
-                    dueChartList(nocreq_id, cus_id, function () {
-                        $(document).off("click", ".print_due_coll");
-                        $(document).on("click", ".print_due_coll", function () {
-                            var id = $(this).attr('value');
-                            Swal.fire({
-                                title: 'Print',
-                                text: 'Do you want to print this collection?',
-                                imageUrl: 'img/printer.png',
-                                imageWidth: 300,
-                                imageHeight: 210,
-                                imageAlt: 'Custom image',
-                                showCancelButton: true,
-                                confirmButtonColor: '#009688',
-                                cancelButtonColor: '#d33',
-                                cancelButtonText: 'No',
-                                confirmButtonText: 'Yes'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    $.ajax({
-                                        url: 'collectionFile/print_collection.php',
-                                        data: { 'coll_id': id },
-                                        type: 'post',
-                                        cache: false,
-                                        success: function (html) {
-                                            $('#printcollection').html(html);
-                                        }
-                                    })
-                                }
-                            })
-                        })
-                    });
-                });
-
-                $('.penalty-chart').click(function () {
-                    var noc_req_id = $('#noc_req_id').val();
-                    $.ajax({
-                        //to insert penalty by on click
-                        url: 'collectionFile/getLoanDetails.php',
-                        data: { 'req_id': noc_req_id, 'cus_id': cus_id },
-                        dataType: 'json',
-                        type: 'post',
-                        cache: false,
-                        success: function (response) {
-                            penaltyChartList(noc_req_id, cus_id); //To show Penalty List.
-                        }
-                    })
-                });
-
-                $('.coll-charge-chart').click(function () {
-                    var noc_req_id = $('#noc_req_id').val();
-                    collectionChargeChartList(noc_req_id) //To Show Fine Chart List
-                });
-
-                $('.coll-charge').click(function () {
-                    var noc_req_id = $('#noc_req_id').val();
-                    resetcollCharges(noc_req_id);  //Fine
-                });
-            }
-        });
-
-        getCustomerLoanCounts(); // to get customer summary details
-        hideOverlay();//loader stop
-    }, 2000);
-
+    });
 }//Auto Load function END
 
 function getCustomerLoanCounts() {
@@ -423,8 +367,9 @@ function getCustomerLoanCounts() {
             $('#cus_travel_cmpy').val(response['travel'])
             $('#cus_exist_type').val(response['existing_type'])
         }
-    })
-    getCustomerSummary();//to get income details
+    }).then(() => {
+        getCustomerSummary();//to get income details
+    });
 }
 
 function getCustomerSummary() {
@@ -483,31 +428,29 @@ function validations() {
 }
 
 //Due Chart List
-function dueChartList(nocreq_id, cus_id, callback) {
+function dueChartList(req_id) {
     $('#dueChartTableDiv').empty()
     $.ajax({
         url: 'collectionFile/getDueChartList.php',
-        data: { 'req_id': nocreq_id, 'cus_id': cus_id, 'closed': 'true' },
+        data: { req_id },
         type: 'post',
         cache: false,
         success: function (response) {
-            $('#dueChartTableDiv').html(response)
+            $('#dueChartTableDiv').html(response);
         }
     }).then(function () {
 
-        $.post('collectionFile/getDueMethodName.php', { "req_id": nocreq_id }, function (response) {
+        $.post('collectionFile/getDueMethodName.php', { req_id }, function (response) {
             $('#dueChartTitle').text(`Due Chart ( Aadhaar Number : ${response.cus_id} | Cus ID : ${response.autogen_cus_id}  | Cus Name : ${response.cus_name}  | Loan ID : ${response.loan_id}  | Loan Category : ${response.loan_category} )`);
         }, 'json');
-
-        callback();
-    })
+    });
 }
 
 //Penalty Chart List
-function penaltyChartList(noc_req_id, cus_id) {
+function penaltyChartList(req_id) {
     $.ajax({
         url: 'collectionFile/getPenaltyChartList.php',
-        data: { 'req_id': noc_req_id, 'cus_id': cus_id },
+        data: { req_id },
         type: 'post',
         cache: false,
         success: function (response) {
@@ -532,7 +475,7 @@ function collectionChargeChartList(noc_req_id) {
 function checkDocumentsStatus(req_id, callback) {
     let val;
     $.post('closedFile/checkDocumentsStatus.php', { req_id }, (response) => {
-        if (response == 'true') {
+        if (response == true) {
             val = 'completed';
         } else {
             val = 'pending';
