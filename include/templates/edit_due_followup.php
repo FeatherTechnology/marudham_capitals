@@ -41,6 +41,7 @@
 		<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 			<div class="table-container">
 				<div class="row">
+
 					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
 						<label for="sub_status_mapping">Customer Status</label><span class="required">&nbsp;*</span>
 						<input type="hidden" name="customer_status" id="customer_status" value="<?php echo isset($_GET['cussts']) ? $_GET['cussts'] : ''; ?>">
@@ -62,6 +63,7 @@
 							<option value="6">Current Month To Follow</option>
 						</select>
 					</div>
+
 					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
 						<label for="res_sts">Responsible</label>
 						<select class="form-control" id="res_sts" name="res_sts">
@@ -72,6 +74,7 @@
 							<option value="1" <?php echo (isset($_GET['res_sts']) && $_GET['res_sts'] === "1") ? 'selected' : ''; ?>>No</option>
 						</select>
 					</div>
+
 					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
 						<label for="comm_sts">Communication Status</label>
 						<select class="form-control" id="comm_sts" name="comm_sts">
@@ -80,8 +83,17 @@
 						</select>
 					</div>
 
-					<div class="col-12 d-flex justify-content-end mt-3">
-						<button type="button" class="btn btn-primary" id="show_due_followup">
+					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+						<label for="call_status">Call Status</label>
+						<select class="form-control" id="call_status" name="call_status">
+							<option value="">Select Call Status</option>
+							<option value="1" <?php echo (isset($_GET['call_sts']) && $_GET['call_sts'] === "1") ? 'selected' : ''; ?>>No Reminder</option>
+							<option value="2" <?php echo (isset($_GET['call_sts']) && $_GET['call_sts'] === "2") ? 'selected' : ''; ?>>No Follow up</option>
+						</select>
+					</div>
+
+					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+						<button type="button" class="btn btn-primary" id="show_due_followup" style="margin-top: 20px;">
 							Proceed
 						</button>
 					</div>

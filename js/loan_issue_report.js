@@ -1,3 +1,15 @@
+const branchName = new Choices('#branch', {
+    removeItemButton: true,
+    noChoicesText: 'Select Branch',
+    allowHTML: true
+});
+
+const loanCategory = new Choices('#loan_category', {
+    removeItemButton: true,
+    noChoicesText: 'Select Category',
+    allowHTML: true
+});
+
 $(document).ready(function () {
     
     $('#from_date').change(function(){
@@ -11,35 +23,38 @@ $(document).ready(function () {
         }
     });
 
-    getLoanCategory();
-
     //Loan Report Table
     $('#reset_btn').click(function () {
         loanIssueReportTable();
-    })
-     $('#download_btn').click(function () {
+    });
+
+    $('#download_btn').click(function () {
         const from_date = $('#from_date').val();
         const to_date = $('#to_date').val();
+        let branch = $('#branch').val();
         let loan_category = $('#loan_category').val();
         const tableId = "loan_issue_report_table"; // your table id
         const reportName = "Loan_Issue_Report";
-        if (!from_date || !to_date || !loan_category) {
+
+        if (!from_date || !to_date || !branch || !loan_category) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Missing Information',
-                text: 'Please select both From and To dates and a loan category before downloading.',
+                text: 'Please select both From and To dates and Branch and a loan category before downloading.',
                 confirmButtonColor: '#009688'
             });
             return;
         }
+
         $.ajax({
             url: 'reportFile/loan_issue/getLoanIssueReport.php',
             type: 'POST',
             dataType: 'json',
             data: {
-                from_date: from_date,
-                to_date: to_date,
-                loan_category: loan_category,
+                from_date,
+                to_date,
+                branch,
+                loan_category,
                 download: 1
             },
             success: function (response) {
@@ -69,6 +84,30 @@ $(document).ready(function () {
 
 });
 
+$(function(){
+    getUserLoanCategories(); //to get Loan Category list.
+    getBranchNames();
+});
+
+function getBranchNames() {
+    $.ajax({
+        url: 'manageUser/getBranchList.php',
+        type: 'POST',
+        dataType: 'json',
+        success: function (response) {
+            branchName.clearStore();
+            let items = [];
+            for (let i = 0; i < response.length; i++) {
+                items.push({
+                    value: response[i]['branch_id'],
+                    label: response[i]['branch_name']
+                });
+            }
+            branchName.setChoices(items);
+        }
+    });
+}
+
 function loanIssueReportTable(){
     $('#loan_issue_report_table').DataTable().destroy();
     // Declare table variable to store the DataTable instance
@@ -87,6 +126,7 @@ function loanIssueReportTable(){
                 data.search = search;
                 data.from_date = $('#from_date').val();
                 data.to_date = $('#to_date').val();
+                data.branch = $('#branch').val();
                 data.loan_category = $('#loan_category').val();
             }
         },
@@ -147,22 +187,4 @@ function loanIssueReportTable(){
 
     // Pass the table variable to the initColVisFeatures function
     initColVisFeatures(loan_issue_report_table, 'loan_issue_report_table');
-}
-
-function getLoanCategory() {
-    $.post('loancategoryFile/ajaxGetLoanCategory.php', {screen: 'loan_issue'}, function (response) {
-        
-        $('#loan_category').empty();
-        $('#loan_category').append("<option value=''>Select Loan Category</option>");
-
-        // Add "All" at last
-        $('#loan_category').append("<option value='all'>All</option>");
-        
-        $.each(response, function (index, val) {
-            $('#loan_category').append(
-                "<option value='" + val['loan_category_creation_id'] + "'>" + val['loan_category_creation_name'] + "</option>"
-            );
-        });
-
-    }, 'json');
 }

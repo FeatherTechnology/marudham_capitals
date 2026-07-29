@@ -12,7 +12,7 @@ include '../ajaxconfig.php';
             <th> Bank Name </th>
             <th> Cheque Count </th>
             <th> Cheque No </th>
-            <th> Document </th>
+            <th> Uploads </th>
             <!-- <th> Availability </th> -->
             <!-- <th> Action </th> -->
             

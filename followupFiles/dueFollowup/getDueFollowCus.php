@@ -108,6 +108,16 @@ if (!empty($comm_sts)) {
     }
 }
 
+//Call Status Filter
+$call_status = isset($_POST['call_status']) ? $_POST['call_status'] : '';
+if (!empty($call_status)) {    
+    if ($call_status == '1') { //No Reminder
+        $loan_agnt .= " AND cr.reminder_call = '1' ";
+    } elseif ($call_status == '2') { //No Follow up
+        $loan_agnt .= " AND cr.reminder_call = '2' ";
+    }
+}
+
 $searchValue = $_POST['search'] ?? '';
 $search = $searchValue != '' ? "AND (ii.cus_id LIKE '%$searchValue%' OR cr.autogen_cus_id LIKE '%$searchValue%' OR cp.cus_name LIKE '%$searchValue%' OR alc.area_name LIKE '%$searchValue%' OR salc.sub_area_name LIKE '%$searchValue%' OR cr.mobile1 LIKE '%$searchValue%' OR cs.sub_status LIKE '%$searchValue%')" : '';
 
@@ -258,6 +268,14 @@ foreach ($result as $row) {
     }
 
     $branch_name = $row['branch_name'];
+    $remindercall = '';
+    if($row['reminder_call'] == '1'){
+        $remindercall = 'No Reminder';
+
+    } else if($row['reminder_call'] == '2'){
+        $remindercall = 'No Follow up';
+    }
+
     $paid_status = ($row['current_month_paid'] == 1) ? 'Yes' : '';
     $hint = $row['hint'];
     $comm_err = ($row['comm_err'] == '1') ? 'Error' : (($row['comm_err'] == '2') ? 'Clear' : '');
@@ -278,7 +296,7 @@ foreach ($result as $row) {
         $finalData['status_priority'] = $cus_status,
         $finalData['responsible_status'] = $row['responsible_status'],
         $finalData['action'] = "<a href='due_followup&upd={$row['req_id']}&cusidupd=$cus_id&cussts=$sub_status_url&cummDate=$commdate&res_sts=$res_sts&comm_sts=$comm_sts' title='Edit details'><button class='btn btn-success' style='background-color:#009688;'>View Loans</button></a>",
-        $finalData['reminder_call'] = ($row['reminder_call'] == '0') ? 'Yes' : 'No',
+        $finalData['reminder_call'] = $remindercall,
         $finalData['customer_summary'] = "<a href='' data-value ='" . $cus_id . "' data-cusid ='" . $row['autogen_cus_id'] . "' data-cusname ='" . $cus_name . "' data-mobile ='" . $row['mobile1'] . "' class='customer-summary' data-toggle='modal' data-target='.customersummary'><span class='icon-eye' style='font-size: 12px;position: relative;top: 2px;'></span></a>",
         $finalData['last_paid_date'] = $last_paid_date,
         $finalData['paid_status'] = $paid_status,

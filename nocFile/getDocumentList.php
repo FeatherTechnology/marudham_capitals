@@ -21,7 +21,7 @@ function getfamName($connect,$rel_id){
             <th>Document Name</th> 
             <th>Document Type</th> 
             <th>Document Holder</th> 
-            <th>Document</th> 
+            <th>Uploads</th> 
             <th>Date Of NOC</th>
             <!-- <th>NOC Person</th>
             <th>Name</th> -->

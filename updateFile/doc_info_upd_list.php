@@ -16,7 +16,7 @@ if(isset($_POST['req_id'])){
             <th> Document Holder</th>
             <th> Holder Name</th>
             <th> Relationship</th>
-            <th> Document </th>
+            <th> Uploads </th>
         </tr>
     </thead>
     <tbody>
