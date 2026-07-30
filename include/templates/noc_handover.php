@@ -548,6 +548,7 @@ if (sizeof($getCustomerReg) > 0) {
 										<label for="noc_member">Member</label><span class="required">&nbsp;*</span>
 										<select type='text' id='noc_member' name='noc_member' class="form-control" tabindex="41">
 											<option value="">Select Member</option>
+											<option value="4">Agent</option>
 											<option value="1">Customer</option>
 											<option value="2">Guarentor</option>
 											<option value="3">Family Memeber</option>
@@ -568,10 +569,11 @@ if (sizeof($getCustomerReg) > 0) {
 									<div class="form-group">
 										<label for="mem_name">Member Name</label><span class="required">&nbsp;*</span>
 										<input type="hidden" id="mem_id" name="mem_id" value='' readonly>
+										<input type="hidden" id="ag_name" name="ag_name">
 										<input type="text" class="form-control" id="mem_name" name="mem_name" value='' readonly tabindex='43'>
 									</div>
 								</div>
-								<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+								<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 scan_btn">
 									<div class="form-group">
 										<label for="ack_fingerprint">Acknowledgement</label><span class="required">&nbsp;*</span> <span class="text-danger scanBtnCheck" style="display:none">Please Scan fingerprint</span>
 										<input type="hidden" id="compare_finger" name="compare_finger"><!--Already Store in Finger Print Table... when select fam name above the finger print will be shown here to compare. -->

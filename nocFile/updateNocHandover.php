@@ -9,6 +9,7 @@ try {
     $req_id   = $_POST['req_id'] ?? '';
     $noc_member = $_POST['noc_member'] ?? '';
     $mem_name   = $_POST['mem_name'] ?? '';
+    $cus_sts   = $_POST['cus_sts'] ?? '24';
 
     $noc_handover_date = date("Y-m-d");
     $userid  = $_SESSION['userid'] ?? '';
@@ -24,7 +25,7 @@ try {
             noc_member = :noc_member,
             mem_name = :mem_name,
             noc_handover_date = :noc_handover_date,
-            cus_status = 24,
+            cus_status = :cus_sts,
             update_login_id = :user_id,
             updated_date = NOW()
         WHERE req_id = :req_id
@@ -33,6 +34,7 @@ try {
     $qry->bindParam(':noc_member', $noc_member);
     $qry->bindParam(':mem_name', $mem_name);
     $qry->bindParam(':noc_handover_date', $noc_handover_date);
+    $qry->bindParam(':cus_sts', $cus_sts);
     $qry->bindParam(':user_id', $userid);
     $qry->bindParam(':req_id', $req_id);
 
@@ -41,58 +43,58 @@ try {
     // Update request_creation
     $stmt = $connect->prepare(
         "UPDATE request_creation 
-        SET cus_status = 24, updated_date = NOW(), update_login_id = ? 
+        SET cus_status = ?, updated_date = NOW(), update_login_id = ? 
         WHERE req_id = ?"
     );
-    $stmt->execute([$userid, $req_id]);
+    $stmt->execute([$cus_sts, $userid, $req_id]);
 
     // Update customer_register
     $stmt = $connect->prepare(
         "UPDATE customer_register 
-        SET cus_status = 24 
+        SET cus_status = ? 
         WHERE req_ref_id = ?"
     );
-    $stmt->execute([$req_id]);
+    $stmt->execute([$cus_sts, $req_id]);
 
     // Update in_verification
     $stmt = $connect->prepare(
         "UPDATE in_verification 
-        SET cus_status = 24, update_login_id = ? 
+        SET cus_status = ?, update_login_id = ? 
         WHERE req_id = ?"
     );
-    $stmt->execute([$userid, $req_id]);
+    $stmt->execute([$cus_sts, $userid, $req_id]);
 
     // Update in_approval
     $stmt = $connect->prepare(
         "UPDATE in_approval 
-        SET cus_status = 24, update_login_id = ?
+        SET cus_status = ?, update_login_id = ?
         WHERE req_id = ?"
     );
-    $stmt->execute([$userid, $req_id]);
+    $stmt->execute([$cus_sts, $userid, $req_id]);
 
     // Update in_acknowledgement
     $stmt = $connect->prepare(
         "UPDATE in_acknowledgement 
-        SET cus_status = 24, update_login_id = ?
+        SET cus_status = ?, update_login_id = ?
         WHERE req_id = ?"
     );
-    $stmt->execute([$userid, $req_id]);    
+    $stmt->execute([$cus_sts, $userid, $req_id]);    
     
     // Update in_issue
     $stmt = $connect->prepare(
         "UPDATE in_issue 
-        SET cus_status = 24, update_login_id = ?
+        SET cus_status = ?, update_login_id = ?
         WHERE req_id = ?"
     );
-    $stmt->execute([$userid, $req_id]);
+    $stmt->execute([$cus_sts, $userid, $req_id]);
     
     // Update closed_status
     $stmt = $connect->prepare(
         "UPDATE closed_status 
-        SET cus_sts = 24, update_login_id = ?, updated_date = NOW()
+        SET cus_sts = ?, update_login_id = ?, updated_date = NOW()
         WHERE req_id = ?"
     );
-    $stmt->execute([$userid, $req_id]);
+    $stmt->execute([$cus_sts, $userid, $req_id]);
 
     // ✅ Commit ONLY if everything succeeds
     $connect->commit();

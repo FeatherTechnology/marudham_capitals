@@ -1,4 +1,6 @@
 <?php
+/* NOC Handover list based loan not customer because each document can receive and handover by different user. so don't use cus_id group by to show NOC Handovered list. */
+
 @session_start();
 
 include "../ajaxconfig.php";
@@ -223,7 +225,7 @@ WHERE
 
     $whereSql
     
-GROUP BY ii.cus_id
+GROUP BY ii.req_id
 
 $orderBy
 
@@ -316,8 +318,8 @@ foreach ($result as $row) {
     $receive_by = $row['receive_by'];
 
     $status = ($receive_status == 0)
-        ? 'Pending'
-        : 'Completed';
+        ? 'In-Receive'
+        : 'Received';
 
     $action = "
     <div class='dropdown'>
