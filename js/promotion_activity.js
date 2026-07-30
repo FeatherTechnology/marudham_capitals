@@ -20,15 +20,15 @@ $(document).ready(function () {
 
         //except new promotion all had closing date.
         $('#date_type')
-        .empty()
-        .append(`<option value="">Select Date</option>
+            .empty()
+            .append(`<option value="">Select Date</option>
                 <option value="1">Closed Date</option>
                 <option value="2">Followup Date</option>`);
 
         if (typevalue == 'New') {
             $('#date_type')
-            .empty()
-            .append(`<option value="">Select Date</option>
+                .empty()
+                .append(`<option value="">Select Date</option>
                     <option value="2">Followup Date</option>`);
 
             $('.new_promo_card, .filter_card').show();
@@ -81,6 +81,13 @@ $(document).ready(function () {
         e.preventDefault();
         if (validatePromoAdd() == true) {
             submitPromotion();
+        }
+    })
+
+    $('#submit_closed').click(function (e) {
+        e.preventDefault();
+        if (validateClosedAdd() == true) {
+            submitClosed();
         }
     })
 
@@ -548,14 +555,19 @@ $(document).ready(function () {
         $('#addPromotion').find('.modal-body select').prop('selectedIndex', 0);
         $("#addPromotion").find(".modal-body span").not('.required').hide();
     });
+    $("#addClosedModal").find(".addcloseModal").click(function () {
+        $('#addClosedModal').find('.modal-body input').not('[readonly]').not('#orgin_closed_table').val('');
+        $('#addClosedModal').find('.modal-body select').prop('selectedIndex', 0);
+        $("#addClosedModal").find(".modal-body span").not('.required').hide();
+    });
 
-    $(document).on('change', '#cus_id', function(e){
+    $(document).on('change', '#cus_id', function (e) {
         var cus_id = $(this).val();
         cus_id = cus_id.replace(/\s+/g, "");
-        $.post('requestFile/getCustomerDetail.php',{cus_id}, function(response){
+        $.post('requestFile/getCustomerDetail.php', { cus_id }, function (response) {
             let cusData = (response.message == 'Existing') ? 'Existing' : 'New';
             $('#cus_data').val(cusData);
-        },'json');
+        }, 'json');
     });
 
 }); //Document END.
@@ -662,7 +674,7 @@ function resetNewPromotionTable() {
     let followUpToDate = $('#follow_up_todate').val();
     let followupType = $('#followuptype').val();
 
-    $.post('followupFiles/promotion/resetNewPromotionTable.php', {followUpSts, dateType, followUpFromDate, followUpToDate, followupType}, function (html) {
+    $.post('followupFiles/promotion/resetNewPromotionTable.php', { followUpSts, dateType, followUpFromDate, followUpToDate, followupType }, function (html) {
         $('#new_promo_div').empty().html(html);
 
     }).then(function () {
@@ -741,6 +753,25 @@ function submitPromotion() {
     })
 }
 
+function submitClosed() {
+    let cus_id = $('#close_cus_id').val();
+    let closed_Sts = $('#closed_Sts').val();
+    let args = { cus_id, closed_Sts };
+
+    $.post('followupFiles/promotion/submitClosedStatus.php', args, function (response) {
+        if (response.includes('Error')) {
+            swarlErrorAlert(response);
+        } else {
+            swarlSuccessAlert(response, function () {
+                $('#closedModal').trigger('click');
+                closedModal()
+            });
+            $('#addClosedModal').find('.modal-body input').not('[readonly]').not('#orgin_closed_table').val('');
+            $('#addClosedModal').find('.modal-body select').prop('selectedIndex', 0);
+        }
+    })
+}
+
 
 function getUserBasedArea() {
     $.ajax({
@@ -801,8 +832,8 @@ function getAreaBasedSubArea(area) {
 function validatePromoAdd() {
     let response = true;
     let promo_type = $('#promo_type').val();
-    let status = $('#promo_status').val(); 
-    let label = $('#promo_label').val(); 
+    let status = $('#promo_status').val();
+    let label = $('#promo_label').val();
     let remark = $('#promo_remark').val();
     let follow_date = $('#promo_fdate').val();
 
@@ -823,6 +854,22 @@ function validatePromoAdd() {
 
     }
 
+    return response;
+}
+function validateClosedAdd() {
+    let response = true;
+    let closed_Sts = $('#closed_Sts').val();
+    validateField(closed_Sts, '#closedStatusCheck')
+    function validateField(value, fieldId) {
+        if (value === '') {
+            response = false;
+            event.preventDefault();
+            $(fieldId).show();
+        } else {
+            $(fieldId).hide();
+        }
+
+    }
     return response;
 }
 
@@ -866,6 +913,22 @@ function intNotintOnclick() {
         $('#orgin_table').val(orgin_table);
     });
 
+    $(document).off('click', '.add_close').on('click', '.add_close', function () {
+         let customer_id = $(this).data('id'); // customer id
+        let row = $(this).closest('tr');
+        // TD positions based on your table
+        let aadhar = row.find('td:eq(1)').text().trim();
+        let cus_id = row.find('td:eq(2)').text().trim();
+        let cus_name = row.find('td:eq(3)').text().trim();
+        let orgin_table = $(this).closest('table').data('id');
+
+        $('#orgin_closed_table').val(orgin_table);
+        $('#close_cus_id').val(customer_id);
+        $('#aadhar_num').val(aadhar);
+        $('#customer_id').val(cus_id);
+        $('#customer_name').val(cus_name);
+    });
+
     // modal close button click
     $(document).off('click', '.closeModal').on('click', '.closeModal', function () {
         let orgin_table = $('#orgin_table').val();
@@ -888,9 +951,9 @@ function showPromotionList(url, tableid, colNo) {
     let followUpFromDate = $('#follow_up_fromdate').val();
     let followUpToDate = $('#follow_up_todate').val();
     let followupType = $('#followuptype').val();
-    let re_active ="";
-    if(tableid === 're_active_promotion_list'){
-        re_active ="re_active_table"
+    let re_active = "";
+    if (tableid === 're_active_promotion_list') {
+        re_active = "re_active_table"
     }
 
     let table = $(`#${tableid}`).DataTable();
@@ -1155,12 +1218,12 @@ function historyTableContents(cus_id, type, url) {
 
         $('#close_history_card').off('click').click(() => {
             let typevalue = $(".toggle-container .active").val();//this will show back active tab's contents
-            if (typevalue == 'Renewal') { 
-                $('.renewal_card').show(); 
-            } else if(typevalue == 'Re-active'){
+            if (typevalue == 'Renewal') {
+                $('.renewal_card').show();
+            } else if (typevalue == 'Re-active') {
                 $('.re_active_card').show();
-            } else if(typevalue == 'Repromotion'){ 
-                $('.repromotion_card').show(); 
+            } else if (typevalue == 'Repromotion') {
+                $('.repromotion_card').show();
             }
 
             $('.filter_card').show();
@@ -1301,4 +1364,19 @@ function getCurrentDate() {
         ("0" + (today.getMonth() + 1)).slice(-2) + '-' +
         today.getFullYear();
     return currentDate;
+}
+
+function closedModal() {
+    let orgin_table = $('#orgin_closed_table').val();
+    console.log('asasa', orgin_table)
+
+    if (orgin_table === 'renewal') {
+        $(".toggle-button[value='Renewal']").trigger('click');
+    } else if (orgin_table === 'repromotion') {
+        $(".toggle-button[value='Repromotion']").trigger('click');
+    } else if (orgin_table === 're_active') {
+        $(".toggle-button[value='Re-active']").trigger('click');
+    } else {
+        resetNewPromotionTable();
+    }
 }

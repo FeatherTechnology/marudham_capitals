@@ -14,15 +14,15 @@ $sub_status = [4 => 'Cancel', 5 => 'Cancel', 6 => 'Cancel', 7 => 'Cancel', 8 => 
 $cusstatus = [21 => 'NOC Pending', 22 => 'NOC Completed', 23 => 'NOC Completed', 24 => 'NOC Handovered', 25 => 'Agent Handovered'];
 
 $column = array(
-    'cp.cus_reg_id',                  
-    'cp.cus_id',    
-    'cp.autogen_cus_id',          
-    'cp.customer_name',            
-    'al.area_name',           
-    'sl.sub_area_name',       
-    'bc.branch_name',         
-    'agm.group_name',                   
-    'alm.line_name',           
+    'cp.cus_reg_id',
+    'cp.cus_id',
+    'cp.autogen_cus_id',
+    'cp.customer_name',
+    'al.area_name',
+    'sl.sub_area_name',
+    'bc.branch_name',
+    'agm.group_name',
+    'alm.line_name',
     'cp.mobile1',
     'cp.cus_reg_id',
     'req.cus_status',
@@ -36,8 +36,8 @@ $column = array(
     'np.followup_type'
 );
 
-$areaColumn = ($accessType == 3) 
-    ? "cp.area" 
+$areaColumn = ($accessType == 3)
+    ? "cp.area"
     : "cp.sub_area";
 
 //to get NOC status, join request_creation second times because main table having condition to show only 4 to 9.
@@ -61,17 +61,17 @@ LEFT JOIN request_creation rcs ON req.cus_id = rcs.cus_id
 WHERE req.cus_status BETWEEN 4 AND 9 
 AND CASE WHEN req.cus_status IN (6, 7) THEN cp.area_confirm_subarea ELSE $areaColumn END IN  ($sub_area_list) AND rc.cus_id IS NULL ";
 
-if($_POST['followUpSts']){
+if ($_POST['followUpSts']) {
     $follow_up_sts = $_POST['followUpSts'];
-    $baseqry .= ($follow_up_sts =='tofollow') ? "AND np.status IS NULL " : "AND TRIM(REPLACE(np.status,' ','')) = '$follow_up_sts' ";
+    $baseqry .= ($follow_up_sts == 'tofollow') ? "AND np.status IS NULL " : "AND TRIM(REPLACE(np.status,' ','')) = '$follow_up_sts' ";
 }
 
-if($_POST['dateType']){
-    $date_type = $_POST['dateType'];//1=Closed date, 2=Followup date.
-    $baseqry .= ($date_type == '1') ? "AND DATE(req.updated_date) BETWEEN '".$_POST['followUpFromDate']."' AND '".$_POST['followUpToDate']."' " : "AND DATE(np.follow_date) BETWEEN '".$_POST['followUpFromDate']."' AND '".$_POST['followUpToDate']."' ";
-}     
+if ($_POST['dateType']) {
+    $date_type = $_POST['dateType']; //1=Closed date, 2=Followup date.
+    $baseqry .= ($date_type == '1') ? "AND DATE(req.updated_date) BETWEEN '" . $_POST['followUpFromDate'] . "' AND '" . $_POST['followUpToDate'] . "' " : "AND DATE(np.follow_date) BETWEEN '" . $_POST['followUpFromDate'] . "' AND '" . $_POST['followUpToDate'] . "' ";
+}
 
-    $baseqry .= ($_POST['followupType']) ? "AND np.followup_type = '". $_POST['followupType'] ."'" : "";   
+$baseqry .= ($_POST['followupType']) ? "AND np.followup_type = '" . $_POST['followupType'] . "'" : "";
 
 $search = '';
 if (isset($_POST['search']) && $_POST['search'] != "") {
@@ -105,7 +105,14 @@ $num_qry->execute();
 $number_filter_row = $num_qry->fetchColumn();
 
 // Main query to fetch customers with specific status and filter those without recent loan requests
-$sql = $connect->query("SELECT req.req_id, req.cus_data, req.cus_id, cp.autogen_cus_id, cp.customer_name, al.area_name, sl.sub_area_name, bc.branch_name, agm.group_name, alm.line_name, cp.mobile1, req.cus_status AS consider_level, req.updated_date, np.status AS followup_sts, np.follow_date, np.followup_type, rcs.cus_status AS noc_cus_status $baseqry $limit");
+$sql = $connect->query("SELECT req.req_id, req.cus_data, CASE 
+        WHEN EXISTS (
+            SELECT 1
+            FROM closed_status cs
+            WHERE cs.cus_id = req.cus_id
+        ) THEN 1
+        ELSE 0
+    END AS has_closed_status, req.cus_id, cp.autogen_cus_id, cp.customer_name, al.area_name, sl.sub_area_name, bc.branch_name, agm.group_name, alm.line_name, cp.mobile1, req.cus_status AS consider_level, req.updated_date, np.status AS followup_sts, np.follow_date, np.followup_type, rcs.cus_status AS noc_cus_status $baseqry $limit");
 
 $sno = 1;
 $data = [];
@@ -115,16 +122,21 @@ while ($row = $sql->fetch()) {
     $charts = "<div class='dropdown'><button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button><div class='dropdown-content'> <a class='promo-chart' data-id='" . $row['cus_id'] . "' data-toggle='modal' data-target='#promoChartModal'><span>Promotion Chart</span></a><a class='personal-info' data-toggle='modal' data-target='#personalInfoModal' data-cusid='" . $row['cus_id'] . "'><span>Personal Info</span></a><a class='customer-sts' data-reqid='" . $row['req_id'] . "' data-cusid='" . $row['cus_id'] . "'><span>Customer Status</span></a></div></div>";
 
     //for intrest or not intrest choice to make
-    $actions = "<div class='dropdown'><button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button><div class='dropdown-content'> <a class='noc-call' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>NOC Call</span></a><a class='intrest' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Interested</span></a><a class='not-intrest' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Not Interested</span></a><a class='un-available' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Unavailable</span></a></div></div>";
+    $actions = "<div class='dropdown'><button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button><div class='dropdown-content'> <a class='noc-call' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>NOC Call</span></a><a class='intrest' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Interested</span></a><a class='not-intrest' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Not Interested</span></a><a class='un-available' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Unavailable</span></a>";
+    if ($row['has_closed_status'] == 1) {
+        $actions .= "<a class='add_close'data-toggle='modal'data-target='#addClosedModal'data-id='" . $row['cus_id'] . "'> <span>Closed Status</span></a>";
+    }
+
+    $actions .= "</div></div>";
 
     $followdate = (isset($row['follow_date'])) ? date('d-m-Y', strtotime($row['follow_date'])) : '';
-    
-    $followup_type =''; 
-    if($row['followup_type'] =='1'){
-        $followup_type = 'Field';  
-    }else if($row['followup_type'] =='2'){
-        $followup_type = 'Telecalling';  
-    }  
+
+    $followup_type = '';
+    if ($row['followup_type'] == '1') {
+        $followup_type = 'Field';
+    } else if ($row['followup_type'] == '2') {
+        $followup_type = 'Telecalling';
+    }
 
     $data[] = [
         $sno++,
