@@ -387,30 +387,31 @@ if (sizeof($getUser) > 0) {
 											<th colspan="2">Action</th>
 										</tr>
 									</thead>
-										<tbody>
-											<tr>
-												<td class="current_date"></td>
-												<td><input type="text"  name="cus_name" id="cus_name" class="form-control cus_name" value="" placeholder="Enter Customer Name"></td>
-												<td>
-												<input type="text" class="form-control cus_mobile_num" id="cus_mobile_num" name="cus_mobile_num" value='' placeholder="Enter Mobile Number" oninput="validateInputNumber(this,'withOutDot')"></td>
+									<tbody>
+										<tr>
+											<td class="current_date"></td>
+											<td><input type="text" name="cus_name" id="cus_name" class="form-control cus_name" value="" placeholder="Enter Customer Name"></td>
+											<td>
+												<input type="text" class="form-control cus_mobile_num" id="cus_mobile_num" name="cus_mobile_num" value='' placeholder="Enter Mobile Number" oninput="validateInputNumber(this,'withOutDot')">
+											</td>
 
-												<td><select type="text" class="form-control cus_area_name" id="cus_area_name" name="area_name" >
-														<option value="">Select Area Name</option>
-													</select></td>
+											<td><select type="text" class="form-control cus_area_name" id="cus_area_name" name="area_name">
+													<option value="">Select Area Name</option>
+												</select></td>
 
-												<td><select type="text" class="form-control sub_area_name" id="sub_area_name" name="sub_area_name" >
-														<option value="">Select Sub Area Name</option>
-													</select></td>
-												<td class="user"></td>
-												<td>
+											<td><select type="text" class="form-control sub_area_name" id="sub_area_name" name="sub_area_name">
+													<option value="">Select Sub Area Name</option>
+												</select></td>
+											<td class="user"></td>
+											<td>
 
-													<button type="button"  id="add_event_mem" name="add_event_mem" value="Submit" class="btn btn-primary add_event_mem">Add</button>
-												</td>
-												<td>
-													<span class='icon-trash-2 delet_event'></span>
-												</td>
-											</tr>
-										</tbody>
+												<button type="button" id="add_event_mem" name="add_event_mem" value="Submit" class="btn btn-primary add_event_mem">Add</button>
+											</td>
+											<td>
+												<span class='icon-trash-2 delet_event'></span>
+											</td>
+										</tr>
+									</tbody>
 								</table>
 							</div>
 						</div>
@@ -571,6 +572,59 @@ if (sizeof($getUser) > 0) {
 			<div class="modal-footer">
 				<button class='btn btn-primary' name="sumit_add_promo" id="sumit_add_promo" tabindex="8">Submit</button>
 				<button class="btn btn-secondary closeModal" data-dismiss="modal" tabindex="9">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal for Closed -->
+<div class="modal fade" id="addClosedModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-lg " role="document">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLongTitle">Update Closed Status</h5>
+				<button type="button" class="close addcloseModal" data-dismiss="modal" aria-label="Close" id="closedModal">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="container-fluid">
+					<div class="row">
+						<input type="hidden" name="orgin_closed_table" id="orgin_closed_table"><!-- this is to reset the table contents -->
+						<input type="hidden" name="close_cus_id" id='close_cus_id'>
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+							<label for="aadhar_num">Aadhar Number</label><span class="required">&nbsp;*</span>
+							<input type="text" name="aadhar_num" id="aadhar_num" class='form-control' readonly>
+						</div>
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+							<label for="customer_id">Customer ID</label><span class="required">&nbsp;*</span>
+							<input type="text" name="customer_id" id="customer_id" class='form-control' readonly>
+						</div>
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+							<label for="customer_name">Customer Name</label><span class="required">&nbsp;*</span>
+							<input type="text" name="customer_name" id="customer_name" class='form-control' readonly>
+						</div>
+						<div class="col-sm-4 col-md-4 col-lg-4">
+							<div class="form-group">
+								<label for="closed_Sts"> Closed Status </label> <span class="required">*</span>
+								<select type="text" class="form-control" name="closed_Sts" id="closed_Sts">
+									<option value=""> Select Closed Status </option>
+									<option value="2"> Waiting List </option>
+									<option value="3"> Block List </option>
+								</select>
+								<span class="text-danger" id="closedStatusCheck" style="display:none;">Please Select Closed Status </span>
+							</div>
+						</div>
+						<div class="col-sm-4 col-md-4 col-lg-4 d-flex align-items-end">
+							<div class="form-group mb-3">
+								<button name="submit_closed" id="submit_closed" class="btn btn-primary" tabindex="1">&nbsp;Submit</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary addcloseModal" data-dismiss="modal" tabindex="1">Close</button>
 			</div>
 		</div>
 	</div>
