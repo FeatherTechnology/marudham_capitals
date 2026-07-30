@@ -85,8 +85,11 @@ include '../../moneyFormatIndia.php';
                     } else if ($row['cus_status'] >= 22 && $row['cus_status'] <= 23) {
                         echo 'NOC Completed';
 
-                    } else if($row['cus_status'] >= 24){
+                    } else if($row['cus_status'] == 24){
                         echo 'NOC Handovered';
+
+                    } else if($row['cus_status'] == 25){
+                        echo 'Agent Handovered';
 
                     }
                 ?>

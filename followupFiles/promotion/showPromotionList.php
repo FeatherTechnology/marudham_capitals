@@ -10,7 +10,7 @@ $sub_area_list = $Obj->sub_area_list;
 $accessType = $Obj->accessType;
 
 $sub_status = [1 => 'Bronze', 2 => 'Silver', 3 => 'Gold', 4 => 'Platinum', 5 => 'Diamond'];
-$cusstatus = [21 => 'NOC Pending', 22 => 'NOC Completed', 23 => 'NOC Completed', 24 => 'NOC Handovered'];
+$cusstatus = [21 => 'NOC Pending', 22 => 'NOC Completed', 23 => 'NOC Completed', 24 => 'NOC Handovered', 25 => 'Agent Handovered'];
 
 $column = array(
     'cr.cus_reg_id',                  

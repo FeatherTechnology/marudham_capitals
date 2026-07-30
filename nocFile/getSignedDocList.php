@@ -27,7 +27,7 @@ function getGuarentorName($connect,$req_id){
             <th>Sign Type</th>
             <th>Name</th>
             <th>Count</th>
-            <th>Document</th>
+            <th>Upload</th>
             <th>Date Of NOC</th>
             <!-- <th>NOC Person</th>
             <th>Name</th> -->

@@ -13,10 +13,10 @@ $records = array();
 $result = $connect->query("SELECT req.req_id, req.prompt_remark, req.cus_status, ad.doc_id,
     CASE WHEN req.cus_status >= 14 THEN ii.updated_date ELSE req.dor END AS `updated_date`,
     CASE WHEN req.cus_status >= 14 THEN ii.loan_id ELSE req.req_code END AS `code`,
-    CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.loan_category WHEN req.cus_status IN (3,13,14,15,16,17,20,21,22,23,24) THEN alc.loan_category ELSE req.loan_category END AS loan_category,
-    CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.sub_category WHEN req.cus_status IN (3,13,14,15,16,17,20,21,22,23,24) THEN alc.sub_category ELSE req.sub_category END AS sub_category,
-    CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.loan_amt WHEN req.cus_status IN (3,13,14,15,16,17,20,21,22,23,24) THEN alc.loan_amt ELSE req.loan_amt END AS loan_amt,
-    CASE WHEN req.cus_status IN (12,2,6,7,3,13,14,15,16,17,20,21,22,23,24) THEN cp.cus_name ELSE req.cus_name END AS cus_name
+    CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.loan_category WHEN req.cus_status IN (3,13,14,15,16,17,20,21,22,23,24,25) THEN alc.loan_category ELSE req.loan_category END AS loan_category,
+    CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.sub_category WHEN req.cus_status IN (3,13,14,15,16,17,20,21,22,23,24,25) THEN alc.sub_category ELSE req.sub_category END AS sub_category,
+    CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.loan_amt WHEN req.cus_status IN (3,13,14,15,16,17,20,21,22,23,24,25) THEN alc.loan_amt ELSE req.loan_amt END AS loan_amt,
+    CASE WHEN req.cus_status IN (12,2,6,7,3,13,14,15,16,17,20,21,22,23,24,25) THEN cp.cus_name ELSE req.cus_name END AS cus_name
     FROM request_creation req
     LEFT JOIN customer_profile cp ON req.req_id = cp.req_id
     LEFT JOIN verification_loan_calculation vlc ON req.req_id = vlc.req_id
@@ -68,7 +68,8 @@ if ($result->rowCount() > 0) {
             '21' => ['status' => 'Closed', 'sub_status' => 'In Closed'],
             '22' => ['status' => 'Closed', 'sub_status' => 'NOC Completed'],
             '23' => ['status' => 'Closed', 'sub_status' => 'NOC Completed'],
-            '24' => ['status' => 'Closed', 'sub_status' => 'NOC Completed']
+            '24' => ['status' => 'Closed', 'sub_status' => 'NOC Completed'],
+            '25' => ['status' => 'Closed', 'sub_status' => 'NOC Completed']
         ];
 
         // if ($cus_status != '10' && $cus_status != '11') {
@@ -89,8 +90,10 @@ if ($result->rowCount() > 0) {
             $records[$i]['doc_status'] = getDocumentStatus($connect, $req_id) == 'pending' ? 'Document Pending' : 'Document Completed';
         } elseif ($cus_status >= 21 && $cus_status <= 23) {
             $records[$i]['doc_status'] = ($cus_status == 21) ? 'NOC Pending' : 'NOC Completed';
-        } elseif ($cus_status >= 24) {
+        } elseif ($cus_status == 24) {
             $records[$i]['doc_status'] = 'NOC Handovered';
+        } elseif ($cus_status == 25) {
+            $records[$i]['doc_status'] = 'Agent Handovered';
         } else {
             $records[$i]['doc_status'] = '';
         }

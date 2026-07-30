@@ -17,7 +17,7 @@ function getfamName($connect,$rel_id){
             <th>Document Name</th> 
             <th>Document Type</th> 
             <th>Document Holder</th> 
-            <th>Document</th> 
+            <th>Uploads</th> 
         </tr>
     </thead>
     <tbody>

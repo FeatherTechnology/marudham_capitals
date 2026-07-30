@@ -8,16 +8,6 @@ if (isset($_SESSION["userid"])) {
     $report_access = '2'; //if super Admin login use need to show overall.
 }
 
-if (isset($_POST['loan_category'])) {
-    $loan_category = $_POST['loan_category'];
-}
-
-$loan_category_filter = '';
-
-if (isset($_POST['loan_category']) && $_POST['loan_category'] != '' && $_POST['loan_category'] != 'all') {
-    $loan_category_filter = " AND lc.loan_category = '$loan_category' ";
-}
-
 $user_based = '';
 if ($userid != 1) {
 
@@ -35,7 +25,25 @@ $where = "1=1";
 if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'] != '' && $_POST['to_date'] != '') {
     $from_date = date('Y-m-d 00:00:00', strtotime($_POST['from_date']));
     $to_date = date('Y-m-d 23:59:59', strtotime($_POST['to_date']));
-    $where = "AND ii.updated_date BETWEEN '$from_date' AND '$to_date'";
+    $where = " ii.updated_date BETWEEN '$from_date' AND '$to_date'";
+}
+
+$branch_name = is_array($_POST['branch'] ?? null)
+    ? implode(',', $_POST['branch'])
+    : '';
+$loan_cat_id = is_array($_POST['loan_category'] ?? null)
+    ? implode(',', $_POST['loan_category'])
+    : '';
+
+if($branch_name !='' && $loan_cat_id !=''){ //Branch & Loan category.
+    $where .= " AND bc.branch_id IN ($branch_name) && lcc.loan_category_creation_id IN ($loan_cat_id)";
+
+} else if($branch_name !='' && $loan_cat_id ==''){ //Branch
+    $where .= " AND bc.branch_id IN ($branch_name)";
+
+} else if($branch_name =='' && $loan_cat_id !=''){ //Loan Category
+    $where .= " AND lcc.loan_category_creation_id IN ($loan_cat_id)";
+
 }
 
 $where  .= $user_based;
@@ -159,8 +167,7 @@ $query = "SELECT
         LEFT JOIN user us ON us.user_id = dt.update_login_id
         LEFT JOIN verification_family_info vfi_received_by ON li.relationship !='Customer' AND li.cash_guarentor_name = vfi_received_by.relation_aadhar AND li.cus_id = vfi_received_by.cus_id
 
-        WHERE ii.cus_status >= 14 AND lc.due_type != 'Interest' $loan_category_filter 
-        $where";
+        WHERE $where AND ii.cus_status >= 14 AND lc.due_type != 'Interest'";
 
 if (isset($_POST['search'])) {
     if ($_POST['search'] != "") {

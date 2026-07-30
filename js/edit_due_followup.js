@@ -11,8 +11,9 @@ $(document).ready(function () {
         let comm_date = $("#comm_date").val();
         let res_sts = $("#res_sts").val();
         let comm_sts = $("#comm_sts").val();
+        let call_status = $("#call_status").val();
 
-        OnLoadFunctions(cusSts, comm_date,res_sts, comm_sts);
+        OnLoadFunctions(cusSts, comm_date,res_sts, comm_sts, call_status);
     });
 });
 
@@ -25,9 +26,10 @@ $(function () {
     let cusSts = cus_Sts.split(',');
     let res_sts = $("#res_sts").val();
     let comm_sts = $("#comm_sts").val();
+    let call_status = $("#call_status").val();
 
     if (cusSts != '') {
-        OnLoadFunctions(cusSts, cummDate ,res_sts ,comm_sts);
+        OnLoadFunctions(cusSts, cummDate ,res_sts ,comm_sts, call_status);
     }
 });
 
@@ -42,7 +44,7 @@ function warningSwal(title, text) {
     });
 }
 
-function OnLoadFunctions(cusSts, comm_date, res_sts, comm_sts) {
+function OnLoadFunctions(cusSts, comm_date, res_sts, comm_sts, call_status) {
     if (!cusSts) {
         warningSwal('Warning!', 'Select Customer Status.');
         return;
@@ -65,6 +67,7 @@ function OnLoadFunctions(cusSts, comm_date, res_sts, comm_sts) {
                 data.comm_date = comm_date;
                 data.res_sts = res_sts;
                 data.comm_sts = comm_sts;
+                data.call_status = call_status;
             }
         },
         dom: 'lBfrtip',

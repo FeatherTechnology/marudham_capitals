@@ -1,3 +1,15 @@
+const branchName = new Choices('#branch', {
+    removeItemButton: true,
+    noChoicesText: 'Select Branch',
+    allowHTML: true
+});
+
+const loanCategory = new Choices('#loan_category', {
+    removeItemButton: true,
+    noChoicesText: 'Select Category',
+    allowHTML: true
+});
+
 $(document).ready(function () {
 
     $('#from_date').change(function () {
@@ -17,6 +29,30 @@ $(document).ready(function () {
     });
 });
 
+$(function(){
+    getUserLoanCategories(); //to get Loan Category list.
+    getBranchNames();
+});
+
+function getBranchNames() {
+    $.ajax({
+        url: 'manageUser/getBranchList.php',
+        type: 'POST',
+        dataType: 'json',
+        success: function (response) {
+            branchName.clearStore();
+            let items = [];
+            for (let i = 0; i < response.length; i++) {
+                items.push({
+                    value: response[i]['branch_id'],
+                    label: response[i]['branch_name']
+                });
+            }
+            branchName.setChoices(items);
+        }
+    });
+}
+
 function requestReportTable() {
     $('#request_report_table').DataTable().destroy();
     var request_report_table = $('#request_report_table').DataTable({
@@ -34,6 +70,8 @@ function requestReportTable() {
                 data.search = search;
                 data.from_date = $('#from_date').val();
                 data.to_date = $('#to_date').val();
+                data.branch = $('#branch').val();
+                data.loan_category = $('#loan_category').val();
             }
         },
         dom: 'lBfrtip',

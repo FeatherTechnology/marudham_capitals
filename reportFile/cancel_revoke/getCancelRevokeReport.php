@@ -107,6 +107,7 @@ $statusLabels = [
     '22' => 'NOC Completed',
     '23' => 'NOC Completed',
     '24' => 'NOC Handovered',
+    '25' => 'Agent Handovered'
 ];
 
 $column = array(

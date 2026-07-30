@@ -16,7 +16,7 @@ if (isset($_POST['cus_name'])) {
             <th>Document Name</th>
             <th>Document Type</th>
             <th>Document Holder</th>
-            <th>Document</th>
+            <th>Uploads</th>
             <th>Checklist</th>
         </tr>
     </thead>

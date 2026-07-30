@@ -12,11 +12,23 @@
 	<form id="closed_report_form" name="closed_report_form" action="" method="post" enctype="multipart/form-data">
 
 		<div class="row gutters" id="closed_card">
-			<div class="toggle-container col-12">
+
+			<div class="toggle-container col-12 reports_filter_card">
+
 				<input type="date" id='from_date' name='from_date' class="toggle-button" value=''>
 				<input type="date" id='to_date' name='to_date' class="toggle-button" value=''>
+									
+				<select class="form-control hidefield" id="branch" name="branch" multiple>
+					<option value="">Select Branch</option>
+				</select>&nbsp;&nbsp;
+
+				<select class="form-control hidefield" id="loan_category" name="loan_category" multiple>
+					<option value="">Select Loan Category</option>
+				</select>
+
 				<input type="button" id='reset_btn' name='reset_btn' class="toggle-button" style="background-color: #009688;color:white" value='Reload'>
 			</div>
+
 			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 				<div class="card">
 					<div class="card-header">Closed Report</div>
@@ -61,6 +73,7 @@
 					</div>
 				</div>
 			</div>
+			
 		</div>
 
 	</form>

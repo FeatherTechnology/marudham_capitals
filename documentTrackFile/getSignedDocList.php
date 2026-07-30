@@ -30,7 +30,7 @@ function getGuarentorName($connect, $req_id){
             <th>Sign Type</th>
             <th>Name</th>
             <th>Count</th>
-            <th>Document</th>
+            <th>Upload</th>
         </tr>
     </thead>
     <tbody>

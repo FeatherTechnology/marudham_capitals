@@ -286,7 +286,7 @@ foreach ($result as $row) {
 
     } elseif (in_array(23, $statuses)) {
 
-        $noc_status = $row['pending_receive'] ? 'Pending' : 'Completed';
+        $noc_status = $row['pending_receive'] ? 'In-Receive' : 'Received';
 
     } else {
         $noc_status = '';
@@ -312,7 +312,7 @@ foreach ($result as $row) {
     }
 
     // For status 22 or 23 → show Summary + Letter
-    if (in_array(22, $statuses) || (in_array(23, $statuses) && $noc_status == 'Pending')) {
+    if (in_array(22, $statuses) || (in_array(23, $statuses) && $noc_status == 'In-Receive')) {
 
         $action .= "
             <a href='noc&cusidupd={$row['cus_id']}'>

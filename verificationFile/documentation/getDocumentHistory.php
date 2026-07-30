@@ -158,8 +158,11 @@ if (isset($_POST["bal_amt"])) {
                     } else if ($row['cus_status'] >= 22 && $row['cus_status'] <= 23) {
                         echo 'NOC Completed';
 
-                    } else if($row['cus_status'] >= 24){
+                    } else if($row['cus_status'] == 24){
                         echo 'NOC Handovered';
+
+                    } else if($row['cus_status'] == 25){
+                        echo 'Agent Handovered';
 
                     }
                     ?>
@@ -229,8 +232,7 @@ function getDocumentStatus($connect, $req_id)
     });
 
     // Declare table variable to store the DataTable instance
-    var DocListTable = $('#DocListTable').DataTable({
-        ...getStateSaveConfig('DocListTable'),
+    $('#DocListTable').DataTable({
         'processing': true,
         'iDisplayLength': 5,
         "lengthMenu": [
@@ -258,9 +260,6 @@ function getDocumentStatus($connect, $req_id)
             searchFunction('DocListTable');
         }
     });
-
-    // Pass the table variable to the initColVisFeatures function
-    initColVisFeatures(DocListTable, 'DocListTable');
 </script>
 
 <?php

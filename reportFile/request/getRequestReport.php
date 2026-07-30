@@ -28,6 +28,24 @@ if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'
     $where = "req.dor BETWEEN '$from_date' AND '$to_date'";
 }
 
+$branch_name = is_array($_POST['branch'] ?? null)
+    ? implode(',', $_POST['branch'])
+    : '';
+$loan_cat_id = is_array($_POST['loan_category'] ?? null)
+    ? implode(',', $_POST['loan_category'])
+    : '';
+
+if($branch_name !='' && $loan_cat_id !=''){ //Branch & Loan category.
+    $where .= " AND bc.branch_id IN ($branch_name) && lcc.loan_category_creation_id IN ($loan_cat_id)";
+
+} else if($branch_name !='' && $loan_cat_id ==''){ //Branch
+    $where .= " AND bc.branch_id IN ($branch_name)";
+
+} else if($branch_name =='' && $loan_cat_id !=''){ //Loan Category
+    $where .= " AND lcc.loan_category_creation_id IN ($loan_cat_id)";
+
+}
+
 $where  .= $user_based;
 
 $statusLabels = [
@@ -54,6 +72,7 @@ $statusLabels = [
     '22' => 'NOC Completed',
     '23' => 'NOC Completed',
     '24' => 'NOC Handovered',
+    '25' => 'Agent Handovered'
 ];
 
 /* ---------- Column List ---------- */
