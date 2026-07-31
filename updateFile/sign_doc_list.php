@@ -10,7 +10,7 @@ include '../ajaxconfig.php';
             <th> Sign Type </th>
             <th> Relationship </th>
             <th> Count </th>
-            <th> Document </th>
+            <th> Uploads </th>
         </tr>
     </thead>
     <tbody>

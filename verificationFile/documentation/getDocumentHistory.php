@@ -45,7 +45,7 @@ if (isset($_POST["bal_amt"])) {
         $cus_id = $_POST['cus_id'];
         $consider_lvl_arr = [1 => 'Bronze', 2 => 'Silver', 3 => 'Gold', 4 => 'Platinum', 5 => 'Diamond'];
 
-        $run = $connect->query("SELECT ii.loan_id, ad.doc_id, lcc.loan_category_creation_name as loan_catrgory_name, lc.sub_category, ac.ag_name, iv.responsible, ii.updated_date, lc.loan_amt_cal, cs.updated_date AS closed_date, cs.closed_sts, cs.consider_level, ii.cus_status, lc.due_start_from, lc.cus_name_loan, ii.req_id
+        $run = $connect->query("SELECT ii.loan_id, ad.doc_id, lcc.loan_category_creation_name as loan_catrgory_name, lc.sub_category, ac.ag_name, iv.responsible, ii.updated_date, lc.loan_amt_cal, cs.created_date AS closed_date, cs.closed_sts, cs.consider_level, ii.cus_status, lc.due_start_from, lc.cus_name_loan, ii.req_id
         FROM acknowlegement_loan_calculation lc 
         LEFT JOIN in_issue ii ON lc.req_id = ii.req_id 
         LEFT JOIN in_verification iv ON ii.req_id = iv.req_id 
