@@ -338,7 +338,7 @@ function getFilteredRecords($connect, $data, $search, $sub_status_mapping, $loan
         FROM in_issue ii
     JOIN customer_register cr ON ii.cus_id = cr.cus_id
     JOIN acknowlegement_customer_profile cp ON ii.req_id = cp.req_id
-    LEFT JOIN request_creation rc ON ii.req_id = rc.req_id AND rc.cus_status >= 14 AND rc.cus_status < 20
+    LEFT JOIN request_creation rc ON ii.req_id = rc.req_id AND (rc.cus_status >= 14 AND rc.cus_status < 20)
     JOIN customer_status cs ON cp.req_id = cs.req_id
     JOIN area_list_creation alc ON cp.area_confirm_area = alc.area_id
     JOIN sub_area_list_creation salc ON cp.area_confirm_subarea = salc.sub_area_id
@@ -346,16 +346,16 @@ function getFilteredRecords($connect, $data, $search, $sub_status_mapping, $loan
     JOIN area_line_mapping alm ON alm.map_id = alma.line_map_id
     JOIN branch_creation bc ON alm.branch_id = bc.branch_id
     JOIN in_verification iv ON cp.req_id = iv.req_id
-    LEFT JOIN acknowlegement_loan_calculation aklc ON aklc.req_id = ii.req_id AND aklc.collection_method = 4
+    LEFT JOIN acknowlegement_loan_calculation aklc ON (aklc.req_id = ii.req_id) AND aklc.collection_method != 4
     LEFT JOIN commitment cm ON cm.cus_id = cp.cus_id AND cm.created_date = (SELECT MAX(c1.created_date) FROM commitment c1 WHERE c1.cus_id = cp.cus_id $commitmentCondition)
 
     WHERE cs.payable_amnt > 0
     AND ii.status = 0
-    AND ii.cus_status BETWEEN 14 AND 17
+    AND (ii.cus_status BETWEEN 14 AND 17)
     AND cs.sub_status IN ($sub_status_mapping)
     $loan_agnt
     $search
-    AND aklc.req_id IS NULL
+    AND DATE_FORMAT(CURDATE(), '%Y-%m') >= DATE_FORMAT(aklc.due_start_from, '%Y-%m')
 
     GROUP BY ii.cus_id, cs.cus_id
     $having ) as subquery");

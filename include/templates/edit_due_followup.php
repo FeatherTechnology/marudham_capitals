@@ -42,7 +42,7 @@
 			<div class="table-container">
 				<div class="row">
 
-					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+					<div class="col-sm-2 col-md-2 col-lg-2 col-xl-2 col-12">
 						<label for="sub_status_mapping">Customer Status</label><span class="required">&nbsp;*</span>
 						<input type="hidden" name="customer_status" id="customer_status" value="<?php echo isset($_GET['cussts']) ? $_GET['cussts'] : ''; ?>">
 						<input type="hidden" name="cummDate" id="cummDate" value="<?php echo isset($_GET['cummDate']) ? $_GET['cummDate'] : '1'; ?>">
@@ -52,7 +52,7 @@
 						<span class='text-danger subStatusCheck' style="display:none">Please Select Customer Status</span>
 					</div>
 
-					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+					<div class="col-sm-2 col-md-2 col-lg-2 col-xl-2 col-12">
 						<label for="comm_date">Commitement Date</label>
 						<select class="form-control" id="comm_date" name="comm_date">
 							<option value="1">Select Commitment Date</option>
@@ -64,7 +64,7 @@
 						</select>
 					</div>
 
-					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+					<div class="col-sm-2 col-md-2 col-lg-2 col-xl-2 col-12">
 						<label for="res_sts">Responsible</label>
 						<select class="form-control" id="res_sts" name="res_sts">
 							<option value="">Select Responsible</option>
@@ -75,7 +75,7 @@
 						</select>
 					</div>
 
-					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+					<div class="col-sm-2 col-md-2 col-lg-2 col-xl-2 col-12">
 						<label for="comm_sts">Communication Status</label>
 						<select class="form-control" id="comm_sts" name="comm_sts">
 							<option value="">Select Communication Status</option>
@@ -83,7 +83,7 @@
 						</select>
 					</div>
 
-					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+					<div class="col-sm-2 col-md-2 col-lg-2 col-xl-2 col-12">
 						<label for="call_status">Call Status</label>
 						<select class="form-control" id="call_status" name="call_status">
 							<option value="">Select Call Status</option>
@@ -92,14 +92,13 @@
 						</select>
 					</div>
 
-					<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+					<div class="col-sm-2 col-md-2 col-lg-2 col-xl-2 col-12">
 						<button type="button" class="btn btn-primary" id="show_due_followup" style="margin-top: 20px;">
 							Proceed
 						</button>
 					</div>
 				</div>
 
-				<br>
 				<div class="table-responsive" id='dueFollwupDiv'>
 					<table id='due_followup_table' class="table custom-table">
 						<thead>
@@ -137,7 +136,6 @@
 <!-- Main container end -->
 
 
-
 <!-- //////////////////////////////// Customer Summary Modal START //////////////////////////////// -->
 <div class="modal fade customersummary" tabindex="-1" role="dialog">
 	<div class="modal-dialog modal-lg">
@@ -164,9 +162,7 @@
 										<th> Remarks </th>
 									</tr>
 								</thead>
-								<tbody>
-
-								</tbody>
+								<tbody></tbody>
 							</table>
 						</div>
 					</div>
