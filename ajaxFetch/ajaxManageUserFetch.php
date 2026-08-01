@@ -6,7 +6,7 @@ $column = array(
     'u.user_id',
     'u.role',
     'u.role_type',
-    'sc.department',
+    'dc.dep_name',
     'u.fullname',
     'u.user_name',
     'c.company_name',
@@ -19,7 +19,7 @@ $column = array(
 
 $status = $_POST['userStatus'] ?? '0';
 
-$query = "SELECT u.*,c.company_name,sc.department,
+$query = "SELECT u.*,c.company_name,dc.dep_name,
     (SELECT GROUP_CONCAT(bc.branch_name SEPARATOR ', ')
     FROM branch_creation bc 
     WHERE FIND_IN_SET(bc.branch_id, u.branch_id) AND bc.status = 0) AS branch_names,
@@ -32,12 +32,13 @@ $query = "SELECT u.*,c.company_name,sc.department,
     FROM user u
     JOIN company_creation c ON c.company_id = u.company_id
     LEFT JOIN staff_creation sc ON sc.staff_id = u.staff_id
+    LEFT JOIN concern_dept_name dc ON dc.id = sc.department
     WHERE u.user_id != 1  AND u.status = '$status' ";
 
 if (isset($_POST['search']) && $_POST['search'] != "") {
     $query .= "AND (u.role LIKE '%" . $_POST['search'] . "%'
                 OR u.role_type LIKE '%" . $_POST['search'] . "%'
-                OR sc.department LIKE '%" . $_POST['search'] . "%'
+                OR dc.dep_name LIKE '%" . $_POST['search'] . "%'
                 OR u.fullname LIKE '%" . $_POST['search'] . "%'
                 OR u.user_name LIKE '%" . $_POST['search'] . "%'
                 OR c.company_name LIKE '%" . $_POST['search'] . "%'
@@ -105,7 +106,7 @@ foreach ($result as $row) {
         $sub_array[] = $row1["staff_type_name"];
     }
 
-   $sub_array[] = !empty($row['department']) ? $row['department'] : '';
+    $sub_array[] = !empty($row['dep_name']) ? $row['dep_name'] : '';
     $sub_array[] = $row['fullname'];
     $sub_array[] = $row['user_name'];
     $sub_array[] = $row["company_name"];

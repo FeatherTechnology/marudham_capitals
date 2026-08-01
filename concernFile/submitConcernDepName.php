@@ -3,28 +3,55 @@ session_start();
 $user_id = $_SESSION["userid"];
 include '../ajaxconfig.php';
 
-if (isset($_POST['con_dep_name'])) {
-    $con_dep_name = $_POST['con_dep_name'];
-}
-if (isset($_POST['con_dep_name_id'])) {
-    $con_dep_name_id = $_POST['con_dep_name_id'];
-}
+$con_dep_name = trim($_POST['con_dep_name'] ?? '');
+$con_dep_name_id = $_POST['con_dep_name_id'] ?? '';
 
-if($con_dep_name_id!=''){
-	$updateDepName=$connect->query("UPDATE `concern_dept_name` SET `dep_name`='$con_dep_name',`update_login_id`='$user_id',`updated_date`=now() WHERE `id` = $con_dep_name_id");
-	if($updateDepName == true){
-		$message='Department Name Updated Succesfully';
+$depName = '';
+
+if ($con_dep_name != '') {
+
+	// Check whether the department already exists
+	$selectDepartment = $connect->query("SELECT id, dep_name FROM concern_dept_name WHERE dep_name = '$con_dep_name'");
+
+	while ($row = $selectDepartment->fetch()) {
+		$depName = $row['dep_name'];
+		$existingId = $row['id'];
 	}
-}
-else{
-	$insertDepName=$connect->query("INSERT INTO `concern_dept_name`( `dep_name`, `insert_login_id`, `created_date`) VALUES ('$con_dep_name','$user_id',now())");
-	if($insertDepName == true){
-		$message='Department Added Succesfully';
+
+	if ($con_dep_name_id == '') {
+
+		// Insert
+		if ($depName != '') {
+			$message = "Department Already Exists, Please Enter a Different Department!";
+		} else {
+			$insertDepName = $connect->query("INSERT INTO concern_dept_name (dep_name, insert_login_id, created_date)
+            VALUES ('$con_dep_name', '$user_id', NOW())");
+
+			if ($insertDepName) {
+				$message = "Department Added Successfully";
+			}
+		}
+	} else {
+
+		// Update
+		if ($depName != '' && $existingId != $con_dep_name_id) {
+			$message = "Department Already Exists, Please Enter a Different Department!";
+		} else {
+			$updateDepName = $connect->query("UPDATE concern_dept_name
+                SET dep_name = '$con_dep_name',
+                    update_login_id = '$user_id',
+                    updated_date = NOW()
+                WHERE id = '$con_dep_name_id'");
+
+			if ($updateDepName) {
+				$message = "Department Name Updated Successfully";
+			}
+		}
 	}
+} else {
+	$message = "Department Name is required";
 }
 
 echo json_encode($message);
 
-// Close the database connection
 $connect = null;
-?>
