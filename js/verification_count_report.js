@@ -141,6 +141,7 @@ function verificationReportCount(from_date, to_date, selectedType, user_type, us
                 { data: 'previous.reactive' },
                 { data: 'previous.additional' },
                 { data: 'previous.existing_new' },
+                { data: 'previous.reloan' },
                 { data: 'previous.total', render: d => `<b>${d}</b>` },
 
                 /* VERIFICATION */
@@ -149,6 +150,7 @@ function verificationReportCount(from_date, to_date, selectedType, user_type, us
                 { data: 'verification.reactive' },
                 { data: 'verification.additional' },
                 { data: 'verification.existing_new' },
+                { data: 'verification.reloan' },
                 { data: 'verification.total', render: d => `<b>${d}</b>` },
 
                 /* CANCEL */
@@ -157,6 +159,7 @@ function verificationReportCount(from_date, to_date, selectedType, user_type, us
                 { data: 'cancel.reactive' },
                 { data: 'cancel.additional' },
                 { data: 'cancel.existing_new' },
+                { data: 'cancel.reloan' },
                 { data: 'cancel.total', render: d => `<b>${d}</b>` },
 
                 /* REVOKE */
@@ -165,6 +168,7 @@ function verificationReportCount(from_date, to_date, selectedType, user_type, us
                 { data: 'revoke.reactive' },
                 { data: 'revoke.additional' },
                 { data: 'revoke.existing_new' },
+                { data: 'revoke.reloan' },
                 { data: 'revoke.total', render: d => `<b>${d}</b>` },
 
                 /* PROCESS */
@@ -173,6 +177,7 @@ function verificationReportCount(from_date, to_date, selectedType, user_type, us
                 { data: 'process.reactive' },
                 { data: 'process.additional' },
                 { data: 'process.existing_new' },
+                { data: 'process.reloan' },
                 { data: 'process.total', render: d => `<b>${d}</b>` },
 
                 /* ISSUED */
@@ -181,6 +186,7 @@ function verificationReportCount(from_date, to_date, selectedType, user_type, us
                 { data: 'issued.reactive' },
                 { data: 'issued.additional' },
                 { data: 'issued.existing_new' },
+                { data: 'issued.reloan' },
                 { data: 'issued.total', render: d => `<b>${d}</b>` },
                 /* STATUS */
                 { data: 'status.current' },
@@ -231,6 +237,7 @@ function verificationReportCount(from_date, to_date, selectedType, user_type, us
                     <td>${totalRow.previous.reactive}</td>
                     <td>${totalRow.previous.additional}</td>
                     <td>${totalRow.previous.existing_new}</td>
+                    <td>${totalRow.previous.reloan}</td>
                     <td><b>${totalRow.previous.total}</b></td>
 
                     <td>${totalRow.verification.new}</td>
@@ -238,6 +245,7 @@ function verificationReportCount(from_date, to_date, selectedType, user_type, us
                     <td>${totalRow.verification.reactive}</td>
                     <td>${totalRow.verification.additional}</td>
                     <td>${totalRow.verification.existing_new}</td>
+                    <td>${totalRow.verification.reloan}</td>
                     <td><b>${totalRow.verification.total}</b></td>
 
                     <td>${totalRow.cancel.new}</td>
@@ -245,6 +253,7 @@ function verificationReportCount(from_date, to_date, selectedType, user_type, us
                     <td>${totalRow.cancel.reactive}</td>
                     <td>${totalRow.cancel.additional}</td>
                     <td>${totalRow.cancel.existing_new}</td>
+                    <td>${totalRow.cancel.reloan}</td>
                     <td><b>${totalRow.cancel.total}</b></td>
 
                     <td>${totalRow.revoke.new}</td>
@@ -252,6 +261,7 @@ function verificationReportCount(from_date, to_date, selectedType, user_type, us
                     <td>${totalRow.revoke.reactive}</td>
                     <td>${totalRow.revoke.additional}</td>
                     <td>${totalRow.revoke.existing_new}</td>
+                    <td>${totalRow.revoke.reloan}</td>
                     <td><b>${totalRow.revoke.total}</b></td>
 
                     <td>${totalRow.process.new}</td>
@@ -259,6 +269,7 @@ function verificationReportCount(from_date, to_date, selectedType, user_type, us
                     <td>${totalRow.process.reactive}</td>
                     <td>${totalRow.process.additional}</td>
                     <td>${totalRow.process.existing_new}</td>
+                    <td>${totalRow.process.reloan}</td>
                     <td><b>${totalRow.process.total}</b></td>
 
                     <td>${totalRow.issued.new}</td>
@@ -266,6 +277,7 @@ function verificationReportCount(from_date, to_date, selectedType, user_type, us
                     <td>${totalRow.issued.reactive}</td>
                     <td>${totalRow.issued.additional}</td>
                     <td>${totalRow.issued.existing_new}</td>
+                    <td>${totalRow.issued.reloan}</td>
                     <td><b>${totalRow.issued.total}</b></td>
 
                     <td>${totalRow.status.current}</td>

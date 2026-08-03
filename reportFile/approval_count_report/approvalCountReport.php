@@ -105,7 +105,7 @@ $loanCats = $connect->query("
 ===================== */
 
 function emptyTypeCounter() {
-    return ['new' => 0, 'renewal' => 0, 'reactive' => 0, 'additional' => 0, 'existing_new' => 0, 'total' => 0];
+    return ['new' => 0, 'renewal' => 0, 'reactive' => 0, 'additional' => 0, 'existing_new' => 0, 'reloan'=>0,'total' => 0];
 }
 
 function emptyStatusCounter() {
@@ -113,13 +113,18 @@ function emptyStatusCounter() {
 }
 
 function getCustomerType($cus_type, $cus_exist_type) {
-    if (strtolower($cus_type) == 'new') return 'new';
-    
+    if (strtolower($cus_type) == 'new') {
+        return 'new';
+    }
     $existType = strtolower(trim($cus_exist_type));
-    $existType = str_replace(['re-active', 'existing-new'], ['reactive', 'existing_new'], $existType);
-    
-    return in_array($existType, ['additional', 'renewal', 'reactive', 'existing_new']) 
-        ? $existType : 'existing_new';
+    $existType = str_replace(  ['re-active', 'existing-new'],  ['reactive', 'existing_new'],  $existType);
+    return in_array($existType, [
+        'additional',
+        'renewal',
+        'reactive',
+        'existing_new',
+        'reloan'
+    ]) ? $existType : 'existing_new';
 }
 
 function processRecord($r, &$counters, $baseCounter, $from_date, $to_date) {

@@ -73,11 +73,11 @@
 										<th rowspan="2">S.No</th>
 										<th rowspan="2">User Name</th>
 										<th rowspan="2">Loan Category</th>
-                                        <th colspan="6" class="group-border">Previous In Process</th>
-										<th colspan="6" class="group-border">Approval</th>
-										<th colspan="6" class="group-border">Cancel</th>
-										<th colspan="6" class="group-border">In Process</th>
-										<th colspan="6" class="group-border">Issued</th>
+                                        <th colspan="7" class="group-border">Previous In Process</th>
+										<th colspan="7" class="group-border">Approval</th>
+										<th colspan="7" class="group-border">Cancel</th>
+										<th colspan="7" class="group-border">In Process</th>
+										<th colspan="7" class="group-border">Issued</th>
 										<th colspan="6" class="group-border">Status</th>
 									</tr>
 
@@ -90,6 +90,7 @@
 										<th>Re-active</th>
 										<th>Additional</th>
 										<th>Existing-New</th>
+										<th>Reloan</th>
 										<th>Total</th>
 										<!-- Approval -->
 										<th>New</th>
@@ -97,6 +98,7 @@
 										<th>Re-active</th>
 										<th>Additional</th>
 										<th>Existing-New</th>
+										<th>Reloan</th>
 										<th>Total</th>
 
 										<!-- Cancel -->
@@ -105,6 +107,7 @@
 										<th>Re-active</th>
 										<th>Additional</th>
 										<th>Existing-New</th>
+										<th>Reloan</th>
 										<th>Total</th>
 
 										<!-- Process -->
@@ -113,6 +116,7 @@
 										<th>Re-active</th>
 										<th>Additional</th>
 										<th>Existing-New</th>
+										<th>Reloan</th>
 										<th>Total</th>
 
 										<!-- Issued -->
@@ -121,6 +125,7 @@
 										<th>Re-active</th>
 										<th>Additional</th>
 										<th>Existing-New</th>
+										<th>Reloan</th>
 										<th>Total</th>
 										<!-- Status -->
 										<th>Current</th>
