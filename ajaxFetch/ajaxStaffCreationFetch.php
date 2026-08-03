@@ -9,8 +9,8 @@ $column = array(
     'stc.staff_type_name',
     'sc.place',
     'c.company_name',
-    'sc.department',
-    'sc.team',
+    'dc.dep_name',
+    'tc.team_name',
     'sc.designation',
     'sc.status',
     'sc.status'
@@ -28,6 +28,10 @@ JOIN staff_type_creation stc
     AND stc.status = 0
 JOIN company_creation c 
     ON c.company_id = sc.company_id
+LEFT JOIN concern_dept_name dc 
+    ON dc.id = sc.department
+LEFT JOIN team_creation tc 
+    ON tc.id = sc.team
 WHERE sc.status = :status
 ";
 
@@ -79,8 +83,8 @@ SELECT
     stc.staff_type_name,
     sc.place,
     c.company_name,
-    sc.department,
-    sc.team,
+    dc.dep_name,
+    tc.team_name,
     sc.designation,
     sc.status
 $base_query
@@ -105,8 +109,8 @@ foreach ($result as $row) {
     $sub_array[] = $row["staff_type_name"];
     $sub_array[] = $row['place'];
     $sub_array[] = $row["company_name"];
-    $sub_array[] = $row['department'];
-    $sub_array[] = $row['team'];
+    $sub_array[] = $row['dep_name'];
+    $sub_array[] = $row['team_name'];
     $sub_array[] = $row['designation'];
 
     $status      = $row['status'];

@@ -96,6 +96,9 @@ if ($idupd > 0) {
 		<input type="hidden" class="form-control" value="<?php if (isset($idupd)) echo $idupd; ?>" id="id" name="id" aria-describedby="id" placeholder="Enter id">
 		<input type="hidden" class="form-control" value="<?php if (isset($staff_id)) echo $staff_id; ?>" id="staff_id_upd" name="staff_id_upd" aria-describedby="id" placeholder="Enter id">
 		<input type="hidden" class="form-control" value="<?php if (isset($staff_type)) echo $staff_type; ?>" id="staff_type_upd" name="staff_type_upd" aria-describedby="id" placeholder="Enter id">
+		<input type="hidden" class="form-control" value="<?php if (isset($department)) echo $department; ?>" id="department_upd" name="department_upd" aria-describedby="id" placeholder="Enter id">
+		<input type="hidden" class="form-control" value="<?php if (isset($team)) echo $team; ?>" id="team_upd" name="team_upd" aria-describedby="id" placeholder="Enter id">
+
 		<input type="hidden" class="form-control" value="<?php if (isset($company_id)) echo $company_id; ?>" id="company_id_upd" name="company_id_upd" aria-describedby="id" placeholder="Enter id">
 		<input type="hidden" class="form-control" value="<?php if (isset($state)) echo $state; ?>" id="state_upd" name="state_upd" aria-describedby="id" placeholder="Enter id">
 		<input type="hidden" class="form-control" value="<?php if (isset($district)) echo $district; ?>" id="district_upd" name="district_upd" aria-describedby="id" placeholder="Enter id">
@@ -249,16 +252,30 @@ if ($idupd > 0) {
 											<input type="text" class="form-control" id='company_id1' name="company_id1" value='<?php echo $companyName[0]['company_name'] ?>' readonly tabindex='16'>
 										</div>
 									</div>
-									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-										<div class="form-group">
-											<label for="disabledInput">Department</label>
-											<input type="text" class="form-control" id="department" name="department" value="<?php if (isset($department)) echo $department; ?>" placeholder="Enter Department Name" tabindex="17">
+									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 dept">
+										<div class="form-group" style="display: flex;">
+											<div style="width: 400px;">
+												<label for="toname">Department Name </label> <span class="required">&nbsp;*</span>
+												<select tabindex="17" type="text" class="form-control" id="department" name="department">
+													<option value="">Select Department Name</option>
+												</select>
+											</div>
+											<div style="margin-left: 20px;">
+												<button type="button" class="btn btn-primary" id="addDepNameBtn" name="addDepNameBtn" onclick="resetModal('department_name', 'department_name_id', 'DepartmentNameCheck'); getDepartmentNameList();" data-toggle="modal" data-target=".addDepartmentName" style="padding: 5px 35px; margin-top: 20px;" tabindex='18'><span class="icon-add"></span></button>
+											</div>
 										</div>
 									</div>
-									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-										<div class="form-group">
-											<label for="disabledInput">Team</label>
-											<input type="text" class="form-control" id="team" name="team" value="<?php if (isset($team)) echo $team; ?>" placeholder="Enter Team Name" tabindex="18">
+									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 dept">
+										<div class="form-group" style="display: flex;">
+											<div style="width: 400px;">
+												<label for="toname">Team Name </label> <span class="required">&nbsp;*</span>
+												<select tabindex="17" type="text" class="form-control" id="team" name="team">
+													<option value="">Select Team Name</option>
+												</select>
+											</div>
+											<div style="margin-left: 20px;">
+												<button type="button" class="btn btn-primary" id="addTeamNameBtn" name="addTeamNameBtn" onclick="resetModal('team_name', 'team_name_id', 'TeamNameCheck'); getTeamNameList();" data-toggle="modal" data-target=".addTeamName" style="padding: 5px 35px; margin-top: 20px;" tabindex='18'><span class="icon-add"></span></button>
+											</div>
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
@@ -348,6 +365,106 @@ if ($idupd > 0) {
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeModal()">Close</button>
 			</div>
+		</div>
+	</div>
+</div>
+
+<!--- Department Name Modal Start --->
+<div class="modal fade addDepartmentName" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="myLargeModalLabel">Add Department Name</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="getDepartmentName()">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12"></div>
+					<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+						<div class="form-group">
+							<label class="label">Department Name</label>
+							<input type="hidden" name="department_name_id" id="department_name_id">
+							<input type="text" name="department_name" id="department_name" class="form-control" placeholder="Enter Department Name">
+							<span class="text-danger" style='display:none' id='DepartmentNameCheck'>Please Enter Department Name</span>
+						</div>
+					</div>
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+						<label class="label" style="visibility: hidden;">Submit</label><br>
+						<button type="button" name="submitDepartmentName" id="submitDepartmentName" class="btn btn-primary">Submit</button>
+					</div>
+				</div>
+
+				<div id="DepNameTableDiv">
+					<table class="table custom-table" id="DepartmentNameTable">
+						<thead>
+							<tr>
+								<th>S.No</th>
+								<th>Department Name</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="getDepartmentName()">Close</button>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+<!--- Team Name Modal Start --->
+<div class="modal fade addTeamName" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="myLargeModalLabel">Add Team Name</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="getTeamName()">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12"></div>
+					<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+						<div class="form-group">
+							<label class="label">Team Name</label>
+							<input type="hidden" name="team_name_id" id="team_name_id">
+							<input type="text" name="team_name" id="team_name" class="form-control" placeholder="Enter Team Name">
+							<span class="text-danger" style='display:none' id='TeamNameCheck'>Please Enter Team Name</span>
+						</div>
+					</div>
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+						<label class="label" style="visibility: hidden;">Submit</label><br>
+						<button type="button" name="submitTeamName" id="submitTeamName" class="btn btn-primary">Submit</button>
+					</div>
+				</div>
+
+				<div id="teamNameTableDiv">
+					<table class="table custom-table" id="TeamNameTable">
+						<thead>
+							<tr>
+								<th>S.No</th>
+								<th>Team Name</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="getTeamName()">Close</button>
+			</div>
+
 		</div>
 	</div>
 </div>

@@ -248,7 +248,7 @@ if (isset($_POST['submit_concern']) && $_POST['submit_concern'] != '') {
                                         <span class="text-danger" style='display:none' id='todeptnameCheck'>Please Select Department Name</span>
                                         </div>
                                         <div style="margin-left: 20px;">
-                                            <button type="button" class="btn btn-primary" id="addDepNameBtn" name="addDepNameBtn" onclick="getConcernDeptNameList()" data-toggle="modal" data-target=".addConDepName" style="padding: 5px 35px; margin-top: 20px;" tabindex='18'><span class="icon-add"></span></button>
+                                            <button type="button" class="btn btn-primary" id="addDepNameBtn" name="addDepNameBtn" onclick="resetconcernDepartmentModal(); getConcernDeptNameList();" data-toggle="modal" data-target=".addConDepName" style="padding: 5px 35px; margin-top: 20px;" tabindex='18'><span class="icon-add"></span></button>
                                         </div>
                                     </div>
                                 </div>
