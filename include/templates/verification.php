@@ -2680,7 +2680,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
-							<label for="relation_dob">Date of Birth</label><span class="required">&nbsp;*</span>
+							<label for="relation_dob">Date of Birth</label>
 							<input type="date" class="form-control" id="relation_dob" name="relation_dob" tabindex='8'>
 							<span class="text-danger" id='famdobCheck'>Please Select DOB</span>
 						</div>

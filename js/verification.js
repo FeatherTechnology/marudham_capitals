@@ -1416,7 +1416,6 @@ $(document).on("click", "#submitFamInfoBtn", function () {
     famData.relationship != "" &&
     famData.relation_Mobile != "" &&
     famData.relation_Mobile.length === 10 &&
-    famData.relation_dob != "" &&
     famData.relation_live_deceased != "" &&
     famData.reqId  != "" 
   ) {
@@ -1485,11 +1484,11 @@ $(document).on("click", "#submitFamInfoBtn", function () {
       $("#fammobileCheck").hide();
     }
 
-    if (famData.relation_dob == "") {
-      $("#famdobCheck").show();
-    } else {
-      $("#famdobCheck").hide();
-    }
+    // if (famData.relation_dob == "") {
+    //   $("#famdobCheck").show();
+    // } else {
+    //   $("#famdobCheck").hide();
+    // }
 
     if (famData.relation_live_deceased == "") {
       $("#famLiveDeceasedCheck").show();

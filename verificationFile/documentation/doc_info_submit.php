@@ -37,15 +37,38 @@ if (isset($_POST['relation'])) {
     $relation = $_POST['relation'];
 }
 
-$doc_upload = '';
-if (isset($_FILES['document_info_upd'])) {
+$doc_upload ='';
+$docupd ='';
+if(isset($_FILES['document_info_upd'])){
 
-    $filesArr3 = $_FILES['document_info_upd'];
     $uploadDir = "../../uploads/verification/doc_info/";
-    $doc_upload = '';
 
-    foreach ($filesArr3['name'] as $key => $val) {
-        $fileName = basename($filesArr3['name'][$key]);
+    // Get uploaded files
+    if($doc_id !=''){
+        $stmt = $connect->prepare("SELECT doc_upload FROM document_info WHERE id = ?");
+        $stmt->execute([$doc_id]);
+    
+        $files = $stmt->fetchColumn();
+    
+        if (!empty($files)) {
+    
+            $docUpd = array_map('trim', explode(',', $files));
+    
+            foreach ($docUpd as $fileinfo) {
+    
+                $file = $uploadDir . $fileinfo;
+    
+                if (!empty($fileinfo) && file_exists($file)) {
+                    unlink($file);
+                }
+            }
+        }
+    }
+
+    $fileArray = $_FILES['document_info_upd'];
+
+    foreach ($fileArray['name'] as $key => $val) {
+        $fileName = basename($fileArray['name'][$key]);
         $targetFilePath = $uploadDir . $fileName;
 
         $fileExtension = pathinfo($targetFilePath, PATHINFO_EXTENSION);
@@ -55,24 +78,25 @@ if (isset($_FILES['document_info_upd'])) {
             $uniqueFileName = uniqid() . '.' . $fileExtension;
         }
 
-        if (move_uploaded_file($filesArr3["tmp_name"][$key], $uploadDir . $uniqueFileName)) {
+        if (move_uploaded_file($fileArray["tmp_name"][$key], $uploadDir . $uniqueFileName)) {
             $doc_upload .= $uniqueFileName . ',';
         }
     }
     $doc_upload = rtrim($doc_upload, ',');
-}
 
+    $docupd = "doc_upload = '$doc_upload', ";
+}
 
 if ($doc_id == '') {
 
-    $insert_qry = $connect->query("INSERT INTO document_info (`cus_id`, `req_id`, `doc_name`, `doc_detail`, `doc_type`, `doc_holder`, `holder_name`, `relation_name`, `relation`, `insert_login_id`, `created_date`) VALUES ('$cus_id', '$req_id', '$doc_name', '$doc_details', '$doc_type', '$doc_holder', '$holder_name', '$relation_name', '$relation', '$userid', now())");
+    $insert_qry = $connect->query("INSERT INTO document_info (`cus_id`, `req_id`, `doc_name`, `doc_detail`, `doc_type`, `doc_holder`, `holder_name`, `relation_name`, `relation`, `doc_upload`, `insert_login_id`, `created_date`) VALUES ('$cus_id', '$req_id', '$doc_name', '$doc_details', '$doc_type', '$doc_holder', '$holder_name', '$relation_name', '$relation', '$doc_upload', '$userid', NOW())");
 
     if ($insert_qry) {
         $result = "Document Info Inserted Successfully.";
     }
 } else {
 
-    $update = $connect->query("UPDATE document_info SET `cus_id` = '$cus_id', `req_id` = '$req_id', `doc_name` = '$doc_name', `doc_detail` = '$doc_details', `doc_type` = '$doc_type', `doc_holder` = '$doc_holder',  `holder_name` = '$holder_name', `relation_name` = '$relation_name', `relation` = '$relation', `doc_upload` = '$doc_upload', `update_login_id` = $userid WHERE `id` = '$doc_id' ");
+    $update = $connect->query("UPDATE document_info SET `cus_id` = '$cus_id', `req_id` = '$req_id', `doc_name` = '$doc_name', `doc_detail` = '$doc_details', `doc_type` = '$doc_type', `doc_holder` = '$doc_holder',  `holder_name` = '$holder_name', `relation_name` = '$relation_name', `relation` = '$relation', $docupd `update_login_id` = $userid WHERE `id` = '$doc_id' ");
 
     if ($update) {
         $result = "Document Info Updated Successfully.";

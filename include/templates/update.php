@@ -1879,7 +1879,7 @@ if (sizeof($getCustomerReg) > 0) {
 
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
-							<label for="relation_dob">Date of Birth</label><span class="required">&nbsp;*</span>
+							<label for="relation_dob">Date of Birth</label>
 							<input type="date" class="form-control" id="relation_dob" name="relation_dob" tabindex='8'>
 							<span class="text-danger" id='famdobCheck' style='display:none'>Please Select DOB</span>
 						</div>
