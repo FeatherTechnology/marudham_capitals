@@ -148,6 +148,7 @@ function requestToIssuedReportCount(from_date, to_date, selectedType, user_type,
                 { data: 'previous.reactive' },
                 { data: 'previous.additional' },
                 { data: 'previous.existing_new' },
+                { data: 'previous.reloan' },
                 { data: 'previous.total', render: d => `<b>${d}</b>` },
 
                 /* REQUEST */
@@ -156,6 +157,7 @@ function requestToIssuedReportCount(from_date, to_date, selectedType, user_type,
                 { data: 'request.reactive' },
                 { data: 'request.additional' },
                 { data: 'request.existing_new' },
+                { data: 'request.reloan' },
                 { data: 'request.total', render: d => `<b>${d}</b>` },
 
                 /* CANCEL */
@@ -164,6 +166,7 @@ function requestToIssuedReportCount(from_date, to_date, selectedType, user_type,
                 { data: 'cancel.reactive' },
                 { data: 'cancel.additional' },
                 { data: 'cancel.existing_new' },
+                { data: 'cancel.reloan' },
                 { data: 'cancel.total', render: d => `<b>${d}</b>` },
 
                 /* REVOKE */
@@ -172,6 +175,7 @@ function requestToIssuedReportCount(from_date, to_date, selectedType, user_type,
                 { data: 'revoke.reactive' },
                 { data: 'revoke.additional' },
                 { data: 'revoke.existing_new' },
+                { data: 'revoke.reloan' },
                 { data: 'revoke.total', render: d => `<b>${d}</b>` },
 
                 /* PROCESS */
@@ -180,6 +184,7 @@ function requestToIssuedReportCount(from_date, to_date, selectedType, user_type,
                 { data: 'process.reactive' },
                 { data: 'process.additional' },
                 { data: 'process.existing_new' },
+                { data: 'process.reloan' },
                 { data: 'process.total', render: d => `<b>${d}</b>` },
 
                 /* ISSUED */
@@ -188,6 +193,7 @@ function requestToIssuedReportCount(from_date, to_date, selectedType, user_type,
                 { data: 'issued.reactive' },
                 { data: 'issued.additional' },
                 { data: 'issued.existing_new' },
+                { data: 'issued.reloan' },
                 { data: 'issued.total', render: d => `<b>${d}</b>` },
                 /* STATUS */
                 { data: 'status.current' },
@@ -238,6 +244,7 @@ function requestToIssuedReportCount(from_date, to_date, selectedType, user_type,
                     <td>${totalRow.previous.reactive}</td>
                     <td>${totalRow.previous.additional}</td>
                     <td>${totalRow.previous.existing_new}</td>
+                    <td>${totalRow.previous.reloan}</td>
                     <td><b>${totalRow.previous.total}</b></td>
 
                     <td>${totalRow.request.new}</td>
@@ -245,6 +252,7 @@ function requestToIssuedReportCount(from_date, to_date, selectedType, user_type,
                     <td>${totalRow.request.reactive}</td>
                     <td>${totalRow.request.additional}</td>
                     <td>${totalRow.request.existing_new}</td>
+                    <td>${totalRow.request.reloan}</td>
                     <td><b>${totalRow.request.total}</b></td>
 
                     <td>${totalRow.cancel.new}</td>
@@ -252,6 +260,7 @@ function requestToIssuedReportCount(from_date, to_date, selectedType, user_type,
                     <td>${totalRow.cancel.reactive}</td>
                     <td>${totalRow.cancel.additional}</td>
                     <td>${totalRow.cancel.existing_new}</td>
+                    <td>${totalRow.cancel.reloan}</td>
                     <td><b>${totalRow.cancel.total}</b></td>
 
                     <td>${totalRow.revoke.new}</td>
@@ -259,6 +268,7 @@ function requestToIssuedReportCount(from_date, to_date, selectedType, user_type,
                     <td>${totalRow.revoke.reactive}</td>
                     <td>${totalRow.revoke.additional}</td>
                     <td>${totalRow.revoke.existing_new}</td>
+                    <td>${totalRow.revoke.reloan}</td>
                     <td><b>${totalRow.revoke.total}</b></td>
 
                     <td>${totalRow.process.new}</td>
@@ -266,6 +276,7 @@ function requestToIssuedReportCount(from_date, to_date, selectedType, user_type,
                     <td>${totalRow.process.reactive}</td>
                     <td>${totalRow.process.additional}</td>
                     <td>${totalRow.process.existing_new}</td>
+                    <td>${totalRow.process.reloan}</td>
                     <td><b>${totalRow.process.total}</b></td>
 
                     <td>${totalRow.issued.new}</td>
@@ -273,6 +284,7 @@ function requestToIssuedReportCount(from_date, to_date, selectedType, user_type,
                     <td>${totalRow.issued.reactive}</td>
                     <td>${totalRow.issued.additional}</td>
                     <td>${totalRow.issued.existing_new}</td>
+                    <td>${totalRow.issued.reloan}</td>
                     <td><b>${totalRow.issued.total}</b></td>
 
                     <td>${totalRow.status.current}</td>

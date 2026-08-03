@@ -161,16 +161,28 @@ if (!empty($cusIds)) {
 
     $cusIdList = implode(',', array_map('intval', $cusIds));
 
-    $issueSql = "SELECT ii.cus_id, ii.cus_status, COALESCE(cs.created_date, cc.closing_date) AS last_created_date
-        FROM in_issue ii
-        LEFT JOIN closed_status cs ON cs.req_id = ii.req_id 
-        LEFT JOIN (
-                SELECT req_id, MAX(closing_date) AS closing_date
-                FROM closing_customer
-                GROUP BY req_id
-            ) cc ON cc.req_id = ii.req_id
-        WHERE ii.cus_id IN ($cusIdList) AND ii.cus_status >= 14 ORDER BY ii.cus_status ASC";
-
+    $issueSql = "SELECT ii.cus_id,ii.req_id,ii.cus_status,cs.created_date AS closing_date,cc.closing_date AS closed_date,cs1.sub_status,dn.due_nil_date
+FROM in_issue ii
+LEFT JOIN closed_status cs ON cs.req_id = ii.req_id
+LEFT JOIN closing_customer cc ON cc.req_id = ii.req_id
+LEFT JOIN (
+    SELECT c1.req_id, c1.sub_status
+    FROM customer_status c1
+    INNER JOIN (
+        SELECT req_id, MAX(created_date) created_date
+        FROM customer_status
+        GROUP BY req_id
+    ) x
+        ON x.req_id = c1.req_id AND x.created_date = c1.created_date
+) cs1 ON cs1.req_id = ii.req_id
+LEFT JOIN (
+    SELECT req_id, MAX(coll_date) AS due_nil_date
+    FROM collection
+    WHERE coll_sub_status='Due Nil'
+    GROUP BY req_id
+) dn ON dn.req_id = ii.req_id
+WHERE ii.cus_id IN ($cusIdList) AND ii.cus_status >= 14
+ORDER BY CAST(ii.req_id AS UNSIGNED) DESC;";
     $stmt = $connect->query($issueSql);
 
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -211,39 +223,39 @@ foreach ($result as $row) {
 
     $existing_type = '';
     if (!empty($issueRows)) {
+        $today = date('Y-m-d', strtotime($row['dor']));
+        $existing_type = '';
         foreach ($issueRows as $res) {
-
-            // 1️⃣ Additional has highest priority
+            $closingDate = !empty($res['closing_date']) ? date('Y-m-d', strtotime($res['closing_date'])): '';
+            $closedDate = !empty($res['closed_date'])  ? date('Y-m-d', strtotime($res['closed_date'])): '';
+            $dueNilDate = !empty($res['due_nil_date']) ? date('Y-m-d', strtotime($res['due_nil_date'])): '';
+            $today = date('Y-m-d', strtotime($row['dor']));
+            // Highest Priority : Additional
             if ($res['cus_status'] >= 14 && $res['cus_status'] < 20) {
                 $existing_type = 'Additional';
-                break; // stop checking further rows
+                break;
             }
-
-            // 2️⃣ Renewal / Re-Active logic (only if not Additional)
-            if ($res['cus_status'] >= 20 && $existing_type != 'Additional') {
-
-                $lastDate = $res['last_created_date'];
-
-                if (!empty($lastDate)) {
-                    // End of the month of last created_date
-                    $monthEnd = date('Y-m-t', strtotime($lastDate));
-
-                    // First day of next month
-                    $nextMonthStart = date('Y-m-d', strtotime($monthEnd . ' +1 day'));
-
-                    // Add 6 months to calculate reactive date
-                    $reactiveDate = date('Y-m-d', strtotime($nextMonthStart . ' +6 months'));
-
-                    $today = date('Y-m-d');
-
-                    // Decide Renewal or Re-Active
-                    if ($today < $reactiveDate) {
-                        $existing_type = 'Renewal';
-                    } else {
-                        $existing_type = 'Re-active';
-                    }
-                    break;
-                }
+            // Reloan - Due Nil and Reloan - Current Request <= Due Nil Date
+            if ($res['sub_status'] == 'Due Nil' || (!empty($dueNilDate) && $today <= $dueNilDate)) {
+                $existing_type = 'Reloan';
+                break;
+            }
+            // Reloan - Between Closed Status and Closing Date
+            if ((!empty($closedDate) && !empty($closingDate) && $today >= $closedDate && $today <= $closingDate) || $res['cus_status'] == 20) {
+                $existing_type = 'Reloan';
+                break;
+            }
+            if (!empty($closedDate) && $today < $closedDate) {
+                $existing_type = 'Additional';
+                break;
+            }
+            // Renewal / Re-active
+            if (!empty($closingDate)) {
+                $monthEnd = date('Y-m-t', strtotime($closingDate));
+                $nextMonth = date('Y-m-d', strtotime($monthEnd . ' +1 day'));
+                $reactiveDate = date('Y-m-d', strtotime($nextMonth . ' +6 months'));
+                $existing_type = ($today < $reactiveDate) ? 'Renewal': 'Re-active';
+                break;
             }
         }
     } else {

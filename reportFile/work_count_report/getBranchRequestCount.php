@@ -52,68 +52,108 @@ $loanCats = $connect->query("
    PRELOAD CUSTOMER HISTORY (Exact Model Match)
 ===================== */
 
-$historyStmt = $connect->query("
-    SELECT rc.cus_id, rc.req_id, rc.cus_status, cc.closing_date, rc.dor
-    FROM request_creation rc
-    LEFT JOIN closing_customer cc ON cc.req_id = rc.req_id
-    WHERE rc.cus_status NOT IN (4,5,6,7,8,9)
-");
 
+
+$historyStmt = $connect->query("SELECT req.cus_id,req.req_id,req.cus_status,csd.created_date AS closing_date,cc.closing_date AS closed_date,req.dor,cs1.sub_status,dn.due_nil_date
+FROM request_creation req
+LEFT JOIN closed_status csd ON csd.req_id = req.req_id
+LEFT JOIN closing_customer cc ON cc.req_id = req.req_id
+LEFT JOIN customer_status cs1 ON cs1.req_id = req.req_id
+LEFT JOIN (SELECT
+        req_id,MAX(coll_date) AS due_nil_date
+    FROM collection
+    WHERE coll_sub_status = 'Due Nil' GROUP BY req_id) dn ON dn.req_id = req.req_id
+WHERE req.cus_status NOT IN (4,5,6,7,8,9) GROUP BY req.req_id;
+");
 $historyData = [];
 while ($row = $historyStmt->fetch(PDO::FETCH_ASSOC)) {
     $historyData[$row['cus_id']][] = $row;
 }
-
 /* =====================
    FAST CUSTOMER TYPE (Exact Logic)
 ===================== */
 
-function getCustomerTypeFast($cus_data, $reqDate, $cus_id, $req_id, $historyData) {
-    if (strtolower($cus_data) === 'new') return 'new';
-    
-    if (empty($historyData[$cus_id])) return 'existing_new';
-    
-    // Find most recent previous record before this req_date
+function getCustomerTypeFast($cus_data, $reqDate, $cus_id, $req_id, $historyData)
+{
+    if (strtolower($cus_data) == 'new') {
+        return 'new';
+    }
+
+    if (empty($historyData[$cus_id])) {
+        return 'existing_new';
+    }
+
+    // Find latest previous loan
     $latestIssue = null;
     foreach ($historyData[$cus_id] as $issue) {
-        if ($issue['req_id'] == $req_id) continue;  // Skip current request
-        if ($issue['dor'] >= $reqDate) continue;    // Only previous records
-        
-        if (!$latestIssue || $issue['dor'] > $latestIssue['dor']) {
+        // Skip current request
+        if ($issue['req_id'] == $req_id) {
+            continue;
+        }
+        // Skip future requests
+        if ($issue['req_id'] > $req_id) {
+            continue;
+        }
+        // Get latest previous request
+        if ($latestIssue == null || $issue['req_id'] > $latestIssue['req_id']) {
             $latestIssue = $issue;
         }
     }
-    
-    if (!$latestIssue) return 'existing_new';
-    
-    // Exact logic from your model
+    if (!$latestIssue) {
+        return 'existing_new';
+    }
+    $dor = date('Y-m-d', strtotime($reqDate));
+
+    $closingDate = '';
+    if (!empty($latestIssue['closing_date'])) {
+        $closingDate = date('Y-m-d', strtotime($latestIssue['closing_date']));
+    }
+    $closedDate = '';
+    if (!empty($latestIssue['closed_date'])) {
+        $closedDate = date('Y-m-d', strtotime($latestIssue['closed_date']));
+    }
+    $dueNilDate = !empty($latestIssue['due_nil_date']) ? date('Y-m-d', strtotime($latestIssue['due_nil_date'])) : '';
+
+    //    1. DUE NIL -> REVIVAL and CURRENT REQUEST <= DUE NIL DATE -> REVIVAL
+    if ($latestIssue['sub_status'] == 'Due Nil' || (!empty($dueNilDate) &&
+    $dor <= $dueNilDate)) {
+        return 'reloan';
+    }
+  
+    //    2. PREVIOUS LOAN CLOSED  Current Request > Closing Date
+    if ((!empty($closingDate) && $dor >= $closedDate && $dor <= $closingDate) || $latestIssue['cus_status'] == 20) {
+        return 'reloan';
+    }
+
+    //    3. ISSUED LOAN (14-19)
     if ($latestIssue['cus_status'] >= 14 && $latestIssue['cus_status'] < 20) {
         return 'additional';
     }
-    
-    $dor = date('Y-m-d', strtotime($reqDate));
-    $closingDate = date('Y-m-d', strtotime($latestIssue['closing_date']));
-    $monthEnd = date('Y-m-t', strtotime($latestIssue['closing_date']));
+  //4.Current Request <= Closing Date
+    if (!empty($closedDate) && $dor < $closedDate) {
+        return 'additional';
+    }
+    //  5. NO CLOSING DATE
+    if (empty($closingDate)) {
+        return 'existing_new';
+    }
+    //    6. RENEWAL / RE-ACTIVE
+    $monthEnd = date('Y-m-t', strtotime($closingDate));
     $nextMonth = date('Y-m-d', strtotime($monthEnd . ' +1 day'));
     $reactiveDate = date('Y-m-d', strtotime($nextMonth . ' +6 months'));
-    
-    if ($closingDate > $dor) {
-        return 'additional';
-    } else {
-        if ($reactiveDate > $dor) {
-            return 'renewal';
-        } else {
-            return 'reactive';  // 'Re-active'
-        }
+    if ($reactiveDate > $dor) {
+        return 'renewal';
     }
-}
+    return 'reactive';
+} 
+
 
 /* =====================
    COUNTERS
 ===================== */
 
 function emptyTypeCounter() {
-    return ['new' => 0, 'renewal' => 0, 'reactive' => 0, 'additional' => 0, 'existing_new' => 0, 'total' => 0];
+    return ['new' => 0, 'renewal' => 0, 'reactive' => 0, 'additional' => 0, 'existing_new' => 0,'reloan'=>0, 'total' => 0];
 }
 
 function emptyStatusCounter() {

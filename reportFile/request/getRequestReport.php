@@ -109,10 +109,10 @@ $baseQuery = "FROM request_creation req
             JOIN loan_category_creation lcc ON req.loan_category = lcc.loan_category_creation_id
             LEFT JOIN agent_creation ag ON req.agent_id = ag.ag_id
             LEFT JOIN customer_status cs ON req.req_id = cs.req_id
-            JOIN area_group_mapping_area agma ON agma.area_id = al.area_id
+            JOIN area_group_mapping_sub_area agma ON agma.sub_area_id = sal.sub_area_id
             JOIN area_group_mapping agm ON agm.map_id = agma.group_map_id
             LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id
-            JOIN area_line_mapping_area alma ON alma.area_id = al.area_id
+            JOIN area_line_mapping_sub_area alma ON alma.sub_area_id = sal.sub_area_id
             JOIN area_line_mapping alm ON alm.map_id = alma.line_map_id
             WHERE $where";
 
@@ -193,6 +193,48 @@ $result = $statement->fetchAll();
 
 $data = array();
 $sno = 1;
+$cusIds = array_unique(array_column($result, 'cus_id'));
+
+$historyDataMap = [];
+
+if (!empty($cusIds)) {
+
+    $cusIdList = implode(',', array_map('intval', $cusIds));
+
+    $historySql = "
+    SELECT
+        rc.cus_id,
+        rc.req_id,
+        rc.dor,
+        rc.cus_status,
+        cs.created_date AS closed_date,
+        cc.closing_date,
+        cs1.sub_status,
+        dn.due_nil_date
+    FROM request_creation rc
+    LEFT JOIN closed_status cs
+        ON cs.req_id = rc.req_id
+    LEFT JOIN closing_customer cc
+        ON cc.req_id = rc.req_id
+    LEFT JOIN customer_status cs1
+        ON cs1.req_id = rc.req_id
+    LEFT JOIN (
+        SELECT req_id, MAX(coll_date) due_nil_date
+        FROM collection
+        WHERE coll_sub_status='Due Nil'
+        GROUP BY req_id
+    ) dn
+        ON dn.req_id = rc.req_id
+    WHERE rc.cus_id IN ($cusIdList)
+      AND rc.cus_status NOT IN (4,5,6,7,8,9)
+    ORDER BY rc.cus_id, rc.req_id DESC";
+
+    $stmt = $connect->query($historySql);
+
+    while ($his = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $historyDataMap[$his['cus_id']][] = $his;
+    }
+}
 foreach ($result as $row) {
     $sub_array   = array();
     $sub_array[] = $sno++;
@@ -216,57 +258,73 @@ foreach ($result as $row) {
     $sub_array[] = $row['cus_data'];
 
     $cus_id = $row['cus_id'];
-    $dor = $row['dor'];
+    $currentDor = $row['dor'];
+    $existing_type = '';
 
-    if (($row['cus_data']) === 'New') {
+    if ($row['cus_data'] != 'New') {
 
-        $existing_type = '';
-    } else {
-
-        $stmt = $connect->prepare("SELECT rc.cus_status, rc.dor, cc.closing_date
-            FROM request_creation rc
-            LEFT JOIN closing_customer cc ON cc.req_id = rc.req_id
-            WHERE rc.cus_id = :cus_id
-            AND rc.dor < :dor AND rc.cus_status NOT IN (4,5,6,7,8,9)
-            ORDER BY rc.dor DESC
-            LIMIT 1 
-        ");
-
-        $stmt->execute([
-            ':cus_id' => $cus_id,
-            ':dor' => $dor
-        ]);
-
-        $issue = $stmt->fetch();
+        $currentDor = $row['dor'];
+        $historyRows = $historyDataMap[$row['cus_id']] ?? [];
+        $issue = null;
+        foreach ($historyRows as $his) {
+            if ($his['dor'] < $currentDor) {
+                $issue = $his;       // Latest previous loan because sorted DESC
+                break;
+            }
+        }
 
         if (!$issue) {
-
-            $existing_type = 'Existing New';
-        } elseif ($issue['cus_status'] >= 14 && $issue['cus_status'] < 20) {
-
-            $existing_type = 'Additional';
+            $existing_type = 'Existing-New';
         } else {
+            $status = (int)$issue['cus_status'];
+            $closedDate  = $issue['closed_date'];
+            $closingDate = $issue['closing_date'];
+            $dueNilDate  = $issue['due_nil_date'];
 
-            $dor = date('Y-m-d', strtotime($dor));
-            $closingDate = date('Y-m-d', strtotime($issue['closing_date']));
-            $monthEnd = date('Y-m-t', strtotime($issue['closing_date']));
-            $nextMonth = date('Y-m-d', strtotime($monthEnd . ' +1 day'));
-            $reactiveDate = date('Y-m-d', strtotime($nextMonth . ' +6 months'));
+            if (
+                $issue['sub_status'] == 'Due Nil' ||
+                (!empty($dueNilDate) && $currentDor <= $dueNilDate)
+            ) {
 
-            if ($closingDate > $dor) {
+                $existing_type = 'Reloan';
+            } elseif (
+                (
+                    !empty($closedDate) &&
+                    !empty($closingDate) &&
+                    $currentDor >= $closingDate &&
+                    $currentDor <= $closedDate
+                ) ||
+                $status == 20
+            ) {
+
+                $existing_type = 'Reloan';
+            } elseif (
+                !empty($closingDate) &&
+                $currentDor < $closingDate
+            ) {
 
                 $existing_type = 'Additional';
+            } elseif (
+                $status >= 14 &&
+                $status < 20
+            ) {
+
+                $existing_type = 'Additional';
+            } elseif (!empty($closingDate)) {
+
+                $monthEnd = date('Y-m-t', strtotime($closingDate));
+                $nextMonth = date('Y-m-d', strtotime($monthEnd . ' +1 day'));
+                $reactiveDate = date('Y-m-d', strtotime($nextMonth . ' +6 months'));
+
+                $existing_type = ($currentDor < $reactiveDate)
+                    ? 'Renewal'
+                    : 'Re-active';
             } else {
 
-                if ($reactiveDate > $dor) {
-                    $existing_type = 'Renewal';
-                } else {
-                    $existing_type = 'Re-active';
-                }
-            } 
+                $existing_type = 'Existing-New';
+            }
         }
     }
-
     $sub_array[] = $existing_type;
     $sub_array[] = $statusLabels[$row['cus_status']];
     $sub_array[] = (in_array($row['cus_status'], [14, 15, 16, 17])) ? $row['sub_status'] : '';

@@ -139,6 +139,7 @@ function approvalReportCount(from_date, to_date, selectedType, user_type, user_i
                 { data: 'previous.reactive' },
                 { data: 'previous.additional' },
                 { data: 'previous.existing_new' },
+                { data: 'previous.reloan' },
                 { data: 'previous.total', render: d => `<b>${d}</b>` },
 
                 /* Approval */
@@ -147,6 +148,7 @@ function approvalReportCount(from_date, to_date, selectedType, user_type, user_i
                 { data: 'approval.reactive' },
                 { data: 'approval.additional' },
                 { data: 'approval.existing_new' },
+                { data: 'approval.reloan' },
                 { data: 'approval.total', render: d => `<b>${d}</b>` },
 
                 /* CANCEL */
@@ -155,6 +157,7 @@ function approvalReportCount(from_date, to_date, selectedType, user_type, user_i
                 { data: 'cancel.reactive' },
                 { data: 'cancel.additional' },
                 { data: 'cancel.existing_new' },
+                { data: 'cancel.reloan' },
                 { data: 'cancel.total', render: d => `<b>${d}</b>` },
 
                 /* PROCESS */
@@ -163,6 +166,7 @@ function approvalReportCount(from_date, to_date, selectedType, user_type, user_i
                 { data: 'process.reactive' },
                 { data: 'process.additional' },
                 { data: 'process.existing_new' },
+                { data: 'process.reloan' },
                 { data: 'process.total', render: d => `<b>${d}</b>` },
 
                 /* ISSUED */
@@ -171,6 +175,7 @@ function approvalReportCount(from_date, to_date, selectedType, user_type, user_i
                 { data: 'issued.reactive' },
                 { data: 'issued.additional' },
                 { data: 'issued.existing_new' },
+                { data: 'issued.reloan' },
                 { data: 'issued.total', render: d => `<b>${d}</b>` },
                 /* STATUS */
                 { data: 'status.current' },
@@ -221,6 +226,7 @@ function approvalReportCount(from_date, to_date, selectedType, user_type, user_i
                     <td>${totalRow.previous.reactive}</td>
                     <td>${totalRow.previous.additional}</td>
                     <td>${totalRow.previous.existing_new}</td>
+                    <td>${totalRow.previous.reloan}</td>
                     <td><b>${totalRow.previous.total}</b></td>
 
                     <td>${totalRow.approval.new}</td>
@@ -228,6 +234,7 @@ function approvalReportCount(from_date, to_date, selectedType, user_type, user_i
                     <td>${totalRow.approval.reactive}</td>
                     <td>${totalRow.approval.additional}</td>
                     <td>${totalRow.approval.existing_new}</td>
+                    <td>${totalRow.approval.reloan}</td>
                     <td><b>${totalRow.approval.total}</b></td>
 
                     <td>${totalRow.cancel.new}</td>
@@ -235,6 +242,7 @@ function approvalReportCount(from_date, to_date, selectedType, user_type, user_i
                     <td>${totalRow.cancel.reactive}</td>
                     <td>${totalRow.cancel.additional}</td>
                     <td>${totalRow.cancel.existing_new}</td>
+                    <td>${totalRow.cancel.reloan}</td>
                     <td><b>${totalRow.cancel.total}</b></td>
 
                     <td>${totalRow.process.new}</td>
@@ -242,6 +250,7 @@ function approvalReportCount(from_date, to_date, selectedType, user_type, user_i
                     <td>${totalRow.process.reactive}</td>
                     <td>${totalRow.process.additional}</td>
                     <td>${totalRow.process.existing_new}</td>
+                    <td>${totalRow.process.reloan}</td>
                     <td><b>${totalRow.process.total}</b></td>
 
                     <td>${totalRow.issued.new}</td>
@@ -249,6 +258,7 @@ function approvalReportCount(from_date, to_date, selectedType, user_type, user_i
                     <td>${totalRow.issued.reactive}</td>
                     <td>${totalRow.issued.additional}</td>
                     <td>${totalRow.issued.existing_new}</td>
+                    <td>${totalRow.issued.reloan}</td>
                     <td><b>${totalRow.issued.total}</b></td>
 
                     <td>${totalRow.status.current}</td>
