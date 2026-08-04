@@ -4,6 +4,7 @@ class promotionListClass
 {
     public $sub_area_list = array();
     public $accessType;
+    public $actionAccess = '';
     public function __construct($connect)
     {
         $userid = $_SESSION["userid"] ?? 0;
@@ -11,11 +12,12 @@ class promotionListClass
         // Super admin bypass
         if ($userid == 1) {
             $this->sub_area_list = '';
+            $this->actionAccess = '1';
             return;
         }
 
         // Fetch user access details
-        $stmt = $connect->prepare("SELECT group_id, line_id, due_followup_lines, promotion_activity_mapping_access FROM user WHERE user_id = ?");
+        $stmt = $connect->prepare("SELECT group_id, line_id, due_followup_lines, promotion_activity_mapping_access, promotion_activity_action_access FROM user WHERE user_id = ?");
         $stmt->execute([$userid]);
         $rowuser = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -25,6 +27,7 @@ class promotionListClass
         }
 
         $this->accessType = (int)$rowuser['promotion_activity_mapping_access'];
+        $this->actionAccess = (int)$rowuser['promotion_activity_action_access'];
         $ids = [];
         $table = '';
         $column = '';
