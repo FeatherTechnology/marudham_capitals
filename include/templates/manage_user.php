@@ -87,6 +87,7 @@ $hand_cash_balance_sheet = '';
 $accounts_loan_issue = '';
 $followupmodule = '';
 $promotion_activity = '';
+$promotion_activity_action_access = '';
 $loan_followup  = '';
 $conf_followup  = '';
 $due_followup  = '';
@@ -278,6 +279,7 @@ if($idupd>0)
 			$accounts_loan_issue          		     = $getUser['accounts_loan_issue'];
 			$followupmodule          		     = $getUser['followupmodule'];
 			$promotion_activity = $getUser['promotion_activity'];
+			$promotion_activity_action_access = $getUser['promotion_activity_action_access'];
 			$loan_followup = $getUser['loan_followup'];
 			$conf_followup = $getUser['confirmation_followup'];
 			$due_followup = $getUser['due_followup'];
@@ -975,6 +977,7 @@ if($idupd>0)
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12" tabindex="55">
                             <div class="custom-control custom-checkbox">
+								<label for="doc_replace_remove_access">DOC Replace Remove Access</label>&nbsp;<span class="text-danger">*</span>
                                 <select class='form-control' id='doc_replace_remove_access' name='doc_replace_remove_access' style="width: 250px;" disabled>
 									<option value="">Select Remove Access</option>
 									<option value="1" <?php if(isset($doc_replace_remove_access) && $doc_replace_remove_access == '1') echo 'selected'; ?>>Yes</option>
@@ -1105,6 +1108,18 @@ if($idupd>0)
 								<span class="text-danger" style='display:none' id='proCheck'>Please select Promotion Activity Access</span>
 							</div>
 						</div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 promotion_activity_div" style="display: none;">
+                            <div class="custom-control custom-checkbox">
+								<label for="promotion_activity_action_access">Promotion Activity Action Access</label>&nbsp;<span class="text-danger">*</span>
+                                <select class='form-control' id='promotion_activity_action_access' name='promotion_activity_action_access' style="width: 250px;">
+									<option value="">Select Action Access</option>
+									<option value="1" <?php if(isset($promotion_activity_action_access) && $promotion_activity_action_access == '1') echo 'selected'; ?>>Yes</option>
+									<option value="2" <?php if(isset($promotion_activity_action_access) && $promotion_activity_action_access == '2') echo 'selected'; ?>>No</option>
+								</select>
+								<br/>
+								<span class='text-danger actionAccessCheck' style="display:none">Please Select Action Access</span>
+                            </div>
+                        </div>
                         <!-- <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php # if($idupd > 0){ if($loan_followup==0){ echo'checked'; }} ?> tabindex="63" class="followup-checkbox screen-validations" id="loan_followup" name="loan_followup" disabled>&nbsp;&nbsp;
@@ -1172,6 +1187,7 @@ if($idupd>0)
 						
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12" tabindex="75">
                             <div class="custom-control custom-checkbox">
+								<label for="update_doc_edit_access">DOC Edit Access</label>&nbsp;<span class="text-danger">*</span>
                                 <select class='form-control' name='update_doc_edit_access' id='update_doc_edit_access' style="width: 250px;" disabled>
 									<option value="">Select Documentation Edit Access</option>
 									<option value="1" <?php if(isset($update_doc_edit_access) && $update_doc_edit_access == '1') echo 'selected'; ?>>Yes</option>
@@ -1255,10 +1271,10 @@ if($idupd>0)
                                 <label class="custom-control-label" for="bank_clearance">Bank Clearance</label>
                             </div>
                         </div>
-						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 bnk_clr_upl_acc_div"  style='display:none'>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 bnk_clr_upl_acc_div"  style='display:none;'>
                             <div class="custom-control custom-checkbox">
                                 <label class="custom-control-label" for="cash_tally">Bank Clearance Upload Access</label>
-                                <select class='form-control' id='bnk_clr_upl_acc' name='bnk_clr_upl_acc' tabindex="82">
+                                <select class='form-control' id='bnk_clr_upl_acc' name='bnk_clr_upl_acc' tabindex="82" style="width:250px;">
 									<option value="">Select Bank Clearance Upload Access</option>
 									<option value="0" <?php if($bnk_clr_upl_acc == '0') echo 'selected'; ?>>Yes</option>
 									<option value="1" <?php if($bnk_clr_upl_acc == '1') echo 'selected'; ?>>No</option>

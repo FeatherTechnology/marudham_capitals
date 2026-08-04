@@ -523,11 +523,22 @@ $(document).ready(function () {
     });
 
     $('#promotion_activity').click(function () {
-        var promotion_activity_screen = document.querySelector('#promotion_activity');
-        if (promotion_activity_screen.checked) {
+        if ($(this).is(':checked')) {
             $('.promotion_activity_div').show();
         } else {
             $('.promotion_activity_div').hide();
+
+            // Clear Promotion Activity
+            promotionAccess.removeActiveItems();
+            $('#pro_aty_access_id').val('');
+            $('#promotion_activity_action_access').val('');
+
+            // Clear Action Access
+            $('#promotion_activity_action_access').val('');
+
+            // Hide validation messages
+            $('#proCheck').hide();
+            $('.actionAccessCheck').hide();
         }
     });
 
@@ -1424,16 +1435,37 @@ function validation() {
         }
     }
 
-    var isPromotionChecked = $('#promotion_activity').is(':checked');
+     var isPromotionChecked = $("#promotion_activity").is(":checked");
+
     if (isPromotionChecked) {
-        let proAtyAccessIdSort = multipleSelectSort(promotionAccess, '#pro_aty_access_id');
+        // Promotion Activity Access Validation
+        let proAtyAccessIdSort = multipleSelectSort(
+          promotionAccess,
+          "#pro_aty_access_id",
+        );
+
         if (proAtyAccessIdSort == 0) {
-            $('#proCheck').show();
-            validation = false;
+          $("#proCheck").show();
+          validation = false;
         } else {
-            $('#proCheck').hide();
+          $("#proCheck").hide();
+        }
+
+        // Action Access Validation
+        if ($("#promotion_activity_action_access").val() == "") {
+          $(".actionAccessCheck").show();
+          validation = false;
+        } else {
+          $(".actionAccessCheck").hide();
         }
     }
+
+    $("#promotion_activity_action_access").on("change", function () {
+      if ($(this).val() != "") {
+        $(".actionAccessCheck").hide();
+      }
+    });
+
     var isbankClearanceChecked = $('#bank_clearance').is(':checked');
     if (isbankClearanceChecked) {
         var bnk_clr_upl_acc = $('#bnk_clr_upl_acc').val();

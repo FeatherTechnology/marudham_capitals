@@ -8,6 +8,7 @@ $follow_up_date = '';
 $Obj = new promotionListClass($connect);
 $sub_area_list = $Obj->sub_area_list;
 $accessType = $Obj->accessType;
+$actionAccess   = $Obj->actionAccess;
 
 $status = [4 => 'Request', 5 => 'Verification', 6 => 'Approval', 7 => 'Acknowledgement', 8 => 'Request', 9 => 'Verification'];
 $sub_status = [4 => 'Cancel', 5 => 'Cancel', 6 => 'Cancel', 7 => 'Cancel', 8 => 'Revoke', 9 => 'Revoke'];
@@ -123,7 +124,8 @@ while ($row = $sql->fetch()) {
 
     //for intrest or not intrest choice to make
     $actions = "<div class='dropdown'><button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button><div class='dropdown-content'> <a class='noc-call' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>NOC Call</span></a><a class='intrest' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Interested</span></a><a class='not-intrest' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Not Interested</span></a><a class='un-available' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Unavailable</span></a>";
-    if ($row['has_closed_status'] == 1) {
+
+    if ($row['has_closed_status'] == 1 && $actionAccess == 1) {
         $actions .= "<a class='add_close'data-toggle='modal'data-target='#addClosedModal'data-id='" . $row['cus_id'] . "'> <span>Closed Status</span></a>";
     }
 
