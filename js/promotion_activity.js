@@ -1,22 +1,16 @@
-const areaMultiselect = new Choices('#area_name', {
-    removeItemButton: true,
-    placeholder: true,
-    placeholderValue: 'Select Area Name',
-    allowHTML: true,
-    shouldSort: false
-});
-
 $(document).ready(function () {
+
     const toggleButtons = $(".toggle-button");
     toggleButtons.on("click", function () {
+
         // Reset active class for all buttons
         toggleButtons.removeClass("active");
+
         // Add active class to the clicked button
         $(this).addClass("active");
 
         var typevalue = this.value;
         $('.renewal_card, .re_active_card, .new_card, .new_promo_card, .customer-status-card, .loan-history-card, .doc-history-card, #close_history_card, .repromotion_card, .filter_card').hide();
-        // $('#follow_up_sts, #date_type, #follow_up_fromdate, #follow_up_todate').val('');
 
         //except new promotion all had closing date.
         $('#date_type')
@@ -34,24 +28,30 @@ $(document).ready(function () {
             $('.new_promo_card, .filter_card').show();
             $('.event_card, .add_event_card').hide();
             resetNewPromotionTable();
+
         } else if (typevalue == 'Renewal') {
             $('.renewal_card, .filter_card').show();
             $('.event_card, .add_event_card').hide();
             showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list', '17');
+
         } else if (typevalue == 'Re-active') {
             $('.re_active_card, .filter_card').show();
             $('.event_card, .add_event_card').hide();
             showPromotionList('followupFiles/promotion/showPromotionList.php', 're_active_promotion_list', '17');
+
         } else if (typevalue == 'Repromotion') {
             $('.event_card, .add_event_card').hide();
             $('.repromotion_card, .filter_card').show();
             showPromotionList('followupFiles/promotion/showRepromotionList.php', 'repromotion_list', '18');
+
         } else if (typevalue == 'Events') {
             $('.event_card').show();
             $('.add_event_card').hide();
             eventsTable();
+
         }
-    })
+
+    });
 
     $('#cus_id_search, #cus_id').keyup(function () {
         var value = $(this).val();
@@ -59,14 +59,10 @@ $(document).ready(function () {
         $(this).val(value);
     });
 
-    // $('button').click(function (e) { e.preventDefault(); })
-
     $('#search_cus').click(function (e) {
         e.preventDefault();
         if (validateCustSearch() == true) {
             searchCustomer();
-        } else {
-            // $('.new_promo_card').hide();
         }
     });
 
@@ -82,14 +78,14 @@ $(document).ready(function () {
         if (validatePromoAdd() == true) {
             submitPromotion();
         }
-    })
+    });
 
     $('#submit_closed').click(function (e) {
         e.preventDefault();
         if (validateClosedAdd() == true) {
             submitClosed();
         }
-    })
+    });
 
     $('#followup_search').click(function (event) {
         event.preventDefault();
@@ -147,55 +143,45 @@ $(document).ready(function () {
         // Set the minimum date in the date input to today
         $('#promo_fdate').attr('min', today);
     }
+
     $('#add_event').click(function (e) {
         e.preventDefault();
         $('.event_card').hide();
         $('.add_event_card').show();
         getArea();
-
     });
+
     $('#back').click(function (e) {
         e.preventDefault();
         $('.event_card').show();
         $('.add_event_card').hide();
-        $('#event_area_id').val("");
-        $('#event_name').val("");
-        $('#event_hidden_id').val("");
+        $('#event_area_id, #event_hidden_id').val("");
         var currentDate = getCurrentDate();
-        // Clear Choices multiselect
-        areaMultiselect.clearStore(); // remove all items
-        areaMultiselect.setChoices([], 'value', 'label', true); // optionally reset with empty choices
-
 
         // reset table body with one empty row
         var emptyRow = `
-        <tr>
-            <td class="current_date">${currentDate}</td>
-            <td>
-                <input type="text"  name="cus_name" class="form-control cus_name" value="" placeholder='Enter Customer Name'>
-            </td>
-            <td>
-                <input type="number" class="form-control cus_mobile_num" name="cus_mobile_num" value="" placeholder="Enter Mobile Number">
-            </td>
-            <td>
-                <select class="form-control cus_area_name" name="area_name">
-                    <option value="">Select Area Name</option>
-                </select>
-            </td>
-            <td>
-                <select class="form-control sub_area_name" name="sub_area_name">
-                    <option value="">Select Sub Area Name</option>
-                </select>
-            </td>
-            <td class="user"></td>
-            <td>
-                <button type="button"  class="btn btn-primary add_event_mem">Add</button>
-            </td>
-            <td>
-                <span class="icon-trash-2 delet_event"></span>
-            </td>
-        </tr>
-    `;
+            <tr>
+                <td class="current_date">${currentDate}</td>
+                <td>
+                    <input type="text"  name="cus_name" class="form-control cus_name" value="" placeholder='Enter Customer Name'>
+                </td>
+                <td>
+                    <input type="number" class="form-control cus_mobile_num" name="cus_mobile_num" value="" placeholder="Enter Mobile Number">
+                </td>
+                <td>
+                    <select class="form-control sub_area_name" name="sub_area_name">
+                        <option value="">Select Sub Area Name</option>
+                    </select>
+                </td>
+                <td class="user"></td>
+                <td>
+                    <button type="button"  class="btn btn-primary add_event_mem">Add</button>
+                </td>
+                <td>
+                    <span class="icon-trash-2 delet_event"></span>
+                </td>
+            </tr>
+        `;
 
         $("#moduleTable tbody").html(emptyRow);
         eventsTable();
@@ -210,7 +196,6 @@ $(document).ready(function () {
             "<td class='current_date'>" + currentDate + "</td>" +
             "<td><input type='text' name='cus_name' class='form-control cus_name' placeholder='Enter Customer Name'></td>" +
             "<td><input type='number' class='form-control cus_mobile_num' name='cus_mobile_num'  value='' placeholder='Enter Mobile Number'></td>" +
-            "<td><select class='form-control cus_area_name' name='cus_area_name'> <option value=''>Select Area Name</option> </select></td>" +
             "<td><select class='form-control sub_area_name' name='sub_area_name'> <option value=''>Select Sub Area Name</option> </select></td>" +
             "<td class='user'></td>" +
             "<td><button type='button' class='btn btn-primary add_event_mem'>Add</button></td>" +
@@ -220,25 +205,26 @@ $(document).ready(function () {
         $('#moduleTable tbody').append(appendTxt);
 
         // Fill cus_area_name with existing main select options
-        const areaSelect = document.querySelector('#area_name');
-        const selectedValues = Array.from(areaSelect.selectedOptions);
+        const prevCusAreaSelect = $('#moduleTable tbody tr')
+            .eq(-2)
+            .find('.sub_area_name');
 
-        const lastCusAreaSelect = $('#moduleTable').find('.cus_area_name').last();
-        selectedValues.forEach(opt => {
-            lastCusAreaSelect.append(
-                $('<option>', { value: opt.value, text: opt.text })
-            );
-        });
+        const lastCusAreaSelect = $('#moduleTable tbody tr')
+            .last()
+            .find('.sub_area_name');
+
+        // Copy all options
+        lastCusAreaSelect.html(prevCusAreaSelect.html());
+
     });
 
-    $(document).on('change', '.cus_area_name', function () {
-        const $this = $(this);
-        const selectedAreas = $this.val();
-        const $row = $this.closest('tr');
+    $(document).on('change', '#area_name', function () {
+        const selectedAreas = $(this).val();
+        const $row = $('#moduleTable tbody');
         const $subAreaSelect = $row.find('.sub_area_name');
         const hiddenSubAreaId = $row.find('.hidden_area').text().trim() || "";
 
-        if (!selectedAreas || selectedAreas.length === 0) {
+        if (!selectedAreas) {
             $subAreaSelect.empty().append('<option value="">Select Sub Area Name</option>');
             return;
         }
@@ -249,15 +235,30 @@ $(document).ready(function () {
             dataType: 'json',
             data: { area_id: selectedAreas },
             success: function (response) {
-                $subAreaSelect.empty().append('<option value="">Select Sub Area Name</option>');
-                response.forEach(function (sub) {
-                    let option = $('<option>', { value: sub.sub_area_id, text: sub.sub_area_name });
-                    if (sub.sub_area_id.toString() === hiddenSubAreaId) {
-                        option.prop('selected', true);
-                    }
 
-                    $subAreaSelect.append(option);
+                const options = $('<div>');
+                options.append('<option value="">Select Sub Area Name</option>');
+
+                response.forEach(function (sub) {
+                    options.append(
+                        $('<option>', {
+                            value: sub.sub_area_id,
+                            text: sub.sub_area_name
+                        })
+                    );
                 });
+
+                $('#moduleTable tbody tr').each(function () {
+
+                    const $row = $(this);
+                    const $subAreaSelect = $row.find('.sub_area_name');
+                    const hiddenSubAreaId = $row.find('.hidden_area').text().trim();
+
+                    $subAreaSelect.html(options.html()); // Copy all options
+                    $subAreaSelect.val(hiddenSubAreaId); // Set this row's value
+
+                });
+
             },
             error: function (xhr, status, error) {
                 console.error("Error fetching sub-areas:", error);
@@ -294,7 +295,6 @@ $(document).ready(function () {
                     if (response === "Event Member Deleted") {
                         $row.remove(); // remove row from table
                     }
-                    console.log(response); // show the message from PHP
                 },
                 error: function (xhr, status, error) {
                     alert("Error deleting record: " + error);
@@ -305,138 +305,76 @@ $(document).ready(function () {
         }
     });
 
-    const areaSelect = document.querySelector('#area_name');
-
-    areaSelect.addEventListener('change', function () {
-        const cusAreaSelects = document.querySelectorAll('.cus_area_name'); // all selects in rows
-        const selectedValues = Array.from(areaSelect.selectedOptions).map(opt => opt.value);
-
-        cusAreaSelects.forEach(cusAreaSelect => {
-            // Add new options if not present
-            selectedValues.forEach(value => {
-                if (value === '') return;
-                if (!Array.from(cusAreaSelect.options).some(opt => opt.value === value)) {
-                    const optionText = areaSelect.querySelector(`option[value="${value}"]`).text;
-                    cusAreaSelect.appendChild(new Option(optionText, value));
-                }
-            });
-
-            // Remove unselected options
-            Array.from(cusAreaSelect.options).forEach(opt => {
-                if (opt.value !== '' && !selectedValues.includes(opt.value)) {
-                    opt.remove();
-                }
-            });
-        });
-    });
-
     $('#submit_event').click(function () {
-        var selectedAreas = $('#area_name').val() || [];
-        var areaString = selectedAreas.join(',');
-        var event_name = $('#event_name').val().trim();
-        var event_hidden_id = $('#event_hidden_id').val();
-        var rows = $('#moduleTable tbody tr');
 
-        //Validate Event name & area
-        if (!event_name.trim()) {
-            Swal.fire({
-                title: 'Please enter Event Name!',
-                icon: 'error',
-                confirmButtonColor: '#009688'
-            });
-            return;
-        }
+        let areaString = $('#area_name').val();
+        let event_hidden_id = $('#event_hidden_id').val();
+        let rows = $('#moduleTable tbody tr');
+
         if (!areaString) {
-            Swal.fire({
-                title: 'Please select at least one Area!',
-                icon: 'error',
-                confirmButtonColor: '#009688'
-            });
+            swalError('Warning', 'Please select Area name!');
             return;
         }
 
-        // Validate rows
-        var allValid = true;
-        var mobileInvalid = false;
+        let allRowsData = [];
+        let validation = true;
+        let errorMsg = '';
 
         rows.each(function () {
-            var $row = $(this);
-            var cus_name = $row.find('.cus_name').val().trim();
-            var cus_mobile_num = $row.find('.cus_mobile_num').val().trim();
-            var cus_area_name = $row.find('.cus_area_name').val();
-            var sub_area_name = $row.find('.sub_area_name').val();
 
-            if (!cus_name || !cus_mobile_num || !cus_area_name || !sub_area_name) {
-                allValid = false;
-                return false; // break loop
+            let $row = $(this);
+
+            let cus_name = $row.find('.cus_name').val().trim();
+            let cus_mobile_num = $row.find('.cus_mobile_num').val().trim();
+            let sub_area_name = $row.find('.sub_area_name').val();
+            let currentDateText = $row.find('.current_date').text().trim();
+            let cus_hidden_id = $row.find('.cus_hidden_id').text().trim();
+
+            if (!cus_name || !cus_mobile_num || !sub_area_name) {
+                validation = false;
+                errorMsg = 'Please fill all fields!';
+                return false;
             }
 
             if (cus_mobile_num.length !== 10) {
-                mobileInvalid = true;
-                allValid = false;
-                return false; // break loop
+                validation = false;
+                errorMsg = 'Please enter a valid mobile number!';
+                return false;
             }
-        });
 
-        if (mobileInvalid) {
-            Swal.fire({
-                title: 'Please enter a valid mobile number!',
-                icon: 'error',
-                confirmButtonColor: '#009688'
-            });
-            return;
-        }
-
-        if (!allValid) {
-            Swal.fire({
-                title: 'Please fill all fields!',
-                icon: 'error',
-                confirmButtonColor: '#009688'
-            });
-            return;
-        }
-        let confirmAction = confirm("Are you sure you want to submit This Event?");
-        if (!confirmAction) {
-            return;
-        }
-
-        // Collect all rows into an array
-        var allRowsData = [];
-        rows.each(function () {
-            var $row = $(this);
-            var cus_name = $row.find('.cus_name').val().trim();
-            var cus_mobile_num = $row.find('.cus_mobile_num').val().trim();
-            var cus_area_name = $row.find('.cus_area_name').val();
-            var sub_area_name = $row.find('.sub_area_name').val();
-            var currentDateText = $row.find('.current_date').text().trim();
-            var cus_hidden_id = $row.find('.cus_hidden_id').text().trim();
-
-            // Convert dd-mm-yyyy → yyyy-mm-dd
-            var parts = currentDateText.split('-');
-            var currentDate = parts[2] + '-' + parts[1].padStart(2, '0') + '-' + parts[0].padStart(2, '0');
+            let parts = currentDateText.split('-');
 
             allRowsData.push({
                 cus_name,
                 cus_mobile_num,
-                cus_area_name,
                 sub_area_name,
-                currentDate,
+                currentDate: `${parts[2]}-${parts[1]}-${parts[0]}`,
                 cus_hidden_id
             });
         });
-        // Send single AJAX request with all rows
+
+        if (!validation) {
+            swalError('Warning', errorMsg);
+            return;
+        }
+
+        if (!confirm('Are you sure you want to submit this event?')) {
+            return;
+        }
+
         $.ajax({
             url: 'followupFiles/promotion/submitEvent.php',
             type: 'POST',
             data: {
-                event_name,
                 areaString,
                 event_hidden_id,
                 rowsData: JSON.stringify(allRowsData)
             },
             success: function (response) {
-                var res = JSON.parse(response);
+                let res = JSON.parse(response);
+
                 $('#back').click();
+
                 Swal.fire({
                     title: res.message,
                     icon: 'success',
@@ -444,8 +382,8 @@ $(document).ready(function () {
                 });
             }
         });
-    });
 
+    });
 
     $(document).on('click', '.edit_event', function (event) {
         event.preventDefault();
@@ -459,7 +397,7 @@ $(document).ready(function () {
             url: 'followupFiles/promotion/getEventDetails.php',
             type: 'POST',
             dataType: 'json',
-            data: { event_id: event_id },
+            data: { event_id },
             success: function (response) {
                 if (!response.success) {
                     alert("Event not found!");
@@ -469,70 +407,45 @@ $(document).ready(function () {
                 var eventData = response.event;
                 var rows = response.rows;
 
-                $('#event_name').val(eventData.event_name);
                 $('#event_hidden_id').val(eventData.id); // eventData.id from PHP JSON
 
-                // Store all area IDs in hidden input
-                $('#event_area_id').val(eventData.all_areas);
-                getArea(); // fill main multi-select
+                // Store area ID in hidden input
+                $('#event_area_id').val(eventData.event_name);
 
-                // Wait for Choices store to be ready
-                waitForChoices(function () {
+                getArea().done(function(){
 
-                    $('#moduleTable tbody').empty();
+                    waitForChoices(function () {
+                    // Wait for Choices store to be ready
 
-                    rows.forEach(function (row) {
-                        var formattedDate = new Date(row.event_created_date).toLocaleDateString('en-GB').split('/').join('-');
+                        $('#moduleTable tbody').empty();
 
-                        var newRow = $(`
-                        <tr>
-                            <td class="current_date">${formattedDate}</td>
-                            <td><input type="text" class="form-control cus_name" value="${row.name}" placeholder='Enter Customer Name'></td>
-                            <td><input type='number' class='form-control cus_mobile_num'  name='cus_mobile_num'  value="${row.mobile_num}"  placeholder='Enter Mobile Number'></td>
-                            <td><select class="form-control cus_area_name"></select></td>
-                            <td>
-                                <!-- sub_area will be filled by .cus_area_name change handler -->
-                                <select class="form-control sub_area_name"></select>
-                            </td>
-                            <td class="user">${row.fullname}</td>
-                            <td class="hidden_area" style="display:none;">${row.sub_area}</td>
-                            <td class="cus_hidden_id" style="display:none;">${row.id}</td>
-                            <td><button type="button" class="btn btn-primary add_event_mem">Add</button></td>
-                            <td><span class="icon-trash-2 delet_event"></span></td>
-                        </tr>
-                    `);
-                        $('#moduleTable tbody').append(newRow);
+                        rows.forEach(function (row) {
+                            // var formattedDate = new Date(row.event_created_date).toLocaleDateSntring('en-GB').split('/').join('-');
+                            var formattedDate = moment(row.event_created_date).format('DD-MM-YYYY');
 
-                        const rowAreaSelect = newRow.find('.cus_area_name');
-                        rowAreaSelect.empty();
-                        rowAreaSelect.append($('<option>', {
-                            value: '',
-                            text: 'Select Area Name'
-                        }));
-
-                        const allChoices = areaMultiselect._store.items.map(item => ({
-                            value: item.value,
-                            label: item.label
-                        }));
-
-                        const rowAreas = row.area ? row.area.toString().split(',') : [];
-
-                        const selectedChoices = areaMultiselect.getValue(true);
-
-                        selectedChoices.forEach(areaId => {
-                            const choice = allChoices.find(item => item.value === areaId);
-                            const areaText = choice ? choice.label : areaId;
-
-                            rowAreaSelect.append($('<option>', {
-                                value: areaId,
-                                text: areaText,
-                                selected: rowAreas.includes(areaId.toString())
-                            }));
+                            var newRow = $(`
+                                <tr>
+                                    <td class="current_date">${formattedDate}</td>
+                                    <td><input type="text" class="form-control cus_name" value="${row.name}" placeholder='Enter Customer Name'></td>
+                                    <td><input type='number' class='form-control cus_mobile_num'  name='cus_mobile_num'  value="${row.mobile_num}"  placeholder='Enter Mobile Number'></td>
+                                    <td>
+                                        <!-- sub_area will be filled by #area_name change handler -->
+                                        <select class="form-control sub_area_name"></select>
+                                    </td>
+                                    <td class="user">${row.fullname}</td>
+                                    <td class="hidden_area" style="display:none;">${row.sub_area}</td>
+                                    <td class="cus_hidden_id" style="display:none;">${row.id}</td>
+                                    <td><button type="button" class="btn btn-primary add_event_mem">Add</button></td>
+                                    <td><span class="icon-trash-2 delet_event"></span></td>
+                                </tr>
+                            `);
+                            
+                            $('#moduleTable tbody').append(newRow);
                         });
 
-                        rowAreaSelect.trigger('change');
-                    });
+                        $('#area_name').trigger('change');
 
+                    });
                 });
             },
             error: function () {
@@ -555,6 +468,7 @@ $(document).ready(function () {
         $('#addPromotion').find('.modal-body select').prop('selectedIndex', 0);
         $("#addPromotion").find(".modal-body span").not('.required').hide();
     });
+
     $("#addClosedModal").find(".addcloseModal").click(function () {
         $('#addClosedModal').find('.modal-body input').not('[readonly]').not('#orgin_closed_table').val('');
         $('#addClosedModal').find('.modal-body select').prop('selectedIndex', 0);
@@ -630,7 +544,6 @@ function searchCustomer() {
                 $('.alert').fadeOut('slow');
             }, 2000);
 
-            // $('.new_promo_card').hide();
         }
 
     }, 'json')
@@ -722,16 +635,26 @@ function validateNewCusAdd() {
         }
 
     }
+
     if (cus_id === '' || cus_id.length < 12) {
-        response = false;
         event.preventDefault();
+        response = false;
         $("#cus_idCheck").show();
-    } else { $("#cus_idCheck").hide(); }
+
+    } else { 
+        $("#cus_idCheck").hide(); 
+    
+    }
+
     if (cus_mob === '' || cus_mob.length < 10) {
-        response = false;
         event.preventDefault();
+        response = false;
         $("#cus_mobCheck").show();
-    } else { $("#cus_mobCheck").hide(); }
+
+    } else { 
+        $("#cus_mobCheck").hide(); 
+    
+    }
 
     return response;
 }
@@ -829,6 +752,7 @@ function getAreaBasedSubArea(area) {
         },
     });
 }
+
 function validatePromoAdd() {
     let response = true;
     let promo_type = $('#promo_type').val();
@@ -856,6 +780,7 @@ function validatePromoAdd() {
 
     return response;
 }
+
 function validateClosedAdd() {
     let response = true;
     let closed_Sts = $('#closed_Sts').val();
@@ -897,7 +822,6 @@ function promoChartOnclick() { // function of on click event for promo chart
         });
     });
 }
-
 
 function intNotintOnclick() {
     // click for add promotion modal
@@ -1092,6 +1016,7 @@ function historyTableContents(cus_id, type, url) {
     var due_nil_arr = [];
     var closed_arr = [];
     var balAmnt = [];
+
     $.ajax({
         url: url,
         data: { 'cus_id': cus_id },
@@ -1119,7 +1044,8 @@ function historyTableContents(cus_id, type, url) {
                 balAmnt = balAmnt.join(',');
             }
         }
-    })
+    });
+
     showOverlay();//loader start
     setTimeout(() => {
 
@@ -1231,7 +1157,7 @@ function historyTableContents(cus_id, type, url) {
         });
 
         hideOverlay();//loader stop
-    }, 2000)
+    }, 2000);
 
 }
 
@@ -1281,6 +1207,7 @@ function swarlSuccessAlert(response, callback) {
         }
     });
 }
+
 function eventsTable() {
     $.post('followupFiles/promotion/eventsList.php', {}, function (data) {
         let tableData = JSON.parse(data);
@@ -1294,7 +1221,6 @@ function eventsTable() {
             columns: [
                 { title: "S.No" },
                 { title: "Date" },
-                { title: "Event Name" },
                 { title: "Area Name" },
                 { title: "Total Customer" },
                 { title: "Action" }
@@ -1323,35 +1249,31 @@ function eventsTable() {
         });
     });
 }
-function getArea() {
-    var event_area = $("#event_area_id").val(); // comma-separated selected area IDs
-    var selectedAreas = event_area.split(',');
 
-    $.ajax({
+function getArea() {
+    return $.ajax({
         url: 'followupFiles/promotion/getUserBasedArea.php',
-        type: 'post',
+        type: 'POST',
         data: { area_id: " " },
         dataType: 'json',
         success: function (response) {
+            $('#area_name').empty().append(`<option value=''> Select Area </option>`);
 
-            areaMultiselect.clearStore(); // clear existing choices
+            let eventAreaId = $('#event_area_id').val();
 
-            var items = response.map(function (area) {
-                return {
-                    value: area.area_id,
-                    label: area.area_name,
-                    selected: selectedAreas.includes(area.area_id.toString())
-                };
+            response.map(function(area){
+                let disabled = (area.event_name && eventAreaId != area.area_id) ? 'disabled' : '';
+                let selected = (eventAreaId == area.area_id) ? 'selected' : '';
+
+                $('#area_name').append(`<option value='${area.area_id}' ${disabled} ${selected}> ${area.area_name} </option>`);
             });
-
-            areaMultiselect.setChoices(items, 'value', 'label', true); // add all choices at once
         }
     });
 }
 
 function waitForChoices(callback) {
     const interval = setInterval(() => {
-        if (areaMultiselect._store.items.length > 0) {
+        if ($('#area_name').val() != '') {
             clearInterval(interval);
             callback();
         }
@@ -1368,7 +1290,6 @@ function getCurrentDate() {
 
 function closedModal() {
     let orgin_table = $('#orgin_closed_table').val();
-    console.log('asasa', orgin_table)
 
     if (orgin_table === 'renewal') {
         $(".toggle-button[value='Renewal']").trigger('click');

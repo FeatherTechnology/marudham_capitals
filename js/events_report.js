@@ -19,12 +19,7 @@ $(document).ready(function () {
         if (fromDate !== "" && toDate !== "") {
             eventsReportTable();
         } else {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Missing Dates',
-                text: 'Please select both From and To dates before Search.',
-                confirmButtonColor: '#009688'
-            });
+            swalError('Warning', 'Please select both From and To dates before Search.');
         }
     });
 });
