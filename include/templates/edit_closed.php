@@ -34,6 +34,24 @@
 						}
 					}
 					?>
+					<div class="row">
+						<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+							<label for="branch_filter">Branch</label>
+							<select class="" id="branch_filter" name="branch_filter" multiple>
+								<option value=''>Select Branch name</option>
+							</select>
+						</div>
+						<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+							<label for="region_filter">Region</label>
+							<select class="" id="region_filter" name="region_filter" multiple>
+								<option value=''>Select Region</option>
+							</select>
+						</div>
+						<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+							<button type="button" class="btn btn-primary" id="search_loan" style="margin-top:20px;">Search</button>
+						</div>
+					</div>
+					<hr>
 					<table id="closed_table" class="table custom-table">
 						<thead>
 							<tr>

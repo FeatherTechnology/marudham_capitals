@@ -8,6 +8,11 @@ if (isset($_SESSION["userid"])) {
 }
 
 $sub_area_list = getUserSubAreaList($connect, 'line');
+$where = [];
+$params = [];
+$branch   = $_POST['branch'] ?? [];
+$region   = $_POST['region'] ?? [];
+$loan_cat = $_POST['loan_cat'] ?? [];
 
 $column = array(
     'cp.id',
@@ -49,6 +54,34 @@ if ($userid == 1) {
     where ii.status = 0 and ii.cus_status = 20 and cp.area_confirm_subarea IN ($sub_area_list) "; //show only issued customers within the same lines of user. 
 }
 
+/* Branch Filter */
+if (!empty($branch)) {
+    $branch = array_map('intval', $branch);
+
+    $where[] = "bc.branch_id IN (" . implode(',', array_fill(0, count($branch), '?')) . ")";
+    $params = array_merge($params, $branch);
+}
+
+/* Region Filter */
+if (!empty($region)) {
+    $region = array_map('intval', $region);
+
+    $where[] = "alm.map_id IN (" . implode(',', array_fill(0, count($region), '?')) . ")";
+    $params = array_merge($params, $region);
+}
+
+/* Loan Category Filter */
+if (!empty($loan_cat)) {
+    $loan_cat = array_map('intval', $loan_cat);
+
+    $where[] = "v.loan_category IN (" . implode(',', array_fill(0, count($loan_cat), '?')) . ")";
+    $params = array_merge($params, $loan_cat);
+}
+
+/* Mapping restriction */
+if (!empty($where)) {
+    $query .= " AND " . implode(" AND ", $where);
+}
 
 if (isset($_POST['search']) && $_POST['search'] != "") {
 
@@ -71,14 +104,13 @@ if ($_POST['length'] != -1) {
 }
 
 $statement = $connect->prepare($query);
-
-$statement->execute();
+$statement->execute($params);
 
 $number_filter_row = $statement->rowCount();
 
 $statement = $connect->prepare($query . $query1);
 
-$statement->execute();
+$statement->execute($params);
 
 $result = $statement->fetchAll();
 

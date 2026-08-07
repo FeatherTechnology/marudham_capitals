@@ -65,6 +65,30 @@ if (sizeof($getUser) > 0) {
 						}
 					}
 					?>
+					<div class="row">
+						<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+							<label for="branch_filter">Branch</label>
+							<select class="" id="branch_filter" name="branch_filter" multiple>
+								<option value=''>Select Branch name</option>
+							</select>
+						</div>
+						<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+							<label for="sector_filter">Sector</label>
+							<select class="" id="sector_filter" name="sector_filter" multiple>
+								<option value=''>Select Sector</option>
+							</select>
+						</div>
+						<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+							<label for="loan_cat_filter">Loan Category</label>
+							<select class="" id="loan_cat_filter" name="loan_cat_filter" multiple>
+								<option value=''>Select Loan Category</option>
+							</select>
+						</div>
+						<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+							<button type="button" class="btn btn-primary" id="search_loan" style="margin-top:20px;">Search</button>
+						</div>
+					</div>
+					<hr>
 					<table id="acknowledge_table" class="table custom-table">
 						<thead>
 							<tr>
