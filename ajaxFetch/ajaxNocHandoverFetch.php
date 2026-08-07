@@ -9,6 +9,9 @@ $userid = $_SESSION["userid"] ?? 0;
 
 $where = [];
 $params = [];
+$branch   = $_POST['branch'] ?? [];
+$sector   = $_POST['sector'] ?? [];
+$loan_cat = $_POST['loan_cat'] ?? [];
 
 /* =========================================================
    USER ACCESS FILTER
@@ -36,6 +39,16 @@ if ($userid != 1) {
     if (!isset($accessMap[$accessType])) {
         echo json_encode([]);
         exit;
+    }
+
+    if ($accessType == 3 && !empty($sector)) {
+        $condition =  "STRAIGHT_JOIN area_duefollowup_mapping_area adfma ON adfma.area_id = ac.area_id
+                       STRAIGHT_JOIN area_duefollowup_mapping adfm ON adfm.map_id = adfma.duefollowup_map_id";
+    } else if ($accessType == 1  && !empty($sector)) {
+        $condition =  "JOIN area_group_mapping_sub_area agmsa ON agmsa.sub_area_id = sa.sub_area_id
+                       JOIN area_group_mapping agm ON agm.map_id = agmsa.group_map_id";
+    } else {
+        $condition = "";
     }
 
     [$source, $table, $mapCol, $selCol, $filterCol] = $accessMap[$accessType];
@@ -94,6 +107,48 @@ if (!empty($search)) {
         $params[] = "%$search%";
     }
 }
+/* Branch Filter */
+if (!empty($branch)) {
+    $branch = array_map('intval', $branch);
+
+    $where[] = "bc.branch_id IN (" . implode(',', array_fill(0, count($branch), '?')) . ")";
+    $params = array_merge($params, $branch);
+}
+
+/* Sector / Region / Zone Filter */
+if (!empty($sector)) {
+
+    $sector = array_map('intval', $sector);
+    switch ($accessType) {
+        // Sector
+        case 1:
+            $where[] = "agm.map_id IN (" . implode(',', array_fill(0, count($sector), '?')) . ")";
+            break;
+        // Region
+        case 2:
+            $where[] = "alm.map_id IN (" . implode(',', array_fill(0, count($sector), '?')) . ")";
+            break;
+        // Zone
+        case 3:
+            $where[] = "adfm.map_id IN (" . implode(',', array_fill(0, count($sector), '?')) . ")";
+            break;
+        default:
+            $where[] = "agm.map_id IN (" . implode(',', array_fill(0, count($sector), '?')) . ")";
+            break;
+    }
+
+
+    $params = array_merge($params, $sector);
+}
+
+/* Loan Category Filter */
+if (!empty($loan_cat)) {
+    $loan_cat = array_map('intval', $loan_cat);
+
+    $where[] = "iv.loan_category IN (" . implode(',', array_fill(0, count($loan_cat), '?')) . ")";
+    $params = array_merge($params, $loan_cat);
+}
+
 
 /* =========================================================
    WHERE
@@ -209,7 +264,7 @@ JOIN area_line_mapping alm
 
 JOIN branch_creation bc
     ON alm.branch_id = bc.branch_id
-
+$condition
 JOIN loan_category_creation lcc
     ON lcc.loan_category_creation_id = iv.loan_category
 
@@ -271,7 +326,7 @@ SELECT COUNT(*) FROM (
 
     JOIN area_line_mapping alm
         ON alm.map_id = almsa.line_map_id
-
+    $condition
     JOIN branch_creation bc
         ON alm.branch_id = bc.branch_id
 
@@ -336,7 +391,6 @@ foreach ($result as $row) {
                 Handover
             </a>
         ";
-
     } else {
 
         $action .= "
@@ -388,4 +442,3 @@ echo json_encode([
 ]);
 
 $connect = null;
-?>

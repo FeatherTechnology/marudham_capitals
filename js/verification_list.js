@@ -1,4 +1,22 @@
-// Document is ready
+// Branch Multi select initialization
+const branchChoices = new Choices('#branch_filter', {
+    removeItemButton: true,
+    noChoicesText: 'No branches available',
+    allowHTML: true,
+});
+// Sector Multi select initialization
+const sectorChoices = new Choices('#sector_filter', {
+    removeItemButton: true,
+    noChoicesText: 'No sector available',
+    allowHTML: true,
+});
+//Loan Category Multi select initialization
+const loan_category = new Choices('#loan_cat_filter', {
+    removeItemButton: true,
+    noChoicesText: 'Select Loan Category',
+    allowHTML: true
+});
+
 $(document).ready(function () {
     $('.closeModal').click(function () {
         $('#cusHistoryTable tbody').empty();
@@ -91,9 +109,29 @@ $(document).ready(function () {
         $("#addLoanFollow").find(".modal-body span").not('.required').hide();
     });
 
+    // Search Button Click Event
+    $('#search_loan').on('click', function () {
+        let branch = $("#branch_filter").val();
+        let sector = $("#sector_filter").val();
+        let loan_cat = $("#loan_cat_filter").val();
+        if ((!branch || branch.length === 0) && (!sector || sector.length === 0) && (!loan_cat || loan_cat.length === 0)) {
+            swalError('Warning', 'Please select at least one filter');
+            return;
+        }
+        $('#verification_table').DataTable().ajax.reload();
+    });
+    
+     $('#branch_filter').on('change', function () {
+        let branch = $(this).val();
+
+        getSectorDropdown('verification', branch);
+    });
 });//document ready end
 
 $(function () {
+    getBranchDropdown();
+    getSectorDropdown('verification');
+    getLoanCatName('verification');
     loadNotifications();
 })
 
@@ -179,4 +217,63 @@ function swarlSuccessAlert(response, callback) {
             callback();
         }
     });
+}
+
+function getBranchDropdown() {
+    $.post('common_files/user_mapped_branches.php', {}, function (response) {
+        branchChoices.clearStore();
+        $.each(response, function (index, val) {
+            let items = [
+                {
+                    value: val.branch_id,
+                    label: val.branch_name,
+                }
+            ];
+            branchChoices.setChoices(items); // Add choices
+
+        });
+    }, 'json');
+}
+
+function getSectorDropdown(module, branch = []) {
+    sectorChoices.clearStore();
+    $.ajax({
+        url: 'common_files/get_sector_name.php',
+        type: 'POST',
+        data: {
+            module: module,
+            branch: branch
+        },
+        dataType: 'json',
+        success: function (response) {
+
+            let items = [];
+
+            $.each(response, function (i, val) {
+                items.push({
+                    value: val.id,
+                    label: val.name
+                });
+            });
+
+            sectorChoices.setChoices(items, 'value', 'label', true);
+        }
+    });
+}
+
+
+function getLoanCatName(module) {
+    $.post('common_files/get_loan_category.php', { module: module }, function (response) {
+        loan_category.clearStore();
+        let items = [];
+        $.each(response, function (index, val) {
+            items.push({
+                value: val.loan_category_creation_id,
+                label: val.loan_category_creation_name,
+            });
+        });
+        loan_category.setChoices(items, 'value', 'label', true);
+    },
+        'json'
+    );
 }

@@ -582,8 +582,15 @@
                 'ajax': {
                     'url': 'ajaxFetch/ajaxRequestFetch.php',
                     'data': function(data) {
-                        var search = $('input[type=search]').val();
-                        data.search = search;
+                       let searchValue = data.search.value;
+				            if (!searchValue) {
+					           searchValue = $('input[type=search]').val();
+				             }
+				          data.search = searchValue;
+                     // Pass filters
+                          data.branch = $('#branch_filter').val();
+                          data.sector = $('#sector_filter').val();
+                          data.loan_cat = $('#loan_cat_filter').val();
                     }
                 },
                 dom: 'lBfrtip',
@@ -627,8 +634,15 @@
                 'ajax': {
                     'url': 'ajaxFetch/ajaxVerificationFetch.php',
                     'data': function(data) {
-                        var search = $('input[type=search]').val();
-                        data.search = search;
+                       let searchValue = data.search.value;
+				            if (!searchValue) {
+					           searchValue = $('input[type=search]').val();
+				             }
+				          data.search = searchValue;
+                        // Pass filters
+                          data.branch = $('#branch_filter').val();
+                          data.sector = $('#sector_filter').val();
+                          data.loan_cat = $('#loan_cat_filter').val();
                     }
                 },
                 dom: 'lBfrtip',
@@ -672,8 +686,15 @@
                 'ajax': {
                     'url': 'ajaxFetch/ajaxApprovalFetch.php',
                     'data': function(data) {
-                        var search = $('input[type=search]').val();
-                        data.search = search;
+                          let searchValue = data.search.value;
+				            if (!searchValue) {
+					           searchValue = $('input[type=search]').val();
+				             }
+				          data.search = searchValue;
+                        // Pass filters
+                          data.branch = $('#branch_filter').val();
+                          data.sector = $('#sector_filter').val();
+                          data.loan_cat = $('#loan_cat_filter').val();
                     }
                 },
                 dom: 'lBfrtip',
@@ -717,8 +738,15 @@
                 'ajax': {
                     'url': 'ajaxFetch/ajaxAcknowledgementFetch.php',
                     'data': function(data) {
-                        var search = $('input[type=search]').val();
-                        data.search = search;
+                         let searchValue = data.search.value;
+				            if (!searchValue) {
+					           searchValue = $('input[type=search]').val();
+				             }
+				          data.search = searchValue;
+                        // Pass filters
+                          data.branch = $('#branch_filter').val();
+                          data.sector = $('#sector_filter').val();
+                          data.loan_cat = $('#loan_cat_filter').val();
                     }
                 },
                 dom: 'lBfrtip',
@@ -762,8 +790,15 @@
                 'ajax': {
                     'url': 'ajaxFetch/ajaxLoanIssueFetch.php',
                     'data': function(data) {
-                        var search = $('input[type=search]').val();
-                        data.search = search;
+                           let searchValue = data.search.value;
+				            if (!searchValue) {
+					           searchValue = $('input[type=search]').val();
+				             }
+				          data.search = searchValue;
+                        // Pass filters
+                          data.branch = $('#branch_filter').val();
+                          data.sector = $('#sector_filter').val();
+                          data.loan_cat = $('#loan_cat_filter').val();
                     }
                 },
                 dom: 'lBfrtip',
@@ -853,8 +888,14 @@
                 'ajax': {
                     'url': 'ajaxFetch/ajaxClosedFetch.php',
                     'data': function(data) {
-                        var search = $('input[type=search]').val();
-                        data.search = search;
+                       let searchValue = data.search.value;
+				            if (!searchValue) {
+					           searchValue = $('input[type=search]').val();
+				             }
+				          data.search = searchValue;
+                        // Pass filters
+                          data.branch = $('#branch_filter').val();
+                          data.region = $('#region_filter').val();
                     }
                 },
                 dom: 'lBfrtip',
@@ -898,8 +939,14 @@
                 'ajax': {
                     'url': 'ajaxFetch/ajaxNocFetch.php',
                     'data': function(data) {
-                        var search = $('input[type=search]').val();
-                        data.search = search;
+                        let searchValue = data.search.value;
+				            if (!searchValue) {
+					           searchValue = $('input[type=search]').val();
+				             }
+				          data.search = searchValue;
+                        // Pass filters
+                          data.branch = $('#branch_filter').val();
+                          data.sector = $('#sector_filter').val();
                     }
                 },
                 dom: 'lBfrtip',
@@ -943,8 +990,15 @@
                 'ajax': {
                     'url': 'ajaxFetch/ajaxNocHandoverFetch.php',
                     'data': function(data) {
-                        var search = $('input[type=search]').val();
-                        data.search = search;
+                    let searchValue = data.search.value;
+				            if (!searchValue) {
+					           searchValue = $('input[type=search]').val();
+				             }
+				          data.search = searchValue;
+                        // Pass filters
+                          data.branch = $('#branch_filter').val();
+                          data.sector = $('#sector_filter').val();
+                          data.loan_cat = $('#loan_cat_filter').val();
                     }
                 },
                 dom: 'lBfrtip',
