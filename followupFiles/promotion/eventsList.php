@@ -26,15 +26,13 @@ if ($user_id != '') {
     if ($role_type == 7 || $role_type == 3) {
         $sql = $connect->query("
         SELECT 
-        e.id,
-            e.event_name,
+            e.id,
             MIN(ep.event_created_date) AS created_date, 
-            GROUP_CONCAT(DISTINCT al.area_name ORDER BY al.area_name SEPARATOR ', ') AS area_names,
+            al.area_name AS area_names,
             COUNT(DISTINCT ep.id) AS total_customer
         FROM events e
         JOIN event_promotion ep ON ep.event_id = e.id
-        JOIN event_areas ea ON ea.event_id = e.id
-        JOIN area_list_creation al ON al.area_id = ea.event_area
+        JOIN area_list_creation al ON al.area_id = e.event_name
         WHERE 1
         GROUP BY e.id
         ORDER BY e.id DESC; 
@@ -42,15 +40,13 @@ if ($user_id != '') {
     } else {
         $sql = $connect->query("
         SELECT 
-          e.id,
-            e.event_name,
+            e.id,
             MIN(ep.event_created_date) AS created_date, 
-            GROUP_CONCAT(DISTINCT al.area_name ORDER BY al.area_name SEPARATOR ', ') AS area_names,
+            al.area_name AS area_names,
             COUNT(DISTINCT ep.id) AS total_customer
         FROM events e
         JOIN event_promotion ep ON ep.event_id = e.id
-        JOIN event_areas ea ON ea.event_id = e.id
-        JOIN area_list_creation al ON al.area_id = ea.event_area
+        JOIN area_list_creation al ON al.area_id = e.event_name
         JOIN area_group_mapping_area agma ON agma.area_id = al.area_id
         JOIN area_group_mapping agm ON agm.map_id = agma.group_map_id
         JOIN area_line_mapping_area alma ON alma.area_id = al.area_id
@@ -71,7 +67,6 @@ if ($user_id != '') {
             $rows[] = [
                 $i++,
                 $formattedDate,
-                $row['event_name'],
                 $row['area_names'],
                 $row['total_customer'],
                 $action

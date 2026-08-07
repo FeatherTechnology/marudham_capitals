@@ -210,7 +210,7 @@ $(document).ready(function () {
             authorize : $("#authorize").val()
         }
 
-        if (famData.famname != "" && famData.relationship != "" && famData.relation_Mobile != "" && famData.relation_Mobile.length === 10 && famData.relation_dob != "" && famData.relation_live_deceased != "") {
+        if (famData.famname != "" && famData.relationship != "" && famData.relation_Mobile != "" && famData.relation_Mobile.length === 10 && famData.relation_live_deceased != "") {
             $.ajax({
                 url: 'updateFile/update_family_submit.php',
                 type: 'POST',
@@ -280,11 +280,11 @@ $(document).ready(function () {
                 $('#fammobileCheck').hide();
             }
             
-            if (famData.relation_dob == "") {
-                $("#famdobCheck").show();
-            } else {
-                $("#famdobCheck").hide();
-            }
+            // if (famData.relation_dob == "") {
+            //     $("#famdobCheck").show();
+            // } else {
+            //     $("#famdobCheck").hide();
+            // }
 
             if (famData.relation_live_deceased == "") {
                 $("#famLiveDeceasedCheck").show();
@@ -325,6 +325,9 @@ $(document).ready(function () {
                 else {
                     $('#remark, #address').hide();
                 }
+
+                (result["aadhar"] !='') ? $("#relation_aadhar").prop('readonly', true) : $("#relation_aadhar").prop('readonly', false);
+                
                 $("#famnameCheck, #famrelationCheck, #famremarkCheck, #famaddressCheck, #famdobCheck, #famageCheck, #famLiveDeceasedCheck, #famaadharCheck, #fammobileCheck, #famoccCheck, #famincomeCheck").hide();
             }
         });
@@ -2234,6 +2237,7 @@ function resetFamInfo() {
         success: function (html) {
             $("#updatedFamTable").html(html);
 
+            $("#relation_aadhar").prop('readonly', false);
             $("#famname, #relationship, #authorize, #other_remark, #other_address, #relation_dob, #relation_age, #relation_live_deceased, #relation_aadhar, #relation_Mobile, #relation_Occupation, #relation_Income, #relation_Blood, #famID").val('');
             $("#famnameCheck, #famrelationCheck, #famremarkCheck, #famaddressCheck, #famdobCheck, #famageCheck, #famLiveDeceasedCheck, #famaadharCheck, #fammobileCheck, #famoccCheck, #famincomeCheck").hide();
         }

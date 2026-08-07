@@ -42,7 +42,7 @@ if ($user_id && empty(trim($area_id))) {
             $placeholders = implode(',', array_fill(0, count($ids), '?'));
 
             // ✅ Single optimized query
-            $sql = " SELECT DISTINCT a.area_id, a.area_name FROM $table m JOIN area_list_creation a ON a.area_id = m.area_id WHERE m.$col IN ($placeholders) ORDER BY a.area_name ASC";
+            $sql = " SELECT DISTINCT a.area_id, a.area_name, e.event_name FROM $table m JOIN area_list_creation a ON a.area_id = m.area_id LEFT JOIN events e ON a.area_id = e.event_name WHERE m.$col IN ($placeholders) ORDER BY a.area_name ASC";
             $stmt = $connect->prepare($sql);
             $stmt->execute($ids);
 

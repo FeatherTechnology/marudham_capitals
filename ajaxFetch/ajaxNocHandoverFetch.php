@@ -217,7 +217,7 @@ if ($_POST['length'] != -1) {
 
 $query = "
 SELECT
-    MAX(cs.created_date) AS latest_date,
+    cs.created_date AS latest_date,
     cs.req_id,
     cr.cus_id,
     cr.autogen_cus_id,
@@ -270,7 +270,6 @@ JOIN loan_category_creation lcc
 
 LEFT JOIN noc n
     ON n.req_id = cs.req_id
-    AND n.cus_status = 23
 
 LEFT JOIN user u
     ON u.user_id = n.receive_by
@@ -279,8 +278,6 @@ WHERE
     cs.cus_sts = 23
 
     $whereSql
-    
-GROUP BY ii.req_id
 
 $orderBy
 

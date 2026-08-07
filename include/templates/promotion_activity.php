@@ -335,7 +335,6 @@ if (sizeof($getUser) > 0) {
 							<thead>
 								<th>S.No</th>
 								<th>Date</th>
-								<th>Event Name</th>
 								<th>Area Name</th>
 								<th>Total Customer</th>
 								<th>Action</th>
@@ -358,21 +357,16 @@ if (sizeof($getUser) > 0) {
 						<div class="row">
 							<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
 								<div class="form-group">
-									<label for="disabledInput">Event Name</label>&nbsp;<span class="required">*</span>
+									<label for="area_name">Area Name</label><span class="required">&nbsp;*</span>
 									<input type="hidden" name="event_area_id" id="event_area_id">
 									<input type="hidden" name="event_hidden_id" id="event_hidden_id">
-									<input type="text" class="form-control" id="event_name" name="event_name" value="" placeholder="Enter Event Name">
-								</div>
-							</div>
-							<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
-								<div class="form-group">
-									<label for="disabledInput">Area Name</label><span class="required">&nbsp;*</span>
-									<select type="text" class="form-control" id="area_name" name="area_name" multiple>
+									<select type="text" class="form-control" id="area_name" name="area_name">
 										<option value="">Select Area Name</option>
 									</select>
 								</div>
 							</div>
-						</div><br><br><br>
+						</div><br>
+
 						<div class="row">
 							<div class="col-12">
 								<table id="moduleTable" class="table custom-table">
@@ -381,7 +375,6 @@ if (sizeof($getUser) > 0) {
 											<th>Date</th>
 											<th>Name</th>
 											<th>Mobile</th>
-											<th>Area</th>
 											<th>Sub Area</th>
 											<th>User</th>
 											<th colspan="2">Action</th>
@@ -390,21 +383,19 @@ if (sizeof($getUser) > 0) {
 									<tbody>
 										<tr>
 											<td class="current_date"></td>
-											<td><input type="text" name="cus_name" id="cus_name" class="form-control cus_name" value="" placeholder="Enter Customer Name"></td>
+											<td>
+												<input type="text" name="cus_name" id="cus_name" class="form-control cus_name" value="" placeholder="Enter Customer Name">
+											</td>
 											<td>
 												<input type="text" class="form-control cus_mobile_num" id="cus_mobile_num" name="cus_mobile_num" value='' placeholder="Enter Mobile Number" oninput="validateInputNumber(this,'withOutDot')">
 											</td>
-
-											<td><select type="text" class="form-control cus_area_name" id="cus_area_name" name="area_name">
-													<option value="">Select Area Name</option>
-												</select></td>
-
-											<td><select type="text" class="form-control sub_area_name" id="sub_area_name" name="sub_area_name">
+											<td>
+												<select type="text" class="form-control sub_area_name" id="sub_area_name" name="sub_area_name">
 													<option value="">Select Sub Area Name</option>
-												</select></td>
+												</select>
+											</td>
 											<td class="user"></td>
 											<td>
-
 												<button type="button" id="add_event_mem" name="add_event_mem" value="Submit" class="btn btn-primary add_event_mem">Add</button>
 											</td>
 											<td>

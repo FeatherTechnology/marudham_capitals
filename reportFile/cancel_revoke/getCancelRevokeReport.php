@@ -16,7 +16,7 @@ if ($userid != 1) {
     $report_access = $rowuser['report_access'];
 
     if ($report_access == '1') { //Report access individual.
-        $user_based = "AND req.update_login_id = '$userid' ";
+        $user_based = "AND (req.update_login_id = '$userid' || req.insert_login_id = '$userid') ";
     }
 }
 
