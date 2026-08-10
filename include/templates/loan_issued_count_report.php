@@ -1,9 +1,7 @@
 <style>
-
-#issue_count_table thead th {
-    border: 1px solid #ffffff;
-}
-
+	#issue_count_table thead th {
+		border: 1px solid #ffffff;
+	}
 </style>
 
 <link rel="stylesheet" type="text/css" href="css/ledger_report.css">
@@ -24,27 +22,37 @@
 				<input type="date" id='from_date' name='from_date' class="toggle-button" value=''>
 				<input type="date" id='to_date' name='to_date' class="toggle-button" value=''>
 
-                <select class="toggle-button" name='type' id='type'>
-					<option value='0'>Select Type</option>
+				<select class="toggle-button" name='type' id='type'>
+					<option value=''>Select Type</option>
 					<option value='1'>User</option>
 					<option value='2'>Sector</option>
+					<option value='5'>Department</option>
+					<option value='6'>Team</option>
 				</select>
 
 				<select class="toggle-button hidefield" id='user_type' name='user_type'>
-                    <option value=''>Select User Type</option>
-                    <option value='1'>All</option>
-                    <option value='2'>Active</option>
-                    <option value='3'>In Active</option>
-                </select>
+					<option value=''>Select User Type</option>
+					<option value='1'>All</option>
+					<option value='2'>Active</option>
+					<option value='3'>In Active</option>
+				</select>
 
 				<select class="toggle-button hidefield" id='by_user' name='by_user'>
 					<option value=''>Select User</option>
 				</select>
-				
-                <select class="form-control hidefield" id="map_name" name="map_name" multiple>
-                    <option value="">Select Sector</option>
-                </select>&nbsp;&nbsp;
-	
+
+				<select class="form-control hidefield" id="map_name" name="map_name" multiple>
+					<option value="">Select Sector</option>
+				</select>
+
+				<select class="toggle-button hidefield" id='department' name='department'>
+					<option value=''>Select Department</option>
+				</select>
+
+				<select class="toggle-button hidefield" id='team' name='team'>
+					<option value=''>Select Team</option>
+				</select> &nbsp;&nbsp;
+
 				<select class="form-control hidefield" id="loan_category" name="loan_category" multiple>
 					<option value="">Select Loan Category</option>
 				</select>
@@ -57,7 +65,7 @@
 					<div class="card-header">Loan Issued Count Report</div>
 					<div class="card-body">
 						<div id="loan_issued_count_report_table_div" class="table-divs" style="overflow-x: auto;">
-							
+
 							<table id="issue_count_table" class="table custom-table">
 								<thead>
 									<tr>
@@ -67,7 +75,7 @@
 										<th rowspan="2">Agent Name</th>
 										<th colspan="6">Issued</th>
 										<th colspan="6">Status</th>
-										
+
 									</tr>
 									<tr>
 										<th>New</th>
@@ -87,7 +95,7 @@
 								<tbody></tbody>
 								<tfoot></tfoot>
 							</table>
-							
+
 						</div>
 					</div>
 				</div>

@@ -1,224 +1,320 @@
-const map_name = new Choices('#map_name', {
-    removeItemButton: true,
-    noChoicesText: 'Select Sector',
-    allowHTML: true
+const map_name = new Choices("#map_name", {
+  removeItemButton: true,
+  noChoicesText: "Select Sector",
+  allowHTML: true,
 });
 
-const loanCategory = new Choices('#loan_category', {
-    removeItemButton: true,
-    noChoicesText: 'Select Category',
-    allowHTML: true
+const loanCategory = new Choices("#loan_category", {
+  removeItemButton: true,
+  noChoicesText: "Select Category",
+  allowHTML: true,
 });
 
-$('#map_name, #loan_category').closest('.choices').hide();
+$("#map_name, #loan_category").closest(".choices").hide();
 
 $(document).ready(function () {
+  // 🔹 Date validation
+  $("#from_date").change(function () {
+    const fromDate = $(this).val();
+    const toDate = $("#to_date").val();
+    $("#to_date").attr("min", fromDate);
 
-    // 🔹 Date validation
-    $('#from_date').change(function () {
-        const fromDate = $(this).val();
-        const toDate = $('#to_date').val();
-        $('#to_date').attr('min', fromDate);
+    if (toDate && fromDate > toDate) {
+      $("#to_date").val("");
+    }
+  });
 
-        if (toDate && fromDate > toDate) {
-            $('#to_date').val('');
-        }
-    });
+  $("#type").change(function (e) {
+    let type = $(this).val();
+    $("#user_type, #by_user, #department, #team").val("").hide();
+    $("#map_name, #loan_category").closest(".choices").hide();
+    map_name.clearStore();
 
-    $('#type').change(function (e) {
-        let type = $(this).val();
-        $('#user_type, #by_user').val('').hide();
-        $('#map_name, #loan_category').closest('.choices').hide();
-        map_name.clearStore();
-        
-        $('#approval_count_table').DataTable().destroy();
-        $('#approval_count_table tbody').empty();
-        $('#approval_count_table tfoot').empty();
-        
-        if(type == '1'){ 
-            $('#user_type, #by_user').val('').show();
-            $('#by_user').empty().append("<option value=''>Select User</option>");
+    if ($.fn.DataTable.isDataTable("#approval_count_table")) {
+      $("#approval_count_table").DataTable().clear().destroy();
 
-        } else if(type == '2' || type == '3' || type == '4') { //sector - group
-            $('#map_name, #loan_category').closest('.choices').show();
-            getUserMappedDetails(type); //to Mapping details. 
-            getUserLoanCategories(); //to get Loan Category list.    
-        }
-    });
+      $("#approval_count_table tbody").empty(); // Remove old rows
+      $("#approval_count_table tfoot").empty(); // Remove old footer
+    }
 
-    $('#user_type').change(function () {
-        let userType = $('#user_type').val();
-        $('#by_user').empty().append("<option value=''>Select User</option>");  
+    if (type == "1") {
+      $("#user_type, #by_user").val("").show();
+      $("#by_user").empty().append("<option value=''>Select User</option>");
+    } else if (type == "2" || type == "3" || type == "4") {
+      //sector - group, Region - Line, Zone - Follow up
+      $("#map_name, #loan_category").closest(".choices").show();
+      getUserMappedDetails(type); //to Mapping details.
+      getUserLoanCategories(); //to get Loan Category list.
+    } else if (type == "5" || type == "6") {
+      // Department / Team
+      $("#loan_category").closest(".choices").show();
+      $(type == "5" ? "#department" : "#team").show();
 
-        if(userType != ''){
-            getUserNames();
-        }
-    });
+      getUserLoanCategories(); // Get Loan Category list
+      getDepartmentTeamNames(); // Get Department & Team list
+    }
+  });
 
-    // 🔹 Reset / Show Button Click
-    $('#reset_btn').click(function () {
+  $("#user_type").change(function () {
+    let userType = $("#user_type").val();
+    $("#by_user").empty().append("<option value=''>Select User</option>");
 
-        let from_date = $('#from_date').val();
-        let to_date = $('#to_date').val();
-        let selectedType = $('#type').val();
-        let user_type = $('#user_type').val();
-        let selected_user = $('#by_user').val();
-        let selectedVal = '';
-        let loanCatVal = '';
+    if (userType != "") {
+      getUserNames();
+    }
+  });
 
-        if(selectedType == '1'){ //user
-            selectedVal = '1'; //dummy
-            loanCatVal = '1'; //dummy
-            
-        } else if(selectedType == '2' || selectedType == '3' || selectedType == '4'){ //sector - group //Region - Line //Zone - Followup
-            selectedVal = $('#map_name').val();
-            loanCatVal = $('#loan_category').val();
-        }
+  // 🔹 Reset / Show Button Click
+  $("#reset_btn").click(function () {
+    let from_date = $("#from_date").val();
+    let to_date = $("#to_date").val();
+    let selectedType = $("#type").val();
+    let user_type = $("#user_type").val();
+    let selected_user = $("#by_user").val();
 
-        if(!from_date || !to_date || !selectedVal || !loanCatVal || (selectedType == '1' && (!user_type || !selected_user))){
-            swalError('Warning', `All Fields are required.`);
-            return;
-        }
+    let selectedVal = "1";
+    let loanCatVal = "1";
 
-        // Load data
-        approvalReportCount(from_date, to_date, selectedType, user_type, selected_user, selectedVal, loanCatVal);
-    });
+    if (["2", "3", "4"].includes(selectedType)) {
+      selectedVal = $("#map_name").val();
+      loanCatVal = $("#loan_category").val();
+    } else if (selectedType === "5") {
+      selectedVal = $("#department").val();
+      loanCatVal = $("#loan_category").val();
+    } else if (selectedType === "6") {
+      selectedVal = $("#team").val();
+      loanCatVal = $("#loan_category").val();
+    }
 
+    if (!from_date || !to_date || !selectedType) {
+      swalError("Warning", "From Date, To Date, and Type are required.");
+      return;
+    }
+
+    if (selectedType === "1" && (!user_type || !selected_user)) {
+      swalError("Warning", "User Type and User are required.");
+      return;
+    }
+
+    if (
+      ["2", "3", "4"].includes(selectedType) &&
+      (!selectedVal || !loanCatVal)
+    ) {
+      swalError("Warning", "Mapping and Loan Category are required.");
+      return;
+    }
+
+    if (selectedType === "5" && (!$("#department").val() || !loanCatVal)) {
+      swalError("Warning", "Department and Loan Category are required.");
+      return;
+    }
+
+    if (selectedType === "6" && (!$("#team").val() || !loanCatVal)) {
+      swalError("Warning", "Team and Loan Category are required.");
+      return;
+    }
+
+    approvalReportCount(
+      from_date,
+      to_date,
+      selectedType,
+      user_type,
+      selected_user,
+      selectedVal,
+      loanCatVal,
+    );
+  });
 });
 
 function getUserNames() {
-    let user_type = $('#user_type').val();
+  let user_type = $("#user_type").val();
 
-    $.post('reportFile/due_followup_count_report/getDuefollowupUser.php', { screen : 5, user_type: user_type }, function (response) {
-        $('#by_user').empty()
+  $.post(
+    "reportFile/due_followup_count_report/getDuefollowupUser.php",
+    { screen: 5, user_type: user_type },
+    function (response) {
+      $("#by_user")
+        .empty()
         .append("<option value=''>Select User</option>")
         .append("<option value='all'>All</option>");
 
-        $.each(response, function (i, val) {
-            $('#by_user').append("<option value='" + val.user_id + "'>" + val.username + "</option>");
-        });
-    }, 'json');
+      $.each(response, function (i, val) {
+        $("#by_user").append(
+          "<option value='" + val.user_id + "'>" + val.username + "</option>",
+        );
+      });
+    },
+    "json",
+  );
 }
 
-function approvalReportCount(from_date, to_date, selectedType, user_type, user_id, selectedVal, loanCatVal) {
+function getDepartmentTeamNames() {
+  let type = $("#type").val();
 
-    $.ajax({
-        url: 'reportFile/approval_count_report/approvalCountReport.php',
-        type: 'POST',
-        data: { from_date, to_date, selectedType, user_type, user_id, selectedVal, loanCatVal },
-        dataType: 'json',
-        success: function (res) {
+  let target = type == "5" ? "#department" : "#team";
 
-            // Handle empty response
-            if (!res.data || res.data.length === 0) {
-                if ($.fn.DataTable.isDataTable('#approval_count_table')) {
-                    $('#approval_count_table').DataTable().clear().draw();
-                }
-                return;
-            }
+  $(target).empty();
 
-            const totalRow = res.data[res.data.length - 1];
-            const tableData = res.data.slice(0, -1);
+  $.post(
+    "reportFile/promotion_activity/department_team_list.php",
+    { type: type },
+    function (response) {
+      let optionText = type == "5" ? "Select Department" : "Select Team";
 
-            // Destroy existing table once
-            if ($.fn.DataTable.isDataTable('#approval_count_table')) {
-                $('#approval_count_table').DataTable().destroy();
-            }
+      $(target).append("<option value=''>" + optionText + "</option>");
 
-            const columns = [
-                /* BASIC */
-                { data: 'sno' },
-                {
-                    data: 'fullname',
-                    title: (selectedType == '2') ? 'Sector Name' : 'User Name'
-                },
-                { data: 'loan_category' },
-                /* PREVIOUS IN PROCESS */
-                { data: 'previous.new' },
-                { data: 'previous.renewal' },
-                { data: 'previous.reactive' },
-                { data: 'previous.additional' },
-                { data: 'previous.existing_new' },
-                { data: 'previous.reloan' },
-                { data: 'previous.total', render: d => `<b>${d}</b>` },
+      $.each(response, function (index, val) {
+        $(target).append(
+          "<option value='" + val.id + "'>" + val.name + "</option>",
+        );
+      });
+    },
+    "json",
+  );
+}
 
-                /* Approval */
-                { data: 'approval.new' },
-                { data: 'approval.renewal' },
-                { data: 'approval.reactive' },
-                { data: 'approval.additional' },
-                { data: 'approval.existing_new' },
-                { data: 'approval.reloan' },
-                { data: 'approval.total', render: d => `<b>${d}</b>` },
+function approvalReportCount(
+  from_date,
+  to_date,
+  selectedType,
+  user_type,
+  user_id,
+  selectedVal,
+  loanCatVal,
+) {
+  $.ajax({
+    url: "reportFile/approval_count_report/approvalCountReport.php",
+    type: "POST",
+    data: {
+      from_date,
+      to_date,
+      selectedType,
+      user_type,
+      user_id,
+      selectedVal,
+      loanCatVal,
+    },
+    dataType: "json",
+    success: function (res) {
+      // Clear old footer before processing new response
+      $("#approval_count_table tfoot").empty();
 
-                /* CANCEL */
-                { data: 'cancel.new' },
-                { data: 'cancel.renewal' },
-                { data: 'cancel.reactive' },
-                { data: 'cancel.additional' },
-                { data: 'cancel.existing_new' },
-                { data: 'cancel.reloan' },
-                { data: 'cancel.total', render: d => `<b>${d}</b>` },
+      // Handle empty response
+      if (!res.data || res.data.length === 0) {
+        if ($.fn.DataTable.isDataTable("#approval_count_table")) {
+          $("#approval_count_table").DataTable().clear().draw();
+        }
+        return;
+      }
 
-                /* PROCESS */
-                { data: 'process.new' },
-                { data: 'process.renewal' },
-                { data: 'process.reactive' },
-                { data: 'process.additional' },
-                { data: 'process.existing_new' },
-                { data: 'process.reloan' },
-                { data: 'process.total', render: d => `<b>${d}</b>` },
+      const totalRow = res.data[res.data.length - 1];
+      const tableData = res.data.slice(0, -1);
 
-                /* ISSUED */
-                { data: 'issued.new' },
-                { data: 'issued.renewal' },
-                { data: 'issued.reactive' },
-                { data: 'issued.additional' },
-                { data: 'issued.existing_new' },
-                { data: 'issued.reloan' },
-                { data: 'issued.total', render: d => `<b>${d}</b>` },
-                /* STATUS */
-                { data: 'status.current' },
-                { data: 'status.pending' },
-                { data: 'status.od' },
-                { data: 'status.error' },
-                { data: 'status.legal' },
-                { data: 'status.total', render: d => `<b>${d}</b>` }
-            ];
+      // Destroy existing table once
+      if ($.fn.DataTable.isDataTable("#approval_count_table")) {
+        $("#approval_count_table").DataTable().destroy();
+      }
 
-            const approval_count_table = $('#approval_count_table').DataTable({
-                ...getStateSaveConfig('approval_count_table'),
-                data: tableData,
-                columns: columns,
-                dom: 'lBfrtip',
-                buttons: [
-                    {
-                        extend: 'excel',
-                        title: 'Approval_Count_Report',
-                        action: function (e, dt, button, config) {
-                            const file = curDateJs('Approval_count_table');
-                            config.title = file;
-                            config.filename = file;
-                            $.fn.dataTable.ext.buttons.excelHtml5.action.call(
-                                this, e, dt, button, config
-                            );
-                        }
-                    },
-                    { extend: 'colvis', collectionLayout: 'fixed four-column' }
-                ],
-                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
-                drawCallback: function () {
-                    searchFunction('approval_count_table');
-                    paginationFunction('approval_count_table');
-                }
-            });
+      const columns = [
+        /* BASIC */
+        { data: "sno" },
+        {
+          data: "fullname",
+          title: selectedType == "2" ? "Sector Name" : "User Name",
+        },
+        { data: "loan_category" },
+        /* PREVIOUS IN PROCESS */
+        { data: "previous.new" },
+        { data: "previous.renewal" },
+        { data: "previous.reactive" },
+        { data: "previous.additional" },
+        { data: "previous.existing_new" },
+        { data: "previous.reloan" },
+        { data: "previous.total", render: (d) => `<b>${d}</b>` },
 
+        /* Approval */
+        { data: "approval.new" },
+        { data: "approval.renewal" },
+        { data: "approval.reactive" },
+        { data: "approval.additional" },
+        { data: "approval.existing_new" },
+        { data: "approval.reloan" },
+        { data: "approval.total", render: (d) => `<b>${d}</b>` },
 
-            // Column visibility helper
-            initColVisFeatures(approval_count_table, 'approval_count_table');
+        /* CANCEL */
+        { data: "cancel.new" },
+        { data: "cancel.renewal" },
+        { data: "cancel.reactive" },
+        { data: "cancel.additional" },
+        { data: "cancel.existing_new" },
+        { data: "cancel.reloan" },
+        { data: "cancel.total", render: (d) => `<b>${d}</b>` },
 
-            // Footer totals
-            $('#approval_count_table tfoot').html(`
+        /* PROCESS */
+        { data: "process.new" },
+        { data: "process.renewal" },
+        { data: "process.reactive" },
+        { data: "process.additional" },
+        { data: "process.existing_new" },
+        { data: "process.reloan" },
+        { data: "process.total", render: (d) => `<b>${d}</b>` },
+
+        /* ISSUED */
+        { data: "issued.new" },
+        { data: "issued.renewal" },
+        { data: "issued.reactive" },
+        { data: "issued.additional" },
+        { data: "issued.existing_new" },
+        { data: "issued.reloan" },
+        { data: "issued.total", render: (d) => `<b>${d}</b>` },
+        /* STATUS */
+        { data: "status.current" },
+        { data: "status.pending" },
+        { data: "status.od" },
+        { data: "status.error" },
+        { data: "status.legal" },
+        { data: "status.total", render: (d) => `<b>${d}</b>` },
+      ];
+
+      const approval_count_table = $("#approval_count_table").DataTable({
+        ...getStateSaveConfig("approval_count_table"),
+        data: tableData,
+        columns: columns,
+        dom: "lBfrtip",
+        buttons: [
+          {
+            extend: "excel",
+            title: "Approval_Count_Report",
+            action: function (e, dt, button, config) {
+              const file = curDateJs("Approval_count_table");
+              config.title = file;
+              config.filename = file;
+              $.fn.dataTable.ext.buttons.excelHtml5.action.call(
+                this,
+                e,
+                dt,
+                button,
+                config,
+              );
+            },
+          },
+          { extend: "colvis", collectionLayout: "fixed four-column" },
+        ],
+        lengthMenu: [
+          [10, 25, 50, -1],
+          [10, 25, 50, "All"],
+        ],
+        drawCallback: function () {
+          searchFunction("approval_count_table");
+          paginationFunction("approval_count_table");
+        },
+      });
+
+      // Column visibility helper
+      initColVisFeatures(approval_count_table, "approval_count_table");
+
+      // Footer totals
+      $("#approval_count_table tfoot").html(`
                 <tr>
                     <td colspan="3"><b>Total</b></td>
                     <td>${totalRow.previous.new}</td>
@@ -269,8 +365,6 @@ function approvalReportCount(from_date, to_date, selectedType, user_type, user_i
                     <td><b>${totalRow.status.total}</b></td>
                 </tr>
             `);
-        }
-    });
+    },
+  });
 }
-
-

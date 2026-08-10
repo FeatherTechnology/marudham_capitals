@@ -18,30 +18,32 @@ if ($user_type == '2') {
 $selectedType = $_POST['selectedType'] ?? '';
 $selectedVal = $_POST['selectedVal'] ?? '';
 
-if(is_array($selectedVal)) {
-    $selectedVal = implode(',', $selectedVal);
-}
+$selectedVal = is_array($selectedVal) ? implode(',', $selectedVal) : $selectedVal;
 
 $loanCatVal = $_POST['loanCatVal'] ?? '';
 
-if(is_array($loanCatVal)) {
+if (is_array($loanCatVal)) {
     $loanCatVal = implode(',', $loanCatVal);
 }
 
-$joinTable ='';
+$joinTable = '';
 $condition = '';
-$condtn = '';
+$joinTable1 = '';
+$condition1 = '';
 
 if ($selectedType == '2') { //Sector
     $joinTable  = "  JOIN area_group_mapping_sub_area agmsa ON cp.area_confirm_subarea = agmsa.sub_area_id";
     $condition  = "AND agmsa.group_map_id IN ($selectedVal)";
+} elseif ($selectedType == '5' || $selectedType == '6') { // Department / Team
+    $joinTable1 = "JOIN staff_creation sc ON sc.staff_id = u.staff_id";
 
-    $condtn  = "WHERE loan_category_creation_id IN ($loanCatVal)";
-} 
+    $field = ($selectedType == '5') ? 'department' : 'team';
+    $condition1 = "AND sc.$field = '$selectedVal'";
+}
 // else if ($selectedType == '3') { //Region
 //     $joinTable = "  JOIN area_line_mapping_sub_area almsa ON cp.area_confirm_subarea = almsa.sub_area_id";
 //     $condition = "AND almsa.line_map_id IN ($selectedVal)";
-    
+
 // } else if ($selectedType == '4') { //Zone
 //     $joinTable = "  JOIN area_duefollowup_mapping_area adma ON cp.area_confirm_area = adma.area_id";
 //     $condition = "AND adma.duefollowup_map_id IN ($selectedVal)";
@@ -58,6 +60,7 @@ if ($user_id != 'all' && !empty($user_id)) {
     $stmt = $connect->prepare("SELECT DISTINCT u.user_id
         FROM document_track dtk
         LEFT JOIN user u ON dtk.insert_login_id = u.user_id
+        $joinTable1 $condition1
         WHERE dtk.insert_login_id != ''
         $where
     ");
@@ -79,7 +82,7 @@ if ($selectedType == '2' && !empty($selectedVal)) {
     // If Sector is selected, split selectedVal into an array for placeholders
     $valArray = explode(',', $selectedVal);
     $sectorPlaceholders = str_repeat('?,', count($valArray) - 1) . '?';
-    
+
     $stmt = $connect->prepare("
         SELECT map_id, group_name 
         FROM area_group_mapping 
@@ -100,7 +103,14 @@ if ($selectedType == '2' && !empty($selectedVal)) {
     $nameMap = $stmt->fetchAll(PDO::FETCH_KEY_PAIR); // structure: user_id => fullname
 }
 
-$loanCats = $connect->query("SELECT loan_category_creation_id, loan_category_creation_name FROM loan_category_creation $condtn")->fetchAll(PDO::FETCH_ASSOC);
+// Loan categories
+$query = "SELECT loan_category_creation_id, loan_category_creation_name FROM loan_category_creation";
+
+if ($selectedType !== '1') {
+    $query .= " WHERE loan_category_creation_id IN ($loanCatVal)";
+}
+
+$loanCats = $connect->query($query)->fetchAll(PDO::FETCH_ASSOC);
 
 // Initialize grand totals
 $grandTotals = [
@@ -120,20 +130,23 @@ $grandTotals = [
 
 /* =====================  COUNTERS ===================== */
 
-function getCustomerType($cus_type, $cus_exist_type) {
+function getCustomerType($cus_type, $cus_exist_type)
+{
     if (strtolower($cus_type) == 'new') return 'new';
-    
+
     $existType = strtolower(trim($cus_exist_type));
     $existType = str_replace(['re-active', 'existing-new'], ['reactive', 'existing_new'], $existType);
-    
-    return in_array($existType, ['additional', 'renewal', 'reactive', 'existing_new']) 
+
+    return in_array($existType, ['additional', 'renewal', 'reactive', 'existing_new'])
         ? $existType : 'existing_new';
 }
-function emptyTypeCounter() {
+function emptyTypeCounter()
+{
     return ['new' => 0, 'renewal' => 0, 'reactive' => 0, 'additional' => 0, 'existing_new' => 0, 'total' => 0];
 }
 
-function emptyStatusCounter() {
+function emptyStatusCounter()
+{
     return ['current' => 0, 'pending' => 0, 'od' => 0, 'error' => 0, 'legal' => 0, 'total' => 0];
 }
 
@@ -186,7 +199,7 @@ foreach ($nameMap as $targetId => $userName) {
             ];
 
             // Process current records  
-            foreach ($catData[$cat_id] as $r){
+            foreach ($catData[$cat_id] as $r) {
                 processRecord($r, $counters);
             }
 
@@ -226,20 +239,20 @@ foreach ($nameMap as $targetId => $userName) {
 
 /* ===================== PROCESS RECORD FUNCTION (DRY) ===================== */
 
-function processRecord($r, &$counters) {
-    
+function processRecord($r, &$counters)
+{
+
     $type = getCustomerType($r['cus_type'], $r['cus_exist_type']);
-    
+
     $counters['issued'][$type]++;
     $counters['issued']['total']++;
-        
-        // Status breakdown FIXED
+
+    // Status breakdown FIXED
     $sub = strtolower($r['sub_status']);
     if (isset($counters['status'][$sub])) {
         $counters['status'][$sub]++;
         $counters['status']['total']++;
     }
-
 }
 /* =====================  TOTALS ===================== */
 
@@ -278,4 +291,3 @@ $data[] = [
 ];
 
 echo json_encode(["data" => $data]);
-?>

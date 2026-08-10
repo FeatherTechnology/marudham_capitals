@@ -18,25 +18,29 @@ if ($user_type == '2') {
 $selectedType = $_POST['selectedType'] ?? '';
 $selectedVal = $_POST['selectedVal'] ?? '';
 
-if(is_array($selectedVal)) {
-    $selectedVal = implode(',', $selectedVal);
-}
+$selectedVal = is_array($selectedVal) ? implode(',', $selectedVal) : $selectedVal;
 
-$joinTable ='';
+$joinTable = '';
 $mapidcondition = '';
+$joinTable1 = '';
+$mapidcondition1 = '';
+
 
 if ($selectedType == '2') { //Sector
     $joinTable  = "  JOIN area_group_mapping_sub_area agmsa ON cr.sub_area = agmsa.sub_area_id";
     $mapidcondition  = "AND agmsa.group_map_id IN ($selectedVal)";
-
 } else if ($selectedType == '3') { //Region
     $joinTable = "  JOIN area_line_mapping_sub_area almsa ON cr.sub_area = almsa.sub_area_id";
     $mapidcondition = "AND almsa.line_map_id IN ($selectedVal)";
-    
 } else if ($selectedType == '4') { //Zone
     $joinTable = "  JOIN area_duefollowup_mapping_area adma ON cr.area = adma.area_id";
     $mapidcondition = "AND adma.duefollowup_map_id IN ($selectedVal)";
-} 
+} elseif ($selectedType == '5' || $selectedType == '6') { // Department / Team
+    $joinTable1 = "JOIN staff_creation sc ON sc.staff_id = u.staff_id";
+
+    $field = ($selectedType == '5') ? 'department' : 'team';
+    $mapidcondition1 = "AND sc.$field = '$selectedVal'";
+}
 
 /* ---------- DATES ---------- */
 if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'] != '' && $_POST['to_date'] != '') {
@@ -49,7 +53,7 @@ if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'
 /* ---------- USER ID ---------- */
 $user_ids = $_POST['user_id'] ?? '';
 
-if($user_ids != '0' && !empty($user_ids)){
+if ($user_ids != '0' && !empty($user_ids)) {
     $user_ids = preg_replace('/[^0-9,]/', '', $user_ids); // clean
     $id_list = implode(',', array_filter(explode(',', $user_ids), 'is_numeric'));
     if (!empty($id_list)) {
@@ -68,7 +72,8 @@ $base_query = "FROM new_promotion np
 LEFT JOIN user u ON np.insert_login_id = u.user_id
 LEFT JOIN customer_register cr ON np.cus_id = cr.cus_id
 $joinTable
-WHERE $where $condition $mapidcondition";
+$joinTable1
+WHERE $where $condition $mapidcondition $mapidcondition1";
 
 /* ---------- GROUP BY ---------- */
 $group_by = "GROUP BY np.insert_login_id, np.promo_type, np.status, np.orgin_table";
@@ -83,15 +88,9 @@ if (isset($_POST['search'])) {
 }
 
 /* ---------- ORDER ---------- */
-$orderBy ='';
+$orderBy = '';
 if (isset($_POST['order'])) {
     $orderBy .= " ORDER BY " . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'];
-}
-
-/* ---------- PAGINATION ---------- */
-$limit = '';
-if ($_POST['length'] != -1) {
-    $limit = " LIMIT " . $_POST['start'] . ", " . $_POST['length'];
 }
 
 /* ---------- TOTAL RECORDS ---------- */
@@ -114,8 +113,7 @@ $data_query = "SELECT
     COUNT(*) as total
     $base_query
     $group_by
-    $orderBy
-    $limit";
+    $orderBy";
 
 $statement = $connect->prepare($data_query);
 $statement->execute();
@@ -184,16 +182,38 @@ foreach ($result as $row) {
 
     // origin
     switch ($row['orgin_table']) {
-        case 1: $origin = 'renewal'; break;
-        case 2: $origin = 'new'; break;
-        case 3: $origin = 'repromotion'; break;
-        case 4: $origin = 'reactive'; break;
-        default: $origin = ''; break;
+        case 1:
+            $origin = 'renewal';
+            break;
+        case 2:
+            $origin = 'new';
+            break;
+        case 3:
+            $origin = 'repromotion';
+            break;
+        case 4:
+            $origin = 'reactive';
+            break;
+        default:
+            $origin = '';
+            break;
     }
 
     $key = "{$type}_{$status}_{$origin}";
 
     $finalData[$user][$key] = $row['total'];
+}
+
+// Convert associative array to indexed array
+$finalData = array_values($finalData);
+
+// Apply pagination AFTER user grouping
+if ((int)$_POST['length'] != -1) {
+
+    $start  = (int)$_POST['start'];
+    $length = (int)$_POST['length'];
+
+    $finalData = array_slice($finalData, $start, $length);
 }
 
 $data = [];
