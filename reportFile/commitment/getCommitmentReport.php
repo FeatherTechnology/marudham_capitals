@@ -13,20 +13,24 @@ if (isset($_POST['from_date']) && isset($_POST['to_date']) && $_POST['from_date'
 
 $selectedType = $_POST['selectedType'] ?? '';
 $selectedVal = $_POST['selectedVal'] ?? '';
+$department = $_POST['department'] ?? '';
+$team = $_POST['team'] ?? '';
 
-if(is_array($selectedVal)) {
+if (is_array($selectedVal)) {
     $selectedVal = implode(',', $selectedVal);
 }
 
 if ($selectedType == '2') { //Sector
     $where .= " AND agma.group_map_id IN ($selectedVal)";
-
 } else if ($selectedType == '3') { //Region
     $where .= " AND alma.line_map_id IN ($selectedVal)";
-    
 } else if ($selectedType == '4') { //Zone
     $where .= " AND adma.duefollowup_map_id IN ($selectedVal)";
-} 
+} else if ($selectedType == '5') { //Department
+    $where .= " AND sc.department = '$department'";
+} else if ($selectedType == '6') { //Team
+    $where .= " AND sc.team = '$team'";
+}
 
 $user_ids = $_POST['user_id'] ?? '';
 $user_ids = preg_replace('/[^0-9,]/', '', $user_ids); // clean
@@ -37,8 +41,8 @@ if (!empty($id_list)) {
 
 $role_arr = [1 => 'Director', 2 => 'Agent', 3 => 'Staff'];
 $comm_err = [1 => 'Error', 2 => 'Clear'];
-$ftype = [1 => 'Direct', 2 => 'Mobile' , 8 =>'Paid'];
-$fstatus = [1 => 'Commitment', 2 => 'Unavailable', 3 => 'RNR', 4 => 'Not Reachable', 5 => 'Switch Off', 6 => 'Not in Use', 7 => 'Blocked', 8 =>'Paid'];
+$ftype = [1 => 'Direct', 2 => 'Mobile', 8 => 'Paid'];
+$fstatus = [1 => 'Commitment', 2 => 'Unavailable', 3 => 'RNR', 4 => 'Not Reachable', 5 => 'Switch Off', 6 => 'Not in Use', 7 => 'Blocked', 8 => 'Paid'];
 $per_type_arr = [1 => 'Customer', 2 => 'Guarantor', 3 => 'Family Member'];
 
 $column = array(
@@ -93,6 +97,8 @@ LEFT JOIN
     area_line_mapping_area alma ON alc.area_id = alma.area_id
 LEFT JOIN 
     area_duefollowup_mapping_area adma ON alc.area_id = adma.area_id  
+JOIN 
+    staff_creation sc ON sc.staff_id = u.staff_id
 WHERE 1
     $where";
 
@@ -169,7 +175,7 @@ foreach ($result as $row) {
     $sub_array[] = $name;
     $sub_array[] = $relationship;
     $sub_array[] = $row['remark'];
-    $sub_array[] = (!empty($row['comm_date']) && $row['comm_date'] != '0000-00-00') ? date('d-m-Y', strtotime($row['comm_date'])): '';
+    $sub_array[] = (!empty($row['comm_date']) && $row['comm_date'] != '0000-00-00') ? date('d-m-Y', strtotime($row['comm_date'])) : '';
     $sub_array[] = isset($role_arr[$row['role']]) ? $role_arr[$row['role']] : '';
     $sub_array[] = $row['fullname'];
     $sub_array[] = $row['hint'];

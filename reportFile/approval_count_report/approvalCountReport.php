@@ -18,26 +18,28 @@ if ($user_type == '2') {
 $selectedType = $_POST['selectedType'] ?? '';
 $selectedVal = $_POST['selectedVal'] ?? '';
 
-if(is_array($selectedVal)) {
-    $selectedVal = implode(',', $selectedVal);
-}
+$selectedVal = is_array($selectedVal) ? implode(',', $selectedVal) : $selectedVal;
 
 $loanCatVal = $_POST['loanCatVal'] ?? '';
 
-if(is_array($loanCatVal)) {
+if (is_array($loanCatVal)) {
     $loanCatVal = implode(',', $loanCatVal);
 }
 
-$joinTable ='';
+$joinTable = '';
 $condition = '';
-$condtn = '';
+$joinTable1 = '';
+$condition1 = '';
 
 if ($selectedType == '2') { //Sector
     $joinTable  = "  JOIN area_group_mapping_sub_area agmsa ON req.sub_area = agmsa.sub_area_id";
     $condition  = "AND agmsa.group_map_id IN ($selectedVal)";
+} elseif ($selectedType == '5' || $selectedType == '6') { // Department / Team
+    $joinTable1 = "JOIN staff_creation sc ON sc.staff_id = u.staff_id";
 
-    $condtn  = "WHERE loan_category_creation_id IN ($loanCatVal)";
-} 
+    $field = ($selectedType == '5') ? 'department' : 'team';
+    $condition1 = "AND sc.$field = '$selectedVal'";
+}
 
 /* =====================
    USER FILTER (from in_acknowledgement)
@@ -52,6 +54,7 @@ if ($user_id != 'all' && !empty($user_id)) {
     $stmt = $connect->prepare("SELECT DISTINCT u.user_id
         FROM in_acknowledgement iak
         LEFT JOIN user u ON iak.insert_login_id = u.user_id
+        $joinTable1 $condition1
         WHERE iak.insert_login_id != ''
         $where
     ");
@@ -74,7 +77,7 @@ $nameMap = [];
 if ($selectedType == '2' && !empty($selectedVal)) {
     $valArray = explode(',', $selectedVal);
     $sectorPlaceholders = str_repeat('?,', count($valArray) - 1) . '?';
-    
+
     $stmt = $connect->prepare("
         SELECT map_id, group_name 
         FROM area_group_mapping 
@@ -95,29 +98,35 @@ if ($selectedType == '2' && !empty($selectedVal)) {
 }
 
 // Loan categories
-$loanCats = $connect->query("
-    SELECT loan_category_creation_id, loan_category_creation_name 
-    FROM loan_category_creation $condtn
-")->fetchAll(PDO::FETCH_ASSOC);
+$query = "SELECT loan_category_creation_id, loan_category_creation_name FROM loan_category_creation";
+
+if ($selectedType !== '1') {
+    $query .= " WHERE loan_category_creation_id IN ($loanCatVal)";
+}
+
+$loanCats = $connect->query($query)->fetchAll(PDO::FETCH_ASSOC);
 
 /* =====================
    HELPER FUNCTIONS
 ===================== */
 
-function emptyTypeCounter() {
-    return ['new' => 0, 'renewal' => 0, 'reactive' => 0, 'additional' => 0, 'existing_new' => 0, 'reloan'=>0,'total' => 0];
+function emptyTypeCounter()
+{
+    return ['new' => 0, 'renewal' => 0, 'reactive' => 0, 'additional' => 0, 'existing_new' => 0, 'reloan' => 0, 'total' => 0];
 }
 
-function emptyStatusCounter() {
+function emptyStatusCounter()
+{
     return ['current' => 0, 'pending' => 0, 'od' => 0, 'error' => 0, 'legal' => 0, 'total' => 0];
 }
 
-function getCustomerType($cus_type, $cus_exist_type) {
+function getCustomerType($cus_type, $cus_exist_type)
+{
     if (strtolower($cus_type) == 'new') {
         return 'new';
     }
     $existType = strtolower(trim($cus_exist_type));
-    $existType = str_replace(  ['re-active', 'existing-new'],  ['reactive', 'existing_new'],  $existType);
+    $existType = str_replace(['re-active', 'existing-new'],  ['reactive', 'existing_new'],  $existType);
     return in_array($existType, [
         'additional',
         'renewal',
@@ -127,7 +136,8 @@ function getCustomerType($cus_type, $cus_exist_type) {
     ]) ? $existType : 'existing_new';
 }
 
-function processRecord($r, &$counters, $baseCounter, $from_date, $to_date) {
+function processRecord($r, &$counters, $baseCounter, $from_date, $to_date)
+{
     $type = getCustomerType($r['cus_type'], $r['cus_exist_type']);
     $status_date = !empty($r['updated_date']) ? date('Y-m-d', strtotime($r['updated_date'])) : '';
     $issue_date = !empty($r['issue_date']) ? date('Y-m-d', strtotime($r['issue_date'])) : '';
@@ -138,13 +148,13 @@ function processRecord($r, &$counters, $baseCounter, $from_date, $to_date) {
     $counters[$baseCounter]['total']++;
 
     // Status checks
-    if ($status_date >= $from_date && $status_date <= $to_date && in_array($req_status, [5,6,7])) {
+    if ($status_date >= $from_date && $status_date <= $to_date && in_array($req_status, [5, 6, 7])) {
         $counters['cancel'][$type]++;
         $counters['cancel']['total']++;
     } elseif ($issue_date >= $from_date && $issue_date <= $to_date && !empty($r['sub_status'])) {
         $counters['issued'][$type]++;
         $counters['issued']['total']++;
-        
+
         // Status breakdown
         $sub = strtolower($r['sub_status']);
         if (isset($counters['status'][$sub])) {
@@ -159,6 +169,7 @@ function processRecord($r, &$counters, $baseCounter, $from_date, $to_date) {
 
 // Dynamic field mapping for group assignment
 $groupSelect = ($selectedType == '2') ? ", agmsa.group_map_id AS target_group_id" : ", ia.insert_login_id AS target_group_id";
+
 // PREVIOUS RECORDS
 $prevQuery = "
     SELECT 
@@ -231,8 +242,10 @@ foreach ($nameMap as $targetId => $targetName) {
         $cat_id = $cat['loan_category_creation_id'];
         $cat_name = $cat['loan_category_creation_name'];
 
-        if (empty($prevByUserCat[$targetId][$cat_id] ?? []) && 
-            empty($currentByUserCat[$targetId][$cat_id] ?? [])) {
+        if (
+            empty($prevByUserCat[$targetId][$cat_id] ?? []) &&
+            empty($currentByUserCat[$targetId][$cat_id] ?? [])
+        ) {
             continue;
         }
 
@@ -269,7 +282,7 @@ foreach ($nameMap as $targetId => $targetName) {
 
 
 $totals = array_fill_keys(
-    ['previous', 'approval', 'cancel', 'process', 'issued'], 
+    ['previous', 'approval', 'cancel', 'process', 'issued'],
     emptyTypeCounter()
 );
 $totals['status'] = emptyStatusCounter();
@@ -295,4 +308,3 @@ $data[] = [
 ];
 
 echo json_encode(["data" => $data]);
-?>

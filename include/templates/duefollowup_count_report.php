@@ -1,18 +1,18 @@
 <style>
 	/* Force borders for grouped headers */
-/* Ensure borders are visible */
-#due_followup_count_table {
-    border-collapse: collapse !important;
-}
+	/* Ensure borders are visible */
+	#due_followup_count_table {
+		border-collapse: collapse !important;
+	}
 
-#due_followup_count_table thead th {
-    border: 1px solid #ffffff;
-}
+	#due_followup_count_table thead th {
+		border: 1px solid #ffffff;
+	}
 
-/* ===== GROUP HEADER BORDER ===== */
-#due_followup_count_table thead th.group-border {
-    border-right: 1px solid #ffffff !important;
-}
+	/* ===== GROUP HEADER BORDER ===== */
+	#due_followup_count_table thead th.group-border {
+		border-right: 1px solid #ffffff !important;
+	}
 </style>
 
 <link rel="stylesheet" type="text/css" href="css/ledger_report.css">
@@ -35,28 +35,38 @@
 				<input type="date" id='from_date' name='from_date' class="toggle-button" value=''>
 				<input type="date" id='to_date' name='to_date' class="toggle-button" value=''>
 
-                <select class="toggle-button" name='type' id='type'>
-					<option value='0'>Select Type</option>
+				<select class="toggle-button" name='type' id='type'>
+					<option value=''>Select Type</option>
 					<option value='1'>User</option>
 					<option value='3'>Region</option><!-- using common API to get mapped zone so not changed value -->
 					<option value='4'>Zone</option><!-- using common API to get mapped zone so not changed value -->
+					<option value='5'>Department</option>
+					<option value='6'>Team</option>
 				</select>
 
 				<select class="toggle-button hidefield" id='user_type' name='user_type'>
-                    <option value=''>Select User Type</option>
-                    <option value='1'>All</option>
-                    <option value='2'>Active</option>
-                    <option value='3'>In Active</option>
-                </select>
+					<option value=''>Select User Type</option>
+					<option value='1'>All</option>
+					<option value='2'>Active</option>
+					<option value='3'>In Active</option>
+				</select>
 
 				<select class="toggle-button hidefield" id='by_user' name='by_user'>
 					<option value=''>Select User</option>
 				</select>
-	
-                <select class="form-control hidefield" id="map_name" name="map_name" multiple>
-                    <option value="">Select</option>
-                </select>&nbsp;&nbsp;
-	
+
+				<select class="form-control hidefield" id="map_name" name="map_name" multiple>
+					<option value="">Select</option>
+				</select>
+
+				<select class="toggle-button hidefield" id='department' name='department'>
+					<option value=''>Select Department</option>
+				</select>
+
+				<select class="toggle-button hidefield" id='team' name='team'>
+					<option value=''>Select Team</option>
+				</select> &nbsp;&nbsp;
+
 				<select class="form-control hidefield" id="loan_category" name="loan_category" multiple>
 					<option value="">Select Loan Category</option>
 				</select>
@@ -69,7 +79,7 @@
 					<div class="card-header">Due Followup Count Report</div>
 					<div class="card-body">
 						<div id="due_followup_count_table_div" class="table-divs" style="overflow-x: auto;">
-							
+
 							<table id="due_followup_count_table" class="table custom-table" style="width:100%">
 								<thead>
 									<!-- GROUP HEADER -->
@@ -122,7 +132,7 @@
 									</tr>
 								</tfoot>
 							</table>
-							
+
 						</div>
 					</div>
 				</div>

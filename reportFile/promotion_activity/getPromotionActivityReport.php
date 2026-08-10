@@ -13,21 +13,24 @@ if ((isset($_POST['fromdate']) && $_POST['fromdate'] != '') && isset($_POST['tod
 
 $selectedType = $_POST['selectedType'] ?? '';
 $selectedVal = $_POST['selectedVal'] ?? '';
+$department = $_POST['department'] ?? '';
+$team = $_POST['team'] ?? '';
 
-if(is_array($selectedVal)) {
+if (is_array($selectedVal)) {
     $selectedVal = implode(',', $selectedVal);
 }
 
 if ($selectedType == '2') { //Sector
     $where .= " AND agm.map_id IN ($selectedVal)";
-
 } else if ($selectedType == '3') { //Region
     $where .= " AND alm.map_id IN ($selectedVal)";
-    
 } else if ($selectedType == '4') { //Zone
     $where .= " AND adm.map_id IN ($selectedVal)";
-
-} 
+} else if ($selectedType == '5') { //Department
+    $where .= " AND sc.department = '$department'";
+} else if ($selectedType == '6') { //Team
+    $where .= " AND sc.team = '$team'";
+}
 
 $user_ids = $_POST['user_id'] ?? '';
 $user_ids = preg_replace('/[^0-9,]/', '', $user_ids); // clean
@@ -109,7 +112,9 @@ LEFT JOIN
 LEFT JOIN 
     area_duefollowup_mapping adm ON adma.duefollowup_map_id = adm.map_id
 LEFT JOIN 
-    branch_creation bc ON agm.branch_id = bc.branch_id  
+    branch_creation bc ON agm.branch_id = bc.branch_id
+JOIN 
+    staff_creation sc ON sc.staff_id = u.staff_id  
 
 WHERE 1 $where";
 
@@ -159,45 +164,45 @@ $result = $statement->fetchAll();
 $data = [];
 $sno = 1;
 $role_arr = [1 => 'Director', 2 => 'Agent', 3 => 'Staff'];
-$originName = [1 => 'Renewal', 2 => 'New Promotion', 3 => 'Repromotion', 4=> 'Re-active']; 
-$promo_type_arr = ['1'=>'Direct','2'=>'Mobile'];
-$statusObj = ['0' => 'Request','1' => 'Verification','2' => 'Approval','3' => 'Acknowledgement','4' => 'Promotion','5' => 'Promotion','6' => 'Promotion','7' => 'Promotion','8' => 'Promotion','9' => 'Promotion','10' => 'Verification','11' => 'Verification','12' => 'Verification','13' => 'Loan Issue','14' => 'Collection','15' => 'Collection','16' => 'Collection','17' => 'Collection','20' => 'Promotion','21' => 'Promotion', '22' => 'Promotion', '23' => 'Promotion', '24' => 'Promotion'];
+$originName = [1 => 'Renewal', 2 => 'New Promotion', 3 => 'Repromotion', 4 => 'Re-active'];
+$promo_type_arr = ['1' => 'Direct', '2' => 'Mobile'];
+$statusObj = ['0' => 'Request', '1' => 'Verification', '2' => 'Approval', '3' => 'Acknowledgement', '4' => 'Promotion', '5' => 'Promotion', '6' => 'Promotion', '7' => 'Promotion', '8' => 'Promotion', '9' => 'Promotion', '10' => 'Verification', '11' => 'Verification', '12' => 'Verification', '13' => 'Loan Issue', '14' => 'Collection', '15' => 'Collection', '16' => 'Collection', '17' => 'Collection', '20' => 'Promotion', '21' => 'Promotion', '22' => 'Promotion', '23' => 'Promotion', '24' => 'Promotion'];
 
 foreach ($result as $row) {
-        
-    $followup_type =''; 
-    if($row['followup_type'] =='1'){
-        $followup_type = 'Field';  
-    }else if($row['followup_type'] =='2'){
-        $followup_type = 'Telecalling';  
+
+    $followup_type = '';
+    if ($row['followup_type'] == '1') {
+        $followup_type = 'Field';
+    } else if ($row['followup_type'] == '2') {
+        $followup_type = 'Telecalling';
     }
-$action = "<button type='button' class='btn btn-success promo-chart' style='background-color:#009688;' data-id='" . $row['cus_id'] . "' data-toggle='modal' data-target='#promoChartModal'>View</button>";
-$data[] = [
-    $sno++,
-    $row['cus_id'],
-    $row['autogen_cus_id'],
-    $row['customer_name'],
-    date('d-m-Y', strtotime($row['created_date'])),
-    date('h:i:s A', strtotime($row['created_date'])),
-    $row['mobile1'],
-    $row['area_name'],
-    $row['sub_area_name'],
-    $row['line_name'],
-    $row['group_name'],
-    $row['duefollowup_name'],
-    $row['branch_name'],
-    $promo_type_arr[$row['promo_type']] ?? '',
-    $row['status'],
-    $row['remark'],
-    date('d-m-Y', strtotime($row['follow_date'])),
-    $followup_type,
-    $role_arr[$row['role']] ?? '',
-    $row['fullname'],
-    $originName[$row['orgin_table']] ?? '',
-    $statusObj[$row['cus_status']] ?? '',
-    $action
-];
-}    
+    $action = "<button type='button' class='btn btn-success promo-chart' style='background-color:#009688;' data-id='" . $row['cus_id'] . "' data-toggle='modal' data-target='#promoChartModal'>View</button>";
+    $data[] = [
+        $sno++,
+        $row['cus_id'],
+        $row['autogen_cus_id'],
+        $row['customer_name'],
+        date('d-m-Y', strtotime($row['created_date'])),
+        date('h:i:s A', strtotime($row['created_date'])),
+        $row['mobile1'],
+        $row['area_name'],
+        $row['sub_area_name'],
+        $row['line_name'],
+        $row['group_name'],
+        $row['duefollowup_name'],
+        $row['branch_name'],
+        $promo_type_arr[$row['promo_type']] ?? '',
+        $row['status'],
+        $row['remark'],
+        date('d-m-Y', strtotime($row['follow_date'])),
+        $followup_type,
+        $role_arr[$row['role']] ?? '',
+        $row['fullname'],
+        $originName[$row['orgin_table']] ?? '',
+        $statusObj[$row['cus_status']] ?? '',
+        $action
+    ];
+}
 
 function count_all_data($connect)
 {
