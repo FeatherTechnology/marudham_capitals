@@ -24,6 +24,7 @@ $report_access = '';
 $home_access = '';
 $cus_summary_access = '';
 $promotion_access = '';
+$repromotion_access = '';
 $promotion_activity_mapping_access = '';
 $mastermodule    = '';
 $company_creation      = '';
@@ -87,6 +88,7 @@ $hand_cash_balance_sheet = '';
 $accounts_loan_issue = '';
 $followupmodule = '';
 $promotion_activity = '';
+$repromotion_activity = '';
 $promotion_activity_action_access = '';
 $loan_followup  = '';
 $conf_followup  = '';
@@ -214,6 +216,7 @@ if($idupd>0)
 			$home_access          		     = $getUser['home_access'];
 			$cus_summary_access          		     = $getUser['cus_summary_access'];
 			$promotion_access          		     = $getUser['promotion_access'];
+			$repromotion_access          		     = $getUser['repromotion_access'];
 			$promotion_activity_mapping_access = $getUser['promotion_activity_mapping_access'];
 			$mastermodule          		     = $getUser['mastermodule'];
 			$company_creation          		     = $getUser['company_creation'];
@@ -279,6 +282,7 @@ if($idupd>0)
 			$accounts_loan_issue          		     = $getUser['accounts_loan_issue'];
 			$followupmodule          		     = $getUser['followupmodule'];
 			$promotion_activity = $getUser['promotion_activity'];
+			$repromotion_activity = $getUser['repromotion_activity'];
 			$promotion_activity_action_access = $getUser['promotion_activity_action_access'];
 			$loan_followup = $getUser['loan_followup'];
 			$conf_followup = $getUser['confirmation_followup'];
@@ -390,6 +394,7 @@ if($idupd>0)
 		<input type="hidden" class="form-control" value="<?php if(isset($group_id)) echo $group_id; ?>"  id="group_id_upd" name="group_id_upd">
 		<input type="hidden" class="form-control" value="<?php if(isset($bank_details)) echo $bank_details; ?>"  id="bank_details_upd" name="bank_details_upd">
 		<input type="hidden" class="form-control" value="<?php if(isset($promotion_access)) echo $promotion_access; ?>"  id="promotion_access_upd" name="promotion_access_upd">
+		<input type="hidden" class="form-control" value="<?php if(isset($repromotion_access)) echo $repromotion_access; ?>"  id="repromotion_access_upd" name="repromotion_access_upd">
 		<input type="hidden" class="form-control" value="<?php if(isset($due_followup_lines)) echo $due_followup_lines; ?>"  id="due_followup_lines_upd" name="due_followup_lines_upd">
 		<!-- Row start -->
 		<div class="row gutters">
@@ -668,6 +673,18 @@ if($idupd>0)
 											</select>
 											<br>
 											<span class="text-danger" style='display:none' id='cusSummaryAccessCheck'>Please select Customer Summary Access</span>
+										</div>
+									</div>	
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+										<div class="form-group">
+											<label for="promotion_activity_action_access">Promotion Activity Action Access</label>&nbsp;
+											<select class="form-control" name="promotion_activity_action_access" id="promotion_activity_action_access" tabindex="18">
+												<option value="">Select Action Access</option>
+												<option value="1" <?php if($promotion_activity_action_access == '1') echo 'selected';?> >Yes</option>
+												<option value="2" <?php if($promotion_activity_action_access == '2') echo 'selected';?> >No</option>
+											</select>
+											<br>
+											<span class="text-danger actionAccessCheck" style='display:none'>Please Select Action Access</span>
 										</div>
 									</div>								
 								</div>
@@ -1099,27 +1116,35 @@ if($idupd>0)
 								<input type='hidden' class='form-control' id='pro_aty_access_id' name='pro_aty_access_id' >
 								<select tabindex="67" type="text" class="form-control" id="pro_aty_access" name="pro_aty_access" multiple>
 									<option value="">Select Promotion Activity</option>
+									<option value="6">Enquiry</option>
 									<option value="1">Renewal</option>
 									<option value="5">Re-active</option>
 									<option value="2">New</option>
-									<option value="3">Repromotion</option>
 									<option value="4">Events</option>
 								</select>
 								<span class="text-danger" style='display:none' id='proCheck'>Please select Promotion Activity Access</span>
 							</div>
 						</div>
-						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 promotion_activity_div" style="display: none;">
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
-								<label for="promotion_activity_action_access">Promotion Activity Action Access</label>&nbsp;<span class="text-danger">*</span>
-                                <select class='form-control' id='promotion_activity_action_access' name='promotion_activity_action_access' style="width: 250px;">
-									<option value="">Select Action Access</option>
-									<option value="1" <?php if(isset($promotion_activity_action_access) && $promotion_activity_action_access == '1') echo 'selected'; ?>>Yes</option>
-									<option value="2" <?php if(isset($promotion_activity_action_access) && $promotion_activity_action_access == '2') echo 'selected'; ?>>No</option>
-								</select>
-								<br/>
-								<span class='text-danger actionAccessCheck' style="display:none">Please Select Action Access</span>
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($repromotion_activity==0){ echo'checked'; }} ?> tabindex="66" class="followup-checkbox screen-validations" id="repromotion_activity" name="repromotion_activity" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="repromotion_activity">Repromotion Activity</label>&nbsp;&nbsp;
+								<span class='text-danger repromotionActivityCheck' style="display:none">Please Select Repromotion Activity </span> 
                             </div>
                         </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 repromotion_activity_div" style="display: none;" >
+							<div class="form-group">
+								<label for="repro_aty_access">Repromotion Activity Access</label>&nbsp;<span class="text-danger">*</span>
+								<input type='hidden' class='form-control' id='repro_aty_access_id' name='repro_aty_access_id' >
+								<select tabindex="67" type="text" class="form-control" id="repro_aty_access" name="repro_aty_access" multiple>
+									<option value="">Select Repromotion Activity</option>
+									<option value="1">Repromotion</option>
+									<option value="2">Waiting List</option>
+									<option value="3">Block List</option>
+								</select>
+								<span class="text-danger" style='display:none' id='reproCheck'>Please select Repromotion Activity Access</span>
+							</div>
+						</div>
                         <!-- <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" value="Yes" <?php # if($idupd > 0){ if($loan_followup==0){ echo'checked'; }} ?> tabindex="63" class="followup-checkbox screen-validations" id="loan_followup" name="loan_followup" disabled>&nbsp;&nbsp;

@@ -523,7 +523,7 @@ $(function () {
 })
 
 function getPromotionAccess() {
-    $.post('followupFiles/promotion/promotion_access.php', function (response) {
+    $.post('followupFiles/promotion/promotion_access.php', {screen : 1}, function (response) {
         if (Array.isArray(response) && response.length > 0) {
             let accessString = response[0].pro_aty_access;
             let accessArray = accessString.split(",").map(Number);

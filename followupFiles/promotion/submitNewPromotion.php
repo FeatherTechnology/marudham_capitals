@@ -45,7 +45,7 @@ if($screen =='1'){
 }else{
     
     if(isset($_POST['orgin_table'])){
-        $originName = ['renewal' => 1, 're_active' => 4, 'new_promotion' => 2, 'repromotion' => 3]; //1=renewal, 2=New, 3=Repromotion ,4= re-active
+         $originName = ['renewal' => 1, 're_active' => 4, 'new_promotion' => 2, 'repromotion' => 3 ,'waiting' => 5, 'block' => 6 ]; //1=renewal, 2=New, 3=Repromotion ,4= re-active,5=waiting,6=block
         $orgin_table = $originName[$_POST['orgin_table']];
     }
     

@@ -73,6 +73,6 @@
 }
 
 /* Target both search boxes */
-#expromotion_list_search, #re_active_promotion_list_search, #repromotion_list_search {
+#expromotion_list_search, #re_active_promotion_list_search, #repromotion_list_search, #waiting_list_search, #block_list_search {
   padding: 7px 12px !important; /* more padding */
 }

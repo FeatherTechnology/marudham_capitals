@@ -49,7 +49,7 @@ $modules = [
     ],
 
     'followup' => [
-        'promotion_activity','loan_followup','confirmation_followup','due_followup',
+        'promotion_activity','repromotion_activity','loan_followup','confirmation_followup','due_followup',
         'edit_due_followup','ecs_followup','ecs_edit_followup'
     ],
 
@@ -551,6 +551,11 @@ if (!empty($getUser) && is_array($getUser)) {
 								<?php if (($leftbar_promotion_activity ?? 1) == 0) { ?>
 									<li>
 										<a href="promotion_activity"><i class='icon-change_history'></i>Promotion Activity</a>
+									</li>
+								<?php  } ?>
+								<?php if (($leftbar_repromotion_activity ?? 1) == 0) { ?>
+									<li>
+										<a href="repromotion_activity"><i class='icon-circle1'></i>Repromotion Activity</a>
 									</li>
 								<?php  } ?>
 								<?php if (($leftbar_loan_followup ?? 1) == 0) { ?>
