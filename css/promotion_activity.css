@@ -20,7 +20,7 @@
     color: white;
 }
 
-.add-new-btn {
+.add-new-btn, .add-enquiry-btn {
     padding: 6px 32px;
     float: right;
 }

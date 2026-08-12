@@ -38,10 +38,10 @@ if (sizeof($getUser) > 0) {
 
 		<div class="row gutters">
 			<div class="toggle-container col-12">
+				<input type="button" class="toggle-button" value='Enquiry' id="enquiry_button">
 				<input type="button" class="toggle-button" value='Renewal' id="renewal_button">
 				<input type="button" class="toggle-button" value='Re-active' id="reactive_button">
 				<input type="button" class="toggle-button" value='New' id="new_button">
-				<input type="button" class="toggle-button" value='Repromotion' id="repromotion_button">
 				<input type="button" class="toggle-button" value='Events' id="events_button">
 			</div>
 		</div>
@@ -95,6 +95,21 @@ if (sizeof($getUser) > 0) {
 					<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12" style="margin-top:20px">
 						<div class="form-group">
 							<button class="btn btn-primary" name="followup_search" id="followup_search">Search</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row gutters enquiry_card" style="display: none;">
+			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+				<div class="card">
+					<div class="card-header">Enquiry
+						<button type="button" class="btn btn-primary add-enquiry-btn" id="add_enquiry_cus" name="add_enquiry_cus" data-toggle="modal" data-target="#addnewcus" value="Enquiry"><span class="icon-add"></span></button>
+					</div>
+					<div class="card-body">
+						<div id="enquiry_div" class="table-responsive">
+
 						</div>
 					</div>
 				</div>
@@ -278,7 +293,7 @@ if (sizeof($getUser) > 0) {
 			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 				<div class="card">
 					<div class="card-header">New Promotion
-						<button type="button" class="btn btn-primary add-new-btn" id="add_new_cus" name="add_new_cus" data-toggle="modal" data-target="#addnewcus" onclick="getUserBasedArea()" tabindex=""><span class="icon-add"></span></button>
+						<button type="button" class="btn btn-primary add-new-btn" id="add_new_cus" name="add_new_cus" data-toggle="modal" data-target="#addnewcus" value="New Promotion"><span class="icon-add"></span></button>
 					</div>
 					<div class="card-body">
 						<div id="new_promo_div" class="table-responsive">
@@ -421,8 +436,8 @@ if (sizeof($getUser) > 0) {
 	<div class="modal-dialog modal-lg " role="document">
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLongTitle">New Promotion</h5>
-				<button type="button" class="close" id="closeNewPromotionModal" data-dismiss="modal" onclick="resetNewPromotionTable()">
+				<h5 class="modal-title" id="new_enquiry_modal_title">New Promotion</h5>
+				<button type="button" class="close" id="closeNewPromotionModal" data-dismiss="modal">
 					<span>&times;</span>
 				</button>
 			</div>
@@ -432,26 +447,34 @@ if (sizeof($getUser) > 0) {
 					<div class="col-12">
 						<div class="row">
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-								<label for="cus_id">Aadhaar Number</label><span class="required">&nbsp;*</span>
-								<input type="text" name="cus_id" id="cus_id" class='form-control' placeholder="Enter Aadhaar Number" tabindex="1" onKeyPress="if(this.value.length==14) return false;">
-								<span class="text-danger" id='cus_idCheck' style="display: none;">Please Enter Aadhaar Number</span>
+								<div class="form-group">
+									<label for="cus_id">Aadhaar Number</label><span class="required">&nbsp;*</span>
+									<input type="text" name="cus_id" id="cus_id" class='form-control' placeholder="Enter Aadhaar Number" tabindex="1" onKeyPress="if(this.value.length==14) return false;">
+									<span class="text-danger" id='cus_idCheck' style="display: none;">Please Enter Aadhaar Number</span>
+								</div>
 							</div>
 
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-								<label for="cus_data">Customer Data</label><span class="required">&nbsp;*</span>
-								<input class='form-control' name="cus_data" id="cus_data" tabindex="2" readonly>
+								<div class="form-group">
+									<label for="cus_data">Customer Data</label><span class="required">&nbsp;*</span>
+									<input class='form-control' name="cus_data" id="cus_data" tabindex="2" readonly>
+								</div>
 							</div>
 
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-								<label for="cus_name">Customer Name</label><span class="required">&nbsp;*</span>
-								<input type="text" name="new_cus_name" id="new_cus_name" class='form-control' placeholder="Enter Customer Name" tabindex="3">
-								<span class="text-danger" id='cus_nameCheck' style="display: none;">Please Enter Customer Name</span>
+								<div class="form-group">
+									<label for="cus_name">Customer Name</label><span class="required">&nbsp;*</span>
+									<input type="text" name="new_cus_name" id="new_cus_name" class='form-control' placeholder="Enter Customer Name" tabindex="3">
+									<span class="text-danger" id='cus_nameCheck' style="display: none;">Please Enter Customer Name</span>
+								</div>
 							</div>
 
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-								<label for="cus_mob">Mobile Number</label><span class="required">&nbsp;*</span>
-								<input type="text" name="cus_mob" id="cus_mob" class='form-control' placeholder="Enter Mobile Number" tabindex="4" onKeyPress="if(this.value.length==10) return false;" oninput="validateInputNumber(this,'withOutDot')">
-								<span class="text-danger" id='cus_mobCheck' style="display: none;">Please Enter Mobile Number </span>
+								<div class="form-group">
+									<label for="cus_mob">Mobile Number</label><span class="required">&nbsp;*</span>
+									<input type="text" name="cus_mob" id="cus_mob" class='form-control' placeholder="Enter Mobile Number" tabindex="4" onKeyPress="if(this.value.length==10) return false;" oninput="validateInputNumber(this,'withOutDot')">
+									<span class="text-danger" id='cus_mobCheck' style="display: none;">Please Enter Mobile Number </span>
+								</div>
 							</div> <!-- Use input type='text' for numeric validation, because type='number' always resets the cursor when you block invalid characters-->
 
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
@@ -467,10 +490,18 @@ if (sizeof($getUser) > 0) {
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<div class="form-group">
 									<label for="sub_area">Sub Area</label>&nbsp;<span class="text-danger">*</span>
-									<select tabindex="45" type="text" class="form-control" id="sub_area" name="sub_area">
+									<select tabindex="6" type="text" class="form-control" id="sub_area" name="sub_area">
 										<option value=''>Select Sub Area</option>
 									</select>
 									<span class="text-danger" style='display:none' id='subareaCheck'>Please Select Sub Area</span>
+								</div>
+							</div>
+
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 enq_loan_amt" style="display: none;">
+								<div class="form-group">
+									<label for="enquiry_loan_amt">Loan amount</label><span class="required">&nbsp;*</span>
+									<input type="text" class="form-control" name="enquiry_loan_amt" id="enquiry_loan_amt" placeholder="Enter Loan Amount" tabindex="7" oninput="validateInputNumber(this,'withOutDot')">
+									<span class="text-danger" id='enquiryloanamtCheck' style="display: none;">Please Enter Loan amount</span>
 								</div>
 							</div>
 
@@ -480,8 +511,9 @@ if (sizeof($getUser) > 0) {
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button class='btn btn-primary' name="submit_new_cus" id="submit_new_cus" tabindex="6">Submit</button>
-				<button class="btn btn-secondary" data-dismiss="modal" tabindex="7" onclick="resetNewPromotionTable()">Close</button>
+				<input type="hidden" id="screen_name"/>
+				<button class='btn btn-primary' name="submit_new_cus" id="submit_new_cus" tabindex="8">Submit</button>
+				<button class="btn btn-secondary modalCloseBtn" data-dismiss="modal" tabindex="9">Close</button>
 			</div>
 		</div>
 	</div>
@@ -504,6 +536,7 @@ if (sizeof($getUser) > 0) {
 						<div class="row">
 							<input type="hidden" name="orgin_table" id="orgin_table"><!-- this is to reset the table contents -->
 							<input type="hidden" name="promo_cus_id" id="promo_cus_id">
+							<input type="hidden" name="promo_screen" id="promo_screen">
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<label for="promo_date">Date</label><span class="required">&nbsp;*</span>
 								<input type="text" class='form-control' readonly name="promo_date" id="promo_date" tabindex="1" value='<?php echo date('d-m-Y'); ?>' />
@@ -569,13 +602,13 @@ if (sizeof($getUser) > 0) {
 </div>
 
 <!-- Modal for Closed -->
-<div class="modal fade" id="addClosedModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="addClosedModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle">
 	<div class="modal-dialog modal-lg " role="document">
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
 				<h5 class="modal-title" id="exampleModalLongTitle">Update Closed Status</h5>
 				<button type="button" class="close addcloseModal" data-dismiss="modal" aria-label="Close" id="closedModal">
-					<span aria-hidden="true">&times;</span>
+					<span>&times;</span>
 				</button>
 			</div>
 			<div class="modal-body">
