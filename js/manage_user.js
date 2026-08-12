@@ -64,6 +64,12 @@ const promotionAccess = new Choices('#pro_aty_access', {
     allowHTML: true
 });
 
+const repromotionAccess = new Choices('#repro_aty_access', {
+    removeItemButton: true,
+    noChoicesText: 'Select Repromotion Activity',
+    allowHTML: true
+});
+
 const dueFollowupLines = new Choices('#due_follup_lines', {
     removeItemButton: true,
     noChoicesText: 'Select Zone Lines',
@@ -524,20 +530,55 @@ $(document).ready(function () {
 
     $('#promotion_activity').click(function () {
         if ($(this).is(':checked')) {
+
             $('.promotion_activity_div').show();
+
         } else {
+
             $('.promotion_activity_div').hide();
 
             // Clear Promotion Activity
             promotionAccess.removeActiveItems();
             $('#pro_aty_access_id').val('');
-            $('#promotion_activity_action_access').val('');
 
-            // Clear Action Access
-            $('#promotion_activity_action_access').val('');
-
-            // Hide validation messages
+            // Hide Promotion validation
             $('#proCheck').hide();
+        }
+
+        // Clear Action Access ONLY if both are unchecked
+        if (
+            !$('#promotion_activity').is(':checked') &&
+            !$('#repromotion_activity').is(':checked')
+        ) {
+            $('#promotion_activity_action_access').val('');
+            $('.actionAccessCheck').hide();
+        }
+    });
+
+
+    $('#repromotion_activity').click(function () {
+        if ($(this).is(':checked')) {
+
+            $('.repromotion_activity_div').show();
+
+        } else {
+
+            $('.repromotion_activity_div').hide();
+
+            // Clear Re-Promotion Activity
+            repromotionAccess.removeActiveItems();
+            $('#repro_aty_access_id').val('');
+
+            // Hide Re-Promotion validation
+            $('#reproCheck').hide();
+        }
+
+        // Clear Action Access ONLY if both are unchecked
+        if (
+            !$('#promotion_activity').is(':checked') &&
+            !$('#repromotion_activity').is(':checked')
+        ) {
+            $('#promotion_activity_action_access').val('');
             $('.actionAccessCheck').hide();
         }
     });
@@ -623,6 +664,7 @@ $(function () {
         getdueFollupLineDropdown(branch_id_upd);
         getBankDetails();
         getProAccess();
+        getReProAccess();
 
         var update_screen = document.querySelector('#update');
         if (update_screen.checked) {
@@ -682,6 +724,12 @@ $(function () {
             $('.promotion_activity_div').show()
         } else {
             $('.promotion_activity_div').hide()
+        }
+        var repromotionActivity_screen = document.querySelector('#repromotion_activity');
+        if (repromotionActivity_screen.checked) {
+            $('.repromotion_activity_div').show()
+        } else {
+            $('.repromotion_activity_div').hide()
         }
         var promotionActivity_screen = document.querySelector('#bank_clearance');
         if (promotionActivity_screen.checked) {
@@ -1199,9 +1247,9 @@ function getProAccess() {
     const valueToLabelMap = {
         '1': 'Renewal',
         '2': 'New ',
-        '3': 'Repromotion',
         '4': 'Events',
-        '5': 'Re-active'
+        '5': 'Re-active',
+        '6': 'Enquiry'
     };
     promotionAccess.clearStore();
 
@@ -1224,6 +1272,35 @@ function getProAccess() {
     promotionAccess.init();
 }
 
+//Get Repromotion Access List
+function getReProAccess() {
+    var repromotion_access_upd = $('#repromotion_access_upd').val().split(',');
+
+    const valueToLabelMap = {
+        '1': 'Repromotion',
+        '2': 'Waiting List ',
+        '3': 'Block List',
+    };
+    repromotionAccess.clearStore();
+
+    let items = [];
+
+    $.each(valueToLabelMap, function (val, label) {
+        let selected = '';
+
+        if (repromotion_access_upd.includes(val)) {
+            selected = 'selected';
+        }
+
+        items.push({
+            value: val,
+            label: label,
+            selected: selected
+        });
+    });
+    repromotionAccess.setChoices(items);
+    repromotionAccess.init();
+}
 //Screen Mapping
 //modules checkbox events
 function checkbox(checkboxesToEnable, module) {
@@ -1349,9 +1426,10 @@ function validation() {
         $('#reqCheck').hide();
     }
     let promotionChecked = $('#promotion_activity').is(':checked');
+    let repromotionChecked = $('#repromotion_activity').is(':checked');
     let promotionMapping = $('#promotion_activity_mapping_access').val();
 
-    if (promotionChecked) {
+    if (promotionChecked || repromotionChecked) {
         if (promotionMapping === '1') requireGroup = true;
         if (promotionMapping === '2') requireLine = true;
         if (promotionMapping === '3') requireFollowup = true;
@@ -1435,35 +1513,58 @@ function validation() {
         }
     }
 
-     var isPromotionChecked = $("#promotion_activity").is(":checked");
+    var isPromotionChecked = $("#promotion_activity").is(":checked");
+    var isRePromotionChecked = $("#repromotion_activity").is(":checked");
 
+    // Promotion Activity Validation
     if (isPromotionChecked) {
-        // Promotion Activity Access Validation
         let proAtyAccessIdSort = multipleSelectSort(
-          promotionAccess,
-          "#pro_aty_access_id",
+            promotionAccess,
+            "#pro_aty_access_id"
         );
 
         if (proAtyAccessIdSort == 0) {
-          $("#proCheck").show();
-          validation = false;
+            $("#proCheck").show();
+            validation = false;
         } else {
-          $("#proCheck").hide();
-        }
-
-        // Action Access Validation
-        if ($("#promotion_activity_action_access").val() == "") {
-          $(".actionAccessCheck").show();
-          validation = false;
-        } else {
-          $(".actionAccessCheck").hide();
+            $("#proCheck").hide();
         }
     }
 
-    $("#promotion_activity_action_access").on("change", function () {
-      if ($(this).val() != "") {
+    // Re-Promotion Activity Validation
+    if (isRePromotionChecked) {
+        let reproAtyAccessIdSort = multipleSelectSort(
+            repromotionAccess,
+            "#repro_aty_access_id"
+        );
+
+        if (reproAtyAccessIdSort == 0) {
+            $("#reproCheck").show();
+            validation = false;
+        } else {
+            $("#reproCheck").hide();
+        }
+    }
+
+    // Common Action Access Validation
+    if (isPromotionChecked || isRePromotionChecked) {
+
+        if ($("#promotion_activity_action_access").val() == "") {
+            $(".actionAccessCheck").show();
+            validation = false;
+        } else {
+            $(".actionAccessCheck").hide();
+        }
+
+    } else {
+        // Neither Promotion nor Re-Promotion is selected
         $(".actionAccessCheck").hide();
-      }
+    }
+
+    $("#promotion_activity_action_access").on("change", function () {
+        if ($(this).val() != "") {
+            $(".actionAccessCheck").hide();
+        }
     });
 
     var isbankClearanceChecked = $('#bank_clearance').is(':checked');
@@ -1708,10 +1809,11 @@ function validation() {
 
     // validtaion for promotion activity
     var promotion_activity = document.querySelector('#promotion_activity');
+    var repromotion_activity = document.querySelector('#repromotion_activity');
     var promotion_activity_mapping_access = $('#promotion_activity_mapping_access').val();
-
+    var isMappingSelected = promotion_activity_mapping_access != '';
     // Case 1: Checkbox checked but dropdown empty
-    if (promotion_activity.checked && promotion_activity_mapping_access == '') {
+    if ((promotion_activity.checked || repromotion_activity.checked) && promotion_activity_mapping_access == '') {
         $('#proMapCheck').show();
         validation = false;
     } else {
@@ -1719,11 +1821,17 @@ function validation() {
     }
 
     // Case 2: Dropdown has value but checkbox not checked
-    if (!promotion_activity.checked && promotion_activity_mapping_access != '') {
+    if (isMappingSelected && !isPromotionChecked && !isRePromotionChecked) {
+
         $('.promotionActivityCheck').show();
+        $('.repromotionActivityCheck').show();
+
         validation = false;
+
     } else {
+
         $('.promotionActivityCheck').hide();
+        $('.repromotionActivityCheck').hide();
     }
 
     let checkedCount = $('.screen-validations:checked').length;

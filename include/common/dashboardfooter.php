@@ -2896,6 +2896,10 @@
         <script src="js/promotion_activity.js"></script>
     <?php }
 
+    if ($current_page == 'repromotion_activity') { ?>
+        <script src="js/repromotion_activity.js"></script>
+    <?php }
+
     if ($current_page == 'due_followup') { ?>
         <script src="js/due_followup.js"></script>
     <?php }

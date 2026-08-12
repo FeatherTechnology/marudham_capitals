@@ -164,7 +164,7 @@ $result = $statement->fetchAll();
 $data = [];
 $sno = 1;
 $role_arr = [1 => 'Director', 2 => 'Agent', 3 => 'Staff'];
-$originName = [1 => 'Renewal', 2 => 'New Promotion', 3 => 'Repromotion', 4 => 'Re-active'];
+$originName = [1 => 'Renewal', 2 => 'New Promotion', 3 => 'Repromotion', 4 => 'Re-active', 5 => 'Waiting List', 6 => 'Block List'];
 $promo_type_arr = ['1' => 'Direct', '2' => 'Mobile'];
 $statusObj = ['0' => 'Request', '1' => 'Verification', '2' => 'Approval', '3' => 'Acknowledgement', '4' => 'Promotion', '5' => 'Promotion', '6' => 'Promotion', '7' => 'Promotion', '8' => 'Promotion', '9' => 'Promotion', '10' => 'Verification', '11' => 'Verification', '12' => 'Verification', '13' => 'Loan Issue', '14' => 'Collection', '15' => 'Collection', '16' => 'Collection', '17' => 'Collection', '20' => 'Promotion', '21' => 'Promotion', '22' => 'Promotion', '23' => 'Promotion', '24' => 'Promotion'];
 

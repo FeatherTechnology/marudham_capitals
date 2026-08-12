@@ -10,7 +10,7 @@ $sub_area_list  = $Obj->sub_area_list;
 $accessType     = $Obj->accessType;
 $actionAccess   = $Obj->actionAccess;
 
-$sub_status = [1 => 'Bronze', 2 => 'Silver', 3 => 'Gold', 4 => 'Platinum', 5 => 'Diamond'];
+$status_arr = [2 => 'Waiting List', 3 => 'Block List'];
 $cusstatus = [21 => 'NOC Pending', 22 => 'NOC Completed', 23 => 'NOC Completed', 24 => 'NOC Handovered', 25 => 'Agent Handovered'];
 
 $column = array(
@@ -25,7 +25,6 @@ $column = array(
     'alm.line_name',
     'cr.mobile1',
     'cr.cus_reg_id',
-    'cs.consider_level',
     'cs.created_date',
     'rc.cus_status',
     'cr.cus_reg_id',
@@ -34,11 +33,14 @@ $column = array(
     'np.follow_date',
     'np.followup_type'
 );
-
-if (isset($_POST['re_active']) && $_POST['re_active'] != "") {
-    $re_active = "HAVING CURDATE() >= DATE_ADD(DATE_ADD(LAST_DAY(MAX(created_date)), INTERVAL 1 DAY),INTERVAL 6 MONTH)";
+ $condition ='';
+ $condition1='';
+if (isset($_POST['waiting_list']) && $_POST['waiting_list'] != "") {
+    $condition = "closed_sts = 2";
+    $condition1 = "closed_sts IN (1,3)";
 } else {
-    $re_active = "HAVING CURDATE() < DATE_ADD( DATE_ADD(LAST_DAY(MAX(created_date)), INTERVAL 1 DAY),INTERVAL 6 MONTH)";
+    $condition = "closed_sts = 3";
+    $condition1 = "closed_sts IN (1,2)";
 }
 
 $areaColumn = ($accessType == 3)
@@ -49,10 +51,10 @@ $areaColumn = ($accessType == 3)
 // Simplified main query to fetch closed customers without loans
 $baseqry = "FROM  customer_register cr
     JOIN (
-        SELECT req_id, cus_id, consider_level, MAX(created_date) AS created_date 
+        SELECT req_id, cus_id, closed_sts, MAX(created_date) AS created_date 
         FROM closed_status 
-        WHERE closed_sts = 1 
-        GROUP BY cus_id $re_active
+        WHERE $condition
+        GROUP BY cus_id 
     ) cs ON cs.cus_id = cr.cus_id 
     LEFT JOIN area_list_creation al ON cr.area_confirm_area = al.area_id 
     LEFT JOIN sub_area_list_creation sl ON cr.area_confirm_subarea = sl.sub_area_id 
@@ -64,8 +66,7 @@ $baseqry = "FROM  customer_register cr
     LEFT JOIN new_promotion np ON np.cus_id = cs.cus_id AND np.created_date = (SELECT MAX(np1.created_date) FROM new_promotion np1 WHERE np1.cus_id = cs.cus_id)
     LEFT JOIN request_creation rc ON cr.cus_id = rc.cus_id
     WHERE $areaColumn IN ($sub_area_list) AND NOT EXISTS (SELECT 1 FROM closed_status cs2
-    WHERE cs2.cus_id = cr.cus_id AND cs2.id = (SELECT MAX(cs3.id) FROM closed_status cs3 WHERE cs3.cus_id = cr.cus_id) AND cs2.closed_sts IN (2,3)
-) AND NOT EXISTS ( SELECT 1 FROM request_creation r WHERE r.cus_id = cs.cus_id AND r.return_sts != 1 AND ((r.cus_status IN (4,5,6,7,8,9)) OR r.cus_status <= 20)) ";
+    WHERE cs2.cus_id = cr.cus_id AND cs2.id = ( SELECT MAX(cs3.id) FROM closed_status cs3 WHERE cs3.cus_id = cr.cus_id) AND $condition1) AND NOT EXISTS ( SELECT 1 FROM request_creation r WHERE r.cus_id = cs.cus_id AND r.return_sts != 1 AND ((r.cus_status IN (4,5,6,7,8,9)) OR r.cus_status <= 20)) ";
 
 if ($_POST['followUpSts']) {
     $follow_up_sts = $_POST['followUpSts'];
@@ -110,8 +111,7 @@ $num_qry = $connect->query("SELECT COUNT(*) FROM (SELECT cr.cus_id  $baseqry) AS
 $num_qry->execute();
 $number_filter_row = $num_qry->fetchColumn();
 
-$sql = $connect->query("SELECT cr.req_ref_id as req_id, cr.cus_id, cr.autogen_cus_id, cr.customer_name as cus_name, al.area_name, sl.sub_area_name, bc.branch_name, agm.group_name, alm.line_name, cr.mobile1, cs.consider_level, cs.created_date, np.status AS followup_sts, np.follow_date, np.followup_type, rc.cus_status AS noc_cus_status $baseqry $limit");
-
+$sql = $connect->query("SELECT cr.req_ref_id as req_id, cr.cus_id, cr.autogen_cus_id, cr.customer_name as cus_name, al.area_name, sl.sub_area_name, bc.branch_name, agm.group_name, alm.line_name, cr.mobile1, cs.closed_sts, cs.created_date, np.status AS followup_sts, np.follow_date, np.followup_type, rc.cus_status AS noc_cus_status $baseqry $limit");
 $sno = 1;
 $data = [];
 while ($row = $sql->fetch()) {
@@ -133,10 +133,6 @@ while ($row = $sql->fetch()) {
             <a class='intrest' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Interested</span></a>
             <a class='not-intrest' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Not Interested</span></a>
             <a class='un-available' data-toggle='modal' data-target='#addPromotion' data-id='" . $row['cus_id'] . "'><span>Unavailable</span></a>";
-
-    if ($actionAccess == 1) {
-        $actions .= "<a class='add_close' data-toggle='modal' data-target='#addClosedModal' data-id='" . $row['cus_id'] . "'><span>Closed Status</span></a>";
-    }
 
     $actions .= "</div></div>";
 
@@ -160,8 +156,7 @@ while ($row = $sql->fetch()) {
         $row['group_name'],
         $row['line_name'],
         $row['mobile1'],
-        'Consider',
-        $sub_status[$row['consider_level']], //fetched from closed status table above mentioned    
+        $status_arr[$row['closed_sts']], //fetched from closed status table above mentioned    
         $createddate,
         $cusstatus[$row['noc_cus_status']] ?? '',
         $charts,
@@ -172,16 +167,15 @@ while ($row = $sql->fetch()) {
     ];
 }
 
-function count_all_data($connect)
-{
-    $statement = $connect->prepare("SELECT COUNT(*) FROM closed_status cs WHERE cs.closed_sts = 1");
+function count_all_data($connect, $condition) {
+    $statement = $connect->prepare("SELECT COUNT(*) FROM closed_status cs WHERE $condition");
     $statement->execute();
     return (int) $statement->fetchColumn();
 }
 
 $output = array(
     'draw' => intval($_POST['draw']),
-    'recordsTotal' => count_all_data($connect),
+    'recordsTotal' => count_all_data($connect, $condition),
     'recordsFiltered' => $number_filter_row,
     'data' => $data
 );

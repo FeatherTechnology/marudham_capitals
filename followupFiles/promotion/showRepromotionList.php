@@ -59,7 +59,7 @@ LEFT JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
 LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
 LEFT JOIN new_promotion np ON np.cus_id = req.cus_id AND np.created_date = (SELECT MAX(np1.created_date) FROM new_promotion np1 WHERE np1.cus_id = req.cus_id)
 LEFT JOIN request_creation rcs ON req.cus_id = rcs.cus_id
-WHERE req.cus_status BETWEEN 4 AND 9 
+WHERE req.cus_status BETWEEN 4 AND 9 AND req.return_sts = 0
 AND CASE WHEN req.cus_status IN (6, 7) THEN cp.area_confirm_subarea ELSE $areaColumn END IN  ($sub_area_list) AND rc.cus_id IS NULL ";
 
 if ($_POST['followUpSts']) {
@@ -127,6 +127,7 @@ while ($row = $sql->fetch()) {
 
     if ($row['has_closed_status'] == 1 && $actionAccess == 1) {
         $actions .= "<a class='add_close'data-toggle='modal'data-target='#addClosedModal'data-id='" . $row['cus_id'] . "'> <span>Closed Status</span></a>";
+        $actions .= "<a class='return_sts' data-id='" . $row['cus_id'] . "' data-req-id='" . $row['req_id'] . "'><span>Return Status</span></a>";
     }
 
     $actions .= "</div></div>";
