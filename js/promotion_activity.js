@@ -10,47 +10,72 @@ $(document).ready(function () {
         $(this).addClass("active");
 
         var typevalue = this.value;
-        $('.renewal_card, .re_active_card, .new_card, .new_promo_card, .customer-status-card, .loan-history-card, .doc-history-card, #close_history_card, .repromotion_card, .filter_card').hide();
+        $('.enquiry_card, .renewal_card, .re_active_card, .new_card, .new_promo_card, .customer-status-card, .loan-history-card, .doc-history-card, #close_history_card, .filter_card, .event_card, .add_event_card').hide();
 
-        //except new promotion all had closing date.
-        $('#date_type')
-            .empty()
-            .append(`<option value="">Select Date</option>
-                <option value="1">Closed Date</option>
-                <option value="2">Followup Date</option>`);
-
-        if (typevalue == 'New') {
+        //except new promotion & Enquiry all had closing date.
+        if(typevalue == 'New' || typevalue == 'Enquiry'){
             $('#date_type')
                 .empty()
                 .append(`<option value="">Select Date</option>
                     <option value="2">Followup Date</option>`);
 
+        }else{
+            $('#date_type')
+                .empty()
+                .append(`<option value="">Select Date</option>
+                    <option value="1">Closed Date</option>
+                    <option value="2">Followup Date</option>`);
+        }
+
+        if (typevalue == 'New') {
             $('.new_promo_card, .filter_card').show();
-            $('.event_card, .add_event_card').hide();
             resetNewPromotionTable();
+
+        } else if (typevalue == 'Enquiry') {
+            $('.enquiry_card, .filter_card').show();
+            resetEnquiryTable();
 
         } else if (typevalue == 'Renewal') {
             $('.renewal_card, .filter_card').show();
-            $('.event_card, .add_event_card').hide();
             showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list', '17');
 
         } else if (typevalue == 'Re-active') {
             $('.re_active_card, .filter_card').show();
-            $('.event_card, .add_event_card').hide();
             showPromotionList('followupFiles/promotion/showPromotionList.php', 're_active_promotion_list', '17');
-
-        } else if (typevalue == 'Repromotion') {
-            $('.event_card, .add_event_card').hide();
-            $('.repromotion_card, .filter_card').show();
-            showPromotionList('followupFiles/promotion/showRepromotionList.php', 'repromotion_list', '18');
 
         } else if (typevalue == 'Events') {
             $('.event_card').show();
-            $('.add_event_card').hide();
             eventsTable();
 
         }
+    });
 
+    $('.add-enquiry-btn, .add-new-btn').click(function(e){
+        let title = $(this).val();
+        $('#new_enquiry_modal_title').text(title);
+        $('.enq_loan_amt').hide();
+
+        if(title.replaceAll(" ", "") == 'Enquiry'){
+            $('#screen_name').val('1'); //1-Enquiry, 2-New //using same modal box for both so differentiate using hidden input.
+            $('.enq_loan_amt').show();
+
+        }else if(title.replaceAll(" ", "") == 'NewPromotion'){
+            $('#screen_name').val('2');
+
+        }
+
+        getUserBasedArea();
+    });
+
+    $('#closeNewPromotionModal, .modalCloseBtn').click(function(e){
+        let screenName = $('#screen_name').val();
+        if(screenName == '1'){
+            resetEnquiryTable();
+        } else if(screenName =='2'){
+            resetNewPromotionTable();
+        }
+
+        $('#cus_id, #cus_data, #new_cus_name, #cus_mob, #area, #sub_area, #enquiry_loan_amt, #screen_name').val('');
     });
 
     $('#cus_id_search, #cus_id').keyup(function () {
@@ -69,7 +94,13 @@ $(document).ready(function () {
     $('#submit_new_cus').click(function (e) {
         e.preventDefault();
         if (validateNewCusAdd() == true) {
-            submitNewCustomer();
+
+            let screenName = $('#screen_name').val(); //1-Enquiry, 2-New Promotion.
+            if(screenName =='1'){
+                submitEnquiry();
+            }else if(screenName =='2'){
+                submitNewCustomer();
+            }
         }
     });
 
@@ -100,17 +131,16 @@ $(document).ready(function () {
                 return;
             }
         } else {
-            $('#follow_up_fromdate').val('');
-            $('#follow_up_todate').val('');
+            $('#follow_up_fromdate, #follow_up_todate').val('');
         }
 
         let btnName = $(".toggle-button.active").first().val();
 
-        if (btnName == 'Renewal') {
-            showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list', '17');
+        if (btnName == 'Enquiry') {
+            resetEnquiryTable();
 
-        } else if (btnName == 'Repromotion') {
-            showPromotionList('followupFiles/promotion/showRepromotionList.php', 'repromotion_list', '18');
+        } else if (btnName == 'Renewal') {
+            showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list', '17');
 
         } else if (btnName == 'Re-active') {
             showPromotionList('followupFiles/promotion/showPromotionList.php', 're_active_promotion_list', '17');
@@ -505,14 +535,14 @@ function getPromotionAccess() {
                 if (value === 2) {
                     $("#new_button").closest(".toggle-button").show();
                 }
-                if (value === 3) {
-                    $("#repromotion_button").closest(".toggle-button").show();
-                }
                 if (value === 4) {
                     $("#events_button").closest(".toggle-button").show();
                 }
                 if (value === 5) {
                     $("#reactive_button").closest(".toggle-button").show();
+                }
+                if (value === 6) {
+                    $("#enquiry_button").closest(".toggle-button").show();
                 }
             });
         }
@@ -611,7 +641,39 @@ function submitNewCustomer() {
             swarlSuccessAlert(response, function () {
                 $('#closeNewPromotionModal').trigger('click');
             });
-            $('#addnewcus').find('.modal-body input').val('');
+            $('#addnewcus').find('.modal-body input').not('#screen_name').val('');
+        }
+    });
+}
+
+function resetEnquiryTable() {
+    let followUpSts = $('#follow_up_sts').val();
+    let dateType = $('#date_type').val();
+    let followUpFromDate = $('#follow_up_fromdate').val();
+    let followUpToDate = $('#follow_up_todate').val();
+    let followupType = $('#followuptype').val();
+
+    $.post('followupFiles/promotion/resetEnquiryTable.php', { followUpSts, dateType, followUpFromDate, followUpToDate, followupType }, function (html) {
+        $('#enquiry_div').empty().html(html);
+
+    }).then(function () {
+
+        intNotintOnclick();
+        promoChartOnclick();
+    })
+}
+
+function submitEnquiry() {
+    let cus_id = $('#cus_id').val(); let cus_data = $('#cus_data').val(); let cus_name = $('#new_cus_name').val(); let cus_mob = $('#cus_mob').val(); let area = $('#area').val(); let sub_area = $('#sub_area').val(); let enquiry_loan_amt = $('#enquiry_loan_amt').val(); 
+    let args = { cus_id, cus_data, cus_name, cus_mob, area, sub_area, enquiry_loan_amt }
+    $.post('followupFiles/promotion/submitEnquiry.php', args, function (response) {
+        if (response.includes('Error')) {
+            swarlErrorAlert(response);
+        } else {
+            swarlSuccessAlert(response, function () {
+                $('#closeNewPromotionModal').trigger('click');
+            });
+            $('#addnewcus').find('.modal-body input').not('#screen_name').val('');
         }
     });
 }
@@ -619,11 +681,13 @@ function submitNewCustomer() {
 function validateNewCusAdd() {
     let response = true;
     let cus_id = $('#cus_id').val(); let cus_name = $('#new_cus_name').val(); let cus_mob = $('#cus_mob').val();
-    let area = $('#area').val(); let sub_area = $('#sub_area').val();
+    let area = $('#area').val(); let sub_area = $('#sub_area').val(); let enquiry_loan_amt = $('#enquiry_loan_amt').val(); let screen_name = $('#screen_name').val();
 
     validateField(cus_name, '#cus_nameCheck');
     validateField(area, '#areaCheck');
     validateField(sub_area, '#subareaCheck');
+
+    (screen_name =='1') ? validateField(enquiry_loan_amt, '#enquiryloanamtCheck') : '';
 
     function validateField(value, fieldId) {
         if (value === '') {
@@ -660,8 +724,8 @@ function validateNewCusAdd() {
 }
 
 function submitPromotion() {
-    let cus_id = $('#promo_cus_id').val(); let promo_type = $('#promo_type').val(); let status = $('#promo_status').val(); let label = $('#promo_label').val(); let remark = $('#promo_remark').val(); let follow_date = $('#promo_fdate').val(); let followupType = $('#followup_type').val(); let orgin_table = $('#orgin_table').val();
-    let args = { cus_id, promo_type, status, label, remark, follow_date, followupType, orgin_table };
+    let cus_id = $('#promo_cus_id').val(); let screen = $('#promo_screen').val(); let promo_type = $('#promo_type').val(); let status = $('#promo_status').val(); let label = $('#promo_label').val(); let remark = $('#promo_remark').val(); let follow_date = $('#promo_fdate').val(); let followupType = $('#followup_type').val(); let orgin_table = $('#orgin_table').val();
+    let args = { cus_id, screen, promo_type, status, label, remark, follow_date, followupType, orgin_table };
 
     $.post('followupFiles/promotion/submitNewPromotion.php', args, function (response) {
         if (response.includes('Error')) {
@@ -694,7 +758,6 @@ function submitClosed() {
         }
     })
 }
-
 
 function getUserBasedArea() {
     $.ajax({
@@ -817,7 +880,8 @@ function update() {//this function will update customer details of after confirm
 function promoChartOnclick() { // function of on click event for promo chart
     $(document).off('click', '.promo-chart').on('click', '.promo-chart', function () {
         let cus_id = $(this).data('id');
-        $.post('followupFiles/promotion/resetPromotionChart.php', { cus_id: cus_id }, function (html) {
+        let screen = $(this).data('screen');
+        $.post('followupFiles/promotion/resetPromotionChart.php', { cus_id, screen }, function (html) {
             $('#promoChartDiv').empty().html(html);
         });
     });
@@ -828,12 +892,14 @@ function intNotintOnclick() {
     $(document).off('click', '.intrest, .not-intrest, .un-available, .noc-call').on('click', '.intrest, .not-intrest, .un-available, .noc-call', function () {
         let value = $(this).children().text(); // span inner html
         let cus_id = $(this).data('id'); // customer id
+        let screen = $(this).data('screen') ?? ''; // screen - 1=Enquiry
 
         $('#promo_status').val(value);
         $('#promo_cus_id').val(cus_id);
+        $('#promo_screen').val(screen);
 
         // get table id for reset when modal close
-        let orgin_table = $(this).closest('table').data('id');
+        let orgin_table = $(this).closest('table').data('id') ?? '';
         $('#orgin_table').val(orgin_table);
     });
 
@@ -863,6 +929,8 @@ function intNotintOnclick() {
             $(".toggle-button[value='Repromotion']").trigger('click');
         } else if (orgin_table === 're_active') {
             $(".toggle-button[value='Re-active']").trigger('click');
+        } else if (orgin_table === 'enquiry') {
+            $(".toggle-button[value='Enquiry']").trigger('click');
         } else {
             resetNewPromotionTable();
         }
@@ -1056,17 +1124,13 @@ function historyTableContents(cus_id, type, url) {
         var bal_amt = balAmnt;
 
         $('#close_history_card').show();
-        $('.filter_card').hide();
-        $('.renewal_card').hide();
-        $('.re_active_card').hide();
-        $('.repromotion_card').hide();
+        $('.filter_card, .renewal_card, .re_active_card').hide();
 
         if (type == 'customer-sts') {
 
             //for customer status
             $('.customer-status-card').show();
-            $('.loan-history-card').hide();
-            $('.doc-history-card').hide();
+            $('.loan-history-card, .doc-history-card').hide();
 
             $.ajax({
                 url: 'requestFile/getCustomerStatus.php',
@@ -1094,8 +1158,7 @@ function historyTableContents(cus_id, type, url) {
 
             //for loan history
             $('.loan-history-card').show();
-            $('.customer-status-card').hide();
-            $('.doc-history-card').hide();
+            $('.customer-status-card, .doc-history-card').hide();
 
             $.ajax({
                 // Fetching details by customer ID instead of req ID because we need all loans from the customer
@@ -1119,8 +1182,7 @@ function historyTableContents(cus_id, type, url) {
 
             //for Document history
             $('.doc-history-card').show();
-            $('.customer-status-card').hide();
-            $('.loan-history-card').hide();
+            $('.customer-status-card, .loan-history-card').hide();
 
             $.ajax({
                 // Fetching details by customer ID instead of req ID because we need all loans from the customer
@@ -1148,8 +1210,6 @@ function historyTableContents(cus_id, type, url) {
                 $('.renewal_card').show();
             } else if (typevalue == 'Re-active') {
                 $('.re_active_card').show();
-            } else if (typevalue == 'Repromotion') {
-                $('.repromotion_card').show();
             }
 
             $('.filter_card').show();
@@ -1297,6 +1357,8 @@ function closedModal() {
         $(".toggle-button[value='Repromotion']").trigger('click');
     } else if (orgin_table === 're_active') {
         $(".toggle-button[value='Re-active']").trigger('click');
+    } else if (orgin_table === 'enquiry') {
+        $(".toggle-button[value='Enquiry']").trigger('click');
     } else {
         resetNewPromotionTable();
     }
