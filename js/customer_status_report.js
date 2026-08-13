@@ -1,337 +1,241 @@
-// Remove User based loan category
+// Remove User based loan category 
 // show the user who has collection and due followup Access
-const loanCategory = new Choices("#loan_category", {
-  removeItemButton: true,
-  noChoicesText: "Select Category",
-  allowHTML: true,
+const loanCategory = new Choices('#loan_category', {
+    removeItemButton: true,
+    noChoicesText: 'Select Category',
+    allowHTML: true
 });
 
-const map_name = new Choices("#map_name", {
-  removeItemButton: true,
-  noChoicesText: "Select",
-  allowHTML: true,
+const map_name = new Choices('#map_name', {
+    removeItemButton: true,
+    noChoicesText: 'Select',
+    allowHTML: true
 });
 
-$("#map_name").closest(".choices").hide();
+$('#map_name').closest('.choices').hide();
 
 $(document).ready(function () {
-  $("#type").change(function () {
-    let type = $(this).val();
-    $("#user_type, #by_user").val("").hide();
-    $("#department, #team").val("").hide(); // Hide both
-    $("#map_name").closest(".choices").hide();
-    map_name.clearStore();
-    $("#pending_table, #current_table, #od_table").hide().find("tbody").empty();
 
-    // Reset header text
-    $(".card-header").text("Customer Status Report");
+    $('#type').change(function () {
+        let type = $(this).val();
+        $('#user_type, #by_user').val('').hide();
+        $('#map_name').closest('.choices').hide();
+        map_name.clearStore();
+        $('#pending_table, #current_table, #od_table').hide().find('tbody').empty();
 
-    // If DataTables is used, destroy previous instances to avoid duplicates
-    if ($.fn.DataTable.isDataTable("#pending_table")) {
-      $("#pending_table").DataTable().clear().destroy();
-    }
-    if ($.fn.DataTable.isDataTable("#current_table")) {
-      $("#current_table").DataTable().clear().destroy();
-    }
-    if ($.fn.DataTable.isDataTable("#od_table")) {
-      $("#od_table").DataTable().clear().destroy();
-    }
+        // Reset header text
+        $('.card-header').text('Customer Status Report');
 
-    if (type == "1") {
-      $("#user_type, #by_user").val("").show();
-      $("#by_user").empty().append("<option value=''>Select User</option>");
-    } else if (type == "2" || type == "3" || type == "4") {
-      //sector - group, Region - Line, Zone - Follow up
-      $("#map_name").closest(".choices").show();
-      getUserMappedDetails(type); //to Mapping details.
-    } else if (type == "5") {
-      $("#department").show();
-      getDepartmentTeamNames();
-    } else if (type == "6") {
-      $("#team").show();
-      getDepartmentTeamNames();
-    }
-  });
+        // If DataTables is used, destroy previous instances to avoid duplicates
+        if ($.fn.DataTable.isDataTable('#pending_table')) {
+            $('#pending_table').DataTable().clear().destroy();
+        }
+        if ($.fn.DataTable.isDataTable('#current_table')) {
+            $('#current_table').DataTable().clear().destroy();
+        }
+        if ($.fn.DataTable.isDataTable('#od_table')) {
+            $('#od_table').DataTable().clear().destroy();
+        }
 
-  $("#user_type").change(function () {
-    let userType = $("#user_type").val();
-    $("#by_user").empty().append("<option value=''>Select User</option>");
+        if(type == '1'){ 
+            $('#user_type, #by_user').val('').show();
+            $('#by_user').empty().append("<option value=''>Select User</option>");
 
-    if (userType != "") {
-      getUserNames();
-    }
-  });
+        } else if(type == '2' || type == '3' || type == '4') { //sector - group, Region - Line, Zone - Follow up
+            $('#map_name').closest('.choices').show();
+            getUserMappedDetails(type); //to Mapping details.  
+        }
+    });
 
-  $("#reset_btn").click(function () {
-    let search_date = $("#search_date").val();
-    let type = $("#type").val();
-    let line = $("#line").val();
-    let selected_user = $("#by_user").val();
-    let map_name = $("#map_name").val();
-    let due_followup = $("#due_followup").val();
-    let loan_category = $("#loan_category").val();
-    let sub_status_type = $("#sub_status_type").val();
-    let department = $("#department").val();
-    let team = $("#team").val();
+    $('#user_type').change(function () {
+        let userType = $('#user_type').val();
+        $('#by_user').empty().append("<option value=''>Select User</option>");  
 
-    if (!search_date || !type || !loan_category || !sub_status_type) {
-      swalError("Please Select All Fields!", "All fields are required.");
-      return;
-    }
+        if(userType != ''){
+            getUserNames();
+        }
+    });
 
-    if (
-      (type == 1 && !selected_user) ||
-      ((type == "2" || type == "3" || type == "4") && !map_name) ||
-      (type == "5" && !department) ||
-      (type == "6" && !team)
-    ) {
-      swalError("Please Select All Fields!", "All fields are required.");
-      return;
-    }
+    $('#reset_btn').click(function () {
+        let search_date = $('#search_date').val();
+        let type = $('#type').val();
+        let line = $('#line').val();
+        let selected_user = $('#by_user').val();
+        let map_name = $('#map_name').val();
+        let due_followup = $('#due_followup').val();
+        let loan_category = $('#loan_category').val();
+        let sub_status_type = $('#sub_status_type').val();
 
-    if (type == "1") {
-      $("#nameHeader").text("User Name");
-    } else if (type == "2") {
-      $("#nameHeader").text("Sector Name");
-    } else if (type == "3") {
-      $("#nameHeader").text("Region Name");
-    } else if (type == "4") {
-      $("#nameHeader").text("Zone Name");
-    }
+        if (!search_date || !type || !loan_category || !sub_status_type) {
+            swalError('Please Select All Fields!', 'All fields are required.');
+            return;
+        }
 
-    $("#current_table, #pending_table, #od_table, .dataTables_wrapper").hide();
+        if (
+            (type == 1 && !selected_user) || ((type == '2' || type == '3' || type == '4') && !map_name)
+        ) {
+            swalError('Please Select All Fields!', 'All fields are required.');
+            return;
+        }
 
-    if (sub_status_type == "1") {
-      $(".card-header").text("Current Report");
-      $("#current_table").show();
-      currentReportCount(
-        search_date,
-        type,
-        selected_user,
-        map_name,
-        department,
-        team,
-        loan_category,
-        sub_status_type,
-      );
-    } else if (sub_status_type == "2") {
-      $(".card-header").text("Pending Report");
-      $("#pending_table").show();
-      pendingReportCount(
-        search_date,
-        type,
-        selected_user,
-        map_name,
-        department,
-        team,
-        loan_category,
-        sub_status_type,
-      );
-    } else if (sub_status_type == "3") {
-      $(".card-header").text("OD Report");
-      $("#od_table").show();
-      odReportCount(
-        search_date,
-        type,
-        selected_user,
-        map_name,
-        department,
-        team,
-        loan_category,
-        sub_status_type,
-      );
-    }
-  });
+        if (type == "1") {
+            $("#nameHeader").text("User Name");
+        } else if (type == "2") {
+            $("#nameHeader").text("Sector Name");
+        } else if (type == "3") {
+            $("#nameHeader").text("Region Name");
+        } else if (type == "4") {
+            $("#nameHeader").text("Zone Name");
+        }
+
+        $('#current_table, #pending_table, #od_table, .dataTables_wrapper').hide();
+
+        if (sub_status_type == '1') {
+            $('.card-header').text('Current Report');
+            $('#current_table').show();
+            currentReportCount(search_date, type, selected_user, map_name, loan_category, sub_status_type);
+
+        } else if (sub_status_type == '2') {
+            $('.card-header').text('Pending Report');
+            $('#pending_table').show();
+            pendingReportCount(search_date, type, selected_user, map_name, loan_category, sub_status_type);
+
+        } else if (sub_status_type == '3') {
+            $('.card-header').text('OD Report');
+            $('#od_table').show();
+            odReportCount(search_date, type, selected_user, map_name, loan_category, sub_status_type);
+        }
+    });
 });
 
-$(function () {
-  getUserLoanCategories();
+$(function(){
+    getUserLoanCategories();
 });
 
 function getUserNames() {
-  let user_type = $("#user_type").val();
+    let user_type = $('#user_type').val();
 
-  $.post(
-    "reportFile/customer_status_report/getAllUserList.php",
-    { user_type },
-    function (response) {
-      $("#by_user").empty().append("<option value=''>Select User</option>");
-      $.each(response, function (index, val) {
-        $("#by_user").append(
-          "<option value='" +
-            val["user_id"] +
-            "'>" +
-            val["username"] +
-            "</option>",
-        );
-      });
-    },
-    "json",
-  );
-}
-
-function getDepartmentTeamNames() {
-  let type = $("#type").val();
-
-  let target = type == "5" ? "#department" : "#team";
-
-  $(target).empty();
-
-  $.post(
-    "reportFile/promotion_activity/department_team_list.php",
-    { type: type },
-    function (response) {
-      let optionText = type == "5" ? "Select Department" : "Select Team";
-
-      $(target).append("<option value=''>" + optionText + "</option>");
-
-      $.each(response, function (index, val) {
-        $(target).append(
-          "<option value='" + val.id + "'>" + val.name + "</option>",
-        );
-      });
-    },
-    "json",
-  );
+    $.post('reportFile/customer_status_report/getAllUserList.php', {user_type}, function (response) {
+        $('#by_user').empty().append("<option value=''>Select User</option>");
+        $.each(response, function (index, val) {
+            $('#by_user').append("<option value='" + val['user_id'] + "'>" + val['username'] + "</option>");
+        });
+    }, 'json');
 }
 
 // function getUserLoanCategories(user_id, followup_id = null)
 function getUserLoanCategories() {
-  $.ajax({
-    url: "reportFile/customer_status_report/ajaxGetUserLoanCategory.php",
-    type: "POST",
-    dataType: "json",
-    success: function (response) {
-      loanCategory.clearStore();
-      let items = [];
-      for (let i = 0; i < response.length; i++) {
-        items.push({
-          value: response[i]["loan_category_creation_id"],
-          label: response[i]["loan_category_creation_name"],
-        });
-      }
-      loanCategory.setChoices(items);
-    },
-  });
+    $.ajax({
+        url: 'reportFile/customer_status_report/ajaxGetUserLoanCategory.php',
+        type: 'POST',
+        dataType: 'json',
+        success: function (response) {
+            loanCategory.clearStore();
+            let items = [];
+            for (let i = 0; i < response.length; i++) {
+                items.push({
+                    value: response[i]['loan_category_creation_id'],
+                    label: response[i]['loan_category_creation_name']
+                });
+            }
+            loanCategory.setChoices(items);
+        }
+    });
 }
 
-function currentReportCount(
-  search_date,
-  type,
-  selected_user,
-  map_name,
-  department,
-  team,
-  loan_category,
-  sub_status_type,
-) {
-  $.ajax({
-    url: "reportFile/customer_status_report/CurrentCustomerCountReport.php",
-    method: "POST",
-    data: {
-      search_date: search_date,
-      type: type,
-      user_id: selected_user,
-      map_name: map_name,
-      department: department,
-      team: team,
-      loan_category: loan_category,
-      sub_status_type: sub_status_type,
-    },
-    success: function (res) {
-      try {
-        const parsed = JSON.parse(res);
+function currentReportCount(search_date, type, selected_user, map_name, loan_category, sub_status_type) {
+    $.ajax({
+        url: 'reportFile/customer_status_report/CurrentCustomerCountReport.php',
+        method: 'POST',
+        data: {
+            search_date: search_date,
+            type: type,
+            user_id: selected_user,
+            map_name: map_name,
+            loan_category: loan_category,
+            sub_status_type: sub_status_type
+        },
+        success: function (res) {
+            try {
+                const parsed = JSON.parse(res);
 
-        if (!parsed.data || parsed.data.length === 0) {
-          $("#current_table thead").html(
-            "<tr><th colspan='10'>No data found for the selected filters</th></tr>",
-          );
-          $("#current_table").DataTable().clear().draw();
-          return;
-        }
+                if (!parsed.data || parsed.data.length === 0) {
+                    $('#current_table thead').html("<tr><th colspan='10'>No data found for the selected filters</th></tr>");
+                    $('#current_table').DataTable().clear().draw();
+                    return;
+                }
 
-        const data = parsed.data;
-        const totalRow = data[data.length - 1];
-        if (totalRow.fullname === "Total") {
-          data.pop();
-        }
+                const data = parsed.data;
+                const totalRow = data[data.length - 1];
+                if (totalRow.fullname === 'Total') {
+                    data.pop();
+                }
 
-        const columns = [
-          { data: "sno" },
-          { data: "date" },
-          { data: "fullname" },
-          { data: "loan_category" },
-          { data: "total_count" },
-          { data: "t_current_count" },
-          { data: "payable_zero" },
-          { data: "responsible_zero" },
-          { data: "balance_count" },
-          { data: "paid" },
-          { data: "partially_paid" },
-          { data: "totals_paid" },
-          {
-            data: "paid_percentage",
-            render: function (data) {
-              return Number(data).toFixed(1) + " %";
-            },
-          },
-          { data: "unpaid" },
-          {
-            data: "unpaid_percentage",
-            render: function (data) {
-              return Number(data).toFixed(1) + " %";
-            },
-          },
-          { data: "from_pending" },
-        ];
+                const columns = [
+                    { data: 'sno' },
+                    { data: 'date' },
+                    { data: 'fullname' },
+                    { data: 'loan_category' },
+                    { data: 'total_count' },
+                    { data: 't_current_count' },
+                    { data: 'payable_zero' },
+                    { data: 'responsible_zero' },
+                    { data: 'balance_count' },
+                    { data: 'paid' },
+                    { data: 'partially_paid' },
+                    { data: 'totals_paid' },
+                    {
+                        data: 'paid_percentage',
+                        render: function (data) {
+                            return Number(data).toFixed(1) + ' %';
+                        }
+                    },
+                    { data: 'unpaid' },
+                    {
+                        data: 'unpaid_percentage',
+                        render: function (data) {
+                            return Number(data).toFixed(1) + ' %';
+                        }
+                    },
+                    { data: 'from_pending' }
+                ];
 
-        $("#current_table").DataTable().destroy();
-        var current_table = $("#current_table").DataTable({
-          ...getStateSaveConfig("current_table"),
-          data: data,
-          columns: columns,
-          dom: "lBfrtip",
-          buttons: [
-            {
-              extend: "excel",
-              title: "Current Customer Count Report",
-              action: function (e, dt, button, config) {
-                var defaultAction =
-                  $.fn.dataTable.ext.buttons.excelHtml5.action;
-                var dynamic = curDateJs("Current_Customer_Count_Report"); // or any base
-                config.title = dynamic; // for versions that use title as filename
-                config.filename = dynamic; // for html5 filename
-                defaultAction.call(this, e, dt, button, config);
-              },
-            },
-            {
-              extend: "colvis",
-              collectionLayout: "fixed four-column",
-            },
-          ],
-          lengthMenu: [
-            [10, 25, 50, -1],
-            [10, 25, 50, "All"],
-          ],
-          drawCallback: function () {
-            searchFunction("current_table");
-            paginationFunction("current_table");
-          },
-        });
+                $('#current_table').DataTable().destroy();
+                var current_table = $('#current_table').DataTable({
+                    ...getStateSaveConfig('current_table'),
+                    data: data,
+                    columns: columns,
+                    dom: 'lBfrtip',
+                    buttons: [{
+                        extend: 'excel',
+                        title: "Current Customer Count Report",
+                        action: function (e, dt, button, config) {
+                            var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                            var dynamic = curDateJs('Current_Customer_Count_Report'); // or any base
+                            config.title = dynamic;      // for versions that use title as filename
+                            config.filename = dynamic;   // for html5 filename
+                            defaultAction.call(this, e, dt, button, config);
+                        }
+                    },
+                    {
+                        extend: 'colvis',
+                        collectionLayout: 'fixed four-column'
+                    }
+                    ],
+                    lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                    drawCallback: function () {
+                        searchFunction('current_table');
+                        paginationFunction('current_table');
+                    }
+                });
 
-        // Pass the table variable to the initColVisFeatures function
-        initColVisFeatures(current_table, "current_table");
+                // Pass the table variable to the initColVisFeatures function
+                initColVisFeatures(current_table, 'current_table');
 
-        let CurrentPaidPercent =
-          totalRow.balance_count > 0
-            ? (totalRow.totals_paid / totalRow.balance_count) * 100
-            : 0;
-        let CurrentUnpaidPercent =
-          totalRow.balance_count > 0
-            ? (totalRow.unpaid / totalRow.balance_count) * 100
-            : 0;
+                let CurrentPaidPercent = totalRow.balance_count > 0 ? (totalRow.totals_paid / totalRow.balance_count) * 100 : 0;
+                let CurrentUnpaidPercent = totalRow.balance_count > 0 ? (totalRow.unpaid / totalRow.balance_count) * 100 : 0;
 
-        let footerHtml = `<tr>
+                let footerHtml = `<tr>
                     <td></td>
                     <td></td>
                     <td><b>Total</b></td>
@@ -350,131 +254,107 @@ function currentReportCount(
                     <td><b>${totalRow.from_pending}</b></td>
                 </tr>`;
 
-        $("#current_table tfoot").html(footerHtml);
-      } catch (e) {
-        console.error("Invalid JSON:", res);
-        swalError("Error", "File returing Error kindly contact admin.");
-      }
-    },
-    error: function (xhr, status, error) {
-      console.error(error);
-      alert("AJAX request failed");
-    },
-  });
+                $('#current_table tfoot').html(footerHtml);
+
+            } catch (e) {
+                console.error('Invalid JSON:', res);
+                swalError('Error', 'File returing Error kindly contact admin.');
+            }
+        },
+        error: function(xhr, status, error){
+            console.error(error);
+            alert('AJAX request failed');
+        }
+    });
 }
 
-function pendingReportCount(
-  search_date,
-  type,
-  selected_user,
-  map_name,
-  department,
-  team,
-  loan_category,
-  sub_status_type,
-) {
-  $.ajax({
-    url: "reportFile/customer_status_report/PendingCustomerCountReport.php",
-    method: "POST",
-    data: {
-      search_date: search_date,
-      type: type,
-      user_id: selected_user,
-      map_name: map_name,
-      department: department,
-      team: team,
-      loan_category: loan_category,
-      sub_status_type: sub_status_type,
-    },
-    success: function (res) {
-      try {
-        const parsed = JSON.parse(res);
+function pendingReportCount(search_date, type, selected_user, map_name, loan_category, sub_status_type) {
+    $.ajax({
+        url: 'reportFile/customer_status_report/PendingCustomerCountReport.php',
+        method: 'POST',
+        data: {
+            search_date: search_date,
+            type: type,
+            user_id: selected_user,
+            map_name: map_name,
+            loan_category: loan_category,
+            sub_status_type: sub_status_type
+        },
+        success: function (res) {
+            try {
+                const parsed = JSON.parse(res);
+                
 
-        console.log(parsed);
+                if (!parsed.data || parsed.data.length === 0) {
+                    $('#pending_table thead').html("<tr><th colspan='10'>No data found for the selected filters</th></tr>");
+                    $('#pending_table').DataTable().clear().draw();
+                    return;
+                }
 
-        if (!parsed.data || parsed.data.length === 0) {
-          $("#pending_table thead").html(
-            "<tr><th colspan='10'>No data found for the selected filters</th></tr>",
-          );
-          $("#pending_table").DataTable().clear().draw();
-          return;
-        }
+                const data = parsed.data;
+                const totalRow = data[data.length - 1];
+                if (totalRow.fullname === 'Total') {
+                    data.pop();
+                }
 
-        const data = parsed.data;
-        const totalRow = data[data.length - 1];
-        if (totalRow.fullname === "Total") {
-          data.pop();
-        }
+                const columns = [
+                    { data: 'sno' },
+                    { data: 'date' },
+                    { data: 'fullname' },
+                    { data: 'loan_category' },
+                    { data: 'total_count' },
+                    { data: 't_pending_count' },
+                    { data: 'today_pending_clear' },
+                    { data: 't_pending_clear' },
+                    { data: 'partially_paid' },
+                    { data: 'total_paid_pending' },
+                    {
+                        data: 'paid_percentage',
+                        render: function (data) {
+                            return Number(data).toFixed(1) + ' %';
+                        }
+                    },
+                    { data: 'unpaid' },
+                    {
+                        data: 'unpaid_percentage',
+                        render: function (data) {
+                            return Number(data).toFixed(1) + ' %';
+                        }
+                    }
+                ];
 
-        const columns = [
-          { data: "sno" },
-          { data: "date" },
-          { data: "fullname" },
-          { data: "loan_category" },
-          { data: "total_count" },
-          { data: "t_pending_count" },
-          { data: "today_pending_clear" },
-          { data: "t_pending_clear" },
-          { data: "partially_paid" },
-          { data: "total_paid_pending" },
-          {
-            data: "paid_percentage",
-            render: function (data) {
-              return Number(data).toFixed(1) + " %";
-            },
-          },
-          { data: "unpaid" },
-          {
-            data: "unpaid_percentage",
-            render: function (data) {
-              return Number(data).toFixed(1) + " %";
-            },
-          },
-        ];
+                $('#pending_table').DataTable().destroy();
+                $('#pending_table').DataTable({
+                    data: data,
+                    columns: columns,
+                    dom: 'lBfrtip',
+                    buttons: [{
+                        extend: 'excel',
+                        title: "Pending Customer Count Report",
+                        action: function (e, dt, button, config) {
+                            var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                            var dynamic = curDateJs('Pending_Customer_Count_Report'); // or any base
+                            config.title = dynamic;      // for versions that use title as filename
+                            config.filename = dynamic;   // for html5 filename
+                            defaultAction.call(this, e, dt, button, config);
+                        }
+                    },
+                    {
+                        extend: 'colvis',
+                        collectionLayout: 'fixed four-column'
+                    }
+                    ],
+                    lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                    drawCallback: function () {
+                        searchFunction('pending_table');
+                        paginationFunction('pending_table');
+                    }
+                });
 
-        $("#pending_table").DataTable().destroy();
-        $("#pending_table").DataTable({
-          data: data,
-          columns: columns,
-          dom: "lBfrtip",
-          buttons: [
-            {
-              extend: "excel",
-              title: "Pending Customer Count Report",
-              action: function (e, dt, button, config) {
-                var defaultAction =
-                  $.fn.dataTable.ext.buttons.excelHtml5.action;
-                var dynamic = curDateJs("Pending_Customer_Count_Report"); // or any base
-                config.title = dynamic; // for versions that use title as filename
-                config.filename = dynamic; // for html5 filename
-                defaultAction.call(this, e, dt, button, config);
-              },
-            },
-            {
-              extend: "colvis",
-              collectionLayout: "fixed four-column",
-            },
-          ],
-          lengthMenu: [
-            [10, 25, 50, -1],
-            [10, 25, 50, "All"],
-          ],
-          drawCallback: function () {
-            searchFunction("pending_table");
-            paginationFunction("pending_table");
-          },
-        });
+                let PendingPaidPercent = totalRow.t_pending_count > 0 ? (totalRow.total_paid_pending / totalRow.t_pending_count) * 100 : 0;
+                let PendingUnpaidPercent = totalRow.t_pending_count > 0 ? (totalRow.unpaid / totalRow.t_pending_count) * 100 : 0;
 
-        let PendingPaidPercent =
-          totalRow.t_pending_count > 0
-            ? (totalRow.total_paid_pending / totalRow.t_pending_count) * 100
-            : 0;
-        let PendingUnpaidPercent =
-          totalRow.t_pending_count > 0
-            ? (totalRow.unpaid / totalRow.t_pending_count) * 100
-            : 0;
-
-        let footerHtml = `<tr>
+                let footerHtml = `<tr>
                     <td></td>
                     <td></td>
                     <td><b>Total</b></td>
@@ -490,131 +370,107 @@ function pendingReportCount(
                     <td><b>${PendingUnpaidPercent.toFixed(1)} %</b></td>
                 </tr>`;
 
-        $("#pending_table tfoot").html(footerHtml);
-      } catch (e) {
-        console.error("Invalid JSON:", res);
-        swalError("Error", "File returing Error kindly contact admin.");
-      }
-    },
-    error: function (xhr, status, error) {
-      console.error(error);
-      alert("AJAX request failed");
-    },
-  });
+                $('#pending_table tfoot').html(footerHtml);
+
+            } catch (e) {
+                console.error('Invalid JSON:', res);
+                swalError('Error', 'File returing Error kindly contact admin.');
+            }
+        },
+        error: function(xhr, status, error){
+            console.error(error);
+            alert('AJAX request failed');
+        }
+    });
 }
 
-function odReportCount(
-  search_date,
-  type,
-  selected_user,
-  map_name,
-  loan_category,
-  department,
-  team,
-  sub_status_type,
-) {
-  $.ajax({
-    url: "reportFile/customer_status_report/odCustomerCountReport.php",
-    method: "POST",
-    data: {
-      search_date: search_date,
-      type: type,
-      user_id: selected_user,
-      map_name: map_name,
-      department: department,
-      team: team,
-      loan_category: loan_category,
-      sub_status_type: sub_status_type,
-    },
-    success: function (res) {
-      try {
-        const parsed = JSON.parse(res);
+function odReportCount(search_date, type, selected_user, map_name, loan_category, sub_status_type) {
+    $.ajax({
+        url: 'reportFile/customer_status_report/odCustomerCountReport.php',
+        method: 'POST',
+        data: {
+            search_date: search_date,
+            type: type,
+            user_id: selected_user,
+            map_name: map_name,
+            loan_category: loan_category,
+            sub_status_type: sub_status_type
+        },
+        success: function (res) {
+            try {
+                const parsed = JSON.parse(res);
 
-        console.log(parsed);
+                if (!parsed.data || parsed.data.length === 0) {
+                    $('#od_table thead').html("<tr><th colspan='10'>No data found for the selected filters</th></tr>");
+                    $('#od_table').DataTable().clear().draw();
+                    return;
+                }
 
-        if (!parsed.data || parsed.data.length === 0) {
-          $("#od_table thead").html(
-            "<tr><th colspan='10'>No data found for the selected filters</th></tr>",
-          );
-          $("#od_table").DataTable().clear().draw();
-          return;
-        }
+                const data = parsed.data;
+                const totalRow = data[data.length - 1];
+                if (totalRow.fullname === 'Total') {
+                    data.pop();
+                }
 
-        const data = parsed.data;
-        const totalRow = data[data.length - 1];
-        if (totalRow.fullname === "Total") {
-          data.pop();
-        }
+                const columns = [
+                    { data: 'sno' },
+                    { data: 'date' },
+                    { data: 'fullname' },
+                    { data: 'loan_category' },
+                    { data: 'total_count' },
+                    { data: 't_od_count' },
+                    { data: 'today_od_clear' },
+                    { data: 't_od_clear' },
+                    { data: 'partially_paid' },
+                    { data: 'total_paid_od' },
+                    {
+                        data: 'paid_percentage',
+                        render: function (data) {
+                            return Number(data).toFixed(1) + ' %';
+                        }
+                    },
+                    { data: 'unpaid' },
+                    {
+                        data: 'unpaid_percentage',
+                        render: function (data) {
+                            return Number(data).toFixed(1) + ' %';
+                        }
+                    }
+                ];
 
-        const columns = [
-          { data: "sno" },
-          { data: "date" },
-          { data: "fullname" },
-          { data: "loan_category" },
-          { data: "total_count" },
-          { data: "t_od_count" },
-          { data: "today_od_clear" },
-          { data: "t_od_clear" },
-          { data: "partially_paid" },
-          { data: "total_paid_od" },
-          {
-            data: "paid_percentage",
-            render: function (data) {
-              return Number(data).toFixed(1) + " %";
-            },
-          },
-          { data: "unpaid" },
-          {
-            data: "unpaid_percentage",
-            render: function (data) {
-              return Number(data).toFixed(1) + " %";
-            },
-          },
-        ];
+                $('#od_table').DataTable().destroy();
+                $('#od_table').DataTable({
+                    data: data,
+                    columns: columns,
+                    dom: 'lBfrtip',
+                    buttons: [
+                        {
+                            extend: 'excel',
+                            title: "OD Customer Count Report",
+                            action: function (e, dt, button, config) {
+                                var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                                var dynamic = curDateJs('OD_Customer_Count_Report'); // or any base
+                                config.title = dynamic;      // for versions that use title as filename
+                                config.filename = dynamic;   // for html5 filename
+                                defaultAction.call(this, e, dt, button, config);
+                            }
+                        },
+                        {
+                            extend: 'colvis',
+                            collectionLayout: 'fixed four-column'
+                        }
+                    ],
+                    lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                    drawCallback: function () {
+                        searchFunction('od_table');
+                        paginationFunction('od_table');
+                    }
+                });
 
-        $("#od_table").DataTable().destroy();
-        $("#od_table").DataTable({
-          data: data,
-          columns: columns,
-          dom: "lBfrtip",
-          buttons: [
-            {
-              extend: "excel",
-              title: "OD Customer Count Report",
-              action: function (e, dt, button, config) {
-                var defaultAction =
-                  $.fn.dataTable.ext.buttons.excelHtml5.action;
-                var dynamic = curDateJs("OD_Customer_Count_Report"); // or any base
-                config.title = dynamic; // for versions that use title as filename
-                config.filename = dynamic; // for html5 filename
-                defaultAction.call(this, e, dt, button, config);
-              },
-            },
-            {
-              extend: "colvis",
-              collectionLayout: "fixed four-column",
-            },
-          ],
-          lengthMenu: [
-            [10, 25, 50, -1],
-            [10, 25, 50, "All"],
-          ],
-          drawCallback: function () {
-            searchFunction("od_table");
-            paginationFunction("od_table");
-          },
-        });
+                let odPaidPercent = totalRow.t_od_count > 0 ? (totalRow.total_paid_od / totalRow.t_od_count) * 100 : 0;
+                let odUnpaidPercent = totalRow.t_od_count > 0 ? (totalRow.unpaid / totalRow.t_od_count) * 100 : 0;
 
-        let odPaidPercent =
-          totalRow.t_od_count > 0
-            ? (totalRow.total_paid_od / totalRow.t_od_count) * 100
-            : 0;
-        let odUnpaidPercent =
-          totalRow.t_od_count > 0
-            ? (totalRow.unpaid / totalRow.t_od_count) * 100
-            : 0;
-
-        let footerHtml = `<tr>
+                let footerHtml = `<tr>
                     <td></td>
                     <td></td>
                     <td><b>Total</b></td>
@@ -630,15 +486,16 @@ function odReportCount(
                     <td><b>${odUnpaidPercent.toFixed(1)} %</b></td>
                 </tr>`;
 
-        $("#od_table tfoot").html(footerHtml);
-      } catch (e) {
-        console.error("Invalid JSON:", res);
-        swalError("Error", "File returing Error kindly contact admin.");
-      }
-    },
-    error: function (xhr, status, error) {
-      console.error(error);
-      alert("AJAX request failed");
-    },
-  });
+                $('#od_table tfoot').html(footerHtml);
+
+            } catch (e) {
+                console.error('Invalid JSON:', res);
+                swalError('Error', 'File returing Error kindly contact admin.');
+            }
+        },
+        error: function(xhr, status, error){
+            console.error(error);
+            alert('AJAX request failed');
+        }
+    });
 }

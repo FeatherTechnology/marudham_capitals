@@ -33,8 +33,6 @@
 					<option value='2'>Sector</option>
 					<option value='3'>Region</option>
 					<option value='4'>Zone</option>
-					<option value='5'>Department</option>
-					<option value='6'>Team</option>
 				</select>
 
 				<select class="toggle-button hidefield" id='user_type' name='user_type'>
@@ -50,14 +48,6 @@
 
 				<select class="form-control hidefield" id="map_name" name="map_name" multiple>
 					<option value="">Select</option>
-				</select>
-
-				<select class="toggle-button hidefield" id='department' name='department'>
-					<option value=''>Select Department</option>
-				</select>
-
-				<select class="toggle-button hidefield" id='team' name='team'>
-					<option value=''>Select Team</option>
 				</select> &nbsp;&nbsp;
 
 				<select class="form-control" id="loan_category" name="loan_category" multiple>
