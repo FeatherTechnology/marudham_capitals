@@ -135,17 +135,8 @@ foreach ($result as $row) {
     $data[] = $sub_array;
 }
 
-// Total records (for DataTable)
-function count_all_data($connect)
-{
-    $hexp = $connect->query("SELECT COUNT(*) as count FROM ct_db_hexpense")->fetch();
-    $bexp = $connect->query("SELECT COUNT(*) as count FROM ct_db_bexpense")->fetch();
-    return $hexp['count'] + $bexp['count'];
-}
-
 $output = array(
     "draw" => intval($_POST["draw"]),
-    "recordsTotal" => count_all_data($connect),
     "recordsFiltered" => $number_filter_row,
     "data" => $data
 );

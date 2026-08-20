@@ -27,6 +27,7 @@ function confirmationFollowUpReportTable(){
         ],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'reportFile/confirmation/getConfirmationReport.php',

@@ -27,6 +27,7 @@ function closedReportTable(){
         ],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'reportFile/in_closed/getInClosedReport.php',

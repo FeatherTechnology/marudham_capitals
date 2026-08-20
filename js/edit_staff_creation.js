@@ -35,6 +35,7 @@ function getStaffCreationList(sts){
         "displayStart": getDisplayStart('staff_creation_table'),
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'ajaxFetch/ajaxStaffCreationFetch.php',

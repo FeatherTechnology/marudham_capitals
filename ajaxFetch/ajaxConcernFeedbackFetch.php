@@ -93,22 +93,8 @@ foreach ($result as $row) {
     $sno = $sno + 1;
 }
 
-function count_all_data($connect)
-{
-    $query = "SELECT cc.*,b.branch_name,sc.staff_name,cs.concern_subject
-    FROM concern_creation cc
-    JOIN branch_creation b ON cc.branch_name = b.branch_id 
-    JOIN staff_creation sc ON cc.staff_assign_to = sc.staff_id
-    JOIN concern_subject cs ON cc.com_sub = cs.concern_sub_id
-    WHERE 1 ";
-    $statement = $connect->prepare($query);
-    $statement->execute();
-    return $statement->rowCount();
-}
-
 $output = array(
     'draw' => intval($_POST['draw']),
-    'recordsTotal' => count_all_data($connect),
     'recordsFiltered' => $number_filter_row,
     'data' => $data
 );

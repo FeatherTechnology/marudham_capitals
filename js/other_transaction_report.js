@@ -82,6 +82,7 @@ function contraReportTable() {
         ],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'reportFile/accounts/get_contra_report.php',
@@ -161,6 +162,7 @@ function exchangeReportTable() {
         ],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'reportFile/accounts/get_exchange_report.php',
@@ -239,6 +241,7 @@ function otherIncomeReportTable() {
         ],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'reportFile/accounts/get_otherIncome_report.php',
@@ -317,6 +320,7 @@ function expensesReportTable() {
         ],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'reportFile/accounts/get_expenses_report.php',
@@ -395,6 +399,7 @@ function investmentReportTable() {
         ],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'reportFile/accounts/get_investment_report.php',
@@ -473,6 +478,7 @@ function depositReportTable() {
         ],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'reportFile/accounts/get_deposit_report.php',
@@ -551,6 +557,7 @@ function elReportTable() {
         ],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'reportFile/accounts/get_el_report.php',
@@ -630,6 +637,7 @@ function excessFundReportTable() {
         ],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'reportFile/accounts/get_excessFund_report.php',

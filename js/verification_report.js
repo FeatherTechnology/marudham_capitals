@@ -62,6 +62,7 @@ function verificationReportTable() {
         ],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'reportFile/verification/getVerificationReport.php',

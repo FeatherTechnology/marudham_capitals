@@ -9,6 +9,7 @@ $(document).ready(function () {
         ],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'reportFile/customer_profile/getCustomerProfileReport.php',

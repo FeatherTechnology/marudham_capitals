@@ -167,16 +167,8 @@ if ($replaceRemoveAccess == '1' && empty($replaceConnected))  {
     $data[]      = $sub_array;
 }
 
-function count_all_data($connect)
-{
-    $statement = $connect->prepare("SELECT cus_id FROM noc WHERE noc_replace_status = 1 ");
-    $statement->execute();
-    return $statement->rowCount();
-}
-
 $output = array(
     'draw' => intval($_POST['draw']),
-    'recordsTotal' => count_all_data($connect),
     'recordsFiltered' => $number_filter_row,
     'data' => $data
 );

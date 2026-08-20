@@ -201,17 +201,8 @@ foreach ($result as $row) {
     $data[]      = $sub_array;
 }
 
-function count_all_data($connect)
-{
-    $query     = "SELECT id FROM document_track";
-    $statement = $connect->prepare($query);
-    $statement->execute();
-    return $statement->rowCount();
-}
-
 $output = array(
     'draw' => intval($_POST['draw']),
-    'recordsTotal' => count_all_data($connect),
     'recordsFiltered' => $number_filter_row,
     'data' => $data
 );

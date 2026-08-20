@@ -118,6 +118,7 @@ function loanIssueReportTable(){
         ],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'reportFile/loan_issue/getLoanIssueReport.php',

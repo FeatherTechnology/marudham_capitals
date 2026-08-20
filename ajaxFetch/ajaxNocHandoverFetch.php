@@ -345,18 +345,6 @@ $countStmt->execute($params);
 $filtered = $countStmt->fetchColumn();
 
 /* =========================================================
-   TOTAL COUNT
-========================================================= */
-
-$totalStmt = $connect->query("
-    SELECT COUNT(*)
-    FROM closed_status
-    WHERE cus_sts = 23
-");
-
-$total = $totalStmt->fetchColumn();
-
-/* =========================================================
    DATA
 ========================================================= */
 
@@ -433,7 +421,6 @@ foreach ($result as $row) {
 
 echo json_encode([
     "draw" => intval($_POST['draw']),
-    "recordsTotal" => (int)$total,
     "recordsFiltered" => (int)$filtered,
     "data" => $data
 ]);

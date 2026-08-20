@@ -50,6 +50,7 @@ function OnLoadFunctions(cusSts, comm_date) {
         "processing": true,
         "displayStart": getDisplayStart('ecs_followup_table'),
         "serverSide": true,
+        'infoCallback': customDataTableInfo,
         "serverMethod": 'post',
         "ajax": {
             "url": 'followupFiles/dueFollowup/ecsgetFollowCus.php',

@@ -39,6 +39,7 @@ function clearedReportTable() {
         ],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'reportFile/cleared/getClearedReport.php',

@@ -149,17 +149,8 @@ foreach ($result as $row) {
     $sno = $sno + 1;
 }
 
-function count_all_data($connect)
-{
-    $query = "SELECT ii.cus_id FROM in_issue ii WHERE ii.status = 0 AND (ii.cus_status >= 14 AND ii.cus_status <= 17) GROUP BY ii.cus_id ";
-    $statement = $connect->prepare($query);
-    $statement->execute();
-    return $statement->rowCount();
-}
-
 $output = array(
     'draw' => intval($_POST['draw']),
-    'recordsTotal' => count_all_data($connect),
     'recordsFiltered' => $number_filter_row,
     'data' => $data
 );

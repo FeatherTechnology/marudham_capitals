@@ -271,13 +271,8 @@ foreach ($result as $row) {
     ];
 }
 
-// Total records without filters
-$totalRecordsQuery = $connect->query("SELECT COUNT(DISTINCT ii.cus_id) FROM acknowlegement_customer_profile cp JOIN in_issue ii ON cp.cus_id = ii.cus_id WHERE ii.status = 0 AND (ii.cus_status >= 14 AND ii.cus_status <= 17)");
-$recordsTotal = (int)$totalRecordsQuery->fetchColumn();
-
 echo json_encode([
     "draw" => intval($_POST['draw'] ?? 0),
-    "recordsTotal" => $recordsTotal,
     "recordsFiltered" => (int)$recordsFiltered,
     "data" => $data
 ]);

@@ -132,14 +132,8 @@ foreach ($result as $row) {
     $data[]      = $sub_array;
 }
 
-function count_all_data($connect)
-{
-    return $connect->query("SELECT COUNT(*) FROM staff_creation")->fetchColumn();
-}
-
 $output = array(
     'draw' => intval($_POST['draw']),
-    'recordsTotal' => count_all_data($connect),
     'recordsFiltered' => $number_filter_row,
     'data' => $data
 );

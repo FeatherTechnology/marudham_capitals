@@ -218,10 +218,6 @@ if ($_POST['length'] != -1) {
     $limit_query = " LIMIT " . $_POST['start'] . ", " . $_POST['length'];
 }
 
-$totalStmt = $connect->query("SELECT COUNT(*) FROM bank_stmt");
-$totalStmt->execute();
-$recordsTotal = (int) $totalStmt->fetchColumn();
-
 $countStmt = $connect->prepare("SELECT COUNT(*) $based_query");
 $countStmt->execute($params);
 $recordsFiltered = (int) $countStmt->fetchColumn();
@@ -285,7 +281,6 @@ foreach ($result as $row) {
 
 $output = array(
     'draw' => intval($_POST['draw']),
-    'recordsTotal' => $recordsTotal,
     'recordsFiltered' => $recordsFiltered,
     'data' => $data
 );

@@ -88,6 +88,7 @@ function collectionReportTable(){
         ],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'reportFile/collection/getCollectionReport.php',

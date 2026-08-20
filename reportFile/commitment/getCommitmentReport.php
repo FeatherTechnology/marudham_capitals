@@ -213,17 +213,8 @@ function getFamilyMember($connect, $fam_id)
     return $response;
 }
 
-function count_all_data($connect)
-{
-    $query = $connect->query("SELECT count(id) as count FROM commitment where 1 ");
-    $statement = $query->fetch();
-    return $statement['count'];
-}
-
-
 $output = array(
     'draw' => intval($_POST['draw']),
-    'recordsTotal' => count_all_data($connect),
     'recordsFiltered' => $number_filter_row,
     'data' => $data
 );

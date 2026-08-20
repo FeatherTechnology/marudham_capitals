@@ -214,16 +214,9 @@ foreach ($result as $row) {
     $data[]      = $sub_array;
     $sno = $sno + 1;
 }
-function count_all_data($connect)
-{
-    $query = $connect->query("SELECT COUNT(subquery.coll_id) AS count_result FROM ( SELECT coll.coll_id FROM collection coll JOIN request_creation req ON coll.req_id = req.req_id WHERE req.cus_status >= 14 GROUP BY coll.req_id ) AS subquery ");
-    $statement = $query->fetch();
-    return intVal($statement['count_result']);
-}
 
 $output = array(
     'draw' => intval($_POST['draw']),
-    'recordsTotal' => count_all_data($connect),
     'recordsFiltered' => $number_filter_row,
     'data' => $data
 );

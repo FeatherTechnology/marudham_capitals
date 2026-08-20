@@ -171,20 +171,11 @@ foreach ($result as $row) {
 
 $output = array(
      'draw' => isset($_POST['draw']) ? intval($_POST['draw']) : 0, // ✅ safe for both table & download,
-    'recordsTotal' => count_all_data($connect),
     'recordsFiltered' => $number_filter_row,
     'data' => $data
 );
 
 echo json_encode($output);
-
-function count_all_data($connect)
-{
-    $query = "SELECT noc_id from noc WHERE cus_status >= 24 ";
-    $statement = $connect->prepare($query);
-    $statement->execute();
-    return $statement->rowCount();
-}
 
 
 

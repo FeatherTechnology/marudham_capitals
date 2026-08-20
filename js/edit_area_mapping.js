@@ -40,6 +40,7 @@ function dT1() {
         "order": [[0, "desc"]],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'ajaxFetch/ajaxAreaMappingLineFetch.php',
@@ -91,6 +92,7 @@ function dT2() {
         "order": [[0, "desc"]],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'ajaxFetch/ajaxAreaMappingGroupFetch.php',
@@ -143,6 +145,7 @@ function dT3() {
         "order": [[0, "desc"]],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'ajaxFetch/ajaxAreaMappingDuefollowupFetch.php',

@@ -301,19 +301,6 @@ $countStmt->execute($params);
 $filtered = $countStmt->fetchColumn();
 
 /* =========================================================
-   TOTAL COUNT
-========================================================= */
-
-$totalStmt = $connect->query("
-    SELECT COUNT(DISTINCT cus_id)
-    FROM in_issue
-    WHERE status = 0
-    AND cus_status IN (21,22,23)
-");
-
-$total = $totalStmt->fetchColumn();
-
-/* =========================================================
    DATA
 ========================================================= */
 
@@ -392,7 +379,6 @@ foreach ($result as $row) {
 
 echo json_encode([
     "draw" => intval($_POST['draw']),
-    "recordsTotal" => (int)$total,
     "recordsFiltered" => (int)$filtered,
     "data" => $data
 ]);

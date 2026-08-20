@@ -59,6 +59,7 @@ function cancelRevokeTable() {
         ],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'reportFile/cancel_revoke/getCancelRevokeReport.php',

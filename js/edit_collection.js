@@ -49,6 +49,7 @@ function getcustomerStatustable(Customer_Status) {
         'processing': true,
         "displayStart": getDisplayStart('collection_table'),
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'ajaxFetch/ajaxCollectionFetch.php',

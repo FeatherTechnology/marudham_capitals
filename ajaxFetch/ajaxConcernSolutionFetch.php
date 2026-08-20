@@ -53,11 +53,6 @@ if ($_POST['length'] != -1) {
     $limit = " LIMIT " . $_POST['start'] . ", " . $_POST['length'];
 }
 
-/* ---------- Total records ---------- */
-$statement = $connect->prepare("SELECT COUNT(*) FROM concern_creation WHERE status != 2");
-$statement->execute();
-$recordsTotal = (int) $statement->fetchColumn();
-
 /* ---------- Filtered records ---------- */
 $countStmt = $connect->prepare("SELECT COUNT(*) $base_query");
 $countStmt->execute();
@@ -144,7 +139,6 @@ foreach ($result as $row) {
 
 $output = array(
     'draw' => intval($_POST['draw']),
-    'recordsTotal' => $recordsTotal,
     'recordsFiltered' => $number_filter_row,
     'data' => $data
 );

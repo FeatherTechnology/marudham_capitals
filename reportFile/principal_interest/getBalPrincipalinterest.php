@@ -330,17 +330,8 @@ foreach ($result as $row) {
     $sno++;
 }
 
-function count_all_data($connect)
-{
-    $query = "SELECT req_id FROM request_creation WHERE cus_status BETWEEN 14 AND 18";
-    $statement = $connect->prepare($query);
-    $statement->execute();
-    return $statement->rowCount();
-}
-
 $output = [
-      'draw' => isset($_POST['draw']) ? intval($_POST['draw']) : 0, // ✅ safe for both table & download
-    'recordsTotal' => count_all_data($connect),
+    'draw' => isset($_POST['draw']) ? intval($_POST['draw']) : 0, // ✅ safe for both table & download
     'recordsFiltered' => $number_filter_row,
     'data' => $data,
 ];

@@ -239,21 +239,9 @@ foreach ($result as $row) {
 // Step 3: Return the data in JSON format
 echo json_encode([
     "draw" => intval($_POST['draw']),
-    "recordsTotal" => getTotalRecords($connect),
     "recordsFiltered" => getFilteredRecords($connect, $data, $search, $sub_status_mapping, $loan_agnt, $commitmentCondition),
     "data" => $data
 ]);
-
-function getTotalRecords($connect)
-{
-    // Your database query to get the total number of records
-    // For example:
-    // $query = "SELECT COUNT(*) FROM customers";
-    // Execute the query and return the result
-    $query = $connect->query("SELECT COUNT(*) as total FROM (SELECT cp.cus_id as cp_cus_id FROM acknowlegement_customer_profile cp JOIN in_issue ii ON cp.cus_id = ii.cus_id where ii.status = 0 and (ii.cus_status >= 14 and ii.cus_status <= 17) GROUP BY ii.cus_id) as subquery ");
-    $totals = $query->fetch()['total'];
-    return $totals;
-}
 
 function getFilteredRecords($connect, $data, $search, $sub_status_mapping, $loan_agnt, $commitmentCondition)
 {
