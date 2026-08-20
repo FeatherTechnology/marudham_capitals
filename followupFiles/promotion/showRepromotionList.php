@@ -165,16 +165,8 @@ while ($row = $sql->fetch()) {
     ];
 }
 
-function count_all_data($connect)
-{
-    $statement = $connect->prepare("SELECT COUNT(*) FROM (SELECT req.cus_id FROM request_creation req LEFT JOIN customer_profile cp ON req.req_id = cp.req_id WHERE req.cus_status BETWEEN 4 AND 9 GROUP BY req.cus_id) AS sub_qry");
-    $statement->execute();
-    return (int) $statement->fetchColumn();
-}
-
 $output = array(
     'draw' => intval($_POST['draw']),
-    'recordsTotal' => count_all_data($connect),
     'recordsFiltered' => $number_filter_row,
     'data' => $data
 );

@@ -154,11 +154,6 @@ if (!isset($_POST['download'])) {
     }
 }
 
-/* ---------- Total records ---------- */
-$totalStmt = $connect->prepare("SELECT COUNT(subquery.coll_id) FROM ( SELECT coll.coll_id FROM collection coll JOIN request_creation req ON coll.req_id = req.req_id WHERE req.cus_status >= 14 GROUP BY coll.req_id ) AS subquery ");
-$totalStmt->execute();
-$recordsTotal = (int) $totalStmt->fetchColumn();
-
 /* ---------- Filtered records ---------- */
 $countStmt = $connect->prepare("SELECT COUNT(*) $baseQuery");
 $countStmt->execute();
@@ -280,7 +275,6 @@ foreach ($result as $row) {
 
 $output = array(
     'draw' => isset($_POST['draw']) ? intval($_POST['draw']) : 0, // ✅ safe for both table & download
-    'recordsTotal' => $recordsTotal,
     'recordsFiltered' => $recordsFiltered,
     'data' => $data
 );

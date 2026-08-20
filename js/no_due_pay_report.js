@@ -15,6 +15,7 @@ function noDuePayReportTable(){
         ],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'reportFile/no_due_pay/getNoDuePayRreport.php',

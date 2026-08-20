@@ -34,6 +34,7 @@ function getManageUserList(sts){
         "displayStart": getDisplayStart('manage_user_table'),
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'ajaxFetch/ajaxManageUserFetch.php',

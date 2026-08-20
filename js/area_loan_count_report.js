@@ -75,6 +75,7 @@ function areaLoanCountReportTable() {
         order: [[1, "asc"]],
         processing: true,
         serverSide: true,
+        infoCallback: customDataTableInfo,
         serverMethod: 'post',
         ajax: {
             url: 'reportFile/area_count_report/getAreaLoanCountReport.php',

@@ -50,6 +50,7 @@ function getcustomerStatustable(doc_sts) {
         "displayStart": getDisplayStart('update_table'),
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'ajaxFetch/ajaxUpdateFetch.php',

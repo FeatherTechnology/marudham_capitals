@@ -376,20 +376,11 @@ foreach ($result as $row) {
 }
 $output = array(
     'draw' => intval($_POST['draw']),
-    'recordsTotal' => count_all_data($connect),
     'recordsFiltered' => $number_filter_row,
     'data' => $data
 );
 
 echo json_encode($output);
-
-function count_all_data($connect)
-{
-    $query     = "SELECT req_id FROM request_creation ";
-    $statement = $connect->prepare($query);
-    $statement->execute();
-    return $statement->rowCount();
-}
 
 // Close the database connection
 $connect = null;

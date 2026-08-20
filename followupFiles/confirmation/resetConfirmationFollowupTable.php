@@ -138,12 +138,8 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
     }
 }
 
-$totalRecordsQry = $connect->query("SELECT COUNT(*) AS total FROM request_creation rc WHERE rc.cus_status >= 14 ");
-$totalRecords = $totalRecordsQry->fetch()['total'];
-
 $response = [
     "draw" => intval($draw),
-    "recordsTotal" => intval($totalRecords),
     "recordsFiltered" => intval($number_filter_row),
     "data" => $data
 ];

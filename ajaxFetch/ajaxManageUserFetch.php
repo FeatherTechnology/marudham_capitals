@@ -134,17 +134,8 @@ foreach ($result as $row) {
     $sno = $sno + 1;
 }
 
-function count_all_data($connect)
-{
-    $query     = "SELECT * FROM user";
-    $statement = $connect->prepare($query);
-    $statement->execute();
-    return $statement->rowCount();
-}
-
 $output = array(
     'draw' => intval($_POST['draw']),
-    'recordsTotal' => count_all_data($connect),
     'recordsFiltered' => $number_filter_row,
     'data' => $data
 );

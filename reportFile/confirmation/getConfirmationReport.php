@@ -117,11 +117,6 @@ if (!isset($_POST['download'])) {
     }
 }
 
-/* ---------- Total records ---------- */
-$totalStmt = $connect->prepare("SELECT count(id) as count FROM confirmation_followup where 1 ");
-$totalStmt->execute();
-$recordsTotal = (int) $totalStmt->fetchColumn();
-
 /* ---------- Filtered records ---------- */
 $countStmt = $connect->prepare("SELECT COUNT(*) $baseQuery");
 $countStmt->execute();
@@ -242,7 +237,6 @@ function getFamilyMember($connect, $fam_id)
 
 $output = array(
     'draw' => isset($_POST['draw']) ? intval($_POST['draw']) : 0, // ✅ safe for both table & download
-    'recordsTotal' => $recordsTotal,
     'recordsFiltered' => $recordsFiltered,
     'data' => $data
 );

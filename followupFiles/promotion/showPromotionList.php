@@ -172,16 +172,8 @@ while ($row = $sql->fetch()) {
     ];
 }
 
-function count_all_data($connect)
-{
-    $statement = $connect->prepare("SELECT COUNT(*) FROM closed_status cs WHERE cs.closed_sts = 1");
-    $statement->execute();
-    return (int) $statement->fetchColumn();
-}
-
 $output = array(
     'draw' => intval($_POST['draw']),
-    'recordsTotal' => count_all_data($connect),
     'recordsFiltered' => $number_filter_row,
     'data' => $data
 );

@@ -15,6 +15,7 @@ function collectionReportTable(){
         ],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'reportFile/principal_interest/getPrincipalInterest.php',

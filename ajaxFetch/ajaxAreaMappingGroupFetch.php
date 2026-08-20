@@ -68,11 +68,6 @@ if ($_POST['length'] != -1) {
     $limit = " LIMIT :start, :length ";
 }
 
-/* ---------- Total records ---------- */
-$totalStmt = $connect->prepare("SELECT COUNT(*) FROM area_group_mapping");
-$totalStmt->execute();
-$recordsTotal = (int) $totalStmt->fetchColumn();
-
 /* ---------- Filtered records ---------- */
 $countStmt = $connect->prepare("SELECT COUNT(*) $baseQuery");
 $countStmt->execute($params);
@@ -141,7 +136,6 @@ foreach ($rows as $row) {
 /* ---------- Output ---------- */
 echo json_encode([
     "draw" => intval($_POST['draw']),
-    "recordsTotal" => $recordsTotal,
     "recordsFiltered" => $recordsFiltered,
     "data" => $data
 ]);

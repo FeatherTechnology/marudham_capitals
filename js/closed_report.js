@@ -63,6 +63,7 @@ function closedReportTable() {
         ],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'reportFile/closed/getClosedReport.php',

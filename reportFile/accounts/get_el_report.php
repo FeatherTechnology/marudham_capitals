@@ -130,21 +130,8 @@ foreach ($result as $row) {
     $data[] = $sub_array;
 }
 
-// Count all rows across all 4 tables
-function count_all_data($connect)
-{
-    $count = 0;
-    $tables = ['ct_db_hinvest', 'ct_db_binvest', 'ct_cr_hinvest', 'ct_cr_binvest'];
-    foreach ($tables as $tbl) {
-        $qry = $connect->query("SELECT COUNT(*) as cnt FROM $tbl");
-        $count += $qry->fetchColumn();
-    }
-    return $count;
-}
-
 $output = array(
     'draw' => intval($_POST['draw']),
-    'recordsTotal' => count_all_data($connect),
     'recordsFiltered' => $number_filter_row,
     'data' => $data
 );

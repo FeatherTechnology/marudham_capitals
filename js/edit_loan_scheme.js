@@ -47,6 +47,7 @@ function mothlyDT() {
         "order": [[0, "desc"]],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'ajaxFetch/ajaxLoanSchemeMonthlyFetch.php',
@@ -100,6 +101,7 @@ function weeklyDT() {
         "order": [[0, "desc"]],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'ajaxFetch/ajaxLoanSchemeWeeklyFetch.php',
@@ -153,6 +155,7 @@ function dailyDT() {
         "order": [[0, "desc"]],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'ajaxFetch/ajaxLoanSchemeDailyFetch.php',

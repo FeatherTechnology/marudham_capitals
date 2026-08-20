@@ -57,6 +57,7 @@ function OnLoadFunctions(cusSts, comm_date, res_sts, comm_sts, call_status) {
         "processing": true,
         "displayStart": getDisplayStart('due_followup_table'),
         "serverSide": true,
+        'infoCallback': customDataTableInfo,
         "serverMethod": 'post',
         "ajax": {
             "url": 'followupFiles/dueFollowup/getDueFollowCus.php',

@@ -170,11 +170,6 @@ if (!isset($_POST['download'])) {
     }
 }
 
-/* ---------- Total records ---------- */
-$totalStmt = $connect->prepare("SELECT COUNT(*) FROM request_creation where cus_status >= 20");
-$totalStmt->execute();
-$recordsTotal = (int) $totalStmt->fetchColumn();
-
 /* ---------- Filtered records ---------- */
 $countStmt = $connect->prepare("SELECT COUNT(*) $baseQuery");
 $countStmt->execute();
@@ -251,7 +246,6 @@ foreach ($result as $row) {
 
 $output = array(
     'draw' => isset($_POST['draw']) ? intval($_POST['draw']) : 0, // ✅ safe for both table & download
-    'recordsTotal' => $recordsTotal,
     'recordsFiltered' => $recordsFiltered,
     'data' => $data
 );

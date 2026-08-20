@@ -34,6 +34,7 @@ function nocHandoverReportTable(){
         ],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'reportFile/noc_handover/getNocHandoverReport.php',

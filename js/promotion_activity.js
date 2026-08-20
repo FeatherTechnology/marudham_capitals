@@ -959,6 +959,7 @@ function showPromotionList(url, tableid, colNo) {
         "displayStart": getDisplayStart(tableid),
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': url,

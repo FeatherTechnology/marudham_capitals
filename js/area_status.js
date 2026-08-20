@@ -28,6 +28,7 @@ function dT1() {
         "order": [[0, "desc"]],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         // 'bInfo':false, // to remove bottom paging info (showing 0 to 0 of 0),
 
@@ -81,6 +82,7 @@ function dT2() {
         'ordering': false,
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'ajaxFetch/ajaxGetSubAreaFetch.php',

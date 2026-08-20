@@ -169,6 +169,7 @@ function getPromotionCountReport(
     order: [[0, "asc"]],
     processing: true,
     serverSide: true,
+    infoCallback: customDataTableInfo,
     serverMethod: "post",
     ajax: {
       url: "reportFile/promotion_count/getPromotionCountReport.php",

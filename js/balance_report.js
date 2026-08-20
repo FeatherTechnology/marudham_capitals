@@ -107,6 +107,7 @@ function balanceReportTable(url, tid, columnsToSum) {
         ],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': url,

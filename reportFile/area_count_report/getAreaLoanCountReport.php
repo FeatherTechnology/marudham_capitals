@@ -268,18 +268,6 @@ if ($length != -1) {
     $data = array_slice($data, $start, $length);
 }
 
-function count_all_data($connect)
-{
-    $query = $connect->query("
-        SELECT COUNT(area_id) AS count_result
-        FROM area_list_creation
-        WHERE area_enable = 0
-          AND status = 0
-    ");
-    $statement = $query->fetch(PDO::FETCH_ASSOC);
-    return (int)$statement['count_result'];
-}
-
 echo json_encode([
     "draw" => $draw,
     "recordsTotal" => $recordsTotal,

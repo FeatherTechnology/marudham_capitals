@@ -34,6 +34,7 @@ function eventsReportTable() {
         ],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'reportFile/events/getEventsReport.php',

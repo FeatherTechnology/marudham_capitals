@@ -115,22 +115,9 @@ foreach ($result as $row) {
     $sno++;
 }
 
-// Count all data
-function count_all_data($connect)
-{
-    $total = 0;
-    $tables = ['ct_db_cash_withdraw', 'ct_db_bank_deposit', 'ct_cr_bank_withdraw', 'ct_cr_cash_deposit'];
-    foreach ($tables as $table) {
-        $stmt = $connect->query("SELECT COUNT(*) AS cnt FROM $table");
-        $row = $stmt->fetch();
-        $total += (int)$row['cnt'];
-    }
-    return $total;
-}
 
 $output = array(
     'draw' => intval($_POST['draw']),
-    'recordsTotal' => count_all_data($connect),
     'recordsFiltered' => $number_filter_row,
     'data' => $data
 );

@@ -170,6 +170,7 @@
                 "displayStart": getDisplayStart('company_creation_table'),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 // 'searching': false, // Remove default Search Control
                 'ajax': {
@@ -218,6 +219,7 @@
                 "displayStart": getDisplayStart('branch_creation_info'),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 //'searching': false, // Remove default Search Control
                 'ajax': {
@@ -265,6 +267,7 @@
                 "displayStart": getDisplayStart('loan_creation_table'),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 //'searching': false, // Remove default Search Control
                 'ajax': {
@@ -313,6 +316,7 @@
                 "displayStart": getDisplayStart('loan_calculation_info'),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 //'searching': false, // Remove default Search Control
                 'ajax': {
@@ -358,6 +362,7 @@
                 "displayStart": getDisplayStart('area_creation_info'),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 //'searching': false, // Remove default Search Control
                 'ajax': {
@@ -406,6 +411,7 @@
                 "displayStart": getDisplayStart('director_creation_table'),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 'ajax': {
                     'url': 'ajaxFetch/ajaxDirectorCreationFetch.php',
@@ -451,6 +457,7 @@
                 "displayStart": getDisplayStart('agent_creation_table', 10),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 'ajax': {
                     'url': 'ajaxFetch/ajaxAgentCreationFetch.php',
@@ -496,6 +503,7 @@
                 "displayStart": getDisplayStart('bank_creation_table'),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 'ajax': {
                     'url': 'ajaxFetch/ajaxBankCreationFetch.php',
@@ -541,6 +549,7 @@
                 "ordering": false,
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 'ajax': {
                     'url': 'ajaxFetch/ajaxDocumentationMappingFetch.php',
@@ -578,6 +587,7 @@
                 "displayStart": getDisplayStart('request_table'),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 'ajax': {
                     'url': 'ajaxFetch/ajaxRequestFetch.php',
@@ -630,6 +640,7 @@
                 "displayStart": getDisplayStart('verification_table'),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 'ajax': {
                     'url': 'ajaxFetch/ajaxVerificationFetch.php',
@@ -682,6 +693,7 @@
                 "displayStart": getDisplayStart('approval_table'),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 'ajax': {
                     'url': 'ajaxFetch/ajaxApprovalFetch.php',
@@ -734,6 +746,7 @@
                 "displayStart": getDisplayStart('acknowledge_table'),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 'ajax': {
                     'url': 'ajaxFetch/ajaxAcknowledgementFetch.php',
@@ -786,6 +799,7 @@
                 "displayStart": getDisplayStart('loanIssue_table'),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 'ajax': {
                     'url': 'ajaxFetch/ajaxLoanIssueFetch.php',
@@ -839,6 +853,7 @@
                 "displayStart": getDisplayStart('accountsloanIssue_table'),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 'ajax': {
                     'url': 'ajaxFetch/ajaxAccountsLoanIssueFetch.php',
@@ -884,6 +899,7 @@
                 "displayStart": getDisplayStart('closed_table'),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 'ajax': {
                     'url': 'ajaxFetch/ajaxClosedFetch.php',
@@ -935,6 +951,7 @@
                 "displayStart": getDisplayStart('noc_table'),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 'ajax': {
                     'url': 'ajaxFetch/ajaxNocFetch.php',
@@ -986,6 +1003,7 @@
                 "displayStart": getDisplayStart('noc_handover_table'),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 'ajax': {
                     'url': 'ajaxFetch/ajaxNocHandoverFetch.php',
@@ -1081,6 +1099,7 @@
                 "displayStart": getDisplayStart('doc_track_table'),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 'ajax': {
                     'url': 'ajaxFetch/ajaxDocumentTrackFetch.php',
@@ -1126,6 +1145,7 @@
                 "displayStart": getDisplayStart('noc_replace_table'),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 'ajax': {
                     'url': 'ajaxFetch/ajaxNocReplaceFetch.php',
@@ -1171,6 +1191,7 @@
                 "displayStart": getDisplayStart('concern_table'),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 'ajax': {
                     'url': 'ajaxFetch/ajaxConcernFetch.php',
@@ -1216,6 +1237,7 @@
                 "displayStart": getDisplayStart('concern_solution_table'),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 'ajax': {
                     'url': 'ajaxFetch/ajaxConcernSolutionFetch.php',
@@ -1261,6 +1283,7 @@
                 "displayStart": getDisplayStart('concern_feedback_table'),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 'ajax': {
                     'url': 'ajaxFetch/ajaxConcernFeedbackFetch.php',
@@ -1305,6 +1328,7 @@
                 "displayStart": getDisplayStart('customer_birthday_table'),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 'ajax': {
                     'url': 'ajaxFetch/ajaxCustomerBirthdayFetch.php',
@@ -1348,6 +1372,7 @@
                 "displayStart": getDisplayStart('loan_follow_table'),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 'ajax': {
                     'url': 'followupFiles/loanFollowup/resetLoanFollowupTable.php',
@@ -1393,6 +1418,7 @@
                 "displayStart": getDisplayStart('conf_follow_table'),
                 'processing': true,
                 'serverSide': true,
+                'infoCallback': customDataTableInfo,
                 'serverMethod': 'post',
                 'ajax': {
                     'url': 'followupFiles/confirmation/resetConfirmationFollowupTable.php',
@@ -2672,6 +2698,11 @@
                     loanCategory.setChoices(items);
                 }
             });
+        }
+
+        // Reusable DataTables info callback. - Overrides the default info text and displays only the current range and total filtered entries.
+        function customDataTableInfo(settings, start, end, max, total, pre) {
+            return 'Showing ' + start + ' to ' + end + ' of ' + total + ' entries';
         }
     </script>
 

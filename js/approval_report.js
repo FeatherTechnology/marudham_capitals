@@ -62,6 +62,7 @@ function approvalReportTable() {
         ],
         'processing': true,
         'serverSide': true,
+        'infoCallback': customDataTableInfo,
         'serverMethod': 'post',
         'ajax': {
             'url': 'reportFile/approval/getApprovalReport.php',
