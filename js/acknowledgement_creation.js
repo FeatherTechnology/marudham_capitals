@@ -1347,7 +1347,7 @@ function getresponsiblecolumn(ag_id) {
         cache: false,
         success: function (response) {
             if (response == '0') {
-                $('.collection').show();
+                $('.responsible').show();
             } else {
                 $('.responsible').hide();
             }
