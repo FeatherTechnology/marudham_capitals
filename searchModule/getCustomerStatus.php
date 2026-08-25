@@ -116,9 +116,13 @@ if ($result->rowCount() > 0) {
         if ($cus_status >= 14) {
             $records[$i]['chart_action'] .= "<a><span data-toggle='modal' data-target='.DueChart' class='due-chart' value='" . $req_id . "' data-cusid='" . $cus_id . "'> Due Chart</span></a>
                 <a><span data-toggle='modal' data-target='.PenaltyChart' class='penalty-chart' value='" . $req_id . "' data-cusid='" . $cus_id . "'> Penalty Chart</span></a>
-                <a><span data-toggle='modal' data-target='.collectionChargeChart' class='coll-charge-chart' value='" . $req_id . "' data-cusid='" . $cus_id . "'> Fine Chart</span></a>
-                <a><span data-toggle='modal' data-target='#commitmentChart' class='commitment-chart' data-reqid='" . $req_id . "' data-cusid='" . $cus_id . "'> Commitment Chart </span></a>";
+                <a><span data-toggle='modal' data-target='.collectionChargeChart' class='coll-charge-chart' value='" . $req_id . "' data-cusid='" . $cus_id . "'> Fine Chart</span></a>";
         }
+
+        if ($cus_status >= 14 && $cus_status <= 20) {
+            $records[$i]['chart_action'] .= "<a><span data-toggle='modal' data-target='#commitmentChart' class='commitment-chart' data-reqid='" . $req_id . "' data-cusid='" . $cus_id . "'> Commitment Chart </span></a>";
+        }
+        
         $records[$i]['chart_action'] .= "</div></div>";
 
         //for Summary
