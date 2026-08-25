@@ -264,7 +264,7 @@
 				<button type="button" class="close" data-dismiss="modal" tabindex="1" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 			</div>
 			<div class="modal-body">
-				<div id='commChartDiv'></div>
+				<div id='commChartDiv' style="overflow-x: scroll;"></div>
 			</div>
 			<div class="modal-footer">
 				<button class="btn btn-secondary" data-dismiss="modal" tabindex="2">Close</button>

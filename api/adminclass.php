@@ -6956,6 +6956,8 @@ class admin
 
 			$mysqli->query("UPDATE `in_issue` SET `cus_status` = 21, `update_login_id` = $userid WHERE req_id = '" .  $close_req_id . "' AND cus_status = '20' ") or die('Error on in_issue Table');
 
+			$mysqli->query("DELETE FROM `commitment` WHERE `req_id` = '$close_req_id' ") or die('Error on commitment Table');
+
 			// Commit the transaction
 			$mysqli->commit();
 
