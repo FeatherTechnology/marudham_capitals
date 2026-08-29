@@ -18,12 +18,6 @@ $column = array(
     'cr.cus_id',
     'cr.autogen_cus_id',
     'cr.customer_name',
-    'al.area_name',
-    'sl.sub_area_name',
-    'bc.branch_name',
-    'agm.group_name',
-    'alm.line_name',
-    'cr.mobile1',
     'cr.cus_reg_id',
     'cs.consider_level',
     'cs.created_date',
@@ -54,13 +48,6 @@ $baseqry = "FROM  customer_register cr
         WHERE closed_sts = 1 
         GROUP BY cus_id $re_active
     ) cs ON cs.cus_id = cr.cus_id 
-    LEFT JOIN area_list_creation al ON cr.area_confirm_area = al.area_id 
-    LEFT JOIN sub_area_list_creation sl ON cr.area_confirm_subarea = sl.sub_area_id 
-    LEFT JOIN area_group_mapping_sub_area agmsa ON agmsa.sub_area_id = sl.sub_area_id
-    LEFT JOIN area_group_mapping agm ON agm.map_id = agmsa.group_map_id 
-    LEFT JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sl.sub_area_id
-    LEFT JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id 
-    LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
     LEFT JOIN new_promotion np ON np.cus_id = cs.cus_id AND np.created_date = (SELECT MAX(np1.created_date) FROM new_promotion np1 WHERE np1.cus_id = cs.cus_id)
     LEFT JOIN request_creation rc ON cr.cus_id = rc.cus_id
     WHERE $areaColumn IN ($sub_area_list) AND NOT EXISTS (SELECT 1 FROM closed_status cs2
@@ -84,12 +71,6 @@ if (isset($_POST['search']) && $_POST['search'] != "") {
     $search = " AND (cr.cus_id LIKE '%" . $_POST['search'] . "%' 
     OR cr.autogen_cus_id LIKE '%" . $_POST['search'] . "%' 
     OR cr.customer_name LIKE '%" . $_POST['search'] . "%' 
-    OR al.area_name LIKE '%" . $_POST['search'] . "%'
-    OR sl.sub_area_name LIKE '%" . $_POST['search'] . "%' 
-    OR bc.branch_name LIKE '%" . $_POST['search'] . "%' 
-    OR agm.group_name LIKE '%" . $_POST['search'] . "%' 
-    OR alm.line_name LIKE '%" . $_POST['search'] . "%' 
-    OR cr.mobile1 LIKE '%" . $_POST['search'] . "%'  
     OR np.status LIKE '%" . $_POST['search'] . "%' ) ";
 }
 
@@ -110,7 +91,8 @@ $num_qry = $connect->query("SELECT COUNT(*) FROM (SELECT cr.cus_id  $baseqry) AS
 $num_qry->execute();
 $number_filter_row = $num_qry->fetchColumn();
 
-$sql = $connect->query("SELECT cr.req_ref_id as req_id, cr.cus_id, cr.autogen_cus_id, cr.customer_name as cus_name, al.area_name, sl.sub_area_name, bc.branch_name, agm.group_name, alm.line_name, cr.mobile1, cs.consider_level, cs.created_date, np.status AS followup_sts, np.follow_date, np.followup_type, rc.cus_status AS noc_cus_status $baseqry $limit");
+// echo "SELECT cr.req_ref_id as req_id, cr.cus_id, cr.autogen_cus_id, cr.customer_name as cus_name, cs.consider_level, cs.created_date, np.status AS followup_sts, np.follow_date, np.followup_type, rc.cus_status AS noc_cus_status $baseqry $limit";die;
+$sql = $connect->query("SELECT cr.req_ref_id as req_id, cr.cus_id, cr.autogen_cus_id, cr.customer_name as cus_name, cs.consider_level, cs.created_date, np.status AS followup_sts, np.follow_date, np.followup_type, rc.cus_status AS noc_cus_status $baseqry $limit");
 
 $sno = 1;
 $data = [];
@@ -154,18 +136,13 @@ while ($row = $sql->fetch()) {
         $row['cus_id'],
         $row['autogen_cus_id'],
         $row['cus_name'],
-        $row['area_name'],
-        $row['sub_area_name'],
-        $row['branch_name'],
-        $row['group_name'],
-        $row['line_name'],
-        $row['mobile1'],
         'Consider',
         $sub_status[$row['consider_level']], //fetched from closed status table above mentioned    
         $createddate,
         $cusstatus[$row['noc_cus_status']] ?? '',
         $charts,
         $actions,
+        "<a href='#'class='personal-info'data-toggle='modal'data-target='#personalInfoModal'data-cusid='" . $row['cus_id'] . "'><span class='icon-eye' style='font-size: 12px;position: relative;top: 2px;'></a>",
         $row['followup_sts'],
         $followupdate,
         $followup_type

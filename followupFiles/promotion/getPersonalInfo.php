@@ -6,7 +6,7 @@ $cus_id = $_POST['cus_id'];
 
 $sql = '';
 
-$query1 = $connect->query("SELECT cp.cus_id, cr.autogen_cus_id, cp.cus_name, cp.cus_pic, cp.mobile1, al.area_name, sl.sub_area_name, alm.line_name as area_line, bc.branch_name 
+$query1 = $connect->query("SELECT cp.cus_id, cr.autogen_cus_id, cp.cus_name, cp.cus_pic, cp.mobile1, al.area_name, sl.sub_area_name, alm.line_name as area_line, bc.branch_name,agm.group_name ,adm.duefollowup_name
     FROM customer_profile cp
     JOIN customer_register cr ON cp.cus_id = cr.cus_id 
     LEFT JOIN area_list_creation al ON cp.area_confirm_area = al.area_id 
@@ -15,10 +15,12 @@ $query1 = $connect->query("SELECT cp.cus_id, cr.autogen_cus_id, cp.cus_name, cp.
     LEFT JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
     LEFT JOIN area_group_mapping_sub_area agmsa ON agmsa.sub_area_id = sl.sub_area_id
     LEFT JOIN area_group_mapping agm ON agm.map_id = agmsa.group_map_id
+    LEFT JOIN area_duefollowup_mapping_area adma ON al.area_id = adma.area_id
+    LEFT JOIN area_duefollowup_mapping adm ON adma.duefollowup_map_id = adm.map_id
     LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id
     WHERE cp.cus_id = " . $cus_id . " ORDER BY cp.id DESC LIMIT 1");
 
-$query2 = $connect->query("SELECT rc.cus_id, cr.autogen_cus_id, rc.cus_name, rc.mobile1, rc.pic as cus_pic, al.area_name, sl.sub_area_name, alm.line_name as area_line, bc.branch_name 
+$query2 = $connect->query("SELECT rc.cus_id, cr.autogen_cus_id, rc.cus_name, rc.mobile1, rc.pic as cus_pic, al.area_name, sl.sub_area_name, alm.line_name as area_line, bc.branch_name ,agm.group_name ,adm.duefollowup_name
     FROM request_creation rc
     JOIN customer_register cr ON rc.cus_id = cr.cus_id
     JOIN area_list_creation al ON rc.area = al.area_id
@@ -27,6 +29,8 @@ $query2 = $connect->query("SELECT rc.cus_id, cr.autogen_cus_id, rc.cus_name, rc.
     LEFT JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
     LEFT JOIN area_group_mapping_sub_area agmsa ON agmsa.sub_area_id = sl.sub_area_id
     LEFT JOIN area_group_mapping agm ON agm.map_id = agmsa.group_map_id 
+    LEFT JOIN area_duefollowup_mapping_area adma ON al.area_id = adma.area_id
+    LEFT JOIN area_duefollowup_mapping adm ON adma.duefollowup_map_id = adm.map_id
     LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id
     WHERE rc.cus_id = '$cus_id' ORDER BY rc.req_id DESC LIMIT 1");
 
@@ -68,8 +72,16 @@ $row = $sql->fetch();
             <input type="text" name="info_line" id="info_line" class='form-control' tabindex="7" readonly value="<?php echo $row['area_line']; ?>">
         </div>
         <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12">
+            <label for="info_group">Sector</label>
+            <input type="text" name="info_group" id="info_group" class='form-control' tabindex="8" readonly value="<?php echo $row['group_name']; ?>">
+        </div>
+        <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12">
+            <label for="info_zone">Zone</label>
+            <input type="text" name="info_zone" id="info_zone" class='form-control' tabindex="9" readonly value="<?php echo $row['duefollowup_name']; ?>">
+        </div>
+        <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12">
             <label for="info_branch">Branch</label>
-            <input type="text" name="info_branch" id="info_branch" class='form-control' tabindex="8" readonly value="<?php echo $row['branch_name']; ?>">
+            <input type="text" name="info_branch" id="info_branch" class='form-control' tabindex="10" readonly value="<?php echo $row['branch_name']; ?>">
         </div>
     </div>
 </div>
