@@ -298,6 +298,13 @@ if (sizeof($getCustomerReg) > 0) {
 
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<div class="form-group">
+									<label for="income_date"> Income Date </label>
+									<input type="text" class="form-control" name="income_date" id="income_date" readonly <?php if (isset($income_date)) echo $income_date; ?>>
+								</div>
+							</div>
+
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+								<div class="form-group">
 									<label for="cus_other_income"> Other Income </label>
 									<input type="text" class="form-control" name="cus_other_income" id="cus_other_income" value="<?php if (isset($other_income)) {
 																																		echo moneyFormatIndia($other_income);

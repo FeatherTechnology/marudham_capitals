@@ -158,29 +158,17 @@ if (!empty($branch)) {
     $params = array_merge($params, $branch);
 }
 
-/* Sector / Region / Zone Filter */
+/* Sector Filter */
 if (!empty($sector)) {
-
-    $sector = array_map('intval', $sector);
-    switch ($accessType) {
-        // Sector
-        case 1:
-            $where[] = "agm.map_id IN (" . implode(',', array_fill(0, count($sector), '?')) . ")";
-            break;
-        // Region
-        case 2:
-            $where[] = "alm.map_id IN (" . implode(',', array_fill(0, count($sector), '?')) . ")";
-            break;
-        // Zone
-        case 3:
-            $where[] = "adfm.map_id IN (" . implode(',', array_fill(0, count($sector), '?')) . ")";
-            break;
-        default:
-            $where[] = "agm.map_id IN (" . implode(',', array_fill(0, count($sector), '?')) . ")";
-            break;
-    }
-
-
+    $sector = array_map('intval', (array)$sector);
+    $columnMap = [
+        1 => "agm.map_id",
+        2 => "alm.map_id",
+        3 => "adfm.map_id"
+    ];
+    
+    $sectorCol = $columnMap[$accessType] ?? "agm.map_id";
+    $where[] = "$sectorCol IN (" . implode(',', array_fill(0, count($sector), '?')) . ")";
     $params = array_merge($params, $sector);
 }
 

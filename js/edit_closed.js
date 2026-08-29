@@ -61,11 +61,27 @@ $(document).ready(function () {
 
         getRegionDropdown('closed', branch);
     });
+        // load each dropdown only when the user actually opens/clicks it.
+    let branchLoaded = false;
+    let regionLoaded = false;
+
+    branchChoices.passedElement.element.addEventListener('showDropdown', function () {
+        if (!branchLoaded) {
+            branchLoaded = true;
+            getBranchDropdown();
+        }
+    });
+
+    regionChoices.passedElement.element.addEventListener('showDropdown', function () {
+        if (!regionLoaded) {
+            regionLoaded = true;
+          getRegionDropdown('closed');
+        }
+    });
+
 });
 
 $(function () {
-    getBranchDropdown();
-    getRegionDropdown('closed');
     loadNotifications();
 })
 

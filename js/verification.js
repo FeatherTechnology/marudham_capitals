@@ -3641,6 +3641,7 @@ function validation(event) {
   var cus_occ_abt = $("#cus_occ_abt").val();
   var cus_how_know = $("#cus_how_know").val();
   var cus_monthly_income = $("#cus_monthly_income").val();
+  var income_date = $("#income_date").val();
   var cus_other_income = $("#cus_other_income").val();
   var cus_support_income = $("#cus_support_income").val();
   var cus_Commitment = $("#cus_Commitment").val();
@@ -3819,6 +3820,13 @@ function validation(event) {
     validation = false;
   } else {
     $("#monthlyIncomeCheck").hide();
+  }
+  if (income_date == "") {
+    event.preventDefault();
+    $("#incomeDateCheck").show();
+    validation = false;
+  } else {
+    $("#incomeDateCheck").hide();
   }
   if (cus_other_income == "") {
     event.preventDefault();

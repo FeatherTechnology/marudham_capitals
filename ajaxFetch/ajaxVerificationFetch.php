@@ -188,34 +188,56 @@ if (!empty($cusIds)) {
 
     $cusIdList = implode(',', array_map('intval', $cusIds));
 
-    $issueSql = "SELECT ii.cus_id,ii.req_id,ii.cus_status,cs.created_date AS closing_date,cc.closing_date AS closed_date,cs1.sub_status,dn.due_nil_date
-FROM in_issue ii
-LEFT JOIN closed_status cs ON cs.req_id = ii.req_id
-LEFT JOIN closing_customer cc ON cc.req_id = ii.req_id
-LEFT JOIN (
-    SELECT c1.req_id, c1.sub_status
-    FROM customer_status c1
-    INNER JOIN (
-        SELECT req_id, MAX(created_date) created_date
-        FROM customer_status
-        GROUP BY req_id
-    ) x
-        ON x.req_id = c1.req_id AND x.created_date = c1.created_date
-) cs1 ON cs1.req_id = ii.req_id
-LEFT JOIN (
-    SELECT req_id, MAX(coll_date) AS due_nil_date
-    FROM collection
-    WHERE coll_sub_status='Due Nil'
-    GROUP BY req_id
-) dn ON dn.req_id = ii.req_id
-WHERE ii.cus_id IN ($cusIdList) AND ii.cus_status >= 14
-ORDER BY CAST(ii.req_id AS UNSIGNED) DESC;";
-    $stmt = $connect->query($issueSql);
+    $issueSql = "WITH filtered_issue AS (
+            SELECT ii.cus_id,ii.req_id,ii.cus_status
+            FROM in_issue ii WHERE ii.cus_id IN ($cusIdList) AND ii.cus_status >= 14),
+        latest_customer_status AS (
+            SELECT cs.req_id,cs.sub_status
+            FROM (
+                SELECT
+                    c.req_id,
+                    c.sub_status,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY c.req_id
+                        ORDER BY c.created_date DESC
+                    ) AS rn
+                FROM customer_status c
+                INNER JOIN filtered_issue fi
+                    ON fi.req_id = c.req_id
+            ) cs
+            WHERE cs.rn = 1
+        ),
+        due_nil AS (
+            SELECT
+                c.req_id,
+                MAX(c.coll_date) AS due_nil_date
+            FROM collection c
+            INNER JOIN filtered_issue fi
+                ON fi.req_id = c.req_id
+            WHERE c.coll_sub_status = 'Due Nil'
+            GROUP BY c.req_id
+        )
+        SELECT
+            fi.cus_id,
+            fi.req_id,
+            fi.cus_status,
+            cs.created_date AS closing_date,
+            cc.closing_date AS closed_date,
+            lcs.sub_status,
+            dn.due_nil_date
+        FROM filtered_issue fi
+        LEFT JOIN closed_status cs ON cs.req_id = fi.req_id
+        LEFT JOIN closing_customer cc ON cc.req_id = fi.req_id
+        LEFT JOIN latest_customer_status lcs ON lcs.req_id = fi.req_id
+        LEFT JOIN due_nil dn ON dn.req_id = fi.req_id
+        ORDER BY CAST(fi.req_id AS UNSIGNED) DESC";
 
+    $stmt = $connect->query($issueSql);
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $issueDataMap[$row['cus_id']][] = $row;
     }
 }
+
 
 /* ---------------- DATA FORMAT ---------------- */
 $data = [];

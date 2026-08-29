@@ -16,6 +16,13 @@
 		font-size: 17px;
 		padding: 7px 12px;
 	}
+    .img-show {
+        height: 150px;
+        width: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        background-color: white;
+    }
 </style>
 
 <!-- Page header start -->
@@ -107,21 +114,17 @@
 								<th>Aadhaar Number</th>
 								<th>Customer ID</th>
 								<th>Customer Name</th>
-								<th>Area</th>
-								<th>Sub Area</th>
-								<th>Branch</th>
-								<th>Region</th>
-								<th>Mobile</th>
-								<th>Sub Status</th>
-								<th>Responsible</th>
+								<th>Mobile1</th>
+								<th>Mobile2</th>
 								<th>Action</th>
-								<th>Call Status</th>
+								<th>Personal Info</th>
 								<th>Customer Summary</th>
 								<th>Last Paid Date</th>
 								<th>Current Month Paid</th>
 								<th>Hint</th>
 								<th>Remark</th>
 								<th>Communication Status</th>
+								<th>Call Status</th>
 								<th>Commitment Date</th>
 							</tr>
 						</thead>
@@ -175,3 +178,23 @@
 	</div>
 </div>
 <!-- //////////////////////////////// Customer Status Modal END //////////////////////////////// -->
+ <!-- Modal for Personal Info   -->
+<div class="modal fade" id="personalInfoModal" tabindex="-1" role="dialog">
+	<div class="modal-dialog modal-lg " role="document" style="height: 90vh;width:300vh;">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLongTitle">Personal Info</h5>
+				<button type="button" class="close" data-dismiss="modal">
+					<span>&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="container-fluid row" id='personalInfoDiv'>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-secondary" data-dismiss="modal" tabindex="1">Close</button>
+			</div>
+		</div>
+	</div>
+</div>

@@ -13,7 +13,19 @@ $(document).ready(function () {
         let comm_sts = $("#comm_sts").val();
         let call_status = $("#call_status").val();
 
-        OnLoadFunctions(cusSts, comm_date,res_sts, comm_sts, call_status);
+        OnLoadFunctions(cusSts, comm_date, res_sts, comm_sts, call_status);
+    });
+
+    $(document).on('click', '.personal-info', function (e) {
+        e.preventDefault();
+        let cus_id = $(this).data('cusid');
+        $.post('followupFiles/promotion/getPersonalInfo.php',{cus_id: cus_id},function (html) {
+                $('#personalInfoDiv').html(html);
+            }
+        ).fail(function (xhr, status, error) {
+            console.log("AJAX Error:", error);
+            console.log(xhr.responseText);
+        });
     });
 });
 
@@ -29,7 +41,7 @@ $(function () {
     let call_status = $("#call_status").val();
 
     if (cusSts != '') {
-        OnLoadFunctions(cusSts, cummDate ,res_sts ,comm_sts, call_status);
+        OnLoadFunctions(cusSts, cummDate, res_sts, comm_sts, call_status);
     }
 });
 
@@ -52,7 +64,7 @@ function OnLoadFunctions(cusSts, comm_date, res_sts, comm_sts, call_status) {
 
     $('#due_followup_table').DataTable().destroy();
     var table = $('#due_followup_table').DataTable({
-        ...getStateSaveConfig('due_followup_table'),
+        // ...getStateSaveConfig('due_followup_table'),
         "order": [[0, "desc"]],
         "processing": true,
         "displayStart": getDisplayStart('due_followup_table'),
@@ -104,13 +116,13 @@ function OnLoadFunctions(cusSts, comm_date, res_sts, comm_sts, call_status) {
             paginationFunction('due_followup_table');
         }
     });
-    initColVisFeatures(table, 'due_followup_table');
+    // initColVisFeatures(table, 'due_followup_table');
 }
 
 function enableDateColoring() {
     //for coloring
     $('#due_followup_table tbody tr').not('th').each(function () {
-        let tddate = $(this).find('td:eq(19)').text(); // Get the text content of the 12th td element (Follow date)
+        let tddate = $(this).find('td:eq(15)').text(); // Get the text content of the 12th td element (Follow date)
         let datecorrection = tddate.split("-").reverse().join("-").replaceAll(/\s/g, ''); // Correct the date format
         let values = new Date(datecorrection); // Create a Date object from the corrected date
         values.setHours(0, 0, 0, 0); // Set the time to midnight for accurate date comparison
@@ -123,11 +135,11 @@ function enableDateColoring() {
         if (tddate != '' && values != 'Invalid Date') { // Check if the extracted date and the created Date object are valid
 
             if (values < curDate) { // Compare the extracted date with the current date
-                $(this).find('td:eq(19)').css({ 'background-color': colors.past, 'color': 'white' }); // Apply styling for past dates
+                $(this).find('td:eq(15)').css({ 'background-color': colors.past, 'color': 'white' }); // Apply styling for past dates
             } else if (values > curDate) {
-                $(this).find('td:eq(19)').css({ 'background-color': colors.future, 'color': 'white' }); // Apply styling for future dates
+                $(this).find('td:eq(15)').css({ 'background-color': colors.future, 'color': 'white' }); // Apply styling for future dates
             } else {
-                $(this).find('td:eq(19)').css({ 'background-color': colors.current, 'color': 'white' }); // Apply styling for the current date
+                $(this).find('td:eq(15)').css({ 'background-color': colors.current, 'color': 'white' }); // Apply styling for the current date
             }
         }
     });

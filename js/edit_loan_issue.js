@@ -317,13 +317,35 @@ $(document).ready(function () {
 
         getSectorDropdown('common', branch);
     });
+    // load each dropdown only when the user actually opens/clicks it.
+    let branchLoaded = false;
+    let sectorLoaded = false;
+    let loanCatLoaded = false;
+
+    branchChoices.passedElement.element.addEventListener('showDropdown', function () {
+        if (!branchLoaded) {
+            branchLoaded = true;
+            getBranchDropdown();
+        }
+    });
+
+    sectorChoices.passedElement.element.addEventListener('showDropdown', function () {
+        if (!sectorLoaded) {
+            sectorLoaded = true;
+            getSectorDropdown('common');
+        }
+    });
+
+    loan_category.passedElement.element.addEventListener('showDropdown', function () {
+        if (!loanCatLoaded) {
+            loanCatLoaded = true;
+            getLoanCatName('common');
+        }
+    });
 
 });//document ready end
 
 $(function () {
-    getBranchDropdown();
-    getSectorDropdown('common');
-    getLoanCatName('common');
     loadNotifications();
 })
 
@@ -370,6 +392,7 @@ function getCustomerSummary(cus_id) {
             $('#cus_frst_loanDate').val(response.first_loan)
             $('#cus_travel_cmpy').val(response.travel)
             $('#cus_monthly_income').val(moneyFormatIndia(response.monthly_income))
+            $('#income_date').val(response.income_date)
             $('#cus_other_income').val(moneyFormatIndia(response.other_income))
             $('#cus_support_income').val(moneyFormatIndia(response.support_income))
             $('#cus_Commitment').val(moneyFormatIndia(response.commitment))

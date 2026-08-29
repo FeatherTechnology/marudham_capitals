@@ -17,7 +17,7 @@ $how_to_know_obj = [
     '6' => 'Renewal'
 ];
 
-$qry = $connect->query("SELECT autogen_cus_id, cus_id, customer_name, how_to_know, monthly_income, other_income, support_income, commitment, monthly_due_capacity, loan_limit, about_customer FROM customer_register WHERE cus_id = $cus_id");
+$qry = $connect->query("SELECT autogen_cus_id, cus_id, customer_name, how_to_know, monthly_income, other_income,income_date, support_income, commitment, monthly_due_capacity, loan_limit, about_customer FROM customer_register WHERE cus_id = $cus_id");
 if($qry->rowCount() > 0){
     $row = $qry->fetch();
     $records['autogen_cus_id'] = $row['autogen_cus_id'];
@@ -26,6 +26,7 @@ if($qry->rowCount() > 0){
     $records['how_to_know'] = $how_to_know_obj[$row['how_to_know']];
     $records['monthly_income'] = $row['monthly_income'];
     $records['other_income'] = $row['other_income'];
+    $records['income_date'] = $row['income_date'];
     $records['support_income'] = $row['support_income'];
     $records['commitment'] = $row['commitment'];
     $records['monthly_due_capacity'] = $row['monthly_due_capacity'];
