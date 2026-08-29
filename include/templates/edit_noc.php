@@ -132,9 +132,7 @@
 			allowHTML: true,
 		});
 
-		setSectorLabel('noc');
-		getBranchDropdown();
-		getSectorDropdown('noc');
+		 setSectorLabel('noc');
 
 		$('#search_loan').on('click', function() {
 
@@ -152,6 +150,24 @@
 			let branch = $(this).val();
 
 			getSectorDropdown('noc', branch);
+		});
+
+		// load each dropdown only when the user actually opens/clicks it.
+		let branchLoaded = false;
+		let sectorLoaded = false;
+
+		branchChoices.passedElement.element.addEventListener('showDropdown', function() {
+			if (!branchLoaded) {
+				branchLoaded = true;
+				getBranchDropdown();
+			}
+		});
+
+		sectorChoices.passedElement.element.addEventListener('showDropdown', function() {
+			if (!sectorLoaded) {
+				sectorLoaded = true;
+				getSectorDropdown('noc');
+			}
 		});
 
 		$(document).on('click', '.remove-noc', function(event) {

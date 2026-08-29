@@ -21,7 +21,7 @@ $(document).ready(function () {
     $('.closeModal').click(function () {
         $('#cusHistoryTable tbody').empty();
     });
-    
+
     // Verification list Actions
     $(document).on("click", '.cancelverification', function () {
         var remark = prompt("Do you want to Cancel this Verification?");
@@ -56,33 +56,33 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '.move_approval', function () {
-            var req_id = $(this).val();
-            if (confirm('Do You want to Send this for Approval?')) {
-                $.ajax({
-                    url: 'verificationFile/sendToApproval.php',
-                    dataType: 'json',
-                    type: 'post',
-                    data: { 'req_id': req_id, 'cus_id': $(this).data('cusid') },
-                    cache: false,
-                    success: function (response) {
-                        if (response.includes('Moved')) {
-                            Swal.fire({
-                                title: response,
-                                icon: 'success',
-                                showConfirmButton: true,
-                                confirmButtonColor: '#009688',
-                                confirmButtonText: 'OK'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    // Redirect only when OK is clicked
-                                    window.location = 'verification_list';
-                                }
-                            });
-                        }
+        var req_id = $(this).val();
+        if (confirm('Do You want to Send this for Approval?')) {
+            $.ajax({
+                url: 'verificationFile/sendToApproval.php',
+                dataType: 'json',
+                type: 'post',
+                data: { 'req_id': req_id, 'cus_id': $(this).data('cusid') },
+                cache: false,
+                success: function (response) {
+                    if (response.includes('Moved')) {
+                        Swal.fire({
+                            title: response,
+                            icon: 'success',
+                            showConfirmButton: true,
+                            confirmButtonColor: '#009688',
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Redirect only when OK is clicked
+                                window.location = 'verification_list';
+                            }
+                        });
                     }
-                })
-            }
-        });
+                }
+            })
+        }
+    });
 
     //Request info tab
     $(document).on('click', '.request-info', function () {
@@ -120,18 +120,41 @@ $(document).ready(function () {
         }
         $('#verification_table').DataTable().ajax.reload();
     });
-    
-     $('#branch_filter').on('change', function () {
+
+    $('#branch_filter').on('change', function () {
         let branch = $(this).val();
 
         getSectorDropdown('verification', branch);
     });
+    // load each dropdown only when the user actually opens/clicks it.
+    let branchLoaded = false;
+    let sectorLoaded = false;
+    let loanCatLoaded = false;
+
+    branchChoices.passedElement.element.addEventListener('showDropdown', function () {
+        if (!branchLoaded) {
+            branchLoaded = true;
+            getBranchDropdown();
+        }
+    });
+
+    sectorChoices.passedElement.element.addEventListener('showDropdown', function () {
+        if (!sectorLoaded) {
+            sectorLoaded = true;
+            getSectorDropdown('verification');
+        }
+    });
+
+    loan_category.passedElement.element.addEventListener('showDropdown', function () {
+        if (!loanCatLoaded) {
+            loanCatLoaded = true;
+            getLoanCatName('verification');
+        }
+    });
+
 });//document ready end
 
 $(function () {
-    getBranchDropdown();
-    getSectorDropdown('verification');
-    getLoanCatName('verification');
     loadNotifications();
 })
 
@@ -196,7 +219,7 @@ function submitLoanfollowup() {
         if (response.includes('Error')) {
             swarlErrorAlert(response);
         } else {
-            swarlSuccessAlert(response, function(){
+            swarlSuccessAlert(response, function () {
                 // $('#closeAddFollowupModal').trigger('click');
                 location.reload(); // Refresh the page to show the Last Follow-up date in the list
             });
@@ -213,7 +236,7 @@ function swarlSuccessAlert(response, callback) {
         confirmButtonText: 'Ok',
         confirmButtonColor: '#009688'
     }).then((result) => {
-        if(result.isConfirmed && typeof callback === 'function'){
+        if (result.isConfirmed && typeof callback === 'function') {
             callback();
         }
     });

@@ -2619,7 +2619,7 @@ function validation() {
     var cus_occ_type = $('#cus_occ_type').val(); var cus_occ_detail = $('#cus_occ_detail').val(); var cus_occ_income = $('#cus_occ_income').val(); var cus_occ_address = $('#cus_occ_address').val(); var cus_occ_dow = $('#cus_occ_dow').val(); var cus_occ_abt = $('#cus_occ_abt').val();
     var area_state = $('#area_state').val(); var area_district = $('#area_district').val(); var area_taluk = $('#area_taluk').val();
     var area_confirm = $('#area_confirm').val(); var area_sub_area = $('#area_sub_area').val();
-    var cus_how_know = $('#cus_how_know').val(); var cus_monthly_income = $('#cus_monthly_income').val(); var cus_other_income = $('#cus_other_income').val(); var cus_support_income = $('#cus_support_income').val(); var cus_Commitment = $('#cus_Commitment').val(); var cus_monDue_capacity = $('#cus_monDue_capacity').val(); var cus_loan_limit = $('#cus_loan_limit').val(); var about_cus = $('#about_cus').val(); 
+    var cus_how_know = $('#cus_how_know').val(); var cus_monthly_income = $('#cus_monthly_income').val(); var income_date = $('#income_date').val(); var cus_other_income = $('#cus_other_income').val(); var cus_support_income = $('#cus_support_income').val(); var cus_Commitment = $('#cus_Commitment').val(); var cus_monDue_capacity = $('#cus_monDue_capacity').val(); var cus_loan_limit = $('#cus_loan_limit').val(); var about_cus = $('#about_cus').val(); 
     var guarentor_name = $('#guarentor_name').val(); var guarentor_image = $('#guarentor_image').val(); var guarentorpic = $('#guarentorpic').val(); var loan_id = $('#loan_id').val(); var validation = true;
     // let reminderCall = $('#reminder_call').val();
     
@@ -2817,6 +2817,13 @@ function validation() {
         $('#monthlyIncomeCheck').show();
     } else {
         $('#monthlyIncomeCheck').hide();
+    }
+    if (income_date == '') {
+        event.preventDefault();
+        validation = false;
+        $('#incomeDateCheck').show();
+    } else {
+        $('#incomeDateCheck').hide();
     }
     if (cus_other_income == '') {
         event.preventDefault();

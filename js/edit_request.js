@@ -107,12 +107,35 @@ $(document).ready(function () {
         getSectorDropdown('request', branch);
     });
 
+     // load each dropdown only when the user actually opens/clicks it.
+    let branchLoaded = false;
+    let sectorLoaded = false;
+    let loanCatLoaded = false;
+
+    branchChoices.passedElement.element.addEventListener('showDropdown', function () {
+        if (!branchLoaded) {
+            branchLoaded = true;
+            getBranchDropdown();
+        }
+    });
+
+    sectorChoices.passedElement.element.addEventListener('showDropdown', function () {
+        if (!sectorLoaded) {
+            sectorLoaded = true;
+            getSectorDropdown('request');
+        }
+    });
+
+    loan_category.passedElement.element.addEventListener('showDropdown', function () {
+        if (!loanCatLoaded) {
+            loanCatLoaded = true;
+            getLoanCatName('common');
+        }
+    });
+
 });//document ready end
 $(function () {
     setSectorLabel('request');
-    getBranchDropdown();
-    getSectorDropdown('request');
-    getLoanCatName('common');
 });
 function warningSwal(title, text) {
     Swal.fire({

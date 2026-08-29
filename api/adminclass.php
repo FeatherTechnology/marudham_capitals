@@ -5155,6 +5155,9 @@ class admin
 		if (isset($_POST['cus_monthly_income'])) {
 			$cus_monthly_income = str_replace([',', ' '], '', $_POST['cus_monthly_income']);
 		}
+		if (isset($_POST['income_date'])) {
+			$income_date = $_POST['income_date'];
+		}
 		if (isset($_POST['cus_other_income'])) {
 			$cus_other_income = str_replace([',', ' '], '', $_POST['cus_other_income']);
 		}
@@ -5202,7 +5205,7 @@ class admin
 			$insresult = $mysqli->query($insertQry) or die("Error " . $mysqli->error);
 		}
 
-		$updateCus = "UPDATE `customer_register` SET  `cus_id`='" . strip_tags($cus_id) . "',`customer_name`='" . strip_tags($cus_name) . "',`gender`='" . strip_tags($gender) . "',`dob`='" . strip_tags($dob) . "',`age`='" . strip_tags($age) . "',`blood_group`='" . strip_tags($bloodGroup) . "',`mobile1`='" . strip_tags($mobile1) . "', `mobile2`='" . strip_tags($mobile2) . "',`whatsapp`='" . strip_tags($whatsapp_no) . "',`pic`='" . strip_tags($pic_req) . "',`how_to_know`='" . strip_tags($cus_how_know) . "',`loan_count`='" . strip_tags($cus_loan_count) . "',`first_loan_date`='" . strip_tags($cus_frst_loanDate) . "',`travel_with_company`='" . strip_tags($cus_travel_cmpy) . "',`monthly_income`='" . strip_tags($cus_monthly_income) . "',`other_income`='" . strip_tags($cus_other_income) . "',`support_income`='" . strip_tags($cus_support_income) . "',`commitment`='" . strip_tags($cus_Commitment) . "',`monthly_due_capacity`='" . strip_tags($cus_monDue_capacity) . "',`loan_limit`='" . strip_tags($cus_loan_limit) . "',`about_customer`='" . strip_tags($about_cus) . "',`residential_type`='" . strip_tags($cus_res_type) . "',`residential_details`='" . strip_tags($cus_res_details) . "',`residential_address`='" . strip_tags($cus_res_address) . "',`residential_native_address`='" . strip_tags($cus_res_native) . "',`occupation_info_occ_type`='" . strip_tags($cus_occ_type) . "',`occupation_details`='" . strip_tags($cus_occ_detail) . "',`occupation_income`='" . strip_tags($cus_occ_income) . "',`occupation_address`='" . strip_tags($cus_occ_address) . "',`dow`='" . strip_tags($cus_occ_dow) . "',`abt_occ`='" . strip_tags($cus_occ_abt) . "',`area_confirm_type`='" . strip_tags($area_cnfrm) . "',`area_confirm_state`='" . strip_tags($state) . "',`area_confirm_district`='" . strip_tags($district) . "',`area_confirm_taluk`='" . strip_tags($taluk) . "',`area_confirm_area`='" . strip_tags($area) . "',`area_confirm_subarea`='" . strip_tags($sub_area) . "',`latlong`='" . strip_tags($latlong) . "',`area_group`='" . strip_tags($area_group) . "',`area_line`='" . strip_tags($area_line) . "' WHERE `cus_id`= '" . strip_tags($cus_id) . "' ";
+		$updateCus = "UPDATE `customer_register` SET  `cus_id`='" . strip_tags($cus_id) . "',`customer_name`='" . strip_tags($cus_name) . "',`gender`='" . strip_tags($gender) . "',`dob`='" . strip_tags($dob) . "',`age`='" . strip_tags($age) . "',`blood_group`='" . strip_tags($bloodGroup) . "',`mobile1`='" . strip_tags($mobile1) . "', `mobile2`='" . strip_tags($mobile2) . "',`whatsapp`='" . strip_tags($whatsapp_no) . "',`pic`='" . strip_tags($pic_req) . "',`how_to_know`='" . strip_tags($cus_how_know) . "',`loan_count`='" . strip_tags($cus_loan_count) . "',`first_loan_date`='" . strip_tags($cus_frst_loanDate) . "',`travel_with_company`='" . strip_tags($cus_travel_cmpy) . "',`monthly_income`='" . strip_tags($cus_monthly_income) . "',`income_date`='" . strip_tags($income_date) . "',`other_income`='" . strip_tags($cus_other_income) . "',`support_income`='" . strip_tags($cus_support_income) . "',`commitment`='" . strip_tags($cus_Commitment) . "',`monthly_due_capacity`='" . strip_tags($cus_monDue_capacity) . "',`loan_limit`='" . strip_tags($cus_loan_limit) . "',`about_customer`='" . strip_tags($about_cus) . "',`residential_type`='" . strip_tags($cus_res_type) . "',`residential_details`='" . strip_tags($cus_res_details) . "',`residential_address`='" . strip_tags($cus_res_address) . "',`residential_native_address`='" . strip_tags($cus_res_native) . "',`occupation_info_occ_type`='" . strip_tags($cus_occ_type) . "',`occupation_details`='" . strip_tags($cus_occ_detail) . "',`occupation_income`='" . strip_tags($cus_occ_income) . "',`occupation_address`='" . strip_tags($cus_occ_address) . "',`dow`='" . strip_tags($cus_occ_dow) . "',`abt_occ`='" . strip_tags($cus_occ_abt) . "',`area_confirm_type`='" . strip_tags($area_cnfrm) . "',`area_confirm_state`='" . strip_tags($state) . "',`area_confirm_district`='" . strip_tags($district) . "',`area_confirm_taluk`='" . strip_tags($taluk) . "',`area_confirm_area`='" . strip_tags($area) . "',`area_confirm_subarea`='" . strip_tags($sub_area) . "',`latlong`='" . strip_tags($latlong) . "',`area_group`='" . strip_tags($area_group) . "',`area_line`='" . strip_tags($area_line) . "' WHERE `cus_id`= '" . strip_tags($cus_id) . "' ";
 		$insresult = $mysqli->query($updateCus) or die("Error " . $mysqli->error);
 
 		//To update customer profile of present loans for the customer
@@ -5231,7 +5234,7 @@ class admin
 	public function getCustomerProfile($mysqli, $req_id)
 	{
 
-		$qry = $mysqli->query("SELECT cp.*,cr.how_to_know,cr.loan_count,cr.first_loan_date,cr.travel_with_company,cr.monthly_income,cr.other_income,cr.support_income,cr.commitment,cr.monthly_due_capacity,cr.loan_limit,cr.about_customer FROM `customer_profile` cp  LEFT JOIN `customer_register` cr on cp.cus_id = cr.cus_id WHERE cp.req_id='$req_id' ");
+		$qry = $mysqli->query("SELECT cp.*,cr.how_to_know,cr.loan_count,cr.first_loan_date,cr.travel_with_company,cr.monthly_income,cr.income_date,cr.other_income,cr.support_income,cr.commitment,cr.monthly_due_capacity,cr.loan_limit,cr.about_customer FROM `customer_profile` cp  LEFT JOIN `customer_register` cr on cp.cus_id = cr.cus_id WHERE cp.req_id='$req_id' ");
 		$detailrecords = array();
 		$i = 0;
 		if ($mysqli->affected_rows > 0) {
@@ -5280,6 +5283,7 @@ class admin
 				$detailrecords['first_loan_date'] = $row['first_loan_date'];
 				$detailrecords['travel_with_company'] = $row['travel_with_company'];
 				$detailrecords['monthly_income'] = $row['monthly_income'];
+				$detailrecords['income_date'] = $row['income_date'];
 				$detailrecords['other_income'] = $row['other_income'];
 				$detailrecords['support_income'] = $row['support_income'];
 				$detailrecords['commitment'] = $row['commitment'];
@@ -5914,7 +5918,7 @@ class admin
 	public function getAcknowlegeCustomerProfile($mysqli, $req_id)
 	{
 
-		$qry = $mysqli->query("SELECT cp.*,cr.how_to_know,cr.loan_count,cr.first_loan_date,cr.travel_with_company,cr.monthly_income,cr.other_income,cr.support_income,cr.commitment,cr.monthly_due_capacity,cr.loan_limit,cr.about_customer FROM `acknowlegement_customer_profile` cp  LEFT JOIN `customer_register` cr on cp.cus_id = cr.cus_id WHERE cp.req_id='$req_id' ");
+		$qry = $mysqli->query("SELECT cp.*,cr.how_to_know,cr.loan_count,cr.first_loan_date,cr.travel_with_company,cr.monthly_income,cr.income_date,cr.other_income,cr.support_income,cr.commitment,cr.monthly_due_capacity,cr.loan_limit,cr.about_customer FROM `acknowlegement_customer_profile` cp  LEFT JOIN `customer_register` cr on cp.cus_id = cr.cus_id WHERE cp.req_id='$req_id' ");
 		$detailrecords = array();
 		$i = 0;
 		if ($mysqli->affected_rows > 0) {
@@ -5963,6 +5967,7 @@ class admin
 				$detailrecords['first_loan_date'] = $row['first_loan_date'];
 				$detailrecords['travel_with_company'] = $row['travel_with_company'];
 				$detailrecords['monthly_income'] = $row['monthly_income'];
+				$detailrecords['income_date'] = $row['income_date'];
 				$detailrecords['other_income'] = $row['other_income'];
 				$detailrecords['support_income'] = $row['support_income'];
 				$detailrecords['commitment'] = $row['commitment'];
@@ -7419,6 +7424,7 @@ class admin
 				$detailrecords['first_loan_date'] = $row['first_loan_date'];
 				$detailrecords['travel_with_company'] = $row['travel_with_company'];
 				$detailrecords['monthly_income'] = $row['monthly_income'];
+				$detailrecords['income_date'] = $row['income_date'];
 				$detailrecords['other_income'] = $row['other_income'];
 				$detailrecords['support_income'] = $row['support_income'];
 				$detailrecords['commitment'] = $row['commitment'];
@@ -7830,6 +7836,9 @@ class admin
 		if (isset($_POST['cus_monthly_income'])) {
 			$cus_monthly_income = $_POST['cus_monthly_income'];
 		}
+		if (isset($_POST['income_date'])) {
+			$income_date = $_POST['income_date'];
+		}
 		if (isset($_POST['cus_other_income'])) {
 			$cus_other_income = $_POST['cus_other_income'];
 		}
@@ -7849,7 +7858,7 @@ class admin
 			$about_cus = $_POST['about_cus'];
 		}
 
-		$updateCus = "UPDATE `customer_register` SET `customer_name`='" . strip_tags($cus_name) . "',`dob`='" . strip_tags($dob) . "',`age`='" . strip_tags($age) . "',`gender`='" . strip_tags($gender) . "',`state`='" . strip_tags($state) . "',`district`='" . strip_tags($district) . "',`taluk`='" . strip_tags($taluk) . "',`area`='" . strip_tags($area) . "',`sub_area`='" . strip_tags($sub_area) . "',`address`='" . strip_tags($address) . "',`mobile1`='" . strip_tags($mobile1) . "', `mobile2`='" . strip_tags($mobile2) . "',`father_name`='" . strip_tags($father_name) . "',`mother_name`='" . strip_tags($mother_name) . "',`marital`='" . strip_tags($marital) . "',`spouse`='" . strip_tags($spouse_name) . "',`occupation_type`='" . strip_tags($occupation_type) . "',`occupation`='" . strip_tags($occupation) . "',`how_to_know`='" . strip_tags($cus_how_know) . "',`loan_count`='" . strip_tags($cus_loan_count) . "',`first_loan_date`='" . strip_tags($cus_frst_loanDate) . "',`travel_with_company`='" . strip_tags($cus_travel_cmpy) . "',`monthly_income`='" . strip_tags($cus_monthly_income) . "',`other_income`='" . strip_tags($cus_other_income) . "',`support_income`='" . strip_tags($cus_support_income) . "',`commitment`='" . strip_tags($cus_Commitment) . "',`monthly_due_capacity`='" . strip_tags($cus_monDue_capacity) . "',`loan_limit`='" . strip_tags($cus_loan_limit) . "',`about_customer`='" . strip_tags($about_cus) . "',`residential_type`='" . strip_tags($cus_res_type) . "',`residential_details`='" . strip_tags($cus_res_details) . "',`residential_address`='" . strip_tags($cus_res_address) . "',`residential_native_address`='" . strip_tags($cus_res_native) . "',`occupation_info_occ_type`='" . strip_tags($cus_occ_type) . "',`occupation_details`='" . strip_tags($cus_occ_detail) . "',`occupation_income`='" . strip_tags($cus_occ_income) . "',`occupation_address`='" . strip_tags($cus_occ_address) . "',`area_confirm_type`='" . strip_tags($area_cnfrm) . "',`area_confirm_state`='" . strip_tags($area_state) . "',`area_confirm_district`='" . strip_tags($area_district) . "',`area_confirm_taluk`='" . strip_tags($area_taluk) . "',`area_confirm_area`='" . strip_tags($area_confirm) . "',`area_confirm_subarea`='" . strip_tags($area_sub_area) . "',`latlong`='" . strip_tags($latlong) . "',`area_group`='" . strip_tags($area_group) . "',`area_line`='" . strip_tags($area_line) . "' WHERE `cus_id`= '" . strip_tags($cus_id) . "' ";
+		$updateCus = "UPDATE `customer_register` SET `customer_name`='" . strip_tags($cus_name) . "',`dob`='" . strip_tags($dob) . "',`age`='" . strip_tags($age) . "',`gender`='" . strip_tags($gender) . "',`state`='" . strip_tags($state) . "',`district`='" . strip_tags($district) . "',`taluk`='" . strip_tags($taluk) . "',`area`='" . strip_tags($area) . "',`sub_area`='" . strip_tags($sub_area) . "',`address`='" . strip_tags($address) . "',`mobile1`='" . strip_tags($mobile1) . "', `mobile2`='" . strip_tags($mobile2) . "',`father_name`='" . strip_tags($father_name) . "',`mother_name`='" . strip_tags($mother_name) . "',`marital`='" . strip_tags($marital) . "',`spouse`='" . strip_tags($spouse_name) . "',`occupation_type`='" . strip_tags($occupation_type) . "',`occupation`='" . strip_tags($occupation) . "',`how_to_know`='" . strip_tags($cus_how_know) . "',`loan_count`='" . strip_tags($cus_loan_count) . "',`first_loan_date`='" . strip_tags($cus_frst_loanDate) . "',`travel_with_company`='" . strip_tags($cus_travel_cmpy) . "',`monthly_income`='" . strip_tags($cus_monthly_income) . "',`income_date`='" . strip_tags($income_date) . "',`other_income`='" . strip_tags($cus_other_income) . "',`support_income`='" . strip_tags($cus_support_income) . "',`commitment`='" . strip_tags($cus_Commitment) . "',`monthly_due_capacity`='" . strip_tags($cus_monDue_capacity) . "',`loan_limit`='" . strip_tags($cus_loan_limit) . "',`about_customer`='" . strip_tags($about_cus) . "',`residential_type`='" . strip_tags($cus_res_type) . "',`residential_details`='" . strip_tags($cus_res_details) . "',`residential_address`='" . strip_tags($cus_res_address) . "',`residential_native_address`='" . strip_tags($cus_res_native) . "',`occupation_info_occ_type`='" . strip_tags($cus_occ_type) . "',`occupation_details`='" . strip_tags($cus_occ_detail) . "',`occupation_income`='" . strip_tags($cus_occ_income) . "',`occupation_address`='" . strip_tags($cus_occ_address) . "',`area_confirm_type`='" . strip_tags($area_cnfrm) . "',`area_confirm_state`='" . strip_tags($area_state) . "',`area_confirm_district`='" . strip_tags($area_district) . "',`area_confirm_taluk`='" . strip_tags($area_taluk) . "',`area_confirm_area`='" . strip_tags($area_confirm) . "',`area_confirm_subarea`='" . strip_tags($area_sub_area) . "',`latlong`='" . strip_tags($latlong) . "',`area_group`='" . strip_tags($area_group) . "',`area_line`='" . strip_tags($area_line) . "' WHERE `cus_id`= '" . strip_tags($cus_id) . "' ";
 		$insresult = $mysqli->query($updateCus) or die("Error " . $mysqli->error);
 	}
 
@@ -8256,6 +8265,9 @@ class admin
 		if (isset($_POST['cus_monthly_income'])) {
 			$cus_monthly_income = str_replace([',', ' '], '', $_POST['cus_monthly_income']);
 		}
+		if (isset($_POST['income_date'])) {
+			$income_date = $_POST['income_date'];
+		}
 		if (isset($_POST['cus_other_income'])) {
 			$cus_other_income = str_replace([',', ' '], '', $_POST['cus_other_income']);
 		}
@@ -8290,7 +8302,7 @@ class admin
 		$grantorupdate = "UPDATE customer_profile cp JOIN in_issue ii ON cp.req_id = ii.req_id JOIN acknowlegement_customer_profile ackp ON ackp.req_id = ii.req_id SET cp.`guarentor_name` = '$guarentor_name', cp.`guarentor_relation` = '$guarentor_relation', cp.`guarentor_photo` = '$guarentor_pic', ackp.`guarentor_name` = '$guarentor_name', ackp.`guarentor_relation` = '$guarentor_relation', ackp.`guarentor_photo` = '$guarentor_pic' WHERE ii.loan_id = '$loan_id'; ";
 		$insresult = $mysqli->query($grantorupdate) or die("Error " . $mysqli->error);
 
-		$updateCus = "UPDATE `customer_register` SET  `cus_id` = '$cus_id', `customer_name` = '$cus_name', `gender` = '$gender', `dob` = '$dob', `age` = '$age', `state` = '$state', `district` = '$district', `taluk` = '$taluk', `area` = '$area', `sub_area` = '$sub_area', `address` = '$cus_address', `mobile1` = '$mobile1',  `mobile2` = '$mobile2',  `whatsapp`  =  '$whatsapp_no',  `father_name` = '$father_name', `mother_name` = '$mother_name', `marital` = '$marital', `spouse` = '$spouse_name', `occupation_type` = '$occupation_type', `occupation` = '$occupation', `pic`  =  '$cus_pic',  `how_to_know` = '$cus_how_know', `loan_count` = '$cus_loan_count', `first_loan_date` = '$cus_frst_loanDate', `travel_with_company` = '$cus_travel_cmpy', `monthly_income` = '$cus_monthly_income', `other_income` = '$cus_other_income', `support_income` = '$cus_support_income', `commitment` = '$cus_Commitment', `monthly_due_capacity` = '$cus_monDue_capacity', `loan_limit` = '$cus_loan_limit', `about_customer` = '$about_cus', `residential_type` = '$cus_res_type', `residential_details` = '$cus_res_details', `residential_address` = '$cus_res_address', `residential_native_address` = '$cus_res_native', `occupation_info_occ_type` = '$cus_occ_type', `occupation_details` = '$cus_occ_detail', `occupation_income` = '$cus_occ_income', `occupation_address` = '$cus_occ_address', `dow` = '$cus_occ_dow', `abt_occ` = '$cus_occ_abt', `reminder_call` = '$reminder_call', `area_confirm_type` = '$area_cnfrm', `area_confirm_state` = '$area_state', `area_confirm_district` = '$area_district', `area_confirm_taluk` = '$area_taluk', `area_confirm_area` = '$area_confirm', `area_confirm_subarea` = '$area_sub_area', `latlong` = '$latlong', `area_group` = '$area_group', `area_line` = '$area_line' WHERE `cus_id` = '$cus_id' ";
+		$updateCus = "UPDATE `customer_register` SET  `cus_id` = '$cus_id', `customer_name` = '$cus_name', `gender` = '$gender', `dob` = '$dob', `age` = '$age', `state` = '$state', `district` = '$district', `taluk` = '$taluk', `area` = '$area', `sub_area` = '$sub_area', `address` = '$cus_address', `mobile1` = '$mobile1',  `mobile2` = '$mobile2',  `whatsapp`  =  '$whatsapp_no',  `father_name` = '$father_name', `mother_name` = '$mother_name', `marital` = '$marital', `spouse` = '$spouse_name', `occupation_type` = '$occupation_type', `occupation` = '$occupation', `pic`  =  '$cus_pic',  `how_to_know` = '$cus_how_know', `loan_count` = '$cus_loan_count', `first_loan_date` = '$cus_frst_loanDate', `travel_with_company` = '$cus_travel_cmpy', `monthly_income` = '$cus_monthly_income', `income_date` = '$income_date',`other_income` = '$cus_other_income', `support_income` = '$cus_support_income', `commitment` = '$cus_Commitment', `monthly_due_capacity` = '$cus_monDue_capacity', `loan_limit` = '$cus_loan_limit', `about_customer` = '$about_cus', `residential_type` = '$cus_res_type', `residential_details` = '$cus_res_details', `residential_address` = '$cus_res_address', `residential_native_address` = '$cus_res_native', `occupation_info_occ_type` = '$cus_occ_type', `occupation_details` = '$cus_occ_detail', `occupation_income` = '$cus_occ_income', `occupation_address` = '$cus_occ_address', `dow` = '$cus_occ_dow', `abt_occ` = '$cus_occ_abt', `reminder_call` = '$reminder_call', `area_confirm_type` = '$area_cnfrm', `area_confirm_state` = '$area_state', `area_confirm_district` = '$area_district', `area_confirm_taluk` = '$area_taluk', `area_confirm_area` = '$area_confirm', `area_confirm_subarea` = '$area_sub_area', `latlong` = '$latlong', `area_group` = '$area_group', `area_line` = '$area_line' WHERE `cus_id` = '$cus_id' ";
 		$insresult = $mysqli->query($updateCus) or die("Error " . $mysqli->error);
 
 		$req_id_array = [];

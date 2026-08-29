@@ -133,6 +133,7 @@ if (sizeof($getCustomerReg) > 0) {
 		$first_loan_date 		= $getCustomerReg['first_loan_date'];
 		$travel_with_company 	= $getCustomerReg['travel_with_company'];
 		$monthly_income 		= $getCustomerReg['monthly_income'];
+		$income_date 		= $getCustomerReg['income_date'];
 		$other_income 			= $getCustomerReg['other_income'];
 		$support_income 		= $getCustomerReg['support_income'];
 		$commitment 			= $getCustomerReg['commitment'];
@@ -1249,6 +1250,28 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 																																													echo moneyFormatIndia($monthly_income);
 																																												} ?>" tabindex="57">
 										<span class="text-danger" style='display:none' id='monthlyIncomeCheck'>Please Enter Monthly Income </span>
+									</div>
+								</div>
+
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+									<div class="form-group">
+										<label for="income_date">Income Date</label>
+										<span class="required">*</span>
+
+										<select class="form-control" name="income_date" id="income_date" tabindex="57">
+											<option value="">Select Income Date</option>
+
+											<?php
+											for ($day = 1; $day <= 31; $day++) {
+												$selected = (isset($income_date) && $income_date == $day) ? 'selected' : '';
+												echo "<option value=\"$day\" $selected>$day</option>";
+											}
+											?>
+										</select>
+
+										<span class="text-danger" style="display:none" id="incomeDateCheck">
+											Please Select Income Date
+										</span>
 									</div>
 								</div>
 

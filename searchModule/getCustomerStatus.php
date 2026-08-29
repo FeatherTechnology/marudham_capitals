@@ -4,141 +4,94 @@ $user_id = $_SESSION["userid"];
 include('../ajaxconfig.php');
 include('../moneyFormatIndia.php');
 
-
 if (isset($_POST['cus_id'])) {
     $cus_id = $_POST['cus_id'];
 }
 
-$records = array();
-$result = $connect->query("SELECT req.req_id, req.prompt_remark, req.cus_status, ad.doc_id,
-    CASE WHEN req.cus_status >= 14 THEN ii.updated_date ELSE req.dor END AS `updated_date`,
-    CASE WHEN req.cus_status >= 14 THEN ii.loan_id ELSE req.req_code END AS `code`,
-    CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.loan_category WHEN req.cus_status IN (3,13,14,15,16,17,20,21,22,23,24,25) THEN alc.loan_category ELSE req.loan_category END AS loan_category,
-    CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.sub_category WHEN req.cus_status IN (3,13,14,15,16,17,20,21,22,23,24,25) THEN alc.sub_category ELSE req.sub_category END AS sub_category,
-    CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.loan_amt WHEN req.cus_status IN (3,13,14,15,16,17,20,21,22,23,24,25) THEN alc.loan_amt ELSE req.loan_amt END AS loan_amt,
-    CASE WHEN req.cus_status IN (12,2,6,7,3,13,14,15,16,17,20,21,22,23,24,25) THEN cp.cus_name ELSE req.cus_name END AS cus_name
-    FROM request_creation req
-    LEFT JOIN customer_profile cp ON req.req_id = cp.req_id
-    LEFT JOIN verification_loan_calculation vlc ON req.req_id = vlc.req_id
-    LEFT JOIN acknowlegement_loan_calculation alc ON req.req_id = alc.req_id
-    LEFT JOIN in_issue ii ON req.req_id = ii.req_id
-    LEFT JOIN acknowlegement_documentation ad ON ii.req_id = ad.req_id
-    where req.cus_id = $cus_id ORDER BY req.created_date DESC");
+$sql = "SELECT base.*, lcc.loan_category_creation_name, cs.closed_sts, cs.consider_level
+        FROM (
+            SELECT req.req_id, req.prompt_remark, req.cus_status, req.cus_id, ad.doc_id,
+                CASE WHEN req.cus_status >= 14 THEN ii.updated_date ELSE req.dor END AS updated_date,
+                CASE WHEN req.cus_status >= 14 THEN ii.loan_id ELSE req.req_code END AS code,
+                CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.loan_category
+                     WHEN req.cus_status IN (3,13,14,15,16,17,20,21,22,23,24,25) THEN alc.loan_category
+                     ELSE req.loan_category END AS loan_category,
+                CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.sub_category
+                     WHEN req.cus_status IN (3,13,14,15,16,17,20,21,22,23,24,25) THEN alc.sub_category
+                     ELSE req.sub_category END AS sub_category,
+                CASE WHEN req.cus_status IN (12,2,6,7) THEN vlc.loan_amt
+                     WHEN req.cus_status IN (3,13,14,15,16,17,20,21,22,23,24,25) THEN alc.loan_amt
+                     ELSE req.loan_amt END AS loan_amt,
+                CASE WHEN req.cus_status IN (12,2,6,7,3,13,14,15,16,17,20,21,22,23,24,25) THEN cp.cus_name
+                     ELSE req.cus_name END AS cus_name,
+                req.created_date
+            FROM request_creation req
+            LEFT JOIN customer_profile cp ON req.req_id = cp.req_id
+            LEFT JOIN verification_loan_calculation vlc ON req.req_id = vlc.req_id
+            LEFT JOIN acknowlegement_loan_calculation alc ON req.req_id = alc.req_id
+            LEFT JOIN in_issue ii ON req.req_id = ii.req_id
+            LEFT JOIN acknowlegement_documentation ad ON ii.req_id = ad.req_id
+            WHERE req.cus_id = :cus_id
+        ) base
+        LEFT JOIN loan_category_creation lcc ON lcc.loan_category_creation_id = base.loan_category
+        LEFT JOIN closed_status cs ON cs.req_id = base.req_id AND cs.cus_id = base.cus_id
+        ORDER BY base.created_date DESC";
 
-if ($result->rowCount() > 0) {
-    $i = 0;
-    while ($row = $result->fetch()) {
+$stmt = $connect->prepare($sql);
+$stmt->execute([':cus_id' => $cus_id]);
+$rows = $stmt->fetchAll();
 
-        $records[$i]['updated_date'] = date('d-m-Y', strtotime($row['updated_date']));
-        $records[$i]['code'] = $row['code'];
-        $records[$i]['doc_id'] = $row['doc_id'];
+// Precompute collection status for ALL of this customer's issued loans in one query
+$collectionStatusMap = getCollectionStatusMap($connect, $cus_id, $user_id);
 
-        $req_id = $row['req_id'];
-        $cus_name = $row['cus_name'];
+$closed_status_labels = ['', 'Consider', 'Waiting List', 'Block List'];
+$statusMapping = getStatusMapping();
+$records = [];
 
-        $loan_category = $row['loan_category'] ?? '';
-        $qry = $connect->query("SELECT * FROM loan_category_creation where loan_category_creation_id = $loan_category");
-        $row1 = $qry->fetch();
-        $records[$i]['loan_category'] = $row1['loan_category_creation_name'];
+foreach ($rows as $i => $row) {
+    $req_id     = $row['req_id'];
+    $cus_status = (int) $row['cus_status'];
 
-        $records[$i]['sub_category'] = $row['sub_category'];
-        $records[$i]['loan_amt'] = $row['loan_amt'];
-        $records[$i]['remark'] = $row['prompt_remark'] ?? '';
-        $cus_status = $row['cus_status'];
-        $statusMapping = [
-            '0' => ['status' => 'Request', 'sub_status' => 'Requested'],
-            '1' => ['status' => 'Verification', 'sub_status' => 'In Verification'],
-            '2' => ['status' => 'Approval', 'sub_status' => 'In Approval'],
-            '3' => ['status' => 'Acknowledgement', 'sub_status' => 'In Acknowledgement'],
-            '4' => ['status' => 'Request', 'sub_status' => 'Cancelled'],
-            '5' => ['status' => 'Verification', 'sub_status' => 'Cancelled'],
-            '6' => ['status' => 'Approval', 'sub_status' => 'Cancelled'],
-            '7' => ['status' => 'Acknowledgement', 'sub_status' => 'Cancelled'],
-            '8' => ['status' => 'Request', 'sub_status' => 'Revoked'],
-            '9' => ['status' => 'Verification', 'sub_status' => 'Revoked'],
-            '10' => ['status' => 'Verification', 'sub_status' => 'In Verification'],
-            '11' => ['status' => 'Verification', 'sub_status' => 'In Verification'],
-            '12' => ['status' => 'Verification', 'sub_status' => 'In Verification'],
-            '13' => ['status' => 'Loan Issue', 'sub_status' => 'In Issue'],
-            '14' => ['status' => 'Present', 'sub_status' => getCollectionStatus($connect, $cus_id, $user_id, $req_id)],
-            '15' => ['status' => 'Present', 'sub_status' => getCollectionStatus($connect, $cus_id, $user_id, $req_id)],
-            '16' => ['status' => 'Present', 'sub_status' => getCollectionStatus($connect, $cus_id, $user_id, $req_id)],
-            '17' => ['status' => 'Present', 'sub_status' => getCollectionStatus($connect, $cus_id, $user_id, $req_id)],
-            '20' => ['status' => 'Closed', 'sub_status' => 'In Closed'],
-            '21' => ['status' => 'Closed', 'sub_status' => 'In Closed'],
-            '22' => ['status' => 'Closed', 'sub_status' => 'NOC Completed'],
-            '23' => ['status' => 'Closed', 'sub_status' => 'NOC Completed'],
-            '24' => ['status' => 'Closed', 'sub_status' => 'NOC Completed'],
-            '25' => ['status' => 'Closed', 'sub_status' => 'NOC Completed']
-        ];
+    $records[$i] = [
+        'updated_date'  => date('d-m-Y', strtotime($row['updated_date'])),
+        'code'          => $row['code'],
+        'doc_id'        => $row['doc_id'],
+        'loan_category' => $row['loan_category_creation_name'],
+        'sub_category'  => $row['sub_category'],
+        'loan_amt'      => $row['loan_amt'],
+        'remark'        => $row['prompt_remark'] ?? '',
+    ];
 
-        // if ($cus_status != '10' && $cus_status != '11') {
-        if (array_key_exists($cus_status, $statusMapping)) {
-            $records[$i]['status'] = $statusMapping[$cus_status]['status'];
-            $records[$i]['sub_status'] = $statusMapping[$cus_status]['sub_status'];
+    if (isset($statusMapping[$cus_status])) {
+        $records[$i]['status']     = $statusMapping[$cus_status]['status'];
+        $records[$i]['sub_status'] = $statusMapping[$cus_status]['sub_status'];
 
-            if ($cus_status >= '21') {
-                $Qry = $connect->query("SELECT closed_sts from closed_status where cus_id = $cus_id and req_id = '" . $req_id . "' ");
-                $closed_status = ['', 'Consider', 'Waiting List', 'Block List'];
-                $records[$i]['sub_status'] = $closed_status[$Qry->fetch()['closed_sts'] ?? 0];
-            }
-        }
-        // }
-
-        //for document status
-        if ($cus_status >= 14 && $cus_status < 21) {
-            $records[$i]['doc_status'] = getDocumentStatus($connect, $req_id) == 'pending' ? 'Document Pending' : 'Document Completed';
-        } elseif ($cus_status >= 21 && $cus_status <= 23) {
-            $records[$i]['doc_status'] = ($cus_status == 21) ? 'NOC Pending' : 'NOC Completed';
-        } elseif ($cus_status == 24) {
-            $records[$i]['doc_status'] = 'NOC Handovered';
-        } elseif ($cus_status == 25) {
-            $records[$i]['doc_status'] = 'Agent Handovered';
-        } else {
-            $records[$i]['doc_status'] = '';
+        if (in_array($cus_status, [14, 15, 16, 17], true)) {
+            $records[$i]['sub_status'] = $collectionStatusMap[$req_id] ?? 'Current';
         }
 
-        //for info 
-        $records[$i]['info_action'] = "<div class='dropdown'><button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button><div class='dropdown-content'> ";
-
-        $records[$i]['info_action'] .= "<a class='personal-info' data-toggle='modal' data-target='#personalInfoModal' data-cusid='" . $cus_id . "'><span>Personal Info</span></a>";
-
-        if ($cus_status >= 2 and $cus_status != 4 and $cus_status != 5 and $cus_status != 8 and $cus_status != 9) {
-            $records[$i]['info_action'] .= "<a class='cust-profile' data-reqid='" . $req_id . "' data-cusid='" . $cus_id . "'><span>Customer Profile</span></a>
-                <a class='documentation' data-reqid='" . $req_id . "' data-cusid='" . $cus_id . "'><span>Documentation</span></a>
-                <a class='loan-calc' data-reqid='" . $req_id . "' data-cusid='" . $cus_id . "'><span>Loan Calculation</span></a>";
+        if ($cus_status >= 21) {
+            $records[$i]['sub_status'] = $closed_status_labels[(int) ($row['closed_sts'] ?? 0)];
         }
-        $records[$i]['info_action'] .= "</div></div>";
-
-        //for Charts
-        $records[$i]['chart_action'] = "<div class='dropdown'><button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button><div class='dropdown-content'> ";
-
-        if ($cus_status >= 14) {
-            $records[$i]['chart_action'] .= "<a><span data-toggle='modal' data-target='.DueChart' class='due-chart' value='" . $req_id . "' data-cusid='" . $cus_id . "'> Due Chart</span></a>
-                <a><span data-toggle='modal' data-target='.PenaltyChart' class='penalty-chart' value='" . $req_id . "' data-cusid='" . $cus_id . "'> Penalty Chart</span></a>
-                <a><span data-toggle='modal' data-target='.collectionChargeChart' class='coll-charge-chart' value='" . $req_id . "' data-cusid='" . $cus_id . "'> Fine Chart</span></a>";
-        }
-
-        if ($cus_status >= 14 && $cus_status <= 20) {
-            $records[$i]['chart_action'] .= "<a><span data-toggle='modal' data-target='#commitmentChart' class='commitment-chart' data-reqid='" . $req_id . "' data-cusid='" . $cus_id . "'> Commitment Chart </span></a>";
-        }
-        
-        $records[$i]['chart_action'] .= "</div></div>";
-
-        //for Summary
-        $records[$i]['summary_action'] = "<div class='dropdown'><button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button><div class='dropdown-content'> ";
-
-        if ($cus_status > 20) { //if request goes to NOC then noc summary can be fetched
-            $records[$i]['summary_action'] .= "<a><span data-reqid='$req_id' data-cusid='$cus_id' data-toggle='modal' data-target='.loansummarychart' class='loansummary-chart' >Loan Summary</span></a>";
-            $records[$i]['summary_action'] .= "<a><span class='noc-summary' data-reqid='$req_id' data-cusid='$cus_id' data-cusname='$cus_name' data-toggle='modal' data-target='.noc-summary-modal' >NOC Summary</span></a>";
-        }
-        $records[$i]['summary_action'] .= "</div></div>";
-
-
-        $i++;
     }
-}
 
+    if ($cus_status >= 14 && $cus_status < 21) {
+        $records[$i]['doc_status'] = getDocumentStatus($connect, $req_id) === 'pending'
+            ? 'Document Pending' : 'Document Completed';
+    } elseif ($cus_status >= 21 && $cus_status <= 23) {
+        $records[$i]['doc_status'] = $cus_status === 21 ? 'NOC Pending' : 'NOC Completed';
+    } elseif ($cus_status === 24) {
+        $records[$i]['doc_status'] = 'NOC Handovered';
+    } elseif ($cus_status === 25) {
+        $records[$i]['doc_status'] = 'Agent Handovered';
+    } else {
+        $records[$i]['doc_status'] = '';
+    }
+
+    $records[$i]['info_action']    = buildInfoActions($cus_id, $req_id, $cus_status);
+    $records[$i]['chart_action']   = buildChartActions($cus_id, $req_id, $cus_status);
+    $records[$i]['summary_action'] = buildSummaryActions($cus_id, $req_id, $cus_status, $row['cus_name']);
+}
 ?>
 <table class="table table-bordered" id="custStatusTable">
     <thead>
@@ -163,234 +116,238 @@ if ($result->rowCount() > 0) {
         </tr>
     </thead>
     <tbody>
-        <?php for ($i = 0; $i < sizeof($records); $i++) { ?>
+        <?php foreach ($records as $i => $record) { ?>
             <tr>
                 <td><?php echo $i + 1; ?></td>
-                <td><?php echo $records[$i]['updated_date']; ?></td>
-                <td><?php echo $records[$i]['code']; ?></td>
-                <td><?php echo $records[$i]['doc_id']; ?></td>
-                <td><?php echo $records[$i]['loan_category']; ?></td>
-                <td><?php echo $records[$i]['sub_category']; ?></td>
-                <td><?php echo moneyFormatIndia($records[$i]['loan_amt']); ?></td>
-                <td><?php echo $records[$i]['status']; ?></td>
-                <td><?php echo $records[$i]['sub_status']; ?></td>
-                <td><?php echo $records[$i]['doc_status']; ?></td>
-                <td><?php echo $records[$i]['info_action']; ?></td>
-                <td><?php echo $records[$i]['chart_action']; ?></td>
-                <td><?php echo $records[$i]['summary_action']; ?></td>
+                <td><?php echo $record['updated_date']; ?></td>
+                <td><?php echo $record['code']; ?></td>
+                <td><?php echo $record['doc_id']; ?></td>
+                <td><?php echo $record['loan_category']; ?></td>
+                <td><?php echo $record['sub_category']; ?></td>
+                <td><?php echo moneyFormatIndia($record['loan_amt']); ?></td>
+                <td><?php echo $record['status'] ?? ''; ?></td>
+                <td><?php echo $record['sub_status'] ?? ''; ?></td>
+                <td><?php echo $record['doc_status']; ?></td>
+                <td><?php echo $record['info_action']; ?></td>
+                <td><?php echo $record['chart_action']; ?></td>
+                <td><?php echo $record['summary_action']; ?></td>
             </tr>
         <?php } ?>
     </tbody>
 </table>
 <input type="hidden" name="docSts" id="docSts">
 <div id="printcollection" style="display: none"></div>
-<?php
-function getCollectionStatus($connect, $cus_id, $user_id, $req_id)
-{
 
-    $pending_sts = isset($_POST["pending_sts"]) && $_POST["pending_sts"] !== '' ? explode(',', $_POST["pending_sts"]) : [];
-    $od_sts = isset($_POST["od_sts"]) && $_POST["od_sts"] !== '' ? explode(',', $_POST["od_sts"]) : [];
-    $due_nil_sts = isset($_POST["due_nil_sts"]) && $_POST["due_nil_sts"] !== '' ? explode(',', $_POST["due_nil_sts"]) : [];
-    $bal_amt = isset($_POST["bal_amt"]) && $_POST["bal_amt"] !== '' ? explode(',', $_POST["bal_amt"]) : [];
-    $closed_sts = isset($_POST["closed_sts"]) && $_POST["closed_sts"] !== '' ? explode(',', $_POST["closed_sts"]) : [];
+<?php
+function getStatusMapping()
+{
+    static $map = null;
+    if ($map === null) {
+        $map = [
+            0  => ['status' => 'Request', 'sub_status' => 'Requested'],
+            1  => ['status' => 'Verification', 'sub_status' => 'In Verification'],
+            2  => ['status' => 'Approval', 'sub_status' => 'In Approval'],
+            3  => ['status' => 'Acknowledgement', 'sub_status' => 'In Acknowledgement'],
+            4  => ['status' => 'Request', 'sub_status' => 'Cancelled'],
+            5  => ['status' => 'Verification', 'sub_status' => 'Cancelled'],
+            6  => ['status' => 'Approval', 'sub_status' => 'Cancelled'],
+            7  => ['status' => 'Acknowledgement', 'sub_status' => 'Cancelled'],
+            8  => ['status' => 'Request', 'sub_status' => 'Revoked'],
+            9  => ['status' => 'Verification', 'sub_status' => 'Revoked'],
+            10 => ['status' => 'Verification', 'sub_status' => 'In Verification'],
+            11 => ['status' => 'Verification', 'sub_status' => 'In Verification'],
+            12 => ['status' => 'Verification', 'sub_status' => 'In Verification'],
+            13 => ['status' => 'Loan Issue', 'sub_status' => 'In Issue'],
+            14 => ['status' => 'Present', 'sub_status' => ''],
+            15 => ['status' => 'Present', 'sub_status' => ''],
+            16 => ['status' => 'Present', 'sub_status' => ''],
+            17 => ['status' => 'Present', 'sub_status' => ''],
+            20 => ['status' => 'Closed', 'sub_status' => 'In Closed'],
+            21 => ['status' => 'Closed', 'sub_status' => 'In Closed'],
+            22 => ['status' => 'Closed', 'sub_status' => 'NOC Completed'],
+            23 => ['status' => 'Closed', 'sub_status' => 'NOC Completed'],
+            24 => ['status' => 'Closed', 'sub_status' => 'NOC Completed'],
+            25 => ['status' => 'Closed', 'sub_status' => 'NOC Completed'],
+        ];
+    }
+    return $map;
+}
+
+function getCollectionStatusMap($connect, $cus_id, $user_id)
+{
+    $pending_sts = array_map('boolFromPost', explodeOrEmpty($_POST["pending_sts"] ?? ''));
+    $od_sts      = array_map('boolFromPost', explodeOrEmpty($_POST["od_sts"] ?? ''));
+    $due_nil_sts = array_map('boolFromPost', explodeOrEmpty($_POST["due_nil_sts"] ?? ''));
+    $closed_sts  = array_map('boolFromPost', explodeOrEmpty($_POST["closed_sts"] ?? ''));
+    $bal_amt     = array_map(
+        fn($v) => trim($v) === '' ? 0.0 : (float) trim($v),
+        explodeOrEmpty($_POST["bal_amt"] ?? '')
+    );
+
     $consider_lvl_arr = [1 => 'Bronze', 2 => 'Silver', 3 => 'Gold', 4 => 'Platinum', 5 => 'Diamond'];
 
-    $boolMapper = function ($value) {
-        return in_array(strtolower(trim((string)$value)), ['1', 'true', 'yes'], true);
-    };
+    $sql = "SELECT lc.due_start_from, ii.req_id, ii.cus_status
+            FROM acknowlegement_loan_calculation lc
+            JOIN in_issue ii ON lc.req_id = ii.req_id
+            WHERE lc.cus_id_loan = :cus_id AND ii.cus_status >= 14 AND ii.cus_status < 20
+            ORDER BY CAST(ii.req_id AS UNSIGNED) ASC";
+    $stmt = $connect->prepare($sql);
+    $stmt->execute([':cus_id' => $cus_id]);
+    $loanRows = $stmt->fetchAll();
 
-    $pending_sts = array_map($boolMapper, $pending_sts);
-    $od_sts = array_map($boolMapper, $od_sts);
-    $due_nil_sts = array_map($boolMapper, $due_nil_sts);
-    $closed_sts = array_map($boolMapper, $closed_sts);
-    $bal_amt = array_map(function ($value) {
-        $value = trim($value);
-        return $value === '' ? 0 : (float)$value;
-    }, $bal_amt);
-
-    $retVal = 'Current';
-
-    $run = $connect->query("SELECT lc.due_start_from,lc.loan_category,lc.sub_category,lc.loan_amt_cal,lc.due_amt_cal,lc.net_cash_cal,lc.collection_method,ii.loan_id,ii.req_id,ii.updated_date,ii.cus_status,
-    rc.agent_id,lcc.loan_category_creation_name as loan_catrgory_name, us.collection_access
-    from acknowlegement_loan_calculation lc JOIN in_issue ii ON lc.req_id = ii.req_id JOIN request_creation rc ON ii.req_id = rc.req_id 
-    JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id JOIN user us ON us.user_id = $user_id
-    WHERE lc.cus_id_loan = $cus_id and (ii.cus_status >= 14 and ii.cus_status < 20) ORDER BY CAST(ii.req_id AS UNSIGNED) ASC"); //Customer status greater than or equal to 14 because, after issued data only we need
-
-    $curdate = date('Y-m-d');
-    $index = 0;
-
-    while ($row = $run->fetch()) {
-        $currentBal = $bal_amt[$index] ?? 0;
-
-        if ($row['req_id'] != $req_id) {
-            $index++;
-            continue;
+    $closedReqIds = array_column(
+        array_filter($loanRows, fn($r) => (int) $r['cus_status'] > 20),
+        'req_id'
+    );
+    $closedMap = [];
+    if ($closedReqIds) {
+        $in = implode(',', array_fill(0, count($closedReqIds), '?'));
+        $cstmt = $connect->prepare("SELECT req_id, closed_sts, consider_level FROM closed_status WHERE req_id IN ($in)");
+        $cstmt->execute($closedReqIds);
+        foreach ($cstmt->fetchAll() as $r) {
+            $closedMap[$r['req_id']] = $r;
         }
-
-        $isPending = $pending_sts[$index] ?? false;
-        $isOd = $od_sts[$index] ?? false;
-        $isDueNil = $due_nil_sts[$index] ?? false;
-        $isClosed = $closed_sts[$index] ?? false;
-
-        if (date('Y-m-d', strtotime($row['due_start_from'])) > $curdate && $currentBal != 0) { //If the start date is on upcoming date then the sub status is current, until current date reach due_start_from date.
-            if ($row['cus_status'] == '15') {
-                $retVal = 'Error';
-            } elseif ($row['cus_status'] == '16') {
-                $retVal = 'Legal';
-            } else {
-                $retVal = 'Current';
-            }
-        } else {
-            if ($row['cus_status'] <= 20) {
-                if ($isPending && !$isOd) {
-                    if ($row['cus_status'] == '15') {
-                        $retVal = 'Error';
-                    } elseif ($row['cus_status'] == '16') {
-                        $retVal = 'Legal';
-                    } else {
-                        $retVal = 'Pending';
-                    }
-                } else if ($isOd && !$isDueNil) {
-                    if ($row['cus_status'] == '15') {
-                        $retVal = 'Error';
-                    } elseif ($row['cus_status'] == '16') {
-                        $retVal = 'Legal';
-                    } else {
-                        $retVal = 'OD';
-                    }
-                } elseif ($isDueNil) {
-                    if ($row['cus_status'] == '15') {
-                        $retVal = 'Error';
-                    } elseif ($row['cus_status'] == '16') {
-                        $retVal = 'Legal';
-                    } else {
-                        $retVal = 'Due Nil';
-                    }
-                } elseif (!$isPending) {
-                    if ($row['cus_status'] == '15') {
-                        $retVal = 'Error';
-                    } elseif ($row['cus_status'] == '16') {
-                        $retVal = 'Legal';
-                    } else {
-                        $retVal = $isClosed ? 'Closed' : 'Current';
-                    }
-                }
-            } else if ($row['cus_status'] > 20) { // if status is closed(21) or more than that(22), then show closed status
-                $closedSts = $connect->query("SELECT * FROM `closed_status` WHERE `req_id` ='" . strip_tags($req_id) . "' ");
-                $closedStsrow = $closedSts->fetch();
-                $rclosed = $closedStsrow['closed_sts'];
-                $consider_lvl = $closedStsrow['consider_level'];
-                if ($rclosed == '1') {
-                    $retVal = 'Consider - ' . $consider_lvl_arr[$consider_lvl];
-                }
-                if ($rclosed == '2') {
-                    $retVal = 'Waiting List';
-                }
-                if ($rclosed == '3') {
-                    $retVal = 'Block List';
-                }
-            }
-        }
-
-        break;
     }
 
-    return $retVal;
+    $curdate = date('Y-m-d');
+    $result = [];
+
+    foreach ($loanRows as $index => $row) {
+        $req_id     = $row['req_id'];
+        $cus_status = (int) $row['cus_status'];
+        $currentBal = $bal_amt[$index] ?? 0;
+        $isPending  = $pending_sts[$index] ?? false;
+        $isOd       = $od_sts[$index] ?? false;
+        $isDueNil   = $due_nil_sts[$index] ?? false;
+        $isClosed   = $closed_sts[$index] ?? false;
+
+        $status = 'Current';
+
+        if (date('Y-m-d', strtotime($row['due_start_from'])) > $curdate && $currentBal != 0) {
+            $status = statusByCusStatus($cus_status, 'Current');
+        } elseif ($cus_status <= 20) {
+            if ($isPending && !$isOd) {
+                $status = statusByCusStatus($cus_status, 'Pending');
+            } elseif ($isOd && !$isDueNil) {
+                $status = statusByCusStatus($cus_status, 'OD');
+            } elseif ($isDueNil) {
+                $status = statusByCusStatus($cus_status, 'Due Nil');
+            } elseif (!$isPending) {
+                $status = statusByCusStatus($cus_status, $isClosed ? 'Closed' : 'Current');
+            }
+        } else {
+            $c = $closedMap[$req_id] ?? null;
+            if ($c) {
+                $status = match ((string) $c['closed_sts']) {
+                    '1'     => 'Consider - ' . ($consider_lvl_arr[(int) $c['consider_level']] ?? ''),
+                    '2'     => 'Waiting List',
+                    '3'     => 'Block List',
+                    default => $status,
+                };
+            }
+        }
+
+        $result[$req_id] = $status;
+    }
+
+    return $result;
+}
+
+function statusByCusStatus($cus_status, $default)
+{
+    return match ((string) $cus_status) {
+        '15'    => 'Error',
+        '16'    => 'Legal',
+        default => $default,
+    };
+}
+
+function explodeOrEmpty($val)
+{
+    return $val !== '' ? explode(',', $val) : [];
+}
+
+function boolFromPost($value): bool
+{
+    return in_array(strtolower(trim((string) $value)), ['1', 'true', 'yes'], true);
 }
 
 function getDocumentStatus($connect, $req_id)
 {
-
     $response1 = 'completed';
-
-    // $sts_qry = $connect->query("SELECT id, doc_Count FROM signed_doc_info WHERE req_id = '$req_id'");
-    // if ($sts_qry->rowCount() > 0) {
-    //     while ($sts_row = $sts_qry->fetch()) {
-    //         $sts_qry1 = $connect->query("SELECT * FROM signed_doc WHERE req_id = '$req_id' AND signed_doc_id = '" . $sts_row['id'] .
-    //             "'");
-    //         if ($sts_qry1->rowCount() == $sts_row['doc_Count'] && $response1 != 'pending') {
-    //             $response1 = 'completed';
-    //         } else {
-    //             $response1 = 'pending';
-    //         }
-    //     }
-    // }
-
     $response2 = 'completed';
-    // $sts_qry = $connect->query("SELECT id, cheque_count FROM cheque_info WHERE req_id = '$req_id'");
-    // if ($sts_qry->rowCount() > 0) {
-    //     while ($sts_row = $sts_qry->fetch()) {
-    //         $sts_qry1 = $connect->query("SELECT * FROM cheque_upd WHERE req_id = '$req_id' AND cheque_table_id = '" . $sts_row['id'] .
-    //             "'");
-    //         if ($sts_qry1->rowCount() == $sts_row['cheque_count'] && $response2 != 'pending') {
-    //             $response2 = 'completed';
-    //         } else {
-    //             $response2 = 'pending';
-    //         }
-    //     }
-    // }
 
     $response3 = 'completed';
-    $sts_qry = $connect->query("SELECT doc_sts FROM acknowlegement_documentation WHERE req_id = '$req_id'");
-    if ($sts_qry->rowCount() > 0) {
-        while ($sts_row = $sts_qry->fetch()) {
-            if ($sts_row['doc_sts'] == 'NO') {
-                $response3 = 'pending';
-            }
+    $sts_qry = $connect->prepare("SELECT doc_sts FROM acknowlegement_documentation WHERE req_id = :req_id");
+    $sts_qry->execute([':req_id' => $req_id]);
+    foreach ($sts_qry->fetchAll() as $sts_row) {
+        if ($sts_row['doc_sts'] == 'NO') {
+            $response3 = 'pending';
         }
     }
 
     $response4 = 'completed';
-    // $sts_qry = $connect->query("SELECT * FROM document_info WHERE req_id = '$req_id'");
-    // if ($sts_qry->rowCount() > 0) {
-    //     while ($sts_row = $sts_qry->fetch()) {
-    //         if ($sts_row['doc_upload'] == '' || $sts_row['doc_upload'] == null) {
-    //             $response4 = 'pending';
-    //         }
-    //     }
-    // }
 
-    if ($response1 == 'completed' && $response2 == 'completed' && $response3 == 'completed' && $response4 == 'completed') {
-        $response = 'completed';
-    } else {
-        $response = 'pending';
-    }
-
-    return $response;
+    return ($response1 === 'completed' && $response2 === 'completed'
+        && $response3 === 'completed' && $response4 === 'completed')
+        ? 'completed' : 'pending';
 }
 
-// function getNOCDocDetails($connect, $req_id, $cus_id)
-// {
+function buildInfoActions($cus_id, $req_id, $cus_status)
+{
+    $cus_id = htmlspecialchars((string) $cus_id, ENT_QUOTES);
+    $req_id = htmlspecialchars((string) $req_id, ENT_QUOTES);
 
-//     $response = 'completed';
-//     $qry = $connect->query("SELECT * FROM signed_doc where req_id ='$req_id' and cus_id = '$cus_id' and noc_given = 0 ");
-//     if ($qry->rowCount() > 0) { // if condition true, then signed doc any one is given other may be pending to give
-//         $response = 'pending';
-//     }
+    $html = "<div class='dropdown'><button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button><div class='dropdown-content'> ";
+    $html .= "<a class='personal-info' data-toggle='modal' data-target='#personalInfoModal' data-cusid='{$cus_id}'><span>Personal Info</span></a>";
 
-//     $qry = $connect->query("SELECT * FROM cheque_no_list where req_id ='$req_id' and cus_id = '$cus_id' and noc_given = 0 ");
-//     if ($qry->rowCount() > 0) { // if condition true, then Cheque doc any one is given other may be pending to give
-//         $response = 'pending';
-//     }
-//     $qry = $connect->query("SELECT * FROM acknowlegement_documentation where req_id ='$req_id' and cus_id_doc = '$cus_id' and (mortgage_process_noc = 0 or mortgage_document_noc = 0 or endorsement_process_noc = 0 or en_RC_noc = 0 or en_Key_noc = 0 ) ");
-//     if ($qry->rowCount() > 0) { // if condition true, then acknowlegement documentation any one is given other may be pending to give
-//         $response = 'pending';
-//     }
+    if ($cus_status >= 2 && !in_array($cus_status, [4, 5, 8, 9], true)) {
+        $html .= "<a class='cust-profile' data-reqid='{$req_id}' data-cusid='{$cus_id}'><span>Customer Profile</span></a>
+            <a class='documentation' data-reqid='{$req_id}' data-cusid='{$cus_id}'><span>Documentation</span></a>
+            <a class='loan-calc' data-reqid='{$req_id}' data-cusid='{$cus_id}'><span>Loan Calculation</span></a>";
+    }
 
-//     $qry = $connect->query("SELECT * FROM gold_info where req_id ='$req_id' and cus_id = '$cus_id' and noc_given = 0 ");
-//     if ($qry->rowCount() > 0) { // if condition true, then Gold doc any one is given other may be pending to give
-//         $response = 'pending';
-//     }
+    $html .= "</div></div>";
+    return $html;
+}
 
-//     $qry = $connect->query("SELECT * FROM document_info where req_id ='$req_id' and cus_id = '$cus_id' and doc_info_upload_noc = 0 ");
-//     if ($qry->rowCount() > 0) { // if condition true, then Document doc any one is given other may be pending to give
-//         $response = 'pending';
-//     }
-//     return $response;
-// }
+function buildChartActions($cus_id, $req_id, $cus_status)
+{
+    $cus_id = htmlspecialchars((string) $cus_id, ENT_QUOTES);
+    $req_id = htmlspecialchars((string) $req_id, ENT_QUOTES);
+
+    $html = "<div class='dropdown'><button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button><div class='dropdown-content'> ";
+
+    if ($cus_status >= 14) {
+        $html .= "<a><span data-toggle='modal' data-target='.DueChart' class='due-chart' value='{$req_id}' data-cusid='{$cus_id}'> Due Chart</span></a>
+            <a><span data-toggle='modal' data-target='.PenaltyChart' class='penalty-chart' value='{$req_id}' data-cusid='{$cus_id}'> Penalty Chart</span></a>
+            <a><span data-toggle='modal' data-target='.collectionChargeChart' class='coll-charge-chart' value='{$req_id}' data-cusid='{$cus_id}'> Fine Chart</span></a>";
+    }
+    if ($cus_status >= 14 && $cus_status <= 20) {
+        $html .= "<a><span data-toggle='modal' data-target='#commitmentChart' class='commitment-chart' data-reqid='{$req_id}' data-cusid='{$cus_id}'> Commitment Chart </span></a>";
+    }
+
+    $html .= "</div></div>";
+    return $html;
+}
+
+function buildSummaryActions($cus_id, $req_id, $cus_status, $cus_name)
+{
+    $cus_id   = htmlspecialchars((string) $cus_id, ENT_QUOTES);
+    $req_id   = htmlspecialchars((string) $req_id, ENT_QUOTES);
+    $cus_name = htmlspecialchars((string) $cus_name, ENT_QUOTES);
+
+    $html = "<div class='dropdown'><button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button><div class='dropdown-content'> ";
+
+    if ($cus_status > 20) {
+        $html .= "<a><span data-reqid='{$req_id}' data-cusid='{$cus_id}' data-toggle='modal' data-target='.loansummarychart' class='loansummary-chart' >Loan Summary</span></a>";
+        $html .= "<a><span class='noc-summary' data-reqid='{$req_id}' data-cusid='{$cus_id}' data-cusname='{$cus_name}' data-toggle='modal' data-target='.noc-summary-modal' >NOC Summary</span></a>";
+    }
+
+    $html .= "</div></div>";
+    return $html;
+}
 ?>
-
-
 <style>
     .dropdown-content {
         color: black;

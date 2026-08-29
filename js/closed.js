@@ -383,6 +383,7 @@ function getCustomerSummary() {
         success: function (response) {
             $('#cus_how_know').val(response['how_to_know'])
             $('#cus_monthly_income').val(moneyFormatIndia(response['monthly_income']))
+            $('#income_date').val(moneyFormatIndia(response['income_date']))
             $('#cus_other_income').val(moneyFormatIndia(response['other_income']))
             $('#cus_support_income').val(moneyFormatIndia(response['support_income']))
             $('#cus_Commitment').val(moneyFormatIndia(response['commitment']))

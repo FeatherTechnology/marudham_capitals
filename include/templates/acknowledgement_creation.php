@@ -151,6 +151,7 @@ if (sizeof($getCustomerProfile) > 0) {
 	$first_loan_date = $getCustomerProfile['first_loan_date'];
 	$travel_with_company = $getCustomerProfile['travel_with_company'];
 	$monthly_income = $getCustomerProfile['monthly_income'];
+	$income_date = $getCustomerProfile['income_date'];
 	$other_income = $getCustomerProfile['other_income'];
 	$support_income = $getCustomerProfile['support_income'];
 	$commitment = $getCustomerProfile['commitment'];
@@ -1316,6 +1317,23 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 										<input type="text" class="form-control" name="cus_monthly_income" id="cus_monthly_income" placeholder="Enter Monthly Income" value="<?php if (isset($monthly_income)) {
 																																												echo moneyFormatIndia($monthly_income);
 																																											} ?>" tabindex="46">
+									</div>
+								</div>
+								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+									<div class="form-group">
+										<label for="income_date">Income Date</label>
+										<span class="required">*</span>
+
+										<select class="form-control" name="income_date" id="income_date" tabindex="57">
+											<option value="">Select Income Date</option>
+
+											<?php
+											for ($day = 1; $day <= 31; $day++) {
+												$selected = (isset($income_date) && $income_date == $day) ? 'selected' : '';
+												echo "<option value=\"$day\" $selected>$day</option>";
+											}
+											?>
+										</select>
 									</div>
 								</div>
 

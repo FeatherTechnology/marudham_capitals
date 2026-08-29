@@ -131,6 +131,7 @@
 		loadNotifications();
 	})
 
+
 	$(document).ready(function() {
 		const branchChoices = new Choices('#branch_filter', {
 			removeItemButton: true,
@@ -182,17 +183,39 @@
 				}
 			});
 		});
-
+    setSectorLabel('noc');
 		$('#branch_filter').on('change', function() {
 			let branch = $(this).val();
 
 			getSectorDropdown('noc', branch);
 		});
-		setSectorLabel('noc');
-		getBranchDropdown();
-		getSectorDropdown('noc');
-		getLoanCatName('common');
 
+		// load each dropdown only when the user actually opens/clicks it.
+		let branchLoaded = false;
+		let sectorLoaded = false;
+		let loanCatLoaded = false;
+
+		branchChoices.passedElement.element.addEventListener('showDropdown', function() {
+			if (!branchLoaded) {
+				branchLoaded = true;
+				getBranchDropdown();
+			}
+		});
+
+		sectorChoices.passedElement.element.addEventListener('showDropdown', function() {
+			if (!sectorLoaded) {
+				sectorLoaded = true;
+				getSectorDropdown('noc');
+			}
+		});
+
+		loan_category.passedElement.element.addEventListener('showDropdown', function() {
+			if (!loanCatLoaded) {
+				loanCatLoaded = true;
+				getLoanCatName('common');
+			}
+		});
+		
 		function receiveNOCFromList(req_id) {
 			$.ajax({
 				url: 'nocFile/receiveNOCFromList.php',
