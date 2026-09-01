@@ -98,7 +98,23 @@
 							<option value="2" <?php echo (isset($_GET['call_sts']) && $_GET['call_sts'] === "2") ? 'selected' : ''; ?>>No Follow up</option>
 						</select>
 					</div>
-
+					<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12">
+						<div class="form-group">
+							<label for="branch">Branch</label>
+							<select class="form-control" name="branch" id="branch">
+								<option value="">Select Branch </option>
+							</select>
+						</div>
+					</div>
+					<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12">
+						<div class="form-group">
+							<label for="region">Region</label>
+							<select class="form-control" name="region" id="region">
+								<option value="">Select Region</option>
+							</select>
+						</div>
+					</div>
+					
 					<div class="col-sm-2 col-md-2 col-lg-2 col-xl-2 col-12">
 						<button type="button" class="btn btn-primary" id="show_due_followup" style="margin-top: 20px;">
 							Proceed

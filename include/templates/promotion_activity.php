@@ -92,6 +92,30 @@ if (sizeof($getUser) > 0) {
 							</select>
 						</div>
 					</div>
+					<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12">
+						<div class="form-group">
+							<label for="branch">Branch</label>
+							<select class="form-control" name="branch" id="branch">
+								<option value="">Select Branch </option>
+							</select>
+						</div>
+					</div>
+					<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12">
+						<div class="form-group">
+							<label for="sector">Sector</label>
+							<select class="form-control" name="sector" id="sector">
+								<option value="">Select Sector</option>
+							</select>
+						</div>
+					</div>
+					<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12">
+						<div class="form-group">
+							<label for="area">Area</label>
+							<select class="form-control" name="area" id="area">
+								<option value="">Select Area</option>
+							</select>
+						</div>
+					</div>
 					<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12" style="margin-top:20px">
 						<div class="form-group">
 							<button class="btn btn-primary" name="followup_search" id="followup_search">Search</button>

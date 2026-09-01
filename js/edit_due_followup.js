@@ -12,8 +12,10 @@ $(document).ready(function () {
         let res_sts = $("#res_sts").val();
         let comm_sts = $("#comm_sts").val();
         let call_status = $("#call_status").val();
+        let branch_id = $("#branch").val();
+        let line_id = $("#region").val();
 
-        OnLoadFunctions(cusSts, comm_date, res_sts, comm_sts, call_status);
+        OnLoadFunctions(cusSts, comm_date, res_sts, comm_sts, call_status,branch_id,line_id);
     });
 
     $(document).on('click', '.personal-info', function (e) {
@@ -31,6 +33,8 @@ $(document).ready(function () {
 
 $(function () {
     getSubStsMapping(); //Call Customer status dropdown.
+    getBranchList();
+    getLineList();
 
     let cummDate = $("#cummDate").val();
     $("#comm_date").val(cummDate);
@@ -39,11 +43,61 @@ $(function () {
     let res_sts = $("#res_sts").val();
     let comm_sts = $("#comm_sts").val();
     let call_status = $("#call_status").val();
+    let branch_id = $("#branch").val();
+    let line_id = $("#region").val();
 
     if (cusSts != '') {
-        OnLoadFunctions(cusSts, cummDate, res_sts, comm_sts, call_status);
+        OnLoadFunctions(cusSts, cummDate, res_sts, comm_sts, call_status,branch_id,line_id);
     }
 });
+
+function getBranchList() {
+    $.ajax({
+        url: 'followupFiles/promotion/getBranchList.php',
+        type: 'post',
+        data: {},
+        dataType: 'json',
+        success: function (response) {
+
+        $('#branch').html('<option value="">Select Region</option>');
+
+        $.each(response, function(index, value) {
+
+            $('#branch').append(
+                '<option value="' + value.branch_id + '">' +
+                value.branch_name +
+                '</option>'
+            );
+
+        });
+        }
+    });
+   
+}
+
+function getLineList() {
+    $.ajax({
+        url: 'followupFiles/promotion/getLineList.php',
+        type: 'post',
+        data: {},
+        dataType: 'json',
+        success: function (response) {
+
+        $('#region').html('<option value="">Select Group</option>');
+
+        $.each(response, function(index, value) {
+
+            $('#region').append(
+                '<option value="' + value.line_id + '">' +
+                value.line_name +
+                '</option>'
+            );
+
+        });
+        }
+    });
+
+}
 
 function warningSwal(title, text) {
     Swal.fire({
@@ -56,7 +110,7 @@ function warningSwal(title, text) {
     });
 }
 
-function OnLoadFunctions(cusSts, comm_date, res_sts, comm_sts, call_status) {
+function OnLoadFunctions(cusSts, comm_date, res_sts, comm_sts, call_status,branch_id,line_id) {
     if (!cusSts) {
         warningSwal('Warning!', 'Select Customer Status.');
         return;
@@ -81,6 +135,8 @@ function OnLoadFunctions(cusSts, comm_date, res_sts, comm_sts, call_status) {
                 data.res_sts = res_sts;
                 data.comm_sts = comm_sts;
                 data.call_status = call_status;
+                data.branch_id = branch_id;
+                data.line_id = line_id;
             }
         },
         dom: 'lBfrtip',

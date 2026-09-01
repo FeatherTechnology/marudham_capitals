@@ -37,11 +37,11 @@ $(document).ready(function () {
 
         } else if (typevalue == 'Renewal') {
             $('.renewal_card, .filter_card').show();
-            showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list', '17');
+            showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list', '12');
 
         } else if (typevalue == 'Re-active') {
             $('.re_active_card, .filter_card').show();
-            showPromotionList('followupFiles/promotion/showPromotionList.php', 're_active_promotion_list', '17');
+            showPromotionList('followupFiles/promotion/showPromotionList.php', 're_active_promotion_list', '12');
 
         } else if (typevalue == 'Events') {
             $('.event_card').show();
@@ -140,10 +140,10 @@ $(document).ready(function () {
             resetEnquiryTable();
 
         } else if (btnName == 'Renewal') {
-            showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list', '17');
+            showPromotionList('followupFiles/promotion/showPromotionList.php', 'expromotion_list', '12');
 
         } else if (btnName == 'Re-active') {
-            showPromotionList('followupFiles/promotion/showPromotionList.php', 're_active_promotion_list', '17');
+            showPromotionList('followupFiles/promotion/showPromotionList.php', 're_active_promotion_list', '12');
 
         } else if (btnName == 'New') {
             resetNewPromotionTable();
@@ -514,10 +514,22 @@ $(document).ready(function () {
         }, 'json');
     });
 
+$('#sector').on('change', function () {
+    let sector = $(this).val();
+    if (sector == '') {
+        $('#area').html('<option value="">Select Area</option>');
+        return false;
+    } else {
+        getAreaList();
+    }
+});
+
 }); //Document END.
 
 $(function () {
     getPromotionAccess();
+    getBranchList();
+    getGroupList();
     var formattedDate = getCurrentDate();
     $('.current_date').text(formattedDate);
 })
@@ -548,6 +560,68 @@ function getPromotionAccess() {
         }
     }, 'json');
 
+}
+function getBranchList() {
+    $.ajax({
+        url: 'followupFiles/promotion/getBranchList.php',
+        type: 'post',
+        data: {},
+        dataType: 'json',
+        success: function (response) {
+
+        $('#branch').html('<option value="">Select Branch</option>');
+
+        $.each(response, function(index, value) {
+
+            $('#branch').append(
+                '<option value="' + value.branch_id + '">' +
+                value.branch_name +
+                '</option>'
+            );
+
+        });
+        }
+    });
+   
+}
+
+function getGroupList() {
+    $.ajax({
+        url: 'followupFiles/promotion/getGroupList.php',
+        type: 'post',
+        data: {},
+        dataType: 'json',
+        success: function (response) {
+
+        $('#sector').html('<option value="">Select Group</option>');
+
+        $.each(response, function(index, value) {
+
+            $('#sector').append(
+                '<option value="' + value.group_id + '">' +
+                value.group_name +
+                '</option>'
+            );
+
+        });
+        }
+    });
+
+}
+
+function getAreaList() { 
+    let sector = $('#sector').val(); 
+    $.ajax({
+         url: 'followupFiles/promotion/getAreaList.php', 
+         type: 'POST', 
+         data: { sector: sector }, 
+         dataType: 'json', success: function(response) { 
+            $('#area').html('<option value="">Select Area</option>'); 
+            $.each(response, function(index, value) {
+                 $('#area').append( '<option value="' + value.area_id + '">' + value.area_name + '</option>' );
+            });
+        }
+    });
 }
 
 function searchCustomer() {
@@ -943,6 +1017,9 @@ function showPromotionList(url, tableid, colNo) {
     let followUpFromDate = $('#follow_up_fromdate').val();
     let followUpToDate = $('#follow_up_todate').val();
     let followupType = $('#followuptype').val();
+    let branch_id = $('#branch').val();
+    let group_id = $('#sector').val();
+    let area_id = $('#area').val();
     let re_active = "";
     if (tableid === 're_active_promotion_list') {
         re_active = "re_active_table"
@@ -971,6 +1048,9 @@ function showPromotionList(url, tableid, colNo) {
                 data.followUpFromDate = followUpFromDate;
                 data.followUpToDate = followUpToDate;
                 data.followupType = followupType;
+                data.branch_id = branch_id;
+                data.group_id = group_id;
+                data.area_id = area_id;
                 data.re_active = re_active;
             }
         },
