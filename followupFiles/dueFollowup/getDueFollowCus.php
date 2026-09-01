@@ -11,6 +11,16 @@ $loan_agnt = "";
 $cus_sts = isset($_POST['cus_sts']) && is_array($_POST['cus_sts']) ? $_POST['cus_sts'] : [];
 $sub_status_url = !empty($cus_sts) ? implode(',', array_map('urlencode', $cus_sts)) : '';
 
+$branch_id =  '';
+$line_id = '';
+
+if ($_POST['branch_id']) {
+    $branch_id  = "AND bc.branch_id ='".$_POST['branch_id']."' ";
+}
+if ($_POST['line_id']) {
+    $line_id = "AND alm.map_id ='".$_POST['line_id']."' ";
+}
+
 $sub_status_condition = "";
 if (!empty($cus_sts)) {
     $placeholders = implode(',', array_fill(0, count($cus_sts), '?'));
@@ -171,6 +181,9 @@ $innerQuery = "SELECT
     LEFT JOIN commitment cm ON cm.id = (
         SELECT c.id FROM $commitmentSubquery
     )
+    JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = cr.area_confirm_subarea
+    JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
+    JOIN branch_creation bc ON alm.branch_id = bc.branch_id
     WHERE cs.payable_amnt > 0
     AND ii.status = 0
     AND (ii.cus_status BETWEEN 14 AND 17)
@@ -178,6 +191,8 @@ $innerQuery = "SELECT
     $loan_agnt
     $search
     $dateCondition
+    $branch_id 
+    $line_id
     GROUP BY ii.cus_id, cs.cus_id
     $having";
 // ---------------------- OUTER QUERY ----------------------

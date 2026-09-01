@@ -50,6 +50,10 @@ $baseqry = "FROM  customer_register cr
     ) cs ON cs.cus_id = cr.cus_id 
     LEFT JOIN new_promotion np ON np.cus_id = cs.cus_id AND np.created_date = (SELECT MAX(np1.created_date) FROM new_promotion np1 WHERE np1.cus_id = cs.cus_id)
     LEFT JOIN request_creation rc ON cr.cus_id = rc.cus_id
+    LEFT JOIN area_list_creation al ON al.area_id = cr.area_confirm_area
+    LEFT JOIN area_group_mapping_sub_area agmsa ON agmsa.sub_area_id = cr.area_confirm_subarea
+    LEFT JOIN area_group_mapping agm ON agm.map_id = agmsa.group_map_id
+    LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
     WHERE $areaColumn IN ($sub_area_list) AND NOT EXISTS (SELECT 1 FROM closed_status cs2
     WHERE cs2.cus_id = cr.cus_id AND cs2.id = (SELECT MAX(cs3.id) FROM closed_status cs3 WHERE cs3.cus_id = cr.cus_id) AND cs2.closed_sts IN (2,3)
 ) AND NOT EXISTS ( SELECT 1 FROM request_creation r WHERE r.cus_id = cs.cus_id AND r.return_sts != 1 AND ((r.cus_status IN (4,5,6,7,8,9)) OR r.cus_status <= 20)) ";
@@ -62,6 +66,15 @@ if ($_POST['followUpSts']) {
 if ($_POST['dateType']) {
     $date_type = $_POST['dateType']; //1=Closed date, 2=Followup date.
     $baseqry .= ($date_type == '1') ? "AND DATE(cs.created_date) BETWEEN '" . $_POST['followUpFromDate'] . "' AND '" . $_POST['followUpToDate'] . "' " : "AND DATE(np.follow_date) BETWEEN '" . $_POST['followUpFromDate'] . "' AND '" . $_POST['followUpToDate'] . "' ";
+}
+if ($_POST['branch_id']) {
+    $baseqry .= "AND bc.branch_id ='".$_POST['branch_id']."' ";
+}
+if ($_POST['group_id']) {
+        $baseqry .= "AND agm.map_id ='".$_POST['group_id']."' ";
+}
+if ($_POST['area_id']) {
+     $baseqry .= "AND agm.map_id ='".$_POST['group_id']."' ";
 }
 
 $baseqry .= ($_POST['followupType']) ? "AND np.followup_type = '" . $_POST['followupType'] . "'" : "";
