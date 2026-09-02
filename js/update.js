@@ -2919,71 +2919,30 @@ function validation() {
 
 function getDocumentHistory() {
     let cus_id = $('#cus_id_load').val();
-    //To get loan sub Status
-    var pending_arr = [];
-    var od_arr = [];
-    var due_nil_arr = [];
-    var closed_arr = [];
-    var balAmnt = [];
     $.ajax({
-        url: 'closedFile/resetCustomerStsForClosed.php',
-        data: { 'cus_id': cus_id },
-        dataType: 'json',
+        //in this file, details gonna fetch by customer ID, Not by req id (Because we need all loans from customer)
+        url: 'verificationFile/documentation/getDocumentHistory.php',
+        data: { 'cus_id': cus_id, screen: 'update' },
         type: 'post',
         cache: false,
         success: function (response) {
-            if (response.length != 0) {//check json response is not empty
-
-                for (var i = 0; i < response['pending_customer'].length; i++) {
-                    pending_arr[i] = response['pending_customer'][i]
-                    od_arr[i] = response['od_customer'][i]
-                    due_nil_arr[i] = response['due_nil_customer'][i]
-                    closed_arr[i] = response['closed_customer'][i]
-                    balAmnt[i] = response['balAmnt'][i]
-                }
-                var pending_sts = pending_arr.join(',');
-                $('#pending_sts').val(pending_sts);
-                var od_sts = od_arr.join(',');
-                $('#od_sts').val(od_sts);
-                var due_nil_sts = due_nil_arr.join(',');
-                $('#due_nil_sts').val(due_nil_sts);
-                var closed_sts = closed_arr.join(',');
-                $('#closed_sts').val(closed_sts);
-                balAmnt = balAmnt.join(',');
-            }
+            $('#docHistoryDiv').html(response);
         }
     }).then(function () {
-        var pending_sts = $('#pending_sts').val()
-        var od_sts = $('#od_sts').val()
-        var due_nil_sts = $('#due_nil_sts').val()
-        var closed_sts = $('#closed_sts').val()
-        var bal_amt = balAmnt;
-        $.ajax({
-            //in this file, details gonna fetch by customer ID, Not by req id (Because we need all loans from customer)
-            url: 'verificationFile/documentation/getDocumentHistory.php',
-            data: { 'cus_id': cus_id, 'pending_sts': pending_sts, 'od_sts': od_sts, 'due_nil_sts': due_nil_sts, 'closed_sts': closed_sts, 'bal_amt': bal_amt, screen: 'update' },
-            type: 'post',
-            cache: false,
-            success: function (response) {
-                $('#docHistoryDiv').html(response);
-            }
-        }).then(function () {
-            $('.edit-doc').off('click');
-            $(document).on('click', '.edit-doc', function () {
-                $('.dropdown').not($(this).parent()).children().css('border-color', '');// to set other dropdown buttons as normal
-                $(this).parent().prev().css('border-color', 'red');// showing selected loan's dropdown button highlighted
+        $('.edit-doc').off('click');
+        $(document).on('click', '.edit-doc', function () {
+            $('.dropdown').not($(this).parent()).children().css('border-color', '');// to set other dropdown buttons as normal
+            $(this).parent().prev().css('border-color', 'red');// showing selected loan's dropdown button highlighted
 
-                $('.choosing-document-card').show();
+            $('.choosing-document-card').show();
 
-                var req_id = $(this).data('reqid'); var cus_id = $(this).data('cusid'); var cus_name = $(this).data('cusname')
-                var doc_id = $(this).data('docid')
-                $('#documents_status_header').html(`Documents - Doc ID: ${doc_id}`);
-                getDocumentDetails(req_id, cus_id, cus_name);
-                $('#req_id_doc').val(req_id);
-            });
+            var req_id = $(this).data('reqid'); var cus_id = $(this).data('cusid'); var cus_name = $(this).data('cusname')
+            var doc_id = $(this).data('docid');
+            $('#documents_status_header').html(`Documents - Doc ID: ${doc_id}`);
+            getDocumentDetails(req_id, cus_id, cus_name);
+            $('#req_id_doc').val(req_id);
         });
-    })
-
+    });
 }
 
 function getDocumentDetails(req_id, cus_id, cus_name) {
