@@ -14,8 +14,9 @@ $(document).ready(function () {
         let call_status = $("#call_status").val();
         let branch_id = $("#branch").val();
         let line_id = $("#region").val();
+        let followup_id = $("#zone").val();
 
-        OnLoadFunctions(cusSts, comm_date, res_sts, comm_sts, call_status,branch_id,line_id);
+        OnLoadFunctions(cusSts, comm_date, res_sts, comm_sts, call_status,branch_id,line_id,followup_id);
     });
 
     $(document).on('click', '.personal-info', function (e) {
@@ -35,6 +36,7 @@ $(function () {
     getSubStsMapping(); //Call Customer status dropdown.
     getBranchList();
     getLineList();
+    getFollowupList();
 
     let cummDate = $("#cummDate").val();
     $("#comm_date").val(cummDate);
@@ -45,9 +47,10 @@ $(function () {
     let call_status = $("#call_status").val();
     let branch_id = $("#branch").val();
     let line_id = $("#region").val();
+    let followup_id = $("#zone").val();
 
     if (cusSts != '') {
-        OnLoadFunctions(cusSts, cummDate, res_sts, comm_sts, call_status,branch_id,line_id);
+        OnLoadFunctions(cusSts, cummDate, res_sts, comm_sts, call_status,branch_id,line_id,followup_id);
     }
 });
 
@@ -59,7 +62,7 @@ function getBranchList() {
         dataType: 'json',
         success: function (response) {
 
-        $('#branch').html('<option value="">Select Region</option>');
+        $('#branch').html('<option value="">Select Branch</option>');
 
         $.each(response, function(index, value) {
 
@@ -83,13 +86,36 @@ function getLineList() {
         dataType: 'json',
         success: function (response) {
 
-        $('#region').html('<option value="">Select Group</option>');
+        $('#region').html('<option value="">Select Region</option>');
 
         $.each(response, function(index, value) {
 
             $('#region').append(
                 '<option value="' + value.line_id + '">' +
                 value.line_name +
+                '</option>'
+            );
+
+        });
+        }
+    });
+
+}
+function getFollowupList() {
+    $.ajax({
+        url: 'followupFiles/promotion/getFollowupList.php',
+        type: 'post',
+        data: {},
+        dataType: 'json',
+        success: function (response) {
+
+        $('#zone').html('<option value="">Select Zone</option>');
+
+        $.each(response, function(index, value) {
+
+            $('#zone').append(
+                '<option value="' + value.due_followup_lines_id + '">' +
+                value.duefollowup_name +
                 '</option>'
             );
 
@@ -110,7 +136,7 @@ function warningSwal(title, text) {
     });
 }
 
-function OnLoadFunctions(cusSts, comm_date, res_sts, comm_sts, call_status,branch_id,line_id) {
+function OnLoadFunctions(cusSts, comm_date, res_sts, comm_sts, call_status,branch_id,line_id,followup_id) {
     if (!cusSts) {
         warningSwal('Warning!', 'Select Customer Status.');
         return;
@@ -137,6 +163,7 @@ function OnLoadFunctions(cusSts, comm_date, res_sts, comm_sts, call_status,branc
                 data.call_status = call_status;
                 data.branch_id = branch_id;
                 data.line_id = line_id;
+                data.followup_id = followup_id;
             }
         },
         dom: 'lBfrtip',

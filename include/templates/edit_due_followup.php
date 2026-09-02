@@ -114,6 +114,14 @@
 							</select>
 						</div>
 					</div>
+					<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12">
+						<div class="form-group">
+							<label for="zone">Zone</label>
+							<select class="form-control" name="zone" id="zone">
+								<option value="">Select Zone</option>
+							</select>
+						</div>
+					</div>
 					
 					<div class="col-sm-2 col-md-2 col-lg-2 col-xl-2 col-12">
 						<button type="button" class="btn btn-primary" id="show_due_followup" style="margin-top: 20px;">

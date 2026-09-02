@@ -47,6 +47,7 @@ $sql = "
         agm.group_name,
         alm.line_name,
         e.loan_amount,
+        e.remarks,
         u.fullname,
         ep.status AS followup_sts,
         ep.follow_date,
@@ -77,6 +78,8 @@ $sql = "
 
     JOIN area_duefollowup_mapping adfm 
         ON adfm.map_id = adfma.duefollowup_map_id
+
+    LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
 
     JOIN user u 
         ON e.insert_login_id = u.user_id
@@ -113,6 +116,9 @@ if($_POST['dateType']){
 }  
 
 $sql .= ($_POST['followupType']) ? " AND ep.followup_type = '". $_POST['followupType'] ."'" : "";   
+$sql .= ($_POST['branch_id']) ? " AND bc.branch_id = '". $_POST['branch_id'] ."'" : "";   
+$sql .= ($_POST['group_id']) ? " AND agm.map_id = '". $_POST['group_id'] ."'" : "";   
+$sql .= ($_POST['area_id']) ? " AND a.area_id = '". $_POST['area_id'] ."'" : "";   
 
 $sql .= " GROUP BY e.cus_id ORDER BY e.id ASC";
 
@@ -131,6 +137,7 @@ $info = $connect->query($sql);
         <th>Region</th>
         <th>Sector</th>
         <th>Loan Amount</th>
+        <th>Remarks</th>
         <th>User Name</th>
         <th>Action</th>
         <th>Promotion Chart</th>
@@ -151,6 +158,7 @@ $info = $connect->query($sql);
                 <td><?php echo $row['line_name']; ?></td>
                 <td><?php echo $row['group_name']; ?></td>
                 <td><?php echo moneyFormatIndia($row['loan_amount']); ?></td>
+                <td><?php echo $row['remarks']; ?></td>
                 <td><?php echo $row['fullname']; ?></td>               
                 <td>
                     <?php

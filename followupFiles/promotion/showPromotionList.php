@@ -74,7 +74,7 @@ if ($_POST['group_id']) {
         $baseqry .= "AND agm.map_id ='".$_POST['group_id']."' ";
 }
 if ($_POST['area_id']) {
-     $baseqry .= "AND agm.map_id ='".$_POST['group_id']."' ";
+     $baseqry .= "AND al.area_id ='".$_POST['area_id']."' ";
 }
 
 $baseqry .= ($_POST['followupType']) ? "AND np.followup_type = '" . $_POST['followupType'] . "'" : "";

@@ -64,7 +64,7 @@ $(document).ready(function () {
 
         }
 
-        getUserBasedArea();
+        getUserBasedArea("","");
     });
 
     $('#closeNewPromotionModal, .modalCloseBtn').click(function(e){
@@ -150,9 +150,9 @@ $(document).ready(function () {
         }
     });
 
-    $("#area").change(function () {
-        var areaselected = $("#area").val();
-        getAreaBasedSubArea(areaselected);
+    $("#areaID").change(function () {
+        var areaselected = $("#areaID").val();
+        getAreaBasedSubArea(areaselected,"");
     });
 
     $('#follow_up_fromdate').change(function () {
@@ -511,6 +511,9 @@ $(document).ready(function () {
         $.post('requestFile/getCustomerDetail.php', { cus_id }, function (response) {
             let cusData = (response.message == 'Existing') ? 'Existing' : 'New';
             $('#cus_data').val(cusData);
+            $('#new_cus_name').val(response.cus_name);
+            $('#cus_mob').val(response.mobile1);
+            getUserBasedArea(response.area,response.sub_area);
         }, 'json');
     });
 
@@ -593,7 +596,7 @@ function getGroupList() {
         dataType: 'json',
         success: function (response) {
 
-        $('#sector').html('<option value="">Select Group</option>');
+        $('#sector').html('<option value="">Select Sector</option>');
 
         $.each(response, function(index, value) {
 
@@ -726,8 +729,11 @@ function resetEnquiryTable() {
     let followUpFromDate = $('#follow_up_fromdate').val();
     let followUpToDate = $('#follow_up_todate').val();
     let followupType = $('#followuptype').val();
+    let branch_id = $('#branch').val();
+    let group_id = $('#sector').val();
+    let area_id = $('#area').val();
 
-    $.post('followupFiles/promotion/resetEnquiryTable.php', { followUpSts, dateType, followUpFromDate, followUpToDate, followupType }, function (html) {
+    $.post('followupFiles/promotion/resetEnquiryTable.php', { followUpSts, dateType, followUpFromDate, followUpToDate, followupType ,branch_id , group_id, area_id}, function (html) {
         $('#enquiry_div').empty().html(html);
 
     }).then(function () {
@@ -738,8 +744,8 @@ function resetEnquiryTable() {
 }
 
 function submitEnquiry() {
-    let cus_id = $('#cus_id').val(); let cus_data = $('#cus_data').val(); let cus_name = $('#new_cus_name').val(); let cus_mob = $('#cus_mob').val(); let area = $('#area').val(); let sub_area = $('#sub_area').val(); let enquiry_loan_amt = $('#enquiry_loan_amt').val(); 
-    let args = { cus_id, cus_data, cus_name, cus_mob, area, sub_area, enquiry_loan_amt }
+    let cus_id = $('#cus_id').val(); let cus_data = $('#cus_data').val(); let cus_name = $('#new_cus_name').val(); let cus_mob = $('#cus_mob').val(); let area = $('#areaID').val(); let sub_area = $('#sub_area').val(); let enquiry_loan_amt = $('#enquiry_loan_amt').val(); let remarks = $('#remarks').val(); 
+    let args = { cus_id, cus_data, cus_name, cus_mob, area, sub_area, enquiry_loan_amt,remarks }
     $.post('followupFiles/promotion/submitEnquiry.php', args, function (response) {
         if (response.includes('Error')) {
             swarlErrorAlert(response);
@@ -755,7 +761,7 @@ function submitEnquiry() {
 function validateNewCusAdd() {
     let response = true;
     let cus_id = $('#cus_id').val(); let cus_name = $('#new_cus_name').val(); let cus_mob = $('#cus_mob').val();
-    let area = $('#area').val(); let sub_area = $('#sub_area').val(); let enquiry_loan_amt = $('#enquiry_loan_amt').val(); let screen_name = $('#screen_name').val();
+    let area = $('#areaID').val(); let sub_area = $('#sub_area').val(); let enquiry_loan_amt = $('#enquiry_loan_amt').val(); let screen_name = $('#screen_name').val();
 
     validateField(cus_name, '#cus_nameCheck');
     validateField(area, '#areaCheck');
@@ -833,60 +839,93 @@ function submitClosed() {
     })
 }
 
-function getUserBasedArea() {
+function getUserBasedArea(area_id, sub_area_id) {
+    
     $.ajax({
         url: "followupFiles/promotion/getAreaId.php",
         type: "post",
         dataType: "json",
+
         success: function (data) {
-            let $area = $("#area");
-            $area.empty().append('<option value="">Select Area</option>');
+
+            let $area = $("#areaID");
+
+            $area.empty().append(
+                '<option value="">Select Area</option>'
+            );
+
             let options = '';
+
             $.each(data, function (i, item) {
-                options += '<option value="' + item.area_id + '">' + item.area_name + '</option>';
+
+                options +=
+                    '<option value="' + item.area_id + '">' +
+                    item.area_name +
+                    '</option>';
             });
+
             let $options = $(options);
+
             $options.sort(function (a, b) {
                 return $(a).text().localeCompare($(b).text());
             });
+
             $area.append($options);
+
+            // Select customer area
+            if (area_id != '') {
+
+                $area.val(area_id);
+
+                // Call sub-area list
+                getAreaBasedSubArea(area_id, sub_area_id);
+            }
         },
+
         error: function (xhr, status, error) {
             console.error("AJAX Error:", error);
         }
     });
 }
 
-function getAreaBasedSubArea(area) {
-    var sub_area_upd = $("#sub_area_upd").val();
+function getAreaBasedSubArea(area_id, sub_area_id) {
+
     $.ajax({
         url: "requestFile/ajaxGetEnabledSubArea.php",
         type: "post",
-        data: { area: area },
+        data: {
+            area: area_id
+        },
         dataType: "json",
-        success: function (response) {
-            $("#sub_area").empty();
-            $("#sub_area").append("<option value='' >Select Sub Area</option>");
-            for (var i = 0; i < response.length; i++) {
-                var selected = "";
-                if (
-                    sub_area_upd != undefined &&
-                    sub_area_upd != "" &&
-                    sub_area_upd == response[i]["sub_area_id"]
-                ) {
-                    selected = "selected";
-                }
-                $("#sub_area").append(
-                    "<option value='" +
-                    response[i]["sub_area_id"] +
-                    "' " +
-                    selected +
-                    ">" +
-                    response[i]["sub_area_name"] +
-                    " </option>"
+
+        success: function (data) {
+
+            let $subArea = $("#sub_area");
+
+            $subArea.empty().append(
+                '<option value="">Select Sub Area</option>'
+            );
+
+            $.each(data, function (i, item) {
+
+                $subArea.append(
+                    '<option value="' + item.sub_area_id + '">' +
+                    item.sub_area_name +
+                    '</option>'
                 );
+
+            });
+
+            if (sub_area_id != '' && sub_area_id != null) {
+                $subArea.val(sub_area_id);
             }
         },
+
+        error: function (xhr, status, error) {
+            console.log("AJAX ERROR =", error);
+            console.log("STATUS =", status);
+            console.log("RESPONSE =", xhr.responseText);
+        }
     });
 }
 
