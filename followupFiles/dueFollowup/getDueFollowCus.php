@@ -13,12 +13,16 @@ $sub_status_url = !empty($cus_sts) ? implode(',', array_map('urlencode', $cus_st
 
 $branch_id =  '';
 $line_id = '';
+$followup_id = '';
 
 if ($_POST['branch_id']) {
     $branch_id  = "AND bc.branch_id ='".$_POST['branch_id']."' ";
 }
 if ($_POST['line_id']) {
     $line_id = "AND alm.map_id ='".$_POST['line_id']."' ";
+}
+if ($_POST['followup_id']) {
+    $followup_id = "AND adfm.map_id ='".$_POST['followup_id']."' ";
 }
 
 $sub_status_condition = "";
@@ -177,6 +181,7 @@ $innerQuery = "SELECT
     LEFT JOIN request_creation rc ON ii.req_id = rc.req_id AND (rc.cus_status >= 14 AND rc.cus_status < 20)
     JOIN customer_status cs ON cp.req_id = cs.req_id
     JOIN area_duefollowup_mapping_area adfma ON adfma.area_id = cp.area_confirm_area
+    JOIN area_duefollowup_mapping adfm ON adfm.map_id = adfma.duefollowup_map_id
     JOIN acknowlegement_loan_calculation aklc ON (aklc.req_id = ii.req_id) AND aklc.collection_method != 4
     LEFT JOIN commitment cm ON cm.id = (
         SELECT c.id FROM $commitmentSubquery
@@ -193,6 +198,7 @@ $innerQuery = "SELECT
     $dateCondition
     $branch_id 
     $line_id
+    $followup_id
     GROUP BY ii.cus_id, cs.cus_id
     $having";
 // ---------------------- OUTER QUERY ----------------------

@@ -493,8 +493,8 @@ if (sizeof($getUser) > 0) {
 
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<div class="form-group">
-									<label for="area">Area</label>&nbsp;<span class="text-danger">*</span>
-									<select tabindex="5" type="text" class="form-control" id="area" name="area">
+									<label for="areaID">Area</label>&nbsp;<span class="text-danger">*</span>
+									<select tabindex="5" type="text" class="form-control" id="areaID" name="areaID">
 										<option value="">Select Area</option>
 									</select>
 									<span class="text-danger" style='display:none' id='areaCheck'>Please Select Area</span>
@@ -516,6 +516,12 @@ if (sizeof($getUser) > 0) {
 									<label for="enquiry_loan_amt">Loan amount</label><span class="required">&nbsp;*</span>
 									<input type="text" class="form-control" name="enquiry_loan_amt" id="enquiry_loan_amt" placeholder="Enter Loan Amount" tabindex="7" oninput="validateInputNumber(this,'withOutDot')">
 									<span class="text-danger" id='enquiryloanamtCheck' style="display: none;">Please Enter Loan amount</span>
+								</div>
+							</div>
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 enq_loan_amt" style="display: none;">
+								<div class="form-group">
+									<label for="remarks">Remarks</label>
+									<textarea class="form-control" name="remarks" id="remarks" placeholder="Enter Remarks"></textarea>
 								</div>
 							</div>
 
