@@ -14,13 +14,13 @@ include '../ajaxconfig.php';
     <tbody>
         <?php
         $cus_id = preg_replace('/\D/', '', $_POST['cus_id']);
-        $famInfo = $connect->query("SELECT * FROM `verification_family_info` where cus_id = '$cus_id' order by id desc");
+        $famInfo = $connect->query("SELECT id, famname, relationship FROM `verification_family_info` WHERE cus_id = '$cus_id' ORDER BY id ASC");
 
         $i = 1;
         while ($fam = $famInfo->fetch()) {
         ?>
             <tr>
-                <td><?php echo $i; ?></td>
+                <td><?php echo $i++; ?></td>
                 <td><?php echo $fam["famname"]; ?></td>
                 <td><?php echo $fam["relationship"]; ?></td>
                 <td>
@@ -28,9 +28,7 @@ include '../ajaxconfig.php';
                     <a id="verification_fam_delete" value="<?php echo $fam['id']; ?>"> <span class='icon-trash-2'></span> </a>
                 </td>
             </tr>
-        <?php $i = $i + 1;
-        }
-        ?>
+        <?php } ?>
     </tbody>
 </table>
 

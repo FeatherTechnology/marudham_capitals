@@ -3,22 +3,6 @@ include '../../ajaxconfig.php';
 include '../../moneyFormatIndia.php';
 
 $screen = $_POST["screen"] ?? '';
-
-if (isset($_POST["pending_sts"])) {
-    $pending_sts = explode(',', $_POST["pending_sts"]);
-}
-if (isset($_POST["od_sts"])) {
-    $od_sts = explode(',', $_POST["od_sts"]);
-}
-if (isset($_POST["due_nil_sts"])) {
-    $due_nil_sts = explode(',', $_POST["due_nil_sts"]);
-}
-if (isset($_POST["closed_sts"])) {
-    $closed_sts = explode(',', $_POST["closed_sts"]);
-}
-if (isset($_POST["bal_amt"])) {
-    $bal_amt = explode(',', $_POST["bal_amt"]);
-}
 ?>
 
 <table class="table custom-table" id='DocListTable'>
@@ -45,7 +29,7 @@ if (isset($_POST["bal_amt"])) {
         $cus_id = $_POST['cus_id'];
         $consider_lvl_arr = [1 => 'Bronze', 2 => 'Silver', 3 => 'Gold', 4 => 'Platinum', 5 => 'Diamond'];
 
-        $run = $connect->query("SELECT ii.loan_id, ad.doc_id, lcc.loan_category_creation_name as loan_catrgory_name, lc.sub_category, ac.ag_name, iv.responsible, ii.updated_date, lc.loan_amt_cal, cs.created_date AS closed_date, cs.closed_sts, cs.consider_level, ii.cus_status, lc.due_start_from, lc.cus_name_loan, ii.req_id
+        $run = $connect->query("SELECT ii.loan_id, ad.doc_id, lcc.loan_category_creation_name as loan_catrgory_name, lc.sub_category, ac.ag_name, iv.responsible, ii.updated_date, lc.loan_amt_cal, cs.created_date AS closed_date, cs.closed_sts, cs.consider_level, ii.cus_status, lc.due_start_from, lc.cus_name_loan, ii.req_id, c.sub_status
         FROM acknowlegement_loan_calculation lc 
         LEFT JOIN in_issue ii ON lc.req_id = ii.req_id 
         LEFT JOIN in_verification iv ON ii.req_id = iv.req_id 
@@ -53,9 +37,9 @@ if (isset($_POST["bal_amt"])) {
         LEFT JOIN loan_category_creation lcc ON lc.loan_category = lcc.loan_category_creation_id
         LEFT JOIN agent_creation ac ON ac.ag_id = iv.agent_id
         LEFT JOIN closed_status cs ON ii.req_id = cs.req_id
-        WHERE lc.cus_id_loan = '$cus_id' AND (ii.cus_status >= 13) ORDER BY CAST(ii.req_id AS UNSIGNED) ASC "); //Customer status greater than or equal to 14 because, after issued data only we need  
+        LEFT JOIN customer_status c ON ii.req_id = c.req_id
+        WHERE lc.cus_id_loan = '$cus_id' AND (ii.cus_status >= 13) ORDER BY CAST(ii.req_id AS UNSIGNED) DESC "); //Customer status greater than or equal to 14 because, after issued data only we need  
 
-        $i = 1;
         $curdate = date('Y-m-d');
         while ($row = $run->fetch()) {
             //Show NOC button until closed_status submit so we check the count of closed status against the request id.
@@ -81,54 +65,9 @@ if (isset($_POST["bal_amt"])) {
                 </td> <!-- Status -->
                 <td>
                     <?php
-                    if (date('Y-m-d', strtotime($row['due_start_from'])) > date('Y-m-d', strtotime($curdate))  and $bal_amt[$i - 1] != 0) { //If the start date is on upcoming date then the sub status is current, until current date reach due_start_from date.
-                        if ($row['cus_status'] == '15') {
-                            echo 'Error';
-                        } elseif ($row['cus_status'] == '16') {
-                            echo 'Legal';
-                        } else {
-                            echo 'Current';
-                        }
-                    } else {
                         if ($row['cus_status'] <= 20) {
-                          
-                            if ($pending_sts[$i - 1] == 'true' && $od_sts[$i - 1] == 'false') {
-                                if ($row['cus_status'] == '15') {
-                                    echo 'Error';
-                                } elseif ($row['cus_status'] == '16') {
-                                    echo 'Legal';
-                                } else {
-                                    echo 'Pending';
-                                }
-                            } else if ($od_sts[$i - 1] == 'true') {
-                                if ($row['cus_status'] == '15') {
-                                    echo 'Error';
-                                } elseif ($row['cus_status'] == '16') {
-                                    echo 'Legal';
-                                } else {
-                                    echo 'OD';
-                                }
-                            } elseif ($due_nil_sts[$i - 1] == 'true') {
-                                if ($row['cus_status'] == '15') {
-                                    echo 'Error';
-                                } elseif ($row['cus_status'] == '16') {
-                                    echo 'Legal';
-                                } else {
-                                    echo 'Due Nil';
-                                }
-                            } elseif ($pending_sts[$i - 1] == 'false') {
-                                if ($row['cus_status'] == '15') {
-                                    echo 'Error';
-                                } elseif ($row['cus_status'] == '16') {
-                                    echo 'Legal';
-                                } else {
-                                    if ($closed_sts[$i - 1] == 'true') {
-                                        echo "In Closed";
-                                    } else {
-                                        echo 'Current';
-                                    }
-                                }
-                            }
+                            echo $row['sub_status'] ?? 'Current';
+                            
                         } else if ($row['cus_status'] > 20) { // if status is closed(21) or more than that(22), then show closed status
                             if ($row['closed_sts'] == '1') {
                                 echo 'Consider - ' . $consider_lvl_arr[$row['consider_level']];
@@ -140,52 +79,50 @@ if (isset($_POST["bal_amt"])) {
                                 echo 'Block List';
                             }
                         }
-                    }
                     ?>
                 </td> <!-- Sub status -->
                 <td><!-- Document status -->
                     <?php
-                    if ($row['cus_status'] <= 20) { //show for present contents and closed customer but not submitted in closed
-                        if (getDocumentStatus($connect, $ii_req_id) == false) {
-                            echo 'Document Pending';
-                        } else {
-                            echo 'Document Completed';
+                        if ($row['cus_status'] <= 20) { //show for present contents and closed customer but not submitted in closed
+                            if (getDocumentStatus($connect, $ii_req_id) == false) {
+                                echo 'Document Pending';
+                            } else {
+                                echo 'Document Completed';
+                            }
+
+                        } else if ($row['cus_status'] == 21) { // show for closed(which are submitted in closed) and noc contents
+                            echo 'NOC Pending';
+
+                        } else if ($row['cus_status'] >= 22 && $row['cus_status'] <= 23) {
+                            echo 'NOC Completed';
+
+                        } else if($row['cus_status'] == 24){
+                            echo 'NOC Handovered';
+
+                        } else if($row['cus_status'] == 25){
+                            echo 'Agent Handovered';
+
                         }
-
-                    } else if ($row['cus_status'] == 21) { // show for closed(which are submitted in closed) and noc contents
-                        echo 'NOC Pending';
-
-                    } else if ($row['cus_status'] >= 22 && $row['cus_status'] <= 23) {
-                        echo 'NOC Completed';
-
-                    } else if($row['cus_status'] == 24){
-                        echo 'NOC Handovered';
-
-                    } else if($row['cus_status'] == 25){
-                        echo 'Agent Handovered';
-
-                    }
                     ?>
                 </td>
                 <td> <!-- Action -->
                     <?php
-                    $action = "<div class='dropdown'>
-                        <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
-                        <div class='dropdown-content'>";
-                    if ($row['cus_status'] > 20) { //if request goes to NOC then noc summary can be fetched
-                        $action .= "<a href='#' class='noc-summary'  data-reqid='$ii_req_id' data-cusid='$cus_id' data-cusname='$cus_name' data-loanid='" . $row['loan_id'] . "' data-loancat='" . $row['loan_catrgory_name'] . "' data-docid='" . $row['doc_id'] . "' data-toggle='modal' data-target='.noc-summary-modal'>NOC Summary</a>";
-                    }
-                    if ($screen == 'update' && $row['cus_status'] <= 20) { //cus status <= 20 will allow only document statuses only to edit, not NOC
-                        $action .= "<a href='#' class='edit-doc' data-reqid='$ii_req_id' data-cusid='$cus_id' data-cusname='$cus_name' data-docid='" . $row['doc_id'] . "' >Edit Documents</a>";
-                    }
-                    $action .= "</div></div>";
-                    echo $action;
+                        $action = "<div class='dropdown'>
+                            <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
+                            <div class='dropdown-content'>";
+                        if ($row['cus_status'] > 20) { //if request goes to NOC then noc summary can be fetched
+                            $action .= "<a href='#' class='noc-summary'  data-reqid='$ii_req_id' data-cusid='$cus_id' data-cusname='$cus_name' data-loanid='" . $row['loan_id'] . "' data-loancat='" . $row['loan_catrgory_name'] . "' data-docid='" . $row['doc_id'] . "' data-toggle='modal' data-target='.noc-summary-modal'>NOC Summary</a>";
+                        }
+                        if ($screen == 'update' && $row['cus_status'] <= 20) { //cus status <= 20 will allow only document statuses only to edit, not NOC
+                            $action .= "<a href='#' class='edit-doc' data-reqid='$ii_req_id' data-cusid='$cus_id' data-cusname='$cus_name' data-docid='" . $row['doc_id'] . "' >Edit Documents</a>";
+                        }
+                        $action .= "</div></div>";
+                        echo $action;
                     ?>
                 </td> <!-- Action -->
             </tr>
 
-        <?php $i++;
-        } ?>
+        <?php } ?>
     </tbody>
 </table>
 
@@ -233,6 +170,7 @@ function getDocumentStatus($connect, $req_id)
 
     // Declare table variable to store the DataTable instance
     $('#DocListTable').DataTable({
+        "order": [ [0, "desc"] ],
         'processing': true,
         'iDisplayLength': 5,
         "lengthMenu": [

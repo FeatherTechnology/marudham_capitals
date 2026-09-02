@@ -24,7 +24,7 @@ include '../ajaxconfig.php';
     <tbody>
         <?php
         $cus_id = preg_replace('/\D/', '', $_POST['cus_id']);
-        $famInfo = $connect->query("SELECT * FROM `verification_family_info` where cus_id = '$cus_id' order by id desc");
+        $famInfo = $connect->query("SELECT * FROM `verification_family_info` WHERE cus_id = '$cus_id' ORDER BY id ASC");
 
         $i = 1;
         $relationLiveDeceased = ['' =>'', '1' => 'Live', '2' => 'Deceased'];
@@ -46,9 +46,7 @@ include '../ajaxconfig.php';
                 <td> <?php echo $fam['relation_Income']; ?></td>
                 <td> <?php echo $fam['relation_Blood']; ?></td>
             </tr>
-        <?php //$i = $i + 1;
-        }
-        ?>
+        <?php } ?>
     </tbody>
 </table>
 

@@ -1201,10 +1201,6 @@ if (sizeof($getCustomerReg) > 0) {
 	<div id="cus_document" style="display: none;">
 		<!-- <form id="cus_doc" name="cus_doc" action="" method="post" enctype="multipart/form-data"> -->
 		<input type="hidden" name="req_id_doc" id="req_id_doc" value="">
-		<input type="hidden" name="pending_sts" id="pending_sts" value="" />
-		<input type="hidden" name="od_sts" id="od_sts" value="" />
-		<input type="hidden" name="due_nil_sts" id="due_nil_sts" value="" />
-		<input type="hidden" name="closed_sts" id="closed_sts" value="" />
 
 		<!-- Row start -->
 		<div class="row gutters">
