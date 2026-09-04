@@ -210,7 +210,7 @@ $(document).ready(function () {
             authorize : $("#authorize").val()
         }
 
-        if (famData.famname != "" && famData.relationship != "" && famData.relation_Mobile != "" && famData.relation_Mobile.length === 10 && famData.relation_live_deceased != "") {
+        if (famData.famname != "" && famData.relationship != "" && famData.relation_Mobile != ""  && famData.relation_live_deceased != "") {
             $.ajax({
                 url: 'updateFile/update_family_submit.php',
                 type: 'POST',

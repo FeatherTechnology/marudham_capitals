@@ -61,10 +61,9 @@ $(document).ready(function () {
 
         }else if(title.replaceAll(" ", "") == 'NewPromotion'){
             $('#screen_name').val('2');
-
+            getUserBasedArea("","");
         }
 
-        getUserBasedArea("","");
     });
 
     $('#closeNewPromotionModal, .modalCloseBtn').click(function(e){
@@ -510,6 +509,13 @@ $(document).ready(function () {
         cus_id = cus_id.replace(/\s+/g, "");
         $.post('requestFile/getCustomerDetail.php', { cus_id }, function (response) {
             let cusData = (response.message == 'Existing') ? 'Existing' : 'New';
+
+             if (cusData == 'New') {
+                swarlErrorAlert("This section is only for existing customers.");
+                $('#cus_id').val('');
+                return;
+            }
+            $('#autogen_cus_id').val(response.autogen_cus_id);
             $('#cus_data').val(cusData);
             $('#new_cus_name').val(response.cus_name);
             $('#cus_mob').val(response.mobile1);
@@ -517,15 +523,23 @@ $(document).ready(function () {
         }, 'json');
     });
 
-$('#sector').on('change', function () {
-    let sector = $(this).val();
-    if (sector == '') {
-        $('#area').html('<option value="">Select Area</option>');
-        return false;
-    } else {
-        getAreaList();
-    }
-});
+    $('#sector').on('change', function () {
+        let sector = $(this).val();
+        if (sector == '') {
+            $('#area').html('<option value="">Select Area</option>');
+            return false;
+        } else {
+            getAreaList();
+        }
+    });
+
+    $(document).on('click', '.enq-remarks', function (e) {
+        e.preventDefault();
+        let remarks = $(this).data('remarks') || '';
+        let cus_id = $(this).attr('data-cusid') || '';
+        $('#enq_remarks').val(remarks);
+        $('#remarksTitle').text('Enquiry Remarks of Customer ID - ' + cus_id);
+    });
 
 }); //Document END.
 
@@ -1400,7 +1414,6 @@ function eventsTable() {
             data: tableData,
             columns: [
                 { title: "S.No" },
-                { title: "Date" },
                 { title: "Area Name" },
                 { title: "Total Customer" },
                 { title: "Action" }

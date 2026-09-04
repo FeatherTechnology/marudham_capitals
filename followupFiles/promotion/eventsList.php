@@ -27,7 +27,6 @@ if ($user_id != '') {
         $sql = $connect->query("
         SELECT 
             e.id,
-            MIN(ep.event_created_date) AS created_date, 
             al.area_name AS area_names,
             COUNT(DISTINCT ep.id) AS total_customer
         FROM events e
@@ -41,7 +40,6 @@ if ($user_id != '') {
         $sql = $connect->query("
         SELECT 
             e.id,
-            MIN(ep.event_created_date) AS created_date, 
             al.area_name AS area_names,
             COUNT(DISTINCT ep.id) AS total_customer
         FROM events e
@@ -61,12 +59,10 @@ if ($user_id != '') {
 
     if ($sql->rowCount() > 0) {
         $i = 1;
-        while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-            $formattedDate = date('d-m-Y', strtotime($row['created_date']));
+        while ($row = $sql->fetch(PDO::FETCH_ASSOC)) { 
             $action = '<button class="btn btn-primary edit_event" data-event="' . $row['id'] . '">Edit</button>';
             $rows[] = [
                 $i++,
-                $formattedDate,
                 $row['area_names'],
                 $row['total_customer'],
                 $action

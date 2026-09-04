@@ -36,6 +36,8 @@ $sql = "
     )
 
     SELECT 
+        cr.autogen_cus_id ,
+        e.id,
         e.cus_id,
         e.cus_name,
         e.cus_data,
@@ -54,6 +56,8 @@ $sql = "
         ep.followup_type
 
     FROM latest_enquiry e
+
+    JOIN customer_register cr ON  e.cus_id = cr.cus_id
 
     JOIN area_list_creation a 
         ON e.area = a.area_id
@@ -129,6 +133,7 @@ $info = $connect->query($sql);
     <thead>
         <th width="10%">Date</th>
         <th>Aadhaar Number</th>
+        <th>Customer ID</th>
         <th>Customer Name</th>
         <th>Customer Data</th>
         <th>Mobile No</th>
@@ -147,9 +152,10 @@ $info = $connect->query($sql);
     </thead>
     <tbody>
         <?php while ($row =  $info->fetch()) { ?>
-            <tr>
+            <tr> 
                 <td><?php echo date('d-m-Y', strtotime($row['created_date'])); ?></td>
                 <td><?php echo $row['cus_id']; ?></td>
+                <td><?php echo $row['autogen_cus_id']; ?></td>
                 <td><?php echo $row['cus_name']; ?></td>
                 <td><?php echo $row['cus_data']; ?></td>
                 <td><?php echo $row['mobile']; ?></td>
@@ -158,7 +164,10 @@ $info = $connect->query($sql);
                 <td><?php echo $row['line_name']; ?></td>
                 <td><?php echo $row['group_name']; ?></td>
                 <td><?php echo moneyFormatIndia($row['loan_amount']); ?></td>
-                <td><?php echo $row['remarks']; ?></td>
+                <td>
+                    <?php  echo "<a href='#' class='enq-remarks' data-toggle='modal' data-target='#remarksModal' data-cusid='" .$row['autogen_cus_id']. "' data-remarks='" .$row['remarks'] . "'>
+                        <span class='icon-eye' style='font-size: 12px; position: relative; top: 2px;'></span> </a>"; ?>
+                </td>
                 <td><?php echo $row['fullname']; ?></td>               
                 <td>
                     <?php
