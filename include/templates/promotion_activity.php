@@ -363,7 +363,6 @@ if (sizeof($getUser) > 0) {
 						<table class="table custom-table" id='event_list' data-id="event" style="width: 100%;">
 							<thead>
 								<th>S.No</th>
-								<th>Date</th>
 								<th>Area Name</th>
 								<th>Total Customer</th>
 								<th>Action</th>
@@ -470,15 +469,21 @@ if (sizeof($getUser) > 0) {
 
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<div class="form-group">
+									<label for="autogen_cus_id">Customer Id</label><span class="required">&nbsp;*</span>
+									<input class='form-control' name="autogen_cus_id" id="autogen_cus_id" tabindex="2" readonly>
+								</div>
+							</div>
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+								<div class="form-group">
 									<label for="cus_data">Customer Data</label><span class="required">&nbsp;*</span>
-									<input class='form-control' name="cus_data" id="cus_data" tabindex="2" readonly>
+									<input class='form-control' name="cus_data" id="cus_data" tabindex="3" readonly>
 								</div>
 							</div>
 
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<div class="form-group">
 									<label for="cus_name">Customer Name</label><span class="required">&nbsp;*</span>
-									<input type="text" name="new_cus_name" id="new_cus_name" class='form-control' placeholder="Enter Customer Name" tabindex="3">
+									<input type="text" name="new_cus_name" id="new_cus_name" class='form-control' placeholder="Enter Customer Name" tabindex="4">
 									<span class="text-danger" id='cus_nameCheck' style="display: none;">Please Enter Customer Name</span>
 								</div>
 							</div>
@@ -486,7 +491,7 @@ if (sizeof($getUser) > 0) {
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<div class="form-group">
 									<label for="cus_mob">Mobile Number</label><span class="required">&nbsp;*</span>
-									<input type="text" name="cus_mob" id="cus_mob" class='form-control' placeholder="Enter Mobile Number" tabindex="4" onKeyPress="if(this.value.length==10) return false;" oninput="validateInputNumber(this,'withOutDot')">
+									<input type="text" name="cus_mob" id="cus_mob" class='form-control' placeholder="Enter Mobile Number" tabindex="5" onKeyPress="if(this.value.length==10) return false;" oninput="validateInputNumber(this,'withOutDot')">
 									<span class="text-danger" id='cus_mobCheck' style="display: none;">Please Enter Mobile Number </span>
 								</div>
 							</div> <!-- Use input type='text' for numeric validation, because type='number' always resets the cursor when you block invalid characters-->
@@ -494,7 +499,7 @@ if (sizeof($getUser) > 0) {
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<div class="form-group">
 									<label for="areaID">Area</label>&nbsp;<span class="text-danger">*</span>
-									<select tabindex="5" type="text" class="form-control" id="areaID" name="areaID">
+									<select tabindex="6" type="text" class="form-control" id="areaID" name="areaID">
 										<option value="">Select Area</option>
 									</select>
 									<span class="text-danger" style='display:none' id='areaCheck'>Please Select Area</span>
@@ -504,7 +509,7 @@ if (sizeof($getUser) > 0) {
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<div class="form-group">
 									<label for="sub_area">Sub Area</label>&nbsp;<span class="text-danger">*</span>
-									<select tabindex="6" type="text" class="form-control" id="sub_area" name="sub_area">
+									<select tabindex="7" type="text" class="form-control" id="sub_area" name="sub_area">
 										<option value=''>Select Sub Area</option>
 									</select>
 									<span class="text-danger" style='display:none' id='subareaCheck'>Please Select Sub Area</span>
@@ -514,14 +519,14 @@ if (sizeof($getUser) > 0) {
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 enq_loan_amt" style="display: none;">
 								<div class="form-group">
 									<label for="enquiry_loan_amt">Loan amount</label><span class="required">&nbsp;*</span>
-									<input type="text" class="form-control" name="enquiry_loan_amt" id="enquiry_loan_amt" placeholder="Enter Loan Amount" tabindex="7" oninput="validateInputNumber(this,'withOutDot')">
+									<input type="text" class="form-control" name="enquiry_loan_amt" id="enquiry_loan_amt" placeholder="Enter Loan Amount" tabindex="8" oninput="validateInputNumber(this,'withOutDot')">
 									<span class="text-danger" id='enquiryloanamtCheck' style="display: none;">Please Enter Loan amount</span>
 								</div>
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 enq_loan_amt" style="display: none;">
 								<div class="form-group">
 									<label for="remarks">Remarks</label>
-									<textarea class="form-control" name="remarks" id="remarks" placeholder="Enter Remarks"></textarea>
+									<textarea class="form-control" name="remarks" id="remarks" placeholder="Enter Remarks" tabindex="9"></textarea>
 								</div>
 							</div>
 
@@ -532,11 +537,44 @@ if (sizeof($getUser) > 0) {
 			</div>
 			<div class="modal-footer">
 				<input type="hidden" id="screen_name"/>
-				<button class='btn btn-primary' name="submit_new_cus" id="submit_new_cus" tabindex="8">Submit</button>
-				<button class="btn btn-secondary modalCloseBtn" data-dismiss="modal" tabindex="9">Close</button>
+				<button class='btn btn-primary' name="submit_new_cus" id="submit_new_cus" tabindex="10">Submit</button>
+				<button class="btn btn-secondary modalCloseBtn" data-dismiss="modal" tabindex="11">Close</button>
 			</div>
 		</div>
 	</div>
+</div>
+<!-- Modal for Personal Info   -->
+<div class="modal fade" id="remarksModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document" style="height: 90vh;width:300vh;">
+        <div class="modal-content" style="background-color: white">
+            <div class="modal-header">
+				<h5 id="remarksTitle">Enquiry Remarks</h5>
+
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid row" id="remarksDiv" style="display: flex;justify-content:center;align-items:center">
+        				<div class="col-12">
+							<div class="form-group">
+								<h5><b>Remarks</b></h5> 
+							</div>
+    					</div>
+        				<div class="col-12">
+							<div class="form-group" style="display: flex;justify-content:center;align-items:center">
+								<textarea class="form-control" name="enq_remarks" id="enq_remarks" placeholder="Remarks" readonly></textarea>
+							</div>
+    					</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-dismiss="modal" tabindex="1">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Modal for promotion add -->

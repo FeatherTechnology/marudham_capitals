@@ -1414,8 +1414,6 @@ $(document).on("click", "#submitFamInfoBtn", function () {
   if (
     famData.famname != "" &&
     famData.relationship != "" &&
-    famData.relation_Mobile != "" &&
-    famData.relation_Mobile.length === 10 &&
     famData.relation_live_deceased != "" &&
     famData.reqId  != "" 
   ) {
