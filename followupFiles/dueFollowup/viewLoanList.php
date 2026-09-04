@@ -24,6 +24,7 @@ include '../../moneyFormatIndia.php';
 
         <?php
         $cus_id = $_POST['cus_id'];
+        $cus_sts = $_POST['cus_sts'];
 
         $run = $connect->query("SELECT ii.loan_id, lcc.loan_category_creation_name as loan_catrgory_name, lc.sub_category, ac.ag_name, iv.responsible, lc.loan_amt_cal, lc.collection_method, ii.cus_status, ii.req_id, cs.sub_status, cls.closed_sts, cls.consider_level
         FROM acknowlegement_loan_calculation lc 
@@ -70,43 +71,59 @@ include '../../moneyFormatIndia.php';
                     }
                     ?>
                 </td>
+                
+                <?php
+                $req_id     = $row['req_id'];
+                $collect_method = $row['collection_method'];
+                $has_cus_sts = !empty($cus_sts);
+                ?>
+
+                <!-- Column 1: Charts Dropdown -->
                 <td>
-                    <?php
-                        echo "<div class='dropdown'>
-                                <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
-                                <div class='dropdown-content'>
-                                    <a><span data-toggle='modal' data-target='.DueChart' class='due-chart' value='" . $row['req_id'] . "' > Due Chart</span></a>
-                                    <a><span data-toggle='modal' data-target='.PenaltyChart' class='penalty-chart' value='" . $row['req_id'] . "' > Penalty Chart</span></a>
-                                    <a><span data-toggle='modal' data-target='.collectionChargeChart' class='coll-charge-chart' value='" . $row['req_id'] . "' > Fine Chart</span></a>
-                                    <a><span data-toggle='modal' data-target='#commitmentChart' class='commitment-chart' data-reqid='" . $row['req_id'] . "' > Commitment Chart </span></a>
-                                </div>
-                            </div>";
-                    ?>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary">
+                            <i class="fa">&#xf107;</i>
+                        </button>
+                        <div class="dropdown-content">
+                            <a><span data-toggle="modal" data-target=".DueChart" class="due-chart" value="<?= $req_id ?>">Due Chart </span></a>
+                                <a><span data-toggle="modal" data-target=".PenaltyChart" class="penalty-chart" value="<?= $req_id ?>">Penalty Chart</span></a>
+                                <a><span data-toggle="modal" data-target=".collectionChargeChart" class="coll-charge-chart" value="<?= $req_id ?>">Fine Chart </span></a>
+                            <a><span data-toggle="modal" data-target="#commitmentChart" class="commitment-chart" data-reqid="<?= $req_id ?>"><?= !empty($has_cus_sts) ? 'Commitment Chart' : 'Followup Chart' ?></span>
+                            </a>
+                        </div>
+                    </div>
                 </td>
+
+                <!-- Column 2: Info & History Dropdown -->
                 <td>
-                    <?php
-                        $r_id = $row['req_id'];
-                        echo "<div class='dropdown'>
-                                <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
-                                <div class='dropdown-content'>
-                                    <a href='due_followup_info&upd=$r_id&pgeView=1'> Customer Profile </a>
-                                    <a href='due_followup_info&upd=$r_id&pgeView=2'> Documentation </a>
-                                    <a href='due_followup_info&upd=$r_id&pgeView=3'> Loan Calculation </a>
-                                    <a href='' class='loan-history-window'> Loan History </a>
-                                    <a href='' class='doc-history-window'> Document History </a>
-                                </div>
-                            </div>";
-                    ?>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary">
+                            <i class="fa">&#xf107;</i>
+                        </button>
+                        <div class="dropdown-content">
+                            <?php if ($has_cus_sts): ?>
+                                <a href="due_followup_info&upd=<?= $req_id ?>&pgeView=1">Customer Profile</a>
+                                <a href="due_followup_info&upd=<?= $req_id ?>&pgeView=2">Documentation</a>
+                                <a href="due_followup_info&upd=<?= $req_id ?>&pgeView=3">Loan Calculation</a>
+                                <a href="" class="loan-history-window">Loan History</a>
+                                <a href="" class="doc-history-window">Document History</a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
                 </td>
+
+                <!-- Column 3: Actions Dropdown -->
                 <td>
-                    <?php
-                        echo "<div class='dropdown'>
-                                <button class='btn btn-outline-secondary'><i class='fa'>&#xf107;</i></button>
-                                <div class='dropdown-content'>
-                                    <a><span data-toggle='modal' data-target='#addCommitment' class='add-commitment-chart' data-reqid='" . $row['req_id'] . "' data-coll_mtd='" . $row['collection_method'] . "' > New Commitment </span></a>
-                                </div>
-                            </div>";
-                    ?>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary">
+                            <i class="fa">&#xf107;</i>
+                        </button>
+                        <div class="dropdown-content">
+                            <a>
+                                <span data-toggle="modal" data-target="#addCommitment" class="add-commitment-chart" data-reqid="<?= $req_id ?>"data-coll_mtd="<?= $collect_method ?>"><?= $has_cus_sts ? 'New Commitment' : 'Followup' ?></span>
+                            </a>
+                        </div>
+                    </div>
                 </td>
             </tr>
 

@@ -93,6 +93,7 @@ $promotion_activity_action_access = '';
 $loan_followup  = '';
 $conf_followup  = '';
 $due_followup  = '';
+$due_nil_followup  = '';
 $ecs_followup  = '';
 $reportmodule = '';
 $work_report_module = '';
@@ -287,6 +288,7 @@ if($idupd>0)
 			$loan_followup = $getUser['loan_followup'];
 			$conf_followup = $getUser['confirmation_followup'];
 			$due_followup = $getUser['due_followup'];
+			$due_nil_followup = $getUser['due_nil_followup'];
 			$ecs_followup = $getUser['ecs_followup'];
 			$due_followup_lines = $getUser['due_followup_lines'];
 			
@@ -613,7 +615,7 @@ if($idupd>0)
                                             <select tabindex="14" class='form-control' id='due_follup_lines' name='due_follup_lines' multiple>
 												<option value="">Select Zone Lines</option>
 											</select>
-											<span class='text-danger duefollowupCheck' style="display:none">Please Select Zone Lines</span>
+											<span class='text-danger duefollowuplineCheck' style="display:none">Please Select Zone Lines</span>
                                         </div>
                                     </div>
 									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
@@ -1162,6 +1164,13 @@ if($idupd>0)
                                 <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($due_followup==0){ echo'checked'; }} ?> tabindex="69" class="followup-checkbox screen-validations" id="due_followup" name="due_followup" disabled>&nbsp;&nbsp;
                                 <label class="custom-control-label" for="due_followup"> Due Followup</label>&nbsp;&nbsp;
 								<span class='text-danger dueFollowupCheck' style="display:none">Please Select Due Followup </span> 
+                            </div>
+                        </div>
+						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" value="Yes" <?php if($idupd > 0){ if($due_nil_followup==0){ echo'checked'; }} ?> tabindex="69" class="followup-checkbox screen-validations" id="due_nil_followup" name="due_nil_followup" disabled>&nbsp;&nbsp;
+                                <label class="custom-control-label" for="due_nil_followup"> Due Nil Followup</label>&nbsp;&nbsp;
+								<span class='text-danger duenilFollowupCheck' style="display:none">Please Select Due Nil Followup </span> 
                             </div>
                         </div>
 						<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">

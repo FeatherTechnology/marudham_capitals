@@ -50,7 +50,7 @@ $modules = [
 
     'followup' => [
         'promotion_activity','repromotion_activity','loan_followup','confirmation_followup','due_followup',
-        'edit_due_followup','ecs_followup','ecs_edit_followup'
+        'edit_due_followup','edit_due_nil_followup','ecs_followup','ecs_edit_followup'
     ],
 
     'report' => [
@@ -571,6 +571,11 @@ if (!empty($getUser) && is_array($getUser)) {
 								<?php if (($leftbar_due_followup ?? 1) == 0) { ?>
 									<li>
 										<a href="edit_due_followup"><i class='icon-confirmation_number'></i>Due Follow Up</a>
+									</li>
+								<?php  } ?>
+								<?php if (($leftbar_due_nil_followup ?? 1) == 0) { ?>
+									<li>
+										<a href="edit_due_nil_followup"><i class='icon-flickr-with-circle'></i>Due Nil Follow Up</a>
 									</li>
 								<?php  } ?>
 								<?php if (($leftbar_ecs_followup ?? 1) == 0) { ?>

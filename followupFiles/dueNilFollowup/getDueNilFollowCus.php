@@ -8,8 +8,6 @@ if (isset($_SESSION['userid'])) {
 
 $queryParams = [];
 $loan_agnt = "";
-$cus_sts = isset($_POST['cus_sts']) && is_array($_POST['cus_sts']) ? $_POST['cus_sts'] : [];
-$sub_status_url = !empty($cus_sts) ? implode(',', array_map('urlencode', $cus_sts)) : '';
 
 $branch_id =  '';
 $line_id = '';
@@ -30,16 +28,6 @@ if ($branch_id || $line_id) {
     JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
     JOIN branch_creation bc ON alm.branch_id = bc.branch_id";
 }
-
-$sub_status_condition = "";
-if (!empty($cus_sts)) {
-    $placeholders = implode(',', array_fill(0, count($cus_sts), '?'));
-    $sub_status_condition = " AND cs.sub_status IN ($placeholders)";
-    foreach ($cus_sts as $status) {
-        $queryParams[] = $status;
-    }
-}
-
 if ($user_id != 1) {
     $stmt = $connect->prepare("SELECT due_followup_lines FROM user WHERE user_id = ?");
     $stmt->execute([(int)$user_id]);
@@ -47,7 +35,8 @@ if ($user_id != 1) {
     if (!$rowuser) {
         exit;
     }
-    $line_ids = array_filter(array_map('intval', explode(',', $rowuser['due_followup_lines'] ?? '')),
+    $line_ids = array_filter(
+        array_map('intval', explode(',', $rowuser['due_followup_lines'] ?? '')),
         fn($id) => $id > 0
     );
     if (empty($line_ids)) {
@@ -59,7 +48,8 @@ if ($user_id != 1) {
 }
 
 // ---------------------- RESPONSIBLE HAVING BUILDER ----------------------
-function buildResponsibleHaving($res_sts) {
+function buildResponsibleHaving($res_sts)
+{
     if ($res_sts === '0') {
         return " HAVING SUM(CASE WHEN rc.responsible = 0 THEN 1 ELSE 0 END) = SUM(CASE WHEN rc.req_id IS NOT NULL THEN 1 ELSE 0 END)
                  AND SUM(CASE WHEN rc.responsible IS NULL OR TRIM(rc.responsible) = '' THEN 1 ELSE 0 END) = 0
@@ -104,7 +94,7 @@ if (!empty($commdate)) {
         $cmCondition .= " AND (t.comm_date IS NULL OR t.comm_date = '0000-00-00') ";
     } elseif ($commdate == '6') {
         $cmCondition .= " AND ((t.comm_date IS NULL OR t.comm_date = '0000-00-00') OR
-            ( t.comm_date < DATE_FORMAT(CURDATE(), '%Y-%m-01') AND NOT EXISTS ( SELECT 1 FROM commitment c2 WHERE c2.cus_id = t.cp_cus_id AND c2.comm_date >= DATE_FORMAT(CURDATE(), '%Y-%m-01') AND c2.comm_date < DATE_FORMAT(CURDATE() + INTERVAL 1 MONTH, '%Y-%m-01') ) ) )";
+            ( t.comm_date < DATE_FORMAT(CURDATE(), '%Y-%m-01') AND NOT EXISTS ( SELECT 1 FROM due_nil_followup c2 WHERE c2.cus_id = t.cp_cus_id AND c2.comm_date >= DATE_FORMAT(CURDATE(), '%Y-%m-01') AND c2.comm_date < DATE_FORMAT(CURDATE() + INTERVAL 1 MONTH, '%Y-%m-01') ) ) )";
     }
 }
 
@@ -144,16 +134,25 @@ if ($searchValue !== '') {
 
 // Sort columns — t.comm_date / t.comm_err are REAL columns now (not JSON-extracted)
 $columns = [
-    't.cp_cus_id', 't.cp_cus_id', 't.autogen_cus_id', 't.cus_name', 't.mobile1','t.mobile2',
-    't.cp_cus_id', 't.reminder_call', 't.cp_cus_id', 't.last_paid_date', 't.current_month_paid',
-    't.comm_err', 't.cm_display', 't.cm_display', 't.comm_date'
+    't.cp_cus_id',
+    't.cp_cus_id',
+    't.autogen_cus_id',
+    't.cus_name',
+    't.mobile1',
+    't.mobile2',
+    't.cp_cus_id',
+    't.reminder_call',
+    't.cp_cus_id',
+    't.last_paid_date',
+    't.current_month_paid',
+    't.comm_err',
+    't.cm_display',
+    't.cm_display',
+    't.comm_date'
 ];
 $orderDir = $_POST['order'][0]['dir'] ?? 'ASC';
 $orderColumnIndex = $_POST['order'][0]['column'] ?? 0;
 $order = "ORDER BY " . ($columns[$orderColumnIndex] ?? $columns[0]) . " $orderDir";
-
-// ---------------------- Date condition (sargable rewrite) ----------------------
-$dateCondition = "AND aklc.due_start_from < DATE_FORMAT(CURDATE() + INTERVAL 1 MONTH, '%Y-%m-01')";
 
 // ---------------------- Reusable commitment correlation ----------------------
 $commitmentCorrelation = "c.cus_id = cp.cus_id
@@ -161,7 +160,7 @@ $commitmentCorrelation = "c.cus_id = cp.cus_id
     AND ii1.cus_status BETWEEN 14 AND 17
     $commitmentCondition";
 
-$commitmentSubquery = "commitment c
+$commitmentSubquery = "due_nil_followup c
         JOIN in_issue ii1 ON ii1.req_id = c.req_id
         WHERE $commitmentCorrelation
         ORDER BY c.created_date DESC LIMIT 1";
@@ -187,18 +186,17 @@ $innerQuery = "SELECT
     LEFT JOIN request_creation rc ON ii.req_id = rc.req_id AND (rc.cus_status >= 14 AND rc.cus_status < 20)
     JOIN customer_status cs ON cp.req_id = cs.req_id
     JOIN area_duefollowup_mapping_area adfma ON adfma.area_id = cp.area_confirm_area
-    $condition
     JOIN acknowlegement_loan_calculation aklc ON (aklc.req_id = ii.req_id) AND aklc.collection_method != 4
-    LEFT JOIN commitment cm ON cm.id = (
+    $condition
+    LEFT JOIN due_nil_followup cm ON cm.id = (
         SELECT c.id FROM $commitmentSubquery
     )
-    WHERE cs.payable_amnt > 0
+    WHERE cs.bal_amnt = 0
     AND ii.status = 0
     AND (ii.cus_status BETWEEN 14 AND 17)
-    $sub_status_condition
+    AND cs.sub_status ='Due Nil'
     $loan_agnt
     $search
-    $dateCondition
     $branch_id 
     $line_id
     $followup_id
@@ -214,7 +212,6 @@ $query = "SELECT COUNT(*) OVER() AS total_filtered, t.*
 // $cmParams' placeholders live in the outer query, which runs after the inner
 // query text closes — so they must be appended LAST, after all inner params.
 $queryParams = array_merge($queryParams, $cmParams);
-
 // Pagination
 $start = isset($_POST['start']) ? (int)$_POST['start'] : 0;
 $length = isset($_POST['length']) ? (int)$_POST['length'] : -1;
@@ -271,7 +268,7 @@ foreach ($result as $row) {
         $cus_name,
         $row['mobile1'],
         $row['mobile2'],
-        "<a href='due_followup&upd={$row['req_id']}&cusidupd={$cus_id}&cussts={$sub_status_url_val}&cummDate={$commdate_val}&res_sts={$res_sts_val}&comm_sts={$comm_sts_val}' title='Edit details'><button class='btn btn-success' style='background-color:#009688;'>View Loans</button></a>",
+        "<a href='due_followup&upd={$row['req_id']}&cusidupd={$cus_id}&cummDate={$commdate_val}&res_sts={$res_sts_val}&comm_sts={$comm_sts_val}' title='Edit details'><button class='btn btn-success' style='background-color:#009688;'>View Loans</button></a>",
         "<a href='#'class='personal-info'data-toggle='modal'data-target='#personalInfoModal'data-cusid='" . $cus_id . "'><span class='icon-eye' style='font-size: 12px;position: relative;top: 2px;'></a>",
         "<a href='' data-value='" . $cus_id . "' data-cusid='" . $row['autogen_cus_id'] . "' data-cusname='" . $cus_name . "' data-mobile='" . $row['mobile1'] . "' class='customer-summary' data-toggle='modal' data-target='.customersummary'><span class='icon-eye' style='font-size: 12px;position: relative;top: 2px;'></span></a>",
         $last_paid_date,

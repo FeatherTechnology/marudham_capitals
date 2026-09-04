@@ -16,7 +16,7 @@ if(isset($_GET['upd']))
 {
 $idupd=$_GET['upd'];
 $cusidupd=$_GET['cusidupd'];
-$cus_sts = $_GET['cussts'];  
+$cus_sts = $_GET['cussts'] ?? '';  
 $cummDate = $_GET['cummDate'];  
 $res_sts = $_GET['res_sts'];  
 $comm_sts = $_GET['comm_sts'];  
@@ -32,6 +32,7 @@ if($idupd>0)
 			$sub_area_name				= $getLoanList['sub_area_name'];
 	}
 }
+$screen_name = ($cus_sts != '') ? 'Due Followup' : 'Due Nil Followup';
 ?>
 
 
@@ -39,7 +40,7 @@ if($idupd>0)
 <br><br>
 <div class="page-header">
 	<div style="background-color:#009688; width:100%; padding:12px; color: #ffff; font-size: 20px; border-radius:5px;">
-		Marudham Capitals - Due Follow Up &nbsp; -- &nbsp;
+		Marudham Capitals -  <?php echo $screen_name; ?> -- &nbsp;
 
 		Customer Name - <?php if (isset($cus_name)) { echo $cus_name;} ?>
 		,&nbsp;&nbsp;Cus ID - <?php if (isset($cus_id)) { echo $cus_id; } ?>
