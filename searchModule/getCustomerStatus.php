@@ -103,12 +103,13 @@ foreach ($rows as $i => $row) {
             <th rowspan="2">Loan Category</th>
             <th rowspan="2">Sub Category</th>
             <th rowspan="2">Loan Amount</th>
-            <th colspan="2">Loan Status</th>
+            <th colspan="3">Loan Status</th>
             <th colspan="4">Document Status</th>
         </tr>
         <tr>
             <th>Status</th>
             <th>Sub Status</th>
+            <th>Cancel/Revoke Remark</th>
             <th>Status</th>
             <th>Info</th>
             <th>Chart</th>
@@ -127,6 +128,7 @@ foreach ($rows as $i => $row) {
                 <td><?php echo moneyFormatIndia($record['loan_amt']); ?></td>
                 <td><?php echo $record['status'] ?? ''; ?></td>
                 <td><?php echo $record['sub_status'] ?? ''; ?></td>
+                <td><?php echo $record['remark'] ?? ''; ?></td>
                 <td><?php echo $record['doc_status']; ?></td>
                 <td><?php echo $record['info_action']; ?></td>
                 <td><?php echo $record['chart_action']; ?></td>

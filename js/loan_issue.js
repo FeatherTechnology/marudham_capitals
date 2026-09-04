@@ -1767,54 +1767,16 @@ function getLoanHistory() {
   $("#hide_loan_history").show();
 
   let cus_id = $("#cus_id").val();
-  let req_id = $("#req_id").val();
-  let cus_type = $("#cus_type").val();
-
-  //To get loan sub Status
-  var pending_arr = '';
-  var od_arr = '';
-  var due_nil_arr = '';
-  var closed_arr = '';
-  var balAmnt = '';
-
-  $.ajax({
-    url: "closedFile/resetCustomerStsForClosed.php",
-    type: "POST",
-    dataType: "json",
-    cache: false,
-    data: { cus_id },
-    success: function (response) {
-
-      if (cus_type === "Existing" && response && response.pending_customer) {//check json response is not empty
-            pending_sts = response.pending_customer.join(',');
-            od_sts = response.od_customer.join(',');
-            due_nil_sts = response.due_nil_customer.join(',');
-            closed_sts = response.closed_customer.join(',');
-            bal_amt = response.balAmnt.join(',');
-      }
-    }
-
-  }).then(function () {
-
-        return $.ajax({
-            //in this file, details gonna fetch by customer ID, Not by req id (Because we need all loans from customer)
-            url: "verificationFile/LoanCalculation/getLoanHistory.php",
-            type: "POST",
-            cache: false,
-            data: {
-                req_id,
-                cus_id,
-                pending_sts,
-                od_sts,
-                due_nil_sts,
-                closed_sts,
-                bal_amt,
-            },
-            success: function (response) {
-                $("#loanHistoryDiv").html(response);
-            },
-        });
-  });
+    $.ajax({
+        //in this file, details gonna fetch by customer ID, Not by req id (Because we need all loans from customer)
+        type: "POST",
+        data: { cus_id },
+        url: "verificationFile/LoanCalculation/getLoanHistory.php",
+        cache: false,
+        success: function (response) {
+            $("#loanHistoryDiv").html(response);
+        },
+    });
 }
 
 // ================= EVENT BINDINGS =================

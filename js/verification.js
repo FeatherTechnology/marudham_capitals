@@ -4794,67 +4794,15 @@ function getDocumentHistory() {
   $("#show_document_history").hide();
   $("#hide_document_history").show();
   let cus_id = $("#cus_id_load").val();
-  let req_id = $("#req_id").val();
-  let cus_type = $("#cus_type").val();
-  //To get loan sub Status
-  var pending_arr = [];
-  var od_arr = [];
-  var due_nil_arr = [];
-  var closed_arr = [];
-  var balAmnt = [];
-  $.ajax({
-    url: "closedFile/resetCustomerStsForClosed.php",
-    data: { cus_id: cus_id },
-    dataType: "json",
-    type: "post",
-    cache: false,
-    success: function (response) {
-      if (cus_type == "Existing") {
-        if (response.length != 0) {//check json response is not empty
-          for (var i = 0; i < response["pending_customer"].length; i++) {
-            pending_arr[i] = response["pending_customer"][i];
-            od_arr[i] = response["od_customer"][i];
-            due_nil_arr[i] = response["due_nil_customer"][i];
-            closed_arr[i] = response["closed_customer"][i];
-            balAmnt[i] = response["balAmnt"][i];
-          }
-        }
-        var pending_sts = pending_arr.join(",");
-        $("#pending_sts").val(pending_sts);
-        var od_sts = od_arr.join(",");
-        $("#od_sts").val(od_sts);
-        var due_nil_sts = due_nil_arr.join(",");
-        $("#due_nil_sts").val(due_nil_sts);
-        var closed_sts = closed_arr.join(",");
-        $("#closed_sts").val(closed_sts);
-        balAmnt = balAmnt.join(",");
-      }
-    },
-  }).then(function () {
-    var pending_sts = $("#pending_sts").val();
-    var od_sts = $("#od_sts").val();
-    var due_nil_sts = $("#due_nil_sts").val();
-    var closed_sts = $("#closed_sts").val();
-    var bal_amt = balAmnt;
     $.ajax({
       //in this file, details gonna fetch by customer ID, Not by req id (Because we need all loans from customer)
+      type: "POST",
+      data: { cus_id },
       url: "verificationFile/documentation/getDocumentHistory.php",
-      data: {
-        req_id: req_id,
-        cus_id: cus_id,
-        pending_sts: pending_sts,
-        od_sts: od_sts,
-        due_nil_sts: due_nil_sts,
-        closed_sts: closed_sts,
-        bal_amt: bal_amt,
-      },
-      type: "post",
       cache: false,
       success: function (response) {
-        $("#docHistoryDiv").empty();
         $("#docHistoryDiv").html(response);
       },
-    });
   });
 }
 
@@ -5614,64 +5562,13 @@ function getLoanHistory() {
   $("#show_loan_history").hide();
   $("#hide_loan_history").show();
   let cus_id = $("#cus_id_load").val();
-  let req_id = $("#req_id").val();
-  let cus_type = $("#cus_type").val();
-  //To get loan sub Status
-  var pending_arr = [];
-  var od_arr = [];
-  var due_nil_arr = [];
-  var closed_arr = [];
-  var balAmnt = [];
-  $.ajax({
-    url: "closedFile/resetCustomerStsForClosed.php",
-    data: { cus_id: cus_id },
-    dataType: "json",
-    type: "post",
-    cache: false,
-    success: function (response) {
-      if (cus_type == "Existing") {
-        if (response.length != 0) {//check json response is not empty
-          for (var i = 0; i < response["pending_customer"].length; i++) {
-            pending_arr[i] = response["pending_customer"][i];
-            od_arr[i] = response["od_customer"][i];
-            due_nil_arr[i] = response["due_nil_customer"][i];
-            closed_arr[i] = response["closed_customer"][i];
-            balAmnt[i] = response["balAmnt"][i];
-          }
-          var pending_sts = pending_arr.join(",");
-          $("#pending_sts").val(pending_sts);
-          var od_sts = od_arr.join(",");
-          $("#od_sts").val(od_sts);
-          var due_nil_sts = due_nil_arr.join(",");
-          $("#due_nil_sts").val(due_nil_sts);
-          var closed_sts = closed_arr.join(",");
-          $("#closed_sts").val(closed_sts);
-          balAmnt = balAmnt.join(",");
-        }
-      }
-    },
-  }).then(function () {
-    var pending_sts = $("#pending_sts").val();
-    var od_sts = $("#od_sts").val();
-    var due_nil_sts = $("#due_nil_sts").val();
-    var closed_sts = $("#closed_sts").val();
-    var bal_amt = balAmnt;
     $.ajax({
       //in this file, details gonna fetch by customer ID, Not by req id (Because we need all loans from customer)
+      type: "POST",
+      data: { cus_id },
       url: "verificationFile/LoanCalculation/getLoanHistory.php",
-      data: {
-        req_id: req_id,
-        cus_id: cus_id,
-        pending_sts: pending_sts,
-        od_sts: od_sts,
-        due_nil_sts: due_nil_sts,
-        closed_sts: closed_sts,
-        bal_amt: bal_amt,
-      },
-      type: "post",
       cache: false,
       success: function (response) {
-        $("#loanHistoryDiv").empty();
         $("#loanHistoryDiv").html(response);
       },
     }).then(function () {
@@ -5680,35 +5577,36 @@ function getLoanHistory() {
         var cus_id = $(this).data("cusid");
         dueChartList(req_id, cus_id);
       });
+
       $(document).on("click", ".penalty-chart", function () {
         var req_id = $(this).data("reqid");
         var cus_id = $(this).data("cusid");
         penaltyChartList(req_id, cus_id);
       });
+
       $(document).on("click", ".collcharge-chart", function () {
         var req_id = $(this).data("reqid");
         collectionChargeChartList(req_id);
       });
+
       $(document).on("click", ".loansummary-chart", function () {
         var req_id = $(this).data("reqid");
         var cus_id = $(this).data("cusid");
         loanSummaryList(req_id, cus_id);
       });
+
      $(document).on("click", ".commitment-chart", function () {
-          //Commitment chart
-          let req_id = $(this).data("reqid");
-          let cus_id = $(this).data("cusid");
-          $.post(
-            "followupFiles/dueFollowup/getCommitmentChart.php",
-            { cus_id, req_id },
-            function (html) {
-              $("#commChartDiv").empty().html(html);
-            }
-          );
+        //Commitment chart
+        let req_id = $(this).data("reqid");
+        let cus_id = $(this).data("cusid");
+        $.post("followupFiles/dueFollowup/getCommitmentChart.php", { cus_id, req_id }, function (html) {
+          $("#commChartDiv").empty().html(html);
         });
     });
+
   });
 }
+
 //Due Chart List
 function dueChartList(req_id, cus_id) {
   $.ajax({
