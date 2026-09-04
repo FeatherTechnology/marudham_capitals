@@ -1,30 +1,21 @@
-const subStatusMultiselect = new Choices('#sub_status_mapping', {
-    removeItemButton: true,
-    noChoicesText: 'Select Customer Status',
-    allowHTML: true
-});
 
 $(document).ready(function () {
 
-    $('#show_due_followup').click(function () {
-        let cusSts = $("#sub_status_mapping").val();
+    $('#show_due_nil_followup').click(function () {
         let comm_date = $("#comm_date").val();
         let res_sts = $("#res_sts").val();
         let comm_sts = $("#comm_sts").val();
         let call_status = $("#call_status").val();
-        let branch_id = $("#branch").val();
-        let line_id = $("#region").val();
-        let followup_id = $("#zone").val();
 
-        OnLoadFunctions(cusSts, comm_date, res_sts, comm_sts, call_status,branch_id,line_id,followup_id);
+        OnLoadFunctions(comm_date, res_sts, comm_sts, call_status);
     });
 
     $(document).on('click', '.personal-info', function (e) {
         e.preventDefault();
         let cus_id = $(this).data('cusid');
-        $.post('followupFiles/promotion/getPersonalInfo.php',{cus_id: cus_id},function (html) {
-                $('#personalInfoDiv').html(html);
-            }
+        $.post('followupFiles/promotion/getPersonalInfo.php', { cus_id: cus_id }, function (html) {
+            $('#personalInfoDiv').html(html);
+        }
         ).fail(function (xhr, status, error) {
             console.log("AJAX Error:", error);
             console.log(xhr.responseText);
@@ -34,6 +25,7 @@ $(document).ready(function () {
     let branchLoaded = false;
     let regionLoaded = false;
     let zoneLoaded = false;
+
 
     // Branch
     $('#branch').on('focus', function () {
@@ -58,97 +50,17 @@ $(document).ready(function () {
             getFollowupList();
         }
     });
+
 });
 
 $(function () {
-    getSubStsMapping(); //Call Customer status dropdown.
-
     let cummDate = $("#cummDate").val();
-    $("#comm_date").val(cummDate);
-    let cus_Sts = $("#customer_status").val();
-    let cusSts = cus_Sts.split(',');
     let res_sts = $("#res_sts").val();
     let comm_sts = $("#comm_sts").val();
     let call_status = $("#call_status").val();
-    let branch_id = $("#branch").val();
-    let line_id = $("#region").val();
-    let followup_id = $("#zone").val();
+    OnLoadFunctions(cummDate, res_sts, comm_sts, call_status);
 
-    if (cusSts != '') {
-        OnLoadFunctions(cusSts, cummDate, res_sts, comm_sts, call_status,branch_id,line_id,followup_id);
-    }
 });
-
-function getBranchList() {
-    $.ajax({
-        url: 'followupFiles/promotion/getBranchList.php',
-        type: 'post',
-        data: {},
-        dataType: 'json',
-        success: function (response) {
-
-        $('#branch').html('<option value="">Select Branch</option>');
-
-        $.each(response, function(index, value) {
-
-            $('#branch').append(
-                '<option value="' + value.branch_id + '">' +
-                value.branch_name +
-                '</option>'
-            );
-
-        });
-        }
-    });
-   
-}
-
-function getLineList() {
-    $.ajax({
-        url: 'followupFiles/promotion/getLineList.php',
-        type: 'post',
-        data: {},
-        dataType: 'json',
-        success: function (response) {
-
-        $('#region').html('<option value="">Select Region</option>');
-
-        $.each(response, function(index, value) {
-
-            $('#region').append(
-                '<option value="' + value.line_id + '">' +
-                value.line_name +
-                '</option>'
-            );
-
-        });
-        }
-    });
-
-}
-function getFollowupList() {
-    $.ajax({
-        url: 'followupFiles/promotion/getFollowupList.php',
-        type: 'post',
-        data: {},
-        dataType: 'json',
-        success: function (response) {
-
-        $('#zone').html('<option value="">Select Zone</option>');
-
-        $.each(response, function(index, value) {
-
-            $('#zone').append(
-                '<option value="' + value.due_followup_lines_id + '">' +
-                value.duefollowup_name +
-                '</option>'
-            );
-
-        });
-        }
-    });
-
-}
 
 function warningSwal(title, text) {
     Swal.fire({
@@ -161,27 +73,24 @@ function warningSwal(title, text) {
     });
 }
 
-function OnLoadFunctions(cusSts, comm_date, res_sts, comm_sts, call_status,branch_id,line_id,followup_id) {
-    if (!cusSts) {
-        warningSwal('Warning!', 'Select Customer Status.');
-        return;
-    }
-
-    $('#due_followup_table').DataTable().destroy();
-    var table = $('#due_followup_table').DataTable({
-        // ...getStateSaveConfig('due_followup_table'),
+function OnLoadFunctions(comm_date, res_sts, comm_sts, call_status) {
+    let branch_id = $("#branch").val();
+    let line_id = $("#region").val();
+    let followup_id = $("#zone").val();
+    $('#due_nil_followup_table').DataTable().destroy();
+    var table = $('#due_nil_followup_table').DataTable({
+        // ...getStateSaveConfig('due_nil_followup_table'),
         "order": [[0, "desc"]],
         "processing": true,
-        "displayStart": getDisplayStart('due_followup_table'),
+        "displayStart": getDisplayStart('due_nil_followup_table'),
         "serverSide": true,
         'infoCallback': customDataTableInfo,
         "serverMethod": 'post',
         "ajax": {
-            "url": 'followupFiles/dueFollowup/getDueFollowCus.php',
+            "url": 'followupFiles/dueNilFollowup/getDueNilFollowCus.php',
             "data": function (data) {
                 var search = $('#search').val();
                 data.search = search;
-                data.cus_sts = cusSts;
                 data.comm_date = comm_date;
                 data.res_sts = res_sts;
                 data.comm_sts = comm_sts;
@@ -220,16 +129,16 @@ function OnLoadFunctions(cusSts, comm_date, res_sts, comm_sts, call_status,branc
         "pagingType": "simple_numbers",
         "drawCallback": function () {
             enableDateColoring();
-            searchFunction('due_followup_table');
-            paginationFunction('due_followup_table');
+            searchFunction('due_nil_followup_table');
+            paginationFunction('due_nil_followup_table');
         }
     });
-    // initColVisFeatures(table, 'due_followup_table');
+    // initColVisFeatures(table, 'due_nil_followup_table');
 }
 
 function enableDateColoring() {
     //for coloring
-    $('#due_followup_table tbody tr').not('th').each(function () {
+    $('#due_nil_followup_table tbody tr').not('th').each(function () {
         let tddate = $(this).find('td:eq(15)').text(); // Get the text content of the 12th td element (Follow date)
         let datecorrection = tddate.split("-").reverse().join("-").replaceAll(/\s/g, ''); // Correct the date format
         let values = new Date(datecorrection); // Create a Date object from the corrected date
@@ -253,26 +162,7 @@ function enableDateColoring() {
     });
 }
 
-function getSubStsMapping() {
-    let subStatus = ['Legal', 'Error', 'OD', 'Pending', 'Current'];
-    let editSubStatus = $('#customer_status').val() || '';
-
-    subStatusMultiselect.clearStore();
-    $.each(subStatus, function (index, val) {
-        let selected = '';
-        if (editSubStatus.includes(val)) {
-            selected = 'selected';
-        }
-        let items = [
-            { value: val, label: val, selected: selected },
-        ]
-        subStatusMultiselect.setChoices(items);
-        subStatusMultiselect.init();
-    });
-
-}
-
-$(document).on('click', 'a.customer-summary', async function(event) {
+$(document).on('click', 'a.customer-summary', async function (event) {
     event.preventDefault();
     try {
         let cus_id = $(this).data('value');
@@ -294,3 +184,75 @@ $(document).on('click', 'a.customer-summary', async function(event) {
         hideOverlay();
     }
 });
+
+function getBranchList() {
+    $.ajax({
+        url: 'followupFiles/promotion/getBranchList.php',
+        type: 'post',
+        data: {},
+        dataType: 'json',
+        success: function (response) {
+
+            $('#branch').html('<option value="">Select Branch</option>');
+
+            $.each(response, function (index, value) {
+
+                $('#branch').append(
+                    '<option value="' + value.branch_id + '">' +
+                    value.branch_name +
+                    '</option>'
+                );
+
+            });
+        }
+    });
+
+}
+
+function getLineList() {
+    $.ajax({
+        url: 'followupFiles/promotion/getLineList.php',
+        type: 'post',
+        data: {},
+        dataType: 'json',
+        success: function (response) {
+
+            $('#region').html('<option value="">Select Region</option>');
+
+            $.each(response, function (index, value) {
+
+                $('#region').append(
+                    '<option value="' + value.line_id + '">' +
+                    value.line_name +
+                    '</option>'
+                );
+
+            });
+        }
+    });
+
+}
+function getFollowupList() {
+    $.ajax({
+        url: 'followupFiles/promotion/getFollowupList.php',
+        type: 'post',
+        data: {},
+        dataType: 'json',
+        success: function (response) {
+
+            $('#zone').html('<option value="">Select Zone</option>');
+
+            $.each(response, function (index, value) {
+
+                $('#zone').append(
+                    '<option value="' + value.due_followup_lines_id + '">' +
+                    value.duefollowup_name +
+                    '</option>'
+                );
+
+            });
+        }
+    });
+
+}
+

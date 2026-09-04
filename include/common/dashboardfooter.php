@@ -2943,6 +2943,10 @@
         <script src="js/edit_due_followup.js"></script>
     <?php }
 
+    if ($current_page == 'edit_due_nil_followup') { ?>
+        <script src="js/edit_due_nil_followup.js"></script>
+    <?php }
+
     if ($current_page == 'ecs_followup') { ?>
         <script src="js/ecs_followup.js"></script>
     <?php }

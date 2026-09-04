@@ -417,6 +417,10 @@ if (isset($getuserdetails['download_access'])) {
 			<?php if ($current_page == 'due_followup_info') { ?>
 				<?php include "include/templates/due_followup_info.php" ?>
 			<?php } else ?>
+            <!-- Due Nil Follow up -->
+			 <?php if ($current_page == 'edit_due_nil_followup') { ?>
+				<?php include "include/templates/edit_due_nil_followup.php" ?>
+			<?php } else ?>
 
 			<!-- ECS Follow up -->
 			<?php if ($current_page == 'ecs_edit_followup') { ?>

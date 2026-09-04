@@ -7,7 +7,8 @@ $(document).ready(function () {
         let cummDate = $('#cummDate').val();
         let res_sts = $('#res_sts').val();
         let comm_sts = $('#comm_sts').val();
-        window.location = 'edit_due_followup&cussts='+cusSts+'&cummDate='+cummDate+'&res_sts='+res_sts+'&comm_sts='+comm_sts;
+        let backPage = (cusSts != '') ? 'edit_due_followup' : 'edit_due_nil_followup';
+        window.location = backPage +'&cussts='+cusSts+'&cummDate='+cummDate+'&res_sts='+res_sts+'&comm_sts='+comm_sts;
     })
 
     $('#comm_ftype').change(function () {
@@ -112,19 +113,20 @@ $(document).ready(function () {
 $(function () {
 
     var req_id = $('#idupd').val()
+    var cus_sts = $('#cus_sts').val()
     const cus_id = $('#cusidupd').val()
-    OnLoadFunctions(req_id, cus_id);
+    OnLoadFunctions(req_id, cus_id,cus_sts);
 
 })
 
-function OnLoadFunctions(req_id, cus_id) {
+function OnLoadFunctions(req_id, cus_id,cus_sts) {
 
         showOverlay();//loader start
 
         $.ajax({
             //in this file, details gonna fetch by customer ID, Not by req id (Because we need all loans from customer)
             url: 'followupFiles/dueFollowup/viewLoanList.php',
-            data: { 'req_id': req_id, 'cus_id': cus_id },
+            data: { 'req_id': req_id, 'cus_id': cus_id , 'cus_sts':cus_sts},
             type: 'post',
             cache: false,
             success: function (response) {
@@ -260,7 +262,9 @@ function OnLoadFunctions(req_id, cus_id) {
                 //Commitment chart
                 $('.commitment-chart').off('click').click(function () {
                     let req_id = $(this).data('reqid'); let cus_id = $('#cusidupd').val();
-                    $.post('followupFiles/dueFollowup/getCommitmentChart.php', { cus_id, req_id }, function (html) {
+                    let cus_sts = $('#cus_sts').val();
+                    let $url = cus_sts != '' ? 'followupFiles/dueFollowup/getCommitmentChart.php' : 'followupFiles/dueNilFollowup/getDueNilFollowupChart.php';
+                    $.post($url, { cus_id, req_id }, function (html) {
                         $('#commChartDiv').empty().html(html);
                     })
                 })
@@ -342,8 +346,9 @@ function submitCommitment() {
     let person_type = $('#comm_person_type').val(); let person_name = $('#comm_person_name').val(); let person_name1 = $('#comm_person_name1').val();
     let relationship = $('#comm_relationship').val(); let remark = $('#comm_remark').val(); let date = $('#comm_date').val(); let hint = $('#comm_hint').val(); let err = $('#comm_err').val();
     let args = { cus_id, req_id, ftype, fstatus, person_type, person_name, person_name1, relationship, remark, date, hint, err };
-
-    $.post('followupFiles/dueFollowup/submitCommitment.php', args, function (response) {
+    let cus_sts = $('#cus_sts').val();
+    let $url = cus_sts != '' ? 'followupFiles/dueFollowup/submitCommitment.php' : 'followupFiles/dueNilFollowup/submitFollowup.php';
+    $.post($url, args, function (response) {
         if (response.includes('Error')) {
             swarlErrorAlert(response);
         } else {
