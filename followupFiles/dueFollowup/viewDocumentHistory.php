@@ -33,9 +33,8 @@ include '../../moneyFormatIndia.php';
         LEFT JOIN customer_status cs ON ii.req_id = cs.req_id
         LEFT JOIN agent_creation ac ON ac.ag_id = iv.agent_id
         LEFT JOIN closed_status cls ON ii.req_id = cls.req_id
-        WHERE lc.cus_id_loan = '$cus_id' AND (ii.cus_status >= 13) ORDER BY CAST(ii.req_id AS UNSIGNED) ASC "); //Customer status greater than or equal to 14 because, after issued data only we need  
+        WHERE lc.cus_id_loan = '$cus_id' AND (ii.cus_status >= 13) ORDER BY CAST(ii.req_id AS UNSIGNED) DESC "); //Customer status greater than or equal to 14 because, after issued data only we need  
 
-        $curdate = date('Y-m-d');
         while ($row = $run->fetch()) {
             //Show NOC button until closed_status submit so we check the count of closed status against the request id.
             $ii_req_id = $row["req_id"];            
@@ -133,6 +132,7 @@ function getDocumentStatus($connect, $req_id){
 
     // Declare table variable to store the DataTable instance
     $('#DocHistTable').DataTable({
+        "order": [ [0, "desc"] ],
         'processing': true,
         'iDisplayLength': 5,
         "lengthMenu": [

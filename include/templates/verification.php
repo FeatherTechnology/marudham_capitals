@@ -1399,10 +1399,6 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 			<input type="hidden" name="docrelation_name" id="docrelation_name" value="<?php if (isset($docholder_relationship_name)) {
 																							echo $docholder_relationship_name;
 																						} ?>">
-			<input type="hidden" name="pending_sts" id="pending_sts" value="" />
-			<input type="hidden" name="od_sts" id="od_sts" value="" />
-			<input type="hidden" name="due_nil_sts" id="due_nil_sts" value="" />
-			<input type="hidden" name="closed_sts" id="closed_sts" value="" />
 
 			<!-- Row start -->
 			<div class="row gutters">

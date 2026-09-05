@@ -31,10 +31,6 @@ if (sizeof($getUser) > 0) {
 <div class="main-container">
 	<!--form start-->
 	<form id="confirmation_followup_form" name="confirmation_followup_form" action="" method="post" enctype="multipart/form-data">
-		<input type="hidden" name="pending_sts" id="pending_sts" value="" />
-		<input type="hidden" name="od_sts" id="od_sts" value="" />
-		<input type="hidden" name="due_nil_sts" id="due_nil_sts" value="" />
-		<input type="hidden" name="closed_sts" id="closed_sts" value="" />
 
 		<div class="row gutters conf-list-card">
 			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">

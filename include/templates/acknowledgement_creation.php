@@ -1463,10 +1463,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 																			echo $submitted;
 																		} ?>">
 			<input type="hidden" name="replace_doc_id_upd" id="replace_doc_id_upd" value="<?php if (isset($noc_replace_doc_id)) {echo $noc_replace_doc_id;} ?>">
-			<input type="hidden" name="pending_sts" id="pending_sts" value="" />
-			<input type="hidden" name="od_sts" id="od_sts" value="" />
-			<input type="hidden" name="due_nil_sts" id="due_nil_sts" value="" />
-			<input type="hidden" name="closed_sts" id="closed_sts" value="" />
+			
 			<input type="hidden" name="approvalaccess" id="approvalaccess" value="<?php if (isset($approvalaccess)) {
 																						echo $approvalaccess;
 																					} ?>" />

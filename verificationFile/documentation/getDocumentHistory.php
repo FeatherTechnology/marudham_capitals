@@ -40,7 +40,6 @@ $screen = $_POST["screen"] ?? '';
         LEFT JOIN customer_status c ON ii.req_id = c.req_id
         WHERE lc.cus_id_loan = '$cus_id' AND (ii.cus_status >= 13) ORDER BY CAST(ii.req_id AS UNSIGNED) DESC "); //Customer status greater than or equal to 14 because, after issued data only we need  
 
-        $curdate = date('Y-m-d');
         while ($row = $run->fetch()) {
             //Show NOC button until closed_status submit so we check the count of closed status against the request id.
             $cus_name = $row["cus_name_loan"];
