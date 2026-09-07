@@ -210,6 +210,9 @@
                                     <th>Date</th>
                                     <th>Transaction Date</th>
                                     <th>Name</th>
+                                    <th>Area</th>
+                                    <th>Identification</th>
+                                    <th>Remark</th>
                                     <th>Cash Type</th>
                                     <th>Credit</th>
                                     <th>Debit</th>
@@ -218,6 +221,9 @@
                             <tbody></tbody>
                             <tfoot>
                                 <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
