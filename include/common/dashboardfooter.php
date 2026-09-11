@@ -585,6 +585,7 @@
                     [0, "desc"]
                 ],
                 "displayStart": getDisplayStart('request_table'),
+                "deferLoading": 0,
                 'processing': true,
                 'serverSide': true,
                 'infoCallback': customDataTableInfo,
@@ -638,6 +639,7 @@
                     [0, "desc"]
                 ],
                 "displayStart": getDisplayStart('verification_table'),
+                "deferLoading": 0,
                 'processing': true,
                 'serverSide': true,
                 'infoCallback': customDataTableInfo,
@@ -691,6 +693,7 @@
                     [0, "desc"]
                 ],
                 "displayStart": getDisplayStart('approval_table'),
+                "deferLoading": 0,
                 'processing': true,
                 'serverSide': true,
                 'infoCallback': customDataTableInfo,
@@ -744,6 +747,7 @@
                     [0, "desc"]
                 ],
                 "displayStart": getDisplayStart('acknowledge_table'),
+                "deferLoading": 0,
                 'processing': true,
                 'serverSide': true,
                 'infoCallback': customDataTableInfo,
@@ -797,6 +801,7 @@
                     [0, "desc"]
                 ],
                 "displayStart": getDisplayStart('loanIssue_table'),
+                "deferLoading": 0,
                 'processing': true,
                 'serverSide': true,
                 'infoCallback': customDataTableInfo,
@@ -897,6 +902,7 @@
                     [0, "desc"]
                 ],
                 "displayStart": getDisplayStart('closed_table'),
+                "deferLoading": 0,
                 'processing': true,
                 'serverSide': true,
                 'infoCallback': customDataTableInfo,
@@ -949,6 +955,7 @@
                     [0, "desc"]
                 ],
                 "displayStart": getDisplayStart('noc_table'),
+                "deferLoading": 0,
                 'processing': true,
                 'serverSide': true,
                 'infoCallback': customDataTableInfo,
@@ -1001,6 +1008,7 @@
                     [0, "desc"]
                 ],
                 "displayStart": getDisplayStart('noc_handover_table'),
+                "deferLoading": 0,
                 'processing': true,
                 'serverSide': true,
                 'infoCallback': customDataTableInfo,
