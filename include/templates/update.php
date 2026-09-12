@@ -1889,7 +1889,7 @@ if (sizeof($getCustomerReg) > 0) {
 
 					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 						<div class="form-group">
-							<label class="label"> Mobile No </label>&nbsp;<span class="text-danger">*</span>
+							<label class="label"> Mobile No </label>
 							<input type="text" class="form-control" name="relation_Mobile" id="relation_Mobile" maxlength="10" onkeypress="if(this.value.length==10) return false;" placeholder="Mobile Number" tabindex='7' oninput="validateInputNumber(this,'withOutDot')">
 							<span class="text-danger" id="fammobileCheck" style='display:none'>Enter Mobile Number</span>
 						</div>
