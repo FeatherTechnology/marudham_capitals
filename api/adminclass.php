@@ -6819,23 +6819,43 @@ class admin
 
 		$loan_id = ""; //if bank transaction means loan id generate here itself and amount transfer by accounts user.
 		$doc_id = ""; //if bank transaction means doc id generate here itself and amount transfer by accounts user.
+		$error_msg = ""; // Initialize error message variable
 
 		try {
 			// Disable autocommit to start a transaction
 			$mysqli->autocommit(FALSE);
 
 			if ($payment_type == 0) {
+				$qry = $mysqli->prepare("SELECT COUNT(*) FROM loan_issue WHERE req_id = ? AND balance_amount = ?");
+
+				$qry->bind_param(
+					"ss",
+					$req_id,
+					$balance
+				);
+				$qry->execute();
+				$res = $qry->get_result();
+				$loanIssueCnt = $res->fetch_row()[0];
+				$qry->close();
+
+				if($loanIssueCnt > 0) {
+					$error_msg = "Loan Issue already exists for this request with the same balance amount.";
+					throw new Exception($error_msg);
+				}
+
 				$insertQry = "INSERT INTO `loan_issue`( `req_id`, `cus_id`, `issued_to`, `agent_id`, `issued_mode`, `payment_type`, `cash`,`cheque_no`, `cheque_value`, `cheque_remark`, `transaction_id`, `transaction_value`, `transaction_remark`, `balance_amount`,`loan_amt`, `net_cash`,`cash_guarentor_name`,`relationship`, `status`, `insert_login_id`,`created_date`)  VALUES('$req_id', '$cus_id', '$issue_to', '$agent_id', '$issued_mode',  '$payment_type',  '$cash',   '$chequeno', '$chequeValue', '$chequeRemark', '$transaction_id', '$transaction_value',  '$transaction_remark',  '$balance',  '$loan_amt_cal', '$net_cash_cal', '$cash_guarentor_name', '$relationship', '0', '$userid', now() )";
 
 				if (!$mysqli->query($insertQry)) {
-					throw new Exception("Insert loan_issue failed: " . $mysqli->error);
+					$error_msg = "Insert loan_issue failed: " . $mysqli->error;
+					throw new Exception($error_msg);
 				}
 			} else {
 
 				$updateQry = "UPDATE in_verification SET issue_by  = 2, issue_mode = '$issued_mode', payment_type = '$payment_type', update_login_id = $userid, updated_date = current_timestamp() WHERE req_id = $req_id ";
 
 				if (!$mysqli->query($updateQry)) {
-					throw new Exception("Update in_verification failed: " . $mysqli->error);
+					$error_msg = "Update in_verification failed: " . $mysqli->error;
+					throw new Exception($error_msg);
 				}
 
 				$issueresult = $mysqli->query("SELECT loan_id FROM in_issue WHERE req_id = '$req_id' AND loan_id != '' ");
@@ -6848,7 +6868,8 @@ class admin
 					$loan_id = $row["loan_id"] ? $row["loan_id"] + 1 : 101;
 
 					if (!$mysqli->query("UPDATE in_issue SET loan_id = '$loan_id', updated_date = NOW(), update_login_id = '$userid' WHERE req_id = '$req_id'")) {
-						throw new Exception("Loan ID update failed: " . $mysqli->error);
+						$error_msg = "Loan ID update failed: " . $mysqli->error;
+						throw new Exception($error_msg);
 					}
 				} elseif ($issueresult && $issueresult->num_rows > 0) {
 					$loan_row = $issueresult->fetch_assoc();
@@ -6865,7 +6886,8 @@ class admin
 			$updateCalc = "UPDATE acknowlegement_loan_calculation SET int_rate = '$int_rate', due_period = '$due_period', doc_charge = '$doc_charge', proc_fee = '$proc_fee', loan_amt_cal = '$loan_amt_cal', principal_amt_cal = '$principal_amt_cal', int_amt_cal = '$int_amt_cal', tot_amt_cal = '$tot_amt_cal', due_amt_cal = '$due_amt_cal', doc_charge_cal = '$doc_charge_cal', proc_fee_cal = '$proc_fee_cal', net_cash_cal = '$net_cash_cal', due_start_from = '$due_start_from', maturity_month = '$maturity_month', cus_status = 12, update_login_id = $userid, update_date = current_timestamp() WHERE req_id = $req_id ";
 
 			if (!$mysqli->query($updateCalc)) {
-				throw new Exception("Calculation update failed: " . $mysqli->error);
+				$error_msg = "Calculation update failed: " . $mysqli->error;
+				throw new Exception($error_msg);
 			}
 
 			// $qry = $mysqli->query("SELECT customer_name, mobile1 from customer_register where req_ref_id = '$req_id' ");
@@ -6895,10 +6917,10 @@ class admin
 			// Rollback the transaction in case of error
 			$mysqli->rollback();
 			$mysqli->autocommit(TRUE);
-			echo "Error: " . $e->getMessage();
+			$error_msg = "Error: " . $e->getMessage();
 		}
 
-		return ["loanid" => $loan_id, "docid" => $doc_id];
+		return ["loanid" => $loan_id, "docid" => $doc_id, "error_msg" => $error_msg];
 	}
 
 	function getLoanList($mysqli, $id)

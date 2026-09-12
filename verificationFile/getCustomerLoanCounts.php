@@ -38,7 +38,14 @@ if ($currentQry->rowCount() > 0) {
        2. GET PREVIOUS ISSUED LOAN
     ============================ */
 
-    $loanQry = $connect->query("SELECT req.req_id, req.cus_status, cs.created_date AS closed_date, cc.closing_date, cs1.sub_status, (SELECT MAX(c.coll_date) FROM collection c WHERE c.req_id = req.req_id AND c.coll_sub_status='Due Nil') AS due_nil_date, COUNT(*) OVER() AS loan_count
+    $sql = $connect->query("SELECT COUNT(*) AS loan_count
+        FROM request_creation req
+        WHERE req.cus_id = '$cus_id' AND req.cus_status >= 14 AND req.req_id < '$currentReqId'");
+
+        $info = $sql->fetch(PDO::FETCH_ASSOC);
+        $records['loan_count'] = !empty($info['loan_count']) ? $info['loan_count'] : 0;
+
+    $loanQry = $connect->query("SELECT req.req_id, req.cus_status, cs.created_date AS closed_date, cc.closing_date, cs1.sub_status, (SELECT MAX(c.coll_date) FROM collection c WHERE c.req_id = req.req_id AND c.coll_sub_status='Due Nil') AS due_nil_date
         FROM request_creation req
         LEFT JOIN closed_status cs ON cs.req_id = req.req_id
         LEFT JOIN customer_status cs1 ON cs1.req_id = req.req_id
@@ -48,7 +55,6 @@ if ($currentQry->rowCount() > 0) {
 
     if ($loanQry->rowCount() > 0) {
         $loan = $loanQry->fetch(PDO::FETCH_ASSOC);
-        $records['loan_count'] = !empty($loan['loan_count']) ? $loan['loan_count'] : 0;
         $status = (int)$loan['cus_status'];
         $closedDate = !empty($loan['closed_date']) ? date('Y-m-d', strtotime($loan['closed_date'])): '';
         $closingDate = !empty($loan['closing_date']) ? date('Y-m-d', strtotime($loan['closing_date'])) : '';

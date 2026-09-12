@@ -169,7 +169,7 @@ function OnLoadFunctions(cusSts, comm_date, res_sts, comm_sts, call_status,branc
 
     $('#due_followup_table').DataTable().destroy();
     var table = $('#due_followup_table').DataTable({
-        // ...getStateSaveConfig('due_followup_table'),
+        ...getStateSaveConfig('due_followup_table'),
         "order": [[0, "desc"]],
         "processing": true,
         "displayStart": getDisplayStart('due_followup_table'),
@@ -224,7 +224,7 @@ function OnLoadFunctions(cusSts, comm_date, res_sts, comm_sts, call_status,branc
             paginationFunction('due_followup_table');
         }
     });
-    // initColVisFeatures(table, 'due_followup_table');
+    initColVisFeatures(table, 'due_followup_table');
 }
 
 function enableDateColoring() {

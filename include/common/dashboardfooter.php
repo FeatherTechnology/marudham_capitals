@@ -2454,6 +2454,9 @@
 
         function getStateSaveConfig(tableId) {
 
+            const COLVIS_VERSION = 'v1'; // Increment this if you change the logic for saving/restoring visibility
+            const STORAGE_KEY = tableId + "_colVis_" + COLVIS_VERSION;
+
             return {
                 // Tells DataTables to remember state (we override which parts to save)
                 stateSave: true,
@@ -2467,7 +2470,7 @@
 
                     // Save into localStorage, tied to this table's ID
                     // Example key: "company_creation_table_colVis"
-                    localStorage.setItem(tableId + "_colVis", JSON.stringify(visibility));
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(visibility));
                 },
 
                 // 🔹 This runs BEFORE DataTables builds the table
@@ -2475,11 +2478,18 @@
                 stateLoadParams: function(settings) {
 
                     // Read saved visibility from local storage
-                    const saved = localStorage.getItem(tableId + "_colVis");
+                    const saved = localStorage.getItem(STORAGE_KEY);
                     if (!saved) return; // nothing saved yet → do nothing
 
                     // Convert back from JSON string → array of booleans
                     const visibility = JSON.parse(saved);
+
+                    // IMPORTANT:
+                    // Only apply if column count matches
+                    if (visibility.length !== settings.aoColumns.length) {
+                        localStorage.removeItem(STORAGE_KEY);
+                        return;
+                    }
 
                     // Apply saved visibility to each column
                     visibility.forEach((isVisible, index) => {
@@ -2491,7 +2501,9 @@
 
         function initColVisFeatures(table, tableId) {
 
-            const STORAGE_KEY = tableId + "_colVis";
+            const COLVIS_VERSION = 'v1'; // Increment this if you change the logic for saving/restoring visibility
+            const STORAGE_KEY = tableId + "_colVis_" + COLVIS_VERSION;
+
             const COLLECTION_SELECTOR = '.dt-button-collection .buttons-columnVisibility';
 
             // 1. Sync ColVis button active state with column

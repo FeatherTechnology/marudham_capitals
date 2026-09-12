@@ -70,6 +70,14 @@ try {
     // Begin transaction
     $connect->beginTransaction();
 
+    $qry = $connect->prepare("SELECT COUNT(*) FROM loan_issue WHERE req_id = ? AND balance_amount = ?");
+    $qry->execute([$req_id, $balance]);
+    $loanIssueCnt = $qry->fetchColumn();
+
+    if($loanIssueCnt > 0) {
+        throw new Exception("Loan Issue already exists for this request with the same balance amount.");
+    }
+    
     // Insert into loan_issue
     $stmt = $connect->prepare(
         "INSERT INTO loan_issue 
