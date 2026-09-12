@@ -16,8 +16,33 @@ const loan_category = new Choices('#loan_cat_filter', {
     noChoicesText: 'Select Loan Category',
     allowHTML: true
 });
+
+// load each dropdown only when the user actually opens/clicks it.
+let branchLoaded = false;
+let sectorLoaded = false;
+let loanCatLoaded = false;
 // Document is ready
 $(document).ready(function () {
+
+     // Trigger the single first load, filtered if filters were restored
+    let savedFilters = getSavedRequestFilters();
+    let hasSavedFilters = savedFilters && (
+        (savedFilters.branch && savedFilters.branch.length) ||
+        (savedFilters.sector && savedFilters.sector.length) ||
+        (savedFilters.loan_cat && savedFilters.loan_cat.length)
+    );
+
+    if (hasSavedFilters) {
+        restoreRequestFilters(savedFilters, function () {
+            if ($.fn.DataTable.isDataTable('#request_table')) {
+                $('#request_table').DataTable().ajax.reload(null, false);
+            }
+        });
+    } else {
+        if ($.fn.DataTable.isDataTable('#request_table')) {
+            $('#request_table').DataTable().ajax.reload(null, false);
+        }
+    }
 
     $('.closeModal').click(function () {
         $('#cusHistoryTable tbody').empty();
@@ -90,46 +115,49 @@ $(document).ready(function () {
     // Search Button Click Event
     $('#search_loan').on('click', function () {
 
-        let branch = $("#branch_filter").val();
-        let sector = $("#sector_filter").val();
-        let loan_cat = $("#loan_cat_filter").val();
-        if ((!branch || branch.length === 0) && (!sector || sector.length === 0) && (!loan_cat || loan_cat.length === 0)) {
-            swalError('Warning', 'Please select at least one filter');
-            return;
-        }
+      saveRequestFilters();
 
         $('#request_table').DataTable().ajax.reload();
     });
 
     $('#branch_filter').on('change', function () {
         let branch = $(this).val();
-
+        saveRequestFilters();
         getSectorDropdown('request', branch);
     });
+ // NEW — keep storage in sync whenever sector selection changes (select or deselect)
+    $('#sector_filter').on('change', function () {
+        saveRequestFilters();
+    });
 
-     // load each dropdown only when the user actually opens/clicks it.
-    let branchLoaded = false;
-    let sectorLoaded = false;
-    let loanCatLoaded = false;
+    // NEW — keep storage in sync whenever loan category selection changes (select or deselect)
+    $('#loan_cat_filter').on('change', function () {
+        saveRequestFilters();
+    });
+
+
 
     branchChoices.passedElement.element.addEventListener('showDropdown', function () {
         if (!branchLoaded) {
             branchLoaded = true;
-            getBranchDropdown();
+            let currentlySelected = $('#branch_filter').val() || [];
+            getBranchDropdown(currentlySelected);
         }
     });
 
     sectorChoices.passedElement.element.addEventListener('showDropdown', function () {
         if (!sectorLoaded) {
             sectorLoaded = true;
-            getSectorDropdown('request');
+           let currentlySelected = $('#sector_filter').val() || [];
+            getSectorDropdown('request',$('#branch_filter').val() || [], currentlySelected);
         }
     });
 
     loan_category.passedElement.element.addEventListener('showDropdown', function () {
         if (!loanCatLoaded) {
             loanCatLoaded = true;
-            getLoanCatName('common');
+            let currentlySelected = $('#loan_cat_filter').val() || [];
+            getLoanCatName('common', currentlySelected);
         }
     });
 
@@ -164,66 +192,55 @@ function successSwal(title, text) {
     });
 }
 
-function getBranchDropdown() {
-    $.post('common_files/user_mapped_branches.php', {}, function (response) {
+function getBranchDropdown(preselect = []) {
+    return $.post('common_files/user_mapped_branches.php', {}, function (response) {
         branchChoices.clearStore();
+        let items = [];
         $.each(response, function (index, val) {
-            let items = [
-                {
-                    value: val.branch_id,
-                    label: val.branch_name,
-                }
-            ];
-            branchChoices.setChoices(items); // Add choices
-
+            items.push({
+                value: val.branch_id,
+                label: val.branch_name,
+                selected: preselect.includes(String(val.branch_id))
+            });
         });
+        branchChoices.setChoices(items, 'value', 'label', true);
     }, 'json');
 }
 
-function getSectorDropdown(module, branch = []) {
-
+function getSectorDropdown(module, branch = [], preselect = []) {
     sectorChoices.clearStore();
-
-    $.ajax({
+    return $.ajax({
         url: 'common_files/get_sector_name.php',
         type: 'POST',
-        data: {
-            module: module,
-            branch: branch
-        },
+        data: { module: module, branch: branch },
         dataType: 'json',
         success: function (response) {
-
             let items = [];
-
             $.each(response, function (i, val) {
                 items.push({
                     value: val.id,
-                    label: val.name
+                    label: val.name,
+                    selected: preselect.includes(String(val.id))
                 });
             });
-
             sectorChoices.setChoices(items, 'value', 'label', true);
         }
     });
 }
 
-function getLoanCatName(module) {
-    $.post(
-        'common_files/get_loan_category.php', { module: module },
-        function (response) {
-            loan_category.clearStore();
-            let items = [];
-            $.each(response, function (index, val) {
-                items.push({
-                    value: val.loan_category_creation_id,
-                    label: val.loan_category_creation_name,
-                });
+function getLoanCatName(module, preselect = []) {
+    return $.post('common_files/get_loan_category.php', { module: module }, function (response) {
+        loan_category.clearStore();
+        let items = [];
+        $.each(response, function (index, val) {
+            items.push({
+                value: val.loan_category_creation_id,
+                label: val.loan_category_creation_name,
+                selected: preselect.includes(String(val.loan_category_creation_id))
             });
-            loan_category.setChoices(items, 'value', 'label', true);
-        },
-        'json'
-    );
+        });
+        loan_category.setChoices(items, 'value', 'label', true);
+    }, 'json');
 }
 
 function setSectorLabel(screen) {
@@ -251,4 +268,64 @@ function setSectorLabel(screen) {
             }
         }
     });
+}
+const  REQUEST_FILTER_KEY = 'request_table_filters';
+
+// Save value + label for each selected item, so restore doesn't need an AJAX call
+function saveRequestFilters() {
+    let filters = {
+        branch: branchChoices.getValue().map(item => ({ value: item.value, label: item.label })),
+        sector: sectorChoices.getValue().map(item => ({ value: item.value, label: item.label })),
+        loan_cat: loan_category.getValue().map(item => ({ value: item.value, label: item.label }))
+    };
+    sessionStorage.setItem(REQUEST_FILTER_KEY, JSON.stringify(filters));
+}
+
+function getSavedRequestFilters() {
+    let saved = sessionStorage.getItem(REQUEST_FILTER_KEY);
+    if (!saved) return null;
+    try {
+        return JSON.parse(saved);
+    } catch (e) {
+        return null;
+    }
+}
+
+// Restores selected chips directly from saved {value, label} pairs — no AJAX, no full list needed.
+// Lazy-load flags (branchLoaded/sectorLoaded/loanCatLoaded) stay false so the full dropdown
+// list still loads normally the first time the user opens it.
+function restoreRequestFilters(filters, onDone) {
+    let hasBranch = filters.branch && filters.branch.length;
+    let hasSector = filters.sector && filters.sector.length;
+    let hasLoanCat = filters.loan_cat && filters.loan_cat.length;
+
+    if (hasBranch) {
+        let items = filters.branch.map(f => ({
+            value: f.value,
+            label: f.label,
+            selected: true
+        }));
+        branchChoices.setChoices(items, 'value', 'label', true);
+    }
+
+    if (hasSector) {
+        let items = filters.sector.map(f => ({
+            value: f.value,
+            label: f.label,
+            selected: true
+        }));
+        sectorChoices.setChoices(items, 'value', 'label', true);
+    }
+
+    if (hasLoanCat) {
+        let items = filters.loan_cat.map(f => ({
+            value: f.value,
+            label: f.label,
+            selected: true
+        }));
+        loan_category.setChoices(items, 'value', 'label', true);
+    }
+
+    // No AJAX involved anymore — resolve immediately
+    if (typeof onDone === 'function') onDone();
 }
