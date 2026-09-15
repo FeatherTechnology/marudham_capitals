@@ -666,6 +666,11 @@ if (!empty($getUser) && is_array($getUser)) {
 										<a href="hand_cash_balance_sheet"><i class='icon-dollar-sign'></i>Hand Cash Balance Sheet</a>
 									</li>
 								<?php  } ?>
+								<?php if (($leftbar_agent_balance_sheet ?? 1) == 0) { ?>
+									<li>
+										<a href="agent_balance_sheet"><i class='icon-magnet'></i>Agent Balance Sheet</a>
+									</li>
+								<?php  } ?>
 								<?php if (($leftbar_accounts_loan_issue ?? 1) == 0) { ?> 
 									<li>
 										<a href="edit_accounts_loan_issue"><i class='icon-wallet'></i>Loan Issue</a>

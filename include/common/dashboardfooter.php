@@ -2934,6 +2934,11 @@
         <script src="js/hand_cash_balance_sheet.js"></script>
     <?php }
 
+    //Agent Cash Balance Sheet
+    if ($current_page == 'agent_balance_sheet') { ?>
+        <script src="js/agent_balance_sheet.js"></script>
+    <?php }
+
     // accounts loan Isue
     if ($current_page == 'edit_accounts_loan_issue') { ?>
         <script src="js/edit_accounts_loan_issue.js"></script>

@@ -1,12 +1,15 @@
-.card {
+.card:not(.ag_card) {
     min-height: 105vh;
+    margin: 12px 5px;
+}
+
+.ag_card {
     margin: 12px 5px;
 }
 
 .inside-title {
     margin: 10px -20px;
 }
-
 
 .split-card {
     display: block;
@@ -53,8 +56,6 @@ table tr td:not(:first-child) {
 }
 
 
-
-
 /* Toggle button styles */
 .toggle-container {
     display: flex;
@@ -76,7 +77,7 @@ table tr td:not(:first-child) {
     transition: background-color 0.3s, color 0.3s;
 }
 
-.toggle-button.active:not(#by_user) {
+.toggle-button.active:not(#by_user, #ag_view_type, #ag_namewise) {
     background-color: #009688;
     color: white;
 }
@@ -92,7 +93,6 @@ table tr td:not(:first-child) {
     margin-top: 35px;
     font-family: 'Open Sans';
 }
-
 
 
 @media (max-width: 576px) {

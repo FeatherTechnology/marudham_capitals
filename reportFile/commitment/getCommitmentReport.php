@@ -121,6 +121,8 @@ if (isset($_POST['search'])) {
     }
 }
 
+$query .= " GROUP BY c.id ";
+
 if (isset($_POST['order'])) {
     $query .= " ORDER BY " . $column[$_POST['order']['0']['column']] . ' ' . $_POST['order']['0']['dir'];
 }
