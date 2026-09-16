@@ -15,10 +15,14 @@ if (isset($_POST['submit_loanIssue']) && $_POST['submit_loanIssue'] != '') {
 		</script>
 	<?php
 	}
+	$msc = 1;
+	if ($response['error_msg'] != '') {
+		$msc = 2;
+	}
 	?>
 	<!-- <script> alert('Loan Issued Details Submitted'); </script> -->
 	<script>
-		location.href = '<?php echo $HOSTPATH;  ?>edit_loan_issue&msc=1';
+		location.href = '<?php echo $HOSTPATH;  ?>edit_loan_issue&msc=<?php echo $msc; ?>';
 	</script>
 <?php
 }

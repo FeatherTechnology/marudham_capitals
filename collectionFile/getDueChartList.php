@@ -385,7 +385,7 @@ foreach ($allCollections as $row) {
 
     if ($loanFrom['due_method_calc'] == 'Monthly' ||  $loanFrom['due_method_scheme'] == '1') {
 
-        if (($collDate !== null &&  $collDate < $dueStartDate) || ($transDate !== null &&   $transDate < $dueStartDate)) {
+        if (($collDate !== null && getMonthKey($collDate) < getMonthKey($dueStartDate)) || ($transDate !== null && getMonthKey($transDate) < getMonthKey($dueStartDate))) {
             $includeBefore = true;
         }
     } elseif ($loanFrom['due_method_scheme'] == '2') {
@@ -1078,14 +1078,14 @@ foreach ($allCollections as $row) {
                                 <?php
                                 $a =  $i - 1;
                                 $pendingval =  ( $due_amt_1 * $a ) - $totalpaid - $totalPreClose;
-                                $pendingval = max(0, $pendingval);
 
-                                echo $pendingval;
+                                echo max(0, $pendingval);
                                 ?>
                             </td>
                             <td>
                                 <?php  $payableval = ($i < 1) ? 0 : $due_amt_1 + $pendingval;
-                                echo ( $payableval > $bal_amt )  ? moneyFormatIndia(  $bal_amt ) : moneyFormatIndia(  $payableval );
+                                $payable_val = ( $payableval > $bal_amt )  ? $bal_amt : $payableval;
+                                echo max( 0, moneyFormatIndia($payable_val));
                                 ?>
                             </td>
 
@@ -1146,6 +1146,7 @@ foreach ($allCollections as $row) {
                         <td></td>
                     <?php } ?>
 
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>

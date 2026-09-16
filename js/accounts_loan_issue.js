@@ -239,7 +239,7 @@ $(document).ready(function () {
             let req_id = $('#req_id').val();
             let cus_id = $('#cus_id').val();
             let issue_to = $('#issue_to').val();
-            let net_cash = $('#net_cash').val().replace(/,/g, '');
+            let net_cash = $('#net_cash_cal').val().replace(/,/g, '');
             let balance = $('#balance').val().replace(/,/g, '');
             let loan_amt_cal = $('#loan_amt_cal').val().replace(/[\s,]+/g, '');
             let issued_mode = $('#issued_mode').val();

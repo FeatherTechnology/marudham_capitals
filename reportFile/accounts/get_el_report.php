@@ -37,7 +37,7 @@ $column = array(
 
 $query = "
 SELECT * FROM (
-    SELECT cdh.created_date AS tdate, '' AS transaction_date, 'Hand Cash' AS ctype, '' AS Credit, cdh.amt AS Debit, cdh.amt AS Amount, ndc.name 
+    SELECT cdh.created_date AS tdate, '' AS transaction_date, 'Hand Cash' AS ctype, '' AS Credit, cdh.amt AS Debit, cdh.amt AS Amount, ndc.name, cdh.area, cdh.ident, cdh.remark 
     FROM ct_db_hel cdh
     JOIN name_detail_creation ndc ON cdh.name_id = ndc.name_id 
     WHERE DATE(cdh.created_date) BETWEEN '$from_date' AND '$to_date'" . 
@@ -45,7 +45,7 @@ SELECT * FROM (
 
     UNION ALL 
 
-    SELECT cdb.updated_date AS tdate, cdb.created_date AS transaction_date, cdb.bank_id AS ctype, '' AS Credit, cdb.amt AS Debit, cdb.amt AS Amount, ndc.name 
+    SELECT cdb.updated_date AS tdate, cdb.created_date AS transaction_date, cdb.bank_id AS ctype, '' AS Credit, cdb.amt AS Debit, cdb.amt AS Amount, ndc.name, cdb.area, cdb.ident, cdb.remark 
     FROM ct_db_bel cdb 
     JOIN name_detail_creation ndc ON cdb.name_id = ndc.name_id
     WHERE DATE(cdb.updated_date) BETWEEN '$from_date' AND '$to_date'" . 
@@ -53,7 +53,7 @@ SELECT * FROM (
 
     UNION ALL 
 
-    SELECT cch.created_date AS tdate, '' AS transaction_date, 'Hand Cash' AS ctype, cch.amt AS Credit, '' AS Debit, cch.amt AS Amount, ndc.name 
+    SELECT cch.created_date AS tdate, '' AS transaction_date, 'Hand Cash' AS ctype, cch.amt AS Credit, '' AS Debit, cch.amt AS Amount, ndc.name, cch.area, cch.ident, cch.remark 
     FROM ct_cr_hel cch
     JOIN name_detail_creation ndc ON cch.name_id = ndc.name_id
     WHERE DATE(cch.created_date) BETWEEN '$from_date' AND '$to_date'" . 
@@ -61,7 +61,7 @@ SELECT * FROM (
 
     UNION ALL 
 
-    SELECT ccb.updated_date AS tdate, ccb.created_date AS transaction_date, ccb.bank_id AS ctype, ccb.amt AS Credit, '' AS Debit, ccb.amt AS Amount, ndc.name 
+    SELECT ccb.updated_date AS tdate, ccb.created_date AS transaction_date, ccb.bank_id AS ctype, ccb.amt AS Credit, '' AS Debit, ccb.amt AS Amount, ndc.name, ccb.area, ccb.ident, ccb.remark 
     FROM ct_cr_bel ccb
     JOIN name_detail_creation ndc ON ccb.name_id = ndc.name_id
     WHERE DATE(ccb.updated_date) BETWEEN '$from_date' AND '$to_date'" . 
@@ -107,27 +107,30 @@ $statement = $connect->prepare($query . $query1);
 $statement->execute();
 $result = $statement->fetchAll();
 
-$data = array();
+$data = [];
 $sno = 1;
 foreach ($result as $row) {
     if ($row['ctype'] != 'Hand Cash') {
-        $bnameqry = $connect->query("SELECT short_name,acc_no from bank_creation where id = '" . $row['ctype'] . "' ");
+        $bnameqry = $connect->query("SELECT short_name, acc_no FROM bank_creation WHERE id = '" . $row['ctype'] . "' ");
         $bnamerun = $bnameqry->fetch();
         $bname = $bnamerun['short_name'] . ' - ' . substr($bnamerun['acc_no'], -5);
     } else {
         $bname = $row['ctype'];
     }
-    $sub_array = array();
-    $sub_array[] = $sno++;
-    $sub_array[] = date('d-m-Y', strtotime($row['tdate']));
-    $sub_array[] = !empty($row['transaction_date']) ? date('d-m-Y', strtotime($row['transaction_date'])) : '';
-    $sub_array[] = $row['name'];
-    $sub_array[] = $bname;
-    $sub_array[] = moneyFormatIndia($row['Credit']);
-    $sub_array[] = moneyFormatIndia($row['Debit']);
-    $sub_array[] = moneyFormatIndia($row['Amount']);
 
-    $data[] = $sub_array;
+    $data[] = [
+        $sno++,
+        date('d-m-Y', strtotime($row['tdate'])),
+        !empty($row['transaction_date']) ? date('d-m-Y', strtotime($row['transaction_date'])) : '',
+        $row['name'],
+        $row['area'],
+        $row['ident'],
+        $row['remark'],
+        $bname,
+        moneyFormatIndia($row['Credit']),
+        moneyFormatIndia($row['Debit']),
+        moneyFormatIndia($row['Amount']),
+    ];
 }
 
 $output = array(

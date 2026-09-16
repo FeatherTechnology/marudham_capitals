@@ -29,8 +29,8 @@
 						<?php
 						}
 						if ($mscid == 2) { ?>
-							<div class="alert alert-success" role="alert">
-								<div class="alert-text"> Approval Removed Successfully! </div>
+							<div class="alert alert-danger" role="alert">
+								<div class="alert-text"> Failed to Submit Loan Issued. </div>
 							</div>
 					<?php
 						}

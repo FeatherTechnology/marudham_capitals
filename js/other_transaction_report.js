@@ -601,7 +601,7 @@ function elReportTable() {
             };
 
             // Array of column indices to sum
-            var columnsToSum = [5, 6];
+            var columnsToSum = [8, 9];
 
             // Loop through each column index
             columnsToSum.forEach(function (colIndex) {
