@@ -2075,15 +2075,18 @@
                 var tableid = $(this).data('id');
                 let cusid = $(this).data('cusid');
                 let replace_status = $(this).data('replace-status');
+                let sts = $(this).data('sts'); //1-receive, 2-confirm
                 event.preventDefault();
-                if (confirm('Are you sure to Mark this Track as Received?')) {
+                const label = (sts == '1') ? 'Receive' : 'Confirm';
+                if (confirm(`Are you sure to Mark this Track as ${label}?`)) {
                     $.ajax({
                         url: 'documentTrackFile/receiveTrack.php',
                         type: 'post',
                         data: {
                             'id': tableid,
                             'cus_id': cusid,
-                            replace_status
+                            'replace_status': replace_status,
+                            'sts': sts
                         },
                         cache: false,
                         success: function(response) {
