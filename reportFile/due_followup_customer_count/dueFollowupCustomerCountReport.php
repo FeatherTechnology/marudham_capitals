@@ -65,7 +65,6 @@ if ($selectedType == '1') {
         FROM area_duefollowup_mapping
         WHERE map_id IN ($line_ids_str)
     ");
-
 } else {
 
     echo json_encode([
@@ -106,7 +105,6 @@ while ($userRow = $userQry->fetch()) {
         );
 
         $due_followup_lines = implode(',', $line_ids);
-
     } else {
         $due_followup_lines = $userRow['due_followup_lines'];
     }
@@ -190,121 +188,143 @@ while ($userRow = $userQry->fetch()) {
 
         // ===== Collection Data =====
         $collectionData = [];
-        $colQry = $connect->query("SELECT req_id, coll_date, payable_amt, due_amt_track, total_paid_track
-                FROM collection WHERE req_id IN ($id_list) AND DATE(coll_date) <= '$to_date' 
-                ORDER BY req_id, coll_date ASC");
+
+        $colQry = $connect->query("SELECT c.req_id,c.coll_date,c.trans_date,c.payable_amt,c.due_amt_track,c.total_paid_track,
+        CASE WHEN c.trans_date IS NOT NULL AND YEAR(c.trans_date) <> 0
+            THEN c.trans_date ELSE c.coll_date END AS effective_coll_date
+    FROM collection c
+    WHERE c.req_id IN ($id_list)
+    AND DATE( CASE WHEN c.trans_date IS NOT NULL AND YEAR(c.trans_date) <> 0 THEN c.trans_date ELSE c.coll_date END) <= '$to_date'
+    ORDER BY c.req_id, effective_coll_date ASC");
         while ($col = $colQry->fetch(PDO::FETCH_ASSOC)) {
             $collectionData[$col['req_id']][] = $col;
         }
 
+
         // ===== Paid Summary =====
         $paidSummary = [];
-        // $current_loanId = []; // For debugging purpose
-        $paidQry = $connect->query("SELECT c.req_id, SUM(c.due_amt_track) AS total_paid,
-                MIN(c.due_amt) AS monthly_due, MIN(a.due_start_from) AS due_start_from,
-                MAX(c.coll_date) AS last_paid_date,
-                COUNT(DISTINCT EXTRACT(YEAR_MONTH FROM c.coll_date)) AS paid_month_count,
-                COALESCE(SUM(CASE WHEN c.coll_date < DATE_FORMAT('$to_date','%Y-%m-01') THEN c.due_amt_track ELSE 0 END),0) AS till_last_month_paid
-                FROM collection c
-                JOIN acknowlegement_loan_calculation a ON c.req_id = a.req_id
-                WHERE DATE(c.coll_date)<= '$to_date' AND c.req_id IN ($id_list)
-                GROUP BY c.req_id");
+        $paidQry = $connect->query("SELECT c.req_id,SUM(c.due_amt_track) AS total_paid,MIN(c.due_amt) AS monthly_due,MIN(a.due_start_from) AS due_start_from,
+        MAX(CASE WHEN c.trans_date IS NOT NULL AND YEAR(c.trans_date) <> 0 THEN c.trans_date ELSE c.coll_date END) AS last_paid_date,
+        COUNT(DISTINCT EXTRACT( YEAR_MONTH FROM CASE
+                    WHEN c.trans_date IS NOT NULL AND YEAR(c.trans_date) <> 0 THEN c.trans_date ELSE c.coll_date END)) AS paid_month_count,
+        COALESCE(SUM(CASE WHEN DATE(CASE WHEN c.trans_date IS NOT NULL AND YEAR(c.trans_date) <> 0 THEN c.trans_date ELSE c.coll_date END) < DATE_FORMAT('$to_date', '%Y-%m-01')
+                    THEN c.due_amt_track ELSE 0 END
+            ),0) AS till_last_month_paid
+    FROM collection c
+    JOIN acknowlegement_loan_calculation a ON c.req_id = a.req_id
+    WHERE DATE( CASE WHEN c.trans_date IS NOT NULL AND YEAR(c.trans_date) <> 0 THEN c.trans_date ELSE c.coll_date END) <= '$to_date'
+    AND c.req_id IN ($id_list)
+    GROUP BY c.req_id");
 
-        while ($row = $paidQry->fetch()) {
+        while ($row = $paidQry->fetch(PDO::FETCH_ASSOC)) {
             $start = new DateTime($row['due_start_from']);
             $end = new DateTime($to_date);
-            $months = ($end->format('Y') - $start->format('Y')) * 12 + ($end->format('m') - $start->format('m')) + 1;
+            $months = ($end->format('Y') - $start->format('Y')) * 12  + ($end->format('m') - $start->format('m')) + 1;
 
             $paidSummary[$row['req_id']] = [
-                'total_paid' => (float)$row['total_paid'],
-                'expected_due' => (float)($months * $row['monthly_due']),
-                'previous_due' => (float)(($months - 1) * $row['monthly_due']),
+                'total_paid' => (float) $row['total_paid'],
+                'expected_due' => (float) ($months * $row['monthly_due']),
+                'previous_due' => (float) (($months - 1) * $row['monthly_due']),
                 'last_paid_date' => $row['last_paid_date'],
-                'till_last_month_paid' => $row['till_last_month_paid'],
-                'paid_month_count' => $row['paid_month_count'],
-                'monthly_due' => (float)$row['monthly_due'],
+                'till_last_month_paid' => (float) $row['till_last_month_paid'],
+                'paid_month_count' => (int) $row['paid_month_count'],
+                'monthly_due' => (float) $row['monthly_due'],
                 'due_start_from' => $row['due_start_from'],
-                'future_due' => (float)(($months + 1) * $row['monthly_due'])
+                'future_due' => (float) (($months + 1) * $row['monthly_due'])
             ];
         }
+
 
         // ===== Classification =====
         foreach ($customers as $row) {
             $rid = $row['req_id'];
-            if (!in_array($rid, $filtered_ids)) continue;
-
+            if (!in_array($rid, $filtered_ids)) {
+                continue;
+            }
             $collList = $collectionData[$rid] ?? [];
+
             $end = strtotime(min($row['maturity_date'], $to_date));
             $start = strtotime($row['due_start_from']);
             $months = (date('Y', $end) - date('Y', $start)) * 12 + (date('m', $end) - date('m', $start)) + 1;
             $pending_month = max(0, $months - 1);
             $start_month = strtotime(date('Y-m-01', strtotime($to_date)));
             $collectedTillMonthStart = 0;
-
+            // ===== Collection calculation =====
             foreach ($collList as $coll) {
-                $collDate = strtotime($coll['coll_date']);
-                if ($collDate < $start_month) $collectedTillMonthStart += (int)$coll['due_amt_track'];
+                // Use trans_date when valid,
+                // otherwise use coll_date
+                $effectiveDate = $coll['effective_coll_date'];
+                if (!empty($effectiveDate) && strtotime($effectiveDate) < $start_month) {
+                    $collectedTillMonthStart +=
+                        (int) $coll['due_amt_track'];
+                }
             }
-
             $payable_amount = ($months * $row['due_amt_cal']) - $collectedTillMonthStart;
             $pending_amount_atMonthStart = ($pending_month * $row['due_amt_cal']) - $collectedTillMonthStart;
-
             // ===== Determine current and balance customer =====
             $isCurrentCustomer = false;
             $isBalanceCustomer = false;
-
-            $iscurrentMonthStart  = $payable_amount <= $row['due_amt_cal']
-                && $pending_amount_atMonthStart <= 0
-                && (
-                    (($row['due_method_scheme'] === '1' || $row['due_method_calc'] === 'Monthly')
-                        && date('Y-m', strtotime($row['maturity_date'])) >= date('Y-m', $start_month))
-                    || (($row['due_method_scheme'] != '1' || $row['due_method_calc'] != 'Monthly')
-                        && strtotime($row['maturity_date']) > $start_month)
+            $iscurrentMonthStart =
+                $payable_amount <= $row['due_amt_cal'] && $pending_amount_atMonthStart <= 0 && ((
+                    (
+                        $row['due_method_scheme'] === '1'
+                        || $row['due_method_calc'] === 'Monthly'
+                    )
+                    && date(
+                        'Y-m',
+                        strtotime($row['maturity_date'])
+                    ) >= date('Y-m', $start_month)
+                )
+                    ||
+                    (
+                        (
+                            $row['due_method_scheme'] != '1'
+                            && $row['due_method_calc'] != 'Monthly'
+                        )
+                        && strtotime($row['maturity_date']) > $start_month
+                    )
                 );
+
 
             if ($iscurrentMonthStart) {
                 $loan_category_data[$cat_id]['t_current_count']++;
-                // $current_loanId = $row['loan_id']; // For debugging purpose
-                // print_r($current_loanId); // For debugging purpose
-                // echo "<br>"; // For debugging purpose
-
                 $isCurrentCustomer = true;
-
-                // Balance customer check
+                // ===== Balance customer check =====
                 if ($payable_amount > 0 && $row['responsible'] != 0) {
                     $loan_category_data[$cat_id]['balance_count']++;
                     $isBalanceCustomer = true;
                 }
             }
 
+
             // ===== Responsible Zero (current customer) =====
-            if ($isCurrentCustomer && $row['responsible'] == '0') {
+            if ($isCurrentCustomer  && $row['responsible'] == '0') {
                 $loan_category_data[$cat_id]['responsible_zero']++;
             }
-
             // ===== Payable Zero (current customer) =====
             if ($isCurrentCustomer && $payable_amount <= 0 && $row['responsible'] != '0') {
                 $loan_category_data[$cat_id]['payable_zero']++;
             }
-
-            // ===== Paid / Partially Paid / Unpaid (balance customer only) =====
+            // ===== Paid / Partially Paid / Unpaid =====
+            // ===== Balance customer only =====
             if ($isBalanceCustomer) {
+
                 if (isset($paidSummary[$rid])) {
                     $p = $paidSummary[$rid];
                     $expected_months = monthDiff($p['due_start_from'], $to_date);
-
                     switch (true) {
-                        case ($p['total_paid'] >= $p['expected_due']
-                            && date('Y-m', strtotime($p['last_paid_date'])) == date('Y-m', $start_month)):
+                        // ===== Fully Paid =====
+                        case ($p['total_paid'] >= $p['expected_due'] && !empty($p['last_paid_date']) && date('Y-m', strtotime($p['last_paid_date'])) == date('Y-m', $start_month)):
                             $loan_category_data[$cat_id]['paid']++;
                             break;
-
-                        case ($p['total_paid'] > 0 && $p['total_paid'] < $p['expected_due']
-                            && date('Y-m', strtotime($p['last_paid_date'])) == date('Y-m', $start_month)):
+                        // ===== Partially Paid =====
+                        case ($p['total_paid'] > 0 && $p['total_paid'] < $p['expected_due'] && !empty($p['last_paid_date']) && date('Y-m', strtotime($p['last_paid_date'])) == date('Y-m', $start_month)):
                             $loan_category_data[$cat_id]['partially_paid']++;
                             break;
-
+                        // ===== Unpaid =====
                         case ($p['total_paid'] == 0):
+                            $loan_category_data[$cat_id]['unpaid']++;
+                            break;
                         default:
                             $loan_category_data[$cat_id]['unpaid']++;
                             break;
@@ -315,21 +335,16 @@ while ($userRow = $userQry->fetch()) {
             }
         }
         // end customer loop
-
         // ===== Calculate total paid & percentages =====
         $total_paid = $loan_category_data[$cat_id]['paid'] + $loan_category_data[$cat_id]['partially_paid'];
-
         $balance = $loan_category_data[$cat_id]['balance_count'];
-
         $loan_category_data[$cat_id]['total_paid'] = $total_paid;
-
         $loan_category_data[$cat_id]['paid_percentage'] = ($balance > 0) ? round(($total_paid / $balance) * 100, 1) : 0;
-
         $loan_category_data[$cat_id]['unpaid_percentage'] = ($balance > 0) ? round(($loan_category_data[$cat_id]['unpaid'] / $balance) * 100, 1) : 0;
     } // end loan category loop
 
     foreach ($loan_category_data as $cat_data) {
-        if ($cat_data['t_current_count'] > 0) {   // only keep if total_count > 0
+        if ($cat_data['t_current_count'] > 0) {
             $cat_data['sno'] = $sno++;
             $data[] = $cat_data;
             foreach ($grand_totals as $key => $val) {
@@ -337,7 +352,8 @@ while ($userRow = $userQry->fetch()) {
             }
         }
     }
-} //While END.
+} // While END
+
 
 $total_paid = $grand_totals['paid'] + $grand_totals['partially_paid'];
 $balance = $grand_totals['balance_count'];
@@ -366,7 +382,10 @@ $length = isset($_POST['length']) ? intval($_POST['length']) : -1;
 $recordsTotal = count($data);
 $recordsFiltered = $recordsTotal;
 
-if ($length != -1) $data = array_slice($data, $start, $length);
+if ($length != -1) {
+    $data = array_slice($data, $start, $length);
+}
+
 
 // ===== Output JSON =====
 echo json_encode([

@@ -133,27 +133,28 @@ foreach ($line_ids as $current_line_id) {
             $filtered_ids[] = $cust['req_id'];
         }
     }
-    
+
     if (empty($filtered_ids)) {
         continue;
     }
-    
+
     $filtered_ids_map = array_flip($filtered_ids);
     $id_list = implode(',', array_map('intval', $filtered_ids));
 
     // **5. Collection data retrieval**
     $collectionData = [];
-    $colStmt = $connect->prepare("
-        SELECT c.req_id, c.coll_date, c.due_amt_track
-        FROM collection c
-        WHERE c.req_id IN ($id_list) AND DATE(c.coll_date) <= ?
-        ORDER BY c.req_id, c.coll_date
-    ");
+
+    $colStmt = $connect->prepare("SELECT c.req_id, c.coll_date, c.trans_date, c.due_amt_track,
+        CASE WHEN c.trans_date IS NOT NULL AND c.trans_date <> '0000-00-00' THEN c.trans_date ELSE c.coll_date END AS effective_coll_date
+    FROM collection c
+    WHERE c.req_id IN ($id_list)
+    AND DATE( CASE WHEN c.trans_date IS NOT NULL AND c.trans_date <> '0000-00-00'THEN c.trans_date ELSE c.coll_date END) <= ?
+    ORDER BY c.req_id, effective_coll_date");
+
     $colStmt->execute([$from_date]);
     while ($col = $colStmt->fetch(PDO::FETCH_ASSOC)) {
         $collectionData[$col['req_id']][] = $col;
     }
-
     // Main loops matching and logical metrics
     $t_current_count = $responsible_zero = $balance_count = $payable_zero = 0;
     $balance_req_ids = [];
@@ -170,13 +171,12 @@ foreach ($line_ids as $current_line_id) {
         $collList = $collectionData[$cust['req_id']] ?? [];
         $end = min($cust['maturity_date'], $from_date);
         $start = $cust['due_start_from'];
-        
         $months = (date('Y', strtotime($end)) - date('Y', strtotime($start))) * 12 + (date('m', strtotime($end)) - date('m', strtotime($start))) + 1;
         $pending_month = max(0, $months - 1);
         $collectedTillMonthStart = 0;
 
         foreach ($collList as $coll) {
-            if (strtotime($coll['coll_date']) < $start_month) {
+            if (strtotime($coll['effective_coll_date']) < $start_month) {
                 $collectedTillMonthStart += (int)$coll['due_amt_track'];
             }
         }
@@ -204,7 +204,6 @@ foreach ($line_ids as $current_line_id) {
 
     if (!empty($balance_req_ids)) {
         $balance_req_str = implode(',', array_map('intval', $balance_req_ids));
-        
         // **6. Commitment + Payment calculation**
         $to_follow_count = $to_follow_paid = $to_follow_unpaid = $followed_count = $followed_paid = 0;
         $payment_cache = [];
@@ -227,12 +226,10 @@ foreach ($line_ids as $current_line_id) {
             if ($row['rn'] > 1) continue;
             $commitmentData[$row['req_id']] = ['ftype' => $row['ftype'], 'fstatus' => (int)$row['fstatus']];
         }
-
-        $paymentStmt = $connect->prepare("
-            SELECT DISTINCT c.req_id FROM collection c
-            WHERE c.req_id IN ($balance_req_str) AND DATE(c.coll_date) BETWEEN ? AND ? AND c.due_amt_track > 0
-        ");
-        $paymentStmt->execute([$from_date, $to_date]);
+        $paymentStmt = $connect->prepare("SELECT DISTINCT c.req_id FROM collection c
+    WHERE c.req_id IN ($balance_req_str) AND DATE( CASE WHEN c.trans_date IS NOT NULL  AND c.trans_date <> '0000-00-00' THEN c.trans_date ELSE c.coll_date END) BETWEEN ? AND ?
+    AND c.due_amt_track > 0");
+        $paymentStmt->execute([$from_date,$to_date]);
         while ($row = $paymentStmt->fetch(PDO::FETCH_ASSOC)) {
             $payment_cache[$row['req_id']] = true;
         }
@@ -249,7 +246,7 @@ foreach ($line_ids as $current_line_id) {
                 $has_payment ? $to_follow_paid++ : $to_follow_unpaid_req_ids[] = (string)$req_id;
             }
         }
-        
+
         $to_follow_unpaid = $to_follow_count - $to_follow_paid;
         $followed_unpaid = $followed_count - $followed_paid;
 
@@ -300,7 +297,6 @@ foreach ($line_ids as $current_line_id) {
         $unified_metrics['direct_unavailable_unpaid'] += $direct_unavailable_unpaid;
         $unified_metrics['direct_paid'] += $direct_paid_count;
         $unified_metrics['direct_total'] += $direct_total;
-        
         $unified_metrics['to_follow_unpaid_req_ids'] = array_values(array_unique(array_merge($unified_metrics['to_follow_unpaid_req_ids'], $to_follow_unpaid_req_ids)));
         $unified_metrics['followed_unpaid_req_ids'] = array_values(array_unique(array_merge($unified_metrics['followed_unpaid_req_ids'], $followed_unpaid_req_ids)));
     } else {
@@ -320,7 +316,7 @@ $single_record = array_merge([
 $data[] = $single_record;
 
 $data[] = array_merge([
-    'sno' => 'Total', 
+    'sno' => 'Total',
     'fullname' => 'GRAND TOTAL'
 ], $unified_metrics);
 
