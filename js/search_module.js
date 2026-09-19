@@ -1,4 +1,9 @@
 $(document).ready(function () {
+
+    $('.search-input').on('input', function(){
+        $('.search-input').not(this).val('');
+    });
+
     $('#cus_id').keyup(function () {
         var value = $(this).val();
         value = value.replace(/\D/g, "").split(/(?:([\d]{4}))/g).filter(s => s.length > 0).join(" ");

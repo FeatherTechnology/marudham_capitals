@@ -254,9 +254,7 @@ foreach ($selectedZones as $zone_id) {
             }
         }
 
-          $paymentStmt = $connect->prepare("SELECT DISTINCT c.req_id FROM collection c
-    WHERE c.req_id IN ($balance_req_str) AND DATE( CASE WHEN c.trans_date IS NOT NULL  AND c.trans_date <> '0000-00-00' THEN c.trans_date ELSE c.coll_date END) BETWEEN ? AND ?
-    AND c.due_amt_track > 0");
+        $paymentStmt = $connect->prepare("SELECT DISTINCT c.req_id FROM collection c WHERE c.req_id IN ($balance_req_str) AND DATE( CASE WHEN c.trans_date IS NOT NULL  AND c.trans_date <> '0000-00-00' THEN c.trans_date ELSE c.coll_date END) BETWEEN ? AND ? AND c.due_amt_track > 0");
         $paymentStmt->execute([$from_date, $to_date]);
         while ($row = $paymentStmt->fetch(PDO::FETCH_ASSOC)) {
             $payment_cache[$row['req_id']] = true;
@@ -285,7 +283,7 @@ foreach ($selectedZones as $zone_id) {
             if ($ftype == 2) { // Mobile
                 $mobile_total++;
                 if ($fstatus == 8) {
-                    $mobile_paid_count++;
+                    $has_payment ? $mobile_paid_count++ : '';
                 } elseif ($fstatus == 1) {
                     if ($has_payment) {
                         $mobile_commitment_paid++;
@@ -300,7 +298,7 @@ foreach ($selectedZones as $zone_id) {
             } elseif ($ftype == 1) { // Direct
                 $direct_total++;
                 if ($fstatus == 8) {
-                    $direct_paid_count++;
+                    $has_payment ? $direct_paid_count++ : '';
                 } elseif ($fstatus == 1) {
                     $has_payment ? $direct_commitment_paid++ : $direct_commitment_unpaid++;
                     

@@ -189,32 +189,23 @@ while ($userRow = $userQry->fetch()) {
         // ===== Collection Data =====
         $collectionData = [];
 
-        $colQry = $connect->query("SELECT c.req_id,c.coll_date,c.trans_date,c.payable_amt,c.due_amt_track,c.total_paid_track,
-        CASE WHEN c.trans_date IS NOT NULL AND YEAR(c.trans_date) <> 0
-            THEN c.trans_date ELSE c.coll_date END AS effective_coll_date
-    FROM collection c
-    WHERE c.req_id IN ($id_list)
-    AND DATE( CASE WHEN c.trans_date IS NOT NULL AND YEAR(c.trans_date) <> 0 THEN c.trans_date ELSE c.coll_date END) <= '$to_date'
-    ORDER BY c.req_id, effective_coll_date ASC");
+        $colQry = $connect->query("SELECT c.req_id, c.coll_date, c.trans_date, c.payable_amt, c.due_amt_track, c.total_paid_track, CASE WHEN c.trans_date IS NOT NULL AND YEAR(c.trans_date) <> 0 THEN c.trans_date ELSE c.coll_date END AS effective_coll_date
+        FROM collection c
+        WHERE c.req_id IN ($id_list)
+        AND DATE( CASE WHEN c.trans_date IS NOT NULL AND YEAR(c.trans_date) <> 0 THEN c.trans_date ELSE c.coll_date END) <= '$to_date'
+        ORDER BY c.req_id, effective_coll_date ASC");
         while ($col = $colQry->fetch(PDO::FETCH_ASSOC)) {
             $collectionData[$col['req_id']][] = $col;
         }
 
-
         // ===== Paid Summary =====
         $paidSummary = [];
-        $paidQry = $connect->query("SELECT c.req_id,SUM(c.due_amt_track) AS total_paid,MIN(c.due_amt) AS monthly_due,MIN(a.due_start_from) AS due_start_from,
-        MAX(CASE WHEN c.trans_date IS NOT NULL AND YEAR(c.trans_date) <> 0 THEN c.trans_date ELSE c.coll_date END) AS last_paid_date,
-        COUNT(DISTINCT EXTRACT( YEAR_MONTH FROM CASE
-                    WHEN c.trans_date IS NOT NULL AND YEAR(c.trans_date) <> 0 THEN c.trans_date ELSE c.coll_date END)) AS paid_month_count,
-        COALESCE(SUM(CASE WHEN DATE(CASE WHEN c.trans_date IS NOT NULL AND YEAR(c.trans_date) <> 0 THEN c.trans_date ELSE c.coll_date END) < DATE_FORMAT('$to_date', '%Y-%m-01')
-                    THEN c.due_amt_track ELSE 0 END
-            ),0) AS till_last_month_paid
-    FROM collection c
-    JOIN acknowlegement_loan_calculation a ON c.req_id = a.req_id
-    WHERE DATE( CASE WHEN c.trans_date IS NOT NULL AND YEAR(c.trans_date) <> 0 THEN c.trans_date ELSE c.coll_date END) <= '$to_date'
-    AND c.req_id IN ($id_list)
-    GROUP BY c.req_id");
+        $paidQry = $connect->query("SELECT c.req_id, SUM(c.due_amt_track) AS total_paid, MIN(c.due_amt) AS monthly_due, MIN(a.due_start_from) AS due_start_from, MAX(CASE WHEN c.trans_date IS NOT NULL AND YEAR(c.trans_date) <> 0 THEN c.trans_date ELSE c.coll_date END) AS last_paid_date, COUNT(DISTINCT EXTRACT( YEAR_MONTH FROM CASE WHEN c.trans_date IS NOT NULL AND YEAR(c.trans_date) <> 0 THEN c.trans_date ELSE c.coll_date END)) AS paid_month_count, COALESCE(SUM(CASE WHEN DATE(CASE WHEN c.trans_date IS NOT NULL AND YEAR(c.trans_date) <> 0 THEN c.trans_date ELSE c.coll_date END) < DATE_FORMAT('$to_date', '%Y-%m-01') THEN c.due_amt_track ELSE 0 END),0) AS till_last_month_paid
+        FROM collection c
+        JOIN acknowlegement_loan_calculation a ON c.req_id = a.req_id
+        WHERE DATE( CASE WHEN c.trans_date IS NOT NULL AND YEAR(c.trans_date) <> 0 THEN c.trans_date ELSE c.coll_date END) <= '$to_date'
+        AND c.req_id IN ($id_list)
+        GROUP BY c.req_id");
 
         while ($row = $paidQry->fetch(PDO::FETCH_ASSOC)) {
             $start = new DateTime($row['due_start_from']);

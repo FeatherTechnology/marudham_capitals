@@ -11,6 +11,8 @@ $handCredit = $connect->query("
     SELECT ROUND(COALESCE(SUM(amt),0),2) FROM (
         SELECT SUM(rec_amt) amt FROM ct_hand_collection WHERE DATE(created_date) <= '$to_date'
         UNION ALL
+        SELECT SUM(rec_amt) amt FROM ct_hand_waiver WHERE DATE(created_date) <= '$to_date'
+        UNION ALL
         SELECT SUM(amt) FROM ct_cr_hoti WHERE DATE(created_date) <= '$to_date'
         UNION ALL
         SELECT SUM(amt) FROM ct_cr_hinvest WHERE DATE(created_date) <= '$to_date'
