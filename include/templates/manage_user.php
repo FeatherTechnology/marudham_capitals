@@ -139,7 +139,15 @@ $noc_handover_report = '';
 $confirmation_count_report = '';
 $concern_report  = '';
 $partners_report  = '';
+$request_count_report  = '';
+$verification_count_report  = '';
+$loan_issue_count_report  = '';
+$approval_count_report  = '';
+$promotion_count_report  = '';
+$due_followup_count_report  = '';
 $back_office_count_report='';
+$branch_request_count_report='';
+$reactive_count_report='';
 $location_track_report = '';
 $outstanding_report = '';
 $search_module = '';
@@ -344,6 +352,7 @@ if($idupd>0)
 			$promotion_count_report = $getUser['promotion_count_report'];
 			$due_followup_count_report = $getUser['due_followup_count_report'];
 			$back_office_count_report = $getUser['back_office_count_report'];
+			$reactive_count_report = $getUser['reactive_count_report'];
 			$branch_request_count_report = $getUser['branch_request_count_report'];
 			$location_track_report = $getUser['location_track_report'];
 			$outstanding_report = $getUser['outstanding_report'];
@@ -1547,6 +1556,12 @@ if($idupd>0)
 								<div class="custom-control custom-checkbox">
 									<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($back_office_count_report==0){ echo'checked'; }} ?> tabindex="119" class="count-checkbox screen-validations" id="back_office_count_report" name="back_office_count_report" disabled>&nbsp;&nbsp;
 									<label class="custom-control-label" for="back_office_count_report">Back Office Count</label>
+								</div>
+							</div>
+							<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12">
+								<div class="custom-control custom-checkbox">
+									<input type="checkbox" value="Yes" <?php if($idupd > 0){ if($reactive_count_report==0){ echo'checked'; }} ?> tabindex="119" class="count-checkbox screen-validations" id="reactive_count_report" name="reactive_count_report" disabled>&nbsp;&nbsp;
+									<label class="custom-control-label" for="reactive_count_report">Renewal To Reactive Count</label>
 								</div>
 							</div>
 						</div>
