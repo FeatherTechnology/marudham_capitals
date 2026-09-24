@@ -635,6 +635,11 @@ if (isset($getuserdetails['download_access'])) {
 				<?php include "include/templates/back_office_count_report.php" ?>
 			<?php } else ?>
 
+			<!-- Reactive Count report -->
+			<?php if ($current_page == 'reactive_count_report') { ?>
+				<?php include "include/templates/reactive_count_report.php" ?>
+			<?php } else ?>
+
 			<!-- Concern report -->
 			<?php if ($current_page == 'concern_report') { ?>
 				<?php include "include/templates/concern_report.php" ?>

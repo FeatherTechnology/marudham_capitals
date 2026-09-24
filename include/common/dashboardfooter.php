@@ -3143,6 +3143,10 @@
         <script src="js/back_office_count_report.js"></script>
     <?php }
 
+    if ($current_page == 'reactive_count_report') { ?>
+        <script src="js/reactive_count_report.js"></script>
+    <?php }
+
     if ($current_page == 'concern_report') { ?>
         <script src="js/concern_report.js"></script>
     <?php }
