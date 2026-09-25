@@ -25,6 +25,8 @@ function getOpeningBalance($connect, $op_date, $bank_ids)
         SELECT SUM(amt) AS credit FROM (
             SELECT COALESCE(SUM(rec_amt),0) amt FROM ct_hand_collection WHERE DATE(created_date) < '$op_date'
             UNION ALL
+            SELECT COALESCE(SUM(rec_amt),0) amt FROM ct_hand_waiver WHERE DATE(created_date) < '$op_date'
+            UNION ALL
             SELECT COALESCE(SUM(amt),0) FROM ct_cr_bank_withdraw WHERE DATE(created_date) < '$op_date'
             UNION ALL
             SELECT COALESCE(SUM(amt),0) FROM ct_cr_hoti WHERE DATE(created_date) < '$op_date'

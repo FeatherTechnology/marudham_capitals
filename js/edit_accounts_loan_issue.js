@@ -28,7 +28,7 @@ $(document).ready(function () {
 });//document ready end
 
 $(function () {
-    loadNotifications();
+    // loadNotifications();
 })
 
 function removeLoanFromList(req_id) {

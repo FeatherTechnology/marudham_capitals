@@ -45,12 +45,12 @@ if ($user_id != '') {
         FROM events e
         JOIN event_promotion ep ON ep.event_id = e.id
         JOIN area_list_creation al ON al.area_id = e.event_name
-        JOIN area_group_mapping_area agma ON agma.area_id = al.area_id
-        JOIN area_group_mapping agm ON agm.map_id = agma.group_map_id
-        JOIN area_line_mapping_area alma ON alma.area_id = al.area_id
-        JOIN area_line_mapping alm ON alm.map_id = alma.line_map_id
-        JOIN area_duefollowup_mapping_area adfma ON adfma.area_id = al.area_id
-        JOIN area_duefollowup_mapping adfm ON adfm.map_id = adfma.duefollowup_map_id
+        LEFT JOIN area_group_mapping_area agma ON agma.area_id = al.area_id
+        LEFT JOIN area_group_mapping agm ON agm.map_id = agma.group_map_id
+        LEFT JOIN area_line_mapping_area alma ON alma.area_id = al.area_id
+        LEFT JOIN area_line_mapping alm ON alm.map_id = alma.line_map_id
+        LEFT JOIN area_duefollowup_mapping_area adfma ON adfma.area_id = al.area_id
+        LEFT JOIN area_duefollowup_mapping adfm ON adfm.map_id = adfma.duefollowup_map_id
         WHERE $condition
         GROUP BY e.id
         ORDER BY e.id DESC; 

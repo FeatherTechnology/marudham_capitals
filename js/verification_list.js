@@ -179,7 +179,7 @@ $(document).ready(function () {
 });//document ready end
 
 $(function () {
-    loadNotifications();
+    // loadNotifications();
 })
 
 function warningSwal(title, text) {

@@ -32,37 +32,37 @@
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="cus_id">Aadhaar Number</label>
-											<input type="text" class="form-control" id="cus_id" name="cus_id" placeholder="Enter Aadhaar Number" maxlength="14">
+											<input type="text" class="form-control search-input" id="cus_id" name="cus_id" placeholder="Enter Aadhaar Number" maxlength="14">
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="autogen_cus_id">Customer ID</label>
-											<input type="number" class="form-control" id="autogen_cus_id" name="autogen_cus_id" placeholder="Enter Customer ID">
+											<input type="number" class="form-control search-input" id="autogen_cus_id" name="autogen_cus_id" placeholder="Enter Customer ID">
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="cus_name">Name</label>
-											<input type="text" class="form-control" id="cus_name" name="cus_name" placeholder="Enter Name">
+											<input type="text" class="form-control search-input" id="cus_name" name="cus_name" placeholder="Enter Name">
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="cus_area">Area</label>
-											<input type="text" class="form-control" id="cus_area" name="cus_area" placeholder="Enter Area">
+											<input type="text" class="form-control search-input" id="cus_area" name="cus_area" placeholder="Enter Area">
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="cus_sub_area">Sub Area</label>
-											<input type="text" class="form-control" id="cus_sub_area" name="cus_sub_area" placeholder="Enter Sub Area">
+											<input type="text" class="form-control search-input" id="cus_sub_area" name="cus_sub_area" placeholder="Enter Sub Area">
 										</div>
 									</div>
 									<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 										<div class="form-group">
 											<label for="mobile">Mobile Number</label>
-											<input type="text" class="form-control" id="mobile" name="mobile" placeholder="Enter Mobile Number" maxlength="10" oninput="validateInputNumber(this,'withOutDot')">
+											<input type="text" class="form-control search-input" id="mobile" name="mobile" placeholder="Enter Mobile Number" maxlength="10" oninput="validateInputNumber(this,'withOutDot')">
 										</div>
 									</div>
 									<div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12"></div>

@@ -6994,6 +6994,38 @@ class admin
 			// Disable autocommit to start a transaction
 			$mysqli->autocommit(FALSE);
 
+			$mysqli->query("INSERT INTO closed_loan_commitment_count(req_id, cus_id, one_to_ten, eleven_to_fifteen, sixteen_to_twenty, twentyone_to_twentyfive, twentysix_to_thirtyone, insert_login_id) SELECT req_id, cus_id,
+				SUM(CASE
+					WHEN DAY(c.created_date) BETWEEN 1 AND 10 THEN 1
+					ELSE 0
+				END) AS one_to_ten,
+
+				SUM(CASE
+					WHEN DAY(c.created_date) BETWEEN 11 AND 15 THEN 1
+					ELSE 0
+				END) AS eleven_to_fifteen,
+
+				SUM(CASE
+					WHEN DAY(c.created_date) BETWEEN 16 AND 20 THEN 1
+					ELSE 0
+				END) AS sixteen_to_twenty,
+
+				SUM(CASE
+					WHEN DAY(c.created_date) BETWEEN 21 AND 25 THEN 1
+					ELSE 0
+				END) AS twentyone_to_twentyfive,
+
+				SUM(CASE
+					WHEN DAY(c.created_date) BETWEEN 26 AND 31 THEN 1
+					ELSE 0
+				END) AS twentysix_to_thirtyone,
+
+				$userid
+
+			FROM commitment c
+			WHERE c.req_id = '$close_req_id' 
+			GROUP BY c.req_id, c.cus_id;");
+
 			$mysqli->query("INSERT INTO `closed_status`( `req_id`, `cus_id`, `closed_sts`, `consider_level`, `remark`, `cus_sts`, `insert_login_id`, `update_login_id`, `created_date`, `updated_date`) VALUES ('" . strip_tags($close_req_id) . "', '" . strip_tags($cus_id) . "', '" . strip_tags($closed_Sts) . "', '" . strip_tags($closed_Sts_consider) . "', '" . strip_tags($closed_Sts_remark) . "', '21', '$userid', '$userid', now(), now() )");
 
 			$mysqli->query("UPDATE request_creation SET cus_status = 21, updated_date = now(), update_login_id = $userid WHERE req_id = '" .  $close_req_id . "' AND cus_status = '20' ") or die('Error on Request Table');

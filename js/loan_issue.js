@@ -1635,13 +1635,13 @@ function loanIssueSumitValidation(event) {
                 $('#cash_guarentor').hide();
             }
 
-            // if (fingerMatch != '1') {
-            //     event.preventDefault();
-            //     validation = false;
-            //     $('#finger_check').show();
-            // } else {
-            //     $('#finger_check').hide();
-            // }
+            if (fingerMatch != '1') {
+                event.preventDefault();
+                validation = false;
+                $('#finger_check').show();
+            } else {
+                $('#finger_check').hide();
+            }
         }
     }
     return validation;
