@@ -77,7 +77,6 @@ $baseQuery = "
 if (isset($_POST['search']) && $_POST['search'] != "") {
     $search         = $_POST['search'];
     $searchPrefix   = $search . '%';
-    $searchContains = '%' . $search . '%';
 
     $baseQuery .= " AND (cr.cus_id LIKE ?
         OR cr.autogen_cus_id LIKE ?
@@ -89,10 +88,10 @@ if (isset($_POST['search']) && $_POST['search'] != "") {
 
     $params[] = $searchPrefix;    // cr.cus_id: same prefix-only match as the original
     $params[] = $searchPrefix;  // cr.autogen_cus_id
-    $params[] = $searchContains;  // cr.customer_name
-    $params[] = $searchContains;  // alc.area_name
-    $params[] = $searchContains;  // salc.sub_area_name
-    $params[] = $searchContains;  // alm.line_name
+    $params[] = $searchPrefix;  // cr.customer_name
+    $params[] = $searchPrefix;  // alc.area_name
+    $params[] = $searchPrefix;  // salc.sub_area_name
+    $params[] = $searchPrefix;  // alm.line_name
     $params[] = $searchPrefix;  // cr.mobile1
 }
 

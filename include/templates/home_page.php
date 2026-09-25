@@ -112,7 +112,7 @@ $media_path = ($m->rowCount() > 0) ? $m->fetch()['media_path'] : "";
 <script>
 
     $(function() {
-		loadNotifications();
+		// loadNotifications();
 	})
     
     $('#submit_upload').click(function() {

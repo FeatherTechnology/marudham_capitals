@@ -145,23 +145,23 @@ if (!empty($where)) {
 if (!empty($_POST['search'])) {
     $search = $_POST['search'];
     $query .= " AND (
-        v.dor LIKE '%$search%' OR
-        v.cus_id LIKE '%$search%' OR
-        cr.autogen_cus_id LIKE '%$search%' OR
-        v.cus_name LIKE '%$search%' OR
-        bc.branch_name LIKE '%$search%' OR
-        agm.group_name LIKE '%$search%' OR
-        alm.line_name LIKE '%$search%' OR
-        a.area_name LIKE '%$search%' OR
-        cr.mobile1 LIKE '%$search%' OR
-        ac.ag_name LIKE '%$search%' OR
-        sa.sub_area_name LIKE '%$search%' OR
-        lcc.loan_category_creation_name LIKE '%$search%' OR
-        v.sub_category LIKE '%$search%' OR
-        v.loan_amt LIKE '%$search%' OR
-        v.user_type LIKE '%$search%' OR
-        v.responsible LIKE '%$search%' OR
-        v.cus_data LIKE '%$search%'
+        v.dor LIKE '$search%' OR
+        v.cus_id LIKE '$search%' OR
+        cr.autogen_cus_id LIKE '$search%' OR
+        v.cus_name LIKE '$search%' OR
+        bc.branch_name LIKE '$search%' OR
+        agm.group_name LIKE '$search%' OR
+        alm.line_name LIKE '$search%' OR
+        a.area_name LIKE '$search%' OR
+        cr.mobile1 LIKE '$search%' OR
+        ac.ag_name LIKE '$search%' OR
+        sa.sub_area_name LIKE '$search%' OR
+        lcc.loan_category_creation_name LIKE '$search%' OR
+        v.sub_category LIKE '$search%' OR
+        v.loan_amt LIKE '$search%' OR
+        v.user_type LIKE '$search%' OR
+        v.responsible LIKE '$search%' OR
+        v.cus_data LIKE '$search%'
     )";
 }
 

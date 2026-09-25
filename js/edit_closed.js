@@ -97,7 +97,7 @@ $(document).ready(function () {
 });
 
 $(function () {
-    loadNotifications();
+    // loadNotifications();
 })
 
 function getBranchDropdown(preselect = []) {

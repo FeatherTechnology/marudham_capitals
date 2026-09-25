@@ -146,7 +146,7 @@ if (!empty($search)) {
     )";
 
     for ($i = 0; $i < 11; $i++) {
-        $params[] = "%$search%";
+        $params[] = "$search%";
     }
 }
 

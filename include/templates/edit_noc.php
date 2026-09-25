@@ -117,7 +117,7 @@
 
 <script>
 	$(function() {
-		loadNotifications();
+		// loadNotifications();
 	})
 
 	$(document).ready(function() {
