@@ -2995,6 +2995,10 @@
         <script src="js/confirmation_followup.js"></script>
     <?php }
 
+    if ($current_page == 'search_screen') { ?>
+        <script src="js/search_screen.js"></script>
+    <?php }
+
     if ($current_page == 'ledger_report') { ?>
         <script src="js/ledger_report.js"></script>
     <?php }

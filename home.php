@@ -449,6 +449,11 @@ if (isset($getuserdetails['download_access'])) {
 				<?php include "include/templates/confirmation_followup.php" ?>
 			<?php } else ?>
 
+			<!-- Search-->
+			<?php if ($current_page == 'search_screen') { ?>
+				<?php include "include/templates/search_screen.php" ?>
+			<?php } else ?>
+
 			<!-- Reports -->
 			<!-- Ledger Report -->
 			<?php if ($current_page == 'ledger_report') { ?>
