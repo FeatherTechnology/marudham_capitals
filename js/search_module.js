@@ -231,7 +231,12 @@ function callresetCustomerStatus(cus_id, callback) {
         }
     });
 }
-
+function openCustomerStage(req_id, cus_sts, pageView) { 
+    cus_sts = parseInt(cus_sts, 10); 
+    // Statuses that should open search_screen
+      const searchScreenStatuses = [2, 4, 5, 6, 8, 9, 10, 11, 12];
+     let page = searchScreenStatuses.includes(cus_sts) ? 'search_screen' : 'due_followup_info'; window.open( page + '&upd=' + req_id + '&pgeView=' + pageView, '_blank' ); 
+    }
 function customerStatusOnClickEvents() {
     $('.personal-info').off('click').click(function () {
         let cus_id = $(this).data('cusid');
@@ -243,19 +248,22 @@ function customerStatusOnClickEvents() {
     })
     $('.cust-profile').off('click').click(function () {
         let req_id = $(this).data('reqid');
+        let cus_sts = $(this).data('cussts');
         // window.location.href = 'due_followup_info&upd='+req_id+'&pgeView=1';
-        window.open('due_followup_info&upd=' + req_id + '&pgeView=1', '_blank');
+       openCustomerStage(req_id, cus_sts, 1);
     })
     //Documentaion
     $('.documentation').off('click').click(function () {
         let req_id = $(this).data('reqid');
+        let cus_sts = $(this).data('cussts');
         // window.location.href = 'due_followup_info&upd='+req_id+'&pgeView=2';
-        window.open('due_followup_info&upd=' + req_id + '&pgeView=2', '_blank');
+        openCustomerStage(req_id, cus_sts, 2);
     })
     //Loan Calculation
     $('.loan-calc').off('click').click(function () {
         let req_id = $(this).data('reqid');
-        window.open('due_followup_info&upd=' + req_id + '&pgeView=3', '_blank');
+        let cus_sts = $(this).data('cussts');
+       openCustomerStage(req_id, cus_sts, 3);
     })
 
     $('.due-chart').off('click').click(function () {
