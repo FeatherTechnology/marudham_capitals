@@ -113,6 +113,7 @@
 											<th>Branch</th>
 											<th>Region</th>
 											<th>Sector</th>
+											<th>Zone</th>
 											<th>Mobile 1</th>
 											<th>Mobile 2</th>
 											<th>Action</th>
