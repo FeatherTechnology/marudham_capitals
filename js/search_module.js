@@ -34,6 +34,7 @@ $(document).ready(function () {
                                 <td>${val.branch}</td>
                                 <td>${val.line}</td>
                                 <td>${val.group}</td>
+                                td>${val.duefollowup_name}</td>
                                 <td>${val.mobile1}</td>
                                 <td>${val.mobile2}</td>
                                 <td>${val.action}</td>
