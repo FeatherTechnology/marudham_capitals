@@ -91,7 +91,7 @@ foreach ($result as $row) {
     $cus_name = $row['customer_name'];
     $track_status = $row['track_status'];
     
-    $doc_keeper_name = ($track_status == '1' || $userid != $row['insert_login_id']) ? $row['insert_login_name'] : 'Main Branch';
+    $doc_keeper_name = ($track_status == '1' || ($track_status == '2' && $userid != $row['insert_login_id'])) ? $row['insert_login_name'] : 'Main Branch';
 
     $replace_doc_action =[];
     $replace_doc_reqid =[];

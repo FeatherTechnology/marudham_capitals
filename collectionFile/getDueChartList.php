@@ -149,113 +149,62 @@ $maturity_month = $loanFrom['maturity_month'];
 $int_rate = $loanFrom['int_rate'];
 $calc_method = $loanFrom['calc_method'];
 
-
-$start_date_obj =
-    DateTime::createFromFormat(
-        'Y-m-d',
-        $due_start_from
-    );
-
-$end_date_obj =
-    DateTime::createFromFormat(
-        'Y-m-d',
-        $maturity_month
-    );
-
-$maturity_month_obj =
-    new DateTime($maturity_month);
-
+$start_date_obj = DateTime::createFromFormat('Y-m-d', $due_start_from);
+$end_date_obj = DateTime::createFromFormat('Y-m-d', $maturity_month);
+$maturity_month_obj = new DateTime($maturity_month);
 
 if (!$start_date_obj || !$end_date_obj) {
-
     echo '<div class="alert alert-danger">
             Invalid loan date.
           </div>';
-
     exit;
 }
 
-if (
-    $loanFrom['tot_amt_cal'] === '' ||
-    $loanFrom['tot_amt_cal'] === null
-) {
-
-    $loan_amt =
-        (int)$loanFrom['principal_amt_cal'];
-
+if ($loanFrom['tot_amt_cal'] === '' || $loanFrom['tot_amt_cal'] === null) {
+    $loan_amt = (int)$loanFrom['principal_amt_cal'];
     $loan_type = 'Interest';
+
 } else {
-
-    $loan_amt =
-        (int)$loanFrom['tot_amt_cal'];
-
+    $loan_amt = (int)$loanFrom['tot_amt_cal'];
     $loan_type = 'emi';
+
 }
 
-$due_amt_1 =
-    (int)$loanFrom['due_amt_cal'];
-
+$due_amt_1 = (int)$loanFrom['due_amt_cal'];
 
 if ($loan_type == 'Interest') {
-
-    $princ_amt_1 =
-        (int)$loanFrom['principal_amt_cal'];
-
-    $due_amt_1 =
-        (int)$loanFrom['int_amt_cal'];
+    $princ_amt_1 = (int)$loanFrom['principal_amt_cal'];
+    $due_amt_1 = (int)$loanFrom['int_amt_cal'];
 }
 
-
-$issue_date =
-    $loanFrom['updated_date'];
+$issue_date = $loanFrom['updated_date'];
 
 $interval = null;
 
+if ($loanFrom['due_method_calc'] == 'Monthly' || $loanFrom['due_method_scheme'] == '1') {
+    $interval = new DateInterval('P1M');
+    
+} elseif ($loanFrom['due_method_scheme'] == '2') {
+    $interval = new DateInterval('P1W');
 
-if (
-    $loanFrom['due_method_calc'] == 'Monthly' ||
-    $loanFrom['due_method_scheme'] == '1'
-) {
+} elseif ($loanFrom['due_method_scheme'] == '3') {
+    $interval = new DateInterval('P1D');
 
-    $interval =
-        new DateInterval('P1M');
-} elseif (
-    $loanFrom['due_method_scheme'] == '2'
-) {
-
-    $interval =
-        new DateInterval('P1W');
-} elseif (
-    $loanFrom['due_method_scheme'] == '3'
-) {
-
-    $interval =
-        new DateInterval('P1D');
 }
 
 $dueMonth = [];
 
 $dueMonth[] = $due_start_from;
 
-
 if ($interval !== null) {
 
     while ($start_date_obj < $end_date_obj) {
 
         $start_date_obj->add($interval);
-        $newDueDate =
-            $start_date_obj->format('Y-m-d');
+        $newDueDate = $start_date_obj->format('Y-m-d');
 
-        if (
-            !in_array(
-                $newDueDate,
-                $dueMonth,
-                true
-            )
-        ) {
-
-            $dueMonth[] =
-                $newDueDate;
+        if (!in_array($newDueDate, $dueMonth, true)) {
+            $dueMonth[] = $newDueDate;
         }
     }
 }
@@ -332,7 +281,6 @@ if (!$collectionRun) {
 $allCollections = [];
 
 while ($collectionRow =  $collectionRun->fetch(PDO::FETCH_ASSOC)) {
-
     $allCollections[] =  $collectionRow;
 }
 
@@ -346,27 +294,24 @@ foreach ($allCollections as $row) {
     if ($effectiveDate === null) {
         continue;
     }
+
     $monthKey = getMonthKey($effectiveDate);
     if (!isset($collectionsByMonth[$monthKey])) {
-
-        $collectionsByMonth[$monthKey] =
-            [];
+        $collectionsByMonth[$monthKey] = [];
     }
     $collectionsByMonth[$monthKey][] =  $row;
+
     $weekKey = getWeekKey($effectiveDate);
     if (!isset($collectionsByWeek[$weekKey])) {
         $collectionsByWeek[$weekKey] = [];
     }
-    $collectionsByWeek[$weekKey][] =
-        $row;
-    $dayKey =
-        getDayKey($effectiveDate);
+    $collectionsByWeek[$weekKey][] = $row;
 
+    $dayKey = getDayKey($effectiveDate);
     if (!isset($collectionsByDay[$dayKey])) {
         $collectionsByDay[$dayKey] = [];
     }
-    $collectionsByDay[$dayKey][] =
-        $row;
+    $collectionsByDay[$dayKey][] = $row;
 }
 
 $beforeDueCollections = [];
@@ -391,42 +336,35 @@ foreach ($allCollections as $row) {
     } elseif ($loanFrom['due_method_scheme'] == '2') {
 
         if ($collDate !== null) {
-
-            if (
-                getWeekKey($collDate) >= getWeekKey($issued)  &&  getWeekKey($collDate) < getWeekKey($dueStartDate) && date('Y', strtotime($collDate)) >=
-                date('Y', strtotime($issued))
-            ) {
+            if (getWeekKey($collDate) >= getWeekKey($issued)  &&  getWeekKey($collDate) < getWeekKey($dueStartDate) && date('Y', strtotime($collDate)) >= date('Y', strtotime($issued))) {
                 $includeBefore = true;
             }
         }
+
         if ($transDate !== null) {
-
-            if (
-                getWeekKey($transDate) >= getWeekKey($issued) && getWeekKey($transDate) < getWeekKey($dueStartDate) &&  date('Y', strtotime($transDate)) >=
-                date('Y', strtotime($issued))
-            ) {
+            if (getWeekKey($transDate) >= getWeekKey($issued) && getWeekKey($transDate) < getWeekKey($dueStartDate) &&  date('Y', strtotime($transDate)) >= date('Y', strtotime($issued))) {
                 $includeBefore = true;
             }
         }
-    } elseif (
-        $loanFrom['due_method_scheme'] == '3'
-    ) {
+
+    } elseif ($loanFrom['due_method_scheme'] == '3') {
         if ($collDate !== null && $collDate >= $issued && $collDate < $dueStartDate) {
             $includeBefore = true;
         }
+
         if ($transDate !== null &&  $transDate >= $issued &&  $transDate < $dueStartDate) {
             $includeBefore = true;
         }
+
     }
+
     if ($includeBefore) {
         $beforeDueCollections[] = $row;
     }
 }
 
 ?>
-<table
-    class="table custom-table table-responsive"
-    id="dueChartListTable">
+<table class="table custom-table table-responsive" id="dueChartListTable">
 
     <thead>
         <tr>
@@ -436,45 +374,35 @@ foreach ($allCollections as $row) {
 
             <?php if ($loan_type == 'emi') { ?>
                 <th>Due Amount</th>
-
             <?php } ?>
 
             <?php if ($loan_type == 'Interest') { ?>
-
                 <th>Principal</th>
                 <th>Interest</th>
-
             <?php } ?>
+
             <th>Pending</th>
             <th>Payable</th>
             <th>Collection Date</th>
 
             <?php if ($loan_type == 'emi') { ?>
-
                 <th>Collection Amount</th>
-
             <?php } ?>
 
             <?php if ($loan_type == 'Interest') { ?>
-
                 <th>Principal Amount</th>
                 <th>Interest Amount</th>
-
             <?php } ?>
 
             <th>Balance Amount</th>
 
             <?php if ($loan_type == 'emi') { ?>
-
                 <th>Pre Closure</th>
-
             <?php } ?>
 
             <?php if ($loan_type == 'Interest') { ?>
-
                 <th>Principal Waiver</th>
                 <th>Interest Waiver</th>
-
             <?php } ?>
 
             <th>Role</th>
@@ -488,32 +416,17 @@ foreach ($allCollections as $row) {
             <td></td>
             <td>
                 <?php
+                if ($loanFrom['due_method_calc'] == 'Monthly' || $loanFrom['due_method_scheme'] == '1') {
+                    echo date('m-Y', strtotime($issue_date));
 
-                if (
-                    $loanFrom['due_method_calc'] == 'Monthly' ||
-                    $loanFrom['due_method_scheme'] == '1'
-                ) {
-
-                    echo date(
-                        'm-Y',
-                        strtotime($issue_date)
-                    );
                 } else {
+                    echo date('d-m-Y', strtotime($issue_date));
 
-                    echo date(
-                        'd-m-Y',
-                        strtotime($issue_date)
-                    );
                 }
                 ?>
             </td>
             <td>
-                <?php
-                echo date(
-                    'M',
-                    strtotime($issue_date)
-                );
-                ?>
+                <?php echo date('M', strtotime($issue_date)); ?>
             </td>
             <?php if ($loan_type == 'emi') { ?>
                 <td></td>
@@ -548,17 +461,10 @@ foreach ($allCollections as $row) {
             <td></td>
             <td></td>
         </tr>
+
         <?php
 
-        $totalPaid = 0;
-        $totalPreClose = 0;
-        $totalpaid = 0;
-        $totalPaidPrinc = 0;
-        $due_amt_track = 0;
-        $waiver = 0;
-        $principal_waiver = 0;
-        $interest_waiver = 0;
-        $last_bal_amt = 0;
+        $totalPaid = $totalPreClose = $totalpaid = $totalPaidPrinc = $due_amt_track = $waiver = $principal_waiver = $interest_waiver = $last_bal_amt = 0;
         $bal_amt = $loan_amt;
 
         foreach ($beforeDueCollections as $row) {
@@ -567,9 +473,7 @@ foreach ($allCollections as $row) {
             $due_amt_track += (int)$row['due_amt_track'];
             $waiver += (int)$row['pre_close_waiver'];
             $principal_waiver += (int)$row['principal_waiver'];
-            $PcollectionAmnt = 0;
-            $IcollectionAmnt = 0;
-            $InterestwaiverAmnt = 0;
+            $PcollectionAmnt = $IcollectionAmnt = $InterestwaiverAmnt = 0;
 
             if ($loan_type == 'Interest') {
 
@@ -598,46 +502,37 @@ foreach ($allCollections as $row) {
                     <td></td>
                 <?php } ?>
                 <td>
-                    <?php
-                    echo (int)$row['pending_amt'];
-                    ?>
+                    <?php echo moneyFormatIndia((int)$row['pending_amt']); ?>
+                </td>
+                <td>
+                    <?php echo moneyFormatIndia((int)$row['payable_amt']); ?>
                 </td>
                 <td>
                     <?php
-                    echo (int)$row['payable_amt'];
-                    ?>
-                </td>
-                <td>
-                    <?php
-                    $displayDate = validCollectionDate($row['trans_date']) ? $row['trans_date'] : $row['coll_date'];
-                    echo date('d-m-Y', strtotime($displayDate));
+                        $displayDate = validCollectionDate($row['trans_date']) ? $row['trans_date'] : $row['coll_date'];
+                        echo date('d-m-Y', strtotime($displayDate));
                     ?>
                 </td>
                 <?php if ($loan_type == 'emi') { ?>
                     <td>
                         <?php
-                        if ($row['due_amt_track'] > 0) {
+                            if ($row['due_amt_track'] > 0) {
+                                $totalPaid += $row['due_amt_track'];
+                                echo moneyFormatIndia($row['due_amt_track']);
 
-                            $totalPaid += $row['due_amt_track'];
-
-                            echo moneyFormatIndia($row['due_amt_track']);
-                        } elseif (
-                            $row['pre_close_waiver'] > 0
-                        ) {
-                            $totalPreClose +=  $row['pre_close_waiver'];
-                            echo moneyFormatIndia($row['pre_close_waiver']);
-                        }
+                            } elseif ($row['pre_close_waiver'] > 0) {
+                                $totalPreClose +=  $row['pre_close_waiver'];
+                                echo moneyFormatIndia($row['pre_close_waiver']);       
+                            }
                         ?>
                     </td>
-                <?php } ?>
-                <?php if ($loan_type == 'Interest') { ?>
+                <?php } 
+                    if ($loan_type == 'Interest') { ?>
                     <td>
                         <?php
                         if ($PcollectionAmnt > 0) {
                             $totalPaidPrinc +=  $PcollectionAmnt;
-                            echo moneyFormatIndia(
-                                $PcollectionAmnt
-                            );
+                            echo moneyFormatIndia($PcollectionAmnt);
                         } else {
                             echo 0;
                         }
@@ -646,20 +541,21 @@ foreach ($allCollections as $row) {
                     <td>
                         <?php
                         if ($IcollectionAmnt > 0) {
-                            echo moneyFormatIndia(
-                                $IcollectionAmnt
-                            );
+                            echo moneyFormatIndia($IcollectionAmnt);
                         } else {
                             echo 0;
                         }
                         ?>
                     </td>
-                <?php } ?>
+                <?php 
+                    $totalpaid = $totalPaidPrinc;
+                } else {  
+                    $totalpaid = $totalPaid; 
+                }
+                ?>
                 <td>
                     <?php
-                    echo moneyFormatIndia(
-                        $bal_amt
-                    );
+                    echo moneyFormatIndia($bal_amt);
                     ?>
                 </td>
 
@@ -675,9 +571,7 @@ foreach ($allCollections as $row) {
                     <td>
                         <?php echo $InterestwaiverAmnt > 0 ? moneyFormatIndia($InterestwaiverAmnt) : '0'; ?>
                     </td>
-
                 <?php } ?>
-
 
                 <td>
                     <?php echo formatRole($role); ?>
@@ -690,15 +584,7 @@ foreach ($allCollections as $row) {
                     <?php echo formatCollectionLocation($row['coll_location']); ?>
                 </td>
                 <td>
-                    <a
-                        class="print_due_coll"
-                        id=""
-                        value="<?php echo htmlspecialchars(
-                                    $row['coll_code']
-                                ); ?>">
-
-                        <i class="fa fa-print" aria-hidden="true"></i>
-                    </a>
+                    <a class="print_due_coll" id="" value="<?php echo htmlspecialchars($row['coll_code']); ?>"><i class="fa fa-print" aria-hidden="true"></i></a>
                 </td>
             </tr>
 
@@ -707,42 +593,38 @@ foreach ($allCollections as $row) {
                 $last_bal_amt =  $bal_amt;
             }
         }
-        if (
-            $loan_type == 'Interest' &&  $last_bal_amt == 0
-        ) {
+
+        if ($loan_type == 'Interest' &&  $last_bal_amt == 0) {
             $last_bal_amt =  $loan_amt;
         }
 
-        $due_amt_track = 0;
-        $waiver = 0;
-        $int = 0;
-        $jj = 0;
+        $due_amt_track = $waiver = $int = $jj = 0;
         $last_int_amt =  $due_amt_1;
 
         if ($loan_type == 'Interest') {
             $last_princ_amt = $last_bal_amt;
         }
+
         $curDateChecker = true;
         $i = 1;
         foreach ($dueMonth as $cusDueMonth) {
             if ($loanFrom['due_method_calc'] == 'Monthly' || $loanFrom['due_method_scheme'] == '1') {
-
                 $lookupKey = getMonthKey($cusDueMonth);
-
                 $runRows =  $collectionsByMonth[$lookupKey] ?? [];
-            } elseif (
-                $loanFrom['due_method_scheme'] == '2'
-            ) {
+
+            } elseif ($loanFrom['due_method_scheme'] == '2') {
                 $lookupKey = getWeekKey($cusDueMonth);
                 $runRows =  $collectionsByWeek[$lookupKey] ?? [];
+
             } else {
                 $lookupKey =  getDayKey($cusDueMonth);
                 $runRows =  $collectionsByDay[$lookupKey] ?? [];
+
             }
+
             $matchedRows = [];
             foreach ($runRows as $tempRow) {
                 if (collectionHasTrack($tempRow, $loan_type, $loanFrom['due_method_scheme'])) {
-
                     $matchedRows[] = $tempRow;
                 }
             }
@@ -757,10 +639,12 @@ foreach ($allCollections as $row) {
                     if ($loanFrom['due_method_calc'] == 'Monthly' || $loanFrom['due_method_scheme'] == '1') {
                         $princ_amt_track = (int)$row['princ_amt_track'];
                         $int_amt_track =  (int)$row['int_amt_track'];
+
                     } else {
                         $princ_amt_track = 0;
                         $int_amt_track = 0;
                     }
+
                     $waiver = (int)$row['pre_close_waiver'];
                     $principal_waiver = (int)$row['principal_waiver'];
 
@@ -783,42 +667,43 @@ foreach ($allCollections as $row) {
                                 <?php if ($loan_type == 'emi') { ?>
                                     <td> <?php echo moneyFormatIndia($row['due_amt']); ?>
                                     </td>
-                                <?php } ?>
-                                <?php if ($loan_type == 'Interest') { ?>
+                                <?php } 
+                                    if ($loan_type == 'Interest') { ?>
 
                                     <td>
                                         <?php echo moneyFormatIndia($last_princ_amt); ?>
                                     </td>
                                     <td>
-                                        <?php $interest_rate_calc =  $loanFrom['int_rate'];
-                                        $current_principal =  $last_princ_amt;
-                                        $interest_calculate =  $loanFrom['calc_method'];
-                                        if ($interest_calculate == 'Monthly') {
+                                        <?php 
+                                            $interest_rate_calc =  $loanFrom['int_rate'];
+                                            $current_principal =  $last_princ_amt;
+                                            $interest_calculate =  $loanFrom['calc_method'];
 
-                                            $int =  $current_principal  * ($interest_rate_calc  / 100);
-                                        } elseif (
-                                            $interest_calculate == 'Days'
-                                        ) {
-                                            $int = ($current_principal * ($interest_rate_calc / 100)) / 30;
-                                        } else {
-                                            $int = 0;
-                                        }
-                                        $curInterest =  ceil($int / 5) * 5;
+                                            if ($interest_calculate == 'Monthly') {
+                                                $int =  $current_principal  * ($interest_rate_calc  / 100);
 
-                                        if ($curInterest < $int) {
-                                            $curInterest += 5;
-                                        }
+                                            } elseif ($interest_calculate == 'Days') {
+                                                $int = ($current_principal * ($interest_rate_calc / 100)) / 30;
 
-                                        echo moneyFormatIndia($curInterest);
+                                            } else {
+                                                $int = 0;
+                                            }
+                                            
+                                            $curInterest =  ceil($int / 5) * 5;
+
+                                            if ($curInterest < $int) {
+                                                $curInterest += 5;
+                                            }
+
+                                            echo moneyFormatIndia($curInterest);
                                         ?>
                                     </td>
                                 <?php } ?>
 
                             <?php
-                                $periodHeaderShown =   true;
+                                $periodHeaderShown = true;
                                 $i++;
                             } else {
-
                             ?>
                                 <td></td>
                                 <td></td>
@@ -826,13 +711,10 @@ foreach ($allCollections as $row) {
 
                                 <?php if ($loan_type == 'emi') { ?>
                                     <td></td>
-                                <?php } ?>
-
-                                <?php if ($loan_type == 'Interest') { ?>
-
+                                <?php }
+                                 if ($loan_type == 'Interest') { ?>
                                     <td></td>
                                     <td></td>
-
                                 <?php } ?>
                             <?php
                             }
@@ -847,8 +729,7 @@ foreach ($allCollections as $row) {
                                     <?php echo date('d-m-Y', strtotime($cusDueMonth)); ?>
                                 </td>
                                 <td>
-                                    <?php echo date('M', strtotime($cusDueMonth));
-                                    ?>
+                                    <?php echo date('M', strtotime($cusDueMonth)); ?>
                                 </td>
                                 <?php if ($loan_type == 'emi') { ?>
                                     <td>
@@ -861,9 +742,10 @@ foreach ($allCollections as $row) {
                                         <?php echo moneyFormatIndia($last_princ_amt); ?>
                                     </td>
                                     <td>
-                                        <?php echo moneyFormatIndia($row['due_amt']);
-
-                                        $last_int_amt =  $row['due_amt']; ?>
+                                        <?php 
+                                            echo moneyFormatIndia($row['due_amt']);
+                                            $last_int_amt =  $row['due_amt']; 
+                                        ?>
                                     </td>
                                 <?php } ?>
                             <?php
@@ -886,14 +768,10 @@ foreach ($allCollections as $row) {
                         }
                         ?>
                         <td>
-                            <?php
-                            echo (int)$row['pending_amt'];
-                            ?>
+                            <?php echo moneyFormatIndia((int)$row['pending_amt']); ?>
                         </td>
                         <td>
-                            <?php
-                            echo (int)$row['payable_amt'];
-                            ?>
+                            <?php echo moneyFormatIndia((int)$row['payable_amt']); ?>
                         </td>
                         <td>
                             <?php $displayDate =  collectionEffectiveDate($row);
@@ -908,21 +786,17 @@ foreach ($allCollections as $row) {
                                 <?php
                                 if ($row['due_amt_track'] > 0) {
                                     $totalPaid +=  $row['due_amt_track'];
+                                    echo moneyFormatIndia($row['due_amt_track']);
 
-                                    echo moneyFormatIndia(
-                                        $row['due_amt_track']
-                                    );
-                                } elseif (
-                                    $row['pre_close_waiver'] > 0
-                                ) {
+                                } elseif ($row['pre_close_waiver'] > 0) {
                                     $totalPreClose +=  $row['pre_close_waiver'];
                                     echo moneyFormatIndia($row['pre_close_waiver']);
                                 }
                                 ?>
                             </td>
-                        <?php } ?>
+                        <?php }
 
-                        <?php if ($loan_type == 'Interest') { ?>
+                         if ($loan_type == 'Interest') { ?>
                             <td>
                                 <?php
                                 if ($princ_amt_track > 0) {
@@ -941,21 +815,16 @@ foreach ($allCollections as $row) {
                                 }
                                 ?>
                             </td>
-                            <?php
-
-                            $totalpaid = $totalPaidPrinc;
-                            ?>
-                        <?php } else { ?>
-
-                            <?php $totalpaid = $totalPaid; ?>
-
-                        <?php } ?>
+                            <?php $totalpaid = $totalPaidPrinc; ?>
+                        <?php } else {
+                                $totalpaid = $totalPaid;
+                            } ?>
                         <td>
                             <?php
-                            echo moneyFormatIndia($bal_amt);
-                            if ($loan_type == 'Interest') {
-                                $last_princ_amt = $bal_amt;
-                            }
+                                echo moneyFormatIndia($bal_amt);
+                                if ($loan_type == 'Interest') {
+                                    $last_princ_amt = $bal_amt;
+                                }
                             ?>
                         </td>
                         <?php if ($loan_type == 'emi') { ?>
@@ -965,133 +834,102 @@ foreach ($allCollections as $row) {
 
                         <?php } else { ?>
                             <td>
-                                <?php
-                                echo $row['principal_waiver'] > 0
-                                    ? moneyFormatIndia(
-                                        $row['principal_waiver']
-                                    )
-                                    : '0';
-                                ?>
+                                <?php echo $row['principal_waiver'] > 0 ? moneyFormatIndia($row['principal_waiver']) : '0'; ?>
                             </td>
                             <td>
-                                <?php
-                                echo $row['interest_waiver'] > 0
-                                    ? moneyFormatIndia(
-                                        $row['interest_waiver']
-                                    )
-                                    : '0';
-                                ?>
+                                <?php echo $row['interest_waiver'] > 0 ? moneyFormatIndia($row['interest_waiver']) : '0'; ?>
                             </td>
 
                         <?php } ?>
                         <td>
-                            <?php
-                            echo formatRole(
-                                $role
-                            );
-                            ?>
+                            <?php echo formatRole($role); ?>
                         </td>
                         <td>
-                            <?php
-                            echo htmlspecialchars(
-                                $row['fullname'] ?? ''
-                            );
-                            ?>
+                            <?php echo htmlspecialchars($row['fullname'] ?? ''); ?>
                         </td>
 
                         <td>
-                            <?php
-                            echo formatCollectionLocation(
-                                $row['coll_location']
-                            );
-                            ?>
+                            <?php echo formatCollectionLocation($row['coll_location']); ?>
                         </td>
                         <td>
-                            <a  class="print_due_coll"  id="" value="<?php echo htmlspecialchars(  $row['coll_code'] ); ?>">
-                                <i class="fa fa-print"  aria-hidden="true"></i>
-                            </a>
+                            <a class="print_due_coll" id="" value="<?php echo htmlspecialchars(  $row['coll_code'] ); ?>"><i class="fa fa-print"  aria-hidden="true"></i></a>
                         </td>
                     </tr>
                 <?php
                 }
-            } else {   ?>
+            } else { ?>
                 <tr>
                     <td>
-                        <?php echo $i;  ?>
+                        <?php echo $i; ?>
                     </td>
                     <td>
                         <?php
-                        if ( $loanFrom['due_method_calc'] == 'Monthly' ||  $loanFrom['due_method_scheme'] == '1'  ) {
-                            echo date(  'm-Y',  strtotime($cusDueMonth)
-                            );
-                        } else {
-                            echo date( 'd-m-Y',  strtotime( $cusDueMonth ));
-                        }
+                            if ($loanFrom['due_method_calc'] == 'Monthly' || $loanFrom['due_method_scheme'] == '1') {
+                                echo date('m-Y',strtotime($cusDueMonth));
+                            } else {
+                                echo date('d-m-Y',strtotime( $cusDueMonth ));
+                            }
                         ?>
                     </td>
                     <td>
-                        <?php   echo date(  'M', strtotime( $cusDueMonth ) ); ?>
+                        <?php echo date('M', strtotime($cusDueMonth)); ?>
                     </td>
                     <?php if ($loan_type == 'emi') { ?>
                         <td>
-                            <?php  echo moneyFormatIndia( $due_amt_1 ); ?>
+                            <?php echo moneyFormatIndia($due_amt_1); ?>
                         </td>
-                    <?php } ?>
-                    <?php if ($loan_type == 'Interest') { ?>
+                    <?php } 
+                        if ($loan_type == 'Interest') { ?>
                         <td>
-                            <?php  echo moneyFormatIndia( $last_princ_amt ); ?>
+                            <?php echo moneyFormatIndia($last_princ_amt); ?>
                         </td>
                         <td>
-                            <?php  $interest_rate_calc =  $loanFrom['int_rate'];
+                            <?php 
+                                $interest_rate_calc = $loanFrom['int_rate'];
+                                $current_principal = $last_princ_amt;
+                                $interest_calculate = $loanFrom['calc_method'];
 
-                            $current_principal =  $last_princ_amt;
+                                if ($interest_calculate == 'Monthly') {
+                                    $int = $current_principal * ($interest_rate_calc / 100);
 
-                            $interest_calculate =  $loanFrom['calc_method'];
+                                } elseif ($interest_calculate == 'Days') {
+                                    $int = ($current_principal * ($interest_rate_calc / 100)) / 30;
 
-                            if ( $interest_calculate == 'Monthly') {
+                                } else {
+                                    $int = 0;
+                                }
 
-                                $int = $current_principal * (  $interest_rate_calc / 100);
-                            } elseif ( $interest_calculate == 'Days') {
-                                $int = ( $current_principal * ( $interest_rate_calc / 100  ) ) / 30;
-                            } else {
-                                $int = 0;
-                            }
+                                $curInterest = ceil($int / 5) * 5;
 
-                            $curInterest =  ceil( $int / 5 ) * 5;
+                                if ($curInterest < $int) {
+                                    $curInterest += 5;
+                                }
 
-                            if (  $curInterest < $int ) {
-                                $curInterest += 5;
-                            }
-
-                            echo moneyFormatIndia($curInterest);
+                                echo moneyFormatIndia($curInterest);
                             ?>
-
                         </td>
-                    <?php } ?>
-                    <?php
-                    if ( $loanFrom['due_method_calc'] == 'Monthly' ||  $loanFrom['due_method_scheme'] == '1') {
+                    <?php }
+                    
+                    if ($loanFrom['due_method_calc'] == 'Monthly' || $loanFrom['due_method_scheme'] == '1') {
 
-                        if ( date( 'Y-m', strtotime( $cusDueMonth ) ) <= date('Y-m') ) {
-
+                        if (date('Y-m', strtotime($cusDueMonth)) <= date('Y-m')) {
                     ?>
                             <td>
                                 <?php
-                                $a =  $i - 1;
-                                $pendingval =  ( $due_amt_1 * $a ) - $totalpaid - $totalPreClose;
-
-                                echo max(0, $pendingval);
+                                    $a = $i - 1;
+                                    $pendingval = ( $due_amt_1 * $a ) - $totalpaid - $totalPreClose;
+                                    echo max(0, moneyFormatIndia($pendingval));
                                 ?>
                             </td>
                             <td>
-                                <?php  $payableval = ($i < 1) ? 0 : $due_amt_1 + $pendingval;
-                                $payable_val = ( $payableval > $bal_amt )  ? $bal_amt : $payableval;
-                                echo max( 0, moneyFormatIndia($payable_val));
+                                <?php  
+                                    $payableval = ($i < 1) ? 0 : $due_amt_1 + $pendingval;
+                                    $payable_val = ( $payableval > $bal_amt )  ? $bal_amt : $payableval;
+                                    echo max( 0, moneyFormatIndia($payable_val));
                                 ?>
                             </td>
-
                         <?php
-
-                        } elseif ( date(  'Y-m',  strtotime( $cusDueMonth )  ) > date('Y-m')  && $curDateChecker == true ) {
+                            } elseif (date('Y-m', strtotime($cusDueMonth)) > date('Y-m') && $curDateChecker == true) {
                         ?>
                             <td></td>
                             <td></td>
@@ -1109,12 +947,10 @@ foreach ($allCollections as $row) {
                             <td></td>
                             <td></td>
                         <?php
-                        } elseif ( date( 'Y-m-d', strtotime($cusDueMonth) ) > date('Y-m-d') && $curDateChecker == true ) {
-
+                            } elseif (date( 'Y-m-d', strtotime($cusDueMonth)) > date('Y-m-d') && $curDateChecker == true ) {
                         ?>
                             <td></td>
                             <td></td>
-
                         <?php
                             $curDateChecker = false;
                         } else {
@@ -1157,11 +993,7 @@ foreach ($allCollections as $row) {
         }
 
         $currentDate =  date('Y-m-d');
-
-
         $startTime = '00:00:00';
-
-
         $endTime = '23:59:59';
 
         if ( $loanFrom['due_method_calc'] == 'Monthly' ||  $loanFrom['due_method_scheme'] == '1') {
@@ -1187,24 +1019,19 @@ foreach ($allCollections as $row) {
 
         foreach ( $allCollections as $row ) {
 
-            if ( !collectionHasTrack(  $row, $loan_type,  $loanFrom['due_method_scheme'] )
-            ) {
+            if (!collectionHasTrack($row, $loan_type, $loanFrom['due_method_scheme'])) {
                 continue;
             }
 
-            $collDate =  validCollectionDate( $row['coll_date'] ) ? substr( $row['coll_date'],  0, 10 ) : null;
-
+            $collDate = validCollectionDate( $row['coll_date'] ) ? substr( $row['coll_date'],  0, 10 ) : null;
             $transDate = validCollectionDate( $row['trans_date'] ) ? substr( $row['trans_date'], 0,  10 ) : null;
-
             $condition1 = false;
 
-            if ($collDate !== null && $collDate >= $futureStartDate &&  $collDate <= $currentDate) {
-
+            if ($collDate !== null && $collDate >= $futureStartDate && $collDate <= $currentDate) {
                 $condition1 = true;
             }
 
-            if (  $transDate !== null && $transDate >= $futureStartDate &&  $transDate <= $currentDate) {
-
+            if ($transDate !== null && $transDate >= $futureStartDate && $transDate <= $currentDate) {
                 $condition1 = true;
             }
 
@@ -1214,56 +1041,45 @@ foreach ($allCollections as $row) {
 
             $condition2 = false;
 
-            if (  $transDate !== null &&  $transDate > $maturity_month_last_date) {
-
+            if ($transDate !== null && $transDate > $maturity_month_last_date) {
                 $condition2 = true;
             }
 
-            if (  $collDate !== null && $collDate > $maturity_month_last_date ) {
-
+            if ($collDate !== null && $collDate > $maturity_month_last_date) {
                 $condition2 = true;
             }
 
             if (!$condition2) {
                 continue;
             }
-            $insideStartToLast =
-                false;
-            if (  $collDate !== null && $collDate >= $due_start_from &&  $collDate <= $maturity_month_last_date ) {
 
-                $insideStartToLast =
-                    true;
+            $insideStartToLast = false;
+            if ($collDate !== null && $collDate >= $due_start_from && $collDate <= $maturity_month_last_date) {
+                $insideStartToLast = true;
             }
 
-            if ( $transDate !== null &&  $transDate >= $due_start_from &&  $transDate <= $maturity_month_last_date) {
-
-                $insideStartToLast =
-                    true;
+            if ($transDate !== null && $transDate >= $due_start_from && $transDate <= $maturity_month_last_date) {
+                $insideStartToLast = true;
             }
 
             if ($insideStartToLast) {
                 continue;
             }
 
-            $futureCollections[] =
-                $row;
+            $futureCollections[] = $row;
         }
 
-        foreach (  $futureCollections  as $row ) {
+        foreach ($futureCollections as $row) {
 
-            $role =  $row['role'];
-            $due_amt_track =  (int)$row['due_amt_track'];
+            $role = $row['role'];
+            $due_amt_track = (int)$row['due_amt_track'];
+            $waiver = (int)$row['pre_close_waiver'];
 
-            $waiver =  (int)$row['pre_close_waiver'];
+            $PcollectionAmnt = $IcollectionAmnt = $principal_waiver = 0;
 
-            $PcollectionAmnt = 0;
-            $IcollectionAmnt = 0;
-            $principal_waiver = 0;
             if ($loan_type == 'Interest') {
-
                 $PcollectionAmnt = (int)$row['princ_amt_track'];
                 $IcollectionAmnt = (int)$row['int_amt_track'];
-
                 $principal_waiver = (int)$row['principal_waiver'];
 
                 if ($last_bal_amt != 0) {
@@ -1274,7 +1090,6 @@ foreach ($allCollections as $row) {
             } else {
                 $bal_amt = (int)$row['bal_amt'] - $due_amt_track - $waiver;
             }
-
             ?>
 
             <tr>
@@ -1289,44 +1104,31 @@ foreach ($allCollections as $row) {
                     <td></td>
                 <?php } ?>
                 <td>
-                    <?php
-                    echo (int)$row['pending_amt'];
-                    ?>
+                    <?php echo moneyFormatIndia((int)$row['pending_amt']); ?>
+                </td>
+                <td>
+                    <?php echo moneyFormatIndia((int)$row['payable_amt']); ?>
                 </td>
                 <td>
                     <?php
-                    echo (int)$row['payable_amt'];
-                    ?>
-                </td>
-                <td>
-                    <?php
-                    $displayDate = collectionEffectiveDate( $row );
+                        $displayDate = collectionEffectiveDate($row);
 
-                    if ($displayDate !== null) {
-
-                        echo date(
-                            'd-m-Y',
-                            strtotime(
-                                $displayDate
-                            )
-                        );
-                    }
+                        if ($displayDate !== null) {
+                            echo date('d-m-Y', strtotime($displayDate));
+                        }
                     ?>
                 </td>
 
                 <?php if ($loan_type == 'emi') { ?>
                     <td>
-                        <?php if (  $row['due_amt_track'] > 0 ) {
-                            echo moneyFormatIndia(
-                                $row['due_amt_track']
-                            );
-                        } elseif (
-                            $row['pre_close_waiver'] > 0
-                        ) {
-                            echo moneyFormatIndia(
-                                $row['pre_close_waiver']
-                            );
-                        }
+                        <?php 
+                            if ($row['due_amt_track'] > 0) {
+                                echo moneyFormatIndia($row['due_amt_track']);
+
+                            } elseif ($row['pre_close_waiver'] > 0) {
+                                echo moneyFormatIndia($row['pre_close_waiver']);
+                                
+                            }
                         ?>
                     </td>
                 <?php } ?>
@@ -1335,106 +1137,55 @@ foreach ($allCollections as $row) {
 
                     <td>
                         <?php
-                        if ( $PcollectionAmnt > 0 ) {
-
-                            $totalPaidPrinc += $PcollectionAmnt;
-                            echo moneyFormatIndia( $PcollectionAmnt );
-                        } else {
-                            echo 0;
-                        }
+                            if ( $PcollectionAmnt > 0 ) {
+                                $totalPaidPrinc += $PcollectionAmnt;
+                                echo moneyFormatIndia( $PcollectionAmnt );
+                            } else {
+                                echo 0;
+                            }
                         ?>
                     </td>
                     <td>
                         <?php
-                        if (
-                            $IcollectionAmnt > 0
-                        ) {
-                            echo moneyFormatIndia(
-                                $IcollectionAmnt
-                            );
-                        } else {
-                            echo 0;
-                        }
+                            if ($IcollectionAmnt > 0) {
+                                echo moneyFormatIndia($IcollectionAmnt);
+                            } else {
+                                echo 0;
+                            }
                         ?>
                     </td>
                 <?php } ?>
 
                 <td>
-                    <?php
-                    echo moneyFormatIndia(
-                        $bal_amt
-                    );
-                    ?>
+                    <?php echo moneyFormatIndia($bal_amt); ?>
                 </td>
 
                 <?php if ($loan_type != 'Interest') { ?>
-
                     <td>
-                        <?php
-                        echo $row['pre_close_waiver'] > 0
-                            ? moneyFormatIndia(
-                                $row['pre_close_waiver']
-                            )
-                            : '0';
-                        ?>
+                        <?php echo $row['pre_close_waiver'] > 0 ? moneyFormatIndia($row['pre_close_waiver']) : '0'; ?>
                     </td>
                 <?php } else { ?>
                     <td>
-                        <?php
-                        echo $row['principal_waiver'] > 0
-                            ? moneyFormatIndia(
-                                $row['principal_waiver']
-                            )
-                            : '0';
-                        ?>
+                        <?php echo $row['principal_waiver'] > 0 ? moneyFormatIndia($row['principal_waiver']) : '0'; ?>
                     </td>
 
                     <td>
-                        <?php
-
-                        echo $row['interest_waiver'] > 0
-                            ? moneyFormatIndia(
-                                $row['interest_waiver']
-                            )
-                            : '0';
-                        ?>
+                        <?php echo $row['interest_waiver'] > 0 ? moneyFormatIndia($row['interest_waiver']) : '0'; ?>
                     </td>
                 <?php } ?>
                 <td>
-                    <?php
-                    echo formatRole(
-                        $role
-                    );
-                    ?>
+                    <?php echo formatRole($role); ?>
                 </td>
 
                 <td>
-                    <?php
-                    echo htmlspecialchars(
-                        $row['fullname'] ?? ''
-                    );
-                    ?>
+                    <?php echo htmlspecialchars($row['fullname'] ?? ''); ?>
                 </td>
                 <td>
-                    <?php
-                    echo formatCollectionLocation(
-                        $row['coll_location']
-                    );
-                    ?>
+                    <?php echo formatCollectionLocation($row['coll_location']); ?>
                 </td>
 
                 <td>
-                    <a
-                        class="print_due_coll"
-                        id=""
-                        value="<?php echo htmlspecialchars(
-                                    $row['coll_code']
-                                ); ?>">
-
-                        <i
-                            class="fa fa-print"
-                            aria-hidden="true"></i>
-                    </a>
+                    <a class="print_due_coll" id="" value="<?php echo htmlspecialchars($row['coll_code']); ?>"><i class="fa fa-print" aria-hidden="true"></i></a>
                 </td>
             </tr>
 
@@ -1444,5 +1195,4 @@ foreach ($allCollections as $row) {
         ?>
 
     </tbody>
-
 </table>

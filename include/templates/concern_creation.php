@@ -291,7 +291,7 @@ if (isset($_POST['submit_concern']) && $_POST['submit_concern'] != '') {
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                     <div class="form-group">
                                         <label for="comremark">Concern Remark</label><span class="required">&nbsp;*</span>
-                                        <textarea class="form-control" id="com_remark" name="com_remark" tabindex='20' onkeydown="return /[a-z ]/i.test(event.key)"></textarea>
+                                        <textarea class="form-control" id="com_remark" name="com_remark" tabindex='20'></textarea>
                                         <span class="text-danger" style='display:none' id='comRemarkCheck'>Please Enter Concern Remark</span>
                                     </div>
                                 </div>

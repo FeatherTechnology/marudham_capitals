@@ -261,7 +261,7 @@
 	<div class="modal-dialog modal-lg " role="document" style="height: 90vh;width:300vh;">
 		<div class="modal-content" style="background-color: white">
 			<div class="modal-header">
-				<h5 class="modal-title">Commitment Chart</h5>
+				<h5 class="modal-title commitment-chart-title">Commitment Chart</h5>
 				<button type="button" class="close" data-dismiss="modal" tabindex="1" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 			</div>
 			<div class="modal-body">

@@ -34,14 +34,14 @@ $(document).ready(function () {
                                 <td>${val.branch}</td>
                                 <td>${val.line}</td>
                                 <td>${val.group}</td>
-                                td>${val.duefollowup_name}</td>
+                                <td>${val.duefollowup_name}</td>
                                 <td>${val.mobile1}</td>
                                 <td>${val.mobile2}</td>
                                 <td>${val.action}</td>
                                 </tr>`;
                         })
                     } else {
-                        appendData = `<tr><td colspan='11'>No Records available</td></tr>`;
+                        appendData = `<tr><td colspan='13'>No Records available</td></tr>`;
                     }
                     $('#custListTable tbody').html(appendData);
 
@@ -59,7 +59,7 @@ $(document).ready(function () {
                                 </tr>`;
                         })
                     } else {
-                        appendData = `<tr><td colspan='7'>No Records available</td></tr>`;
+                        appendData = `<tr><td colspan='8'>No Records available</td></tr>`;
                     }
                     $('#famlistTable tbody').html(appendData);
 
@@ -322,15 +322,26 @@ function customerStatusOnClickEvents() {
     $('.coll-charge-chart').off('click').click(function () {
         var req_id = $(this).attr('value');
         collectionChargeChartList(req_id) //To Show Fine Chart List
-    })
+    });
+
     //Commitment chart
     $('.commitment-chart').off('click').click(function () {
         let req_id = $(this).data('reqid');
         let cus_id = $(this).data('cusid');
         $.post('followupFiles/dueFollowup/getCommitmentChart.php', { cus_id, req_id }, function (html) {
+            $('.commitment-chart-title').text(`Commitment Chart`);
             $('#commChartDiv').empty().html(html);
         })
-    })
+    });
+
+    //Commitment count chart
+    $('.commitment-count-chart').off('click').click(function () {
+        let req_id = $(this).data('reqid');
+        $.post('followupFiles/dueFollowup/getCommitmentCountChart.php', { req_id }, function (html) {
+            $('.commitment-chart-title').text(`Commitment Count Chart`);
+            $('#commChartDiv').empty().html(html);
+        })
+    });
 
     $('.noc-summary').off('click').click(function (e) {
         e.preventDefault();

@@ -25,7 +25,7 @@ if($row_count == 0){
     $response = ($sql) ? 'Enquiry Inserted Successfully' : 'Error While Inserting';
 
 }else{
-    $response = "Error! Customer Exists";
+    $response = "Customer Already Exists";
 }
 
 
