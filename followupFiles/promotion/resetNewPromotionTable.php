@@ -20,39 +20,26 @@ if ($promotion_activity_mapping_access == 1) {
     $condition = "adfm.map_id IN ($due_followup_lines)";
 }
 
+$sql = "
+    SELECT ncp.cus_id, ncp.cus_name, ncp.mobile, ncp.insert_login_id, ncp.created_date, a.area_name, sa.sub_area_name, agm.group_name, alm.line_name, u.fullname, np.status AS followup_sts, np.follow_date, np.followup_type 
+    FROM new_cus_promo ncp 
+    JOIN area_list_creation a ON ncp.area = a.area_id
+    JOIN sub_area_list_creation sa ON ncp.sub_area = sa.sub_area_id
+    JOIN area_group_mapping_area agma ON agma.area_id = a.area_id
+    JOIN area_group_mapping agm ON agm.map_id = agma.group_map_id
+    JOIN area_line_mapping_area alma ON alma.area_id = a.area_id
+    JOIN area_line_mapping alm ON alm.map_id = alma.line_map_id
+    LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
+    JOIN user u ON ncp.insert_login_id = u.user_id
+    LEFT JOIN new_promotion np ON ncp.cus_id = np.cus_id AND np.created_date = (SELECT MAX(np1.created_date) FROM new_promotion np1 WHERE np1.cus_id = ncp.cus_id)
+    WHERE ncp.cus_id NOT IN (SELECT cus_id FROM customer_register)
+";
+
 // Step 2: Apply logic for fetching data
-if ($role_type == 7 || $role_type == 3) {
-    // Role 7 (Admin) and 3(Manager)→ See all records
-    $sql = "
-        SELECT ncp.cus_id, ncp.cus_name, ncp.mobile, ncp.insert_login_id, ncp.created_date, a.area_name, sa.sub_area_name, agm.group_name, alm.line_name, u.fullname, np.status AS followup_sts, np.follow_date, np.followup_type 
-        FROM new_cus_promo ncp JOIN area_list_creation a ON ncp.area = a.area_id
-        JOIN sub_area_list_creation sa ON ncp.sub_area = sa.sub_area_id
-        JOIN area_group_mapping_area agma ON agma.area_id = a.area_id
-        JOIN area_group_mapping agm ON agm.map_id = agma.group_map_id
-        JOIN area_line_mapping_area alma ON alma.area_id = a.area_id
-        JOIN area_line_mapping alm ON alm.map_id = alma.line_map_id
-        JOIN user u ON ncp.insert_login_id = u.user_id
-        LEFT JOIN new_promotion np ON ncp.cus_id = np.cus_id AND np.created_date = (SELECT MAX(np1.created_date) FROM new_promotion np1 WHERE np1.cus_id = ncp.cus_id)
-        WHERE ncp.cus_id NOT IN (SELECT cus_id FROM customer_register)
-    ";
-} else {
+// Role 7 (Admin) and 3(Manager)→ See all records
+if ($role_type != 7 && $role_type != 3) {
     // Other roles → See only their own records
-    $sql = "
-        SELECT ncp.cus_id, ncp.cus_name, ncp.mobile, ncp.insert_login_id, ncp.created_date, a.area_name, sa.sub_area_name, agm.group_name, alm.line_name, u.fullname, np.status AS followup_sts, np.follow_date, np.followup_type
-        FROM new_cus_promo ncp 
-        JOIN area_list_creation a ON ncp.area = a.area_id
-        JOIN sub_area_list_creation sa ON ncp.sub_area = sa.sub_area_id
-        JOIN area_group_mapping_area agma ON agma.area_id = a.area_id
-        JOIN area_group_mapping agm ON agm.map_id = agma.group_map_id
-        JOIN area_line_mapping_area alma ON alma.area_id = a.area_id
-        JOIN area_line_mapping alm ON alm.map_id = alma.line_map_id
-        JOIN area_duefollowup_mapping_area adfma ON adfma.area_id = a.area_id
-        JOIN area_duefollowup_mapping adfm ON adfm.map_id = adfma.duefollowup_map_id
-        JOIN user u ON ncp.insert_login_id = u.user_id
-        LEFT JOIN new_promotion np ON ncp.cus_id = np.cus_id AND np.created_date = (SELECT MAX(np1.created_date) FROM new_promotion np1 WHERE np1.cus_id = ncp.cus_id)
-        WHERE ncp.cus_id NOT IN (SELECT cus_id FROM customer_register)
-        AND $condition 
-    ";
+    $sql .= "$condition";
 }
 
 if($_POST['followUpSts']){
@@ -64,14 +51,19 @@ if($_POST['dateType']){
     $sql .= " AND (DATE(np.follow_date) BETWEEN '".$_POST['followUpFromDate']."' AND '".$_POST['followUpToDate']."') ";
 }  
 
-    $sql .= ($_POST['followupType']) ? " AND np.followup_type = '". $_POST['followupType'] ."'" : "";   
+$sql .= ($_POST['followupType']) ? " AND np.followup_type = '". $_POST['followupType'] ."'" : "";   
+$sql .= ($_POST['branch_id']) ? " AND bc.branch_id = '". $_POST['branch_id'] ."'" : "";   
+$sql .= ($_POST['group_id']) ? " AND agm.map_id = '". $_POST['group_id'] ."'" : "";   
+$sql .= ($_POST['area_id']) ? " AND a.area_id = '". $_POST['area_id'] ."'" : "";
 
-    ($role_type != 7 || $role_type != 3) ? " GROUP BY ncp.cus_id" : "";
-    
-    $info = $connect->query($sql);
-// $sql = $connect->query("SELECT a.*,b.area_name,c.sub_area_name  FROM new_promotion a JOIN area_list_creation b ON a.area = b.area_id JOIN sub_area_list_creation c ON a.sub_area = c.sub_area_id WHERE 1 ");
+($role_type != 7 && $role_type != 3) ? " GROUP BY ncp.cus_id" : "";
+$sql .= " ORDER BY ncp.created_date DESC";
+
+$info = $connect->query($sql);
+
+// Close the database connection
+$connect = null;
 ?>
-
 
 <table class="table custom-table" id='new_promo_table' data-id='new_promotion'>
     <thead>
@@ -146,6 +138,7 @@ if($_POST['dateType']){
     // Declare table variable to store the DataTable instance
     var new_promo_table = $('#new_promo_table').DataTable({
         ...getStateSaveConfig('new_promo_table'),
+        'order': [],
         'iDisplayLength': 10,
         "lengthMenu": [
             [10, 25, 50, -1],
@@ -207,18 +200,9 @@ if($_POST['dateType']){
 </script>
 
 <style>
-    .dropdown-content {
-        color: black;
-    }
-
     @media (max-width: 598px) {
         #new_promo_div {
             overflow: auto;
         }
     }
 </style>
-
-<?php
-// Close the database connection
-$connect = null;
-?>

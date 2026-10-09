@@ -295,17 +295,15 @@ function boolFromPost($value): bool
 
 function getDocumentStatus($connect, $req_id)
 {
-
-    $response3 = 'completed';
+    $response = 'completed';
     $sts_qry = $connect->prepare("SELECT doc_sts FROM acknowlegement_documentation WHERE req_id = :req_id");
     $sts_qry->execute([':req_id' => $req_id]);
-    foreach ($sts_qry->fetchAll() as $sts_row) {
+    $sts_row = $sts_qry->fetch();
         if ($sts_row['doc_sts'] == 'NO') {
-            $response3 = 'pending';
-        }
+        $response = 'pending';
     }
 
-    return ($response3 === 'completed') ? 'completed' : 'pending';
+    return ($response === 'completed') ? 'completed' : 'pending';
 }
 
 function buildInfoActions($cus_id, $req_id, $cus_status, $profile_cus_status = null, $verification_cus_status = null, $documentation_submitted = 0) {
@@ -367,6 +365,9 @@ function buildChartActions($cus_id, $req_id, $cus_status)
     }
     if ($cus_status >= 14 && $cus_status <= 20) {
         $html .= "<a><span data-toggle='modal' data-target='#commitmentChart' class='commitment-chart' data-reqid='{$req_id}' data-cusid='{$cus_id}'> Commitment Chart </span></a>";
+    }
+    if ($cus_status > 20) {
+        $html .= "<a><span data-toggle='modal' data-target='#commitmentChart' class='commitment-count-chart' data-reqid='{$req_id}'> Commitment Count Chart </span></a>";
     }
 
     $html .= "</div></div>";

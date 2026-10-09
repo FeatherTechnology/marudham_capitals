@@ -110,8 +110,8 @@ if (sizeof($getUser) > 0) {
 					</div>
 					<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12">
 						<div class="form-group">
-							<label for="area">Area</label>
-							<select class="form-control" name="area" id="area">
+							<label for="filter_area">Area</label>
+							<select class="form-control" name="filter_area" id="filter_area">
 								<option value="">Select Area</option>
 							</select>
 						</div>
@@ -467,9 +467,9 @@ if (sizeof($getUser) > 0) {
 								</div>
 							</div>
 
-							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 enq_loan_amt" style="display: none;">
 								<div class="form-group">
-									<label for="autogen_cus_id">Customer Id</label><span class="required">&nbsp;*</span>
+									<label for="autogen_cus_id">Customer ID</label><span class="required">&nbsp;*</span>
 									<input class='form-control' name="autogen_cus_id" id="autogen_cus_id" tabindex="2" readonly>
 								</div>
 							</div>
@@ -498,8 +498,8 @@ if (sizeof($getUser) > 0) {
 
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<div class="form-group">
-									<label for="areaID">Area</label>&nbsp;<span class="text-danger">*</span>
-									<select tabindex="6" type="text" class="form-control" id="areaID" name="areaID">
+									<label for="area">Area</label>&nbsp;<span class="text-danger">*</span>
+									<select tabindex="6" type="text" class="form-control" id="area" name="area">
 										<option value="">Select Area</option>
 									</select>
 									<span class="text-danger" style='display:none' id='areaCheck'>Please Select Area</span>

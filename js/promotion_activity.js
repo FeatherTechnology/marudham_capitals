@@ -74,7 +74,7 @@ $(document).ready(function () {
             resetNewPromotionTable();
         }
 
-        $('#cus_id, #cus_data, #new_cus_name, #cus_mob, #area, #sub_area, #enquiry_loan_amt, #screen_name').val('');
+        $('#cus_id, #autogen_cus_id, #cus_data, #new_cus_name, #cus_mob, #area, #sub_area, #enquiry_loan_amt, #remarks, #screen_name').val('');
     });
 
     $('#cus_id_search, #cus_id').keyup(function () {
@@ -149,8 +149,8 @@ $(document).ready(function () {
         }
     });
 
-    $("#areaID").change(function () {
-        var areaselected = $("#areaID").val();
+    $("#area").change(function () {
+        var areaselected = $("#area").val();
         getAreaBasedSubArea(areaselected,"");
     });
 
@@ -507,26 +507,32 @@ $(document).ready(function () {
     $(document).on('change', '#cus_id', function (e) {
         var cus_id = $(this).val();
         cus_id = cus_id.replace(/\s+/g, "");
+        let activeBtnName = $(".toggle-button.active").val();
         $.post('requestFile/getCustomerDetail.php', { cus_id }, function (response) {
             let cusData = (response.message == 'Existing') ? 'Existing' : 'New';
 
-             if (cusData == 'New') {
+             if (cusData == 'New' && activeBtnName == 'Enquiry') {
                 swarlErrorAlert("This section is only for existing customers.");
                 $('#cus_id').val('');
                 return;
             }
-            $('#autogen_cus_id').val(response.autogen_cus_id);
+
+            if(activeBtnName == 'Enquiry'){
+                $('#autogen_cus_id').val(response.autogen_cus_id);
+                getUserBasedArea(response.area, response.sub_area);
+            }
+
             $('#cus_data').val(cusData);
             $('#new_cus_name').val(response.cus_name);
             $('#cus_mob').val(response.mobile1);
-            getUserBasedArea(response.area,response.sub_area);
+            
         }, 'json');
     });
 
     $('#sector').on('change', function () {
         let sector = $(this).val();
         if (sector == '') {
-            $('#area').html('<option value="">Select Area</option>');
+            $('#filter_area').html('<option value="">Select Area</option>');
             return false;
         } else {
             getAreaList();
@@ -633,9 +639,9 @@ function getAreaList() {
          type: 'POST', 
          data: { sector: sector }, 
          dataType: 'json', success: function(response) { 
-            $('#area').html('<option value="">Select Area</option>'); 
+            $('#filter_area').html('<option value="">Select Area</option>'); 
             $.each(response, function(index, value) {
-                 $('#area').append( '<option value="' + value.area_id + '">' + value.area_name + '</option>' );
+                $('#filter_area').append( '<option value="' + value.area_id + '">' + value.area_name + '</option>' );
             });
         }
     });
@@ -707,8 +713,11 @@ function resetNewPromotionTable() {
     let followUpFromDate = $('#follow_up_fromdate').val();
     let followUpToDate = $('#follow_up_todate').val();
     let followupType = $('#followuptype').val();
+    let branch_id = $('#branch').val();
+    let group_id = $('#sector').val();
+    let area_id = $('#filter_area').val();
 
-    $.post('followupFiles/promotion/resetNewPromotionTable.php', { followUpSts, dateType, followUpFromDate, followUpToDate, followupType }, function (html) {
+    $.post('followupFiles/promotion/resetNewPromotionTable.php', { followUpSts, dateType, followUpFromDate, followUpToDate, followupType, branch_id, group_id, area_id }, function (html) {
         $('#new_promo_div').empty().html(html);
 
     }).then(function () {
@@ -721,7 +730,7 @@ function resetNewPromotionTable() {
 function submitNewCustomer() {
     let cus_id = $('#cus_id').val(); let cus_name = $('#new_cus_name').val(); let cus_mob = $('#cus_mob').val();
     let area = $('#area').val(); let sub_area = $('#sub_area').val();
-    let args = { 'cus_id': cus_id, 'cus_name': cus_name, 'cus_mob': cus_mob, 'area': area, 'sub_area': sub_area }
+    let args = { cus_id, cus_name, cus_mob, area, sub_area }
     $.post('followupFiles/promotion/submitNewCustomer.php', args, function (response) {
         if (response.includes('Error')) {
             swarlErrorAlert(response);
@@ -745,9 +754,9 @@ function resetEnquiryTable() {
     let followupType = $('#followuptype').val();
     let branch_id = $('#branch').val();
     let group_id = $('#sector').val();
-    let area_id = $('#area').val();
+    let area_id = $('#filter_area').val();
 
-    $.post('followupFiles/promotion/resetEnquiryTable.php', { followUpSts, dateType, followUpFromDate, followUpToDate, followupType ,branch_id , group_id, area_id}, function (html) {
+    $.post('followupFiles/promotion/resetEnquiryTable.php', { followUpSts, dateType, followUpFromDate, followUpToDate, followupType, branch_id, group_id, area_id}, function (html) {
         $('#enquiry_div').empty().html(html);
 
     }).then(function () {
@@ -758,10 +767,10 @@ function resetEnquiryTable() {
 }
 
 function submitEnquiry() {
-    let cus_id = $('#cus_id').val(); let cus_data = $('#cus_data').val(); let cus_name = $('#new_cus_name').val(); let cus_mob = $('#cus_mob').val(); let area = $('#areaID').val(); let sub_area = $('#sub_area').val(); let enquiry_loan_amt = $('#enquiry_loan_amt').val(); let remarks = $('#remarks').val(); 
-    let args = { cus_id, cus_data, cus_name, cus_mob, area, sub_area, enquiry_loan_amt,remarks }
+    let cus_id = $('#cus_id').val(); let cus_data = $('#cus_data').val(); let cus_name = $('#new_cus_name').val(); let cus_mob = $('#cus_mob').val(); let area = $('#area').val(); let sub_area = $('#sub_area').val(); let enquiry_loan_amt = $('#enquiry_loan_amt').val(); let remarks = $('#remarks').val(); 
+    let args = { cus_id, cus_data, cus_name, cus_mob, area, sub_area, enquiry_loan_amt, remarks }
     $.post('followupFiles/promotion/submitEnquiry.php', args, function (response) {
-        if (response.includes('Error')) {
+        if (response.includes('Already')) {
             swarlErrorAlert(response);
         } else {
             swarlSuccessAlert(response, function () {
@@ -775,7 +784,7 @@ function submitEnquiry() {
 function validateNewCusAdd() {
     let response = true;
     let cus_id = $('#cus_id').val(); let cus_name = $('#new_cus_name').val(); let cus_mob = $('#cus_mob').val();
-    let area = $('#areaID').val(); let sub_area = $('#sub_area').val(); let enquiry_loan_amt = $('#enquiry_loan_amt').val(); let screen_name = $('#screen_name').val();
+    let area = $('#area').val(); let sub_area = $('#sub_area').val(); let enquiry_loan_amt = $('#enquiry_loan_amt').val(); let screen_name = $('#screen_name').val();
 
     validateField(cus_name, '#cus_nameCheck');
     validateField(area, '#areaCheck');
@@ -862,7 +871,7 @@ function getUserBasedArea(area_id, sub_area_id) {
 
         success: function (data) {
 
-            let $area = $("#areaID");
+            let $area = $("#area");
 
             $area.empty().append(
                 '<option value="">Select Area</option>'
@@ -1072,7 +1081,7 @@ function showPromotionList(url, tableid, colNo) {
     let followupType = $('#followuptype').val();
     let branch_id = $('#branch').val();
     let group_id = $('#sector').val();
-    let area_id = $('#area').val();
+    let area_id = $('#filter_area').val();
     let re_active = "";
     if (tableid === 're_active_promotion_list') {
         re_active = "re_active_table"

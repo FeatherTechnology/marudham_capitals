@@ -65,17 +65,17 @@ $data = array();
 if ($runSql->rowCount() > 0) {
     while ($row = $runSql->fetch()){
         $req_sql = $connect->query("SELECT cr.cus_id, cr.autogen_cus_id, cr.customer_name, ac.area_name, sac.sub_area_name, bc.branch_name, alm.line_name, agm.group_name,adfm.duefollowup_name, cr.mobile1, cr.mobile2 
-                    FROM customer_register cr 
-                    LEFT JOIN area_list_creation ac ON ac.area_id = COALESCE(NULLIF(cr.area_confirm_area, ''), cr.area) 
-                    LEFT JOIN sub_area_list_creation sac ON  sac.sub_area_id = COALESCE(NULLIF(cr.area_confirm_subarea, ''), cr.sub_area)
-                    LEFT JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sac.sub_area_id
-                    LEFT JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
-                    LEFT JOIN area_group_mapping_sub_area agmsa ON agmsa.sub_area_id = sac.sub_area_id
-                    LEFT JOIN area_group_mapping agm ON agm.map_id = agmsa.group_map_id  
-                    LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
-                    JOIN area_duefollowup_mapping_area adfma ON adfma.area_id = ac.area_id
-                    JOIN area_duefollowup_mapping adfm ON adfm.map_id = adfma.duefollowup_map_id
-                    WHERE cr.cus_id = '".$row['cus_id'] . "'");
+            FROM customer_register cr 
+            LEFT JOIN area_list_creation ac ON ac.area_id = COALESCE(NULLIF(cr.area_confirm_area, ''), cr.area) 
+            LEFT JOIN sub_area_list_creation sac ON  sac.sub_area_id = COALESCE(NULLIF(cr.area_confirm_subarea, ''), cr.sub_area)
+            LEFT JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = sac.sub_area_id
+            LEFT JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
+            LEFT JOIN area_group_mapping_sub_area agmsa ON agmsa.sub_area_id = sac.sub_area_id
+            LEFT JOIN area_group_mapping agm ON agm.map_id = agmsa.group_map_id  
+            LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id 
+            LEFT JOIN area_duefollowup_mapping_area adfma ON adfma.area_id = ac.area_id
+            LEFT JOIN area_duefollowup_mapping adfm ON adfm.map_id = adfma.duefollowup_map_id
+            WHERE cr.cus_id = '".$row['cus_id'] . "'");
 
         while ($req_row = $req_sql->fetch()) {
             $sub_array = array();
@@ -88,7 +88,7 @@ if ($runSql->rowCount() > 0) {
             $sub_array['branch'] = $req_row['branch_name'];
             $sub_array['line'] = $req_row['line_name'];
             $sub_array['group'] = $req_row['group_name'];
-            $sub_array['duefollowup_name'] = $req_row['duefollowup_name'];
+            $sub_array['duefollowup_name'] = $req_row['duefollowup_name'] ?? '';
             $sub_array['mobile1'] = $req_row['mobile1'];
             $sub_array['mobile2'] = $req_row['mobile2'];
             $action = '<input type="button" class="view_cust btn btn-primary" value="View" data-toggle="modal" data-target="#customerStatusModal" data-cusid=' . $req_row['cus_id'] . '>';
