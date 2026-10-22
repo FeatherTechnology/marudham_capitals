@@ -202,7 +202,7 @@
 		$('#branch_filter').on('change', function() {
 			let branch = $(this).val();
 
-			getSectorDropdown('noc', branch);
+			getSectorDropdowns('noc', branch);
 			saveNOCHandoverFilters();
 		});
 
@@ -228,7 +228,7 @@
 			if (!sectorLoaded) {
 				sectorLoaded = true;
 				let currentlySelected = $('#sector_filter').val() || [];
-				getSectorDropdown('noc', $('#branch_filter').val() || [], currentlySelected);
+				getSectorDropdowns('noc', $('#branch_filter').val() || [], currentlySelected);
 			}
 		});
 
@@ -287,7 +287,7 @@
 			}, 'json');
 		}
 
-		function getSectorDropdown(module, branch = [], preselect = []) {
+		function getSectorDropdowns(module, branch = [], preselect = []) {
 			sectorChoices.clearStore();
 			return $.ajax({
 				url: 'common_files/get_sector_name.php',

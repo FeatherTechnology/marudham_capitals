@@ -281,27 +281,6 @@ function getBranchDropdown(preselect = []) {
     }, 'json');
 }
 
-function getSectorDropdown(module, branch = [], preselect = []) {
-    sectorChoices.clearStore();
-    return $.ajax({
-        url: 'common_files/get_sector_name.php',
-        type: 'POST',
-        data: { module: module, branch: branch },
-        dataType: 'json',
-        success: function (response) {
-            let items = [];
-            $.each(response, function (i, val) {
-                items.push({
-                    value: val.id,
-                    label: val.name,
-                    selected: preselect.includes(String(val.id))
-                });
-            });
-            sectorChoices.setChoices(items, 'value', 'label', true);
-        }
-    });
-}
-
 function getLoanCatName(module, preselect = []) {
     return $.post('common_files/get_loan_category.php', { module: module }, function (response) {
         loan_category.clearStore();

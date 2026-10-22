@@ -283,7 +283,7 @@ foreach ($selectedZones as $zone_id) {
             if ($ftype == 2) { // Mobile
                 $mobile_total++;
                 if ($fstatus == 8) {
-                    $has_payment ? $mobile_paid_count++ : '';
+                    $has_payment ? $mobile_paid_count++ : $mobile_commitment_unpaid++;
                 } elseif ($fstatus == 1) {
                     if ($has_payment) {
                         $mobile_commitment_paid++;
@@ -298,7 +298,7 @@ foreach ($selectedZones as $zone_id) {
             } elseif ($ftype == 1) { // Direct
                 $direct_total++;
                 if ($fstatus == 8) {
-                    $has_payment ? $direct_paid_count++ : '';
+                    $has_payment ? $direct_paid_count++ : $direct_commitment_unpaid++;
                 } elseif ($fstatus == 1) {
                     $has_payment ? $direct_commitment_paid++ : $direct_commitment_unpaid++;
                     

@@ -48,7 +48,7 @@ $(function () {
 });
 
 function getUserNames() {
-    $.post('manageUser/getBranchList.php',  function (response) {
+    $.post('followupFiles/promotion/getBranchList.php',  function (response) {
         $('#branch').empty()
             .append("<option value=''>Select Branch</option>") .append("<option value='0'>All</option>")
 
@@ -60,15 +60,16 @@ function getUserNames() {
 
 function getGroup() {
     $.ajax({
-        url: 'reportFile/customer_status_report/ajaxGetGroup.php',
+        url: 'common_files/getUserMappings.php',
         type: 'POST',
+        data: {typeVal : '2'},
         dataType: 'json',
         success: function (response) {
             $('#branch').empty()
                 .append("<option value=''>Select Sector</option>") .append("<option value='0'>All</option>")
 
             $.each(response, function (i, val) {
-                $('#branch').append("<option value='" + val.group_ids + "'>" + val.group_name + "</option>");
+                $('#branch').append("<option value='" + val.ids + "'>" + val.map_name + "</option>");
             });
         }
     });

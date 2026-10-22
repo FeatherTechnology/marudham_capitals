@@ -2704,6 +2704,58 @@
             }
         }
         
+        function getUserMappings(typeVal){
+            $.post('common_files/getUserMappings.php', {typeVal}, function (response) {
+
+                map_name.clearStore();
+
+                const items = response.map(row => ({
+                    value: row.ids,
+                    label: row.map_name
+                }));
+
+                map_name.setChoices(items);
+
+            },'json');
+        }
+
+        // =====================================================
+        // SECTOR DROPDOWN
+        // =====================================================
+
+        function getSectorDropdown(module, branch = [], preselect = []) {
+            sectorChoices.clearStore();
+            return $.ajax({
+                url: "common_files/get_sector_name.php",
+                type: "POST",
+                data: {
+                    module: module,
+                    branch: branch
+                },
+                dataType: "json",
+                success: function (response) {
+                    let items = [];
+                    $.each(response, function (i, val) {
+                        items.push({
+                            value: String(val.id),
+                            label: val.name,
+                            selected: preselect.includes(String(val.id))
+                        });
+
+                    });
+                    sectorChoices.setChoices(
+                        items,
+                        "value",
+                        "label",
+                        true
+                    );
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        }
+        
         function getUserLoanCategories() {
             $.ajax({
                 url: 'reportFile/customer_status_report/ajaxGetUserLoanCategory.php',

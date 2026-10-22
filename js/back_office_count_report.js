@@ -35,7 +35,7 @@ $(document).ready(function () {
         if (type == '4') { //Zone - Followup
             $('#user_type, #by_user').val('').hide();
             $('#map_name').closest('.choices').show();
-            getUserMappedDetails(type); //to Mapping details.
+            getUserMappings(type); //to Mapping details.
 
         } else if (type == '0') {
             $('#user_type, #by_user').val('').hide();

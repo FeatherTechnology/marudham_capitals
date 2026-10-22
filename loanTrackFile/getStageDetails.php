@@ -1,22 +1,20 @@
 <?php
-// session_start();
 include '../ajaxconfig.php';
 include './getTrackDetails.php';
 
 $req_id = $_POST['req_id'] ?? '';
 $stage = $_POST['stage'] ?? '';
-$detail_arr = array();
+$detail_arr = [];
+$heading_arr = [];
 
 if ($stage == 'lc') { //Loan Calculation, So show verification info
 
-    $qry = $connect->query("SELECT cus_id_loan as cus_id,communication,com_audio,verification_person,verification_location from verification_loan_calculation where req_id = '" . strip_tags($req_id) . "' ");
+    $qry = $connect->query("SELECT cus_id_loan as cus_id, communication, com_audio, verification_person, verification_location FROM verification_loan_calculation WHERE req_id = '$req_id' ");
     if ($qry->rowCount() > 0) {
         $row = $qry->fetch();
 
         $detail_arr['communication'] = $row['communication'] == '0' ? 'Phone' : 'Direct';
         if ($row['com_audio'] != '') {
-            // $detail_arr['com_audio'] = "<a href='uploads/verification/verifyInfo_audio/" . $row['com_audio'] . "' target='_blank'>Audio File</a>";
-
             $upload = explode(',', $row['com_audio']) ?? '';
             $upd_name = '';
             foreach ($upload as $upd) {
@@ -32,21 +30,23 @@ if ($stage == 'lc') { //Loan Calculation, So show verification info
         }
 
         if ($row['verification_person'] == $row['cus_id']) {
-            $cusname_qry = $connect->query("SELECT customer_name from customer_register where cus_id = '" . strip_tags($row['cus_id']) . "' ");
+            $cusname_qry = $connect->query("SELECT customer_name FROM customer_register WHERE cus_id = '" . strip_tags($row['cus_id']) . "' ");
             $cusname_row = $cusname_qry->fetch();
             $verification_person = $cusname_row['customer_name'];
         } else {
-            $famname_qry = $connect->query("SELECT famname from verification_family_info where id = '" . strip_tags($row['verification_person']) . "' ");
+            $famname_qry = $connect->query("SELECT famname FROM verification_family_info WHERE id = '" . strip_tags($row['verification_person']) . "' ");
             $famname_row = $famname_qry->fetch();
             $verification_person = $famname_row['famname'];
         }
+
         $detail_arr['verification_person'] = $verification_person;
         $detail_arr['verification_location'] = $row['verification_location'] == '0' ? 'On Spot' : 'Customer Spot';
         $heading_arr = ['Communication', 'Audio', 'Verification Person', 'Verification Location'];
     }
+
 } elseif ($stage == 'li') { //Loan Issue, So show Cash Acknowledgement info
 
-    $qry = $connect->query("SELECT cus_id,issued_to,cash_guarentor_name,cash_guarentor_name,agent_id from loan_issue where req_id = '" . strip_tags($req_id) . "' ");
+    $qry = $connect->query("SELECT cus_id, issued_to, cash_guarentor_name, cash_guarentor_name, agent_id FROM loan_issue WHERE req_id = '$req_id' AND cash_guarentor_name !=''");
     if ($qry->rowCount() > 0) {
 
         $row = $qry->fetch();
@@ -54,16 +54,18 @@ if ($stage == 'lc') { //Loan Calculation, So show verification info
         if (empty($row['agent_id']) && $row['cus_id'] != $row['cash_guarentor_name']) {
             //if agent id is empty and cash gurarantor is not the customer, then we need to search in family table
 
-            $fam_qry = $connect->query("SELECT famname,relationship from verification_family_info where relation_aadhar = '" . strip_tags($row['cash_guarentor_name']) . "' ");
+            $fam_qry = $connect->query("SELECT famname, relationship FROM verification_family_info WHERE relation_aadhar = '" . strip_tags($row['cash_guarentor_name']) . "' ");
             $fam_row = $fam_qry->fetch();
             $detail_arr['issued_to'] = $fam_row['famname'] ?? '';
             $detail_arr['relationship'] = $fam_row['relationship'] ?? '';
+
         } elseif (!empty($row['agent_id'])) { //if issued to an agent, take agent name
 
-            $ag_qry = $connect->query("SELECT ag_name from agent_creation where ag_id = '" . strip_tags($row['agent_id']) . "' ");
+            $ag_qry = $connect->query("SELECT ag_name FROM agent_creation WHERE ag_id = '" . strip_tags($row['agent_id']) . "' ");
             $ag_row = $ag_qry->fetch();
             $detail_arr['issued_to'] = $ag_row['ag_name'];
             $detail_arr['relationship'] = 'Agent';
+
         } else if ($row['cus_id'] == $row['cash_guarentor_name']) { //if issued and customer are same then direclty take values from issue table
 
             $detail_arr['issued_to'] = $row['issued_to'];
@@ -72,9 +74,10 @@ if ($stage == 'lc') { //Loan Calculation, So show verification info
 
         $heading_arr = ['Issued To', 'Relationship'];
     }
+
 } elseif ($stage == 'noc') { // NOC, So show NOC info
     $obj = new getTrackTableDetails;
-    $qry = $connect->query("SELECT noc_handover_date,noc_member,mem_name from noc where req_id = '" . strip_tags($req_id) . "'");
+    $qry = $connect->query("SELECT noc_handover_date, noc_member, mem_name FROM noc WHERE req_id = '$req_id'");
     $row = $qry->fetch();
     $response = $row;
     $detail_arr['noc_handover_date'] = !empty($response['noc_handover_date']) ? date('d-m-Y', strtotime($response['noc_handover_date'])) : '';
@@ -82,23 +85,20 @@ if ($stage == 'lc') { //Loan Calculation, So show verification info
         // 1 = Customer
         $detail_arr['noc_member'] = $response['mem_name'];
         $detail_arr['noc_name']   = 'Customer';
+
     } else if ($response['noc_member'] == '2') {
         // 2 = Guarantor
         $detail_arr['noc_member'] = $response['mem_name'];
         $detail_arr['noc_name']   = 'Guarantor';
+
     } else if ($response['noc_member'] == '3') {
         // 3 = Family member
-        $fam_qry = $connect->query("
-        SELECT famname, relationship 
-        FROM verification_family_info 
-        WHERE id = '" . strip_tags($response['mem_name']) . "'
-    ");
+        $fam_qry = $connect->query("SELECT famname, relationship FROM verification_family_info WHERE id = '" . strip_tags($response['mem_name']) . "'");
         $fam_row = $fam_qry->fetch();
 
         $detail_arr['noc_member'] = $fam_row['famname'];
         $detail_arr['noc_name']   = $fam_row['relationship'];
     }
-
 
     $heading_arr = ['Date of NOC', 'Member', 'Relationship'];
 }

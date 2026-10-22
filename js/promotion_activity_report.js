@@ -35,7 +35,7 @@ $(document).ready(function () {
       $("#by_user").empty().append("<option value=''>Select User</option>");
     } else if (type == "2" || type == "3" || type == "4") {
       $("#map_name").closest(".choices").show();
-      getUserMappedDetails(type);
+      getUserMappings(type);
     } else if (type == "5") {
       $("#department").show();
       getDepartmentTeamNames();

@@ -256,7 +256,7 @@ foreach ($line_ids as $current_line_id) {
             if ($ftype == 2) { // Mobile
                 $mobile_total++;
                 if ($fstatus == 8) {
-                    $has_payment ? $mobile_paid_count++ : '';
+                    $has_payment ? $mobile_paid_count++ : $mobile_commitment_unpaid++;
                 } elseif ($fstatus == 1) {
                     $has_payment ? $mobile_commitment_paid++ : $mobile_commitment_unpaid++;
                 } elseif (in_array($fstatus, [2, 3, 4, 5, 6, 7])) {
@@ -265,7 +265,7 @@ foreach ($line_ids as $current_line_id) {
             } elseif ($ftype == 1) { // Direct
                 $direct_total++;
                 if ($fstatus == 8) {
-                    $has_payment ? $direct_paid_count++ : '';
+                    $has_payment ? $direct_paid_count++ : $direct_commitment_unpaid++;
                 } elseif ($fstatus == 1) {
                     $has_payment ? $direct_commitment_paid++ : $direct_commitment_unpaid++;
                 } elseif (in_array($fstatus, [2, 3, 4, 5, 6, 7])) {

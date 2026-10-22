@@ -1,14 +1,10 @@
 <?php
-session_start();
 require_once 'moneyFormatIndia.php';
 if (isset($_GET['upd'])) {
     $idupd = $_GET['upd'];
 }
-if (isset($_SESSION["userid"])) {
-    $user_id = $_SESSION["userid"];
-}
 
-$getBankDetails = $userObj->getBankDetails($mysqli,$user_id);
+$getBankDetails = $userObj->getBankDetails($mysqli,$userid);
 
 $getRequestData = $userObj->getRequestForVerification($mysqli, $idupd);
 if (sizeof($getRequestData) > 0) {

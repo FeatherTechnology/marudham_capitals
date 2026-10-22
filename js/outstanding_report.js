@@ -274,7 +274,7 @@ function outStandingReport(monthVal, branch, loan_category, type, agent) {
 }
 
 function getBranchNames() {
-    $.post('manageUser/getBranchList.php', function (response) {
+    $.post('followupFiles/promotion/getBranchList.php', function (response) {
         $('#branch_id').empty()
             .append("<option value=''>Select Branch</option>")
 
