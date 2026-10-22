@@ -43,7 +43,7 @@ $(document).ready(function () {
     } else if (type == "2" || type == "3" || type == "4") {
       //sector - group, Region - Line, Zone - Follow up
       $("#map_name, #loan_category").closest(".choices").show();
-      getUserMappedDetails(type); //to Mapping details.
+      getUserMappings(type); //to Mapping details.
       getUserLoanCategories(); //to get Loan Category list.
     } else if (type == "5" || type == "6") {
       // Department / Team

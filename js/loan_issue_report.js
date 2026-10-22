@@ -91,7 +91,7 @@ $(function(){
 
 function getBranchNames() {
     $.ajax({
-        url: 'manageUser/getBranchList.php',
+        url: 'followupFiles/promotion/getBranchList.php',
         type: 'POST',
         dataType: 'json',
         success: function (response) {

@@ -58,7 +58,7 @@
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 								<div class="form-group">
 									<label for="loan_id">Loan ID</label>
-									<input type="text" class="form-control" id="loan_id" name="loan_id" placeholder="XXXX">
+									<input type="text" class="form-control" id="loan_id" name="loan_id" placeholder="Enter Loan ID">
 								</div>
 							</div>
 							<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12" style="text-align:center">

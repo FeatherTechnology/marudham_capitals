@@ -14,9 +14,8 @@ $current_page = isset($_GET['page']) ? $_GET['page'] : null;
 
 include('api/main.php'); // Database Connection File   
 
-if (isset($getuserdetails['download_access'])) {
-	define('DACC', $getuserdetails['download_access']);
-}
+$dwldAcc = $getuserdetails['download_access'] ?? 0;
+define('DACC', $dwldAcc);
 ?>
 
 <!doctype html>
