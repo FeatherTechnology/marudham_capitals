@@ -1,17 +1,17 @@
 <?php
 require '../ajaxconfig.php';
 
-$cus_id                   = $_POST['cus_id'];
+$cus_id                  = $_POST['cus_id'];
 $famname                 = $_POST['famname'];
 $relationship            = $_POST['relationship'];
 
 if($relationship  == 'Other'){
-    $other_remark            = $_POST['other_remark'];
-    $other_address           = $_POST['other_address'];
+    $other_remark        = $_POST['other_remark'];
+    $other_address       = $_POST['other_address'];
 }
 else{
-    $other_remark            = null;
-    $other_address           = null;
+    $other_remark        = null;
+    $other_address       = null;
 }
 
 $relation_dob            = ($_POST['relation_dob'] !='') ? $_POST['relation_dob'] : '0000-00-00';
@@ -24,13 +24,14 @@ $relation_Income         = $_POST['relation_Income'];
 $relation_Blood          = $_POST['relation_Blood'];
 $famTableId              = $_POST['famTableId'];
 $authorize               = ($_POST['authorize'] == 1) ? 1 : 0;
+$fam_mem_mark_as_spam    = $_POST['fam_mem_mark_as_spam'];
 
 
 if($famTableId == ''){
-    $insert_qry = $connect ->query("INSERT INTO `verification_family_info`(`cus_id`,`famname`, `relationship`,`authorize`, `other_remark`, `other_address`, `relation_dob`, `relation_age`, `relation_live_deceased`, `relation_aadhar`, `relation_Mobile`, `relation_Occupation`, `relation_Income`, `relation_Blood`) VALUES ('$cus_id','$famname','$relationship','$authorize','$other_remark','$other_address ','$relation_dob','$relation_age','$relation_live_deceased','$relation_aadhar','$relation_Mobile','$relation_Occupation','$relation_Income','$relation_Blood')");
+    $insert_qry = $connect ->query("INSERT INTO `verification_family_info`(`cus_id`,`famname`, `relationship`,`authorize`, `other_remark`, `other_address`, `relation_dob`, `relation_age`, `relation_live_deceased`, `relation_aadhar`, `relation_Mobile`, `relation_Occupation`, `relation_Income`, `relation_Blood`, `mark_as_spam`) VALUES ('$cus_id','$famname','$relationship','$authorize','$other_remark','$other_address ','$relation_dob','$relation_age','$relation_live_deceased','$relation_aadhar','$relation_Mobile','$relation_Occupation','$relation_Income','$relation_Blood','$fam_mem_mark_as_spam')");
 
 } else {
-    $update = $connect->query("UPDATE `verification_family_info` SET `cus_id`='$cus_id',`famname`='$famname',`relationship`='$relationship',`authorize`='$authorize',`other_remark`='$other_remark',`other_address`='$other_address',`relation_dob`='$relation_dob',`relation_age`='$relation_age',`relation_live_deceased`='$relation_live_deceased',`relation_aadhar`='$relation_aadhar',`relation_Mobile`='$relation_Mobile',`relation_Occupation`='$relation_Occupation',`relation_Income`='$relation_Income',`relation_Blood`='$relation_Blood' WHERE id = '$famTableId ' ");
+    $update = $connect->query("UPDATE `verification_family_info` SET `cus_id`='$cus_id',`famname`='$famname',`relationship`='$relationship',`authorize`='$authorize',`other_remark`='$other_remark',`other_address`='$other_address',`relation_dob`='$relation_dob',`relation_age`='$relation_age',`relation_live_deceased`='$relation_live_deceased',`relation_aadhar`='$relation_aadhar',`relation_Mobile`='$relation_Mobile',`relation_Occupation`='$relation_Occupation',`relation_Income`='$relation_Income',`relation_Blood`='$relation_Blood', `mark_as_spam`='$fam_mem_mark_as_spam' WHERE id = '$famTableId ' ");
 
 }
 

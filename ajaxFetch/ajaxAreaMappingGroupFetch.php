@@ -37,8 +37,8 @@ $baseQuery = "
 
 /* ---------- Search ---------- */
 $params = [];
-if (!empty($_POST['search']['value'])) {
-    $search = '%' . $_POST['search']['value'] . '%';
+if (!empty($_POST['search'])) {
+    $search = '%' . $_POST['search'] . '%';
     $baseQuery .= "
         AND (
             agm.group_name LIKE :search

@@ -67,39 +67,41 @@ $(document).ready(function () {
         var req_id = $(this).val();
         var cus_id = $(this).data('cusid');
         if (confirm('Do You want to Send this for Issue?')) {
-            $.ajax({
-                url: 'verificationFile/sendToIssue.php',
-                dataType: 'json',
-                type: 'post',
-                data: { 'req_id': req_id, 'cus_id': cus_id },
-                cache: false,
-                success: function (response) {
-                    if (response.includes('Moved')) {
-                        Swal.fire({
-                            title: response,
-                            icon: 'success',
-                            showConfirmButton: true,
-                            confirmButtonColor: '#009688',
-                            confirmButtonText: 'OK'
-                        }).then((result) => {
-                            // Redirect only if user clicks OK
-                            if (result.isConfirmed) {
-                                window.location = 'edit_acknowledgement_list';
-                            }
-                        });
+            getSpamCustomerDetails(cus_id, function(){
+                $.ajax({
+                    url: 'verificationFile/sendToIssue.php',
+                    dataType: 'json',
+                    type: 'post',
+                    data: { 'req_id': req_id, 'cus_id': cus_id },
+                    cache: false,
+                    success: function (response) {
+                        if (response.includes('Moved')) {
+                            Swal.fire({
+                                title: response,
+                                icon: 'success',
+                                showConfirmButton: true,
+                                confirmButtonColor: '#009688',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                // Redirect only if user clicks OK
+                                if (result.isConfirmed) {
+                                    window.location = 'edit_acknowledgement_list';
+                                }
+                            });
+                        }
+                        else {
+                            Swal.fire({
+                                timerProgressBar: true,
+                                timer: 2000,
+                                title: response,
+                                icon: 'error',
+                                showConfirmButton: true,
+                                confirmButtonColor: '#009688'
+                            });
+                        }
                     }
-                    else {
-                        Swal.fire({
-                            timerProgressBar: true,
-                            timer: 2000,
-                            title: response,
-                            icon: 'error',
-                            showConfirmButton: true,
-                            confirmButtonColor: '#009688'
-                        });
-                    }
-                }
-            })
+                }); //ajax end.
+            }); //function end.
         }
     });
 

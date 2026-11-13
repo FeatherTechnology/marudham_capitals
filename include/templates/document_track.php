@@ -31,6 +31,7 @@
 								<th>Region</th>
 								<th>Document Holder</th>
 								<th>Replace Doc</th>
+								<th>Loan Calculation</th>
 								<th>Action</th>
 							</tr>
 						</thead>

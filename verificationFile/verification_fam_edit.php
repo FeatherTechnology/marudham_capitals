@@ -21,6 +21,7 @@ $famEditRes['mobileno'] = $fam['relation_Mobile'];
 $famEditRes['occ'] = $fam['relation_Occupation'];
 $famEditRes['income'] = $fam['relation_Income'];
 $famEditRes['bg'] = $fam['relation_Blood'];
+$famEditRes['fam_mark_as_spam'] = $fam['mark_as_spam'];
 
 echo json_encode($famEditRes);
 

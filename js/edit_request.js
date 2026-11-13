@@ -85,30 +85,32 @@ $(document).ready(function () {
     $(document).on('click', '.sub_verification', function () {
         var req_id = $(this).val();
         var cus_id = $(this).attr('data-value');
-        if (confirm('Do You want to Send this Request for Verification?')) {
-            $.ajax({
-                url: 'requestFile/sendToVerificaiton.php',
-                dataType: 'json',
-                type: 'post',
-                data: { 'req_id': req_id, "cus_id": cus_id },
-                cache: false,
-                success: function (response) {
-                    if (response.includes('Moved')) {
-                        Swal.fire({
-                            title: response,
-                            icon: 'success',
-                            showConfirmButton: true,
-                            confirmButtonColor: '#009688',
-                            confirmButtonText: 'OK'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                // Redirect only when OK is clicked
-                                window.location = 'edit_request';
-                            }
-                        });
+        if (confirm('Do You want to Send this Request for Verification?')) { 
+            getSpamCustomerDetails(cus_id, function(){
+                $.ajax({
+                    url: 'requestFile/sendToVerificaiton.php',
+                    dataType: 'json',
+                    type: 'post',
+                    data: { 'req_id': req_id, "cus_id": cus_id },
+                    cache: false,
+                    success: function (response) {
+                        if (response.includes('Moved')) {
+                            Swal.fire({
+                                title: response,
+                                icon: 'success',
+                                showConfirmButton: true,
+                                confirmButtonColor: '#009688',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // Redirect only when OK is clicked
+                                    window.location = 'edit_request';
+                                }
+                            });
+                        }
                     }
-                }
-            })
+                }); //ajax end.
+            }); //function end.
         }
     });
 

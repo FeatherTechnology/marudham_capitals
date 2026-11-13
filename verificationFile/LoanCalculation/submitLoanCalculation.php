@@ -206,28 +206,18 @@ if (isset($_POST['cus_profile_id'])) {
     $cus_profile_id = $_POST['cus_profile_id'];
 }
 
-if ($loan_cal_id > 0 and $loan_cal_id != '') {
-   $insresult = $connect->query("UPDATE acknowlegement_loan_calculation SET cus_id_loan = '" . strip_tags($cus_id_loan) . "', cus_name_loan = '" . strip_tags($cus_name_loan) . "', cus_data_loan = '" . strip_tags($cus_data_loan) . "', mobile_loan = '" . strip_tags($mobile_loan) . "', pic_loan = '" . strip_tags($pic_loan) . "', loan_category = '" . strip_tags($loan_category) . "', sub_category = '" . strip_tags($sub_category) . "', tot_value = '" . strip_tags($tot_value) . "', ad_amt = '" . strip_tags($ad_amt) . "', loan_amt = '" . strip_tags($loan_amt) . "', profit_type = '" . strip_tags($profit_type) . "', due_method_calc = '" . strip_tags($due_method_calc) . "', due_type = '" . strip_tags($due_type) . "', profit_method = '" . strip_tags($profit_method) . "', calc_method = '" . strip_tags($calc_method) . "', due_method_scheme = '" . strip_tags($due_method_scheme) . "', profit_method_scheme = '" . strip_tags($scheme_profit_method) . "', day_scheme = '" . strip_tags($day_scheme) . "', scheme_name = '" . strip_tags($scheme_name) . "', int_rate = '" . strip_tags($int_rate) . "', due_period = '" . strip_tags($due_period) . "', doc_charge = '" . strip_tags($doc_charge) . "', proc_fee = '" . strip_tags($proc_fee) . "', loan_amt_cal = '" . strip_tags($loan_amt_cal) . "', principal_amt_cal = '" . strip_tags($principal_amt_cal) . "', int_amt_cal = '" . strip_tags($int_amt_cal) . "', tot_amt_cal = '" . strip_tags($tot_amt_cal) . "', due_amt_cal = '" . strip_tags($due_amt_cal) . "', doc_charge_cal = '" . strip_tags($doc_charge_cal) . "', proc_fee_cal = '" . strip_tags($proc_fee_cal) . "', net_cash_cal = '" . strip_tags($net_cash_cal) . "', due_start_from = '" . strip_tags($due_start_from) . "', maturity_month = '" . strip_tags($maturity_month) . "', collection_method = '" . strip_tags($collection_method) . "', cus_status = 12, update_login_id = $userid, update_date = current_timestamp() WHERE req_id = $req_id ");
-
-    $connect->query("DELETE FROM acknowledgement_loan_cal_category where req_id = '" . strip_tags($req_id) . "' and loan_cal_id='" . strip_tags($loan_cal_id) . "'");
-
-    for ($i = 0; $i < sizeof($category_info); $i++) {
-        $insertCategory = $connect->query("INSERT INTO `acknowledgement_loan_cal_category`(`req_id`, `loan_cal_id`, `category`) VALUES ('" . strip_tags($req_id) . "', '" . strip_tags($loan_cal_id) . "', '" . strip_tags($category_info[$i]) . "' )");
-    }
-
-} else {
-    $insresult = $connect->query("INSERT INTO acknowlegement_loan_calculation (`req_id`, `cus_id_loan`, `cus_name_loan`,`cus_data_loan`, `mobile_loan`, `pic_loan`, `loan_category`, `sub_category`, `tot_value`, `ad_amt`, `loan_amt`, `profit_type`, `due_method_calc`, `due_type`, `profit_method`, `calc_method`, `due_method_scheme`, `profit_method_scheme`,`day_scheme`, `scheme_name`,  `int_rate`, `due_period`, `doc_charge`, `proc_fee`, `loan_amt_cal`, `principal_amt_cal`, `int_amt_cal`, `tot_amt_cal`, `due_amt_cal`, `doc_charge_cal`, `proc_fee_cal`, `net_cash_cal`, `due_start_from`, `maturity_month`, `collection_method`, `cus_status`, `insert_login_id`,`create_date`) VALUES ('" . strip_tags($req_id) . "', '" . strip_tags($cus_id_loan) . "', '" . strip_tags($cus_name_loan) . "', '" . strip_tags($cus_data_loan) . "','" . strip_tags($mobile_loan) . "', '" . strip_tags($pic_loan) . "', '" . strip_tags($loan_category) . "', '" . strip_tags($sub_category) . "', '" . strip_tags($tot_value) . "', '" . strip_tags($ad_amt) . "', '" . strip_tags($loan_amt) . "', '" . strip_tags($profit_type) . "', '" . strip_tags($due_method_calc) . "', '" . strip_tags($due_type) . "', '" . strip_tags($profit_method) . "', '" . strip_tags($calc_method) . "', '" . strip_tags($due_method_scheme) . "', '" . strip_tags($scheme_profit_method) . "', '" . strip_tags($day_scheme) . "', '" . strip_tags($scheme_name) . "', '" . strip_tags($int_rate) . "', '" . strip_tags($due_period) . "', '" . strip_tags($doc_charge) . "', '" . strip_tags($proc_fee) . "', '" . strip_tags($loan_amt_cal) . "', '" . strip_tags($principal_amt_cal) . "', '" . strip_tags($int_amt_cal) . "', '" . strip_tags($tot_amt_cal) . "', '" . strip_tags($due_amt_cal) . "', '" . strip_tags($doc_charge_cal) . "', '" . strip_tags($proc_fee_cal) . "', '" . strip_tags($net_cash_cal) . "', '" . strip_tags($due_start_from) . "', '" . strip_tags($maturity_month) . "', '" . strip_tags($collection_method) . "', 12, $userid, current_timestamp()) ");
-    $loan_cal_id = $connect->lastInsertId();
-
-    for ($i = 0; $i < sizeof($category_info); $i++) {
-        $insertCategory = $connect->query("INSERT INTO `acknowledgement_loan_cal_category`(`req_id`, `loan_cal_id`, `category`) VALUES ('" . strip_tags($req_id) . "','" . strip_tags($loan_cal_id) . "', '" . strip_tags($category_info[$i]) . "' )");
-    }
-}
-
-$cusUpd = "UPDATE `acknowlegement_customer_profile` SET `communication`='" . strip_tags($Communitcation_to_cus) . "',`com_audio`='" . strip_tags($verify_audio) . "',`verification_person`='" . strip_tags($verifyPerson) . "',`verification_location`='" . strip_tags($verification_location) . "',`update_login_id`='" . $userid . "',`updated_date`= now() WHERE `id`='" . strip_tags($cus_profile_id) . "' ";
-
 try {
-    $updateCus = $connect->query($cusUpd);
+
+    if ($loan_cal_id > 0 and $loan_cal_id != '') {
+        $insresult = $connect->query("UPDATE acknowlegement_loan_calculation SET cus_id_loan = '$cus_id_loan', cus_name_loan = '$cus_name_loan', cus_data_loan = '$cus_data_loan', mobile_loan = '$mobile_loan', pic_loan = '$pic_loan', loan_category = '$loan_category', sub_category = '$sub_category', tot_value = '$tot_value', ad_amt = '$ad_amt', loan_amt = '$loan_amt', profit_type = '$profit_type', due_method_calc = '$due_method_calc', due_type = '$due_type', profit_method = '$profit_method', calc_method = '$calc_method', due_method_scheme = '$due_method_scheme', profit_method_scheme = '$scheme_profit_method', day_scheme = '$day_scheme', scheme_name = '$scheme_name', int_rate = '$int_rate', due_period = '$due_period', doc_charge = '$doc_charge', proc_fee = '$proc_fee', loan_amt_cal = '$loan_amt_cal', principal_amt_cal = '$principal_amt_cal', int_amt_cal = '$int_amt_cal', tot_amt_cal = '$tot_amt_cal', due_amt_cal = '$due_amt_cal', doc_charge_cal = '$doc_charge_cal', proc_fee_cal = '$proc_fee_cal', net_cash_cal = '$net_cash_cal', due_start_from = '$due_start_from', maturity_month = '$maturity_month', collection_method = '$collection_method', communication = '$Communitcation_to_cus', com_audio = '$verify_audio', verification_person = '$verifyPerson', verification_location = '$verification_location', verify_remark = '$verify_remark', cus_status = 12, update_login_id = $userid, update_date = CURRENT_TIMESTAMP() WHERE req_id = $req_id ");
+
+        $connect->query("DELETE FROM acknowledgement_loan_cal_category WHERE req_id = '$req_id'");
+
+        for ($i = 0; $i < sizeof($category_info); $i++) {
+            $insertCategory = $connect->query("INSERT INTO acknowledgement_loan_cal_category(req_id, loan_cal_id, category) VALUES ('$req_id', '$loan_cal_id', '$category_info[$i]' )");
+        }
+    }
+
 } catch (PDOException $e) {
     die("Error: " . $e->getMessage());
 }

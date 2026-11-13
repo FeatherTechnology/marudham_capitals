@@ -19,6 +19,7 @@ include '../ajaxconfig.php';
             <th>Occupation</th>
             <th>Income</th>
             <th>Blood Group</th>
+            <th>Mark as Spam</th>
         </tr>
     </thead>
     <tbody>
@@ -28,6 +29,7 @@ include '../ajaxconfig.php';
 
         $i = 1;
         $relationLiveDeceased = ['' =>'', '1' => 'Live', '2' => 'Deceased'];
+        $spam = ['' =>'', '0' => '', '1' => 'Mark as spam', '2' => 'Not a Spam'];
         while ($fam = $famInfo->fetch()) {
         ?>
             <tr>
@@ -45,6 +47,7 @@ include '../ajaxconfig.php';
                 <td> <?php echo $fam['relation_Occupation']; ?></td>
                 <td> <?php echo $fam['relation_Income']; ?></td>
                 <td> <?php echo $fam['relation_Blood']; ?></td>
+                <td> <?php echo $spam[$fam['mark_as_spam']]; ?></td>
             </tr>
         <?php } ?>
     </tbody>

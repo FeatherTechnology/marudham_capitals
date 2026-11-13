@@ -251,10 +251,6 @@ if (sizeof($getCusInfoForLoanCal) > 0) {
 		$cus_pic_lc = $getCusInfoForLoanCal['cus_pic'];
 		$cus_data_lc = $getCusInfoForLoanCal['cus_type'];
 		$mobile_lc = $getCusInfoForLoanCal['mobile'];
-		$communication = $getCusInfoForLoanCal['communication'];
-		$com_audio = $getCusInfoForLoanCal['com_audio'];
-		$verification_person = $getCusInfoForLoanCal['verification_person'];
-		$verification_location = $getCusInfoForLoanCal['verification_location'];
 	}
 }
 

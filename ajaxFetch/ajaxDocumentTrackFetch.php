@@ -158,6 +158,7 @@ foreach ($result as $row) {
         $row['line_name'], //line name column
         $doc_keeper_name, //document keeper name column
         !empty($replace_doc_action) ? implode('<br>', $replace_doc_action) : '',
+        "<a href='' data-reqid ='$req_id' data-cusid='$cus_id' data-autogencusid='".$row['autogen_cus_id']."' data-cusname='$cus_name' data-docid='".$row['doc_id']."' class='loan-calc' data-toggle='modal' data-target='.viewDocModal'><span class='icon-eye' style='font-size: 12px;position: relative;top: 2px;'></span></a>", //Loan Calculation form view only.
         $action
     ];
 }

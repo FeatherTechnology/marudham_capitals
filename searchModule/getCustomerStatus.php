@@ -408,6 +408,7 @@ $connect = null;
             [10, 25, 50, -1],
             [10, 25, 50, "All"]
         ],
+        columnDefs: commonColumnDefs,
         dom: 'lBfrtip',
         buttons: [{
                 extend: 'excel',

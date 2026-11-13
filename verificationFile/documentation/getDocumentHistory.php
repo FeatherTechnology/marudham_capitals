@@ -113,7 +113,7 @@ $screen = $_POST["screen"] ?? '';
                             $action .= "<a href='#' class='noc-summary'  data-reqid='$ii_req_id' data-cusid='$cus_id' data-cusname='$cus_name' data-loanid='" . $row['loan_id'] . "' data-loancat='" . $row['loan_catrgory_name'] . "' data-docid='" . $row['doc_id'] . "' data-toggle='modal' data-target='.noc-summary-modal'>NOC Summary</a>";
                         }
                         if ($screen == 'update' && $row['cus_status'] <= 20) { //cus status <= 20 will allow only document statuses only to edit, not NOC
-                            $action .= "<a href='#' class='edit-doc' data-reqid='$ii_req_id' data-cusid='$cus_id' data-cusname='$cus_name' data-docid='" . $row['doc_id'] . "' >Edit Documents</a>";
+                            $action .= "<a href='#' class='edit-doc' data-reqid='$ii_req_id' data-cusid='$cus_id' data-cusname='$cus_name' data-docid='" . $row['doc_id'] . "' >Edit Documents</a><a href='#' class='edit-loan-calc' data-reqid='$ii_req_id' data-cusid='$cus_id'>Edit Loan Calculation</a>";
                         }
                         $action .= "</div></div>";
                         echo $action;
