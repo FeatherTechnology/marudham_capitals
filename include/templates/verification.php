@@ -184,10 +184,6 @@ if (sizeof($getCustomerProfile) > 0) {
 	$guarentor_photo = $getCustomerProfile['guarentor_photo'];
 	$cus_type = $getCustomerProfile['cus_type'];
 	$cus_exist_type = $getCustomerProfile['cus_exist_type'];
-	$communication = $getCustomerProfile['communication'];
-	$com_audio = $getCustomerProfile['com_audio'];
-	$verification_person = $getCustomerProfile['verification_person'];
-	$verification_location = $getCustomerProfile['verification_location'];
 	$cp_cus_status = $getCustomerProfile['cus_status'];
 	$dow 					= $getCustomerProfile['dow'];
 	$abt_occ 					= $getCustomerProfile['abt_occ'];

@@ -77,6 +77,8 @@ include '../ajaxconfig.php';
             } else
             if ($kyc['proof_type'] == '13') {
                 $proof_type = "Others";
+            } else{
+                $proof_type = "";
             }
 
             $fam_mem_id = $kyc['fam_mem'];

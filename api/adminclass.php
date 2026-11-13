@@ -5298,10 +5298,6 @@ class admin
 				$detailrecords['latlong'] = $row['latlong'];
 				$detailrecords['area_group'] = $row['area_group'];
 				$detailrecords['area_line'] = $row['area_line'];
-				$detailrecords['communication'] = $row['communication'];
-				$detailrecords['com_audio'] = $row['com_audio'];
-				$detailrecords['verification_person'] = $row['verification_person'];
-				$detailrecords['verification_location'] = $row['verification_location'];
 				$detailrecords['cus_status'] = $row['cus_status'];
 				$detailrecords['how_to_know'] = $row['how_to_know'];
 				$detailrecords['loan_count'] = $row['loan_count'];
@@ -5982,10 +5978,6 @@ class admin
 				$detailrecords['latlong'] = $row['latlong'];
 				$detailrecords['area_group'] = $row['area_group'];
 				$detailrecords['area_line'] = $row['area_line'];
-				$detailrecords['communication'] = $row['communication'];
-				$detailrecords['com_audio'] = $row['com_audio'];
-				$detailrecords['verification_person'] = $row['verification_person'];
-				$detailrecords['verification_location'] = $row['verification_location'];
 				$detailrecords['cus_status'] = $row['cus_status'];
 				$detailrecords['how_to_know'] = $row['how_to_know'];
 				$detailrecords['loan_count'] = $row['loan_count'];
@@ -6443,10 +6435,6 @@ class admin
 				$detailrecords['cus_pic'] = $row['cus_pic'];
 				$detailrecords['cus_type'] = $row['cus_type'];
 				$detailrecords['mobile'] = $row['mobile1'];
-				$detailrecords['communication'] = $row['communication'];
-				$detailrecords['com_audio'] = $row['com_audio'];
-				$detailrecords['verification_person'] = $row['verification_person'];
-				$detailrecords['verification_location'] = $row['verification_location'];
 				$i++;
 			}
 		}
@@ -7513,6 +7501,7 @@ class admin
 				$detailrecords['dow'] = $row['dow'];
 				$detailrecords['abt_occ'] = $row['abt_occ'];
 				$detailrecords['reminder_call'] = $row['reminder_call'];
+				$detailrecords['mark_as_spam'] = $row['mark_as_spam'];
 				// $detailrecords['cus_type'] = $row['cus_type'];
 				// $detailrecords['cus_exist_type'] = $row['cus_exist_type'];
 				$detailrecords['residential_type'] = $row['residential_type'];
@@ -8368,6 +8357,9 @@ class admin
 		if (isset($_POST['reminder_call'])) {
 			$reminder_call = $_POST['reminder_call'];
 		}
+		if (isset($_POST['mark_as_spam'])) {
+			$mark_as_spam = $_POST['mark_as_spam'];
+		}
 		if (isset($_POST['cus_Tableid'])) {
 			$cus_Tableid = $_POST['cus_Tableid'];
 		}
@@ -8381,7 +8373,7 @@ class admin
 		$grantorupdate = "UPDATE customer_profile cp JOIN in_issue ii ON cp.req_id = ii.req_id JOIN acknowlegement_customer_profile ackp ON ackp.req_id = ii.req_id SET cp.`guarentor_name` = '$guarentor_name', cp.`guarentor_relation` = '$guarentor_relation', cp.`guarentor_photo` = '$guarentor_pic', ackp.`guarentor_name` = '$guarentor_name', ackp.`guarentor_relation` = '$guarentor_relation', ackp.`guarentor_photo` = '$guarentor_pic' WHERE ii.loan_id = '$loan_id'; ";
 		$insresult = $mysqli->query($grantorupdate) or die("Error " . $mysqli->error);
 
-		$updateCus = "UPDATE `customer_register` SET  `cus_id` = '$cus_id', `customer_name` = '$cus_name', `gender` = '$gender', `dob` = '$dob', `age` = '$age', `state` = '$state', `district` = '$district', `taluk` = '$taluk', `area` = '$area', `sub_area` = '$sub_area', `address` = '$cus_address', `mobile1` = '$mobile1',  `mobile2` = '$mobile2',  `whatsapp`  =  '$whatsapp_no',  `father_name` = '$father_name', `mother_name` = '$mother_name', `marital` = '$marital', `spouse` = '$spouse_name', `occupation_type` = '$occupation_type', `occupation` = '$occupation', `pic`  =  '$cus_pic',  `how_to_know` = '$cus_how_know', `loan_count` = '$cus_loan_count', `first_loan_date` = '$cus_frst_loanDate', `travel_with_company` = '$cus_travel_cmpy', `monthly_income` = '$cus_monthly_income', `income_date` = '$income_date',`other_income` = '$cus_other_income', `support_income` = '$cus_support_income', `commitment` = '$cus_Commitment', `monthly_due_capacity` = '$cus_monDue_capacity', `loan_limit` = '$cus_loan_limit', `about_customer` = '$about_cus', `residential_type` = '$cus_res_type', `residential_details` = '$cus_res_details', `residential_address` = '$cus_res_address', `residential_native_address` = '$cus_res_native', `occupation_info_occ_type` = '$cus_occ_type', `occupation_details` = '$cus_occ_detail', `occupation_income` = '$cus_occ_income', `occupation_address` = '$cus_occ_address', `dow` = '$cus_occ_dow', `abt_occ` = '$cus_occ_abt', `reminder_call` = '$reminder_call', `area_confirm_type` = '$area_cnfrm', `area_confirm_state` = '$area_state', `area_confirm_district` = '$area_district', `area_confirm_taluk` = '$area_taluk', `area_confirm_area` = '$area_confirm', `area_confirm_subarea` = '$area_sub_area', `latlong` = '$latlong', `area_group` = '$area_group', `area_line` = '$area_line' WHERE `cus_id` = '$cus_id' ";
+		$updateCus = "UPDATE `customer_register` SET  `cus_id` = '$cus_id', `customer_name` = '$cus_name', `gender` = '$gender', `dob` = '$dob', `age` = '$age', `state` = '$state', `district` = '$district', `taluk` = '$taluk', `area` = '$area', `sub_area` = '$sub_area', `address` = '$cus_address', `mobile1` = '$mobile1',  `mobile2` = '$mobile2',  `whatsapp`  =  '$whatsapp_no',  `father_name` = '$father_name', `mother_name` = '$mother_name', `marital` = '$marital', `spouse` = '$spouse_name', `occupation_type` = '$occupation_type', `occupation` = '$occupation', `pic`  =  '$cus_pic',  `how_to_know` = '$cus_how_know', `loan_count` = '$cus_loan_count', `first_loan_date` = '$cus_frst_loanDate', `travel_with_company` = '$cus_travel_cmpy', `monthly_income` = '$cus_monthly_income', `income_date` = '$income_date',`other_income` = '$cus_other_income', `support_income` = '$cus_support_income', `commitment` = '$cus_Commitment', `monthly_due_capacity` = '$cus_monDue_capacity', `loan_limit` = '$cus_loan_limit', `about_customer` = '$about_cus', `residential_type` = '$cus_res_type', `residential_details` = '$cus_res_details', `residential_address` = '$cus_res_address', `residential_native_address` = '$cus_res_native', `occupation_info_occ_type` = '$cus_occ_type', `occupation_details` = '$cus_occ_detail', `occupation_income` = '$cus_occ_income', `occupation_address` = '$cus_occ_address', `dow` = '$cus_occ_dow', `abt_occ` = '$cus_occ_abt', `reminder_call` = '$reminder_call', `mark_as_spam` = '$mark_as_spam', `area_confirm_type` = '$area_cnfrm', `area_confirm_state` = '$area_state', `area_confirm_district` = '$area_district', `area_confirm_taluk` = '$area_taluk', `area_confirm_area` = '$area_confirm', `area_confirm_subarea` = '$area_sub_area', `latlong` = '$latlong', `area_group` = '$area_group', `area_line` = '$area_line' WHERE `cus_id` = '$cus_id' ";
 		$insresult = $mysqli->query($updateCus) or die("Error " . $mysqli->error);
 
 		$req_id_array = [];
@@ -8407,8 +8399,9 @@ class admin
 	public function updateReminderCall($mysqli){
 		$cus_id =  preg_replace('/\s+/', '', $_POST['cus_id']) ?? '';
 		$reminder_call = $_POST['reminder_call'] ?? '0';
+		$mark_as_spam = $_POST['mark_as_spam'] ?? '0';
 
-		$updateCus = "UPDATE `customer_register` SET `reminder_call` = '$reminder_call' WHERE `cus_id` = '$cus_id' ";
+		$updateCus = "UPDATE `customer_register` SET `reminder_call` = '$reminder_call', `mark_as_spam` = '$mark_as_spam' WHERE `cus_id` = '$cus_id' ";
 		$mysqli->query($updateCus) or die("Error " . $mysqli->error);
 	}
 

@@ -1,3 +1,31 @@
+$(document).on('click', '.loan-calc', function () {
+
+    let reqid = $(this).data('reqid'); 
+    let cusid = $(this).data('cusid');
+
+    $('#myLargeModalLabel').text(`Loan Calculation ( Aadhaar Number : ${cusid} | Cus ID : ${$(this).data('autogencusid')}  | Cus Name : ${$(this).data('cusname')}  | DOC ID : ${$(this).data('docid')} )`);
+    $('#viewTrackDiv').html('<div class="text-center">Loading...</div>');
+
+    $.ajax({
+        url: 'verificationFile/LoanCalculation/getLoanCalculationForm.php',
+        type: 'POST',
+        dataType: 'html',
+        cache: false,
+
+        success: function (response) {
+            $('#viewTrackDiv').html(response);
+        },
+
+        error: function (xhr, status, error) {
+            $('#viewTrackDiv').html('<div class="alert alert-danger">Unable to load loan calculation form.</div>');
+            console.error(xhr.responseText);
+        }
+    }).then(function(){
+        getCustomerLoanCalc(reqid, cusid, '1');
+        $('#submit_loan_calculation').hide();
+    });
+});
+
 function getAllDocumentList(req_id, cus_name) {
     // To get the Customer details.
     $.post('collectionFile/getDueMethodName.php', { req_id }, function (response) {

@@ -73,6 +73,7 @@ while($row = $qry->fetch()){
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"]
             ],
+            columnDefs: commonColumnDefs,
             "createdRow": function(row, data, dataIndex) {
                 $(row).find('td:first').html(dataIndex + 1);
             },

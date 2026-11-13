@@ -1,25 +1,31 @@
 let storeDocInfo = {};
 let loanidResponse = {};
 
+const personMultiselect = new Choices("#verification_person", {
+  removeItemButton: true,
+  noChoicesText: null,
+  placeholder: true,
+  placeholderValue: "Select Verification Person",
+  allowHTML: true,
+});
+
 $(document).ready(function () {
 
     // Verification Tab Change Radio buttons
     $('#cus_profile, #documentation, #customer_old').click(function () {
         var verify = $('input[name=verification_type]:checked').val();
+        $('#customer_profile, #cus_document, #customer_loan_calc, #customer_old_div, .choosing-document-card, .edit-document-card').hide();
 
         if (verify == 'cus_profile') {
-            $('#customer_profile').show(); 
-            $('#cus_document, #customer_loan_calc, #customer_old_div, .edit-document-card').hide();// hide edit document card when not in use
+            $('#customer_profile').show();
             $('.dropdown').children().css('border-color', '');// to set other dropdown buttons as normal
             const curDate = moment().format('YYYY-MM-DD');
             $('#relation_dob').attr('max', curDate);
         }
         if (verify == 'documentation') {
-            $('#customer_profile, #customer_loan_calc, #customer_old_div, .edit-document-card').hide();
             $('#cus_document').show(); 
         }
         if (verify == 'customer_old') {
-            $('#customer_profile, #cus_document, #customer_loan_calc').hide();
             $('#customer_old_div').show();
             showCustomerOldData();
         }
@@ -207,7 +213,8 @@ $(document).ready(function () {
             relation_Income : $("#relation_Income").val(),
             relation_Blood : $("#relation_Blood").val(),
             famTableId : $("#famID").val(),
-            authorize : $("#authorize").val()
+            authorize : $("#authorize").val(),
+            fam_mem_mark_as_spam : $("#fam_mem_mark_as_spam").val()
         }
 
         if (famData.famname != "" && famData.relationship != ""  && famData.relation_live_deceased != "") {
@@ -319,6 +326,7 @@ $(document).ready(function () {
                 $("#relation_Occupation").val(result['occ']);
                 $("#relation_Income").val(result['income']);
                 $("#relation_Blood").val(result['bg']);
+                $("#fam_mem_mark_as_spam").val(result['fam_mark_as_spam']);
                 if (result['relation'] == 'Other') {
                     $('#remark, #address').show();
                 }
@@ -1652,6 +1660,65 @@ $(document).ready(function () {
 
     //////////////////////////////////////////// Documentation END //////////////////////////////////////////////
 
+    $(document).on("change", "#Communitcation_to_cus", function () {
+        let com = $(this).val();
+
+        if (com == "0") {
+            $(".verify_audio_div").show();
+        } else {
+            $(".verify_audio_div").hide();
+        }
+    });
+
+    $(document).on("click", "#submit_loan_calculation", function (e) {
+        e.preventDefault(); // stop default form submit
+
+        //Verification Person Multi select store
+        var person_list = personMultiselect.getValue();
+        var person = "";
+        for (var i = 0; i < person_list.length; i++) {
+            if (i > 0) {
+            person += ",";
+            }
+            person += person_list[i].value;
+        }
+        var arr = person.split(",");
+        arr.sort(function (a, b) {
+            return a - b;
+        });
+        var sortedStr = arr.join(",");
+        $("#verifyPerson").val(sortedStr);
+
+        const submit_btn = $(this);
+        submit_btn.prop('disabled', true);
+
+        const form = document.getElementById("cus_loancalc");
+        const formData = new FormData(form);
+
+        $.ajax({
+            url: "verificationFile/LoanCalculation/submitLoanCalcFromUpdate.php",
+            type: "POST",
+            data: formData,
+            contentType: false, // Important for file upload
+            processData: false, // Prevent jQuery from processing the data
+            dataType: "json",
+            success: function (response) {
+                if (response["info"].includes("Success")) {
+                    swalSuccess('Success', 'Loan calculation updated successfully');
+
+                    $('.choosing-document-card, .edit-document-card, #customer_loan_calc').hide();
+                } else {
+                    swalError('Error', 'Error on Submit');
+                }
+                submit_btn.prop("disabled", false);
+            },
+            error: function () {
+                submit_btn.prop("disabled", false);
+                swalError('Error', 'Server error during submission.')
+            }
+        });
+    });
+
 });   ////////Document Ready End
 
 $(function () {
@@ -1799,7 +1866,7 @@ function callCustomerProfileFunctn() {
             .prop('readonly', true);
 
         // button except inside customer_summary_card
-        let cndtn = (selectedArray.includes('1')) ? '#customer_summary_card button, #reminder_call,' : '';
+        let cndtn = (selectedArray.includes('1')) ? '#customer_summary_card button, #reminder_call, #mark_as_spam,' : '';
         form.find('select, button')
             .not(`${cndtn} #back_btn`)
             .prop('disabled', true);
@@ -2239,6 +2306,7 @@ function resetFamInfo() {
 
             $("#relation_aadhar").prop('readonly', false);
             $("#famname, #relationship, #authorize, #other_remark, #other_address, #relation_dob, #relation_age, #relation_live_deceased, #relation_aadhar, #relation_Mobile, #relation_Occupation, #relation_Income, #relation_Blood, #famID").val('');
+            $('#fam_mem_mark_as_spam').val('0');
             $("#famnameCheck, #famrelationCheck, #famremarkCheck, #famaddressCheck, #famdobCheck, #famageCheck, #famLiveDeceasedCheck, #famaadharCheck, #fammobileCheck, #famoccCheck, #famincomeCheck").hide();
         }
     });
@@ -2935,12 +3003,20 @@ function getDocumentHistory() {
             $(this).parent().prev().css('border-color', 'red');// showing selected loan's dropdown button highlighted
 
             $('.choosing-document-card').show();
+            $('#customer_loan_calc').hide();
 
             var req_id = $(this).data('reqid'); var cus_id = $(this).data('cusid'); var cus_name = $(this).data('cusname')
             var doc_id = $(this).data('docid');
             $('#documents_status_header').html(`Documents - Doc ID: ${doc_id}`);
             getDocumentDetails(req_id, cus_id, cus_name);
             $('#req_id_doc').val(req_id);
+        });
+
+        $(document).off('click', '.edit-loan-calc').on('click', '.edit-loan-calc', function () {
+            $('.choosing-document-card, .edit-document-card').hide();
+            $('#customer_loan_calc').show();
+            $('#loan_req_id').val($(this).data('reqid'));
+            getCustomerLoanCalc($(this).data('reqid'), $(this).data('cusid'));
         });
     });
 }
@@ -3031,6 +3107,231 @@ function getDocumentDetails(req_id, cus_id, cus_name) {
             resetDocmentList(req_id)
         });
     }
+}
+
+function getCustomerLoanCalc(req_id, cus_id) {
+    $.ajax({
+        url: 'verificationFile/LoanCalculation/getCustomerLoanCalc.php',
+        type: 'POST',
+        data: { "req_id": req_id },
+        cache: false,
+        dataType: 'json',
+        success: function (html) {
+            $('#verification_audio').val('');
+
+            $('#loan_cal_id').val(html.loanCalcInfo.loan_cal_id);
+
+            //Request Info
+            $('#user_type').val(html.requestInfo.user_type);
+            $('#user_name').val(html.requestInfo.user_name);
+            $('#agent_name').val(html.requestInfo.ag_name);
+            $('#responsible').val((html.requestInfo.responsible == '0') ? 'Yes' : 'No');
+            $('#remarks').val(html.requestInfo.remarks);
+            $('#declaration').val(html.requestInfo.declaration);
+            $('#req_area').val(html.requestInfo.area_name);
+            $('#req_sub_area').val(html.requestInfo.sub_area_name);
+            $('#req_code').val(html.requestInfo.req_code);
+            $('#dor').val(moment(html.requestInfo.dor).format('DD-MM-YYYY') ?? '');
+
+            //Possibility Info
+            $('#possibility').val((html.requestInfo.poss_type == '1') ? 'Due Amount' : 'Due Period');
+            $('#possibility_due_amount').val(html.requestInfo.due_amt);
+            $('#possibility_due_period').val(html.requestInfo.due_period);
+
+            //Verification Info
+            $('#Communitcation_to_cus').val(html.loanCalcInfo.communication);
+            $('#verification_audio_upd').val(html.loanCalcInfo.com_audio);
+            $('#verification_location').val(html.loanCalcInfo.verification_location);
+            $('#verify_remark').val(html.loanCalcInfo.verify_remark);
+
+            verificationPerson(cus_id, html.loanCalcInfo.verification_person);
+
+            //loan info
+            $('#loan_category').val(html.loanCalcInfo.loan_category_creation_name);
+            $('#sub_category').val(html.loanCalcInfo.sub_category);
+
+            //Category Info
+            getCategoryInfo(html.loanCalcInfo.sub_category, html.loanCalcInfo.loan_category);
+
+            $('#tot_value').val(html.loanCalcInfo.tot_value);
+            $('#ad_amt').val(html.loanCalcInfo.ad_amt);
+            $('#loan_amt').val(html.loanCalcInfo.loan_amt);
+            $('#profit_type').val(html.loanCalcInfo.profit_type);
+            $('#due_method_calc').val(html.loanCalcInfo.due_method_calc);
+            $('#due_type').val(html.loanCalcInfo.due_type);
+            $('#profit_method').val((html.loanCalcInfo.profit_method =='after_intrest') ? 'After Benefit' : 'Pre Benefit');
+            $('#calc_method').val(html.loanCalcInfo.calc_method);
+            $('#due_method_scheme').val(html.loanCalcInfo.due_method_scheme);
+            $('#day_scheme').val(html.loanCalcInfo.day_scheme);
+            $('#scheme_name').val(html.loanCalcInfo.scheme_name);
+            $('#scheme_profit_method').val((html.loanCalcInfo.profit_method =='after_intrest') ? 'After Benefit' : 'Pre Benefit');
+            $('#int_rate').val(html.loanCalcInfo.int_rate);
+            $('#due_period').val(html.loanCalcInfo.due_period);
+            $('#doc_charge').val(html.loanCalcInfo.doc_charge);
+            $('#proc_fee').val(html.loanCalcInfo.proc_fee);
+
+            //Loan Calculation Info
+            $('#loan_amt_cal').val(html.loanCalcInfo.loan_amt_cal);
+            $('#principal_amt_cal').val(html.loanCalcInfo.principal_amt_cal);
+            $('#int_amt_cal').val(html.loanCalcInfo.int_amt_cal);
+            $('#tot_amt_cal').val(html.loanCalcInfo.tot_amt_cal);
+            $('#due_amt_cal').val(html.loanCalcInfo.due_amt_cal);
+            $('#doc_charge_cal').val(html.loanCalcInfo.doc_charge_cal);
+            $('#proc_fee_cal').val(html.loanCalcInfo.proc_fee_cal);
+            $('#net_cash_cal').val(html.loanCalcInfo.net_cash_cal);
+            $('#due_start_from').val(html.loanCalcInfo.due_start_from);
+            $('#maturity_month').val(html.loanCalcInfo.maturity_month);
+            $('#collection_method').val(html.loanCalcInfo.collection_method);
+
+
+            (html.requestInfo.ag_name !='') ? $('.agent_div').show() : $('.agent_div').hide();
+            (html.requestInfo.user_type == 'Staff') ? $('.remarks_div').show() : $('.remarks_div').hide();
+            (html.requestInfo.user_type == 'Staff') ? $('.declaration_div').hide() : $('.declaration_div').show();
+
+            (html.requestInfo.poss_type == '1') ? $('.due_amnt_div').show() : $('.due_amnt_div').hide();
+            (html.requestInfo.poss_type == '2') ? $('.due_period_div').show() : $('.due_period_div').hide();
+
+            if (html.loanCalcInfo.communication == '0') {
+                $('.verify_audio_div').show();
+
+                let audioList = '';
+                let audioFiles = html.loanCalcInfo.com_audio;
+                // Handle comma-separated audio filenames
+                if (typeof audioFiles === 'string') {
+                    audioFiles = audioFiles.split(',');
+                }
+
+                if (Array.isArray(audioFiles)) {
+                    audioFiles.forEach(function(audio) {
+                        audio = audio.trim();
+                        if (audio !== '') {
+                            audioList += `<a href="uploads/verification/verifyInfo_audio/${encodeURIComponent(audio)}" target="_blank" style="color: #4ba39b;">${audio}</a>, `;
+                        }
+                    });
+                }
+
+                $('#audio_files').html(audioList);
+
+            } else {
+                $('.verify_audio_div').hide();
+            }
+
+            (html.loanCalcInfo.collection_info == 'Yes') ? $('.advance_yes').show() : $('.advance_yes').hide();
+            
+            if (html.loanCalcInfo.profit_type == '1'){ 
+                $('.calculation_div').show();
+                $('.scheme_div, .day_scheme_div').hide();
+
+            } else if(html.loanCalcInfo.profit_type == '2'){
+                $('.calculation_div').hide();
+                $('.scheme_div').show();
+
+                (html.loanCalcInfo.due_method_scheme == '2') ? $('.day_scheme_div').show() : $('.day_scheme_div').hide();
+                
+            }
+
+        }
+    });
+}
+
+// Verification Info Person
+function verificationPerson(cus_id, verification_person_upd) {
+
+  var values = verification_person_upd.split(",");
+
+  $.ajax({
+    url: "verificationFile/verificationFam.php",
+    type: "post",
+    data: { cus_id: cus_id },
+    dataType: "json",
+    success: function (response) {
+      personMultiselect.clearStore();
+      for (var i = 0; i < response.length; i++) {
+        var fam_name = response[i]["fam_name"] + " - " + response[i]["relationship"];
+        var fam_id = response[i]["fam_id"];
+        var selected = "";
+        if (verification_person_upd !== "" && values.includes(String(fam_id))) {
+          selected = "selected";
+        }
+        var items = [
+          {
+            value: fam_id,
+            label: fam_name,
+            selected: selected,
+          },
+        ];
+        personMultiselect.setChoices(items);
+        personMultiselect.init();
+      }
+    },
+  });
+}
+
+//Get Category info From Request
+function getCategoryInfo(sub_category_upd, loan_category) {
+    $.ajax({
+        url: 'requestFile/getCategoryInfo.php',
+        data: { 'sub_cat': sub_category_upd,'loan_category':loan_category },
+        dataType: 'json',
+        type: 'post',
+        cache: false,
+        success: function (response) {
+            $('#moduleTable').empty().append('<tbody><tr>');
+            if (response.length != 0) {
+                var tb = 21;
+                
+                for (var i = 0; i < response.length; i++) {
+                    $('#moduleTable tbody tr').append(`<td><label for="disabledInput">${response[i]["loan_category_ref_name"]}</label><span class="required">&nbsp;*</span><input type="text" class="form-control" id="category_info" name="category_info[]" value='' tabindex='${tb}' required placeholder = 'Enter ${response[i]["loan_category_ref_name"]}'></td>`);
+                    tb++;
+                }
+
+                $('#moduleTable tbody tr').append(`<td><button type="button" tabindex='${tb}' id="add_category_info[]" name="add_category_info" 
+                class="btn btn-primary add_category_info">Add</button></td><td><span class='icon-trash-2 deleterow' id='deleterow' tabindex='${tb}'></span></td>
+                </tr></tbody></table>`);
+
+                var category_content = $('#moduleTable tbody tr').html(); //To get the appended category list
+
+                var category_count = $('#moduleTable tbody tr').find('td').length - 2;//To find input fields count
+                getCategoryInputs(category_count, category_content, sub_category_upd);
+
+                // Remove previously registered event and bind only once
+                $(document).off('click', '.add_category_info').on('click', '.add_category_info', function () {
+                    $('#moduleTable tbody').append('<tr>' + category_content + '</tr>');
+                });
+
+                // remove delete option for last child
+                $('#deleterow:last').filter(':last').removeClass('deleterow');
+
+                $(document).off('click', '.deleterow').on('click', '.deleterow', function () {
+                    $(this).closest('tr').remove();
+                });
+
+            }
+        }
+    });
+}
+
+function getCategoryInputs(category_count, category_content, sub_category_upd) {
+    var req_id = $('#req_id').val();
+    $.ajax({
+        url: 'verificationFile/LoanCalculation/getCategoryInfoForAck.php',
+        data: { 'req_id': req_id, 'sub_category_upd': sub_category_upd },
+        dataType: 'json',
+        type: 'post',
+        cache: false,
+        success: function (response) {
+            var trCount = Math.ceil(response.length / category_count); // number of rows needed
+
+            for (var j = 0; j < trCount - 1; j++) {
+                $('#moduleTable tbody').append('<tr>' + category_content + '</tr>');
+            }
+            for (var i = 0; i < response.length; i++) {
+                $('#moduleTable tbody input').each(function (index) {
+                    $(this).val(response[index]);
+                });
+            }
+        }
+    })
 }
 
 //Signed Doc List non-modal

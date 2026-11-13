@@ -136,10 +136,6 @@ if (sizeof($getCustomerProfile) > 0) {
 	$guarentor_photo = $getCustomerProfile['guarentor_photo'];
 	$cus_type = $getCustomerProfile['cus_type'];
 	$cus_exist_type = $getCustomerProfile['cus_exist_type'];
-	$communication = $getCustomerProfile['communication'];
-	$com_audio = $getCustomerProfile['com_audio'];
-	$verification_person = $getCustomerProfile['verification_person'];
-	$verification_location = $getCustomerProfile['verification_location'];
 	$cp_cus_status = $getCustomerProfile['cus_status'];
 	$dow 					= $getCustomerProfile['dow'];
 	$abt_occ 					= $getCustomerProfile['abt_occ'];
@@ -1968,9 +1964,7 @@ $sub_area_topbar = isset($sub_area_name) && $sub_area_name != '' ? $sub_area_nam
 								<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
 									<div class="form-group">
 										<label for="Verificationlocation"> Verification location </label> <span class="required">*</span>
-										<input type="hidden" class="form-control" id="verification_location_ack" name="verification_location_ack" value="<?php if (isset($verification_location)) {
-																																								echo $verification_location;
-																																							} ?>">
+										<input type="hidden" class="form-control" id="verification_location_ack" name="verification_location_ack" value="<?php if (isset($verification_location)) {echo $verification_location;} ?>">
 										<select type="text" class="form-control" name="verification_location" id="verification_location">
 											<option value=""> Select Verification location </option>
 											<option value="0" <?php if (isset($verification_location) and $verification_location == '0') echo 'selected'; ?>> On Spot </option>

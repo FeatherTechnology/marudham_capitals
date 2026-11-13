@@ -214,6 +214,7 @@ if ($result->rowCount() > 0) {
             [10, 25, 50, -1],
             [10, 25, 50, "All"]
         ],
+        columnDefs: commonColumnDefs,
         "createdRow": function(row, data, dataIndex) {
             $(row).find('td:first').html(dataIndex + 1);
         },
@@ -223,19 +224,19 @@ if ($result->rowCount() > 0) {
             });
         },
         dom: 'lBfrtip',
-       buttons: [{
-        extend: 'excel',
-        action: function(e, dt, button, config) {
-            var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
-            var dynamic = curDateJs('Customer_status_List');
-            // or any base config.title = dynamic; // for versions that use title as filename
-            config.filename = dynamic; // for html5 filename
-            defaultAction.call(this, e, dt, button, config);
-        }
-        }, {
-            extend: 'colvis',
-            collectionLayout: 'fixed four-column',
-        }],
+        buttons: [{
+            extend: 'excel',
+            action: function(e, dt, button, config) {
+                var defaultAction = $.fn.dataTable.ext.buttons.excelHtml5.action;
+                var dynamic = curDateJs('Customer_status_List');
+                // or any base config.title = dynamic; // for versions that use title as filename
+                config.filename = dynamic; // for html5 filename
+                defaultAction.call(this, e, dt, button, config);
+            }
+            }, {
+                extend: 'colvis',
+                collectionLayout: 'fixed four-column',
+            }],
     });
 
 </script>

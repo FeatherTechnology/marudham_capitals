@@ -120,6 +120,37 @@
             return `${title}_${formattedDate}_${time}`;
         }
 
+        var commonColumnDefs = [
+            {
+                targets: '_all',
+                createdCell: function (td, cellData) {
+
+                    // Skip cells containing interactive or HTML elements
+                    if ($(td).find('button, a, input, select, textarea, i, svg, .dropdown, .btn').length > 0) {
+                        return;
+                    }
+
+                    // Check whether the cell contains only text
+                    if ($(td).children().length > 0) {
+                        return;
+                    }
+
+                    var text = $(td).text().trim();
+
+                    if (text.length > 40) {
+
+                        $(td).empty().append(
+                            $('<span>', {
+                                class: 'dt-long-text',
+                                text: text,
+                                title: text
+                            })
+                        );
+                    }
+                }
+            }
+        ];
+
         $(document).ready(function() {
 
             showOverlay();
@@ -2454,7 +2485,6 @@
 
         // <------------------------------------------------------ COLUMN VISIBILITY AND COLOR CHNAGE START -------------------------------------------------------->
 
-
         function getStateSaveConfig(tableId) {
 
             const COLVIS_VERSION = 'v1'; // Increment this if you change the logic for saving/restoring visibility
@@ -2593,6 +2623,15 @@
         function swalError(title, text) {
             Swal.fire({
                 icon: 'error',
+                title: title,
+                text: text,
+                confirmButtonColor: '#009688',
+            });
+        }
+
+        function swalSuccess(title, text) {
+            Swal.fire({
+                icon: 'success',
                 title: title,
                 text: text,
                 confirmButtonColor: '#009688',
@@ -2779,6 +2818,32 @@
         function customDataTableInfo(settings, start, end, max, total, pre) {
             return 'Showing ' + start + ' to ' + end + ' of ' + total + ' entries';
         }
+
+        //get spam customer details
+        function getSpamCustomerDetails(cus_id, callback){
+            $.ajax({
+                url: 'common_files/get_spam_customer_details.php', 
+                dataType: 'json',
+                type: 'post',
+                data: { cus_id },
+                cache: false,
+                success: function (response) {
+                    if (response == '1') {
+                        swalError('Warning', 'The Customer is marked as spam so kindly contact with Manager before processing.');
+                        
+                    } else if(response =='0'){
+                        if (typeof callback === "function") {
+                            callback();
+                        }
+                        
+                    } else{
+                        swalError('Error','Something went wrong!');
+                        
+                    }
+                }
+            });
+        }
+
     </script>
 
     <?php

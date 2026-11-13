@@ -10,12 +10,12 @@ if(isset($_POST['cus_name'])){
 function getfamName($connect,$rel_id){
     $qry1=$connect->query("SELECT famname FROM `verification_family_info` where id=$rel_id");
     $run=$qry1->fetch();
-    return $run['famname'];
+    return $run['famname'] ?? '';
 }
 function getGuarentorName($connect,$req_id){
     $qry1=$connect->query("SELECT famname FROM `verification_family_info` a JOIN `acknowlegement_customer_profile` b on b.guarentor_name = a.id where b.req_id=$req_id");
     $run=$qry1->fetch();
-    return $run['famname'];
+    return $run['famname'] ?? '';
 }
 
 ?>

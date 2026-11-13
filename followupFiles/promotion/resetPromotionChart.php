@@ -68,6 +68,7 @@ $sql = $connect->query("SELECT a.*,b.fullname, CASE b.role WHEN 1 then 'Director
             [10, 25, 50, -1],
             [10, 25, 50, "All"]
         ],
+        columnDefs: commonColumnDefs,
         dom: 'lBfrtip',
         buttons: [{
                 extend: 'excel',

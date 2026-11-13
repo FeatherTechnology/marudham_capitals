@@ -32,7 +32,7 @@ if (isset($_POST['submit_reminder_call']) && $_POST['submit_reminder_call'] != '
 	$userObj->updateReminderCall($mysqli);
 ?>
 	<script>
-		alert('Reminder Call Updated');
+		alert('Customer Info Updated');
 	</script>
 <?php
 }
@@ -79,6 +79,7 @@ if (sizeof($getCustomerReg) > 0) {
 		$loan_limit 			= $getCustomerReg['loan_limit'];
 		$about_customer 		= $getCustomerReg['about_customer'];
 		$reminder_call 		= $getCustomerReg['reminder_call'];
+		$mark_as_spam 		= $getCustomerReg['mark_as_spam'];
 		$residential_type 		= $getCustomerReg['residential_type'];
 		$residential_details 	= $getCustomerReg['residential_details'];
 		$residential_address 	= $getCustomerReg['residential_address'];
@@ -1170,6 +1171,16 @@ if (sizeof($getCustomerReg) > 0) {
 										<span class="text-danger" style='display:none' id='reminderCallCheck'>Please Select Reminder and Follow up </span>
 									</div>
 								</div>
+								<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+									<div class="form-group">
+										<label for="mark_as_spam"> Mark as Spam </label> 
+										<select class="form-control" name="mark_as_spam" id="mark_as_spam" tabindex="64">
+											<option value="0">Select option</option>
+											<option value="1" <?php if (isset($mark_as_spam) and $mark_as_spam == '1') echo 'selected'; ?>> Mark as Spam </option>
+											<option value="2" <?php if (isset($mark_as_spam) and $mark_as_spam == '2') echo 'selected'; ?>> Not a Spam </option>
+										</select>
+									</div>
+								</div>
 								<div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-12" id="reminder_submit_div">
 									<div class="form-group">
 										<label style="visibility:hidden">submit</label> 
@@ -1258,7 +1269,7 @@ if (sizeof($getCustomerReg) > 0) {
 					<div class="card-body">
 						<div class="row">
 							<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-								<div class="form-group table-responsive" id="docHistoryDiv">
+								<div class="form-group table-responsive" id="docHistoryDiv" style="overflow-x: scroll;">
 
 								</div>
 							</div>
@@ -1754,6 +1765,458 @@ if (sizeof($getCustomerReg) > 0) {
 				</form>
 				<!-- Document Status End -->
 
+				<!-- Loan Calculation START -->
+				<div id="customer_loan_calc" style="display: none;">
+					<form id="cus_loancalc" name="cus_loancalc" action="" method="post" enctype="multipart/form-data">
+						<input type="hidden" name="loan_cal_id" id="loan_cal_id" value="" />
+						<input type="hidden" name="loan_req_id" id="loan_req_id" value="" />
+						<!-- Row start -->
+						<div class="row gutters">
+							<!-- Request Info -->
+							<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+								<div class="card">
+									<div class="card-header">Request Info <span style="font-weight:bold" class=""></span></div>
+									<div class="card-body">
+										<div class="row">
+
+											<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+												<div class="form-group">
+													<label for="user_type">User type</label><span class="required">&nbsp;*</span>
+													<input type="text" class="form-control" name="user_type" id="user_type" readonly tabindex="1">
+												</div>
+											</div>
+
+											<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+												<div class="form-group">
+													<label for="user_name">User Name</label><span class="required">&nbsp;*</span>
+													<input type="text" class="form-control" name="user_name" id="user_name" readonly tabindex="2">
+												</div>
+											</div>
+
+											<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 agent_div">
+												<div class="form-group">
+													<label for="agent_name">Agent Name</label><span class="required">&nbsp;*</span>
+													<input type="text" class="form-control" name="agent_name" id="agent_name" readonly tabindex='3'>
+												</div>
+											</div>
+
+											<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 agent_div">
+												<div class="form-group">
+													<label for="responsible">Responsible<span class="required">&nbsp;*</span></label>
+													<input type="text" class="form-control" name="responsible" id="responsible" readonly tabindex="4">
+												</div>
+											</div>
+
+											<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 remarks_div" style="display: none;">
+												<div class="form-group">
+													<label for="remark">Remarks</label><span class="required">&nbsp;*</span>
+													<input type="text" class="form-control" name="remarks" id="remarks" readonly tabindex="5">
+												</div>
+											</div>
+
+											<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 declaration_div" style="display: none;">
+												<div class="form-group">
+													<label for="declaration">Declaration</label><span class="required">&nbsp;*</span>
+													<input type="text" class="form-control" name="declaration" id="declaration" readonly tabindex="6">
+												</div>
+											</div>
+
+											<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+												<div class="form-group">
+													<label for="req_area">Area</label><span class="required">&nbsp;*</span>
+													<input type="text" class="form-control" name="req_area" id="req_area" readonly tabindex="7">
+												</div>
+											</div>
+
+											<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+												<div class="form-group">
+													<label for="req_sub_area">Sub Area</label><span class="required">&nbsp;*</span>
+													<input type="text" class="form-control" name="req_sub_area" id="req_sub_area" readonly tabindex="8">
+												</div>
+											</div>
+
+											<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+												<div class="form-group">
+													<label for="req_code">Request ID</label><span class="required">&nbsp;*</span>
+													<input type="text" class="form-control" name="req_code" id="req_code" readonly tabindex="9">
+												</div>
+											</div>
+
+											<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+												<div class="form-group">
+													<label for="dor">Date Of request</label><span class="required">&nbsp;*</span>
+													<input type="text" class="form-control" name="dor" id="dor" readonly tabindex="10">
+												</div>
+											</div>
+
+										</div>
+									</div>
+								</div>
+								<!-- Possibility info -->
+								<div class="card ">
+									<div class="card-header">Possibilty Info</div>
+									<div class="card-body">
+										<div class="row">
+											<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+												<div class="form-group">
+													<label for="possibility">Possibility<span class="required">&nbsp;*</span></label>
+													<input type="text" class="form-control" name="possibility" id="possibility" readonly tabindex='11'>
+												</div>
+											</div>
+											<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 due_amnt_div">
+												<div class="form-group">
+													<label for="">Due Amount</label><span class="required">&nbsp;*</span>
+													<input type="text" class="form-control" name="possibility_due_amount" id="possibility_due_amount" readonly tabindex='12'>
+												</div>
+											</div>
+											<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 due_period_div">
+												<div class="form-group">
+													<label for="">Due Period</label><span class="required">&nbsp;*</span>
+													<input type="text" class="form-control" name="possibility_due_period" id="possibility_due_period" readonly tabindex='13'>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- Possibility info -->
+
+								<!-- ///////////////////////////////////////////////// Verification Info START ///////////////////////////////////////////////////////////// -->
+								<div class="card">
+									<div class="card-header"> Verfication Info <span style="font-weight:bold"></span></div>
+									<div class="card-body">
+										<div class="row">
+
+											<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+												<div class="form-group">
+													<label for="Communitcation">Communitcation</label><span class="required">&nbsp;*</span>
+													<select type="text" class="form-control" name="Communitcation_to_cus" id="Communitcation_to_cus" tabindex='14'>
+														<option value=""> Select Communication </option>
+														<option value="0"> Phone </option>
+														<option value="1"> Direct </option>
+													</select>
+												</div>
+											</div>
+
+											<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 verify_audio_div">
+												<div class="form-group">
+													<label for="Communitcation"> Audio </label>
+													<input type="hidden" id="verification_audio_upd" name="verification_audio_upd" value="">
+													<input type="file" class="form-control" name="verification_audio[]" id="verification_audio" accept=".mp3,audio/*" tabindex="15" multiple>
+													<span id="audio_files"></span>
+												</div>
+											</div>
+
+											<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+												<div class="form-group">
+													<label for="Verificationperson">Verification person</label> <span class="required">&nbsp;*</span>
+													<input type="hidden" id="verifyPerson" name="verifyPerson">
+													<select type="text" class="form-control" name="verification_person" id="verification_person" multiple tabindex='16'>
+														<option value=""> Select Verification Person </option>
+													</select>
+												</div>
+											</div>
+
+											<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+												<div class="form-group">
+													<label for="Verificationlocation">Verification location</label> <span class="required">&nbsp;*</span>
+													<select type="text" class="form-control" name="verification_location" id="verification_location" tabindex='17'>
+														<option value=""> Select Verification location </option>
+														<option value="0"> On Spot </option>
+														<option value="1"> Customer Spot </option>
+													</select>
+												</div>
+											</div>
+
+											<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+												<div class="form-group">
+													<label for="verify_remark">Remarks</label>
+													<input type="text" class="form-control" name="verify_remark" id="verify_remark" tabindex="18">
+												</div>
+											</div>
+
+										</div>
+
+									</div>
+								</div>
+								<!-- ///////////////////////////////////////////////  Verification Info  END /////////////////////////////////////////////////////////// -->
+								<!-- Loan History START -->
+								<!-- <div class="card">
+									<div class="card-header"> Loan History
+										<button type="button" class="btn btn-primary" name="show_loan_history" id="show_loan_history" style="padding: 5px 35px;  float: right;" tabindex="9" onclick="getLoanHistory()">Show Loan History</button>
+										<button type="button" class="btn btn-primary" name="hide_loan_history" id="hide_loan_history" style="padding: 5px 35px;  float: right; display: none;" tabindex="10" >Hide Loan History</button>
+
+									</div>
+									<div class="card-body">
+										<div class="row">
+											<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+												<div class="form-group table-responsive" id="loanHistoryDiv">
+
+												</div>
+											</div>
+										</div>
+									</div>
+								</div> -->
+								<!-- Loan History END -->
+
+								<!-- Loan Info Start -->
+								<div class="card">
+									<div class="card-header">Loan Info <span style="font-weight:bold" class=""></span></div>
+									<div class="card-body">
+										<div class="row">
+											<div class="col-md-12">
+												<div class="row">
+
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-8">
+														<div class="form-group">
+															<label class="label">Loan Category</label>&nbsp;<span class="text-danger">*</span>
+															<input type="text" class="form-control" name="loan_category" id="loan_category" readonly tabindex="19">
+														</div>
+													</div>
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+														<div class="form-group">
+															<label for="sub_category">Sub Category</label>&nbsp;<span class="text-danger">*</span>
+															<input type="text" class="form-control" name="sub_category" id="sub_category" readonly tabindex="20">
+														</div>
+													</div>
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12"></div>
+													<div class="col-md-12">
+														<br><br><label>Category Info</label>&nbsp;<span class="text-danger">*</span><br><br>
+														<table id="moduleTable" class="table custom-table">
+															<tbody>
+															</tbody>
+														</table><br><br>
+													</div>
+
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 advance_yes">
+														<div class="form-group">
+															<label for="tot_value">Total Value</label>&nbsp;<span class="text-danger">*</span>
+															<input type="text" class="form-control" name="tot_value" id="tot_value" readonly tabindex="21">
+														</div>
+													</div>
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 advance_yes">
+														<div class="form-group">
+															<label for="ad_amt">Advance Amount</label>&nbsp;<span class="text-danger">*</span>
+															<input type="text" class="form-control" name="ad_amt" id="ad_amt" readonly tabindex="22">
+														</div>
+													</div>
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+														<div class="form-group">
+															<label for="loan_amt">Loan Amount</label>&nbsp;<span class="text-danger">*</span>
+															<input type="text" class="form-control" name="loan_amt" id="loan_amt" readonly tabindex="23">
+														</div>
+													</div>
+													<hr>
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+														<div class="form-group">
+															<label for="profit_type">Profit Type</label>&nbsp;<span class="text-danger">*</span>
+															<select type="text" class="form-control" name="profit_type" id="profit_type" disabled tabindex="24">
+																<option value="">Select Profit Type</option>
+																<option value="1">Calculation</option>
+																<option value="2">Scheme</option>
+															</select>
+														</div>
+													</div>
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 calculation_div">
+														<div class="form-group">
+															<label for="due_method_calc">Due Method</label>&nbsp;<span class="text-danger">*</span>
+															<input type="text" class="form-control" name="due_method_calc" id="due_method_calc" value='Monthly' readonly tabindex="25">
+														</div>
+													</div>
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 calculation_div">
+														<div class="form-group">
+															<label for="due_type">Due Type</label>&nbsp;<span class="text-danger">*</span>
+															<input type="text" class="form-control" name="due_type" id="due_type" readonly tabindex="26">
+														</div>
+													</div>
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 calculation_div">
+														<div class="form-group">
+															<label for="profit_method">Profit Method</label>&nbsp;<span class="text-danger">*</span>
+															<input type="text" class="form-control" name="profit_method" id="profit_method" readonly tabindex="27">
+														</div>
+													</div>
+													<!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 interest-calculation">
+														<div class="form-group">
+															<label for="calc_method">Calculation Method</label>&nbsp;<span class="text-danger">*</span>
+															<input type="text" class="form-control" name="calc_method" id="calc_method" readonly tabindex="28">
+														</div>
+													</div> -->
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 scheme_div">
+														<div class="form-group">
+															<label for="due_method_scheme">Due Method</label>&nbsp;<span class="text-danger">*</span>
+															<select type="text" class="form-control" name="due_method_scheme" id="due_method_scheme" disabled tabindex="29">
+																<option value="">Select Due Method</option>
+																<option value="1">Monthly</option>
+																<option value="2">Weekly</option>
+																<option value="3">Daily</option>
+															</select>
+														</div>
+													</div>
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 day_scheme_div">
+														<div class="form-group">
+															<label for="day_scheme">Day</label>&nbsp;<span class="text-danger">*</span>
+															<select type="text" class="form-control" name="day_scheme" id="day_scheme" disabled tabindex="30">
+																<option value="">Select a Day</option>
+																<option value="1">Monday</option>
+																<option value="2">Tuesday</option>
+																<option value="3">Wednesday</option>
+																<option value="4">Thursday</option>
+																<option value="5">Friday</option>
+																<option value="6">Saturday</option>
+																<option value="7">Sunday</option>
+															</select>
+														</div>
+													</div>
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 scheme_div">
+														<div class="form-group">
+															<label for="scheme_name">Scheme Name</label>&nbsp;<span class="text-danger">*</span>
+															<input type="text" class="form-control" name="scheme_name" id="scheme_name" readonly tabindex="31">
+														</div>
+													</div>
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 scheme_div">
+														<div class="form-group">
+															<label for="scheme_profit_method">Profit Method</label>&nbsp;<span class="text-danger">*</span>
+															<input type="text" class="form-control" name="scheme_profit_method" id="scheme_profit_method" readonly tabindex="32">
+														</div>
+													</div>
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+														<div class="form-group">
+															<label for="int_rate">Interest Rate </label>&nbsp;<span class="text-danger min-max-int">*</span><!-- Min and max intrest rate-->
+															<input type="text" class="form-control" name="int_rate" id="int_rate" readonly tabindex="33">
+														</div>
+													</div>
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+														<div class="form-group">
+															<label for="due_period">Due Period </label>&nbsp;<span class="text-danger min-max-due">*</span><!-- Min and max Profit Method-->
+															<input type="text" class="form-control" name="due_period" id="due_period" readonly tabindex="34">
+														</div>
+													</div>
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+														<div class="form-group">
+															<label for="doc_charge">Document Charges </label>&nbsp;<span class="text-danger min-max-doc">*</span><!-- Min and max Document charges-->
+															<input type="text" class="form-control" name="doc_charge" id="doc_charge" readonly tabindex="35">
+														</div>
+													</div>
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+														<div class="form-group">
+															<label for="proc_fee">Processing Fees</label>&nbsp;<span class="text-danger min-max-proc">*</span><!-- Min and max Processing fee-->
+															<input type="text" class="form-control" name="proc_fee" id="proc_fee" readonly tabindex="36">
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- Loan info End -->
+								<!-- Loan Calculation Start -->
+								<div class="card">
+									<div class="card-header">Loan Calculation</div>
+									<div class="card-body">
+										<div class="row">
+											<div class="col-md-12">
+												<div class="row">
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+														<div class="form-group">
+															<label for="loan_amt_cal">Loan Amount</label>&nbsp;<span class="text-danger">*</span>
+															<input type="text" class="form-control" name="loan_amt_cal" id="loan_amt_cal" readonly tabindex='37'>
+														</div>
+													</div>
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emi_div">
+														<div class="form-group">
+															<label for="principal_amt_cal">Principal Amount</label>&nbsp;<span class="text-danger">*</span>
+															<input type="text" class="form-control" name="principal_amt_cal" id="principal_amt_cal" readonly tabindex='38'>
+														</div>
+													</div>
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+														<div class="form-group">
+															<label for="int_amt_cal">Interest Amount</label>&nbsp;<span class="text-danger int-diff">*</span>
+															<input type="text" class="form-control" name="int_amt_cal" id="int_amt_cal" readonly tabindex='39'>
+														</div>
+													</div>
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emi_div">
+														<div class="form-group">
+															<label for="tot_amt_cal">Total Amount</label>&nbsp;<span class="text-danger">*</span>
+															<input type="text" class="form-control" name="tot_amt_cal" id="tot_amt_cal" readonly tabindex='40'>
+														</div>
+													</div>
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 emi_div">
+														<div class="form-group">
+															<label for="due_amt_cal">Due Amount</label>&nbsp;<span class="text-danger due-diff">*</span>
+															<input type="text" class="form-control" name="due_amt_cal" id="due_amt_cal" readonly tabindex='41'>
+														</div>
+													</div>
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+														<div class="form-group">
+															<label for="doc_charge_cal">Document Charges</label>&nbsp;<span class="text-danger">*</span>
+															<input type="text" class="form-control" name="doc_charge_cal" id="doc_charge_cal" readonly tabindex='42'>
+														</div>
+													</div>
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+														<div class="form-group">
+															<label for="proc_fee_cal">Processing Fee</label>&nbsp;<span class="text-danger">*</span>
+															<input type="text" class="form-control" name="proc_fee_cal" id="proc_fee_cal" readonly tabindex='43'>
+														</div>
+													</div>
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+														<div class="form-group">
+															<label for="net_cash_cal">Net Cash</label>&nbsp;<span class="text-danger">*</span>
+															<input type="text" class="form-control" name="net_cash_cal" id="net_cash_cal" readonly tabindex='44'>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- Loan info End -->
+								<!-- Collection Info Start -->
+								<div class="card">
+									<div class="card-header">Collection Info <span style="font-weight:bold" class=""></span></div>
+									<div class="card-body">
+										<div class="row">
+											<div class="col-md-12">
+												<div class="row">
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+														<div class="form-group">
+															<label for="due_start_from">Due Start From</label>&nbsp;<span class="text-danger">*</span>
+															<input type="date" class="form-control" name="due_start_from" id="due_start_from" readonly tabindex="45">
+														</div>
+													</div>
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+														<div class="form-group">
+															<label for="maturity_month">Maturity Date</label>&nbsp;<span class="text-danger">*</span>
+															<input type="date" class="form-control" name="maturity_month" id="maturity_month" readonly tabindex="46">
+														</div>
+													</div>
+													<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+														<div class="form-group">
+															<label for="collection_method">Collection Format</label>&nbsp;<span class="text-danger">*</span>
+															<select type="text" class="form-control" name="collection_method" id="collection_method" disabled tabindex="47">
+																<option value="">Select Collection Format</option>
+																<option value="1">BySelf</option>
+																<option value="2">On Spot</option>
+																<option value="3">Cheque Collection</option>
+																<option value="4">ECS</option>
+															</select>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- Collection Info End -->
+								<div class="col-md-12">
+									<div class="text-right">
+										<button type="submit" class="btn btn-primary" name="submit_loan_calculation" id="submit_loan_calculation" value="Submit" tabindex="48"><span class="icon-check"></span>&nbsp;Submit</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<!-- Loan Calculation END -->
+
 			</div>
 		</div> <!-- Row End -->
 		<!-- </form> -->
@@ -1946,6 +2409,16 @@ if (sizeof($getCustomerReg) > 0) {
 						</div>
 					</div>
 
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+						<div class="form-group">
+							<label for="fam_mem_mark_as_spam"> Mark as Spam </label> 
+							<select class="form-control" name="fam_mem_mark_as_spam" id="fam_mem_mark_as_spam" tabindex="64">
+								<option value="0">Select option</option>
+								<option value="1"> Mark as Spam </option>
+								<option value="2"> Not a Spam </option>
+							</select>
+						</div>
+					</div>
 
 					<div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12">
 						<input type="hidden" name="famID" id="famID">
