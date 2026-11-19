@@ -242,12 +242,77 @@ $(document).ready(function () {
   });
 
   //Submit Validation
-  $("#submit_concern").click(function () {
-    if (!submitValidation()) {
-      event.preventDefault();
-      scrollToFirstError("#concern_form"); // your form id
+  // $("#submit_concern").click(function () {
+  //   if (!submitValidation()) {
+  //     event.preventDefault();
+  //     scrollToFirstError("#concern_form"); // your form id
+  //   }
+  // });
+
+  let isSubmitting = false;
+
+  $("#concern_form").on("submit", function (e) {
+    e.preventDefault();
+    if (isSubmitting) {
+      return false;
     }
+    if (!submitValidation()) {
+      scrollToFirstError("#concern_form");
+      return false;
+    }
+
+    isSubmitting = true;
+    let submitBtn = $("#submit_concern");
+
+    submitBtn.prop("disabled", true);
+
+    let formData = new FormData(this);
+
+    $.ajax({
+      url: "concernFile/submit_concern.php",
+      type: "POST",
+      data: formData,
+      cache: false,
+      processData: false,
+      contentType: false,
+      dataType: "json",
+
+      success: function (response) {
+        if (response.status === "success") {
+          Swal.fire({
+            title: 'Concern Submitted Successfully!',
+            icon: 'success',
+            showConfirmButton: true,
+            confirmButtonColor: '#009688',
+            confirmButtonText: 'OK'
+          }).then((swalResult) => {
+            // Redirect only when OK is clicked
+            if (swalResult.isConfirmed) {
+              window.location.href = "edit_concern_creation&msc=1";
+            }
+          });
+
+        } else {
+          swalError(response.message || "Something went wrong while submitting the concern.");
+
+          isSubmitting = false;
+          submitBtn.prop("disabled", false);
+        }
+      },
+
+      error: function (xhr) {
+        console.log(xhr.responseText);
+
+        swalError("Something went wrong while submitting the concern.");
+
+        isSubmitting = false;
+        submitBtn.prop("disabled", false);
+      }
+    });
+
+    return false;
   });
+
   $(document).on("click", ".editDepName", function () {
     var id = $(this).data("id");
     var name = $(this).data("name");
@@ -775,20 +840,15 @@ function submitValidation() {
   var staff_team_name = $("#staff_team_name").val();
   var ag_name = $("#ag_name").val();
   var cus_id = $("#cus_id").val();
-  // var branch_name = $('#branch_name').val();
-  // var concern_to = $('#concern_to').val(); console.log(concern_to);
   var to_dept_name = $("#to_dept_name").val();
-  // var to_team_name = $('#to_team_name').val();
   var com_sub = $("#com_sub").val();
   var com_remark = $("#com_remark").val();
-  // var concern_against = $('#concern_against').val();
-  // var com_priority = $('#com_priority').val();
   var role_type = $("#role_type").val();
   var staff_assign_to = $("#staff_assign_to").val();
+
   var isValid = true;
 
   if (raising == "") {
-    event.preventDefault();
     $("#raisingForCheck").show();
     isValid = false;
   } else {
@@ -797,21 +857,20 @@ function submitValidation() {
 
   if (raising == "2") {
     if (staff_name == "") {
-      event.preventDefault();
       $("#staffnameCheck").show();
       isValid = false;
     } else {
       $("#staffnameCheck").hide();
     }
+
     if (staff_dept_name == "") {
-      event.preventDefault();
       $("#staffdeptnameCheck").show();
       isValid = false;
     } else {
       $("#staffdeptnameCheck").hide();
     }
+
     if (staff_team_name == "") {
-      event.preventDefault();
       $("#staffteamnameCheck").show();
       isValid = false;
     } else {
@@ -821,7 +880,6 @@ function submitValidation() {
 
   if (raising == "3") {
     if (ag_name == "") {
-      event.preventDefault();
       $("#agentnameCheck").show();
       isValid = false;
     } else {
@@ -831,7 +889,6 @@ function submitValidation() {
 
   if (raising == "4") {
     if (cus_id == "") {
-      event.preventDefault();
       $("#cusIdCheck").show();
       isValid = false;
     } else {
@@ -839,77 +896,40 @@ function submitValidation() {
     }
   }
 
-  // if (branch_name == '') {
-  //     event.preventDefault();
-  //     $('#branchCheck').show();
-  // } else {
-  //     $('#branchCheck').hide();
-  // }
-  // if (concern_to == '') {
-  //     event.preventDefault();
-  //     $('#comtoCheck').show();
-  // } else {
-  //     $('#comtoCheck').hide();
-  // }
-
-  // if (concern_to == '1') {
   if (to_dept_name == "") {
-    event.preventDefault();
     $("#todeptnameCheck").show();
     isValid = false;
   } else {
     $("#todeptnameCheck").hide();
   }
-  // }
-
-  // if (concern_to == '2') {
-  // if (to_team_name == '') {
-  //     event.preventDefault();
-  //     $('#toteamnameCheck').show();
-  // } else {
-  //     $('#toteamnameCheck').hide();
-  // }
-  // }
 
   if (com_sub == "") {
-    event.preventDefault();
     $("#concernsubCheck").show();
     isValid = false;
   } else {
     $("#concernsubCheck").hide();
   }
+
   if (com_remark == "") {
-    event.preventDefault();
     $("#comRemarkCheck").show();
     isValid = false;
   } else {
     $("#comRemarkCheck").hide();
   }
-  // if (com_priority == '') {
-  //     event.preventDefault();
-  //     $('#conpriorityCheck').show();
-  // } else {
-  //     $('#conpriorityCheck').hide();
-  // }
-  // if (concern_against == '') {
-  //     event.preventDefault();
-  //     $('#concernAgainstcheck').show();
-  // } else {
-  //     $('#concernAgainstcheck').hide();
-  // }
+
   if (role_type == "") {
-    event.preventDefault();
     $("#roleTypeCheck").show();
     isValid = false;
   } else {
     $("#roleTypeCheck").hide();
   }
+
   if (staff_assign_to == "") {
-    event.preventDefault();
     $("#staffAssignCheck").show();
     isValid = false;
   } else {
     $("#staffAssignCheck").hide();
   }
+
   return isValid;
 }

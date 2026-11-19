@@ -8,15 +8,6 @@ if ($getUserDetails) {
 }
 
 
-if (isset($_POST['submit_concern']) && $_POST['submit_concern'] != '') {
-    $userObj->addConcern($mysqli, $userid);
-
-?>
-    <script>
-        location.href = '<?php echo $HOSTPATH; ?>edit_concern_creation&msc=1';
-    </script>
-<?php
-}
 ?>
 <style>
     .img_show {

@@ -97,6 +97,26 @@
         // Detect page reload once when the page loads
         const isPageReloaded = performance.getEntriesByType("navigation")[0]?.type === "reload";
 
+        const ACTIVE_LOGIN_KEY = 'active-login';
+        // Store the login event seen by this tab
+        let lastLoginEvent = localStorage.getItem(ACTIVE_LOGIN_KEY);
+            window.addEventListener('storage', function (e) {
+                if (e.key === ACTIVE_LOGIN_KEY && e.newValue) {
+                  const newLogin = JSON.parse(e.newValue);
+                   // Ignore the very first value this tab sees on page load
+                    if (lastLoginEvent === null) {
+                       lastLoginEvent = e.newValue;
+                       return;
+                    }
+                // If another tab logged in, reload this tab.
+               // PHP will then send it to home_page because it is logged in.
+                    if (newLogin.time !== JSON.parse(lastLoginEvent).time) {
+                        lastLoginEvent = e.newValue;
+                        window.location.href = 'home_page';
+                    }
+                }
+            });
+
         function curDateJs(title) {
             // Get current date and time
             const now = new Date();
