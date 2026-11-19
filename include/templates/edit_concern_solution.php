@@ -34,15 +34,15 @@ if (isset($_SESSION["userid"])) {
 					if (isset($_GET['msc'])) {
 						$mscid = $_GET['msc'];
 						if ($mscid == 1) { ?>
-							<div class="alert alert-success" role="alert">
+							<!-- <div class="alert alert-success" role="alert">
 								<div class="alert-text"> Concern Assigned Successfully! </div>
-							</div>
+							</div> -->
 						<?php
 						}
 						if ($mscid == 2) { ?>
-							<div class="alert alert-success" role="alert">
+							<!-- <div class="alert alert-success" role="alert">
 								<div class="alert-text"> Concern Solution Submitted Successfully! </div>
-							</div>
+							</div> -->
 					<?php
 						}
 					}

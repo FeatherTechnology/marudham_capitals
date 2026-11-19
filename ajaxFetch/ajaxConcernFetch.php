@@ -119,7 +119,7 @@ foreach ($result as $row) {
                 <div class='dropdown-content'>";
     $action .= "<a href='concern_solution_view&upd=$id&pageId=3' class='concern_details' title='View'>View</a>";
     if ($con_sts == 1) {
-        $action .= "<a href='#' class='concern_remove' title='Concern Remove'>Remove</a>";
+        $action .= "<a href='#' class='concern_remove' value='" . $row['id'] . "' title='Concern Remove'>Remove</a>";
     }
     $action .= "</div></div>";
     $sub_array[] = $action;

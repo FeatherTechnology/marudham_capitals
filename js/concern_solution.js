@@ -16,11 +16,61 @@ $(document).ready(function () {
         }
     });
 
-    $('#submit_concern_solution').click(function () {
-        if (!solutionSubmitValidation()){
-            event.preventDefault();
+
+    $('#submit_concern_solution').click(function (e) {
+        e.preventDefault();
+
+        if (!solutionSubmitValidation()) {
             scrollToFirstError('#concern_form');
+            return false;
         }
+
+        let submitBtn = $(this);
+        if (submitBtn.prop('disabled')) {
+            return false;
+        }
+
+        submitBtn.prop('disabled', true);
+
+        let formData = new FormData($('#concern_form')[0]);
+
+        $.ajax({
+            url: "concernFile/submit_concern_solution.php",
+            type: "POST",
+            data: formData,
+            cache: false,
+            processData: false,
+            contentType: false,
+            dataType: "json",
+
+            success: function (response) {
+                if (response.status === "success") {
+                    let pg_id = $('#pg_id').val();
+                    let msc = (pg_id == '1') ? 1 : 2;
+
+                    Swal.fire({
+                        title: (pg_id == '1') ? 'Concern Assigned Successfully!' : 'Concern Solution Submitted Successfully!',
+                        icon: 'success',
+                        showConfirmButton: true,
+                        confirmButtonColor: '#009688',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "edit_concern_solution&msc=" + msc;
+                        }
+                    });
+                } else {
+                    swalError(response.message || "Something went wrong while submitting the solution.");
+                    submitBtn.prop('disabled', false);
+                }
+            },
+
+            error: function (xhr) {
+                console.log(xhr.responseText);
+                swalError("Something went wrong while submitting the solution.");
+                submitBtn.prop('disabled', false);
+            }
+        });
     });
 
     // $('#to_dept_name').change(function () { // To Staff list based on department
@@ -211,8 +261,8 @@ function getAssignName(staff_name_id) {
     let pg_id = $('#pg_id').val();
     let staff_assign_to = $('#con_staff').val(); //  assigned staff
     let pass_to = $('#pass_to').val(); // pass assigned staff
- 
-     const staff_assign_id = (pass_to && pass_to.trim() !== '')
+
+    const staff_assign_id = (pass_to && pass_to.trim() !== '')
         ? pass_to
         : staff_assign_to;
 
@@ -220,12 +270,12 @@ function getAssignName(staff_name_id) {
     const selectedId = (pg_id != '1') ? staff_assign_id : '';
 
     //if pass screen means hide login user name in dropdown, but in solution need to show the login username.
-    const filterId = (pg_id =='1') ? '1' : '2'; //1 dont show login username, 2 - show login username.
+    const filterId = (pg_id == '1') ? '1' : '2'; //1 dont show login username, 2 - show login username.
 
     return $.ajax({
         url: 'reportFile/customer_status_report/getAllUserList.php',
         type: 'POST',
-        data: { user_track: '3', user_type: '2', role_type: staff_name_id, filterId: filterId},
+        data: { user_track: '3', user_type: '2', role_type: staff_name_id, filterId: filterId },
         dataType: 'json',
         cache: false
     })
@@ -253,15 +303,18 @@ function getAssignName(staff_name_id) {
 
 function solutionSubmitValidation() {
     let pg_id = $('#pg_id').val();
-    var com = $('#Com_for_solution').val(); var upd = $('#concern_upload').val(); var solutionRemark = $('#solution_remark').val();
-    var role_type = $('#role_type').val();
-    var staff_assign_to = $('#staff_assign_to').val();
-    var location = $('#location').val();
-    var sol_participants = $('#sol_participants').val();
-    var isValid = true;
+    let com = $('#Com_for_solution').val();
+    let upd = $('#concern_upload').val();
+    let solutionRemark = $('#solution_remark').val();
+    let role_type = $('#role_type').val();
+    let staff_assign_to = $('#staff_assign_to').val();
+    let location = $('#location').val();
+    let sol_participants = $('#sol_participants').val();
+
+    let isValid = true;
+
     if (pg_id != '1') {
         if (com == '') {
-            event.preventDefault();
             $('#communicationCheck').show();
             isValid = false;
         } else {
@@ -270,31 +323,34 @@ function solutionSubmitValidation() {
 
         if (com == '1') {
             if (upd == '') {
-                event.preventDefault();
                 $('#updCheck').show();
                 isValid = false;
             } else {
                 $('#updCheck').hide();
             }
-        } else if (com == '2') {
+        } else {
+            $('#updCheck').hide();
+        }
+
+        if (com == '2') {
             if (location == '') {
-                event.preventDefault();
                 $('#locationCheck').show();
                 isValid = false;
             } else {
                 $('#locationCheck').hide();
             }
+        } else {
+            $('#locationCheck').hide();
         }
 
         if (sol_participants == '') {
-            event.preventDefault();
             $('#participantsCheck').show();
             isValid = false;
         } else {
             $('#participantsCheck').hide();
         }
+
         if (solutionRemark == '') {
-            event.preventDefault();
             $('#solutionRemarkCheck').show();
             isValid = false;
         } else {
@@ -302,20 +358,19 @@ function solutionSubmitValidation() {
         }
     } else {
         if (role_type == '') {
-            event.preventDefault();
             $('#roleTypeCheck').show();
             isValid = false;
         } else {
             $('#roleTypeCheck').hide();
         }
+
         if (staff_assign_to == '') {
-            event.preventDefault();
             $('#staffAssignCheck').show();
             isValid = false;
         } else {
             $('#staffAssignCheck').hide();
         }
     }
-    return isValid;
 
+    return isValid;
 }

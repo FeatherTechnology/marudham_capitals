@@ -40,9 +40,9 @@ if (isset($_SESSION["userid"])) {
 					if (isset($_GET['msc'])) {
 						$mscid = $_GET['msc'];
 						if ($mscid == 1) { ?>
-							<div class="alert alert-success" role="alert">
+							<!-- <div class="alert alert-success" role="alert">
 								<div class="alert-text"> Concern Submitted Successfully! </div>
-							</div>
+							</div> -->
 						<?php
 						}
 						if ($mscid == 2) { ?>

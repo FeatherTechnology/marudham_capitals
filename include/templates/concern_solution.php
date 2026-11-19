@@ -48,17 +48,6 @@ if (count($getConcernCreation) > 0) {
     $insert_user_name      = $getConcernCreation['insert_user_name'];
 }
 
-if (isset($_POST['submit_concern_solution']) && $_POST['submit_concern_solution'] != '') {
-
-    $userObj->addConcernsolution($mysqli, $userid);
-
-    $msc = (isset($_POST['pg_id']) && $_POST['pg_id'] == '1') ? 1 : 2;
-    ?>
-    <script>
-        location.href = '<?php echo $HOSTPATH; ?>edit_concern_solution&msc=<?php echo $msc; ?>';
-    </script>
-    <?php
-}
 ?>
 <style>
     .img_show {
