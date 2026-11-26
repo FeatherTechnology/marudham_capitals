@@ -764,6 +764,11 @@ if (!empty($getUser) && is_array($getUser)) {
 													<a href="noc_handover_report"><i class='icon-area-graph'></i>NOC Handover</a>
 												</li>
 											<?php  } ?>
+											<?php if (($leftbar_noc_handover_report ?? 1) == 0) { ?>
+												<li>
+													<a href="manual_noc_handover_report"><i class='icon-area-graph'></i>Manual NOC Handover</a>
+												</li>
+											<?php  } ?>
 										</ul>
 									</div>
 								</li>

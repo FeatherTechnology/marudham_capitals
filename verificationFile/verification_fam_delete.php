@@ -42,6 +42,9 @@ if ($isUsed) {
 	$message = "Family member used as Guarantor or Doc Holder.";
 
 }else{
+	$connect->query("DELETE a.* FROM `fingerprints` a JOIN verification_family_info b ON a.adhar_num = b.relation_aadhar WHERE b.id = '$id' ");
+
+
 	$delct = $connect->query("DELETE FROM `verification_family_info` WHERE id = '$id' ");
 	
 	if ($delct) {

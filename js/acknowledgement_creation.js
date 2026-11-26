@@ -72,173 +72,340 @@ $(document).ready(function () {
                 getLoaninfo(sub_cat_id);
                 profitCalculationInfo();
             });
-
         }
-    })
-
-    function customerProfileFunc() {
-
-        getImage(); // To show customer image when window onload.
-        resetFamDetails(); //Family Table List
-        resetPropertyinfoList() //Property Info List.
-        resetbankinfoList(); //Bank Info List.
-        resetkycinfoList(); //KYC Info List.
-        feedbackList(); // Feedback List.
-        getCustomerLoanCounts(); // to get customer loan details
-        fingerprintTable(); // Fingerprint Info List
-
-        var state_upd = $('#state_upd').val();
-        if (state_upd != '') {
-            getDistrictDropdown(state_upd);
-        }
-        var district_upd = $('#district_upd').val();
-        if (district_upd != '') {
-            getTalukDropdown(district_upd);
-        }
-        var taluk_upd = $('#taluk_upd').val();
-        if (taluk_upd != '') {
-            getTalukBasedArea(taluk_upd);
-        }
-        var area_upd = $('#area_upd').val();
-        if (area_upd != '') {
-            getAreaBasedSubArea(area_upd);
-        }
-    }
-    
- $("body").on("click", "#feedback_edit", function () {
-    let id = $(this).attr("value");
-
-    $.ajax({
-      url: "verificationFile/get_feedback_edit.php",
-      type: "POST",
-      data: { id: id },
-      dataType: "json",
-      cache: false,
-      success: function (result) {
-        $("#fedbackname_id").val(result["id"]);
-        $("#feedbackname").val(result["feedback_name"]);
-      },
     });
-  });
+    
+    ///////// Famil info START ///////////
+    $("#relation_dob").change(function () {
+        let dobirth = $(this).val();
 
-  $("body").on("click", "#feedback_delete", function () {
-    let id = $(this).attr("value");
-    if (confirm('Do You want to delete this Feedback Name?')) {
-      $.ajax({
-        url: "verificationFile/delet_feedback_edit.php",
+        var dob = new Date(dobirth);
+        //calculate month difference from current date in time
+        var month_diff = Date.now() - dob.getTime();
+
+        //convert the calculated difference in date format
+        var age_dt = new Date(month_diff);
+
+        //extract year from date
+        var year = age_dt.getUTCFullYear();
+
+        //now calculate the age of the user
+        var age = Math.abs(year - 1970);
+
+        // Determine which age field to update based on which element triggered the event
+        let ageval = (this.id === "dob") ? "#age" : "#relation_age";
+
+        $(ageval).val(age); // set value to age.
+    });
+
+    //Show Remark and Address when select other in Relationship.
+    $("#relationship").on("change", function () {
+        var relation = $("#relationship").val();
+
+        if (relation == "Other") {
+            $("#remark").show();
+            $("#address").show();
+        } else if (relation != "Other") {
+            $("#remark").hide();
+            $("#address").hide();
+        }
+    });
+    
+    $(document).on("click", "#submitFamInfoBtn", function () {
+        let famData = {
+            reqId  : $("#req_id").val(),
+            cus_id : $("#cus_id").val(),
+            famname : $("#famname").val(),
+            relationship : $("#relationship").val(),
+            other_remark : $("#other_remark").val(),
+            other_address : $("#other_address").val(),
+            relation_dob : $("#relation_dob").val(),
+            relation_age : $("#relation_age").val(),
+            relation_live_deceased : $("#relation_live_deceased").val(),
+            relation_aadhar : $("#relation_aadhar").val(),
+            relation_Mobile : $("#relation_Mobile").val(),
+            relation_Occupation : $("#relation_Occupation").val(),
+            relation_Income : $("#relation_Income").val(),
+            relation_Blood : $("#relation_Blood").val(),
+            famTableId : $("#famID").val(),
+            authorize : $("#authorize").val()
+        }
+
+        if (
+            famData.famname != "" &&
+            famData.relationship != "" &&
+            famData.relation_live_deceased != "" &&
+            famData.reqId  != "" 
+        ) {
+            $.ajax({
+            url: "verificationFile/verification_family_submit.php",
+            type: "POST",
+            data: famData,
+            cache: false,
+            success: function (response) {
+                var insresult = response.includes("Inserted");
+                var updresult = response.includes("Updated");
+                if (insresult) {
+                    $("#FamInsertOk").show();
+                    setTimeout(function () {
+                        $("#FamInsertOk").fadeOut("fast");
+                    }, 2000);
+                } else if (updresult) {
+                    $("#famUpdateok").show();
+                    setTimeout(function () {
+                        $("#famUpdateok").fadeOut("fast");
+                    }, 2000);
+                } else {
+                    $("#NotOk").show();
+                    setTimeout(function () {
+                        $("#NotOk").fadeOut("fast");
+                    }, 2000);
+                }
+
+                resetFamInfo();
+            },
+            });
+        } else {
+            if (famData.famname == "") {
+                $("#famnameCheck").show();
+            } else {
+                $("#famnameCheck").hide();
+            }
+
+            if (famData.relationship == "") {
+                $("#famrelationCheck").show();
+            } else {
+                $("#famrelationCheck").hide();
+            }
+
+            if (famData.relationship == "Other" && famData.other_remark == "") {
+                $("#famremarkCheck").show();
+            } else {
+                $("#famremarkCheck").hide();
+            }
+
+            if (famData.relationship == "Other" && famData.other_address == "") {
+                $("#famaddressCheck").show();
+            } else {
+                $("#famaddressCheck").hide();
+            }
+
+            if (famData.relation_live_deceased == "") {
+                $("#famLiveDeceasedCheck").show();
+            } else {
+                $("#famLiveDeceasedCheck").hide();
+            }
+        }
+    });
+
+    $("body").on("click", "#verification_fam_edit", function () {
+        let id = $(this).attr("value");
+
+        $.ajax({
+            url: "verificationFile/verification_fam_edit.php",
+            type: "POST",
+            data: { id: id },
+            dataType: "json",
+            cache: false,
+            success: function (result) {
+                $("#famID").val(result["id"]);
+                $("#famname").val(result["fname"]);
+                $("#relationship").val(result["relation"]);
+                $("#other_remark").val(result["remark"]);
+                $("#other_address").val(result["address"]);
+                $("#relation_dob").val(result["dob"]);
+                $("#relation_age").val(result["age"]);
+                $("#relation_live_deceased").val(result["live_deceased"]);
+                $("#relation_aadhar").val(result["aadhar"]);
+                $("#relation_Mobile").val(result["mobileno"]);
+                $("#relation_Occupation").val(result["occ"]);
+                $("#relation_Income").val(result["income"]);
+                $("#relation_Blood").val(result["bg"]);
+                $("#authorize").val(result["authorize"]);
+                if (result["relation"] == "Other") {
+                    $("#remark, #address").show();
+                } else {
+                    $("#remark, #address").hide();
+                }
+
+                (result["aadhar"] !='') ? $("#relation_aadhar").prop('readonly', true) : $("#relation_aadhar").prop('readonly', false);
+
+                $("#famnameCheck, #famrelationCheck, #famremarkCheck, #famaddressCheck, #famdobCheck, #famageCheck, #famLiveDeceasedCheck, #famaadharCheck, #fammobileCheck, #famoccCheck, #famincomeCheck").hide();
+            },
+        });
+    });
+
+    $("body").on("click", "#verification_fam_delete", function () {
+        var isok = confirm("Do you want delete this Family Info?");
+        if (isok == false) {
+            return false;
+        } else {
+            var famid = $(this).attr("value");
+
+            $.ajax({
+                url: "verificationFile/verification_fam_delete.php",
+                type: "POST",
+                data: { famid: famid },
+                cache: false,
+                success: function (response) {
+                    var delresult = response.includes("Deleted");
+                    if (delresult) {
+                        $("#FamDeleteOk").show();
+                        setTimeout(function () {
+                            $("#FamDeleteOk").fadeOut("fast");
+                        }, 2000);
+
+                    } else if(response.includes("Guarantor")){
+                        $('#FamDeleteValidateFail').show();
+                        setTimeout(function () {
+                            $('#FamDeleteValidateFail').fadeOut('slow');
+                        }, 5000);
+
+                    } else {
+                        $("#FamDeleteNotOk").show();
+                        setTimeout(function () {
+                            $("#FamDeleteNotOk").fadeOut("fast");
+                        }, 2000);
+                    }
+                    
+                    resetFamInfo();
+                },
+            });
+        }
+    });
+
+    ///////// Famil info END ///////////
+    $("body").on("click", "#feedback_edit", function () {
+        let id = $(this).attr("value");
+
+        $.ajax({
+            url: "verificationFile/get_feedback_edit.php",
+            type: "POST",
+            data: { id: id },
+            dataType: "json",
+            cache: false,
+            success: function (result) {
+                $("#fedbackname_id").val(result["id"]);
+                $("#feedbackname").val(result["feedback_name"]);
+            },
+        });
+    });
+
+    $("body").on("click", "#feedback_delete", function () {
+        let id = $(this).attr("value");
+        if (confirm('Do You want to delete this Feedback Name?')) {
+            $.ajax({
+                url: "verificationFile/delet_feedback_edit.php",
+                type: "POST",
+                data: { id: id },
+                dataType: "json",
+                cache: false,
+                success: function (result) {
+                if (result === "DELETED") {
+                    Swal.fire({
+                    title: 'Feedback Label Deleted!',
+                    icon: 'success',
+                    confirmButtonColor: '#009688'
+                    });
+                    cusfeedbacklist();
+
+                } else if (result === "USED") {
+                    Swal.fire({
+                    title: 'Already Used!',
+                    text: 'This feedback label is already used in Customer Feedback.',
+                    icon: 'warning',
+                    confirmButtonColor: '#009688'
+                    });
+
+                } else {
+                    Swal.fire({
+                    title: 'Error Occurred!',
+                    icon: 'error',
+                    confirmButtonColor: '#009688'
+                    });
+                }
+                },
+            });
+        }
+    });
+
+    $(document).on("click", "#add_cus_label", function () {
+        $('#feedback_label, #cus_feedback_department, #cus_feedback').prop('disabled', false);
+        getFeedbackLable();
+    });
+
+    $(document).on("click", "#add_cus_feedback", function () {
+        cusfeedbacklist();
+        $('#feedbackname').prop('readonly', false);
+        $("#feedbackname").val('');
+        $("#fedbackname_id").val('');
+    });
+
+    $(document).on("click", "#submit_feedback_lable", function () {
+        submitfeedbackname();
+    });
+
+    ///Customer Feedback
+    $("body").on("click", "#cus_feedback_edit", function () {
+        let id = $(this).attr("value");
+
+        $.ajax({
+        url: "verificationFile/customer_feedback_edit.php",
         type: "POST",
         data: { id: id },
         dataType: "json",
         cache: false,
         success: function (result) {
-          if (result === "DELETED") {
-            Swal.fire({
-              title: 'Feedback Label Deleted!',
-              icon: 'success',
-              confirmButtonColor: '#009688'
-            });
-            cusfeedbacklist();
-
-          } else if (result === "USED") {
-            Swal.fire({
-              title: 'Already Used!',
-              text: 'This feedback label is already used in Customer Feedback.',
-              icon: 'warning',
-              confirmButtonColor: '#009688'
-            });
-
-          } else {
-            Swal.fire({
-              title: 'Error Occurred!',
-              icon: 'error',
-              confirmButtonColor: '#009688'
-            });
-          }
+            $("#feedbackID").val(result["id"]);
+            $("#feedback_label").val(result["feedback_label"]);
+            $("#cus_feedback_department").val(result["cus_feedback_dept"]);
+            $("#cus_feedback").val(result["cus_feedback"]);
+            $("#feedback_remark").val(result["feedback_remark"]);
+            $("#cus_summary_upload").val(result["upload"]);
         },
-      });
-    }
-  });
-
-  $(document).on("click", "#add_cus_label", function () {
-    $('#feedback_label, #cus_feedback_department, #cus_feedback').prop('disabled', false);
-    getFeedbackLable();
-  });
-
-  $(document).on("click", "#add_cus_feedback", function () {
-    cusfeedbacklist();
-    $('#feedbackname').prop('readonly', false);
-    $("#feedbackname").val('');
-    $("#fedbackname_id").val('');
-  });
-
-  $(document).on("click", "#submit_feedback_lable", function () {
-    submitfeedbackname();
-  });
-    ///Customer Feedback
-  $("body").on("click", "#cus_feedback_edit", function () {
-    let id = $(this).attr("value");
-
-    $.ajax({
-      url: "verificationFile/customer_feedback_edit.php",
-      type: "POST",
-      data: { id: id },
-      dataType: "json",
-      cache: false,
-      success: function (result) {
-        $("#feedbackID").val(result["id"]);
-        $("#feedback_label").val(result["feedback_label"]);
-        $("#cus_feedback_department").val(result["cus_feedback_dept"]);
-        $("#cus_feedback").val(result["cus_feedback"]);
-        $("#feedback_remark").val(result["feedback_remark"]);
-        $("#cus_summary_upload").val(result["upload"]);
-      },
+        });
     });
-  });
 
-  $("body").on("click", "#cus_feedback_delete", function () {
-    var isok = confirm("Do you want delete this Feedback?");
-    if (isok == false) {
-      return false;
-    } else {
-      var id = $(this).attr("value");
+    $("body").on("click", "#cus_feedback_delete", function () {
+        var isok = confirm("Do you want delete this Feedback?");
+        if (isok == false) {
+        return false;
+        } else {
+        var id = $(this).attr("value");
 
-      $.ajax({
-        url: "verificationFile/customer_feedback_delete.php",
-        type: "POST",
-        data: { id: id },
-        cache: false,
-        success: function (response) {
-          var delresult = response.includes("Deleted");
-          if (delresult) {
-            $("#feedbackDeleteOk").show();
-            setTimeout(function () {
-              $("#feedbackDeleteOk").fadeOut("fast");
-            }, 2000);
-          } else {
-            $("#feedbackDeleteNotOk").show();
-            setTimeout(function () {
-              $("#feedbackDeleteNotOk").fadeOut("fast");
-            }, 2000);
-          }
+        $.ajax({
+            url: "verificationFile/customer_feedback_delete.php",
+            type: "POST",
+            data: { id: id },
+            cache: false,
+            success: function (response) {
+            var delresult = response.includes("Deleted");
+            if (delresult) {
+                $("#feedbackDeleteOk").show();
+                setTimeout(function () {
+                $("#feedbackDeleteOk").fadeOut("fast");
+                }, 2000);
+            } else {
+                $("#feedbackDeleteNotOk").show();
+                setTimeout(function () {
+                $("#feedbackDeleteNotOk").fadeOut("fast");
+                }, 2000);
+            }
 
-          resetfeedback();
-        },
-      });
-    }
-  });
-
-
- 
+            resetfeedback();
+            },
+        });
+        }
+    });
 
     ///Documentation 
-  $(document).on("click", "#hide_document_history", function () {
-    $("#docHistoryDiv").empty();
-    $("#show_document_history").show();
-    $("#hide_document_history").hide();
-  })
+    $(document).on("click", "#hide_document_history", function () {
+        $("#docHistoryDiv").empty();
+        $("#show_document_history").show();
+        $("#hide_document_history").hide();
+    });
  
     // Signed Modal Doc Upload.
-
     $('#add_sign_doc').click(function () {
         $('#signDocUploads input').not('#signType_cus_name, #guar_name').prop('readonly', false);
         $('#signDocUploads select').prop('disabled', false);
@@ -752,7 +919,6 @@ $(document).ready(function () {
             });
         }
     });
-
 
     ////Mortgage Info  
     $('#mortgageprocessCheck, #propertyholdertypeCheck, #docpropertytypeCheck,#docpropertymeasureCheck, #docpropertylocCheck, #docpropertyvalueCheck, #mortgagenameCheck, #mortgagedsgnCheck, #mortgagenumCheck, #regofficeCheck, #mortgagevalueCheck, #mortgagedocCheck, #mortgagedocUpdCheck, #propertyholderNameCheck, #doc_remarkcheck').hide();
@@ -1268,8 +1434,8 @@ $(document).ready(function () {
 $(function () {
     $('.icon-chevron-down1').parent().next('div').slideUp(); //To collapse all card on load
     // Disable all inputs except the ones you want to keep editable
-    $('input').not('#int_rate, #due_period, #doc_charge, #proc_fee').attr('readonly', true);
-    $('select').not('#choose_document, #mortgage_process, #endorsement_process, #replace_doc_id').attr('disabled', true);
+    $('input').not('#int_rate, #due_period, #doc_charge, #proc_fee, #famname, #other_remark, #other_address, #relation_Mobile, #relation_dob, #relation_live_deceased, #relation_Occupation, #relation_Income, #relation_Blood').attr('readonly', true);
+    $('select').not('#choose_document, #mortgage_process, #endorsement_process, #replace_doc_id, #relationship, #authorize, #relation_live_deceased').attr('disabled', true);
 
     let agent_id = $('#agent_id').val();
     getresponsiblecolumn(agent_id);
@@ -1302,6 +1468,70 @@ $(function () {
 
     mantraInitDevice(); //to initialize the fingerprint scanner.
 });
+
+function customerProfileFunc() {
+
+    getImage(); // To show customer image when window onload.
+    resetFamDetails(); //Family Table List
+    resetPropertyinfoList() //Property Info List.
+    resetbankinfoList(); //Bank Info List.
+    resetkycinfoList(); //KYC Info List.
+    feedbackList(); // Feedback List.
+    getCustomerLoanCounts(); // to get customer loan details
+    fingerprintTable(); // Fingerprint Info List
+
+    var state_upd = $('#state_upd').val();
+    if (state_upd != '') {
+        getDistrictDropdown(state_upd);
+    }
+    var district_upd = $('#district_upd').val();
+    if (district_upd != '') {
+        getTalukDropdown(district_upd);
+    }
+    var taluk_upd = $('#taluk_upd').val();
+    if (taluk_upd != '') {
+        getTalukBasedArea(taluk_upd);
+    }
+    var area_upd = $('#area_upd').val();
+    if (area_upd != '') {
+        getAreaBasedSubArea(area_upd);
+    }
+}
+
+function resetFamInfo() {
+  let cus_id = $("#cus_id").val();
+
+  $.ajax({
+    url: "verificationFile/verification_fam_reset.php",
+    type: "POST",
+    data: { cus_id: cus_id },
+    cache: false,
+    success: function (html) {
+      $("#updatedFamTable").html(html);
+
+      $("#relation_aadhar").prop('readonly', false);
+      const curDate = moment().format('YYYY-MM-DD');
+      $('#relation_dob').attr('max', curDate);
+      $("#famname, #relationship, #other_remark, #other_address, #relation_dob, #relation_age, #relation_live_deceased, #relation_aadhar, #relation_Mobile, #relation_Occupation, #relation_Income, #relation_Blood, #famID, #authorize").val("");
+      $("#famnameCheck, #famrelationCheck, #famremarkCheck, #famaddressCheck, #famdobCheck, #famageCheck, #famLiveDeceasedCheck, #famaadharCheck, #fammobileCheck, #famoccCheck, #famincomeCheck").hide();
+    },
+  });
+}
+
+function resetFamDetail() {
+  let cus_id = $("#cus_id").val();
+
+  $.ajax({
+    url: "verificationFile/verification_fam_list.php",
+    type: "POST",
+    data: { cus_id: cus_id },
+    cache: false,
+    success: function (html) {
+      $("#famList").html(html);
+      fingerprintTable(cus_id);
+    },
+  });
+}
 
 //Get document ids
 function getDocumentIds(){
@@ -3001,15 +3231,15 @@ function doc_submit_validation(event) {
         } else {
             $('#mortgagevalueCheck').hide();
         }
-           if (Propertyholder_type == '2') {
-      if (Propertyholder_relationship_name == "") {
-        event.preventDefault();
-        validation = false;
-        $("#propertyholderNameCheck").show();
-      } else {
-        $("#propertyholderNameCheck").hide();
-      }
-    }
+        if (Propertyholder_type == '2') {
+            if (Propertyholder_relationship_name == "") {
+                event.preventDefault();
+                validation = false;
+                $("#propertyholderNameCheck").show();
+            } else {
+                $("#propertyholderNameCheck").hide();
+            }
+        }
         if (mortgage_document == '') {// check if document dropdown selected or not
             event.preventDefault();
             $('#mortgagedocCheck').show();
@@ -3304,6 +3534,7 @@ function dueChartList(req_id, cus_id) {
     });
   });
 }
+
 //Penalty Chart List
 function penaltyChartList(req_id, cus_id) {
   $.ajax({
@@ -3317,6 +3548,7 @@ function penaltyChartList(req_id, cus_id) {
     },
   }); //Ajax End.
 }
+
 //Collection Charge Chart List
 function collectionChargeChartList(req_id) {
   $.ajax({
@@ -3330,6 +3562,7 @@ function collectionChargeChartList(req_id) {
     },
   }); //Ajax End.
 }
+
 //Loan Summary Chart List
 function loanSummaryList(req_id, cus_id) {
   $.ajax({
@@ -3344,6 +3577,7 @@ function loanSummaryList(req_id, cus_id) {
     },
   });
 }
+
 function onLoadEditFunction() {//On load for Loan Calculation edit
     $('input#due_start_from').removeAttr('readonly');
     $('select#collection_method').removeAttr('disabled');

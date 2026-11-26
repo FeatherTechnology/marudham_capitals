@@ -599,6 +599,11 @@ define('DACC', $dwldAcc);
 				<?php include "include/templates/noc_handover_report.php" ?>
 			<?php } else ?>
 
+			<!-- Manual NOC Handover report -->
+			<?php if ($current_page == 'manual_noc_handover_report') { ?>
+				<?php include "include/templates/manual_noc_handover_report.php" ?>
+			<?php } else ?>
+
 			<!-- Request Count report -->
 			<?php if ($current_page == 'request_count_report') { ?>
 				<?php include "include/templates/request_count_report.php" ?>
