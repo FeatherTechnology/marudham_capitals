@@ -2650,7 +2650,7 @@
         }
 
         function swalSuccess(title, text) {
-            Swal.fire({
+            return Swal.fire({
                 icon: 'success',
                 title: title,
                 text: text,
@@ -3250,6 +3250,10 @@
 
     if ($current_page == 'noc_handover_report') { ?>
         <script src="js/noc_handover_report.js"></script>
+    <?php }
+
+    if ($current_page == 'manual_noc_handover_report') { ?>
+        <script src="js/manual_noc_handover_report.js"></script>
     <?php }
 
     if ($current_page == 'request_count_report') { ?>

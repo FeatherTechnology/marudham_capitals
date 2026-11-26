@@ -306,7 +306,7 @@ if ($idupd > 0) {
 																																	} ?>>
 								<div class="form-group">
 									<label for="remark">Remarks</label><span class="required">&nbsp;*</span>
-									<input type="text" class="form-control" id="remark" name="remark" value='<?php if (isset($remarks)) echo $remarks; ?>' tabindex='5' placeholder="Enter Remarks" pattern="[a-zA-Z\s]+">
+									<input type="text" class="form-control" id="remark" name="remark" value='<?php if (isset($remarks)) echo $remarks; ?>' tabindex='5' placeholder="Enter Remarks" oninput="validateInputNumber(this,'alphaNumeric')">
 									<span class="text-danger" style='display:none' id='remarkCheck'>Please Enter Remarks</span>
 								</div>
 							</div>
@@ -315,7 +315,7 @@ if ($idupd > 0) {
 																																		} ?>>
 								<div class="form-group">
 									<label for="declaration">Declaration</label><span class="required">&nbsp;*</span>
-									<input type="text" class="form-control" id="declaration" name="declaration" value='<?php if (isset($declaration)) echo $declaration; ?>' tabindex='6' placeholder="Enter Declaration" pattern="[a-zA-Z\s]+">
+									<input type="text" class="form-control" id="declaration" name="declaration" value='<?php if (isset($declaration)) echo $declaration; ?>' tabindex='6' placeholder="Enter Declaration" oninput="validateInputNumber(this,'alphaNumeric')">
 									<span class="text-danger" style='display:none' id='declarationCheck'>Please Enter Declaration</span>
 								</div>
 							</div>

@@ -772,6 +772,7 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 					<!-- Family info START -->
 					<div class="card">
 						<div class="card-header">Family Info <span style="font-weight:bold" class=""></span>
+							<button type="button" class="btn btn-primary" id="add_group" name="add_group" data-toggle="modal" data-target=".addGroup" style="padding: 5px 35px; float: right;" tabindex='20' onclick="resetFamInfo();"><span class="icon-add"></span></button>
 						</div>
 						<div class="card-body">
 
@@ -2790,6 +2791,197 @@ $sub_area_topbar = isset($doc_sub_area_name) && $doc_sub_area_name != '' ? $doc_
 
 </div>
 
+
+<!-- Add Family Members Modal -->
+<div class="modal fade addGroup" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content" style="background-color: white">
+			<div class="modal-header">
+				<h5 class="modal-title" id="myLargeModalLabel">Add Family Info</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="resetFamDetail()">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<!-- alert messages -->
+				<div id="FamInsertNotOk" class="unsuccessalert"> Name Already Exists, Please Enter a Different Name!
+					<span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
+				</div>
+
+				<div id="FamInsertOk" class="successalert">Family Info Added Succesfully!<span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
+				</div>
+
+				<div id="famUpdateok" class="successalert">Family Info Updated Succesfully!<span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
+				</div>
+
+				<div id="NotOk" class="unsuccessalert">Please Retry!<span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
+				</div>
+
+				<div id="FamDeleteNotOk" class="unsuccessalert"> Please Retry to Delete Family Info!
+					<span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
+				</div>
+
+				<div id="FamDeleteOk" class="unsuccessalert"> Family Info Has been Deleted!<span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
+				</div>
+
+				<div id="FamDeleteValidateFail" class="unsuccessalert"> You don't have Access to delete, Family member used as Guarantor or Doc Holder!<span class="custclosebtn" onclick="this.parentElement.style.display='none';"><span class="icon-squared-cross"></span></span>
+				</div>
+				
+				<br />
+
+				<div class="row" id="editFam">
+
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+						<div class="form-group">
+							<label class="label"> Name </label>&nbsp;<span class="text-danger">*</span>
+							<input type="text" class="form-control" name="famname" id="famname" onkeydown="return /[a-z ]/i.test(event.key)" tabindex='1' placeholder="Enter Name">
+							<span class="text-danger" id="famnameCheck">Enter Name</span>
+						</div>
+					</div>
+
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+						<div class="form-group">
+							<label for="relationship"> Relationship </label> &nbsp;<span class="text-danger">*</span>
+							<select type="text" class="form-control" id="relationship" name="relationship" tabindex='2'>
+								<option value=""> Select Relationship </option>
+								<option value="Father"> Father </option>
+								<option value="Mother"> Mother </option>
+								<option value="Spouse"> Spouse </option>
+								<option value="Son"> Son </option>
+								<option value="Daughter"> Daughter </option>
+								<option value="Brother"> Brother </option>
+								<option value="Sister"> Sister </option>
+								<option value="Other"> Other </option>
+							</select>
+							<span class="text-danger" id="famrelationCheck">Select Relationship</span>
+						</div>
+					</div>
+
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+						<div class="form-group">
+							<label class="label" for="authorize"> Authorize</label>&nbsp;
+							 <select type="text" class="form-control" id="authorize" name="authorize" tabindex='3'>
+								<option value=""> Select Authorize </option>
+								<option value="0"> Yes </option>
+								<option value="1"> No</option>
+							</select>
+						</div>
+					</div>
+
+					<div id="remark" style="display: none" class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+						<div class="form-group">
+							<label for="other_remark"> Remark</label>
+							<input type="text" class="form-control" name="other_remark" id="other_remark" tabindex='4' placeholder="Enter Remark">
+							<span class="text-danger" id="famremarkCheck">Enter Remark</span>
+						</div>
+					</div>
+
+					<div id="address" style="display: none" class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+						<div class="form-group">
+							<label for="other_address"> Address </label>
+							<input type="text" class="form-control" name="other_address" id="other_address" tabindex='5' placeholder="Enter Address">
+							<span class="text-danger" id="famaddressCheck">Enter Address</span>
+						</div>
+					</div>
+
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+						<div class="form-group">
+							<label class="label" for="relation_aadhar"> Aadhar No </label>
+							<input type="text" class="form-control" name="relation_aadhar" id="relation_aadhar" data-type="adhaar-number" maxlength="14" tabindex='6' placeholder="Enter Adhar Number">
+							<span class="text-danger" id="famaadharCheck">Enter Aadhar Number</span>
+						</div>
+					</div>
+
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+						<div class="form-group">
+							<label class="label" for="relation_Mobile"> Mobile No </label>
+							<input type="text" class="form-control" name="relation_Mobile" id="relation_Mobile" maxlength="10" onkeypress="if(this.value.length==10) return false;" tabindex='7' placeholder="Enter Mobile Number" oninput="validateInputNumber(this,'withOutDot')">
+							<span class="text-danger" id="fammobileCheck">Enter Mobile Number</span>
+						</div>
+					</div>
+
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+						<div class="form-group">
+							<label for="relation_dob">Date of Birth</label>
+							<input type="date" class="form-control" id="relation_dob" name="relation_dob" tabindex='8'>
+							<span class="text-danger" id='famdobCheck'>Please Select DOB</span>
+						</div>
+					</div>
+
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+						<div class="form-group">
+							<label class="label" for="relation_age"> Age </label>
+							<input type="text" class="form-control" name="relation_age" id="relation_age" tabindex='9' placeholder="Enter Age" readonly>
+							<span class="text-danger" id="famageCheck">Enter Age</span>
+						</div>
+					</div>
+
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+						<div class="form-group">
+							<label class="label" for="relation_live_deceased"> Live Status </label><span class="required">&nbsp;*</span>
+							<select class="form-control" name="relation_live_deceased" id="relation_live_deceased" tabindex="10">
+								<option value=''>Select Live Status</option>
+								<option value='1'>Live</option>
+								<option value='2'>Deceased</option>
+							</select>
+							<span class="text-danger" id="famLiveDeceasedCheck">Select Live Status</span>
+						</div>
+					</div>
+
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+						<div class="form-group">
+							<label class="label" for="relation_Occupation"> Occupation </label>
+							<input type="text" class="form-control" name="relation_Occupation" id="relation_Occupation" onkeydown="return /[a-z ]/i.test(event.key)" tabindex='11' placeholder="Enter Mobile Number">
+							<span class="text-danger" id="famoccCheck">Enter Occupation</span>
+						</div>
+					</div>
+
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+						<div class="form-group">
+							<label class="label" for="relation_Income"> Income </label>
+							<input type="text" class="form-control" name="relation_Income" id="relation_Income" tabindex='12' placeholder="Enter Income" oninput="validateInputNumber(this,'withOutDot')">
+							<span class="text-danger" id="famincomeCheck">Enter Income</span>
+						</div>
+					</div>
+
+					<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+						<div class="form-group">
+							<label class="label" for="relation_Blood"> Blood Group </label>&nbsp;
+							<input type="text" class="form-control" name="relation_Blood" id="relation_Blood" tabindex='13' placeholder="Enter Blood Group">
+						</div>
+					</div>
+
+					<div class="col-xl-2 col-lg-2 col-md-6 col-sm-4 col-12">
+						<input type="hidden" name="famID" id="famID">
+						<button type="button" name="submitFamInfoBtn" id="submitFamInfoBtn" class="btn btn-primary" style="margin-top: 19px;" tabindex='14'>Submit</button>
+					</div>
+
+				</div>
+				</br>
+
+				<div id="updatedFamTable" class="table-responsive">
+					<table class="table custom-table modalTable">
+						<thead>
+							<tr>
+								<th width="50">S.No</th>
+								<th>Name</th>
+								<th>Relationship</th>
+								<th>ACTION</th>
+							</tr>
+						</thead>
+						<tbody>
+
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="resetFamDetail()" tabindex='15'>Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- END  Add Family Members Modal -->
 
 <!-- Add Signed Doc info Modal  START -->
 <div class="modal fade addSignDoc" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">

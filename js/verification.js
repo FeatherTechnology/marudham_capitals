@@ -1346,6 +1346,7 @@ function getresponsiblecolumn(ag_id) {
         $(".responsible").show();
       } else {
         $(".responsible").hide();
+        $("#cus_responsible").val('');
       }
     },
   });

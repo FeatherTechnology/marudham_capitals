@@ -16,9 +16,9 @@ if ($_POST['length'] != -1) {
 }
 
 $columns = [
-    'rc.req_id',
+    'ii.req_id',
     'ii.updated_date',
-    'rc.cus_id',
+    'ii.cus_id',
     'cr.autogen_cus_id',
     'cr.customer_name',
     'alc.area_name',
@@ -27,9 +27,9 @@ $columns = [
     'agm.group_name',
     'alm.line_name',
     'cr.mobile1',
-    'rc.req_id',
-    'rc.req_id',
-    'rc.req_id'
+    'ii.req_id',
+    'ii.req_id',
+    'ii.req_id'
 ];
 
 if (isset($_SESSION["userid"])) {
@@ -40,23 +40,23 @@ $area_list = getUserSubAreaList($connect, 'followup');
 
 $searchQuery = "";
 if ($searchValue != '') {
-    $searchQuery = " AND (rc.cus_id LIKE '%" . $searchValue . "%' 
-                    OR cr.autogen_cus_id LIKE '%" . $searchValue . "%'
-                    OR cr.customer_name LIKE '%" . $searchValue . "%' 
-                    OR alc.area_name LIKE '%" . $searchValue . "%'
-                    OR salc.sub_area_name LIKE '%" . $searchValue . "%'
-                    OR bc.branch_name LIKE '%" . $searchValue . "%'
-                    OR agm.group_name LIKE '%" . $searchValue . "%'
-                    OR alm.line_name LIKE '%" . $searchValue . "%'
-                    OR cr.mobile1 LIKE '%" . $searchValue . "%')";
+    $searchQuery = " AND (ii.cus_id LIKE '" . $searchValue . "%' 
+                    OR cr.autogen_cus_id LIKE '" . $searchValue . "%'
+                    OR cr.customer_name LIKE '" . $searchValue . "%' 
+                    OR alc.area_name LIKE '" . $searchValue . "%'
+                    OR salc.sub_area_name LIKE '" . $searchValue . "%'
+                    OR bc.branch_name LIKE '" . $searchValue . "%'
+                    OR agm.group_name LIKE '" . $searchValue . "%'
+                    OR alm.line_name LIKE '" . $searchValue . "%'
+                    OR cr.mobile1 LIKE '" . $searchValue . "%')";
 }
 
 $orderQuery = " ORDER BY " . $columns[$orderColumnIndex] . " " . $orderDir;
 
 $sql = "SELECT 
-    rc.req_id,
+    ii.req_id,
     ii.updated_date,
-    rc.cus_id,
+    ii.cus_id,
     cr.customer_name,
     cr.mobile1,
     cr.autogen_cus_id,
@@ -66,20 +66,19 @@ $sql = "SELECT
     agm.group_name,
     alm.line_name
 FROM 
-    request_creation rc
-LEFT JOIN in_issue ii ON rc.req_id = ii.req_id
-JOIN customer_register cr ON rc.cus_id = cr.cus_id
-JOIN acknowlegement_customer_profile acp ON rc.req_id = acp.req_id
-LEFT JOIN area_list_creation alc ON rc.area = alc.area_id
-LEFT JOIN sub_area_list_creation salc ON rc.sub_area = salc.sub_area_id
+    in_issue ii
+JOIN customer_register cr ON ii.cus_id = cr.cus_id
+JOIN acknowlegement_customer_profile acp ON ii.req_id = acp.req_id
+LEFT JOIN area_list_creation alc ON acp.area_confirm_area = alc.area_id
+LEFT JOIN sub_area_list_creation salc ON acp.area_confirm_subarea = salc.sub_area_id
 LEFT JOIN area_group_mapping_sub_area agmsa ON agmsa.sub_area_id = salc.sub_area_id
 LEFT JOIN area_group_mapping agm ON agm.map_id = agmsa.group_map_id
 LEFT JOIN branch_creation bc ON agm.branch_id = bc.branch_id
 LEFT JOIN area_line_mapping_sub_area almsa ON almsa.sub_area_id = salc.sub_area_id
 LEFT JOIN area_line_mapping alm ON alm.map_id = almsa.line_map_id
 WHERE 
-    rc.cus_status >= 14 AND acp.area_confirm_area IN ($area_list) 
-    AND NOT EXISTS (SELECT 1 FROM confirmation_followup cf WHERE cf.req_id = rc.req_id AND cf.remove_status = 1) $searchQuery $orderQuery ";
+    ii.cus_status >= 14 AND acp.area_confirm_area IN ($area_list) 
+    AND NOT EXISTS (SELECT 1 FROM confirmation_followup cf WHERE cf.req_id = ii.req_id AND cf.remove_status = 1) $searchQuery $orderQuery ";
 
 // Count query for filtered rows
 $num_qry = $connect->query($sql);
@@ -92,7 +91,7 @@ $status_arr = [1 => 'Completed', 2 => 'Unavailable', 3 => 'Reconfirmation'];
 
 while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
     $req_id = $row['req_id'];
-    $qry = $connect->query("SELECT remove_status, status FROM confirmation_followup WHERE req_id = '" . $req_id . "' ORDER BY created_date DESC limit 1");
+    $qry = $connect->query("SELECT remove_status, status FROM confirmation_followup WHERE req_id = '$req_id' ORDER BY created_date DESC limit 1");
     $rst = $qry->fetch(PDO::FETCH_ASSOC);
     $remove_status = $rst['remove_status'] ?? null;
 
